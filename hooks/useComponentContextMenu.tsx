@@ -144,7 +144,8 @@ export const useComponentContextMenu = () => {
 
   const copyComponent = useCallback(
     (component: Component) => {
-      const copiedComponent = getComponentById(editorTree.root, component.id!)!;
+      const copiedComponent =
+        useEditorStore.getState().componentMutableAttrs[component.id!];
       setCopiedComponent(copiedComponent);
       copyToClipboard(copiedComponent);
     },
@@ -153,7 +154,8 @@ export const useComponentContextMenu = () => {
 
   const copyProperties = useCallback(
     (component: Component) => {
-      const targetComponent = getComponentById(editorTree.root, component.id!)!;
+      const targetComponent =
+        useEditorStore.getState().componentMutableAttrs[component.id!];
       setCopiedProperties({
         componentName: targetComponent.name,
         componentProps: targetComponent.props!,

@@ -1,16 +1,12 @@
 import { useDataContext } from "@/contexts/DataProvider";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { isSame } from "@/utils/componentComparison";
-import { Component } from "@/utils/editor";
+import { EditableComponentMapper } from "@/utils/editor";
 import { ImageProps, Image as MantineImage } from "@mantine/core";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { forwardRef, memo } from "react";
 
-type Props = {
-  renderTree: (component: Component) => any;
-  component: Component;
-  shareableContent?: any;
-} & ImageProps;
+type Props = EditableComponentMapper & ImageProps;
 
 const ImageComponent = forwardRef(
   ({ component, shareableContent, ...props }: Props, ref) => {

@@ -160,16 +160,16 @@ export const EditorAsideSections = () => {
   const [tab, setTab] = useState<Tab>("design");
   const selectedComponentId = useDeferredValue(_selectedComponentId);
   const [createState, setCreateState] = useState<undefined | string>(undefined);
-
-  const component = useMemo(
-    () => getComponentById(editorTree.root, selectedComponentId as string),
-    [editorTree.root, selectedComponentId],
+  const component = useEditorStore(
+    (state) => state.componentMutableAttrs[selectedComponentId!],
   );
   const componentName = component?.name ?? "content-wrapper";
 
-  const components = useMemo(
-    () => getAllComponentsByIds(editorTree.root, selectedComponentIds!),
-    [editorTree.root, selectedComponentIds],
+  const components = useEditorStore(
+    (state) =>
+      (state.selectedComponentIds ?? [])?.map(
+        (id) => state.componentMutableAttrs[id],
+      ),
   );
   const { getComponentsStates } = useComponentStates();
   const isMappedComponent = components.some(

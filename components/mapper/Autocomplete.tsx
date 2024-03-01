@@ -7,7 +7,7 @@ import { useChangeState } from "@/hooks/useChangeState";
 import { useEndpoint } from "@/hooks/useEndpoint";
 import { useInputsStore } from "@/stores/inputs";
 import { isSame } from "@/utils/componentComparison";
-import { Component } from "@/utils/editor";
+import { EditableComponentMapper } from "@/utils/editor";
 import {
   AutocompleteItem,
   AutocompleteProps,
@@ -17,10 +17,7 @@ import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { forwardRef, memo, useEffect, useState } from "react";
 
-type Props = {
-  renderTree: (component: Component) => any;
-  component: Component;
-} & AutocompleteProps;
+type Props = EditableComponentMapper & AutocompleteProps;
 
 const AutocompleteComponent = forwardRef(
   ({ renderTree, component, children: child, ...props }: Props, ref) => {

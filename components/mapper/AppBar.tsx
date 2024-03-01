@@ -1,14 +1,11 @@
 // AppBar.tsx
 import { isSame } from "@/utils/componentComparison";
-import { Component } from "@/utils/editor";
+import { EditableComponentMapper } from "@/utils/editor";
 import { forwardRef, memo } from "react";
 import { Grid, GridProps } from "./Grid";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 
-type Props = {
-  renderTree: (component: Component) => any;
-  component: Component;
-} & GridProps; // Using GridProps instead of FlexProps
+type Props = EditableComponentMapper & GridProps; // Using GridProps instead of FlexProps
 
 const AppBarComponent = forwardRef(
   ({ renderTree, component, ...props }: Props, ref) => {

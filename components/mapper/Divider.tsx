@@ -1,13 +1,10 @@
 import { isSame } from "@/utils/componentComparison";
-import { Component } from "@/utils/editor";
+import { EditableComponentMapper } from "@/utils/editor";
 import { DividerProps, Divider as MantineDivider } from "@mantine/core";
 import { forwardRef, memo } from "react";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 
-type Props = {
-  renderTree: (component: Component) => any;
-  component: Component;
-} & DividerProps;
+type Props = EditableComponentMapper & DividerProps;
 
 const DividerComponent = forwardRef(
   ({ renderTree, component, ...props }: Props, ref) => {

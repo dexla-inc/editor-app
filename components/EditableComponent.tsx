@@ -14,13 +14,13 @@ import {
 } from "@/hooks/useMergedProps";
 import { useTriggers } from "@/hooks/useTriggers";
 import { useEditorStore } from "@/stores/editor";
-import { Component } from "@/utils/editor";
+import { Component, ComponentTree } from "@/utils/editor";
 import { BoxProps } from "@mantine/core";
 import { PropsWithChildren, cloneElement } from "react";
 
 type Props = {
   id: string;
-  component: Component;
+  component: ComponentTree;
   isSelected?: boolean;
   selectedByOther?: string;
   shareableContent?: any;
@@ -29,7 +29,7 @@ type Props = {
 export const EditableComponent = ({
   id,
   children,
-  component,
+  component: componentTree,
   isSelected,
   selectedByOther,
   shareableContent,
@@ -37,8 +37,8 @@ export const EditableComponent = ({
   const { isPreviewMode } = useAppMode();
   const isLive = useEditorStore((state) => state.isLive);
   const isEditorMode = !isPreviewMode && !isLive;
-  const componentMutableAttrs = useEditorStore(
-    (state) => state.componentMutableAttrs[component.id!] ?? {},
+  const component = useEditorStore(
+    (state) => state.componentMutableAttrs[componentTree.id!] ?? {},
   );
 
   let currentState = useComputeCurrentState(component, isEditorMode);
@@ -53,7 +53,7 @@ export const EditableComponent = ({
     useComponentContextMenu();
 
   const handleContextMenu = useComponentContextEventHandler(
-    { ...component, ...componentMutableAttrs },
+    { ...{}, ...componentTree, ...component },
     componentContextMenu,
   );
 

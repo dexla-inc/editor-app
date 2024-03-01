@@ -1,15 +1,16 @@
 import { useAppMode } from "@/hooks/useAppMode";
 import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
-import { Component, getComponentById } from "@/utils/editor";
+import {
+  Component,
+  EditableComponentMapper,
+  getComponentById,
+} from "@/utils/editor";
 import { Box, Popover as MantinePopOver, PopoverProps } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { memo, useEffect } from "react";
 
-type Props = {
-  renderTree: (component: Component) => any;
-  component: Component;
-} & Omit<PopoverProps, "opened">;
+type Props = EditableComponentMapper & Omit<PopoverProps, "opened">;
 
 const PopOverComponent = ({
   renderTree,

@@ -7,7 +7,7 @@ import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
 import { componentMapper } from "@/utils/componentMapper";
 import { decodeSchema } from "@/utils/compression";
-import { Component } from "@/utils/editor";
+import { Component, ComponentTree } from "@/utils/editor";
 import { Box } from "@mantine/core";
 import { useCallback, useEffect, useMemo } from "react";
 
@@ -49,8 +49,8 @@ export const Live = ({ projectId, pageId }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page]);
 
-  const renderTree = useCallback((component: Component) => {
-    if (component.id === "root") {
+  const renderTree = useCallback((componentTree: ComponentTree) => {
+    if (componentTree.id === "root") {
       return (
         <Box
           w="100%"
@@ -58,13 +58,15 @@ export const Live = ({ projectId, pageId }: Props) => {
           m={0}
           p={0}
           sx={{ flexDirection: "column" }}
-          key={component.id}
+          key={componentTree.id}
         >
-          {component.children?.map((child) => renderTree(child))}
+          {componentTree.children?.map((child) => renderTree(child))}
         </Box>
       );
     }
 
+    const component =
+      useEditorStore.getState().componentMutableAttrs[componentTree.id!];
     const componentToRender = componentMapper[component.name];
 
     return (

@@ -6,17 +6,14 @@ import { useChangeState } from "@/hooks/useChangeState";
 import { useEndpoint } from "@/hooks/useEndpoint";
 import { useInputsStore } from "@/stores/inputs";
 import { isSame } from "@/utils/componentComparison";
-import { Component } from "@/utils/editor";
+import { EditableComponentMapper } from "@/utils/editor";
 import { Select as MantineSelect, SelectProps } from "@mantine/core";
 import debounce from "lodash.debounce";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { forwardRef, memo, useEffect, useState } from "react";
 
-type Props = {
-  renderTree: (component: Component) => any;
-  component: Component;
-} & SelectProps;
+type Props = EditableComponentMapper & SelectProps;
 
 const SelectComponent = forwardRef(
   ({ renderTree, component, children: child, ...props }: Props, ref) => {

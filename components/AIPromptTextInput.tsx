@@ -40,10 +40,8 @@ export default function AIPromptTextInput() {
 
     let selectedComponent = null;
     if (selectedComponentId) {
-      selectedComponent = getComponentById(
-        editorTree.root,
-        selectedComponentId,
-      );
+      selectedComponent =
+        useEditorStore.getState().componentMutableAttrs[selectedComponentId];
     }
 
     const dropTarget = {

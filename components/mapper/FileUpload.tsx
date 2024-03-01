@@ -1,17 +1,13 @@
 import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { isSame } from "@/utils/componentComparison";
-import { Component } from "@/utils/editor";
+import { EditableComponentMapper } from "@/utils/editor";
 import { Box } from "@mantine/core";
 import { Dropzone, DropzoneProps } from "@mantine/dropzone";
 import merge from "lodash.merge";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { memo } from "react";
 
-type Props = {
-  renderTree: (component: Component) => any;
-  component: Component;
-  isPreviewMode?: Boolean;
-} & DropzoneProps;
+type Props = EditableComponentMapper & DropzoneProps;
 
 const FileUploadComponent = ({
   renderTree,

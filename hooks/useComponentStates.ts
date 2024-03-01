@@ -2,10 +2,10 @@ import { useEditorStore } from "@/stores/editor";
 import { getAllComponentsByIds } from "@/utils/editor";
 
 export const useComponentStates = () => {
-  const selectedComponentIds = useEditorStore(
-    (state) => state.selectedComponentIds ?? [],
+  const components = useEditorStore(
+    (state) =>
+      state.selectedComponentIds?.map((id) => state.componentMutableAttrs[id]),
   );
-  const editorTreeRoot = useEditorStore((state) => state.tree.root);
 
   type ComponentAppearence = {
     label: string;
@@ -86,11 +86,6 @@ export const useComponentStates = () => {
   };
 
   const getComponentsStates = (componentsIds?: string[]) => {
-    const components = getAllComponentsByIds(
-      editorTreeRoot,
-      componentsIds ?? selectedComponentIds,
-    );
-
     const componentNames = [
       ...new Set(components?.map((component) => component?.name)),
     ];
@@ -110,7 +105,9 @@ export const useComponentStates = () => {
       return [...new Set([...initialAcc, ...combinedComponentAppearences])];
     }, [] as ComponentAppearence[]);
 
-    const appearencesListValues = appearencesList.map((state) => state.value);
+    const appearencesListValues = appearencesList.map(
+      (state: any) => state.value,
+    );
 
     const customAppearences = [
       ...new Set(

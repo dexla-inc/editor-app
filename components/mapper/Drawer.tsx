@@ -1,14 +1,11 @@
 import { useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
-import { Component, getComponentById } from "@/utils/editor";
+import { EditableComponentMapper, getComponentById } from "@/utils/editor";
 import { DrawerProps, Drawer as MantineDrawer } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useEffect } from "react";
 
-type Props = {
-  renderTree: (component: Component) => any;
-  component: Component;
-} & Omit<DrawerProps, "opened">;
+type Props = EditableComponentMapper & Omit<DrawerProps, "opened">;
 
 export const Drawer = ({
   renderTree,

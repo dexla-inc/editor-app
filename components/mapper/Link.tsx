@@ -3,16 +3,12 @@ import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { useContentEditable } from "@/hooks/useContentEditable";
 import { isSame } from "@/utils/componentComparison";
-import { Component } from "@/utils/editor";
+import { EditableComponentMapper } from "@/utils/editor";
 import { AnchorProps, Anchor as MantineAnchor } from "@mantine/core";
 import merge from "lodash.merge";
 import { forwardRef, memo } from "react";
 
-type Props = {
-  renderTree: (component: Component) => any;
-  component: Component;
-  shareableContent: any;
-} & AnchorProps;
+type Props = EditableComponentMapper & AnchorProps;
 
 const LinkComponent = forwardRef(
   ({ renderTree, component, shareableContent, ...props }: Props, ref) => {

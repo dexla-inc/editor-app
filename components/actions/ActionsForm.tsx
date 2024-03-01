@@ -41,7 +41,9 @@ export const ActionsForm = ({ sequentialTo, close }: ActionProps) => {
     },
   });
 
-  const component = getComponentById(editorTree.root, selectedComponentId!);
+  const component = useEditorStore(
+    (state) => state.componentMutableAttrs[selectedComponentId!],
+  );
   const componentActions = component?.actions ?? [];
 
   const isCopiedAction = !!copiedAction && !!copiedAction.length;
@@ -165,7 +167,7 @@ export const ActionsForm = ({ sequentialTo, close }: ActionProps) => {
           }}
         />
         {isCopiedAction &&
-          componentActions.every((action) =>
+          componentActions.every((action: any) =>
             copiedAction.every((a) => a.id !== action.id),
           ) && (
             <Button

@@ -1,8 +1,8 @@
 import { useEditorStore } from "@/stores/editor";
-import { Component } from "@/utils/editor";
+import { Component, ComponentTree } from "@/utils/editor";
 import crawl from "tree-crawl";
 
-export const calculateGridSizes = (tree?: Component) => {
+export const calculateGridSizes = (tree?: ComponentTree) => {
   if (!tree) {
     tree = useEditorStore.getState().tree.root;
   }
@@ -11,17 +11,23 @@ export const calculateGridSizes = (tree?: Component) => {
 
   crawl(
     tree,
-    (node, context) => {
+    (nodeTree, context) => {
+      const node =
+        useEditorStore.getState().componentMutableAttrs[nodeTree.id!];
       if (node.name === "Grid") {
-        const parent = context.parent as Component;
+        const parentTree = context.parent;
+        const parent =
+          useEditorStore.getState().componentMutableAttrs[parentTree?.id!];
         if (parent?.name === "GridColumn") {
           node.props!.gridSize = parent.props!.span;
         }
       } else if (node.name === "GridColumn") {
-        const parent = context.parent as Component;
+        const parentTree = context.parent;
+        const parent =
+          useEditorStore.getState().componentMutableAttrs[parentTree?.id!];
         if (parent?.name === "Grid") {
           const sibilings =
-            (parent.children ?? []).filter(
+            (parentTree?.children ?? []).filter(
               (child) => child.name === "GridColumn",
             ) ?? [];
 

@@ -1,13 +1,10 @@
 import { isSame } from "@/utils/componentComparison";
-import { Component } from "@/utils/editor";
+import { EditableComponentMapper } from "@/utils/editor";
 import { Progress as MantineProgress, ProgressProps } from "@mantine/core";
 import { forwardRef, memo } from "react";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 
-type Props = {
-  renderTree: (component: Component) => any;
-  component: Component;
-} & ProgressProps;
+type Props = EditableComponentMapper & ProgressProps;
 
 const ProgressComponent = forwardRef(
   ({ renderTree, component, ...props }: Props, ref) => {

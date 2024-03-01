@@ -22,6 +22,15 @@ import { nanoid } from "nanoid";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { CSSProperties } from "react";
 import crawl from "tree-crawl";
+import { CSSObject } from "@mantine/core";
+
+export type EditableComponentMapper = {
+  renderTree: (component: ComponentTree, shareableContent?: any) => any;
+  component: ComponentTree & Component;
+  shareableContent?: any;
+  isPreviewMode: boolean;
+  style: CSSObject;
+};
 
 type ComponentBase = {
   id?: string;
@@ -46,6 +55,7 @@ export type Component = {
 } & ComponentBase;
 
 export type ComponentTree = {
+  // TODO: this needs to be a ComponentTree[]
   children?: Component[];
 } & ComponentBase;
 
@@ -90,26 +100,28 @@ export const traverseComponents = (
   componentTrees: ComponentTree[],
   theme: MantineThemeExtended,
 ): Component[] => {
-  return componentTrees
-    .filter((c) => !!c.name)
-    .map((component) => {
-      const isTable = component.name === "Table";
+  return (
+    componentTrees
+      // .filter((c) => !!c.name)
+      .map((component) => {
+        // const isTable = component.name === "Table";
+        //
+        // let tableData = {};
 
-      let tableData = {};
+        // const structureDefinition = structureMapper[component.name];
+        //
+        // const newComponent = structureDefinition.structure({
+        //   ...component,
+        //   props: component?.props ?? {},
+        //   theme,
+        // });
+        // if (component.children) {
+        //   newComponent.children = traverseComponents(component.children, theme);
+        // }
 
-      const structureDefinition = structureMapper[component.name];
-
-      const newComponent = structureDefinition.structure({
-        ...component,
-        props: component?.props ?? {},
-        theme,
-      });
-      if (component.children) {
-        newComponent.children = traverseComponents(component.children, theme);
-      }
-
-      return newComponent;
-    });
+        return {} as Component;
+      })
+  );
 };
 
 export const getEditorTreeFromPageStructure = (
@@ -136,22 +148,22 @@ export const getEditorTreeFromPageStructure = (
               minHeight: "20px",
             },
           },
-          children: tree.rows.map((row: Row) => {
-            return {
-              id: nanoid(),
-              name: "Container",
-              description: "Container",
-              props: {
-                style: {
-                  width: "100%",
-                  backgroundColor: "White.6",
-                  display: "flex",
-                  flexDirection: "row",
-                },
-              },
-              children: traverseComponents(row.components, theme),
-            };
-          }),
+          // children: tree.rows.map((row: Row) => {
+          //   return {
+          //     id: nanoid(),
+          //     name: "Container",
+          //     description: "Container",
+          //     props: {
+          //       style: {
+          //         width: "100%",
+          //         backgroundColor: "White.6",
+          //         display: "flex",
+          //         flexDirection: "row",
+          //       },
+          //     },
+          //     children: traverseComponents(row.components, theme),
+          //   };
+          // }),
         },
       ],
     },
@@ -207,24 +219,24 @@ export const getNewComponents = (
         flexDirection: "column",
       },
     },
-    children: tree.rows.map((row: Row) => {
-      return {
-        id: nanoid(),
-        name: "Container",
-        description: "Container",
-        props: {
-          style: {
-            width: "100%",
-            rowGap: fromAi ? "8px" : "0px",
-            columnGap: fromAi ? "8px" : "0px",
-          },
-        },
-        children:
-          row.components && row.components.length > 0
-            ? traverseComponents(row.components, theme)
-            : [],
-      };
-    }),
+    // children: tree.rows.map((row: Row) => {
+    //   return {
+    //     id: nanoid(),
+    //     name: "Container",
+    //     description: "Container",
+    //     props: {
+    //       style: {
+    //         width: "100%",
+    //         rowGap: fromAi ? "8px" : "0px",
+    //         columnGap: fromAi ? "8px" : "0px",
+    //       },
+    //     },
+    //     children:
+    //       row.components && row.components.length > 0
+    //         ? traverseComponents(row.components, theme)
+    //         : [],
+    //   };
+    // }),
   };
 };
 
@@ -232,27 +244,28 @@ export const getNewComponent = (
   components: Component[],
   theme: MantineThemeExtended,
   pages: PageResponse[],
-): Component => {
-  const firstComponent = components[0];
-  const structureDefinition = structureMapper[firstComponent.name];
-  const firstComponentStructure = structureDefinition.structure({
-    ...firstComponent,
-    props: {
-      ...(firstComponent?.props ?? {}),
-    },
-    theme,
-  });
-
-  return {
-    id: nanoid(),
-    name: firstComponentStructure.name,
-    description: firstComponentStructure.name,
-    props: { ...firstComponentStructure.props },
-    children:
-      firstComponent.children && firstComponent.children.length > 0
-        ? traverseComponents(firstComponent.children, theme)
-        : [],
-  };
+): ComponentTree => {
+  // const firstComponent = components[0];
+  // const structureDefinition = structureMapper[firstComponent.name];
+  // const firstComponentStructure = structureDefinition.structure({
+  //   ...firstComponent,
+  //   props: {
+  //     ...(firstComponent?.props ?? {}),
+  //   },
+  //   theme,
+  // });
+  //
+  // return {
+  //   id: nanoid(),
+  //   name: firstComponentStructure.name,
+  //   description: firstComponentStructure.name,
+  //   props: { ...firstComponentStructure.props },
+  //   children:
+  //     firstComponent.children && firstComponent.children.length > 0
+  //       ? traverseComponents(firstComponent.children, theme)
+  //       : [],
+  // };
+  return {} as ComponentTree;
 };
 
 export type TileType = {
@@ -261,131 +274,151 @@ export type TileType = {
   count: number;
 };
 
-export const getTiles = (treeRoot: Component): TileType[] => {
-  let tiles: TileType[] = [];
+// export const getTiles = (treeRoot: Component): TileType[] => {
+//   let tiles: TileType[] = [];
+//
+//   crawl(
+//     treeRoot,
+//     (node) => {
+//       const name = node.description?.replace(".tile", "");
+//       if (
+//         node.description?.endsWith(".tile") &&
+//         !tiles.find((t) => t.name === name)
+//       ) {
+//         tiles.push({ name: name as string, node, count: 1 });
+//       } else {
+//         tiles = tiles.map((t) => {
+//           if (t.name === name) {
+//             return { ...t, count: t.count + 1 } as TileType;
+//           }
+//
+//           return t as TileType;
+//         });
+//       }
+//     },
+//     { order: "bfs" },
+//   );
+//
+//   return tiles;
+// };
+//
+// export const getTileData = (treeRoot: Component): { [key: string]: any } => {
+//   let data: { [key: string]: any } = {};
+//
+//   crawl(
+//     treeRoot,
+//     (node) => {
+//       if (node.description?.startsWith("tile.data.")) {
+//         let type = "string";
+//         // TODO: Handle unique types of charts, like PieChart that needs different data
+//         if (node.name.endsWith("Chart")) {
+//           type = `{
+//             data: {
+//               series: {
+//                 name: string;
+//                 data: number[]
+//               }[]
+//               xaxis: { categories: string[] }
+//             }
+//           }`;
+//         }
+//
+//         if (node.name === "Table") {
+//           type = `{
+//             data: {
+//               value: { [key: string]: any }[]
+//             }
+//           }`;
+//         }
+//
+//         data = {
+//           ...data,
+//           [node.description.replace("tile.data.", "")]: type,
+//         };
+//       }
+//     },
+//     { order: "bfs" },
+//   );
+//
+//   return data;
+// };
+//
+// // recursively replace all tile.data with the actual tile data
+// const replaceTileData = (node: Component, tile: any, entities: object) => {
+//   if (node.description?.startsWith("tile.data.")) {
+//     const key = node.description?.replace("tile.data.", "");
+//     const val = tile.data[key];
+//
+//     if (node.name === "Text" || node.name === "Title") {
+//       // @ts-ignore
+//       node.props.children = val;
+//     }
+//
+//     if (node.name.endsWith("Chart")) {
+//       try {
+//         const data = typeof val === "string" ? JSON.parse(val).data : val.data;
+//         node.props = {
+//           ...node.props,
+//           ...data,
+//         };
+//       } catch (error) {
+//         // do nothing
+//       }
+//     }
+//
+//     // @ts-ignore
+//     node.props.data = { value: val };
+//   }
+//
+//   if (node.children) {
+//     node.children?.map((child) => replaceTileData(child, tile, entities)) ?? [];
+//   }
+//
+//   return node;
+// };
+//
+// export const replaceTilesData = (
+//   tree: EditorTree,
+//   tiles: any[],
+//   entities: object,
+// ): EditorTree => {
+//   // crawl(
+//   //   tree.root,
+//   //   (node) => {
+//   //     if (node.description?.endsWith(".tile")) {
+//   //       const name = node.description?.replace(".tile", "");
+//   //       const tile = tiles.find((t) => t.name === `${name}Tile`);
+//   //
+//   //       node.children =
+//   //         node.children?.map((child) =>
+//   //           replaceTileData(child, tile, entities as object),
+//   //         ) ?? [];
+//   //     }
+//   //   },
+//   //   { order: "bfs" },
+//   // );
+//   //
+//   return tree;
+// };
+
+export const getComponentTreeById = (
+  treeRoot: ComponentTree,
+  id: string,
+): Component | null => {
+  let found: Component | null = null;
 
   crawl(
     treeRoot,
-    (node) => {
-      const name = node.description?.replace(".tile", "");
-      if (
-        node.description?.endsWith(".tile") &&
-        !tiles.find((t) => t.name === name)
-      ) {
-        tiles.push({ name: name as string, node, count: 1 });
-      } else {
-        tiles = tiles.map((t) => {
-          if (t.name === name) {
-            return { ...t, count: t.count + 1 } as TileType;
-          }
-
-          return t as TileType;
-        });
+    (node, context) => {
+      if (node.id === id) {
+        found = node as Component;
+        context.break();
       }
     },
     { order: "bfs" },
   );
 
-  return tiles;
-};
-
-export const getTileData = (treeRoot: Component): { [key: string]: any } => {
-  let data: { [key: string]: any } = {};
-
-  crawl(
-    treeRoot,
-    (node) => {
-      if (node.description?.startsWith("tile.data.")) {
-        let type = "string";
-        // TODO: Handle unique types of charts, like PieChart that needs different data
-        if (node.name.endsWith("Chart")) {
-          type = `{
-            data: {
-              series: { 
-                name: string; 
-                data: number[] 
-              }[]
-              xaxis: { categories: string[] }
-            }
-          }`;
-        }
-
-        if (node.name === "Table") {
-          type = `{
-            data: {
-              value: { [key: string]: any }[]
-            }
-          }`;
-        }
-
-        data = {
-          ...data,
-          [node.description.replace("tile.data.", "")]: type,
-        };
-      }
-    },
-    { order: "bfs" },
-  );
-
-  return data;
-};
-
-// recursively replace all tile.data with the actual tile data
-const replaceTileData = (node: Component, tile: any, entities: object) => {
-  if (node.description?.startsWith("tile.data.")) {
-    const key = node.description?.replace("tile.data.", "");
-    const val = tile.data[key];
-
-    if (node.name === "Text" || node.name === "Title") {
-      // @ts-ignore
-      node.props.children = val;
-    }
-
-    if (node.name.endsWith("Chart")) {
-      try {
-        const data = typeof val === "string" ? JSON.parse(val).data : val.data;
-        node.props = {
-          ...node.props,
-          ...data,
-        };
-      } catch (error) {
-        // do nothing
-      }
-    }
-
-    // @ts-ignore
-    node.props.data = { value: val };
-  }
-
-  if (node.children) {
-    node.children?.map((child) => replaceTileData(child, tile, entities)) ?? [];
-  }
-
-  return node;
-};
-
-export const replaceTilesData = (
-  tree: EditorTree,
-  tiles: any[],
-  entities: object,
-): EditorTree => {
-  crawl(
-    tree.root,
-    (node) => {
-      if (node.description?.endsWith(".tile")) {
-        const name = node.description?.replace(".tile", "");
-        const tile = tiles.find((t) => t.name === `${name}Tile`);
-
-        node.children =
-          node.children?.map((child) =>
-            replaceTileData(child, tile, entities as object),
-          ) ?? [];
-      }
-    },
-    { order: "bfs" },
-  );
-
-  return tree;
+  return found;
 };
 
 export const getComponentById = (
@@ -427,23 +460,12 @@ export const getAllComponentsByIds = (
   return found;
 };
 
-export const getComponentBeingAddedId = (
-  treeRoot: Component,
-): string | null => {
-  let id = null;
-
-  crawl(
-    treeRoot,
-    (node, context) => {
-      if (node.props?.isBeingAdded === true) {
-        id = node.id;
-        context.break();
-      }
-    },
-    { order: "bfs" },
+export const getComponentBeingAddedId = (): string | null => {
+  return (
+    Object.values(useEditorStore.getState().componentMutableAttrs).find(
+      (component) => component.isBeingAdded,
+    )?.id || null
   );
-
-  return id;
 };
 
 const translatableFieldsKeys = [
@@ -558,13 +580,10 @@ export const getTreeComponentMutableProps = (treeRoot: Component) => {
   return newComponentMutableAttrs;
 };
 
-export const extractComponentMutableAttrs = (component: Partial<Component>) => {
-  return omit(component, [
-    "id",
-    "name",
-    "children",
-    "blockDroppingChildrenInside",
-  ]);
+export const extractComponentMutableAttrs = (
+  component: Partial<ComponentTree>,
+) => {
+  return omit(component, ["id", "children"]);
 };
 
 export const updateTreeComponentStates = (
@@ -590,16 +609,16 @@ export const updateTreeComponentChildren = (
   id: string,
   children: Component[],
 ) => {
-  crawl(
-    treeRoot,
-    (node, context) => {
-      if (node.id === id) {
-        node.children = children;
-        context.break();
-      }
-    },
-    { order: "bfs" },
-  );
+  // crawl(
+  //   treeRoot,
+  //   (node, context) => {
+  //     if (node.id === id) {
+  //       node.children = children;
+  //       context.break();
+  //     }
+  //   },
+  //   { order: "bfs" },
+  // );
 };
 
 export const updateTreeComponentActions = (
@@ -619,15 +638,18 @@ export const updateTreeComponentActions = (
   );
 };
 
+//TODO: make it run through the new component list and find the parent component by id
 export const getParentComponentData = (
-  treeRoot: Component,
+  treeRoot: ComponentTree,
   componentId: string,
 ): Component | null => {
   const parentComponentNames = ["Container", "Table", "Form", "Card"];
   let parentWithOnLoad: Component | null = null;
   crawl(
     treeRoot,
-    (node, context) => {
+    (nodeTree, context) => {
+      const node =
+        useEditorStore.getState().componentMutableAttrs[nodeTree.id!];
       if (
         !isEmpty(node.onLoad?.endpointId) &&
         parentComponentNames.includes(node.name)
@@ -646,10 +668,10 @@ export const getParentComponentData = (
 };
 
 export const getComponentParent = (
-  treeRoot: Component,
+  treeRoot: ComponentTree,
   id: string,
-): Component | null => {
-  let parent: Component | null = null;
+): ComponentTree | null => {
+  let parent: ComponentTree | null = null;
   crawl(
     treeRoot,
     (node, context) => {
@@ -712,7 +734,7 @@ export const getAllChildrenComponents = (treeRoot: Component): Component[] => {
   return components;
 };
 
-export const getComponentIndex = (parent: Component, id: string) => {
+export const getComponentIndex = (parent: ComponentTree, id: string) => {
   if (!parent) return -1;
   return (
     parent.children?.findIndex((child: Component) => child.id === id) ?? -1
@@ -720,103 +742,104 @@ export const getComponentIndex = (parent: Component, id: string) => {
 };
 
 export const addComponent = (
-  treeRoot: Component,
+  treeRoot: ComponentTree,
   componentToAdd: Component,
   dropTarget: DropTarget,
   dropIndex?: number,
 ): string => {
-  const copy = cloneDeep(componentToAdd);
-  replaceIdsDeeply(copy);
-  const directChildren = ["Modal", "Drawer", "Toast"];
-  const isGrid = copy.name === "Grid";
-  const isColumn = copy.name === "GridColumn";
-  const isNavbar = copy.name === "Navbar";
-  let targetComponent = null;
+  // const copy = cloneDeep(componentToAdd);
+  // replaceIdsDeeply(copy);
+  // const directChildren = ["Modal", "Drawer", "Toast"];
+  // const isGrid = copy.name === "Grid";
+  // const isColumn = copy.name === "GridColumn";
+  // const isNavbar = copy.name === "Navbar";
+  // let targetComponent = null;
+  //
+  // crawl(
+  //   treeRoot,
+  //   (node, context) => {
+  //     if (isNavbar) {
+  //       const contentWrapper = treeRoot.children?.find(
+  //         (child) => child.id === "content-wrapper",
+  //       );
+  //       if (contentWrapper) {
+  //         contentWrapper.props = {
+  //           ...contentWrapper.props,
+  //           navbarWidth: componentToAdd.props?.style.width,
+  //         };
+  //       }
+  //     }
+  //     if ((isGrid || isColumn) && node.id === dropTarget.id) {
+  //       targetComponent = addNodeToTarget(
+  //         treeRoot,
+  //         node,
+  //         copy,
+  //         context,
+  //         dropTarget,
+  //         false,
+  //         false,
+  //         dropIndex,
+  //       );
+  //
+  //       context.break();
+  //     } else {
+  //       if (copy.fixedPosition) {
+  //         if (node.id === copy.fixedPosition.target) {
+  //           if (
+  //             copy.fixedPosition.position === "left" ||
+  //             copy.fixedPosition.position === "top"
+  //           ) {
+  //             node.children = [copy, ...(node.children || [])];
+  //           } else if (
+  //             copy.fixedPosition.position === "right" ||
+  //             copy.fixedPosition.position === "bottom"
+  //           ) {
+  //             node.children = [...(node.children || []), copy];
+  //           }
+  //
+  //           context.break();
+  //         }
+  //       } else {
+  //         if (
+  //           directChildren.includes(copy.name) &&
+  //           node.id === "content-wrapper"
+  //         ) {
+  //           node.children = [...(node.children || []), copy];
+  //           context.break();
+  //         } else if (node.id === dropTarget.id) {
+  //           const isPopOver = copy.name === "PopOver";
+  //           if (isPopOver) {
+  //             copy.props!.targetId = node.id;
+  //             copy.children = [...(copy.children || []), node];
+  //             context.parent?.children?.splice(context.index, 1, copy);
+  //           } else {
+  //             node.children = node.children ?? [];
+  //
+  //             if (dropTarget.edge === "left" || dropTarget.edge === "top") {
+  //               const index = dropIndex ?? context.index - 1;
+  //               node.children.splice(index, 0, copy);
+  //             } else if (["right", "bottom"].includes(dropTarget.edge)) {
+  //               const index = dropIndex ?? context.index + 1;
+  //               node.children.splice(index, 0, copy);
+  //             } else if (dropTarget.edge === "center") {
+  //               node.children = [...(node.children || []), copy];
+  //             }
+  //           }
+  //
+  //           context.break();
+  //         }
+  //       }
+  //     }
+  //   },
+  //   { order: "bfs" },
+  // );
+  //
+  // if ((isGrid || isColumn) && targetComponent) {
+  //   calculateGridSizes(targetComponent);
+  // }
 
-  crawl(
-    treeRoot,
-    (node, context) => {
-      if (isNavbar) {
-        const contentWrapper = treeRoot.children?.find(
-          (child) => child.id === "content-wrapper",
-        );
-        if (contentWrapper) {
-          contentWrapper.props = {
-            ...contentWrapper.props,
-            navbarWidth: componentToAdd.props?.style.width,
-          };
-        }
-      }
-      if ((isGrid || isColumn) && node.id === dropTarget.id) {
-        targetComponent = addNodeToTarget(
-          treeRoot,
-          node,
-          copy,
-          context,
-          dropTarget,
-          false,
-          false,
-          dropIndex,
-        );
-
-        context.break();
-      } else {
-        if (copy.fixedPosition) {
-          if (node.id === copy.fixedPosition.target) {
-            if (
-              copy.fixedPosition.position === "left" ||
-              copy.fixedPosition.position === "top"
-            ) {
-              node.children = [copy, ...(node.children || [])];
-            } else if (
-              copy.fixedPosition.position === "right" ||
-              copy.fixedPosition.position === "bottom"
-            ) {
-              node.children = [...(node.children || []), copy];
-            }
-
-            context.break();
-          }
-        } else {
-          if (
-            directChildren.includes(copy.name) &&
-            node.id === "content-wrapper"
-          ) {
-            node.children = [...(node.children || []), copy];
-            context.break();
-          } else if (node.id === dropTarget.id) {
-            const isPopOver = copy.name === "PopOver";
-            if (isPopOver) {
-              copy.props!.targetId = node.id;
-              copy.children = [...(copy.children || []), node];
-              context.parent?.children?.splice(context.index, 1, copy);
-            } else {
-              node.children = node.children ?? [];
-
-              if (dropTarget.edge === "left" || dropTarget.edge === "top") {
-                const index = dropIndex ?? context.index - 1;
-                node.children.splice(index, 0, copy);
-              } else if (["right", "bottom"].includes(dropTarget.edge)) {
-                const index = dropIndex ?? context.index + 1;
-                node.children.splice(index, 0, copy);
-              } else if (dropTarget.edge === "center") {
-                node.children = [...(node.children || []), copy];
-              }
-            }
-
-            context.break();
-          }
-        }
-      }
-    },
-    { order: "bfs" },
-  );
-
-  if ((isGrid || isColumn) && targetComponent) {
-    calculateGridSizes(targetComponent);
-  }
-
-  return copy.id as string;
+  // return copy.id as string;
+  return "";
 };
 
 export type Edge = "left" | "right" | "top" | "bottom" | "center";
@@ -956,165 +979,165 @@ export const componentStyleMapper = (
 };
 
 const addNodeToTarget = (
-  treeRoot: Component,
-  targetNode: Component,
-  copy: Component,
+  treeRoot: ComponentTree,
+  targetNode: ComponentTree,
+  copy: ComponentTree,
   context: crawl.Context<Component>,
   dropTarget: DropTarget,
   isMoving?: boolean,
   forceTarget?: boolean,
   dropIndex?: number,
 ) => {
-  const parent = context.parent as Component;
-  const isAddingToXAxis =
-    dropTarget.edge === "left" || dropTarget.edge === "right";
-  const isAddingToYAxis =
-    dropTarget.edge === "top" || dropTarget.edge === "bottom";
-  let target =
-    isAddingToXAxis || isAddingToYAxis
-      ? forceTarget
-        ? targetNode
-        : parent
-      : targetNode;
+  // const parent = context.parent as Component;
+  // const isAddingToXAxis =
+  //   dropTarget.edge === "left" || dropTarget.edge === "right";
+  // const isAddingToYAxis =
+  //   dropTarget.edge === "top" || dropTarget.edge === "bottom";
+  // let target =
+  //   isAddingToXAxis || isAddingToYAxis
+  //     ? forceTarget
+  //       ? targetNode
+  //       : parent
+  //     : targetNode;
+  //
+  // if (dropTarget.edge === "center") {
+  //   targetNode.children = [...(targetNode.children || []), copy];
+  //
+  //   copy.props!.resized = false;
+  //   copy.children = copy.children?.map((child) => {
+  //     child.props!.resized = false;
+  //     return child;
+  //   });
+  //
+  //   if (copy.props?.resetTargetResized && !isMoving) {
+  //     target.props!.resized = false;
+  //     target.children = target.children?.map((child) => {
+  //       child.props!.resized = false;
+  //       return child;
+  //     });
+  //   }
+  //
+  //   return target;
+  // }
+  // const shouldRemoveResizing = target.name === "Grid" && isAddingToXAxis;
+  //
+  // if (shouldRemoveResizing) {
+  //   copy.props!.resized = false;
+  //   target.children = target.children?.map((child) => {
+  //     child.props!.resized = false;
+  //     return child;
+  //   });
+  // }
+  //
+  // if (dropTarget.edge === "top") {
+  //   if (targetNode.name === "GridColumn" && !forceTarget) {
+  //     target = getComponentParent(treeRoot, parent.id!)!;
+  //     dropIndex = getComponentIndex(target, parent.id!);
+  //   }
+  //
+  //   if (isMoving) {
+  //     const dropTargetParent = getComponentParent(treeRoot, dropTarget.id!);
+  //     const items = (target?.children?.map((c) => c.id) ?? []) as string[];
+  //     const oldIndex = items.indexOf(copy.id!);
+  //     let newIndex = items.indexOf(dropTargetParent?.id!);
+  //
+  //     if (newIndex > oldIndex) {
+  //       newIndex = Math.max(newIndex - 1, 0);
+  //     }
+  //
+  //     if (oldIndex !== newIndex) {
+  //       const newPositions = arrayMove(items, oldIndex, newIndex);
+  //       target!.children = parent?.children?.sort((a, b) => {
+  //         const aIndex = newPositions.indexOf(a.id as string);
+  //         const bIndex = newPositions.indexOf(b.id as string);
+  //         return aIndex - bIndex;
+  //       });
+  //     }
+  //   } else {
+  //     let i = dropIndex;
+  //     if (typeof dropIndex === "undefined") {
+  //       i = context.index;
+  //     }
+  //
+  //     // @ts-ignore
+  //     target.children?.splice(i, 0, copy);
+  //   }
+  //
+  //   return target;
+  // }
+  //
+  // if (dropTarget.edge === "bottom") {
+  //   if (targetNode.name === "GridColumn" && !forceTarget) {
+  //     target = getComponentParent(treeRoot, parent.id!)!;
+  //     dropIndex = getComponentIndex(target, parent.id!) + 1;
+  //   }
+  //
+  //   if (isMoving) {
+  //     const dropTargetParent = getComponentParent(treeRoot, dropTarget.id!);
+  //     const items = (target?.children?.map((c) => c.id) ?? []) as string[];
+  //     const oldIndex = items.indexOf(copy.id!);
+  //     let newIndex = items.indexOf(dropTargetParent?.id!);
+  //
+  //     if (newIndex < oldIndex) {
+  //       newIndex = Math.min(newIndex + 1, items.length);
+  //     }
+  //
+  //     if (oldIndex !== newIndex) {
+  //       const newPositions = arrayMove(items, oldIndex, newIndex);
+  //       target!.children = parent?.children?.sort((a, b) => {
+  //         const aIndex = newPositions.indexOf(a.id as string);
+  //         const bIndex = newPositions.indexOf(b.id as string);
+  //         return aIndex - bIndex;
+  //       });
+  //     }
+  //   } else {
+  //     let i = dropIndex;
+  //     if (typeof dropIndex === "undefined") {
+  //       i = context.index + 1;
+  //     }
+  //
+  //     target.children?.splice(i!, 0, copy);
+  //   }
+  //
+  //   return target;
+  // }
+  //
+  // const gridColumn = {
+  //   id: nanoid(),
+  //   name: "GridColumn",
+  //   description: "GridColumn",
+  //   props: {
+  //     span: GRID_SIZE,
+  //     style: {
+  //       height: "auto",
+  //       outline: GRAY_OUTLINE,
+  //       outlineOffset: "-2px",
+  //     },
+  //   },
+  //   children: [copy],
+  // } as Component;
+  //
+  // if (dropTarget.edge === "left") {
+  //   let i = dropIndex;
+  //   if (typeof dropIndex === "undefined") {
+  //     i = context.index - 1 < 0 ? 0 : context.index;
+  //   }
+  //   // @ts-ignore
+  //   target.children?.splice(i, 0, gridColumn);
+  // } else if (dropTarget.edge === "right") {
+  //   let i = dropIndex;
+  //   if (typeof dropIndex === "undefined") {
+  //     i = context.index + 1;
+  //   }
+  //   // @ts-ignore
+  //   target.children?.splice(i, 0, gridColumn);
+  // }
 
-  if (dropTarget.edge === "center") {
-    targetNode.children = [...(targetNode.children || []), copy];
-
-    copy.props!.resized = false;
-    copy.children = copy.children?.map((child) => {
-      child.props!.resized = false;
-      return child;
-    });
-
-    if (copy.props?.resetTargetResized && !isMoving) {
-      target.props!.resized = false;
-      target.children = target.children?.map((child) => {
-        child.props!.resized = false;
-        return child;
-      });
-    }
-
-    return target;
-  }
-  const shouldRemoveResizing = target.name === "Grid" && isAddingToXAxis;
-
-  if (shouldRemoveResizing) {
-    copy.props!.resized = false;
-    target.children = target.children?.map((child) => {
-      child.props!.resized = false;
-      return child;
-    });
-  }
-
-  if (dropTarget.edge === "top") {
-    if (targetNode.name === "GridColumn" && !forceTarget) {
-      target = getComponentParent(treeRoot, parent.id!)!;
-      dropIndex = getComponentIndex(target, parent.id!);
-    }
-
-    if (isMoving) {
-      const dropTargetParent = getComponentParent(treeRoot, dropTarget.id!);
-      const items = (target?.children?.map((c) => c.id) ?? []) as string[];
-      const oldIndex = items.indexOf(copy.id!);
-      let newIndex = items.indexOf(dropTargetParent?.id!);
-
-      if (newIndex > oldIndex) {
-        newIndex = Math.max(newIndex - 1, 0);
-      }
-
-      if (oldIndex !== newIndex) {
-        const newPositions = arrayMove(items, oldIndex, newIndex);
-        target!.children = parent?.children?.sort((a, b) => {
-          const aIndex = newPositions.indexOf(a.id as string);
-          const bIndex = newPositions.indexOf(b.id as string);
-          return aIndex - bIndex;
-        });
-      }
-    } else {
-      let i = dropIndex;
-      if (typeof dropIndex === "undefined") {
-        i = context.index;
-      }
-
-      // @ts-ignore
-      target.children?.splice(i, 0, copy);
-    }
-
-    return target;
-  }
-
-  if (dropTarget.edge === "bottom") {
-    if (targetNode.name === "GridColumn" && !forceTarget) {
-      target = getComponentParent(treeRoot, parent.id!)!;
-      dropIndex = getComponentIndex(target, parent.id!) + 1;
-    }
-
-    if (isMoving) {
-      const dropTargetParent = getComponentParent(treeRoot, dropTarget.id!);
-      const items = (target?.children?.map((c) => c.id) ?? []) as string[];
-      const oldIndex = items.indexOf(copy.id!);
-      let newIndex = items.indexOf(dropTargetParent?.id!);
-
-      if (newIndex < oldIndex) {
-        newIndex = Math.min(newIndex + 1, items.length);
-      }
-
-      if (oldIndex !== newIndex) {
-        const newPositions = arrayMove(items, oldIndex, newIndex);
-        target!.children = parent?.children?.sort((a, b) => {
-          const aIndex = newPositions.indexOf(a.id as string);
-          const bIndex = newPositions.indexOf(b.id as string);
-          return aIndex - bIndex;
-        });
-      }
-    } else {
-      let i = dropIndex;
-      if (typeof dropIndex === "undefined") {
-        i = context.index + 1;
-      }
-
-      target.children?.splice(i!, 0, copy);
-    }
-
-    return target;
-  }
-
-  const gridColumn = {
-    id: nanoid(),
-    name: "GridColumn",
-    description: "GridColumn",
-    props: {
-      span: GRID_SIZE,
-      style: {
-        height: "auto",
-        outline: GRAY_OUTLINE,
-        outlineOffset: "-2px",
-      },
-    },
-    children: [copy],
-  } as Component;
-
-  if (dropTarget.edge === "left") {
-    let i = dropIndex;
-    if (typeof dropIndex === "undefined") {
-      i = context.index - 1 < 0 ? 0 : context.index;
-    }
-    // @ts-ignore
-    target.children?.splice(i, 0, gridColumn);
-  } else if (dropTarget.edge === "right") {
-    let i = dropIndex;
-    if (typeof dropIndex === "undefined") {
-      i = context.index + 1;
-    }
-    // @ts-ignore
-    target.children?.splice(i, 0, gridColumn);
-  }
-
-  return target;
+  return;
 };
 
 export const moveComponent = (
-  treeRoot: Component,
+  treeRoot: ComponentTree,
   id: string,
   dropTarget: DropTarget,
 ) => {
@@ -1122,48 +1145,48 @@ export const moveComponent = (
   crawl(
     treeRoot,
     (node, context) => {
-      if (node.id === id) {
-        const isGrid = node.name === "Grid";
-        if (isGrid) {
-          targetComponent = addNodeToTarget(
-            treeRoot,
-            context.parent!,
-            node,
-            context,
-            dropTarget,
-            true,
-            true,
-          );
-        } else {
-          const parent = context.parent;
-          const items = (parent?.children?.map((c) => c.id) ?? []) as string[];
-          const oldIndex = items.indexOf(id);
-          let newIndex = items.indexOf(dropTarget.id);
-
-          if (
-            ["top", "left"].includes(dropTarget.edge) &&
-            oldIndex < newIndex
-          ) {
-            newIndex = Math.max(newIndex - 1, 0);
-          } else if (
-            ["right", "bottom", "center"].includes(dropTarget.edge) &&
-            newIndex < oldIndex
-          ) {
-            newIndex = Math.min(newIndex + 1, items.length);
-          }
-
-          if (oldIndex !== newIndex) {
-            const newPositions = arrayMove(items, oldIndex, newIndex);
-            parent!.children = parent?.children?.sort((a, b) => {
-              const aIndex = newPositions.indexOf(a.id as string);
-              const bIndex = newPositions.indexOf(b.id as string);
-              return aIndex - bIndex;
-            });
-          }
-        }
-
-        context.break();
-      }
+      // if (node.id === id) {
+      //   const isGrid = node.name === "Grid";
+      //   if (isGrid) {
+      //     targetComponent = addNodeToTarget(
+      //       treeRoot,
+      //       context.parent!,
+      //       node,
+      //       context,
+      //       dropTarget,
+      //       true,
+      //       true,
+      //     );
+      //   } else {
+      //     const parent = context.parent;
+      //     const items = (parent?.children?.map((c) => c.id) ?? []) as string[];
+      //     const oldIndex = items.indexOf(id);
+      //     let newIndex = items.indexOf(dropTarget.id);
+      //
+      //     if (
+      //       ["top", "left"].includes(dropTarget.edge) &&
+      //       oldIndex < newIndex
+      //     ) {
+      //       newIndex = Math.max(newIndex - 1, 0);
+      //     } else if (
+      //       ["right", "bottom", "center"].includes(dropTarget.edge) &&
+      //       newIndex < oldIndex
+      //     ) {
+      //       newIndex = Math.min(newIndex + 1, items.length);
+      //     }
+      //
+      //     if (oldIndex !== newIndex) {
+      //       const newPositions = arrayMove(items, oldIndex, newIndex);
+      //       parent!.children = parent?.children?.sort((a, b) => {
+      //         const aIndex = newPositions.indexOf(a.id as string);
+      //         const bIndex = newPositions.indexOf(b.id as string);
+      //         return aIndex - bIndex;
+      //       });
+      //     }
+      //   }
+      //
+      //   context.break();
+      // }
     },
     { order: "bfs" },
   );
@@ -1179,78 +1202,78 @@ export const moveComponentToDifferentParent = (
   dropTarget: DropTarget,
   newParentId: string,
 ) => {
-  const componentToAdd = getComponentById(treeRoot, id) as Component;
-  const isGrid = componentToAdd.name === "Grid";
-  let targetComponent = null;
-
-  crawl(
-    treeRoot,
-    (node, context) => {
-      if (node.id === newParentId) {
-        if (isGrid) {
-          const isHorizontalAxis =
-            dropTarget.edge === "right" || dropTarget.edge === "left";
-          const dropIndex = node.children?.findIndex(
-            (c) => c.id === dropTarget.id,
-          ) as number;
-
-          targetComponent = addNodeToTarget(
-            treeRoot,
-            node,
-            componentToAdd,
-            context,
-            dropTarget,
-            false,
-            isHorizontalAxis,
-            isHorizontalAxis
-              ? dropTarget.edge === "right"
-                ? dropIndex + 1
-                : dropIndex
-              : undefined,
-          );
-        } else {
-          if (dropTarget.edge === "left" || dropTarget.edge === "top") {
-            const dropIndex = node.children?.findIndex(
-              (c) => c.id === dropTarget.id,
-            );
-            node.children?.splice(
-              Math.max(dropIndex || 0, 0),
-              0,
-              componentToAdd,
-            );
-          } else if (
-            dropTarget.edge === "right" ||
-            dropTarget.edge === "bottom" ||
-            dropTarget.edge === "center"
-          ) {
-            if (!node.children) {
-              node.children = [];
-            }
-
-            const dropIndex = node.children.findIndex(
-              (c) => c.id === dropTarget.id,
-            );
-            node.children.splice(
-              Math.min((dropIndex || 0) + 1, node.children.length),
-              0,
-              componentToAdd,
-            );
-          }
-        }
-
-        context.break();
-      }
-    },
-    { order: "bfs" },
-  );
-
-  if (targetComponent) {
-    calculateGridSizes(targetComponent);
-  }
+  // const componentToAdd = getComponentById(treeRoot, id) as Component;
+  // const isGrid = componentToAdd.name === "Grid";
+  // let targetComponent = null;
+  //
+  // crawl(
+  //   treeRoot,
+  //   (node, context) => {
+  //     if (node.id === newParentId) {
+  //       if (isGrid) {
+  //         const isHorizontalAxis =
+  //           dropTarget.edge === "right" || dropTarget.edge === "left";
+  //         const dropIndex = node.children?.findIndex(
+  //           (c) => c.id === dropTarget.id,
+  //         ) as number;
+  //
+  //         targetComponent = addNodeToTarget(
+  //           treeRoot,
+  //           node,
+  //           componentToAdd,
+  //           context,
+  //           dropTarget,
+  //           false,
+  //           isHorizontalAxis,
+  //           isHorizontalAxis
+  //             ? dropTarget.edge === "right"
+  //               ? dropIndex + 1
+  //               : dropIndex
+  //             : undefined,
+  //         );
+  //       } else {
+  //         if (dropTarget.edge === "left" || dropTarget.edge === "top") {
+  //           const dropIndex = node.children?.findIndex(
+  //             (c) => c.id === dropTarget.id,
+  //           );
+  //           node.children?.splice(
+  //             Math.max(dropIndex || 0, 0),
+  //             0,
+  //             componentToAdd,
+  //           );
+  //         } else if (
+  //           dropTarget.edge === "right" ||
+  //           dropTarget.edge === "bottom" ||
+  //           dropTarget.edge === "center"
+  //         ) {
+  //           if (!node.children) {
+  //             node.children = [];
+  //           }
+  //
+  //           const dropIndex = node.children.findIndex(
+  //             (c) => c.id === dropTarget.id,
+  //           );
+  //           node.children.splice(
+  //             Math.min((dropIndex || 0) + 1, node.children.length),
+  //             0,
+  //             componentToAdd,
+  //           );
+  //         }
+  //       }
+  //
+  //       context.break();
+  //     }
+  //   },
+  //   { order: "bfs" },
+  // );
+  //
+  // if (targetComponent) {
+  //   calculateGridSizes(targetComponent);
+  // }
 };
 
 export const removeComponentFromParent = (
-  treeRoot: Component,
+  treeRoot: ComponentTree,
   id: string,
   parentId: string,
 ) => {
@@ -1262,7 +1285,10 @@ export const removeComponentFromParent = (
     (node, context) => {
       if (node.id === id && context.parent?.id === parentId) {
         context.parent?.children?.splice(context.index, 1);
-        shouldRecalculate = node.name === "GridColumn" || node.name === "Grid";
+        const component =
+          useEditorStore.getState().componentMutableAttrs[node.id];
+        shouldRecalculate =
+          component.name === "GridColumn" || component.name === "Grid";
         targetComponent = context.parent;
         context.remove();
         context.break();
@@ -1276,25 +1302,25 @@ export const removeComponentFromParent = (
   }
 };
 
-export const removeComponent = (treeRoot: Component, id: string) => {
-  let shouldRecalculate = false;
-  let targetComponent = null;
-
-  crawl(
-    treeRoot,
-    (node, context) => {
-      if (node.id === id) {
-        context.parent?.children?.splice(context.index, 1);
-        shouldRecalculate = node.name === "GridColumn" || node.name === "Grid";
-        targetComponent = context.parent;
-        context.remove();
-        context.break();
-      }
-    },
-    { order: "bfs" },
-  );
-
-  if (shouldRecalculate && targetComponent) {
-    calculateGridSizes(targetComponent);
-  }
+export const removeComponent = (treeRoot: ComponentTree, id: string) => {
+  // let shouldRecalculate = false;
+  // let targetComponent = null;
+  //
+  // crawl(
+  //   treeRoot,
+  //   (node, context) => {
+  //     if (node.id === id) {
+  //       context.parent?.children?.splice(context.index, 1);
+  //       shouldRecalculate = node.name === "GridColumn" || node.name === "Grid";
+  //       targetComponent = context.parent;
+  //       context.remove();
+  //       context.break();
+  //     }
+  //   },
+  //   { order: "bfs" },
+  // );
+  //
+  // if (shouldRecalculate && targetComponent) {
+  //   calculateGridSizes(targetComponent);
+  // }
 };

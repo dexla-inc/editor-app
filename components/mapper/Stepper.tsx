@@ -1,14 +1,16 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
-import { Component, getAllChildrenComponents } from "@/utils/editor";
+import {
+  Component,
+  ComponentTree,
+  EditableComponentMapper,
+  getAllChildrenComponents,
+} from "@/utils/editor";
 import { Stepper as MantineStepper, StepperProps } from "@mantine/core";
 import { forwardRef, memo, useEffect, useState } from "react";
 
-type Props = {
-  renderTree: (component: Component) => any;
-  component: Component;
-} & StepperProps;
+type Props = EditableComponentMapper & StepperProps;
 
 const StepperComponent = forwardRef(
   ({ renderTree, component, ...props }: Props, ref) => {
@@ -32,7 +34,7 @@ const StepperComponent = forwardRef(
     useEffect(() => {
       // Reflect any external changes to the activeStep property
       setActive(activeStep);
-      component?.children?.forEach((step: Component, index: number) => {
+      component?.children?.forEach((step: ComponentTree, index: number) => {
         const state =
           activeStep === index
             ? "Active"
@@ -71,32 +73,34 @@ const StepperComponent = forwardRef(
             }
           : {})}
       >
-        {(component?.children ?? []).map((child: Component, index: number) => {
-          const { header, content } = (child.children ?? []).reduce(
-            (acc, curr) => {
-              if (curr.name === "StepperStepHeader") acc.header = curr;
-              if (curr.name === "StepperStepContent") acc.content = curr;
-              return acc;
-            },
-            { header: {}, content: {} } as {
-              header: Component;
-              content: Component;
-            },
-          );
+        {(component?.children ?? []).map(
+          (child: ComponentTree, index: number) => {
+            const { header, content } = (child.children ?? []).reduce(
+              (acc, curr) => {
+                if (curr.name === "StepperStepHeader") acc.header = curr;
+                if (curr.name === "StepperStepContent") acc.content = curr;
+                return acc;
+              },
+              { header: {}, content: {} } as {
+                header: ComponentTree;
+                content: ComponentTree;
+              },
+            );
 
-          return (
-            <MantineStepper.Step
-              key={index}
-              label={(header.children ?? []).map((grandChild: Component) => {
-                return renderTree(grandChild);
-              })}
-            >
-              {(content.children ?? []).map((grandChild: Component) => {
-                return renderTree(grandChild);
-              })}
-            </MantineStepper.Step>
-          );
-        })}
+            return (
+              <MantineStepper.Step
+                key={index}
+                label={(header.children ?? []).map((grandChild: Component) => {
+                  return renderTree(grandChild);
+                })}
+              >
+                {(content.children ?? []).map((grandChild: Component) => {
+                  return renderTree(grandChild);
+                })}
+              </MantineStepper.Step>
+            );
+          },
+        )}
       </MantineStepper>
     );
   },

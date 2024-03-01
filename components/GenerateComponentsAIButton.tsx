@@ -84,7 +84,7 @@ export const GenerateComponentsAIButton = () => {
 
       const newComponents = getNewComponents(tomlData, theme, pages, true);
 
-      const id = getComponentBeingAddedId(tree.root);
+      const id = getComponentBeingAddedId();
 
       if (!id) {
         const copy = cloneDeep(tree);
@@ -95,7 +95,8 @@ export const GenerateComponentsAIButton = () => {
         setTree(copy, { action: `Added ${newComponents.name}` });
       } else {
         componentBeingAddedId.current = id;
-        updateTreeComponentChildren(id, newComponents.children!);
+        // TODO: get this back
+        // updateTreeComponentChildren(id, newComponents.children!);
       }
     };
   };

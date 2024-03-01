@@ -2,15 +2,12 @@ import { Icon } from "@/components/Icon";
 import { useEditorStore } from "@/stores/editor";
 import { getColorValue } from "@/utils/branding";
 import { isSame } from "@/utils/componentComparison";
-import { Component } from "@/utils/editor";
+import { EditableComponentMapper } from "@/utils/editor";
 import { Tabs as MantineTabs, TabProps } from "@mantine/core";
 import { forwardRef, memo } from "react";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 
-type Props = {
-  renderTree: (component: Component) => any;
-  component: Component;
-} & TabProps;
+type Props = EditableComponentMapper & TabProps;
 
 const TabComponent = forwardRef(
   ({ renderTree, component, ...props }: Props, ref) => {

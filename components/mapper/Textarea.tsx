@@ -4,7 +4,7 @@ import { useChangeState } from "@/hooks/useChangeState";
 import { useEditorStore } from "@/stores/editor";
 import { useInputsStore } from "@/stores/inputs";
 import { isSame } from "@/utils/componentComparison";
-import { Component } from "@/utils/editor";
+import { EditableComponentMapper } from "@/utils/editor";
 import {
   Loader,
   Textarea as MantineTextarea,
@@ -15,10 +15,7 @@ import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { ChangeEvent, forwardRef, memo, useCallback, useState } from "react";
 
-type Props = {
-  renderTree: (component: Component) => any;
-  component: Component;
-} & TextareaProps;
+type Props = EditableComponentMapper & TextareaProps;
 
 const TextareaComponent = forwardRef(
   ({ renderTree, component, ...props }: Props, ref) => {

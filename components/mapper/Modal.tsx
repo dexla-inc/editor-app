@@ -2,14 +2,11 @@ import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useAppMode } from "@/hooks/useAppMode";
 import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
-import { Component, getComponentById } from "@/utils/editor";
+import { EditableComponentMapper, getComponentById } from "@/utils/editor";
 import { Modal as MantineModal, ModalProps } from "@mantine/core";
 import { forwardRef, memo } from "react";
 
-type Props = {
-  renderTree: (component: Component) => any;
-  component: Component;
-} & Omit<ModalProps, "opened">;
+type Props = EditableComponentMapper & Omit<ModalProps, "opened">;
 
 export const ModalComponent = forwardRef(
   ({ renderTree, component, ...props }: Props, ref) => {

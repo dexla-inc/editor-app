@@ -99,43 +99,41 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
       !isPreviewMode
     ) {
       const copy = cloneDeep(editorTree);
-      const modals = getAllComponentsByName(copy.root, "Modal");
-      const targetModal = modals.find(
-        (modal) => !!getComponentById(modal, selectedComponentIds[0]),
-      );
+      // const modals = getAllComponentsByName(copy.root, "Modal");
+      // const targetModal = modals.find(
+      //   (modal) => !!getComponentById(modal, selectedComponentIds[0]),
+      // );
       selectedComponentIds.map((selectedComponentId) => {
-        const comp = getComponentById(copy.root, selectedComponentId);
-        const parent = getComponentParent(copy.root, selectedComponentId);
-        const grandParent = getComponentParent(copy.root, parent?.id!);
-
-        if (comp?.id === "content-wrapper" || comp?.id === "main-content")
-          return;
-
-        if (
-          comp?.name === "GridColumn" &&
-          parent?.name === "Grid" &&
-          parent?.children?.length === 1 &&
-          grandParent?.id === "root"
-        ) {
-          return;
-        }
-
-        removeComponent(copy.root, selectedComponentId);
-
-        if (
-          comp?.name === "GridColumn" &&
-          parent?.name === "Grid" &&
-          parent?.children?.length === 0
-        ) {
-          removeComponent(copy.root, parent.id!);
-        }
-
-        if (targetModal) {
-          setSelectedComponentIds(() => [targetModal.id!]);
-        } else {
-          setSelectedComponentIds(() => []);
-        }
-        setEditorTree(copy, { action: `Removed ${comp?.name}` });
+        // const comp = getComponentById(copy.root, selectedComponentId);
+        // const parent = getComponentParent(copy.root, selectedComponentId);
+        // const grandParent = getComponentParent(copy.root, parent?.id!);
+        //
+        // if (comp?.id === "content-wrapper" || comp?.id === "main-content")
+        //   return;
+        // TODO: WTF??
+        // if (
+        //   comp?.name === "GridColumn" &&
+        //   parent?.name === "Grid" &&
+        //   parent?.children?.length === 1 &&
+        //   grandParent?.id === "root"
+        // ) {
+        //   return;
+        // }
+        // removeComponent(copy.root, selectedComponentId);
+        // TODO: WTF x 2?????? OMG
+        // if (
+        //   comp?.name === "GridColumn" &&
+        //   parent?.name === "Grid" &&
+        //   parent?.children?.length === 0
+        // ) {
+        //   removeComponent(copy.root, parent.id!);
+        // }
+        // if (targetModal) {
+        //   setSelectedComponentIds(() => [targetModal.id!]);
+        // } else {
+        //   setSelectedComponentIds(() => []);
+        // }
+        // setEditorTree(copy, { action: `Removed ${comp?.name}` });
       });
     }
   }, [isPreviewMode, editorTree, setSelectedComponentIds, setEditorTree]);
@@ -144,14 +142,14 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
     const selectedComponentId = useEditorStore
       .getState()
       .selectedComponentIds?.at(-1);
-    const componentToCopy = getComponentById(
-      editorTree.root,
-      selectedComponentId!,
-    )!;
-    if (!isPreviewMode && selectedComponentId) {
-      setCopiedComponent(componentToCopy);
-      copyToClipboard(componentToCopy);
-    }
+    // const componentToCopy = getComponentById(
+    //   editorTree.root,
+    //   selectedComponentId!,
+    // )!;
+    // if (!isPreviewMode && selectedComponentId) {
+    //   setCopiedComponent(componentToCopy);
+    //   copyToClipboard(componentToCopy);
+    // }
   }, [editorTree.root, isPreviewMode, setCopiedComponent]);
 
   const cutSelectedComponent = useCallback(() => {
@@ -180,7 +178,8 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
 
     if (!selectedComponentId || selectedComponentId === "root")
       return "content-wrapper";
-    const component = getComponentById(editorTree.root, selectedComponentId);
+    const component =
+      useEditorStore.getState().componentMutableAttrs[selectedComponentId];
     let targetId = selectedComponentId;
     let componentIndex = 0;
 
@@ -202,17 +201,17 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
       isAllowedSibling ||
       isAllowedGridMatch;
 
-    if (addAsSiblingFlag) {
-      const parentComponent = getComponentParent(
-        editorTree.root,
-        selectedComponentId,
-      );
-      targetId = parentComponent?.id as string;
-      componentIndex =
-        getComponentIndex(parentComponent!, selectedComponentId!) + 1;
-    } else {
-      componentIndex = component?.children?.length ?? 0;
-    }
+    // if (addAsSiblingFlag) {
+    //   const parentComponent = getComponentParent(
+    //     editorTree.root,
+    //     selectedComponentId,
+    //   );
+    //   targetId = parentComponent?.id as string;
+    //   componentIndex =
+    //     getComponentIndex(parentComponent!, selectedComponentId!) + 1;
+    // } else {
+    //   componentIndex = component?.children?.length ?? 0;
+    // }
 
     const newSelectedId = addComponent(
       copy.root,
@@ -331,7 +330,7 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
       if (componentTree.id === "root") {
         return (
           <Droppable
-            key={`${componentTree.id}-${isPreviewMode ? "preview" : "editor"}`}
+            key={`${componentTree.id}`}
             id={componentTree.id}
             m={0}
             p={2}
@@ -357,7 +356,7 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
       if (!componentToRender) {
         return (
           <EditableComponentContainer
-            key={`${component.id}-${isPreviewMode ? "preview" : "editor"}`}
+            key={`${component.id}`}
             component={component}
           >
             {componentTree.children?.map((child) => renderTree(child))}
@@ -367,7 +366,7 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
 
       return (
         <EditableComponentContainer
-          key={`${component.id}-${isPreviewMode ? "preview" : "editor"}`}
+          key={`${component.id}`}
           component={component}
           shareableContent={shareableContent}
         >

@@ -3,16 +3,11 @@ import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useEditorStore } from "@/stores/editor";
 import { getColorValue, globalStyles } from "@/utils/branding";
 import { isSame } from "@/utils/componentComparison";
-import { Component } from "@/utils/editor";
-import { CSSObject } from "@mantine/core";
+import { EditableComponentMapper } from "@/utils/editor";
 import merge from "lodash.merge";
 import { forwardRef, memo } from "react";
 
-type Props = {
-  renderTree: (component: Component) => any;
-  component: Component;
-  style: CSSObject;
-};
+type Props = EditableComponentMapper;
 
 const IconComponent = forwardRef(
   ({ renderTree, component, ...props }: Props, ref) => {

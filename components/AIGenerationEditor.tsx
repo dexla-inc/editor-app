@@ -1,5 +1,5 @@
 import { PageResponse } from "@/requests/pages/types";
-import { MantineThemeExtended } from "@/stores/editor";
+import { MantineThemeExtended, useEditorStore } from "@/stores/editor";
 import {
   Component,
   DropTarget,
@@ -7,6 +7,7 @@ import {
   addComponent,
   getComponentBeingAddedId,
   getNewComponent,
+  ComponentTree,
 } from "@/utils/editor";
 import cloneDeep from "lodash.clonedeep";
 import { MutableRefObject } from "react";
@@ -16,7 +17,7 @@ type Props = {
   theme: MantineThemeExtended;
   updateTreeComponentChildren: (
     componentId: string,
-    children: Component[],
+    children: ComponentTree[],
   ) => void;
   setTree: (
     tree: EditorTree,
@@ -37,8 +38,10 @@ export const createComponentEditorHandler = ({
   dropTarget,
 }: Props) => {
   return function (components: Component[]) {
-    const newComponents = getNewComponent(components, theme, pages);
-    const id = getComponentBeingAddedId(tree.root);
+    const newComponentTree = getNewComponent(components, theme, pages);
+    const newComponents =
+      useEditorStore.getState().componentMutableAttrs[newComponentTree?.id!];
+    const id = getComponentBeingAddedId();
 
     if (!id) {
       const copy = cloneDeep(tree);

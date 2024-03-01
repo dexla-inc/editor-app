@@ -5,16 +5,14 @@ import { useInputsStore } from "@/stores/inputs";
 import { isSame } from "@/utils/componentComparison";
 import { componentMapper } from "@/utils/componentMapper";
 import { convertSizeToPx } from "@/utils/defaultSizes";
-import { Component, getAllComponentsByName } from "@/utils/editor";
+import {
+  EditableComponentMapper,
+  getAllComponentsByName,
+} from "@/utils/editor";
 import { FlexProps, LoadingOverlay, Flex as MantineFlex } from "@mantine/core";
 import { FormEvent, forwardRef, memo, useMemo } from "react";
 
-type Props = {
-  renderTree: (component: Component, shareableContent: any) => any;
-  component: Component;
-  isPreviewMode?: boolean;
-  shareableContent?: any;
-} & FlexProps;
+type Props = EditableComponentMapper & FlexProps;
 
 const FormComponent = forwardRef(
   (
@@ -119,31 +117,17 @@ const FormComponent = forwardRef(
           data?.map((item: any, parentIndex: number) => {
             return component.children && component.children.length > 0
               ? component.children?.map((child) =>
-                  renderTree(
-                    {
-                      ...child,
-                      props: {
-                        ...child.props,
-                      },
-                    },
-                    {
-                      ...shareableContent,
-                      data: item,
-                      parentIndex,
-                    },
-                  ),
+                  renderTree(child, {
+                    ...shareableContent,
+                    data: item,
+                    parentIndex,
+                  }),
                 )
               : children;
           })}
         {!endpointId && component.children && component.children.length > 0
           ? component.children?.map((child) =>
-              renderTree(
-                {
-                  ...child,
-                  props: { ...child.props },
-                },
-                shareableContent,
-              ),
+              renderTree(child, shareableContent),
             )
           : children}
         <LoadingOverlay visible={loading} zIndex={1000} radius="sm" />

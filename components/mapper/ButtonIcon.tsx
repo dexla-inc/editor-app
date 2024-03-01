@@ -4,7 +4,7 @@ import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { useChangeState } from "@/hooks/useChangeState";
 import { DISABLED_HOVER, globalStyles } from "@/utils/branding";
 import { isSame } from "@/utils/componentComparison";
-import { Component } from "@/utils/editor";
+import { EditableComponentMapper } from "@/utils/editor";
 import {
   ActionIconProps,
   ActionIcon as MantineActionIcon,
@@ -12,11 +12,7 @@ import {
 import merge from "lodash.merge";
 import { ReactElement, forwardRef, memo } from "react";
 
-type Props = {
-  renderTree: (component: Component) => any;
-  component: Component;
-} & ActionIconProps &
-  ReactElement<"Button">;
+type Props = EditableComponentMapper & ActionIconProps & ReactElement<"Button">;
 
 const ButtonIconComponent = forwardRef(
   ({ renderTree, component, ...props }: Props, ref) => {

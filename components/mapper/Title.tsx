@@ -1,18 +1,12 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useContentEditable } from "@/hooks/useContentEditable";
 import { isSame } from "@/utils/componentComparison";
-import { Component } from "@/utils/editor";
-import { CSSObject, Title as MantineTitle, TitleProps } from "@mantine/core";
+import { EditableComponentMapper } from "@/utils/editor";
+import { Title as MantineTitle, TitleProps } from "@mantine/core";
 import { forwardRef, memo } from "react";
 import { useDataContext } from "@/contexts/DataProvider";
 
-type Props = {
-  renderTree: (component: Component) => any;
-  component: Component;
-  style: CSSObject;
-  isPreviewMode: boolean;
-  shareableContent: any;
-} & TitleProps;
+type Props = EditableComponentMapper & TitleProps;
 
 const TitleComponent = forwardRef(
   (

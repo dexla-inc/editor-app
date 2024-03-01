@@ -99,6 +99,9 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
     (state) => state.selectedComponentIds?.at(-1),
   );
   // const [stream, setStream] = useState<string>("");
+  const component = useEditorStore(
+    (state) => state.componentMutableAttrs[selectedComponentId!],
+  );
 
   const setStream: any = {
     COMPONENT: (stream: string) => {
@@ -152,7 +155,7 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
 
       const newComponents = getNewComponents(tomlData, theme, pages);
 
-      const id = getComponentBeingAddedId(tree.root);
+      const id = getComponentBeingAddedId();
 
       if (!id) {
         const copy = cloneDeep(tree);
@@ -163,7 +166,8 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
         setTree(copy, { action: `Added ${newComponents.name}` });
       } else {
         componentBeingAddedId.current = id;
-        updateTreeComponentChildren(id, newComponents.children!);
+        // TODO: get this back
+        // updateTreeComponentChildren(id, newComponents.children!);
       }
     };
   };
@@ -198,8 +202,6 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
         },
         {} as Record<string, string | number>,
       );
-
-      const component = getComponentById(tree.root, selectedComponentId);
 
       debouncedTreeUpdate(
         selectedComponentId,

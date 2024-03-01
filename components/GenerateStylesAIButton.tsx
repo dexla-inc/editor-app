@@ -40,6 +40,9 @@ export const GenerateStylesAIButton = () => {
     (state) => state.selectedComponentIds?.at(-1),
   );
   // const [stream, setStream] = useState<string>("");
+  const component = useEditorStore(
+    (state) => state.componentMutableAttrs[selectedComponentId!],
+  );
 
   const setStream: any = {
     CSS_MODIFIER: (stream: string) => {
@@ -76,8 +79,6 @@ export const GenerateStylesAIButton = () => {
         },
         {} as Record<string, string | number>,
       );
-
-      const component = getComponentById(tree.root, selectedComponentId);
 
       debouncedTreeUpdate(
         selectedComponentId,

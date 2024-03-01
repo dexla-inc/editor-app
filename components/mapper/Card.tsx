@@ -2,17 +2,14 @@ import { getCardStyling } from "@/components/CardStyleSelector";
 import { CardAndContainerWrapper } from "@/components/mapper/CardAndContainerWrapper";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useEditorStore } from "@/stores/editor";
-import { Component } from "@/utils/editor";
-import { FlexProps } from "@mantine/core";
+import { convertSizeToPx } from "@/utils/defaultSizes";
+import { EditableComponentMapper } from "@/utils/editor";
+import { FlexProps, LoadingOverlay, Flex as MantineFlex } from "@mantine/core";
+import isEmpty from "lodash.isempty";
 import merge from "lodash.merge";
 import { forwardRef } from "react";
 
-type Props = {
-  renderTree: (component: Component) => any;
-  component: Component;
-  isPreviewMode: boolean;
-  shareableContent?: any;
-} & FlexProps;
+type Props = EditableComponentMapper & FlexProps;
 
 export const CardComponent = forwardRef(
   ({ renderTree, isPreviewMode, component, ...props }: Props, ref) => {

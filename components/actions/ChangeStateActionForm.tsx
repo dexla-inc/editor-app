@@ -27,7 +27,9 @@ export const ChangeStateActionForm = ({ form }: Props) => {
 
   const { computeValue } = useDataContext()!;
 
-  const component = getComponentById(editorTree.root, selectedComponentId!);
+  const component = useEditorStore(
+    (state) => state.componentMutableAttrs[selectedComponentId!],
+  );
 
   const pickedId = computeValue({ value: form.values.componentId });
   const componentStatesList = getComponentsStates([pickedId]);

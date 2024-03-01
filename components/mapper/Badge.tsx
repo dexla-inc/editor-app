@@ -4,16 +4,12 @@ import { useContentEditable } from "@/hooks/useContentEditable";
 import { useEditorStore } from "@/stores/editor";
 import { DISABLED_HOVER } from "@/utils/branding";
 import { isSame } from "@/utils/componentComparison";
-import { Component, getColorFromTheme } from "@/utils/editor";
+import { EditableComponentMapper, getColorFromTheme } from "@/utils/editor";
 import { BadgeProps, Badge as MantineBadge } from "@mantine/core";
 import merge from "lodash.merge";
 import { forwardRef, memo } from "react";
 
-type Props = {
-  renderTree: (component: Component) => any;
-  component: Component;
-  shareableContent: any;
-} & BadgeProps;
+type Props = EditableComponentMapper & BadgeProps;
 
 const BadgeComponent = forwardRef(
   ({ renderTree, component, shareableContent, ...props }: Props, ref) => {

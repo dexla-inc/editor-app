@@ -43,7 +43,9 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
 
   const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
 
-  const component = getComponentById(editorTree.root, selectedComponentId!);
+  const component = useEditorStore(
+    (state) => state.componentMutableAttrs[selectedComponentId!],
+  );
 
   const id = component?.id;
   const componentData = componentMapper[component?.name || ""];

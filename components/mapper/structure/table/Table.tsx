@@ -1,6 +1,6 @@
 import { jsonStructure as headerStructure } from "@/components/mapper/structure/table/TableActionsRow";
 import { defaultTheme } from "@/utils/branding";
-import { Component } from "@/utils/editor";
+import { Component, ComponentTree } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { nanoid } from "nanoid";
 
@@ -10,7 +10,7 @@ const badgeColor = {
   Active: "Success.9",
 };
 
-export const jsonStructure = (props?: any): Component => {
+export const jsonStructure = (props?: any): ComponentTree => {
   const theme = props.theme ?? defaultTheme;
   const { table: defaultTableValues, button, input } = requiredModifiers;
   const tableHeader = headerStructure({ theme, button, input });

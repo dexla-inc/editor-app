@@ -3,15 +3,12 @@ import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useUserTheme } from "@/hooks/useUserTheme";
 import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
-import { Component } from "@/utils/editor";
+import { EditableComponentMapper } from "@/utils/editor";
 import { AlertProps, Alert as MantineAlert } from "@mantine/core";
 import get from "lodash.get";
 import { forwardRef, memo } from "react";
 
-type Props = {
-  renderTree: (component: Component) => any;
-  component: Component;
-} & Omit<AlertProps, "title">;
+type Props = EditableComponentMapper & Omit<AlertProps, "title">;
 
 const AlertComponent = forwardRef(
   ({ renderTree, component, ...props }: Props, ref) => {

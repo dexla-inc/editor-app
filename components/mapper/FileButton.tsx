@@ -1,6 +1,6 @@
 import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { useContentEditable } from "@/hooks/useContentEditable";
-import { Component } from "@/utils/editor";
+import { EditableComponentMapper } from "@/utils/editor";
 import {
   Button,
   FileButtonProps,
@@ -9,12 +9,7 @@ import {
 import merge from "lodash.merge";
 import { useDataContext } from "@/contexts/DataProvider";
 
-type Props = {
-  renderTree: (component: Component) => any;
-  component: Component;
-  isPreviewMode: boolean;
-  shareableContent: any;
-} & FileButtonProps;
+type Props = EditableComponentMapper & FileButtonProps;
 
 export const FileButton = ({
   renderTree,

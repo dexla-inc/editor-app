@@ -1,17 +1,13 @@
 import { CardAndContainerWrapper } from "@/components/mapper/CardAndContainerWrapper";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { setComponentBorder } from "@/utils/branding";
-import { Component } from "@/utils/editor";
-import { FlexProps } from "@mantine/core";
+import { convertSizeToPx } from "@/utils/defaultSizes";
+import { EditableComponentMapper } from "@/utils/editor";
+import { FlexProps, LoadingOverlay, Flex as MantineFlex } from "@mantine/core";
 import merge from "lodash.merge";
 import { forwardRef } from "react";
 
-type Props = {
-  renderTree: (component: Component, shareableContent: any) => any;
-  component: Component;
-  isPreviewMode?: boolean;
-  shareableContent?: any;
-} & FlexProps;
+type Props = EditableComponentMapper & FlexProps;
 
 export const ContainerComponent = forwardRef(
   ({ renderTree, component, isPreviewMode, ...props }: Props, ref) => {

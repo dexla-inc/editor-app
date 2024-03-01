@@ -1,5 +1,4 @@
 import { useEditorStore } from "@/stores/editor";
-import { getComponentById } from "@/utils/editor";
 import {
   Anchor as MantineAnchor,
   Box as MantineBox,
@@ -39,10 +38,8 @@ const FixedLink = ({ text, link, url }: LinkProps) => {
 };
 
 export const CustomDropdown = ({ children, ...props }: any) => {
-  const editorTree = useEditorStore((state) => state.tree);
-  const component = getComponentById(
-    editorTree.root,
-    props.id.split("-").at(0),
+  const component = useEditorStore(
+    (state) => state.componentMutableAttrs[props.id.split("-").at(0)],
   );
   const isComponent =
     component?.props?.customText || component?.props?.customLinkText;

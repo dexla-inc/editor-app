@@ -30,6 +30,7 @@ export const GridColumn = forwardRef(
   ) => {
     const { flexWrap, ...style } = gridColumnStyles;
     const theme = useMantineTheme();
+    const editorTree = useEditorStore((state) => state.tree);
     const setEditorTree = useEditorStore((state) => state.setTree);
     const columnSpans = useEditorStore((state) => state.columnSpans ?? {});
     const setColumnSpan = useEditorStore((state) => state.setColumnSpan);
@@ -40,15 +41,15 @@ export const GridColumn = forwardRef(
     const [initialSpan, setInitialSpan] = useState(0);
     const [initialNextSiblingSpan, setInitialNextSiblingSpan] = useState(0);
 
-    const parent = useMemo(() => {
-      const editorTree = useEditorStore.getState().tree;
-      return getComponentParent(editorTree.root, props.id!);
-    }, [props.id]);
-    const siblings = (parent?.children ?? []).filter(
+    const parentTree = getComponentParent(editorTree.root, props.id!);
+    const parent = useEditorStore(
+      (state) => state.componentMutableAttrs[parentTree?.id!],
+    );
+    const siblings = (parentTree?.children ?? []).filter(
       (c) => c.name === "GridColumn",
     );
 
-    const compIndex = getComponentIndex(parent!, props.id);
+    const compIndex = getComponentIndex(parentTree!, props.id);
     const nextSibling =
       compIndex < siblings.length - 1 ? siblings[compIndex + 1] : null;
     const isLast = siblings[siblings.length - 1]?.id === props.id;
@@ -204,36 +205,35 @@ export const GridColumn = forwardRef(
             setColumnSpan(props.id, newSpan);
           }}
           onResizeStop={() => {
-            const editorTree = useEditorStore.getState().tree;
-            const copy = cloneDeep(editorTree);
-            console.log("onresizeStop");
-            updateTreeComponent(copy.root, props.id, {
-              span: columnSpans[props.id] ?? 0,
-              resized: true,
-            });
-
-            if (nextSibling) {
-              updateTreeComponent(copy.root, nextSibling.id!, {
-                span: columnSpans[nextSibling.id!] ?? 0,
-                resized: false,
-              });
-
-              const nextSiblingComp = getComponentById(
-                copy.root,
-                nextSibling.id!,
-              );
-              if (nextSiblingComp) {
-                calculateGridSizes(nextSiblingComp);
-              }
-            }
-
-            const component = getComponentById(copy.root, props.id!);
-            if (component) {
-              calculateGridSizes(component);
-            }
-
-            setEditorTree(copy);
-            setIsResizing(false);
+            // TODO: get this back
+            //   const copy = cloneDeep(editorTree);
+            //   updateTreeComponent(copy.root, props.id, {
+            //     span: columnSpans[props.id] ?? 0,
+            //     resized: true,
+            //   });
+            //
+            //   if (nextSibling) {
+            //     updateTreeComponent(copy.root, nextSibling.id!, {
+            //       span: columnSpans[nextSibling.id!] ?? 0,
+            //       resized: false,
+            //     });
+            //
+            //     const nextSiblingComp = getComponentById(
+            //       copy.root,
+            //       nextSibling.id!,
+            //     );
+            //     if (nextSiblingComp) {
+            //       calculateGridSizes(nextSiblingComp);
+            //     }
+            //   }
+            //
+            //   const component = getComponentById(copy.root, props.id!);
+            //   if (component) {
+            //     calculateGridSizes(component);
+            //   }
+            //
+            //   setEditorTree(copy);
+            //   setIsResizing(false);
           }}
         >
           {children}

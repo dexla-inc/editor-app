@@ -7,17 +7,12 @@ import { useEditorStore } from "@/stores/editor";
 import { NavigationAction } from "@/utils/actions";
 import { getColorValue } from "@/utils/branding";
 import { isSame } from "@/utils/componentComparison";
-import { Component } from "@/utils/editor";
+import { EditableComponentMapper } from "@/utils/editor";
 import { NavLink as MantineNavLink, NavLinkProps } from "@mantine/core";
 import merge from "lodash.merge";
 import { forwardRef, memo } from "react";
 
-type Props = {
-  renderTree: (component: Component) => any;
-  component: Component;
-  shareableContent: any;
-  isPreviewMode: Boolean;
-} & NavLinkProps;
+type Props = EditableComponentMapper & NavLinkProps;
 
 const NavLinkComponent = forwardRef(
   (
@@ -109,12 +104,7 @@ const NavLinkComponent = forwardRef(
       >
         {component.children &&
           component.children.length > 0 &&
-          component.children?.map((child) =>
-            renderTree({
-              ...child,
-              props: { ...child.props },
-            }),
-          )}
+          component.children?.map((child) => renderTree(child))}
       </MantineNavLink>
     );
   },
