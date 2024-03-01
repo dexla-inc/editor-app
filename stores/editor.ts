@@ -1,3 +1,4 @@
+import { NodeData } from "@/components/logic-flow/nodes/CustomNode";
 import { SectionId } from "@/components/navbar/EditorNavbarSections";
 import { updatePageState } from "@/requests/pages/mutations";
 import { PageResponse } from "@/requests/pages/types";
@@ -27,11 +28,10 @@ import cloneDeep from "lodash.clonedeep";
 import debounce from "lodash.debounce";
 import isEqual from "lodash.isequal";
 import merge from "lodash.merge";
+import { Node } from "reactflow";
 import { TemporalState, temporal } from "zundo";
 import { create, useStore } from "zustand";
 import { devtools } from "zustand/middleware";
-import { Node } from "reactflow";
-import { NodeData } from "@/components/logic-flow/nodes/CustomNode";
 
 const client = createClient({
   publicApiKey: process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY ?? "",
@@ -347,6 +347,7 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
             set(
               (state: EditorState) => {
                 if (!options?.onLoad && !state.isPreviewMode) {
+                  console.log("setTree", state);
                   debouncedUpdatePageState(
                     encodeSchema(JSON.stringify(tree)),
                     state.currentProjectId ?? "",
@@ -399,6 +400,7 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
                   currentLanguage,
                 );
                 if (save && !prev.isPreviewMode) {
+                  console.log("updateTreeComponent", prev);
                   debouncedUpdatePageState(
                     encodeSchema(
                       JSON.stringify(removeKeysRecursive(copy, ["error"])),
@@ -441,6 +443,7 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
                   currentLanguage,
                 );
                 if (save && !prev.isPreviewMode) {
+                  console.log("updateTreeComponents", prev);
                   debouncedUpdatePageState(
                     encodeSchema(
                       JSON.stringify(removeKeysRecursive(copy, ["error"])),
@@ -470,6 +473,7 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
 
                 updateTreeComponentStates(copy.root, componentId, states);
                 if (save && !prev.isPreviewMode) {
+                  console.log("updateTreeComponentStates", prev);
                   debouncedUpdatePageState(
                     encodeSchema(
                       JSON.stringify(removeKeysRecursive(copy, ["error"])),
@@ -502,6 +506,7 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
                 updateTreeComponentChildren(copy.root, componentId, children);
 
                 if (save && !state.isPreviewMode) {
+                  console.log("updateTreeComponentChildren", state);
                   debouncedUpdatePageState(
                     encodeSchema(
                       JSON.stringify(
@@ -540,14 +545,15 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
                 const copy = cloneDeep(state.tree);
                 updateTreeComponentActions(copy.root, componentId, actions);
                 if (!state.isPreviewMode)
-                  debouncedUpdatePageState(
-                    encodeSchema(
-                      JSON.stringify(removeKeysRecursive(copy, ["error"])),
-                    ),
-                    state.currentProjectId ?? "",
-                    state.currentPageId ?? "",
-                    state.setIsSaving,
-                  );
+                  console.log("updateTreeComponentActions", state);
+                debouncedUpdatePageState(
+                  encodeSchema(
+                    JSON.stringify(removeKeysRecursive(copy, ["error"])),
+                  ),
+                  state.currentProjectId ?? "",
+                  state.currentPageId ?? "",
+                  state.setIsSaving,
+                );
 
                 const component = getComponentById(copy.root, componentId);
 
@@ -573,14 +579,15 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
 
                 updateTreeComponentAttrs(copy.root, componentIds, attrs);
                 if (!state.isPreviewMode)
-                  debouncedUpdatePageState(
-                    encodeSchema(
-                      JSON.stringify(removeKeysRecursive(copy, ["error"])),
-                    ),
-                    state.currentProjectId ?? "",
-                    state.currentPageId ?? "",
-                    state.setIsSaving,
-                  );
+                  console.log("updateTreeComponentAttrs", state);
+                debouncedUpdatePageState(
+                  encodeSchema(
+                    JSON.stringify(removeKeysRecursive(copy, ["error"])),
+                  ),
+                  state.currentProjectId ?? "",
+                  state.currentPageId ?? "",
+                  state.setIsSaving,
+                );
 
                 return {
                   tree: copy,
