@@ -1,10 +1,10 @@
 import { GRAY_OUTLINE, defaultTheme } from "@/utils/branding";
 import { GRID_SIZE } from "@/utils/config";
-import { Component } from "@/utils/editor";
+import { ComponentStructure } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { nanoid } from "nanoid";
 
-export const jsonStructure = (props?: any): Component => {
+export const jsonStructure = (props?: any): ComponentStructure => {
   const theme = props.theme ?? defaultTheme;
 
   const initialGridValues = requiredModifiers.grid;

@@ -1,7 +1,7 @@
-import { Component } from "@/utils/editor";
+import { ComponentStructure } from "@/utils/editor";
 import { nanoid } from "nanoid";
 
-export const jsonStructure = (props?: any): Component => {
+export const jsonStructure = (props?: any): ComponentStructure => {
   const { button: defaultButtonValues, input: defaultInputValues } = props;
   return {
     id: nanoid(),

@@ -41,7 +41,6 @@ const DateInputComponent = ({
       {...(iconName &&
         !isPositionLeft && { rightSection: <Icon name={iconName} /> })}
       disabled={isDisabled ? true : false}
-      style={{}}
       styles={{
         root: {
           position: "relative",

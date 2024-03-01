@@ -42,7 +42,9 @@ const StepperComponent = forwardRef(
             ? "Complete"
             : "default";
 
-        step.children?.forEach((section: Component) => {
+        step.children?.forEach((sectionTree) => {
+          const section =
+            useEditorStore.getState().componentMutableAttrs[sectionTree?.id!];
           if (section.name === "StepperStepHeader") {
             const allChildren = getAllChildrenComponents(section);
             allChildren.forEach((c) =>
@@ -76,7 +78,11 @@ const StepperComponent = forwardRef(
         {(component?.children ?? []).map(
           (child: ComponentTree, index: number) => {
             const { header, content } = (child.children ?? []).reduce(
-              (acc, curr) => {
+              (acc, currTree) => {
+                const curr =
+                  useEditorStore.getState().componentMutableAttrs[
+                    currTree?.id!
+                  ];
                 if (curr.name === "StepperStepHeader") acc.header = curr;
                 if (curr.name === "StepperStepContent") acc.content = curr;
                 return acc;
@@ -90,11 +96,11 @@ const StepperComponent = forwardRef(
             return (
               <MantineStepper.Step
                 key={index}
-                label={(header.children ?? []).map((grandChild: Component) => {
+                label={(header.children ?? []).map((grandChild) => {
                   return renderTree(grandChild);
                 })}
               >
-                {(content.children ?? []).map((grandChild: Component) => {
+                {(content.children ?? []).map((grandChild) => {
                   return renderTree(grandChild);
                 })}
               </MantineStepper.Step>

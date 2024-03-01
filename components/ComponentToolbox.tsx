@@ -202,20 +202,21 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
             }
 
             const copy = cloneDeep(editorTree);
-            const containerId = addComponent(
-              copy.root,
-              container,
-              {
-                id: parent?.id!,
-                edge: "left",
-              },
-              getComponentIndex(parent!, id),
-            );
-
-            addComponent(copy.root, component, {
-              id: containerId,
-              edge: "left",
-            });
+            // TODO: get this back
+            // const containerId = addComponent(
+            //   copy.root,
+            //   container,
+            //   {
+            //     id: parent?.id!,
+            //     edge: "left",
+            //   },
+            //   getComponentIndex(parent!, id),
+            // );
+            //
+            // addComponent(copy.root, component, {
+            //   id: containerId,
+            //   edge: "left",
+            // });
 
             removeComponentFromParent(copy.root, id, parent?.id!);
             setEditorTree(copy, {

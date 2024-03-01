@@ -24,6 +24,10 @@ import { CSSProperties } from "react";
 import crawl from "tree-crawl";
 import { CSSObject } from "@mantine/core";
 
+export type ComponentStructure = {
+  children?: ComponentStructure[];
+} & Component;
+
 export type EditableComponentMapper = {
   renderTree: (component: ComponentTree, shareableContent?: any) => any;
   component: ComponentTree & Component;
@@ -56,12 +60,12 @@ export type Component = {
 
 export type ComponentTree = {
   // TODO: this needs to be a ComponentTree[]
-  children?: Component[];
+  children?: ComponentTree[];
 } & ComponentBase;
 
 export type Row = {
   columns: number;
-  components: Component[];
+  components: ComponentStructure[];
 };
 
 export type EditorTree = {
@@ -99,7 +103,7 @@ export const replaceIdsDeeply = (treeRoot: Component) => {
 export const traverseComponents = (
   componentTrees: ComponentTree[],
   theme: MantineThemeExtended,
-): Component[] => {
+): ComponentStructure[] => {
   return (
     componentTrees
       // .filter((c) => !!c.name)
@@ -119,7 +123,7 @@ export const traverseComponents = (
         //   newComponent.children = traverseComponents(component.children, theme);
         // }
 
-        return {} as Component;
+        return {} as ComponentStructure;
       })
   );
 };
@@ -129,7 +133,7 @@ export const getEditorTreeFromPageStructure = (
   theme: MantineThemeExtended,
   pages: PageResponse[],
 ) => {
-  const editorTree: EditorTree = {
+  const editorTree: { root: ComponentStructure } & Omit<EditorTree, "root"> = {
     name: "Initial State",
     timestamp: Date.now(),
     root: {
@@ -148,22 +152,22 @@ export const getEditorTreeFromPageStructure = (
               minHeight: "20px",
             },
           },
-          // children: tree.rows.map((row: Row) => {
-          //   return {
-          //     id: nanoid(),
-          //     name: "Container",
-          //     description: "Container",
-          //     props: {
-          //       style: {
-          //         width: "100%",
-          //         backgroundColor: "White.6",
-          //         display: "flex",
-          //         flexDirection: "row",
-          //       },
-          //     },
-          //     children: traverseComponents(row.components, theme),
-          //   };
-          // }),
+          children: tree.rows.map((row: Row) => {
+            return {
+              id: nanoid(),
+              name: "Container",
+              description: "Container",
+              props: {
+                style: {
+                  width: "100%",
+                  backgroundColor: "White.6",
+                  display: "flex",
+                  flexDirection: "row",
+                },
+              },
+              children: traverseComponents(row.components, theme),
+            };
+          }),
         },
       ],
     },
@@ -183,31 +187,32 @@ export const getEditorTreeFromTemplateData = (
   return editorTree;
 };
 
-export const getEditorTreeFromTemplateTileData = async (
-  tree: { template: { name: string; tiles: Tile[] } },
-  theme: MantineThemeExtended,
-  pages: PageResponse[],
-  projectId: string,
-  pageId: string,
-) => {
-  // @ts-ignore
-  const template = templatesMapper[tree.template.name];
-  const editorTree: EditorTree = await template(
-    tree.template,
-    theme,
-    pages,
-    projectId,
-    pageId,
-  );
-  return editorTree;
-};
+// TODO: not used, needs deleting?
+// export const getEditorTreeFromTemplateTileData = async (
+//   tree: { template: { name: string; tiles: Tile[] } },
+//   theme: MantineThemeExtended,
+//   pages: PageResponse[],
+//   projectId: string,
+//   pageId: string,
+// ) => {
+//   // @ts-ignore
+//   const template = templatesMapper[tree.template.name];
+//   const editorTree: EditorTree = await template(
+//     tree.template,
+//     theme,
+//     pages,
+//     projectId,
+//     pageId,
+//   );
+//   return editorTree;
+// };
 
 export const getNewComponents = (
   tree: { rows: Row[] },
   theme: MantineThemeExtended,
   pages: PageResponse[],
   fromAi?: boolean,
-): Component => {
+): ComponentStructure => {
   return {
     id: nanoid(),
     name: "Container",
@@ -219,53 +224,52 @@ export const getNewComponents = (
         flexDirection: "column",
       },
     },
-    // children: tree.rows.map((row: Row) => {
-    //   return {
-    //     id: nanoid(),
-    //     name: "Container",
-    //     description: "Container",
-    //     props: {
-    //       style: {
-    //         width: "100%",
-    //         rowGap: fromAi ? "8px" : "0px",
-    //         columnGap: fromAi ? "8px" : "0px",
-    //       },
-    //     },
-    //     children:
-    //       row.components && row.components.length > 0
-    //         ? traverseComponents(row.components, theme)
-    //         : [],
-    //   };
-    // }),
+    children: tree.rows.map((row: Row) => {
+      return {
+        id: nanoid(),
+        name: "Container",
+        description: "Container",
+        props: {
+          style: {
+            width: "100%",
+            rowGap: fromAi ? "8px" : "0px",
+            columnGap: fromAi ? "8px" : "0px",
+          },
+        },
+        children:
+          row.components && row.components.length > 0
+            ? traverseComponents(row.components, theme)
+            : [],
+      };
+    }),
   };
 };
 
 export const getNewComponent = (
-  components: Component[],
+  components: ComponentStructure[],
   theme: MantineThemeExtended,
   pages: PageResponse[],
-): ComponentTree => {
-  // const firstComponent = components[0];
-  // const structureDefinition = structureMapper[firstComponent.name];
-  // const firstComponentStructure = structureDefinition.structure({
-  //   ...firstComponent,
-  //   props: {
-  //     ...(firstComponent?.props ?? {}),
-  //   },
-  //   theme,
-  // });
-  //
-  // return {
-  //   id: nanoid(),
-  //   name: firstComponentStructure.name,
-  //   description: firstComponentStructure.name,
-  //   props: { ...firstComponentStructure.props },
-  //   children:
-  //     firstComponent.children && firstComponent.children.length > 0
-  //       ? traverseComponents(firstComponent.children, theme)
-  //       : [],
-  // };
-  return {} as ComponentTree;
+): ComponentStructure => {
+  const firstComponent = components[0];
+  const structureDefinition = structureMapper[firstComponent.name];
+  const firstComponentStructure = structureDefinition.structure({
+    ...firstComponent,
+    props: {
+      ...(firstComponent?.props ?? {}),
+    },
+    theme,
+  });
+
+  return {
+    id: nanoid(),
+    name: firstComponentStructure.name,
+    description: firstComponentStructure.name,
+    props: { ...firstComponentStructure.props },
+    children:
+      firstComponent.children && firstComponent.children.length > 0
+        ? traverseComponents(firstComponent.children, theme)
+        : [],
+  };
 };
 
 export type TileType = {
@@ -670,7 +674,7 @@ export const getParentComponentData = (
 export const getComponentParent = (
   treeRoot: ComponentTree,
   id: string,
-): ComponentTree | null => {
+): ComponentStructure | null => {
   let parent: ComponentTree | null = null;
   crawl(
     treeRoot,
@@ -720,8 +724,10 @@ export const getAllComponentsByName = (
   return components;
 };
 
-export const getAllChildrenComponents = (treeRoot: Component): Component[] => {
-  const components: Component[] = [];
+export const getAllChildrenComponents = (
+  treeRoot: ComponentTree,
+): ComponentTree[] => {
+  const components: ComponentTree[] = [];
 
   crawl(
     treeRoot,
@@ -736,110 +742,107 @@ export const getAllChildrenComponents = (treeRoot: Component): Component[] => {
 
 export const getComponentIndex = (parent: ComponentTree, id: string) => {
   if (!parent) return -1;
-  return (
-    parent.children?.findIndex((child: Component) => child.id === id) ?? -1
-  );
+  return parent.children?.findIndex((child) => child.id === id) ?? -1;
 };
 
 export const addComponent = (
-  treeRoot: ComponentTree,
-  componentToAdd: Component,
+  treeRoot: ComponentStructure,
+  componentToAdd: ComponentStructure,
   dropTarget: DropTarget,
   dropIndex?: number,
 ): string => {
-  // const copy = cloneDeep(componentToAdd);
-  // replaceIdsDeeply(copy);
-  // const directChildren = ["Modal", "Drawer", "Toast"];
-  // const isGrid = copy.name === "Grid";
-  // const isColumn = copy.name === "GridColumn";
-  // const isNavbar = copy.name === "Navbar";
-  // let targetComponent = null;
-  //
-  // crawl(
-  //   treeRoot,
-  //   (node, context) => {
-  //     if (isNavbar) {
-  //       const contentWrapper = treeRoot.children?.find(
-  //         (child) => child.id === "content-wrapper",
-  //       );
-  //       if (contentWrapper) {
-  //         contentWrapper.props = {
-  //           ...contentWrapper.props,
-  //           navbarWidth: componentToAdd.props?.style.width,
-  //         };
-  //       }
-  //     }
-  //     if ((isGrid || isColumn) && node.id === dropTarget.id) {
-  //       targetComponent = addNodeToTarget(
-  //         treeRoot,
-  //         node,
-  //         copy,
-  //         context,
-  //         dropTarget,
-  //         false,
-  //         false,
-  //         dropIndex,
-  //       );
-  //
-  //       context.break();
-  //     } else {
-  //       if (copy.fixedPosition) {
-  //         if (node.id === copy.fixedPosition.target) {
-  //           if (
-  //             copy.fixedPosition.position === "left" ||
-  //             copy.fixedPosition.position === "top"
-  //           ) {
-  //             node.children = [copy, ...(node.children || [])];
-  //           } else if (
-  //             copy.fixedPosition.position === "right" ||
-  //             copy.fixedPosition.position === "bottom"
-  //           ) {
-  //             node.children = [...(node.children || []), copy];
-  //           }
-  //
-  //           context.break();
-  //         }
-  //       } else {
-  //         if (
-  //           directChildren.includes(copy.name) &&
-  //           node.id === "content-wrapper"
-  //         ) {
-  //           node.children = [...(node.children || []), copy];
-  //           context.break();
-  //         } else if (node.id === dropTarget.id) {
-  //           const isPopOver = copy.name === "PopOver";
-  //           if (isPopOver) {
-  //             copy.props!.targetId = node.id;
-  //             copy.children = [...(copy.children || []), node];
-  //             context.parent?.children?.splice(context.index, 1, copy);
-  //           } else {
-  //             node.children = node.children ?? [];
-  //
-  //             if (dropTarget.edge === "left" || dropTarget.edge === "top") {
-  //               const index = dropIndex ?? context.index - 1;
-  //               node.children.splice(index, 0, copy);
-  //             } else if (["right", "bottom"].includes(dropTarget.edge)) {
-  //               const index = dropIndex ?? context.index + 1;
-  //               node.children.splice(index, 0, copy);
-  //             } else if (dropTarget.edge === "center") {
-  //               node.children = [...(node.children || []), copy];
-  //             }
-  //           }
-  //
-  //           context.break();
-  //         }
-  //       }
-  //     }
-  //   },
-  //   { order: "bfs" },
-  // );
-  //
-  // if ((isGrid || isColumn) && targetComponent) {
-  //   calculateGridSizes(targetComponent);
-  // }
+  const copy = cloneDeep(componentToAdd);
+  replaceIdsDeeply(copy);
+  const directChildren = ["Modal", "Drawer", "Toast"];
+  const isGrid = copy.name === "Grid";
+  const isColumn = copy.name === "GridColumn";
+  const isNavbar = copy.name === "Navbar";
+  let targetComponent = null;
 
-  // return copy.id as string;
-  return "";
+  crawl(
+    treeRoot,
+    (node, context) => {
+      if (isNavbar) {
+        const contentWrapper = treeRoot.children?.find(
+          (child) => child.id === "content-wrapper",
+        );
+        if (contentWrapper) {
+          contentWrapper.props = {
+            ...contentWrapper.props,
+            navbarWidth: componentToAdd.props?.style.width,
+          };
+        }
+      }
+      if ((isGrid || isColumn) && node.id === dropTarget.id) {
+        targetComponent = addNodeToTarget(
+          treeRoot,
+          node,
+          copy,
+          context,
+          dropTarget,
+          false,
+          false,
+          dropIndex,
+        );
+
+        context.break();
+      } else {
+        if (copy.fixedPosition) {
+          if (node.id === copy.fixedPosition.target) {
+            if (
+              copy.fixedPosition.position === "left" ||
+              copy.fixedPosition.position === "top"
+            ) {
+              node.children = [copy, ...(node.children || [])];
+            } else if (
+              copy.fixedPosition.position === "right" ||
+              copy.fixedPosition.position === "bottom"
+            ) {
+              node.children = [...(node.children || []), copy];
+            }
+
+            context.break();
+          }
+        } else {
+          if (
+            directChildren.includes(copy.name) &&
+            node.id === "content-wrapper"
+          ) {
+            node.children = [...(node.children || []), copy];
+            context.break();
+          } else if (node.id === dropTarget.id) {
+            const isPopOver = copy.name === "PopOver";
+            if (isPopOver) {
+              copy.props!.targetId = node.id;
+              copy.children = [...(copy.children || []), node];
+              context.parent?.children?.splice(context.index, 1, copy);
+            } else {
+              node.children = node.children ?? [];
+
+              if (dropTarget.edge === "left" || dropTarget.edge === "top") {
+                const index = dropIndex ?? context.index - 1;
+                node.children.splice(index, 0, copy);
+              } else if (["right", "bottom"].includes(dropTarget.edge)) {
+                const index = dropIndex ?? context.index + 1;
+                node.children.splice(index, 0, copy);
+              } else if (dropTarget.edge === "center") {
+                node.children = [...(node.children || []), copy];
+              }
+            }
+
+            context.break();
+          }
+        }
+      }
+    },
+    { order: "bfs" },
+  );
+
+  if ((isGrid || isColumn) && targetComponent) {
+    calculateGridSizes(targetComponent);
+  }
+
+  return copy.id as string;
 };
 
 export type Edge = "left" | "right" | "top" | "bottom" | "center";
@@ -979,161 +982,159 @@ export const componentStyleMapper = (
 };
 
 const addNodeToTarget = (
-  treeRoot: ComponentTree,
-  targetNode: ComponentTree,
-  copy: ComponentTree,
-  context: crawl.Context<Component>,
+  treeRoot: ComponentStructure,
+  targetNode: ComponentStructure,
+  copy: ComponentStructure,
+  context: crawl.Context<ComponentStructure>,
   dropTarget: DropTarget,
   isMoving?: boolean,
   forceTarget?: boolean,
   dropIndex?: number,
 ) => {
-  // const parent = context.parent as Component;
-  // const isAddingToXAxis =
-  //   dropTarget.edge === "left" || dropTarget.edge === "right";
-  // const isAddingToYAxis =
-  //   dropTarget.edge === "top" || dropTarget.edge === "bottom";
-  // let target =
-  //   isAddingToXAxis || isAddingToYAxis
-  //     ? forceTarget
-  //       ? targetNode
-  //       : parent
-  //     : targetNode;
-  //
-  // if (dropTarget.edge === "center") {
-  //   targetNode.children = [...(targetNode.children || []), copy];
-  //
-  //   copy.props!.resized = false;
-  //   copy.children = copy.children?.map((child) => {
-  //     child.props!.resized = false;
-  //     return child;
-  //   });
-  //
-  //   if (copy.props?.resetTargetResized && !isMoving) {
-  //     target.props!.resized = false;
-  //     target.children = target.children?.map((child) => {
-  //       child.props!.resized = false;
-  //       return child;
-  //     });
-  //   }
-  //
-  //   return target;
-  // }
-  // const shouldRemoveResizing = target.name === "Grid" && isAddingToXAxis;
-  //
-  // if (shouldRemoveResizing) {
-  //   copy.props!.resized = false;
-  //   target.children = target.children?.map((child) => {
-  //     child.props!.resized = false;
-  //     return child;
-  //   });
-  // }
-  //
-  // if (dropTarget.edge === "top") {
-  //   if (targetNode.name === "GridColumn" && !forceTarget) {
-  //     target = getComponentParent(treeRoot, parent.id!)!;
-  //     dropIndex = getComponentIndex(target, parent.id!);
-  //   }
-  //
-  //   if (isMoving) {
-  //     const dropTargetParent = getComponentParent(treeRoot, dropTarget.id!);
-  //     const items = (target?.children?.map((c) => c.id) ?? []) as string[];
-  //     const oldIndex = items.indexOf(copy.id!);
-  //     let newIndex = items.indexOf(dropTargetParent?.id!);
-  //
-  //     if (newIndex > oldIndex) {
-  //       newIndex = Math.max(newIndex - 1, 0);
-  //     }
-  //
-  //     if (oldIndex !== newIndex) {
-  //       const newPositions = arrayMove(items, oldIndex, newIndex);
-  //       target!.children = parent?.children?.sort((a, b) => {
-  //         const aIndex = newPositions.indexOf(a.id as string);
-  //         const bIndex = newPositions.indexOf(b.id as string);
-  //         return aIndex - bIndex;
-  //       });
-  //     }
-  //   } else {
-  //     let i = dropIndex;
-  //     if (typeof dropIndex === "undefined") {
-  //       i = context.index;
-  //     }
-  //
-  //     // @ts-ignore
-  //     target.children?.splice(i, 0, copy);
-  //   }
-  //
-  //   return target;
-  // }
-  //
-  // if (dropTarget.edge === "bottom") {
-  //   if (targetNode.name === "GridColumn" && !forceTarget) {
-  //     target = getComponentParent(treeRoot, parent.id!)!;
-  //     dropIndex = getComponentIndex(target, parent.id!) + 1;
-  //   }
-  //
-  //   if (isMoving) {
-  //     const dropTargetParent = getComponentParent(treeRoot, dropTarget.id!);
-  //     const items = (target?.children?.map((c) => c.id) ?? []) as string[];
-  //     const oldIndex = items.indexOf(copy.id!);
-  //     let newIndex = items.indexOf(dropTargetParent?.id!);
-  //
-  //     if (newIndex < oldIndex) {
-  //       newIndex = Math.min(newIndex + 1, items.length);
-  //     }
-  //
-  //     if (oldIndex !== newIndex) {
-  //       const newPositions = arrayMove(items, oldIndex, newIndex);
-  //       target!.children = parent?.children?.sort((a, b) => {
-  //         const aIndex = newPositions.indexOf(a.id as string);
-  //         const bIndex = newPositions.indexOf(b.id as string);
-  //         return aIndex - bIndex;
-  //       });
-  //     }
-  //   } else {
-  //     let i = dropIndex;
-  //     if (typeof dropIndex === "undefined") {
-  //       i = context.index + 1;
-  //     }
-  //
-  //     target.children?.splice(i!, 0, copy);
-  //   }
-  //
-  //   return target;
-  // }
-  //
-  // const gridColumn = {
-  //   id: nanoid(),
-  //   name: "GridColumn",
-  //   description: "GridColumn",
-  //   props: {
-  //     span: GRID_SIZE,
-  //     style: {
-  //       height: "auto",
-  //       outline: GRAY_OUTLINE,
-  //       outlineOffset: "-2px",
-  //     },
-  //   },
-  //   children: [copy],
-  // } as Component;
-  //
-  // if (dropTarget.edge === "left") {
-  //   let i = dropIndex;
-  //   if (typeof dropIndex === "undefined") {
-  //     i = context.index - 1 < 0 ? 0 : context.index;
-  //   }
-  //   // @ts-ignore
-  //   target.children?.splice(i, 0, gridColumn);
-  // } else if (dropTarget.edge === "right") {
-  //   let i = dropIndex;
-  //   if (typeof dropIndex === "undefined") {
-  //     i = context.index + 1;
-  //   }
-  //   // @ts-ignore
-  //   target.children?.splice(i, 0, gridColumn);
-  // }
+  const parent = context.parent as ComponentStructure;
+  const isAddingToXAxis =
+    dropTarget.edge === "left" || dropTarget.edge === "right";
+  const isAddingToYAxis =
+    dropTarget.edge === "top" || dropTarget.edge === "bottom";
+  let target =
+    isAddingToXAxis || isAddingToYAxis
+      ? forceTarget
+        ? targetNode
+        : parent
+      : targetNode;
 
-  return;
+  if (dropTarget.edge === "center") {
+    targetNode.children = [...(targetNode.children || []), copy];
+
+    copy.props!.resized = false;
+    copy.children = copy.children?.map((child) => {
+      child.props!.resized = false;
+      return child;
+    });
+
+    if (copy.props?.resetTargetResized && !isMoving) {
+      target.props!.resized = false;
+      target.children = target.children?.map((child) => {
+        child.props!.resized = false;
+        return child;
+      });
+    }
+
+    return target;
+  }
+  const shouldRemoveResizing = target.name === "Grid" && isAddingToXAxis;
+
+  if (shouldRemoveResizing) {
+    copy.props!.resized = false;
+    target.children = target.children?.map((child) => {
+      child.props!.resized = false;
+      return child;
+    });
+  }
+
+  if (dropTarget.edge === "top") {
+    if (targetNode.name === "GridColumn" && !forceTarget) {
+      target = getComponentParent(treeRoot, parent.id!)!;
+      dropIndex = getComponentIndex(target, parent.id!);
+    }
+
+    if (isMoving) {
+      const dropTargetParent = getComponentParent(treeRoot, dropTarget.id!);
+      const items = (target?.children?.map((c) => c.id) ?? []) as string[];
+      const oldIndex = items.indexOf(copy.id!);
+      let newIndex = items.indexOf(dropTargetParent?.id!);
+
+      if (newIndex > oldIndex) {
+        newIndex = Math.max(newIndex - 1, 0);
+      }
+
+      if (oldIndex !== newIndex) {
+        const newPositions = arrayMove(items, oldIndex, newIndex);
+        target!.children = parent?.children?.sort((a, b) => {
+          const aIndex = newPositions.indexOf(a.id as string);
+          const bIndex = newPositions.indexOf(b.id as string);
+          return aIndex - bIndex;
+        });
+      }
+    } else {
+      let i = dropIndex;
+      if (typeof dropIndex === "undefined") {
+        i = context.index;
+      }
+
+      // @ts-ignore
+      target.children?.splice(i, 0, copy);
+    }
+
+    return target;
+  }
+
+  if (dropTarget.edge === "bottom") {
+    if (targetNode.name === "GridColumn" && !forceTarget) {
+      target = getComponentParent(treeRoot, parent.id!)!;
+      dropIndex = getComponentIndex(target, parent.id!) + 1;
+    }
+
+    if (isMoving) {
+      const dropTargetParent = getComponentParent(treeRoot, dropTarget.id!);
+      const items = (target?.children?.map((c) => c.id) ?? []) as string[];
+      const oldIndex = items.indexOf(copy.id!);
+      let newIndex = items.indexOf(dropTargetParent?.id!);
+
+      if (newIndex < oldIndex) {
+        newIndex = Math.min(newIndex + 1, items.length);
+      }
+
+      if (oldIndex !== newIndex) {
+        const newPositions = arrayMove(items, oldIndex, newIndex);
+        target!.children = parent?.children?.sort((a, b) => {
+          const aIndex = newPositions.indexOf(a.id as string);
+          const bIndex = newPositions.indexOf(b.id as string);
+          return aIndex - bIndex;
+        });
+      }
+    } else {
+      let i = dropIndex;
+      if (typeof dropIndex === "undefined") {
+        i = context.index + 1;
+      }
+
+      target.children?.splice(i!, 0, copy);
+    }
+
+    return target;
+  }
+
+  const gridColumn = {
+    id: nanoid(),
+    name: "GridColumn",
+    description: "GridColumn",
+    props: {
+      span: GRID_SIZE,
+      style: {
+        height: "auto",
+        outline: GRAY_OUTLINE,
+        outlineOffset: "-2px",
+      },
+    },
+    children: [copy],
+  } as Component;
+
+  if (dropTarget.edge === "left") {
+    let i = dropIndex;
+    if (typeof dropIndex === "undefined") {
+      i = context.index - 1 < 0 ? 0 : context.index;
+    }
+    // @ts-ignore
+    target.children?.splice(i, 0, gridColumn);
+  } else if (dropTarget.edge === "right") {
+    let i = dropIndex;
+    if (typeof dropIndex === "undefined") {
+      i = context.index + 1;
+    }
+    // @ts-ignore
+    target.children?.splice(i, 0, gridColumn);
+  }
 };
 
 export const moveComponent = (

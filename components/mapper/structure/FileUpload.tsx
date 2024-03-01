@@ -1,10 +1,10 @@
 import { defaultTheme } from "@/utils/branding";
-import { Component } from "@/utils/editor";
+import { ComponentStructure } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { MantineSize, px } from "@mantine/core";
 import { nanoid } from "nanoid";
 
-export const jsonStructure = (props?: any): Component => {
+export const jsonStructure = (props?: any): ComponentStructure => {
   const theme = props.theme ?? defaultTheme;
   const setSize = (size: MantineSize) => `${px(theme.spacing[size])}px`;
 

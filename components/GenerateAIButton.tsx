@@ -16,6 +16,7 @@ import {
   getComponentById,
   getEditorTreeFromPageStructure,
   getNewComponents,
+  ComponentStructure,
 } from "@/utils/editor";
 import { isKeyOfAISupportedModifiers } from "@/utils/modifiers";
 import {
@@ -42,19 +43,23 @@ import cloneDeep from "lodash.clonedeep";
 import { useRouter } from "next/router";
 import { MutableRefObject, useRef, useState } from "react";
 
+type EditorTreeStructure = {
+  children: ComponentStructure[];
+} & Component;
+
 type ComponentGenerationProps = {
   componentBeingAddedId: MutableRefObject<string | undefined>;
   theme: MantineThemeExtended;
   updateTreeComponentChildren: (
     componentId: string,
-    children: Component[],
+    children: ComponentStructure[],
   ) => void;
   setTree: (
-    tree: EditorTree,
+    tree: EditorTreeStructure,
     options?: { onLoad?: boolean; action?: string },
   ) => void;
   pages: PageResponse[];
-  tree: EditorTree;
+  tree: EditorTreeStructure;
 };
 
 type LayoutGenerationProps = {
@@ -105,17 +110,18 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
 
   const setStream: any = {
     COMPONENT: (stream: string) => {
-      processTOMLStream({
-        stream,
-        handler: handleComponentGeneration({
-          componentBeingAddedId,
-          theme,
-          updateTreeComponentChildren,
-          tree,
-          setTree,
-          pages,
-        }),
-      });
+      // TODO: get this back
+      // processTOMLStream({
+      //   stream,
+      //   handler: handleComponentGeneration({
+      //     componentBeingAddedId,
+      //     theme,
+      //     updateTreeComponentChildren,
+      //     tree,
+      //     setTree,
+      //     pages,
+      //   }),
+      // });
     },
     LAYOUT: (stream: string) => {
       processTOMLStream({
@@ -158,12 +164,13 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
       const id = getComponentBeingAddedId();
 
       if (!id) {
-        const copy = cloneDeep(tree);
-        addComponent(copy.root, newComponents, {
-          id: "content-wrapper",
-          edge: "bottom",
-        });
-        setTree(copy, { action: `Added ${newComponents.name}` });
+        // TODO: get this back
+        // const copy = cloneDeep(tree);
+        // addComponent(copy.root, newComponents, {
+        //   id: "content-wrapper",
+        //   edge: "bottom",
+        // });
+        // setTree(copy, { action: `Added ${newComponents.name}` });
       } else {
         componentBeingAddedId.current = id;
         // TODO: get this back

@@ -88,11 +88,12 @@ export const GenerateComponentsAIButton = () => {
 
       if (!id) {
         const copy = cloneDeep(tree);
-        addComponent(copy.root, newComponents, {
-          id: "content-wrapper",
-          edge: "bottom",
-        });
-        setTree(copy, { action: `Added ${newComponents.name}` });
+        // TODO: get this back
+        // addComponent(copy.root, newComponents, {
+        //   id: "content-wrapper",
+        //   edge: "bottom",
+        // });
+        // setTree(copy, { action: `Added ${newComponents.name}` });
       } else {
         componentBeingAddedId.current = id;
         // TODO: get this back

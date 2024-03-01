@@ -1,9 +1,9 @@
 import { jsonStructure as radioItemStructure } from "@/components/mapper/structure/RadioItem";
 import { defaultTheme } from "@/utils/branding";
-import { Component } from "@/utils/editor";
+import { ComponentStructure } from "@/utils/editor";
 import { nanoid } from "nanoid";
 
-export const jsonStructure = (props?: any): Component => {
+export const jsonStructure = (props?: any): ComponentStructure => {
   const radioGroupId = nanoid();
   const theme = props.theme ?? defaultTheme;
   const radioItemOne = radioItemStructure({

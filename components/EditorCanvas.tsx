@@ -200,7 +200,7 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
       isSpecialComponents ||
       isAllowedSibling ||
       isAllowedGridMatch;
-
+    // TODO: get this back
     // if (addAsSiblingFlag) {
     //   const parentComponent = getComponentParent(
     //     editorTree.root,
@@ -213,18 +213,18 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
     //   componentIndex = component?.children?.length ?? 0;
     // }
 
-    const newSelectedId = addComponent(
-      copy.root,
-      componentToPaste,
-      {
-        id: targetId,
-        edge: isGridItems ? "center" : "top",
-      },
-      componentIndex,
-    );
+    // const newSelectedId = addComponent(
+    //   copy.root,
+    //   componentToPaste,
+    //   {
+    //     id: targetId,
+    //     edge: isGridItems ? "center" : "top",
+    //   },
+    //   componentIndex,
+    // );
 
-    setEditorTree(copy, { action: `Pasted ${componentToPaste.name}` });
-    setSelectedComponentIds(() => [newSelectedId]);
+    // setEditorTree(copy, { action: `Pasted ${componentToPaste.name}` });
+    // setSelectedComponentIds(() => [newSelectedId]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [copiedComponent, editorTree, isPreviewMode, setEditorTree]);
 

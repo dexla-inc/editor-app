@@ -45,8 +45,9 @@ export const createComponentEditorHandler = ({
 
     if (!id) {
       const copy = cloneDeep(tree);
-      addComponent(copy.root, newComponents, dropTarget);
-      setTree(copy, { action: `Added ${newComponents.name}` });
+      // TODO: get this back
+      // addComponent(copy.root, newComponents, dropTarget);
+      // setTree(copy, { action: `Added ${newComponents.name}` });
     } else {
       componentBeingAddedId.current = id;
       updateTreeComponentChildren(id, newComponents.children!);
