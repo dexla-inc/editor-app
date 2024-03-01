@@ -40,7 +40,7 @@ export const EditableComponent = ({
   const component = useEditorStore(
     (state) => state.componentMutableAttrs[componentTree.id!] ?? {},
   );
-  console.log("Editable", component.name, component.description);
+
   let currentState = useComputeCurrentState(component, isEditorMode);
 
   if (shareableContent?.parentState)

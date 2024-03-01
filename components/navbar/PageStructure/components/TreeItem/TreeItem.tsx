@@ -261,7 +261,9 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
                     e.stopPropagation();
                     form.setFieldValue("value", e.target.value);
                     debouncedTreeComponentAttrsUpdate({
-                      description: e.target.value,
+                      attrs: {
+                        description: e.target.value,
+                      },
                     });
                   }}
                   onBlur={closeEdit}

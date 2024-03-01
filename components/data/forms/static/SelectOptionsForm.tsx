@@ -23,8 +23,8 @@ export const SelectOptionsForm = ({ component }: { component: Component }) => {
   const [value, setValue] = useState("");
 
   useEffect(() => {
-    if (form.isTouched()) {
-      debouncedTreeComponentAttrsUpdate(form.values);
+    if (form.isTouched() && form.isDirty()) {
+      debouncedTreeComponentAttrsUpdate({ attrs: form.values });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.values]);

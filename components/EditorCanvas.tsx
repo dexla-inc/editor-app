@@ -77,7 +77,8 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
   const undo = useTemporalStore((state) => state.undo);
   const redo = useTemporalStore((state) => state.redo);
   const pastStates = useTemporalStore((state) => state.pastStates);
-  const setCursor = useEditorStore((state) => state.setCursor);
+  // TODO: get this back - turn it off for now
+  // const setCursor = useEditorStore((state) => state.setCursor);
   const copiedComponent = useEditorStore((state) => state.copiedComponent);
   const setCopiedComponent = useEditorStore(
     (state) => state.setCopiedComponent,
@@ -88,7 +89,6 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
   const currentProjectId = useEditorStore((state) => state.currentProjectId);
   const currentPageId = useEditorStore((state) => state.currentPageId);
   const setIsSaving = useEditorStore((state) => state.setIsSaving);
-  console.log("TEST");
   const setSelectedComponentIds = useEditorStore(
     (state) => state.setSelectedComponentIds,
   );

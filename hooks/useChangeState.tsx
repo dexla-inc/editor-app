@@ -76,7 +76,7 @@ export const useChangeState = ({
       hoverBackground,
       shouldUpdateHover,
     );
-    debouncedTreeComponentAttrsUpdate(treeUpdate);
+    debouncedTreeComponentAttrsUpdate({ attrs: treeUpdate });
   };
   return {
     color,

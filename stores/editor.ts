@@ -16,9 +16,11 @@ import {
   extractComponentMutableAttrs,
   getComponentById,
   getTreeComponentMutableProps,
+  recoverTreeComponentAttrs,
   updateTreeComponent,
   updateTreeComponentActions,
   updateTreeComponentAttrs,
+  updateTreeComponentAttrs2,
   updateTreeComponentChildren,
   updateTreeComponentStates,
 } from "@/utils/editor";
@@ -233,10 +235,12 @@ export type EditorState = {
     save?: boolean,
   ) => any;
   updateTreeComponentActions: (componentId: string, actions: Action[]) => void;
-  updateTreeComponentAttrs: (
-    componentIds: string[],
-    attrs: Partial<Component>,
-  ) => void;
+  updateTreeComponentAttrs: (params: {
+    componentIds: string[];
+    attrs: Partial<Component>;
+    forceState?: string;
+    save?: boolean;
+  }) => void;
   setTreeComponentCurrentState: (
     componentId: string,
     currentState: string,
@@ -613,20 +617,40 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
               "editor/updateTreeComponentActions",
             );
           },
-          updateTreeComponentAttrs: (
-            componentIds: string[],
-            attrs: Partial<Component>,
-          ) => {
+          updateTreeComponentAttrs: ({
+            componentIds,
+            attrs,
+            forceState,
+            save = true,
+          }) => {
             set(
               (state: EditorState) => {
-                const copy = cloneDeep(state.tree);
+                const lastComponentId = componentIds.at(-1)!;
+                const currentState =
+                  forceState ??
+                  state.currentTreeComponentsStates?.[lastComponentId] ??
+                  "default";
+                const currentLanguage = state.language;
 
-                // TODO: get this back
-                // updateTreeComponentAttrs(copy.root, componentIds, attrs);
-                if (!state.isPreviewMode) {
+                componentIds.forEach((id) => {
+                  state.componentMutableAttrs[id] = updateTreeComponentAttrs2(
+                    state.componentMutableAttrs[id],
+                    attrs,
+                    currentState,
+                    currentLanguage,
+                  );
+                });
+
+                const treeWithRecoveredAttrs = recoverTreeComponentAttrs(
+                  state.tree,
+                  state.componentMutableAttrs,
+                );
+                if (save && !state.isPreviewMode) {
                   debouncedUpdatePageState(
                     encodeSchema(
-                      JSON.stringify(removeKeysRecursive(copy, ["error"])),
+                      JSON.stringify(
+                        removeKeysRecursive(treeWithRecoveredAttrs, ["error"]),
+                      ),
                     ),
                     state.currentProjectId ?? "",
                     state.currentPageId ?? "",
@@ -634,21 +658,8 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
                   );
                 }
 
-                const newComponentMutableAttrs = componentIds.reduce(
-                  (acc, id) => {
-                    acc[id] = extractComponentMutableAttrs(attrs);
-                    return acc;
-                  },
-                  {} as Record<string, any>,
-                );
-
                 return {
-                  tree: copy,
-                  componentMutableAttrs: merge(
-                    {},
-                    state.componentMutableAttrs,
-                    newComponentMutableAttrs,
-                  ),
+                  componentMutableAttrs: state.componentMutableAttrs,
                 };
               },
               false,

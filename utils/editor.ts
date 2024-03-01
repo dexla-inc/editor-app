@@ -437,6 +437,57 @@ export const updateTreeComponentAttrs = (
   );
 };
 
+export const updateTreeComponentAttrs2 = (
+  component: Component,
+  attrs: Partial<Component>,
+  state: string = "default",
+  language: string = "default",
+) => {
+  const newComponent = cloneDeep(component);
+  const translatableProps = pickBy(attrs.props, pickTranslatableFields);
+  const styleProps = pickBy(attrs.props, pickStyleFields);
+  const alwaysDefaultProps = omit(attrs.props ?? {}, [
+    ...translatableFieldsKeys,
+    ...styleFieldsKeys,
+  ]);
+
+  if (language === "default") {
+    merge(newComponent, { props: translatableProps });
+  } else {
+    merge(newComponent, { languages: { [language]: translatableProps } });
+  }
+
+  if (state === "default") {
+    merge(newComponent, { props: styleProps });
+  } else {
+    merge(newComponent, {
+      states: {
+        [state]: styleProps,
+      },
+    });
+  }
+
+  merge(newComponent, { props: alwaysDefaultProps });
+  merge(newComponent, omit(attrs, ["props"]));
+
+  return newComponent;
+};
+
+export const recoverTreeComponentAttrs = (
+  tree: EditorTree,
+  componentMutableAttrs: Record<string, Component>,
+) => {
+  crawl(
+    tree.root,
+    (node, context) => {
+      merge(node, componentMutableAttrs[node.id!]);
+    },
+    { order: "bfs" },
+  );
+
+  return tree;
+};
+
 export const updateTreeComponent = (
   treeRoot: Component,
   ids: string | string[],
@@ -828,12 +879,26 @@ export const debouncedTreeRootChildrenUpdate = debounce(
 );
 
 export const debouncedTreeComponentAttrsUpdate = debounce(
-  (value: Partial<Component>) => {
+  ({
+    attrs,
+    forceState,
+    save = true,
+  }: {
+    attrs: Partial<Component>;
+    forceState?: string;
+    save?: boolean;
+  }) => {
     const updateTreeComponentAttrs =
       useEditorStore.getState().updateTreeComponentAttrs;
-    const selectedComponentIds = useEditorStore.getState().selectedComponentIds;
+    const selectedComponentIds =
+      useEditorStore.getState().selectedComponentIds ?? [];
 
-    updateTreeComponentAttrs(selectedComponentIds!, value);
+    updateTreeComponentAttrs({
+      componentIds: selectedComponentIds,
+      attrs,
+      forceState,
+      save,
+    });
   },
   300,
 );
