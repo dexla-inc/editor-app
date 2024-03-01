@@ -13,8 +13,8 @@ import {
   PropsWithChildren,
   forwardRef,
   useEffect,
-  useState,
   useMemo,
+  useState,
 } from "react";
 
 export const GridColumn = forwardRef(
@@ -206,6 +206,7 @@ export const GridColumn = forwardRef(
           onResizeStop={() => {
             const editorTree = useEditorStore.getState().tree;
             const copy = cloneDeep(editorTree);
+            console.log("onresizeStop");
             updateTreeComponent(copy.root, props.id, {
               span: columnSpans[props.id] ?? 0,
               resized: true,

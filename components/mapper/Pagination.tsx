@@ -16,11 +16,11 @@ type Props = {
 const PaginationComponent = forwardRef(
   ({ renderTree, component, ...props }: Props, ref) => {
     const { triggers, ...componentProps } = component.props as any;
-    const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
 
     const { onChange, ...allTriggers } = triggers;
 
     const customOnChange = (value: any) => {
+      const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
       updateTreeComponent({ componentId: component.id!, props: { value } });
       onChange && onChange(value);
     };

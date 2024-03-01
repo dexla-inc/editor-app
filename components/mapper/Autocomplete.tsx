@@ -5,6 +5,7 @@ import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { useChangeState } from "@/hooks/useChangeState";
 import { useEndpoint } from "@/hooks/useEndpoint";
+import { useEditorStore } from "@/stores/editor";
 import { useInputsStore } from "@/stores/inputs";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
@@ -52,10 +53,23 @@ const AutocompleteComponent = forwardRef(
       dataType === "static" ? component.props?.data : [],
     );
 
-    const { data: response } = useEndpoint({
+    const { data: response, isLoading } = useEndpoint({
       component,
       enabled: !!inputValue,
     });
+
+    const setLoadingState = (componentId: string, isLoading: boolean) => {
+      const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+
+      updateTreeComponent({ componentId, props: { loading: isLoading } });
+    };
+
+    useEffect(() => {
+      if (inputValue) {
+        setLoadingState(componentId, isLoading);
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isLoading]);
 
     useEffect(() => {
       if (dataType === "dynamic") {
