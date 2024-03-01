@@ -90,9 +90,7 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
   const pageTitle = pages?.find((p) => p.id === currentPageId)?.title;
   const componentBeingAddedId = useRef<string>();
   const setTree = useEditorStore((state) => state.setTree);
-  const updateTreeComponent = useEditorStore(
-    (state) => state.updateTreeComponent,
-  );
+  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
   const updateTreeComponentChildren = useEditorStore(
     (state) => state.updateTreeComponentChildren,
   );

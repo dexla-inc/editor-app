@@ -5,26 +5,22 @@ import { useEditorStore } from "@/stores/editor";
 import {
   Action,
   ActionTrigger,
-  actionMapper,
   TriggerLogicFlowAction,
+  actionMapper,
 } from "@/utils/actions";
+import { decodeSchema } from "@/utils/compression";
 import { Component } from "@/utils/editor";
 import { Router, useRouter } from "next/router";
 import { ChangeEvent } from "react";
-import { decodeSchema } from "@/utils/compression";
 
 const nonDefaultActionTriggers = ["onSuccess", "onError"];
 
 type UseTriggersProps = {
   entity: Component | PageResponse;
   isEditorMode?: boolean;
-  updateTreeComponent?: (update: any) => void;
 };
 
-export const useTriggers = ({
-  entity,
-  updateTreeComponent,
-}: UseTriggersProps) => {
+export const useTriggers = ({ entity }: UseTriggersProps) => {
   const projectId = useEditorStore((state) => state.currentProjectId);
   const router = useRouter();
   const { computeValue } = useDataContext()!;
@@ -96,13 +92,6 @@ export const useTriggers = ({
   const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (typeof triggers().onChange === "function") {
       triggers().onChange(e);
-    }
-
-    if (entity.props?.error) {
-      updateTreeComponent?.({
-        componentId: entity.id,
-        props: { error: "" },
-      });
     }
   };
 

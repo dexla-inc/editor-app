@@ -1,3 +1,5 @@
+import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import {
@@ -5,8 +7,6 @@ import {
   PaginationProps,
 } from "@mantine/core";
 import { forwardRef, memo } from "react";
-import { useEditorStore } from "@/stores/editor";
-import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -16,9 +16,7 @@ type Props = {
 const PaginationComponent = forwardRef(
   ({ renderTree, component, ...props }: Props, ref) => {
     const { triggers, ...componentProps } = component.props as any;
-    const updateTreeComponent = useEditorStore(
-      (state) => state.updateTreeComponent,
-    );
+    const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
 
     const { onChange, ...allTriggers } = triggers;
 

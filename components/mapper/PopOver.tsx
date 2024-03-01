@@ -21,9 +21,7 @@ const PopOverComponent = ({
     (state) => state.selectedComponentIds?.at(-1),
   );
   const { isPreviewMode } = useAppMode();
-  const updateTreeComponent = useEditorStore(
-    (state) => state.updateTreeComponent,
-  );
+  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const isLive = useEditorStore((state) => state.isLive);
 
