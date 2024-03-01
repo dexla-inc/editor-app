@@ -397,8 +397,11 @@ export const useChangeStateAction = ({
   const updateTreeComponentAttrs =
     useEditorStore.getState().updateTreeComponentAttrs;
 
-  updateTreeComponentAttrs([componentId], {
-    onLoad: { currentState: action.state },
+  updateTreeComponentAttrs({
+    componentIds: [componentId],
+    attrs: {
+      onLoad: { currentState: action.state },
+    },
   });
 };
 

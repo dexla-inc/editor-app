@@ -27,8 +27,11 @@ export const ChartData = ({ component, endpoints, dataType }: DataProps) => {
           { label: "Dynamic", value: "dynamic" },
         ]}
         onChange={(e) =>
-          updateTreeComponentAttrs([component.id!], {
-            props: { dataType: e },
+          updateTreeComponentAttrs({
+            componentIds: [component.id!],
+            attrs: {
+              props: { dataType: e },
+            },
           })
         }
       />

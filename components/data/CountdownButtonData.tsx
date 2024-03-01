@@ -27,8 +27,11 @@ export const CountdownButtonData = ({ component, endpoints }: DataProps) => {
         ]}
         disabledUnits={["%", "auto", "fit-content", "px", "rem", "vh", "vw"]}
         onChange={(e) =>
-          updateTreeComponentAttrs([component.id!], {
-            props: { duration: e },
+          updateTreeComponentAttrs({
+            componentIds: [component.id!],
+            attrs: {
+              props: { duration: e },
+            },
           })
         }
       />
