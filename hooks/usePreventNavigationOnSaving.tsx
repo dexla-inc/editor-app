@@ -34,7 +34,6 @@ export const usePreventNavigationOnSaving = () => {
           throw errorMessage;
         }
 
-        liveblocks.leaveRoom();
         if (!options.shallow) {
           resetTree();
         }
