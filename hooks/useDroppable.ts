@@ -25,11 +25,10 @@ const debouncedDragEnter = debounce((event: any, id: string) => {
   const isTabPinned = useUserConfigStore.getState().isTabPinned;
   const activeId = componentToAdd?.id ?? selectedComponentId;
 
-  const activeComponent = useEditorStore(
-    (state) => state.componentMutableAttrs[activeId!],
-  );
+  const activeComponent =
+    useEditorStore.getState().componentMutableAttrs[activeId!];
 
-  const comp = useEditorStore((state) => state.componentMutableAttrs[id]);
+  const comp = useEditorStore.getState().componentMutableAttrs[id];
   const isTryingToDropInsideItself =
     activeComponent && activeId !== id
       ? !!getComponentById(activeComponent!, id)

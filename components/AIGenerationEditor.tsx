@@ -6,7 +6,7 @@ import {
   EditorTree,
   addComponent,
   getComponentBeingAddedId,
-  getNewComponent,
+  // getNewComponent, TODO: get this back
   ComponentTree,
 } from "@/utils/editor";
 import cloneDeep from "lodash.clonedeep";
@@ -38,20 +38,19 @@ export const createComponentEditorHandler = ({
   dropTarget,
 }: Props) => {
   return function (components: Component[]) {
-    const newComponentTree = getNewComponent(components, theme, pages);
-    const newComponents =
-      useEditorStore.getState().componentMutableAttrs[newComponentTree?.id!];
-    const id = getComponentBeingAddedId();
-
-    if (!id) {
-      const copy = cloneDeep(tree);
-      // TODO: get this back
-      // addComponent(copy.root, newComponents, dropTarget);
-      // setTree(copy, { action: `Added ${newComponents.name}` });
-    } else {
-      componentBeingAddedId.current = id;
-      // TODO: get this back
-      // updateTreeComponentChildren(id, newComponents.children!);
-    }
+    // TODO: get this back
+    // const newComponentTree = getNewComponent(components, theme, pages);
+    // const newComponents =
+    //   useEditorStore.getState().componentMutableAttrs[newComponentTree?.id!];
+    // const id = getComponentBeingAddedId();
+    //
+    // if (!id) {
+    //   const copy = cloneDeep(tree);
+    //   addComponent(copy.root, newComponents, dropTarget);
+    //   setTree(copy, { action: `Added ${newComponents.name}` });
+    // } else {
+    //   componentBeingAddedId.current = id;
+    //   updateTreeComponentChildren(id, newComponents.children!);
+    // }
   };
 };

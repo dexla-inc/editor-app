@@ -10,6 +10,7 @@ import { encodeSchema } from "@/utils/compression";
 import { GRID_SIZE } from "@/utils/config";
 import {
   Component,
+  ComponentStructure,
   EditorTree,
   EditorTreeCopy,
   extractComponentMutableAttrs,
@@ -162,7 +163,7 @@ export type EditorState = {
   hoveredComponentId?: string;
   selectedComponentIds?: string[];
   copiedComponent?: Component;
-  componentToAdd?: Component;
+  componentToAdd?: ComponentStructure;
   iframeWindow?: Window;
   currentTargetId?: string;
   theme: MantineThemeExtended;
@@ -209,7 +210,7 @@ export type EditorState = {
     currentProjectId: string,
     currentPageId: string,
   ) => void;
-  setComponentToAdd: (componentToAdd?: Component) => void;
+  setComponentToAdd: (componentToAdd?: ComponentStructure) => void;
   updateTreeComponent: (params: {
     componentId: string;
     props: any;

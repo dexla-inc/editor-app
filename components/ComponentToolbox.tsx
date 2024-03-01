@@ -12,6 +12,9 @@ import {
 import { ICON_DELETE, ICON_SIZE, NAVBAR_WIDTH } from "@/utils/config";
 import {
   addComponent,
+  ComponentStructure,
+  EditorTree,
+  EditorTreeCopy,
   getComponentById,
   getComponentIndex,
   getComponentParent,
@@ -244,10 +247,11 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
             iconName={ICON_DELETE}
             tooltip="Delete"
             onClick={() => {
-              const copy = cloneDeep(editorTree);
-              removeComponent(copy.root, component?.id!);
-              // TODO: get this back
-              // setEditorTree(copy, { action: `Removed ${component?.name}` });
+              const editorTreeCopy = cloneDeep(editorTree) as EditorTreeCopy;
+              removeComponent(editorTreeCopy.root, component?.id!);
+              setEditorTree(editorTreeCopy, {
+                action: `Removed ${component?.name}`,
+              });
             }}
           />
           {customComponentModal && (

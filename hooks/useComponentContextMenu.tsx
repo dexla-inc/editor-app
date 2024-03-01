@@ -14,6 +14,7 @@ import {
   getComponentParent,
   removeComponent,
   removeComponentFromParent,
+  EditorTreeCopy,
 } from "@/utils/editor";
 import {
   IconBoxMargin,
@@ -109,10 +110,9 @@ export const useComponentContextMenu = () => {
         component.id !== "main-content" &&
         component.id !== "content-wrapper"
       ) {
-        const copy = cloneDeep(editorTree);
-        removeComponent(copy.root, component.id);
-        // TODO: get this back
-        // setEditorTree(copy, { action: `Removed ${component?.name}` });
+        const editorTreeCopy = cloneDeep(editorTree) as EditorTreeCopy;
+        removeComponent(editorTreeCopy.root, component.id);
+        setEditorTree(editorTreeCopy, { action: `Removed ${component?.name}` });
         clearSelection();
       }
     },

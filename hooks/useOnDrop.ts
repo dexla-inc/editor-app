@@ -3,9 +3,7 @@ import { componentMapper } from "@/utils/componentMapper";
 import {
   Component,
   DropTarget,
-  EditorTree,
   addComponent,
-  getComponentById,
   getComponentIndex,
   getComponentParent,
   moveComponent,
@@ -13,6 +11,8 @@ import {
   removeComponent,
   removeComponentFromParent,
   getComponentTreeById,
+  EditorTreeCopy,
+  ComponentStructure,
 } from "@/utils/editor";
 import cloneDeep from "lodash.clonedeep";
 import { useCallback } from "react";
@@ -41,68 +41,78 @@ export const useOnDrop = () => {
       if (isResizing) return;
       const droppedId = parseId(_droppedId ?? componentToAdd?.id);
       dropTarget.id = parseId(dropTarget.id);
-      const copy = cloneDeep(editorTree);
-      const activeComponent = getComponentTreeById(copy.root, droppedId);
-      let targetComponent = getComponentTreeById(copy.root, dropTarget.id);
+      const editorTreeCopy = cloneDeep(editorTree) as EditorTreeCopy;
+      const activeComponentTree = getComponentTreeById(
+        editorTreeCopy.root,
+        droppedId,
+      );
+      const activeComponent =
+        useEditorStore.getState().componentMutableAttrs[droppedId];
+      let targetComponent =
+        useEditorStore.getState().componentMutableAttrs[dropTarget.id];
       const targetParentComponent = getComponentParent(
-        copy.root,
+        editorTreeCopy.root,
         dropTarget.id,
       );
       const isParentContentWrapper =
         targetParentComponent?.id === "content-wrapper";
       const isDroppable =
         !isParentContentWrapper || dropTarget.edge === "center";
-      const isMoving = !!activeComponent;
-      // TODO: get this back
-      //       if (!isMoving && droppedId && componentToAdd && isDroppable) {
-      // if (componentToAdd.name === "Grid") {
-      //   handleGridComponentAddition(
-      //     copy.root,
-      //     dropTarget,
-      //     targetComponent,
-      //     componentToAdd,
-      //   );
-      // } else {
-      //   handleComponentAddition(
-      //     copy,
-      //     dropTarget,
-      //     targetComponent,
-      //     componentToAdd,
-      //   );
-      // }
-      // } else if (dropTarget.id !== "root" && isDroppable) {
-      //   if (activeComponent?.name === "Grid") {
-      //     const isDopopingInVerticalAxis =
-      //       dropTarget.edge === "top" || dropTarget.edge === "bottom";
-      //     let useParentInstead = false;
-      //     if (
-      //       isMoving &&
-      //       isDopopingInVerticalAxis &&
-      //       targetComponent?.name === "GridColumn"
-      //     ) {
-      //       useParentInstead = true;
-      //     }
-      //
-      //     handleGridReorderingOrMoving(
-      //       copy.root,
-      //       droppedId,
-      //       targetComponent,
-      //       dropTarget,
-      //       useParentInstead,
-      //     );
-      //   } else {
-      //     handleReorderingOrMoving(
-      //       copy,
-      //       droppedId,
-      //       targetComponent,
-      //       dropTarget,
-      //     );
-      //   }
-      // } else if (isDroppable) {
-      //   handleRootDrop(copy, droppedId, activeComponent, dropTarget);
-      // }
-      //
-      // setEditorTree(copy);
+      const isMoving = !!activeComponentTree;
+      if (!isMoving && droppedId && componentToAdd && isDroppable) {
+        if (componentToAdd.name === "Grid") {
+          handleGridComponentAddition(
+            editorTreeCopy.root,
+            dropTarget,
+            targetComponent,
+            componentToAdd,
+          );
+        } else {
+          handleComponentAddition(
+            editorTreeCopy.root,
+            dropTarget,
+            targetComponent,
+            componentToAdd,
+          );
+        }
+      } else if (dropTarget.id !== "root" && isDroppable) {
+        if (activeComponent?.name === "Grid") {
+          const isDopopingInVerticalAxis =
+            dropTarget.edge === "top" || dropTarget.edge === "bottom";
+          let useParentInstead = false;
+          if (
+            isMoving &&
+            isDopopingInVerticalAxis &&
+            targetComponent?.name === "GridColumn"
+          ) {
+            useParentInstead = true;
+          }
+
+          handleGridReorderingOrMoving(
+            editorTreeCopy.root,
+            droppedId,
+            targetComponent,
+            dropTarget,
+            useParentInstead,
+          );
+        } else {
+          handleReorderingOrMoving(
+            editorTreeCopy.root,
+            droppedId,
+            targetComponent,
+            dropTarget,
+          );
+        }
+      } else if (isDroppable) {
+        handleRootDrop(
+          editorTreeCopy.root,
+          droppedId,
+          activeComponent,
+          dropTarget,
+        );
+      }
+
+      setEditorTree(editorTreeCopy);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
@@ -117,21 +127,21 @@ export const useOnDrop = () => {
   );
 
   function handleGridComponentAddition(
-    copy: Component,
+    treeRoot: ComponentStructure,
     dropTarget: DropTarget,
     targetComponent: Component | null,
-    componentToAdd: Component,
+    componentToAdd: ComponentStructure,
   ) {
     const allowedParentTypes =
       componentMapper[componentToAdd.name].allowedParentTypes;
 
     if (allowedParentTypes?.includes(targetComponent?.name as string)) {
-      const newSelectedId = addComponent(copy, componentToAdd, dropTarget);
+      const newSelectedId = addComponent(treeRoot, componentToAdd, dropTarget);
       setSelectedComponentIds(() => [newSelectedId]);
     } else {
-      const targetParent = getComponentParent(copy, dropTarget.id);
+      const targetParent = getComponentParent(treeRoot, dropTarget.id);
       if (targetParent && allowedParentTypes?.includes(targetParent.name)) {
-        const newSelectedId = addComponent(copy, componentToAdd, {
+        const newSelectedId = addComponent(treeRoot, componentToAdd, {
           id: targetParent.id as string,
           edge: dropTarget.edge,
         });
@@ -144,50 +154,49 @@ export const useOnDrop = () => {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   function handleComponentAddition(
-    copy: EditorTree,
+    treeRoot: ComponentStructure,
     dropTarget: DropTarget,
     targetComponent: Component | null,
-    componentToAdd: Component,
+    componentToAdd: ComponentStructure,
   ) {
-    const targetParent = getComponentParent(copy.root, dropTarget.id);
+    const targetParent = getComponentParent(treeRoot, dropTarget.id);
     const isPopOver = componentToAdd.name === "PopOver";
-    // TODO: get this back
-    // if (!targetComponent?.blockDroppingChildrenInside || isPopOver) {
-    //   const newSelectedId = addComponent(copy.root, componentToAdd, dropTarget);
-    //
-    //   if (dropTarget.edge !== "center") {
-    //     handleReorderingOrMoving(
-    //       copy,
-    //       newSelectedId,
-    //       targetComponent,
-    //       dropTarget,
-    //     );
-    //   }
-    //
-    //   setSelectedComponentIds(() => [newSelectedId]);
-    // } else {
-    //   if (targetParent) {
-    //     const dropTargetIndex = getComponentIndex(targetParent, dropTarget.id);
-    //
-    //     const newSelectedId = addComponent(
-    //       copy.root,
-    //       componentToAdd,
-    //       {
-    //         id: targetParent.id as string,
-    //         edge: dropTarget.edge,
-    //       },
-    //       ["right", "bottom"].includes(dropTarget.edge)
-    //         ? dropTargetIndex + 1
-    //         : dropTargetIndex,
-    //     );
-    //     setSelectedComponentIds(() => [newSelectedId]);
-    //   }
-    // }
+    if (!targetComponent?.blockDroppingChildrenInside || isPopOver) {
+      const newSelectedId = addComponent(treeRoot, componentToAdd, dropTarget);
+
+      if (dropTarget.edge !== "center") {
+        handleReorderingOrMoving(
+          treeRoot,
+          newSelectedId,
+          targetComponent,
+          dropTarget,
+        );
+      }
+
+      setSelectedComponentIds(() => [newSelectedId]);
+    } else {
+      if (targetParent) {
+        const dropTargetIndex = getComponentIndex(targetParent, dropTarget.id);
+
+        const newSelectedId = addComponent(
+          treeRoot,
+          componentToAdd,
+          {
+            id: targetParent.id as string,
+            edge: dropTarget.edge,
+          },
+          ["right", "bottom"].includes(dropTarget.edge)
+            ? dropTargetIndex + 1
+            : dropTargetIndex,
+        );
+        setSelectedComponentIds(() => [newSelectedId]);
+      }
+    }
     setComponentToAdd(undefined);
   }
 
   function handleGridReorderingOrMoving(
-    copy: Component,
+    treeRoot: ComponentStructure,
     droppedId: string,
     targetComponent: Component | null,
     dropTarget: DropTarget,
@@ -197,34 +206,38 @@ export const useOnDrop = () => {
       return;
     }
 
-    const activeParent = getComponentParent(copy, droppedId);
-    const targetParent = getComponentParent(copy, targetComponent?.id!);
-    const p = getComponentParent(copy, targetParent?.id!);
+    const activeParent = getComponentParent(treeRoot, droppedId);
+    const targetParent = getComponentParent(treeRoot, targetComponent?.id!);
+    const p = getComponentParent(treeRoot, targetParent?.id!);
 
     const isSameParent = useParentInstead
       ? activeParent?.id === p?.id
       : activeParent?.id === targetParent?.id;
 
     if (isSameParent) {
-      moveComponent(copy, droppedId, dropTarget);
+      moveComponent(treeRoot, droppedId, dropTarget);
     } else {
       let newParentId = targetParent!.id;
       if (dropTarget.edge === "center") {
         newParentId = dropTarget.id;
       }
       moveComponentToDifferentParent(
-        copy,
+        treeRoot,
         droppedId,
         dropTarget,
         newParentId as string,
       );
-      removeComponentFromParent(copy, droppedId, activeParent!.id as string);
+      removeComponentFromParent(
+        treeRoot,
+        droppedId,
+        activeParent!.id as string,
+      );
     }
   }
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   function handleReorderingOrMoving(
-    copy: EditorTree,
+    treeRoot: ComponentStructure,
     droppedId: string,
     targetComponent: Component | null,
     dropTarget: DropTarget,
@@ -233,27 +246,26 @@ export const useOnDrop = () => {
       return;
     }
 
-    const activeParent = getComponentParent(copy.root, droppedId);
-    const targetParent = getComponentParent(copy.root, dropTarget.id);
+    const activeParent = getComponentParent(treeRoot, droppedId);
+    const targetParent = getComponentParent(treeRoot, dropTarget.id);
     if (
       targetComponent?.blockDroppingChildrenInside &&
       activeParent?.id === targetParent?.id
     ) {
-      moveComponent(copy.root, droppedId, dropTarget);
+      moveComponent(treeRoot, droppedId, dropTarget);
     } else {
       let newParentId = targetParent!.id;
       if (dropTarget.edge === "center") {
         newParentId = dropTarget.id;
       }
-      // TODO: get this back
-      // moveComponentToDifferentParent(
-      //   copy.root,
-      //   droppedId,
-      //   dropTarget,
-      //   newParentId as string,
-      // );
+      moveComponentToDifferentParent(
+        treeRoot,
+        droppedId,
+        dropTarget,
+        newParentId as string,
+      );
       removeComponentFromParent(
-        copy.root,
+        treeRoot,
         droppedId,
         activeParent!.id as string,
       );
@@ -262,19 +274,14 @@ export const useOnDrop = () => {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   function handleRootDrop(
-    copy: EditorTree,
+    treeRoot: ComponentStructure,
     droppedId: string,
     activeComponent: Component | null,
     dropTarget: DropTarget,
   ) {
-    removeComponent(copy.root, droppedId);
-    // TODO: get this back
-    // const newSelectedId = addComponent(
-    //   copy.root,
-    //   activeComponent as unknown as Component,
-    //   dropTarget,
-    // );
-    // setSelectedComponentIds(() => [newSelectedId]);
+    removeComponent(treeRoot, droppedId);
+    const newSelectedId = addComponent(treeRoot, activeComponent!, dropTarget);
+    setSelectedComponentIds(() => [newSelectedId]);
   }
   return onDrop;
 };
