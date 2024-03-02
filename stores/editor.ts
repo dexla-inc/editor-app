@@ -13,10 +13,8 @@ import {
   ComponentStructure,
   EditorTree,
   EditorTreeCopy,
-  extractComponentMutableAttrs,
   getTreeComponentMutableProps,
   recoverTreeComponentAttrs,
-  updateTreeComponent,
   updateTreeComponentAttrs2,
   updateTreeComponentChildren,
 } from "@/utils/editor";
@@ -209,17 +207,6 @@ export type EditorState = {
     currentPageId: string,
   ) => void;
   setComponentToAdd: (componentToAdd?: ComponentStructure) => void;
-  updateTreeComponent: (params: {
-    componentId: string;
-    props: any;
-    forceState?: string;
-    save?: boolean;
-  }) => void;
-  updateTreeComponents: (
-    componentIds: string[],
-    props: any,
-    save?: boolean,
-  ) => void;
   updateTreeComponentChildren: (
     componentId: string,
     children: Component[],
@@ -396,112 +383,6 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
               },
               false,
               "editor/resetTree",
-            );
-          },
-          // any props change
-          updateTreeComponent: ({
-            componentId,
-            props,
-            forceState,
-            save = true,
-          }) => {
-            set(
-              (prev: EditorState) => {
-                const copy = cloneDeep(prev.tree);
-                const currentState =
-                  prev.currentTreeComponentsStates?.[componentId] ?? "default";
-                const currentLanguage = forceState ?? prev.language;
-
-                // TODO: get this back
-                // const newComponentMutableAttrs = updateTreeComponent(
-                //   copy.root,
-                //   componentId,
-                //   props,
-                //   currentState,
-                //   currentLanguage,
-                // );
-                if (save && !prev.isPreviewMode) {
-                  console.log(
-                    "updateTreeComponent",
-                    prev,
-                    props,
-                    componentId,
-                    forceState,
-                    save,
-                  );
-                  debouncedUpdatePageState(
-                    encodeSchema(
-                      JSON.stringify(removeKeysRecursive(copy, ["error"])),
-                    ),
-                    prev.currentProjectId ?? "",
-                    prev.currentPageId ?? "",
-                    prev.setIsSaving,
-                  );
-                }
-
-                // const component = getComponentById(copy.root, componentId);
-
-                return {
-                  tree: {
-                    ...copy,
-                    // name: `Edited ${component?.name}`,
-                    timestamp: Date.now(),
-                  },
-                  componentMutableAttrs: merge(
-                    {},
-                    prev.componentMutableAttrs,
-                    // newComponentMutableAttrs,
-                  ),
-                };
-              },
-              false,
-              "editor/updateTreeComponent",
-            );
-          },
-          updateTreeComponents: (componentIds, props, save = true) => {
-            set(
-              (prev: EditorState) => {
-                const lastComponentId = componentIds[componentIds.length - 1];
-                const copy = cloneDeep(prev.tree);
-                const currentState =
-                  prev.currentTreeComponentsStates?.[lastComponentId] ??
-                  "default";
-                const currentLanguage = prev.language;
-
-                // TODO: get this back
-                // const newComponentMutableAttrs = updateTreeComponent(
-                //   copy.root,
-                //   componentIds,
-                //   props,
-                //   currentState,
-                //   currentLanguage,
-                // );
-                if (save && !prev.isPreviewMode) {
-                  debouncedUpdatePageState(
-                    encodeSchema(
-                      JSON.stringify(removeKeysRecursive(copy, ["error"])),
-                    ),
-                    prev.currentProjectId ?? "",
-                    prev.currentPageId ?? "",
-                    prev.setIsSaving,
-                  );
-                }
-
-                return {
-                  tree: {
-                    ...cloneDeep(copy),
-                    name: `Edited multiple components`,
-                    timestamp: Date.now(),
-                  },
-                  componentMutableAttrs: merge(
-                    {},
-                    prev.componentMutableAttrs,
-                    // newComponentMutableAttrs,
-                  ),
-                };
-              },
-              false,
-              "editor/updateTreeComponents",
             );
           },
           // anything out of .props that changes .children[]

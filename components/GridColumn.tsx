@@ -1,22 +1,15 @@
 import { useEditorStore } from "@/stores/editor";
 import {
   EditorTreeCopy,
-  getComponentById,
   getComponentIndex,
   getComponentParent,
-  updateTreeComponent,
+  updateTreeComponentAttrs2,
 } from "@/utils/editor";
 import { calculateGridSizes } from "@/utils/grid";
 import { Box, Text, px, useMantineTheme } from "@mantine/core";
 import cloneDeep from "lodash.clonedeep";
 import { Resizable } from "re-resizable";
-import {
-  PropsWithChildren,
-  forwardRef,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { PropsWithChildren, forwardRef, useEffect, useState } from "react";
 
 export const GridColumn = forwardRef(
   (
@@ -41,6 +34,9 @@ export const GridColumn = forwardRef(
     const [initialWidth, setInitialWidth] = useState(0);
     const [initialSpan, setInitialSpan] = useState(0);
     const [initialNextSiblingSpan, setInitialNextSiblingSpan] = useState(0);
+    const component = useEditorStore(
+      (state) => state.componentMutableAttrs[props.id!],
+    );
 
     const parentTree = getComponentParent(editorTree.root, props.id!);
     const parent = useEditorStore(
@@ -207,27 +203,26 @@ export const GridColumn = forwardRef(
           }}
           onResizeStop={() => {
             const copy = cloneDeep(editorTree);
-            updateTreeComponent(copy.root, props.id, {
-              span: columnSpans[props.id] ?? 0,
-              resized: true,
+            updateTreeComponentAttrs2(component, {
+              props: {
+                span: columnSpans[props.id] ?? 0,
+                resized: true,
+              },
             });
 
             if (nextSibling) {
-              updateTreeComponent(copy.root, nextSibling.id!, {
-                span: columnSpans[nextSibling.id!] ?? 0,
-                resized: false,
+              updateTreeComponentAttrs2(nextSibling, {
+                props: {
+                  span: columnSpans[nextSibling.id!] ?? 0,
+                  resized: false,
+                },
               });
 
-              const nextSiblingComp = getComponentById(
-                copy.root,
-                nextSibling.id!,
-              );
-              if (nextSiblingComp) {
-                calculateGridSizes(nextSiblingComp);
+              if (nextSibling) {
+                calculateGridSizes(nextSibling);
               }
             }
 
-            const component = getComponentById(copy.root, props.id!);
             if (component) {
               calculateGridSizes(component);
             }

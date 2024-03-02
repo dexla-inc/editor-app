@@ -472,56 +472,6 @@ export const recoverTreeComponentAttrs = (
   return tree;
 };
 
-export const updateTreeComponent = (
-  treeRoot: Component,
-  ids: string | string[],
-  props: any,
-  state: string = "default",
-  language: string = "default",
-) => {
-  const componentMutableAttrs: Record<string, any> = {};
-  ids = Array.isArray(ids) ? ids : [ids];
-
-  const translatableFields = pickBy(props, pickTranslatableFields);
-  const styleFields = pickBy(props, pickStyleFields);
-  const alwaysDefaultFields = omit(props ?? {}, [
-    ...translatableFieldsKeys,
-    ...styleFieldsKeys,
-  ]);
-
-  crawl(
-    treeRoot,
-    (node, context) => {
-      if (ids.includes(node.id!)) {
-        if (language === "default") {
-          node.props = merge(node.props, translatableFields);
-        } else {
-          node.languages = merge(node.languages, {
-            [language]: translatableFields,
-          });
-        }
-
-        if (state === "default") {
-          node.props = merge(node.props, styleFields);
-        } else {
-          node.states = merge(node.states, {
-            [state]: styleFields,
-          });
-        }
-
-        node.props = merge(node.props, alwaysDefaultFields);
-
-        // TODO: uncomment when we have a solution to  loop only the ids list
-        // context.break();
-        componentMutableAttrs[node.id!] = extractComponentMutableAttrs(node);
-      }
-    },
-    { order: "bfs" },
-  );
-
-  return componentMutableAttrs;
-};
-
 export const getTreeComponentMutableProps = (treeRoot: Component) => {
   const newComponentMutableAttrs: Record<string, any> = {};
   crawl(
@@ -795,20 +745,6 @@ export const debouncedTreeComponentChildrenUpdate = debounce(
   },
   300,
 );
-
-export const debouncedTreeUpdate = debounce(
-  (componentId, props, save = true) => {
-    const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-    const updateTreeComponents = useEditorStore.getState().updateTreeComponents;
-    if (Array.isArray(componentId)) {
-      updateTreeComponents(componentId, props, save);
-    } else {
-      updateTreeComponent({ componentId, props, save });
-    }
-  },
-  300,
-);
-
 export const debouncedTreeRootChildrenUpdate = debounce(
   (value: Component[], save = true) => {
     const updateTreeComponentChildren =

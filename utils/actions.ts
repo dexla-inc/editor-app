@@ -336,8 +336,8 @@ export const useChangeVisibilityAction = ({
   action,
   computeValue,
 }: TogglePropsActionParams) => {
-  const updateTreeComponent = useEditorStore(
-    (state) => state.updateTreeComponent,
+  const updateTreeComponentAttrs = useEditorStore(
+    (state) => state.updateTreeComponentAttrs,
   );
   const componentId = computeValue({ value: action.componentId });
   const component = useEditorStore(
@@ -362,10 +362,12 @@ export const useChangeVisibilityAction = ({
   );
 
   // Update the component with the new display value
-  updateTreeComponent({
-    componentId,
-    props: {
-      style: { display: newDisplay },
+  updateTreeComponentAttrs({
+    componentIds: [componentId],
+    attrs: {
+      props: {
+        style: { display: newDisplay },
+      },
     },
     save: false,
   });
@@ -550,9 +552,12 @@ export async function performFetch(
 const setLoadingState = (
   componentId: string,
   isLoading: boolean,
-  updateTreeComponent: Function,
+  updateTreeComponentAttrs: Function,
 ) => {
-  updateTreeComponent({ componentId, props: { loading: isLoading } });
+  updateTreeComponentAttrs({
+    componentIds: [componentId],
+    attrs: { props: { loading: isLoading } },
+  });
 };
 
 export const useApiCallAction = async ({
@@ -566,9 +571,10 @@ export const useApiCallAction = async ({
   endpointResults,
   setNonEditorActions,
 }: APICallActionParams): Promise<any> => {
-  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+  const updateTreeComponentAttrs =
+    useEditorStore.getState().updateTreeComponentAttrs;
   if (entity.props) {
-    setLoadingState(entity.id!, true, updateTreeComponent);
+    setLoadingState(entity.id!, true, updateTreeComponentAttrs);
   }
 
   const endpoint = endpointResults?.find((e) => e.id === action.endpoint)!;
@@ -647,7 +653,7 @@ export const useApiCallAction = async ({
     });
   } finally {
     if (entity.props) {
-      setLoadingState(entity.id!, false, updateTreeComponent);
+      setLoadingState(entity.id!, false, updateTreeComponentAttrs);
     }
   }
 };

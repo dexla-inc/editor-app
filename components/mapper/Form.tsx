@@ -74,12 +74,13 @@ const FormComponent = forwardRef(
       if (!isPreviewMode) {
         return;
       }
-      const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+      const updateTreeComponentAttrs =
+        useEditorStore.getState().updateTreeComponentAttrs;
 
       invalidComponents.map((component) => {
-        updateTreeComponent({
-          componentId: component.id!,
-          props: { error: `${component?.description} is required` },
+        updateTreeComponentAttrs({
+          componentIds: [component.id!],
+          attrs: { props: { error: `${component?.description} is required` } },
           save: false,
         });
       });

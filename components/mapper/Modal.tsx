@@ -40,11 +40,12 @@ export const ModalComponent = forwardRef(
 
     const handleClose = () => {
       onclose && onclose();
-      const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+      const updateTreeComponentAttrs =
+        useEditorStore.getState().updateTreeComponentAttrs;
 
-      updateTreeComponent({
-        componentId: component.id!,
-        props: { opened: false },
+      updateTreeComponentAttrs({
+        componentIds: [component.id!],
+        attrs: { props: { opened: false } },
         save: false,
       });
     };
