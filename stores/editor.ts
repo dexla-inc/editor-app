@@ -14,14 +14,11 @@ import {
   EditorTree,
   EditorTreeCopy,
   extractComponentMutableAttrs,
-  getComponentById,
   getTreeComponentMutableProps,
   recoverTreeComponentAttrs,
   updateTreeComponent,
-  updateTreeComponentAttrs,
   updateTreeComponentAttrs2,
   updateTreeComponentChildren,
-  updateTreeComponentStates,
 } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { removeKeysRecursive } from "@/utils/removeKeys";
@@ -221,11 +218,6 @@ export type EditorState = {
   updateTreeComponents: (
     componentIds: string[],
     props: any,
-    save?: boolean,
-  ) => void;
-  updateTreeComponentStates: (
-    componentId: string,
-    states: any,
     save?: boolean,
   ) => void;
   updateTreeComponentChildren: (
@@ -510,38 +502,6 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
               },
               false,
               "editor/updateTreeComponents",
-            );
-          },
-          updateTreeComponentStates: (componentId, states, save = true) => {
-            set(
-              (prev: EditorState) => {
-                const copy = cloneDeep(prev.tree);
-
-                // TODO: get this back
-                // updateTreeComponentStates(copy.root, componentId, states);
-                if (save && !prev.isPreviewMode) {
-                  debouncedUpdatePageState(
-                    encodeSchema(
-                      JSON.stringify(removeKeysRecursive(copy, ["error"])),
-                    ),
-                    prev.currentProjectId ?? "",
-                    prev.currentPageId ?? "",
-                    prev.setIsSaving,
-                  );
-                }
-
-                // const component = getComponentById(copy.root, componentId);
-
-                return {
-                  tree: {
-                    ...cloneDeep(copy),
-                    // name: `Edited ${component?.name}`,
-                    timestamp: Date.now(),
-                  },
-                };
-              },
-              false,
-              "editor/updateTreeComponentStates",
             );
           },
           // anything out of .props that changes .children[]

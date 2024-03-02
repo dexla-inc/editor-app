@@ -421,22 +421,6 @@ const pickStyleFields = (value: string, key: string) => {
   return value !== "" && styleFieldsKeys.includes(key);
 };
 
-export const updateTreeComponentAttrs = (
-  treeRoot: Component,
-  ids: string[],
-  attrs: Partial<Component>,
-) => {
-  crawl(
-    treeRoot,
-    (node) => {
-      if (ids.includes(node.id!)) {
-        merge(node, attrs);
-      }
-    },
-    { order: "bfs" },
-  );
-};
-
 export const updateTreeComponentAttrs2 = (
   component: Component,
   attrs: Partial<Component>,
@@ -557,24 +541,6 @@ export const extractComponentMutableAttrs = (
   return omit(component, ["children"]);
 };
 
-export const updateTreeComponentStates = (
-  treeRoot: Component,
-  id: string,
-  states: any,
-) => {
-  crawl(
-    treeRoot,
-    (node, context) => {
-      if (node.id === id) {
-        node.states = merge(node.states, states);
-
-        context.break();
-      }
-    },
-    { order: "bfs" },
-  );
-};
-
 export const updateTreeComponentChildren = (
   treeRoot: Component,
   id: string,
@@ -591,23 +557,6 @@ export const updateTreeComponentChildren = (
   //   },
   //   { order: "bfs" },
   // );
-};
-
-export const updateTreeComponentActions = (
-  treeRoot: Component,
-  id: string,
-  actions: Action[],
-) => {
-  crawl(
-    treeRoot,
-    (node, context) => {
-      if (node.id === id) {
-        node.actions = actions;
-        context.break();
-      }
-    },
-    { order: "bfs" },
-  );
 };
 
 //TODO: make it run through the new component list and find the parent component by id
@@ -860,13 +809,6 @@ export const debouncedTreeUpdate = debounce(
   300,
 );
 
-export const debouncedTreeUpdateStates = debounce((...params: any[]) => {
-  const updateTreeComponentStates =
-    useEditorStore.getState().updateTreeComponentStates;
-  // @ts-ignore
-  updateTreeComponentStates(...params);
-}, 300);
-
 export const debouncedTreeRootChildrenUpdate = debounce(
   (value: Component[], save = true) => {
     const updateTreeComponentChildren =
@@ -880,10 +822,12 @@ export const debouncedTreeRootChildrenUpdate = debounce(
 
 export const debouncedTreeComponentAttrsUpdate = debounce(
   ({
+    componentIds = [],
     attrs,
     forceState,
     save = true,
   }: {
+    componentIds?: string[];
     attrs: Partial<Component>;
     forceState?: string;
     save?: boolean;
@@ -893,8 +837,12 @@ export const debouncedTreeComponentAttrsUpdate = debounce(
     const selectedComponentIds =
       useEditorStore.getState().selectedComponentIds ?? [];
 
+    if (!componentIds.length) {
+      componentIds = selectedComponentIds;
+    }
+
     updateTreeComponentAttrs({
-      componentIds: selectedComponentIds,
+      componentIds,
       attrs,
       forceState,
       save,

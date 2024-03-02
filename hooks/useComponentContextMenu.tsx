@@ -7,14 +7,12 @@ import { NAVBAR_WIDTH } from "@/utils/config";
 import {
   Component,
   addComponent,
-  debouncedTreeUpdate,
-  debouncedTreeUpdateStates,
-  getComponentById,
   getComponentIndex,
   getComponentParent,
   removeComponent,
   removeComponentFromParent,
   EditorTreeCopy,
+  debouncedTreeComponentAttrsUpdate,
 } from "@/utils/editor";
 import {
   IconBoxMargin,
@@ -172,14 +170,13 @@ export const useComponentContextMenu = () => {
       const isTargetNameSame =
         component.name === copiedProperties.componentName;
       if (!isTargetNameSame) return;
-      debouncedTreeUpdate(
-        component.id!,
-        omit(copiedProperties.componentProps, blackList),
-      );
-      debouncedTreeUpdateStates(
-        component.id!,
-        copiedProperties.componentStates!,
-      );
+      debouncedTreeComponentAttrsUpdate({
+        componentIds: [component.id!],
+        attrs: {
+          props: omit(copiedProperties.componentProps, blackList),
+          states: copiedProperties.componentStates!,
+        },
+      });
     },
     [copiedProperties],
   );
