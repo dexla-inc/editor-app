@@ -10,7 +10,6 @@ export const usePreventNavigationOnSaving = () => {
   const isSaving = useEditorStore((state) => state.isSaving);
   const isSavingRef = useRef(isSaving);
   const resetTree = useEditorStore((state) => state.resetTree);
-  const liveblocks = useEditorStore((state) => state.liveblocks);
 
   useEffect(() => {
     isSavingRef.current = isSaving;

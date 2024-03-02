@@ -19,7 +19,7 @@ import {
   NAVBAR_WIDTH,
 } from "@/utils/config";
 import { Aside, Box, Global, Navbar, ScrollArea } from "@mantine/core";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 type Props = {
   projectId: string;
@@ -39,14 +39,19 @@ export const Editor = ({ projectId, pageId }: Props) => {
 
   useGetPageData({ projectId, pageId });
   setCurrentPageAndProjectIds(projectId, pageId);
+  const [roomEntered, setRoomEntered] = useState(false);
 
   useEffect(() => {
-    if (pageId) {
+    if (pageId && !roomEntered) {
       liveblocks.enterRoom(pageId);
+      setRoomEntered(true);
     }
 
     return () => {
-      if (liveblocks.status === "connected") liveblocks.leaveRoom();
+      if (liveblocks.status === "connected") {
+        liveblocks.leaveRoom();
+        setRoomEntered(false);
+      }
     };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
