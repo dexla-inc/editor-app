@@ -23,7 +23,7 @@ const FormComponent = forwardRef(
   ) => {
     const { children, triggers, loading, dataType, gap, ...componentProps } =
       component.props as any;
-    const { onSubmit, ...otherTriggers } = triggers;
+    const { onSubmit, ...otherTriggers } = triggers || {};
     const { style, ...otherProps } = props as any;
     const gapPx = convertSizeToPx(gap, "gap");
     const setState = useEditorStore(

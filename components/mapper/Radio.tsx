@@ -1,9 +1,9 @@
+import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { Group, Radio as MantineRadio, RadioGroupProps } from "@mantine/core";
 import merge from "lodash.merge";
 import { forwardRef, memo, useState } from "react";
-import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -23,7 +23,7 @@ const RadioComponent = forwardRef(
       alignItems: "center",
     };
 
-    const { onChange, ...otherTriggers } = triggers;
+    const { onChange, ...otherTriggers } = triggers || {};
 
     const defaultTriggers = isPreviewMode
       ? {
