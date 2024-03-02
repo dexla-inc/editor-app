@@ -14,7 +14,6 @@ import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
 import { Button, Group, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useClipboard } from "@mantine/hooks";
 import { IconArrowLeft } from "@tabler/icons-react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -26,7 +25,6 @@ type Props = {
 };
 
 export default function PageConfig({ page, setPage }: Props) {
-  const { copy, copied } = useClipboard();
   const [isLoading, setIsLoading] = useState(false);
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);

@@ -20,7 +20,7 @@ export default function InitialPane({
   debouncedSearch,
 }: InitialPaneProps) {
   return (
-    <>
+    <Stack p="xs" pr={0}>
       <Button
         leftIcon={<IconPlus size={ICON_SIZE} />}
         onClick={() => setPage(null)}
@@ -48,6 +48,6 @@ export default function InitialPane({
           );
         })}
       </Stack>
-    </>
+    </Stack>
   );
 }

@@ -1,4 +1,6 @@
+import { useDataContext } from "@/contexts/DataProvider";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { useContentEditable } from "@/hooks/useContentEditable";
 import { useEditorStore } from "@/stores/editor";
 import { DISABLED_HOVER } from "@/utils/branding";
 import { isSame } from "@/utils/componentComparison";
@@ -6,7 +8,6 @@ import { Component, getColorFromTheme } from "@/utils/editor";
 import { BadgeProps, Badge as MantineBadge } from "@mantine/core";
 import merge from "lodash.merge";
 import { forwardRef, memo } from "react";
-import { useDataContext } from "@/contexts/DataProvider";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -16,6 +17,7 @@ type Props = {
 
 const BadgeComponent = forwardRef(
   ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
+    const contentEditableProps = useContentEditable(component.id as string);
     const { style, color, variable, ...componentProps } =
       component.props as any;
 
@@ -34,7 +36,8 @@ const BadgeComponent = forwardRef(
 
     return (
       <MantineBadge
-        ref={ref}
+        {...contentEditableProps}
+        ref={ref ?? contentEditableProps.ref}
         styles={{
           inner: customStyle,
           root: DISABLED_HOVER,

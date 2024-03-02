@@ -1,7 +1,7 @@
 import { deletePage, updatePage } from "@/requests/pages/mutations";
 import { PageResponse } from "@/requests/pages/types";
 import { useEditorStore } from "@/stores/editor";
-import { SegmentedControl, Stack } from "@mantine/core";
+import { Box, SegmentedControl } from "@mantine/core";
 import { useState } from "react";
 import PageActions from "./PageActions";
 import PageConfig from "./PageConfig";
@@ -28,7 +28,7 @@ export default function PageDetailPane({ page, setPage }: PageDetailPaneProps) {
   };
 
   return (
-    <Stack>
+    <Box>
       <SegmentedControl
         size="xs"
         style={{ width: "100%" }}
@@ -51,6 +51,6 @@ export default function PageDetailPane({ page, setPage }: PageDetailPaneProps) {
       ) : (
         <PageActions page={page} onUpdatePage={onUpdatePage} />
       )}
-    </Stack>
+    </Box>
   );
 }

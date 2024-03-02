@@ -1,4 +1,3 @@
-import { OpenAction, useEditorStore } from "@/stores/editor";
 import { DARK_COLOR, HOVERED } from "@/utils/branding";
 import { ICON_SIZE } from "@/utils/config";
 import {
@@ -12,9 +11,9 @@ import {
   UnstyledButton,
   useMantineTheme,
 } from "@mantine/core";
-import { IconChevronDown, IconTrash } from "@tabler/icons-react";
-import { PropsWithChildren, useState } from "react";
 import { useDisclosure } from "@mantine/hooks";
+import { IconChevronDown, IconTrash } from "@tabler/icons-react";
+import { PropsWithChildren } from "react";
 
 type SidebarSectionProps = {
   id: string;
@@ -45,8 +44,8 @@ export function SidebarSection({
     <>
       <Group
         spacing="xs"
-        {...(!noPadding ? { pr: "xs" } : { mx: `-${theme.spacing.md}` })}
-        {...(isSequential ? { mt: "md" } : {})}
+        {...(!noPadding ? { pr: "xs" } : { mx: `-${theme.spacing.sm}` })}
+        {...(isSequential ? { mt: "sm" } : {})}
         noWrap
         sx={{
           color: theme.black,
@@ -64,7 +63,7 @@ export function SidebarSection({
             fontWeight: 500,
             display: "block",
             width: "100%",
-            padding: `${theme.spacing.xs} ${theme.spacing.md}`,
+            padding: `${theme.spacing.xs} ${theme.spacing.sm}`,
           }}
         >
           <Group position="apart" spacing={0} noWrap>
@@ -76,7 +75,7 @@ export function SidebarSection({
               >
                 <Icon size={ICON_SIZE} />
               </ThemeIcon>
-              <Text size="xs" ml="md">
+              <Text size="xs" ml="sm">
                 {label}
               </Text>
             </Box>
@@ -107,7 +106,7 @@ export function SidebarSection({
       </Group>
       {children ? (
         <Collapse in={isExpanded}>
-          <Box {...(!noPadding && { px: "md" })}>{children}</Box>
+          <Box pl="xs">{children}</Box>
         </Collapse>
       ) : null}
     </>

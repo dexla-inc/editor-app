@@ -1,13 +1,13 @@
-import { useForm } from "@mantine/form";
+import { Icon } from "@/components/Icon";
+import { ActionButtons } from "@/components/actions/ActionButtons";
+import { SelectActionForm } from "@/components/pages/SelectActionForm";
+import { PageResponse } from "@/requests/pages/types";
 import { Action } from "@/utils/actions";
 import { Button, Divider, Stack } from "@mantine/core";
-import { useEffect } from "react";
-import { PageResponse } from "@/requests/pages/types";
-import merge from "lodash.merge";
-import { Icon } from "@/components/Icon";
-import { SelectActionForm } from "@/components/pages/SelectActionForm";
+import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
-import { ActionButtons } from "@/components/actions/ActionButtons";
+import merge from "lodash.merge";
+import { useEffect } from "react";
 
 type Props = {
   action: Action;

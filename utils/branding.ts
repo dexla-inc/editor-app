@@ -416,7 +416,7 @@ const getHoverColor = (value: string) => {
 };
 
 const setComponentBorder = (style: any, isPreviewMode?: boolean) => {
-  const [borderSize, _] = splitValueAndUnit(style.borderWidth) || [0, "px"];
+  const [borderSize, _] = splitValueAndUnit(style?.borderWidth) || [0, "px"];
   const hasBorder = borderSize > 0 && style.borderStyle !== "none";
   return hasBorder || isPreviewMode ? {} : IDENTIFIER;
 };

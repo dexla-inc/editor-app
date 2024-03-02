@@ -188,15 +188,15 @@ export const NavbarSection = ({
       pos="fixed"
       // bg={(theme) => (theme.co ? DARK_MODE : LIGHT_MODE)}
       top={HEADER_HEIGHT}
-      p={10}
-      pr={0}
+      //p={10}
+      //pr={0}
       left={NAVBAR_MIN_WIDTH}
       w={NAVBAR_WIDTH}
       h={`calc(100vh - ${HEADER_HEIGHT}px )`}
       spacing="xs"
       align="flex-start"
     >
-      <Flex justify="space-between" w="100%">
+      <Flex justify="space-between" w="100%" p="xs" pb={0}>
         <Title
           align="center"
           sx={(theme) => ({

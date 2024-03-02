@@ -3,7 +3,7 @@ import { SelectActionForm } from "@/components/pages/SelectActionForm";
 import { SidebarSection } from "@/components/pages/SidebarSection";
 import { PageResponse } from "@/requests/pages/types";
 import { Action, actionMapper } from "@/utils/actions";
-import { Button, Stack } from "@mantine/core";
+import { Box, Button } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconArrowBadgeRight, IconBolt } from "@tabler/icons-react";
 import startCase from "lodash.startcase";
@@ -84,7 +84,7 @@ export default function PageActions({ page, onUpdatePage }: Props) {
   };
 
   return (
-    <Stack>
+    <Box>
       {!addForm && (
         <Button
           onClick={open}
@@ -92,6 +92,8 @@ export default function PageActions({ page, onUpdatePage }: Props) {
           type="button"
           variant="light"
           w={"100%"}
+          m="xs"
+          mr={0}
         >
           Add Action
         </Button>
@@ -135,6 +137,6 @@ export default function PageActions({ page, onUpdatePage }: Props) {
           )
         );
       })}
-    </Stack>
+    </Box>
   );
 }

@@ -27,7 +27,7 @@ import {
   Title,
 } from "@mantine/core";
 import { IconFrustum, IconSearch } from "@tabler/icons-react";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 
 type DraggableComponentData = {
   id: string;
@@ -65,11 +65,6 @@ export const EditorNavbarComponentsSection = () => {
     projectId,
     activeCompany.orgId ?? "",
     componentTypeToShow,
-  );
-
-  const customComponents = useMemo(
-    () => componentList?.results.filter((c) => c.scope !== "GLOBAL") ?? [],
-    [componentList?.results],
   );
 
   const renderTree = useCallback((component: Component) => {
@@ -132,7 +127,7 @@ export const EditorNavbarComponentsSection = () => {
 
       {componentTypeToShow === "custom" && (
         <Stack spacing="xs" ref={customStackRef}>
-          {customComponents?.length === 0 && (
+          {componentList?.results?.length === 0 && (
             <Center>
               <Text align="center" size="xs" color="dimmed">
                 Create a custom component by editing and saving one on the
@@ -150,17 +145,13 @@ export const EditorNavbarComponentsSection = () => {
           >
             <Grid gutter="xs">
               {(query
-                ? customComponents.filter((cc) =>
+                ? componentList &&
+                  componentList.results.filter((cc) =>
                     new RegExp(query, "i").test(cc.description),
                   )
-                : customComponents
-              ).map(
-                ({
-                  id,
-                  content,
-                  description,
-                  type,
-                }: CustomComponentResponse) => {
+                : componentList?.results
+              )?.map(
+                ({ id, content, description }: CustomComponentResponse) => {
                   const componentData = JSON.parse(decodeSchema(content));
 
                   return (
