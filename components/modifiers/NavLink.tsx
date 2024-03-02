@@ -2,7 +2,7 @@ import { IconSelector } from "@/components/IconSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { withModifier } from "@/hoc/withModifier";
 import { useChangeState } from "@/hooks/useChangeState";
-import { debouncedTreeUpdate } from "@/utils/editor";
+import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -47,8 +47,8 @@ export const Modifier = withModifier(
             {...form.getInputProps("textAlign")}
             onChange={(value) => {
               form.setFieldValue("textAlign", value as string);
-              debouncedTreeUpdate(selectedComponentIds, {
-                style: { textAlign: value },
+              debouncedTreeComponentAttrsUpdate({
+                attrs: { props: { style: { textAlign: value } } },
               });
             }}
           />
@@ -70,8 +70,12 @@ export const Modifier = withModifier(
             {...form.getInputProps("color")}
             onChange={(value: string) => {
               form.setFieldValue("color", value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                color: value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: {
+                    color: value,
+                  },
+                },
               });
             }}
           />
@@ -80,8 +84,12 @@ export const Modifier = withModifier(
             selectedIcon={form.values.icon as string}
             onIconSelect={(value: string) => {
               form.setFieldValue("icon", value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                icon: value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: {
+                    icon: value,
+                  },
+                },
               });
             }}
           />
@@ -90,8 +98,12 @@ export const Modifier = withModifier(
             {...form.getInputProps("iconColor")}
             onChange={(value: string) => {
               form.setFieldValue("iconColor", value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                iconColor: value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: {
+                    iconColor: value,
+                  },
+                },
               });
             }}
           />

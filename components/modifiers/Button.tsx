@@ -6,7 +6,7 @@ import { withModifier } from "@/hoc/withModifier";
 import { useChangeState } from "@/hooks/useChangeState";
 import { useEditorStore } from "@/stores/editor";
 import { inputSizes } from "@/utils/defaultSizes";
-import { debouncedTreeUpdate } from "@/utils/editor";
+import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -25,9 +25,13 @@ export const Modifier = withModifier(
 
     const changeIcon = useCallback(
       (value?: string, iconPosition?: string) => {
-        debouncedTreeUpdate(selectedComponentIds, {
-          icon: value,
-          iconPosition: iconPosition,
+        debouncedTreeComponentAttrsUpdate({
+          attrs: {
+            props: {
+              icon: value,
+              iconPosition: iconPosition,
+            },
+          },
         });
         setIcon(value);
         form.setFieldValue("icon", value);
@@ -61,9 +65,13 @@ export const Modifier = withModifier(
             {...form.getInputProps("size")}
             onChange={(value) => {
               form.setFieldValue("size", value as string);
-              debouncedTreeUpdate(selectedComponentIds, {
-                size: value,
-                style: { height: inputSizes[value] },
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: {
+                    size: value,
+                    style: { height: inputSizes[value] },
+                  },
+                },
               });
             }}
           />
@@ -94,8 +102,12 @@ export const Modifier = withModifier(
             {...form.getInputProps("type")}
             onChange={(value) => {
               form.setFieldValue("type", value as string);
-              debouncedTreeUpdate(selectedComponentIds, {
-                type: value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: {
+                    type: value,
+                  },
+                },
               });
             }}
           />
@@ -111,8 +123,12 @@ export const Modifier = withModifier(
             {...form.getInputProps("textColor")}
             onChange={(value: string) => {
               form.setFieldValue("textColor", value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                textColor: value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: {
+                    textColor: value,
+                  },
+                },
               });
             }}
           />
@@ -125,8 +141,12 @@ export const Modifier = withModifier(
             {...form.getInputProps("width")}
             onChange={(value) => {
               form.setFieldValue("width", value as string);
-              debouncedTreeUpdate(selectedComponentIds, {
-                style: { width: value },
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: {
+                    width: value,
+                  },
+                },
               });
             }}
           />
@@ -153,8 +173,12 @@ export const Modifier = withModifier(
               {...form.getInputProps("iconPosition")}
               onChange={(value) => {
                 form.setFieldValue("iconPosition", value as string);
-                debouncedTreeUpdate(selectedComponentIds, {
-                  iconPosition: value,
+                debouncedTreeComponentAttrsUpdate({
+                  attrs: {
+                    props: {
+                      iconPosition: value,
+                    },
+                  },
                 });
               }}
             />

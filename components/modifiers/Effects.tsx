@@ -1,6 +1,6 @@
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { withModifier } from "@/hoc/withModifier";
-import { debouncedTreeUpdate } from "@/utils/editor";
+import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { NumberInput, Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -56,8 +56,8 @@ export const Modifier = withModifier(
             {...form.getInputProps("cursor")}
             onChange={(value) => {
               form.setFieldValue("cursor", value as string);
-              debouncedTreeUpdate(selectedComponentIds, {
-                style: { cursor: value },
+              debouncedTreeComponentAttrsUpdate({
+                attrs: { props: { style: { cursor: value } } },
               });
             }}
           />
@@ -76,8 +76,8 @@ export const Modifier = withModifier(
             {...form.getInputProps("overflow")}
             onChange={(value) => {
               form.setFieldValue("overflow", value as string);
-              debouncedTreeUpdate(selectedComponentIds, {
-                style: { overflow: value },
+              debouncedTreeComponentAttrsUpdate({
+                attrs: { props: { style: { overflow: value } } },
               });
             }}
           />
@@ -91,8 +91,8 @@ export const Modifier = withModifier(
             max={1}
             onChange={(value) => {
               form.setFieldValue("opacity", value as number);
-              debouncedTreeUpdate(selectedComponentIds, {
-                style: { opacity: value },
+              debouncedTreeComponentAttrsUpdate({
+                attrs: { props: { style: { opacity: value } } },
               });
             }}
           />
@@ -104,8 +104,8 @@ export const Modifier = withModifier(
             onChange={(e) => {
               const value = e.target.value;
               form.setFieldValue("tooltip", value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                tooltip: value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: { props: { tooltip: value } },
               });
             }}
           />
@@ -115,8 +115,8 @@ export const Modifier = withModifier(
             {...form.getInputProps("tooltipColor")}
             onChange={(value: string) => {
               form.setFieldValue("tooltipColor", value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                tooltipColor: value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: { props: { tooltipColor: value } },
               });
             }}
           />
@@ -139,8 +139,8 @@ export const Modifier = withModifier(
             {...form.getInputProps("tooltipPosition")}
             onChange={(value) => {
               form.setFieldValue("tooltipPosition", value as string);
-              debouncedTreeUpdate(selectedComponentIds, {
-                tooltipPosition: value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: { props: { tooltipPosition: value } },
               });
             }}
           />

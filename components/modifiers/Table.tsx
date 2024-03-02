@@ -1,5 +1,5 @@
 import { withModifier } from "@/hoc/withModifier";
-import { debouncedTreeUpdate } from "@/utils/editor";
+import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { Stack, Switch } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconTable } from "@tabler/icons-react";
@@ -68,10 +68,6 @@ export const Modifier = withModifier(
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedComponent]);
 
-    const isThereAnyConfigChecked =
-      get(form.values.config, "select", false) ||
-      get(form.values.config, "sorting", false);
-
     return (
       <form>
         <Stack spacing="xs">
@@ -80,8 +76,8 @@ export const Modifier = withModifier(
             {...form.getInputProps("striped")}
             onChange={(event) => {
               form.setFieldValue("striped", event.currentTarget.checked);
-              debouncedTreeUpdate(selectedComponentIds, {
-                striped: event.currentTarget.checked,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: { props: { striped: event.currentTarget.checked } },
               });
             }}
           />
@@ -95,7 +91,9 @@ export const Modifier = withModifier(
                 sorting: e.currentTarget.checked,
               };
               form.setFieldValue("config", config);
-              debouncedTreeUpdate(selectedComponentIds, { config });
+              debouncedTreeComponentAttrsUpdate({
+                attrs: { props: { config } },
+              });
             }}
           />
           <Switch
@@ -108,7 +106,9 @@ export const Modifier = withModifier(
                 select: e.currentTarget.checked,
               };
               form.setFieldValue("config", config);
-              debouncedTreeUpdate(selectedComponentIds, { config });
+              debouncedTreeComponentAttrsUpdate({
+                attrs: { props: { config } },
+              });
             }}
           />
         </Stack>

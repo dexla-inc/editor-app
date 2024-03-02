@@ -2,7 +2,7 @@ import { SizeSelector } from "@/components/SizeSelector";
 import { SwitchSelector } from "@/components/SwitchSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { withModifier } from "@/hoc/withModifier";
-import { debouncedTreeUpdate } from "@/utils/editor";
+import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Group, Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -40,8 +40,8 @@ export const Modifier = withModifier(
             {...form.getInputProps("defaultValue")}
             onChange={(e) => {
               form.setFieldValue("defaultValue", e.target.value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                defaultValue: e.target.value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: { props: { defaultValue: e.target.value } },
               });
             }}
           />
@@ -57,8 +57,8 @@ export const Modifier = withModifier(
               {...form.getInputProps("variant")}
               onChange={(value) => {
                 form.setFieldValue("variant", value as string);
-                debouncedTreeUpdate(selectedComponentIds, {
-                  variant: value,
+                debouncedTreeComponentAttrsUpdate({
+                  attrs: { props: { variant: value } },
                 });
               }}
             />
@@ -67,8 +67,8 @@ export const Modifier = withModifier(
               {...form.getInputProps("radius")}
               onChange={(value) => {
                 form.setFieldValue("radius", value as string);
-                debouncedTreeUpdate(selectedComponentIds, {
-                  radius: value,
+                debouncedTreeComponentAttrsUpdate({
+                  attrs: { props: { radius: value } },
                 });
               }}
             />
@@ -83,8 +83,8 @@ export const Modifier = withModifier(
             {...form.getInputProps("orientation")}
             onChange={(value) => {
               form.setFieldValue("orientation", value as string);
-              debouncedTreeUpdate(selectedComponentIds, {
-                orientation: value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: { props: { orientation: value } },
               });
             }}
           />
@@ -93,8 +93,8 @@ export const Modifier = withModifier(
             {...form.getInputProps("color")}
             onChange={(value: string) => {
               form.setFieldValue("color", value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                color: value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: { props: { color: value } },
               });
             }}
           />
@@ -103,8 +103,8 @@ export const Modifier = withModifier(
             {...form.getInputProps("grow")}
             onChange={(event) => {
               form.setFieldValue("grow", event.currentTarget.checked);
-              debouncedTreeUpdate(selectedComponentIds, {
-                grow: event.currentTarget.checked,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: { props: { grow: event.currentTarget.checked } },
               });
             }}
           />

@@ -1,7 +1,7 @@
 import { IconSelector } from "@/components/IconSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { withModifier } from "@/hoc/withModifier";
-import { debouncedTreeUpdate } from "@/utils/editor";
+import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -36,8 +36,8 @@ export const Modifier = withModifier(
             {...form.getInputProps("value")}
             onChange={(e) => {
               form.setFieldValue("value", e.target.value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                value: e.target.value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: { props: { value: e.target.value } },
               });
             }}
           />
@@ -46,8 +46,12 @@ export const Modifier = withModifier(
             selectedIcon={form.values.icon as string}
             onIconSelect={(value: string) => {
               form.setFieldValue("icon", value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                icon: value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: {
+                    icon: value,
+                  },
+                },
               });
             }}
           />
@@ -56,8 +60,12 @@ export const Modifier = withModifier(
             {...form.getInputProps("iconColor")}
             onChange={(value: string) => {
               form.setFieldValue("iconColor", value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                iconColor: value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: {
+                    iconColor: value,
+                  },
+                },
               });
             }}
           />

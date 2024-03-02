@@ -1,7 +1,7 @@
 import { FontSelector } from "@/components/FontSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { withModifier } from "@/hoc/withModifier";
-import { debouncedTreeUpdate } from "@/utils/editor";
+import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -39,8 +39,12 @@ export const Modifier = withModifier(
             value={form.getInputProps("color").value}
             onChange={(value: string) => {
               form.setFieldValue("color", value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                color: value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: {
+                    color: value,
+                  },
+                },
               });
             }}
           />

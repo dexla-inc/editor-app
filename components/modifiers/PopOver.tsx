@@ -1,6 +1,6 @@
 import { TopLabel } from "@/components/TopLabel";
 import { withModifier } from "@/hoc/withModifier";
-import { debouncedTreeUpdate } from "@/utils/editor";
+import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { SegmentedControl, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -46,8 +46,12 @@ export const Modifier = withModifier(
               {...form.getInputProps("position")}
               onChange={(value) => {
                 form.setFieldValue("position", value as string);
-                debouncedTreeUpdate(selectedComponentIds, {
-                  position: value,
+                debouncedTreeComponentAttrsUpdate({
+                  attrs: {
+                    props: {
+                      position: value,
+                    },
+                  },
                 });
               }}
             />

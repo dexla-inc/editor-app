@@ -8,7 +8,7 @@ import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon"
 import { withModifier } from "@/hoc/withModifier";
 import { useEditorStore } from "@/stores/editor";
 import { ICON_SIZE } from "@/utils/config";
-import { debouncedTreeUpdate } from "@/utils/editor";
+import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { ActionIcon, Flex, SegmentedControl, Stack, Text } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -113,12 +113,16 @@ export const Modifier = withModifier(
                 // @ts-ignore
                 const size = theme.headings.sizes[`h${value}`];
                 form.setFieldValue("order", value as string);
-                debouncedTreeUpdate(selectedComponentIds, {
-                  order: parseInt(value as string, 10),
-                  style: {
-                    fontSize: size.fontSize,
-                    lineHeight: size.lineHeight,
-                    fontWeight: size.fontWeight,
+                debouncedTreeComponentAttrsUpdate({
+                  attrs: {
+                    props: {
+                      order: parseInt(value as string, 10),
+                      style: {
+                        fontSize: size.fontSize,
+                        lineHeight: size.lineHeight,
+                        fontWeight: size.fontWeight,
+                      },
+                    },
                   },
                 });
               }}
@@ -159,9 +163,13 @@ export const Modifier = withModifier(
               {...form.getInputProps("whiteSpace")}
               onChange={(value) => {
                 form.setFieldValue("whiteSpace", value as string);
-                debouncedTreeUpdate(selectedComponentIds, {
-                  style: { whiteSpace: value },
-                  truncate: value === "normal" ? false : true,
+                debouncedTreeComponentAttrsUpdate({
+                  attrs: {
+                    props: {
+                      style: { whiteSpace: value },
+                      truncate: value === "normal" ? false : true,
+                    },
+                  },
                 });
               }}
             />
@@ -210,8 +218,12 @@ export const Modifier = withModifier(
               {...form.getInputProps("align")}
               onChange={(value) => {
                 form.setFieldValue("align", value as string);
-                debouncedTreeUpdate(selectedComponentIds, {
-                  style: { textAlign: value as string },
+                debouncedTreeComponentAttrsUpdate({
+                  attrs: {
+                    props: {
+                      style: { textAlign: value as string },
+                    },
+                  },
                 });
               }}
             />
@@ -270,7 +282,11 @@ export const Modifier = withModifier(
               {...form.getInputProps("textTransform")}
               onChange={(value) => {
                 form.setFieldValue("textTransform", value as string);
-                debouncedTreeUpdate(selectedComponentIds, { tt: value });
+                debouncedTreeComponentAttrsUpdate({
+                  attrs: {
+                    props: { tt: value },
+                  },
+                });
               }}
             />
           </Stack>
@@ -328,7 +344,11 @@ export const Modifier = withModifier(
               {...form.getInputProps("textDecoration")}
               onChange={(value) => {
                 form.setFieldValue("textDecoration", value as string);
-                debouncedTreeUpdate(selectedComponentIds, { td: value });
+                debouncedTreeComponentAttrsUpdate({
+                  attrs: {
+                    props: { td: value },
+                  },
+                });
               }}
             />
           </Stack>
@@ -337,7 +357,11 @@ export const Modifier = withModifier(
             {...form.getInputProps("color")}
             onChange={(value: string) => {
               form.setFieldValue("color", value);
-              debouncedTreeUpdate(selectedComponentIds, { color: value });
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: { color: value },
+                },
+              });
             }}
           />
 
@@ -368,8 +392,10 @@ export const Modifier = withModifier(
                       form.setFieldValue("xOffset", value as string);
                       const textShadow = `${value} ${yOffset} ${blur} ${shadowColor}`;
 
-                      debouncedTreeUpdate(selectedComponentIds, {
-                        style: { textShadow },
+                      debouncedTreeComponentAttrsUpdate({
+                        attrs: {
+                          props: { style: { textShadow } },
+                        },
                       });
                     }}
                     options={[
@@ -384,8 +410,10 @@ export const Modifier = withModifier(
                       form.setFieldValue("yOffset", value as string);
                       const textShadow = `${xOffset} ${value} ${blur} ${shadowColor}`;
 
-                      debouncedTreeUpdate(selectedComponentIds, {
-                        style: { textShadow },
+                      debouncedTreeComponentAttrsUpdate({
+                        attrs: {
+                          props: { style: { textShadow } },
+                        },
                       });
                     }}
                     options={[
@@ -402,8 +430,10 @@ export const Modifier = withModifier(
                     form.setFieldValue("blur", value as string);
                     const textShadow = `${xOffset} ${yOffset} ${value} ${shadowColor}`;
 
-                    debouncedTreeUpdate(selectedComponentIds, {
-                      style: { textShadow },
+                    debouncedTreeComponentAttrsUpdate({
+                      attrs: {
+                        props: { style: { textShadow } },
+                      },
                     });
                   }}
                   options={[
@@ -422,8 +452,10 @@ export const Modifier = withModifier(
                     form.setFieldValue("shadowColor", _value);
                     const textShadow = `${xOffset} ${yOffset} ${blur} ${value}`;
 
-                    debouncedTreeUpdate(selectedComponentIds, {
-                      style: { textShadow },
+                    debouncedTreeComponentAttrsUpdate({
+                      attrs: {
+                        props: { style: { textShadow } },
+                      },
                     });
                   }}
                 />

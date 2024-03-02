@@ -13,7 +13,7 @@ import { useEditorStore } from "@/stores/editor";
 import { allEqual } from "@/utils/common";
 import { INPUT_SIZE } from "@/utils/config";
 import { radiusSizes } from "@/utils/defaultSizes";
-import { debouncedTreeUpdate } from "@/utils/editor";
+import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Group, SegmentedControl, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -148,8 +148,8 @@ export const Modifier = withModifier(
       }
       form.setValues(borderColorForForm);
 
-      debouncedTreeUpdate(selectedComponentIds, {
-        style: borderColor,
+      debouncedTreeComponentAttrsUpdate({
+        attrs: { props: { style: borderColor } },
       });
     };
 
@@ -183,9 +183,13 @@ export const Modifier = withModifier(
       }
 
       form.setValues(borderStyle);
-      debouncedTreeUpdate(selectedComponentIds, {
-        showBorder: form.values.showBorder,
-        style: { ...borderStyle, ...borderColor },
+      debouncedTreeComponentAttrsUpdate({
+        attrs: {
+          props: {
+            showBorder: form.values.showBorder,
+            style: { ...borderStyle, ...borderColor },
+          },
+        },
       });
     };
 
@@ -217,8 +221,12 @@ export const Modifier = withModifier(
                 form.setFieldValue(styleKey, cardStyles[styleKey]);
               });
 
-              debouncedTreeUpdate(selectedComponentIds, {
-                style: cardStyles,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: {
+                    style: cardStyles,
+                  },
+                },
               });
             }}
             size={INPUT_SIZE}
@@ -285,8 +293,12 @@ export const Modifier = withModifier(
               {...form.getInputProps("showBorder")}
               onChange={(value) => {
                 form.setFieldValue("showBorder", value as string);
-                debouncedTreeUpdate(selectedComponentIds, {
-                  showBorder: value,
+                debouncedTreeComponentAttrsUpdate({
+                  attrs: {
+                    props: {
+                      showBorder: value,
+                    },
+                  },
                 });
               }}
             />
@@ -370,8 +382,12 @@ export const Modifier = withModifier(
                   };
                 }
 
-                debouncedTreeUpdate(selectedComponentIds, {
-                  style: borderWidth,
+                debouncedTreeComponentAttrsUpdate({
+                  attrs: {
+                    props: {
+                      style: borderWidth,
+                    },
+                  },
                 });
               }}
             />
@@ -429,8 +445,12 @@ export const Modifier = withModifier(
                         borderBottomRightRadius: value,
                       };
                       form.setValues({ ...borderRadius });
-                      debouncedTreeUpdate(selectedComponentIds, {
-                        style: borderRadius,
+                      debouncedTreeComponentAttrsUpdate({
+                        attrs: {
+                          props: {
+                            style: borderRadius,
+                          },
+                        },
                       });
                     }}
                     options={[
@@ -451,8 +471,12 @@ export const Modifier = withModifier(
                           "borderTopLeftRadius",
                           value as string,
                         );
-                        debouncedTreeUpdate(selectedComponentIds, {
-                          style: { borderTopLeftRadius: value },
+                        debouncedTreeComponentAttrsUpdate({
+                          attrs: {
+                            props: {
+                              style: { borderTopLeftRadius: value },
+                            },
+                          },
                         });
                       }}
                     />
@@ -464,8 +488,12 @@ export const Modifier = withModifier(
                           "borderTopRightRadius",
                           value as string,
                         );
-                        debouncedTreeUpdate(selectedComponentIds, {
-                          style: { borderTopRightRadius: value },
+                        debouncedTreeComponentAttrsUpdate({
+                          attrs: {
+                            props: {
+                              style: { borderTopRightRadius: value },
+                            },
+                          },
                         });
                       }}
                     />
@@ -479,8 +507,12 @@ export const Modifier = withModifier(
                           "borderBottomLeftRadius",
                           value as string,
                         );
-                        debouncedTreeUpdate(selectedComponentIds, {
-                          style: { borderBottomLeftRadius: value },
+                        debouncedTreeComponentAttrsUpdate({
+                          attrs: {
+                            props: {
+                              style: { borderBottomLeftRadius: value },
+                            },
+                          },
                         });
                       }}
                     />
@@ -492,8 +524,12 @@ export const Modifier = withModifier(
                           "borderBottomRightRadius",
                           value as string,
                         );
-                        debouncedTreeUpdate(selectedComponentIds, {
-                          style: { borderBottomRightRadius: value },
+                        debouncedTreeComponentAttrsUpdate({
+                          attrs: {
+                            props: {
+                              style: { borderBottomRightRadius: value },
+                            },
+                          },
                         });
                       }}
                     />

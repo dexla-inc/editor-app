@@ -4,9 +4,7 @@ import { useEditorStore } from "@/stores/editor";
 import { structureMapper } from "@/utils/componentMapper";
 import {
   Component,
-  debouncedTreeComponentChildrenUpdate,
-  debouncedTreeUpdate,
-  getAllComponentsByIds,
+  debouncedTreeComponentAttrsUpdate,
   getComponentTreeById,
 } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
@@ -93,7 +91,9 @@ export const Modifier = withModifier(
             {...form.getInputProps("variant")}
             onChange={(value) => {
               form.setFieldValue("variant", value as string);
-              debouncedTreeUpdate(selectedComponentIds, { variant: value });
+              debouncedTreeComponentAttrsUpdate({
+                attrs: { props: { variant: value } },
+              });
             }}
           />
           {/*TODO: get this back*/}

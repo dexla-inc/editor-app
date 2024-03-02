@@ -2,7 +2,7 @@ import { IconSelector } from "@/components/IconSelector";
 import { SizeSelector } from "@/components/SizeSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { withModifier } from "@/hoc/withModifier";
-import { debouncedTreeUpdate } from "@/utils/editor";
+import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -31,7 +31,7 @@ export const Modifier = withModifier(
 
     const handleIconSelect = (value: string) => {
       form.setFieldValue("icon", value);
-      debouncedTreeUpdate(selectedComponentIds, { name: value });
+      debouncedTreeComponentAttrsUpdate({ attrs: { props: { name: value } } });
     };
 
     return (
@@ -47,8 +47,12 @@ export const Modifier = withModifier(
             {...form.getInputProps("color")}
             onChange={(value: string) => {
               form.setFieldValue("color", value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                color: value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: {
+                    color: value,
+                  },
+                },
               });
             }}
           />
@@ -57,8 +61,12 @@ export const Modifier = withModifier(
             {...form.getInputProps("bg")}
             onChange={(value: string) => {
               form.setFieldValue("bg", value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                bg: value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: {
+                    bg: value,
+                  },
+                },
               });
             }}
           />
@@ -66,8 +74,12 @@ export const Modifier = withModifier(
             {...form.getInputProps("size")}
             onChange={(value) => {
               form.setFieldValue("size", value as string);
-              debouncedTreeUpdate(selectedComponentIds, {
-                size: value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: {
+                    size: value,
+                  },
+                },
               });
             }}
             showNone={false}

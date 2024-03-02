@@ -1,6 +1,6 @@
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { withModifier } from "@/hoc/withModifier";
-import { debouncedTreeUpdate } from "@/utils/editor";
+import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { NumberInput, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -37,8 +37,12 @@ export const Modifier = withModifier(
             {...form.getInputProps("color")}
             onChange={(value: string) => {
               form.setFieldValue("color", value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                color: value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: {
+                    color: value,
+                  },
+                },
               });
             }}
           />
@@ -47,7 +51,11 @@ export const Modifier = withModifier(
             {...form.getInputProps("size")}
             onChange={(value) => {
               form.setFieldValue("size", value as string);
-              debouncedTreeUpdate(selectedComponentIds, { size: value });
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: { size: value },
+                },
+              });
             }}
             showNone={false}
           />
@@ -59,8 +67,10 @@ export const Modifier = withModifier(
             {...form.getInputProps("value")}
             onChange={(value) => {
               form.setFieldValue("value", value as number);
-              debouncedTreeUpdate(selectedComponentIds, {
-                value: value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: { value: value },
+                },
               });
             }}
           />
@@ -70,8 +80,10 @@ export const Modifier = withModifier(
             checked={selectedComponent.props?.animate}
             onChange={(event) => {
               form.setFieldValue("animate", event.currentTarget.checked);
-              debouncedTreeUpdate(selectedComponentIds, {
-                animate: event.currentTarget.checked,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: { animate: event.currentTarget.checked },
+                },
               });
             }}
           />

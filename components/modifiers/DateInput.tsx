@@ -2,7 +2,7 @@ import { IconSelector } from "@/components/IconSelector";
 import { SizeSelector } from "@/components/SizeSelector";
 import { TopLabel } from "@/components/TopLabel";
 import { withModifier } from "@/hoc/withModifier";
-import { debouncedTreeUpdate } from "@/utils/editor";
+import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { SegmentedControl, Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -62,8 +62,8 @@ export const Modifier = withModifier(
               {...form.getInputProps("type")}
               onChange={(value) => {
                 form.setFieldValue("type", value as string);
-                debouncedTreeUpdate(selectedComponentIds, {
-                  type: value as string,
+                debouncedTreeComponentAttrsUpdate({
+                  attrs: { props: { type: value } },
                 });
               }}
             />
@@ -79,8 +79,8 @@ export const Modifier = withModifier(
             {...form.getInputProps("valueFormat")}
             onChange={(value) => {
               form.setFieldValue("valueFormat", value as string);
-              debouncedTreeUpdate(selectedComponentIds, {
-                valueFormat: value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: { props: { valueFormat: value } },
               });
             }}
           />
@@ -90,8 +90,8 @@ export const Modifier = withModifier(
             {...form.getInputProps("placeholder")}
             onChange={(e) => {
               form.setFieldValue("placeholder", e.target.value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                placeholder: e.target.value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: { props: { placeholder: e.target.value } },
               });
             }}
           />
@@ -99,8 +99,8 @@ export const Modifier = withModifier(
             {...form.getInputProps("size")}
             onChange={(e) => {
               form.setFieldValue("size", e);
-              debouncedTreeUpdate(selectedComponentIds, {
-                size: e,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: { props: { size: e } },
               });
             }}
           />
@@ -109,8 +109,8 @@ export const Modifier = withModifier(
             {...form.getInputProps("radius")}
             onChange={(e) => {
               form.setFieldValue("radius", e);
-              debouncedTreeUpdate(selectedComponentIds, {
-                radius: e,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: { props: { radius: e } },
               });
             }}
           />
@@ -119,8 +119,8 @@ export const Modifier = withModifier(
             selectedIcon={form.values.icon as string}
             onIconSelect={(value: string) => {
               form.setFieldValue("icon", value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                icon: value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: { props: { icon: value } },
               });
             }}
           />
@@ -140,8 +140,8 @@ export const Modifier = withModifier(
             {...form.getInputProps("iconPosition")}
             onChange={(value) => {
               form.setFieldValue("iconPosition", value as string);
-              debouncedTreeUpdate(selectedComponentIds, {
-                iconPosition: value as string,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: { props: { iconPosition: value as string } },
               });
             }}
           />
@@ -150,8 +150,8 @@ export const Modifier = withModifier(
             {...form.getInputProps("withAsterisk")}
             onChange={(value) => {
               form.setFieldValue("withAsterisk", value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                withAsterisk: value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: { props: { withAsterisk: value } },
               });
             }}
           />
@@ -160,8 +160,8 @@ export const Modifier = withModifier(
             {...form.getInputProps("clearable")}
             onChange={(value) => {
               form.setFieldValue("clearable", value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                clearable: value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: { props: { clearable: value } },
               });
             }}
           />
@@ -170,8 +170,8 @@ export const Modifier = withModifier(
             {...form.getInputProps("disabled")}
             onChange={(value) => {
               form.setFieldValue("disabled", value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                disabled: value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: { props: { disabled: value } },
               });
             }}
           />

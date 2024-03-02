@@ -1,7 +1,7 @@
 import { UnitInput } from "@/components/UnitInput";
 import { withModifier } from "@/hoc/withModifier";
 import { useEditorStore } from "@/stores/editor";
-import { debouncedTreeUpdate } from "@/utils/editor";
+import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -56,8 +56,12 @@ export const Modifier = withModifier(
             {...form.getInputProps("width")}
             onChange={(value) => {
               form.setFieldValue("width", value as string);
-              debouncedTreeUpdate(selectedComponentIds, {
-                style: { width: value },
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: {
+                    style: { width: value },
+                  },
+                },
               });
               setNavbarWidth(value as string);
             }}
@@ -67,8 +71,12 @@ export const Modifier = withModifier(
             {...form.getInputProps("bg")}
             onChange={(value: string) => {
               form.setFieldValue("bg", value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                bg: value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: {
+                    bg: value,
+                  },
+                },
               });
             }}
           />

@@ -1,6 +1,6 @@
 import { withModifier } from "@/hoc/withModifier";
 import { gapSizes } from "@/utils/defaultSizes";
-import { debouncedTreeUpdate } from "@/utils/editor";
+import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -37,8 +37,8 @@ export const Modifier = withModifier(
             {...form.getInputProps("gap")}
             onChange={(value) => {
               form.setFieldValue("gap", value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                gap: value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: { props: { gap: value } },
               });
             }}
           />
@@ -58,8 +58,8 @@ export const Modifier = withModifier(
             {...form.getInputProps("gridDirection")}
             onChange={(value) => {
               form.setFieldValue("gridDirection", value as string);
-              debouncedTreeUpdate(selectedComponentIds, {
-                gridDirection: value as string,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: { props: { gridDirection: value as string } },
               });
             }}
           />

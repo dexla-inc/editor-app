@@ -2,7 +2,7 @@ import { SegmentedControlInput } from "@/components/SegmentedControlInput";
 import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon";
 import { withModifier } from "@/hoc/withModifier";
 import { gapSizes } from "@/utils/defaultSizes";
-import { debouncedTreeUpdate } from "@/utils/editor";
+import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -52,8 +52,12 @@ export const Modifier = withModifier(
             {...form.getInputProps("gap")}
             onChange={(value) => {
               form.setFieldValue("gap", value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                gap: value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: {
+                    gap: value,
+                  },
+                },
               });
             }}
           />
@@ -83,11 +87,15 @@ export const Modifier = withModifier(
             {...form.getInputProps("gridAutoFlow")}
             onChange={(value) => {
               form.setFieldValue("gridAutoFlow", value as string);
-              debouncedTreeUpdate(selectedComponentIds, {
-                style: {
-                  gridAutoFlow: value,
-                  gridAutoRows: value === "row" ? "max-content" : "auto", // This is to stop the grid column stretching
-                  justifyContent: value === "row" ? "stretch" : "start",
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: {
+                    style: {
+                      gridAutoFlow: value,
+                      gridAutoRows: value === "row" ? "max-content" : "auto", // This is to stop the grid column stretching
+                      justifyContent: value === "row" ? "stretch" : "start",
+                    },
+                  },
                 },
               });
             }}
@@ -136,8 +144,12 @@ export const Modifier = withModifier(
               {...form.getInputProps("flexWrap")}
               onChange={(value) => {
                 form.setFieldValue("flexWrap", value as string);
-                debouncedTreeUpdate(selectedComponentIds, {
-                  style: { flexWrap: value },
+                debouncedTreeComponentAttrsUpdate({
+                  attrs: {
+                    props: {
+                      style: { flexWrap: value },
+                    },
+                  },
                 });
               }}
             />
@@ -177,9 +189,13 @@ export const Modifier = withModifier(
             {...form.getInputProps("alignSelf")}
             onChange={(value) => {
               form.setFieldValue("alignSelf", value as string);
-              debouncedTreeUpdate(selectedComponentIds, {
-                style: {
-                  alignSelf: value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: {
+                    style: {
+                      alignSelf: value,
+                    },
+                  },
                 },
               });
             }}
@@ -228,9 +244,13 @@ export const Modifier = withModifier(
             {...form.getInputProps("justifyContent")}
             onChange={(value) => {
               form.setFieldValue("justifyContent", value as string);
-              debouncedTreeUpdate(selectedComponentIds, {
-                style: {
-                  justifyContent: value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: {
+                    style: {
+                      justifyContent: value,
+                    },
+                  },
                 },
               });
             }}

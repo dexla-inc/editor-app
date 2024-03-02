@@ -3,7 +3,7 @@ import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { withModifier } from "@/hoc/withModifier";
 import { useEditorStore } from "@/stores/editor";
 import { inputSizes, radiusSizes } from "@/utils/defaultSizes";
-import { debouncedTreeUpdate } from "@/utils/editor";
+import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -50,9 +50,16 @@ export const Modifier = withModifier(
             {...form.getInputProps("size")}
             onChange={(value) => {
               form.setFieldValue("size", value as string);
-              debouncedTreeUpdate(selectedComponentIds, {
-                size: value,
-                style: { height: inputSizes[value], width: inputSizes[value] },
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: {
+                    size: value,
+                    style: {
+                      height: inputSizes[value],
+                      width: inputSizes[value],
+                    },
+                  },
+                },
               });
             }}
           />
@@ -66,7 +73,11 @@ export const Modifier = withModifier(
             {...form.getInputProps("variant")}
             onChange={(value) => {
               form.setFieldValue("variant", value as string);
-              debouncedTreeUpdate(selectedComponentIds, { variant: value });
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: { variant: value },
+                },
+              });
             }}
           />
           <ThemeColorSelector
@@ -74,7 +85,11 @@ export const Modifier = withModifier(
             {...form.getInputProps("color")}
             onChange={(value: string) => {
               form.setFieldValue("color", value);
-              debouncedTreeUpdate(selectedComponentIds, { color: value });
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: { color: value },
+                },
+              });
             }}
           />
           <SegmentedControlSizes
@@ -83,7 +98,11 @@ export const Modifier = withModifier(
             {...form.getInputProps("radius")}
             onChange={(value) => {
               form.setFieldValue("radius", value as string);
-              debouncedTreeUpdate(selectedComponentIds, { radius: value });
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: { radius: value },
+                },
+              });
             }}
           />
           <SizeSelector
@@ -91,7 +110,11 @@ export const Modifier = withModifier(
             {...form.getInputProps("radius")}
             onChange={(value) => {
               form.setFieldValue("radius", value as string);
-              debouncedTreeUpdate(selectedComponentIds, { radius: value });
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: { radius: value },
+                },
+              });
             }}
           />
         </Stack>

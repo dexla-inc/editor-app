@@ -6,9 +6,7 @@ import { useEditorStore } from "@/stores/editor";
 import { structureMapper } from "@/utils/componentMapper";
 import {
   Component,
-  debouncedTreeComponentChildrenUpdate,
-  debouncedTreeUpdate,
-  getComponentById,
+  debouncedTreeComponentAttrsUpdate,
   getComponentTreeById,
 } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
@@ -101,8 +99,8 @@ export const Modifier = withModifier(
             {...form.getInputProps("activeStep")}
             onChange={(value) => {
               form.setFieldValue("activeStep", String(value));
-              debouncedTreeUpdate(selectedComponentIds, {
-                activeStep: value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: { props: { activeStep: value } },
               });
             }}
           />
@@ -152,8 +150,8 @@ export const Modifier = withModifier(
               {...form.getInputProps("orientation")}
               onChange={(value) => {
                 form.setFieldValue("orientation", value as string);
-                debouncedTreeUpdate(selectedComponentIds, {
-                  orientation: value,
+                debouncedTreeComponentAttrsUpdate({
+                  attrs: { props: { orientation: value } },
                 });
               }}
             />
@@ -163,8 +161,8 @@ export const Modifier = withModifier(
                 {...form.getInputProps("color")}
                 onChange={(value: string) => {
                   form.setFieldValue("color", value);
-                  debouncedTreeUpdate(selectedComponentIds, {
-                    color: value,
+                  debouncedTreeComponentAttrsUpdate({
+                    attrs: { props: { color: value } },
                   });
                 }}
               />

@@ -2,7 +2,7 @@ import { SegmentedControlSizes } from "@/components/SegmentedControlSizes";
 import { SwitchSelector } from "@/components/SwitchSelector";
 import { withModifier } from "@/hoc/withModifier";
 import { inputSizes } from "@/utils/defaultSizes";
-import { debouncedTreeUpdate } from "@/utils/editor";
+import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -37,8 +37,12 @@ export const Modifier = withModifier(
             {...form.getInputProps("name")}
             onChange={(e) => {
               form.setFieldValue("name", e.target.value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                name: e.target.value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: {
+                    name: e.target.value,
+                  },
+                },
               });
             }}
           />
@@ -48,8 +52,12 @@ export const Modifier = withModifier(
             {...form.getInputProps("size")}
             onChange={(value) => {
               form.setFieldValue("size", value as string);
-              debouncedTreeUpdate(selectedComponentIds, {
-                size: value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: {
+                    size: value,
+                  },
+                },
               });
             }}
           />
@@ -58,8 +66,12 @@ export const Modifier = withModifier(
             checked={form.getInputProps("withAsterisk").value}
             onChange={(event) => {
               form.setFieldValue("withAsterisk", event.currentTarget.checked);
-              debouncedTreeUpdate(selectedComponentIds, {
-                withAsterisk: event.currentTarget.checked,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: {
+                    withAsterisk: event.currentTarget.checked,
+                  },
+                },
               });
             }}
           />

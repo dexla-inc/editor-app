@@ -1,7 +1,7 @@
 import { SizeSelector } from "@/components/SizeSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { withModifier } from "@/hoc/withModifier";
-import { debouncedTreeUpdate } from "@/utils/editor";
+import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -39,8 +39,8 @@ export const Modifier = withModifier(
             {...form.getInputProps("label")}
             onChange={(e) => {
               form.setFieldValue("label", e.target.value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                label: e.target.value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: { props: { label: e.target.value } },
               });
             }}
           />
@@ -55,8 +55,8 @@ export const Modifier = withModifier(
             {...form.getInputProps("labelPosition")}
             onChange={(value) => {
               form.setFieldValue("labelPosition", value as string);
-              debouncedTreeUpdate(selectedComponentIds, {
-                labelPosition: value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: { props: { labelPosition: value } },
               });
             }}
           />
@@ -71,9 +71,8 @@ export const Modifier = withModifier(
             onChange={(value) => {
               form.setFieldValue("orientation", value as string);
               const height = value === "horizontal" ? "auto" : "20px";
-              debouncedTreeUpdate(selectedComponentIds, {
-                style: { height },
-                orientation: value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: { props: { style: { height }, orientation: value } },
               });
             }}
           />
@@ -81,8 +80,8 @@ export const Modifier = withModifier(
             {...form.getInputProps("size")}
             onChange={(value) => {
               form.setFieldValue("size", value as string);
-              debouncedTreeUpdate(selectedComponentIds, {
-                size: value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: { props: { size: value } },
               });
             }}
           />
@@ -97,8 +96,8 @@ export const Modifier = withModifier(
             {...form.getInputProps("variant")}
             onChange={(value) => {
               form.setFieldValue("variant", value as string);
-              debouncedTreeUpdate(selectedComponentIds, {
-                variant: value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: { props: { variant: value } },
               });
             }}
           />
@@ -107,8 +106,8 @@ export const Modifier = withModifier(
             {...form.getInputProps("color")}
             onChange={(value: string) => {
               form.setFieldValue("color", value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                color: value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: { props: { color: value } },
               });
             }}
           />

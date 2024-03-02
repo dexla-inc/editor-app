@@ -1,7 +1,7 @@
 import { Icon } from "@/components/Icon";
 import { TopLabel } from "@/components/TopLabel";
 import { UnitInput } from "@/components/UnitInput";
-import { debouncedTreeUpdate } from "@/utils/editor";
+import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { Flex, Group, SegmentedControl, Stack } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { IconBoxModel2 } from "@tabler/icons-react";
@@ -32,8 +32,8 @@ export const SpacingControl = ({ type, form, selectedComponentIds }: Props) => {
     };
     form.setValues(newValues);
 
-    debouncedTreeUpdate(selectedComponentIds, {
-      style: newValues,
+    debouncedTreeComponentAttrsUpdate({
+      attrs: { props: { style: newValues } },
     });
   };
 
@@ -42,8 +42,8 @@ export const SpacingControl = ({ type, form, selectedComponentIds }: Props) => {
     value: string,
   ) => {
     setTypeValue(`${type.toLowerCase()}${side}`, value);
-    debouncedTreeUpdate(selectedComponentIds, {
-      style: { [`${type.toLowerCase()}${side}`]: value },
+    debouncedTreeComponentAttrsUpdate({
+      attrs: { props: { style: { [`${type.toLowerCase()}${side}`]: value } } },
     });
   };
 

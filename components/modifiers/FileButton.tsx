@@ -1,5 +1,5 @@
 import { withModifier } from "@/hoc/withModifier";
-import { debouncedTreeUpdate } from "@/utils/editor";
+import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Stack, Switch, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -29,8 +29,8 @@ export const Modifier = withModifier(
       const name = e.target.name;
       const value = e.target.value;
       form.setFieldValue(name, value);
-      debouncedTreeUpdate(selectedComponentIds, {
-        [name]: value,
+      debouncedTreeComponentAttrsUpdate({
+        attrs: { props: { [name]: value } },
       });
     };
 
@@ -52,8 +52,8 @@ export const Modifier = withModifier(
             label="Allow multiple file upload"
             onChange={(e) => {
               form.setFieldValue("multiple", e.currentTarget.checked);
-              debouncedTreeUpdate(selectedComponentIds, {
-                multiple: e.currentTarget.checked,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: { props: { multiple: e.currentTarget.checked } },
               });
             }}
           />

@@ -4,7 +4,7 @@ import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon"
 import { withModifier } from "@/hoc/withModifier";
 import { useEditorStore } from "@/stores/editor";
 import { gapSizes } from "@/utils/defaultSizes";
-import { debouncedTreeUpdate } from "@/utils/editor";
+import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { SegmentedControl, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -175,8 +175,12 @@ export const Modifier = withModifier(
               {...form.getInputProps("flexDirection")}
               onChange={(value) => {
                 form.setFieldValue("flexDirection", value as string);
-                debouncedTreeUpdate(selectedComponentIds, {
-                  style: { flexDirection: value },
+                debouncedTreeComponentAttrsUpdate({
+                  attrs: {
+                    props: {
+                      style: { flexDirection: value },
+                    },
+                  },
                 });
               }}
             />
@@ -188,8 +192,12 @@ export const Modifier = withModifier(
             {...form.getInputProps("gap")}
             onChange={(value) => {
               form.setFieldValue("gap", value as string);
-              debouncedTreeUpdate(selectedComponentIds, {
-                gap: value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: {
+                    gap: value,
+                  },
+                },
               });
             }}
           />
@@ -215,8 +223,12 @@ export const Modifier = withModifier(
               {...form.getInputProps("alignItems")}
               onChange={(value) => {
                 form.setFieldValue("alignItems", value as string);
-                debouncedTreeUpdate(selectedComponentIds, {
-                  style: { alignItems: value },
+                debouncedTreeComponentAttrsUpdate({
+                  attrs: {
+                    props: {
+                      style: { alignItems: value },
+                    },
+                  },
                 });
               }}
             />
@@ -244,8 +256,12 @@ export const Modifier = withModifier(
                 {...form.getInputProps("justifyContent")}
                 onChange={(value) => {
                   form.setFieldValue("justifyContent", value as string);
-                  debouncedTreeUpdate(selectedComponentIds, {
-                    style: { justifyContent: value },
+                  debouncedTreeComponentAttrsUpdate({
+                    attrs: {
+                      props: {
+                        style: { justifyContent: value },
+                      },
+                    },
                   });
                 }}
               />
@@ -264,8 +280,12 @@ export const Modifier = withModifier(
                 {...form.getInputProps("justifyContent")}
                 onChange={(value) => {
                   form.setFieldValue("justifyContent", value as string);
-                  debouncedTreeUpdate(selectedComponentIds, {
-                    style: { justifyContent: value },
+                  debouncedTreeComponentAttrsUpdate({
+                    attrs: {
+                      props: {
+                        style: { justifyContent: value },
+                      },
+                    },
                   });
                 }}
               />
@@ -306,8 +326,12 @@ export const Modifier = withModifier(
               {...form.getInputProps("flex")}
               onChange={(value) => {
                 form.setFieldValue("flex", value as string);
-                debouncedTreeUpdate(selectedComponentIds, {
-                  style: { flex: value },
+                debouncedTreeComponentAttrsUpdate({
+                  attrs: {
+                    props: {
+                      style: { flex: value },
+                    },
+                  },
                 });
               }}
             />
@@ -356,8 +380,12 @@ export const Modifier = withModifier(
               {...form.getInputProps("flexWrap")}
               onChange={(value) => {
                 form.setFieldValue("flexWrap", value as string);
-                debouncedTreeUpdate(selectedComponentIds, {
-                  style: { flexWrap: value },
+                debouncedTreeComponentAttrsUpdate({
+                  attrs: {
+                    props: {
+                      style: { flexWrap: value },
+                    },
+                  },
                 });
               }}
             />
@@ -373,8 +401,12 @@ export const Modifier = withModifier(
               {...form.getInputProps("width")}
               onChange={(value) => {
                 form.setFieldValue("width", value as string);
-                debouncedTreeUpdate(selectedComponentIds, {
-                  style: { width: value },
+                debouncedTreeComponentAttrsUpdate({
+                  attrs: {
+                    props: {
+                      style: { width: value },
+                    },
+                  },
                 });
               }}
             />

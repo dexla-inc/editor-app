@@ -1,7 +1,7 @@
 import { withModifier } from "@/hoc/withModifier";
-import { debouncedTreeUpdate } from "@/utils/editor";
+import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { Checkbox, Stack, Textarea } from "@mantine/core";
+import { Checkbox, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconBoxModel } from "@tabler/icons-react";
 import merge from "lodash.merge";
@@ -42,8 +42,8 @@ export const Modifier = withModifier(
             {...form.getInputProps("size")}
             onChange={(value) => {
               form.setFieldValue("size", value as string);
-              debouncedTreeUpdate(selectedComponentIds, {
-                size: value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: { props: { size: value } },
               });
             }}
           />
@@ -54,8 +54,8 @@ export const Modifier = withModifier(
             {...form.getInputProps("forceHide", { type: "checkbox" })}
             onChange={(e) => {
               form.setFieldValue("forceHide", e.target.checked);
-              debouncedTreeUpdate(selectedComponentIds, {
-                forceHide: e.target.checked,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: { props: { forceHide: e.target.checked } },
               });
             }}
           />
