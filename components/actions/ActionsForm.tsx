@@ -9,7 +9,6 @@ import {
 } from "@/utils/actions";
 import { componentMapper } from "@/utils/componentMapper";
 import { ICON_SIZE } from "@/utils/config";
-import { getComponentById } from "@/utils/editor";
 import { ActionIcon, Button, Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import startCase from "lodash.startcase";
@@ -25,9 +24,8 @@ export const ActionsForm = ({ sequentialTo, close }: ActionProps) => {
   const selectedComponentId = useEditorStore
     .getState()
     .selectedComponentIds?.at(-1);
-  const editorTree = useEditorStore.getState().tree;
-  const updateTreeComponentActions =
-    useEditorStore.getState().updateTreeComponentActions;
+  const updateTreeComponentAttrs =
+    useEditorStore.getState().updateTreeComponentAttrs;
   const copiedAction = useEditorStore.getState().copiedAction;
   const setCopiedAction = useEditorStore.getState().setCopiedAction;
   const setSequentialTo = useEditorStore.getState().setSequentialTo;
@@ -77,10 +75,10 @@ export const ActionsForm = ({ sequentialTo, close }: ActionProps) => {
   }, [availableTriggers]);
 
   const pasteAction = (copiedAction: Action[]) => {
-    updateTreeComponentActions(
-      selectedComponentId!,
-      componentActions.concat(copiedAction),
-    );
+    updateTreeComponentAttrs({
+      componentIds: [selectedComponentId!],
+      attrs: { actions: componentActions.concat(copiedAction) },
+    });
     setCopiedAction(undefined);
   };
 
@@ -91,17 +89,22 @@ export const ActionsForm = ({ sequentialTo, close }: ActionProps) => {
   const saveAction = (trigger: ActionTrigger, action: string) => {
     const id = nanoid();
 
-    updateTreeComponentActions(selectedComponentId!, [
-      ...(component?.actions ?? []),
-      {
-        id,
-        sequentialTo: sequentialTo,
-        trigger: trigger as ActionTrigger,
-        action: {
-          name: action as any,
-        } as ActionType,
+    updateTreeComponentAttrs({
+      componentIds: [selectedComponentId!],
+      attrs: {
+        actions: [
+          ...(component?.actions ?? []),
+          {
+            id,
+            sequentialTo: sequentialTo,
+            trigger: trigger as ActionTrigger,
+            action: {
+              name: action as any,
+            } as ActionType,
+          },
+        ],
       },
-    ]);
+    });
     handleOpenAction(id);
     form.reset();
   };

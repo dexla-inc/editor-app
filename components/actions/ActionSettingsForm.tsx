@@ -30,8 +30,8 @@ export const ActionSettingsForm = ({
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentIds?.at(-1),
   );
-  const updateTreeComponentActions = useEditorStore(
-    (state) => state.updateTreeComponentActions,
+  const updateTreeComponentAttrs = useEditorStore(
+    (state) => state.updateTreeComponentAttrs,
   );
 
   const form = useForm({
@@ -61,7 +61,7 @@ export const ActionSettingsForm = ({
         componentActions,
         id: action.id,
         updateValues,
-        updateTreeComponentActions,
+        updateTreeComponentAttrs,
       });
     } catch (error) {
       console.error(error);

@@ -1,6 +1,6 @@
 import { useAppStore } from "@/stores/app";
 import { Action, BaseAction } from "@/utils/actions";
-import { EditorTree, getComponentById } from "@/utils/editor";
+import { Component, EditorTree } from "@/utils/editor";
 import { useEditorStore } from "@/stores/editor";
 
 export function useLoadingState(): {
@@ -81,7 +81,12 @@ type UpdateActionProps<T extends BaseAction> = {
   id: string;
   selectedComponentId: string;
   componentActions: Action[];
-  updateTreeComponentActions: (componentId: string, actions: Action[]) => void;
+  updateTreeComponentAttrs: (params: {
+    componentIds: string[];
+    attrs: Partial<Component>;
+    forceState?: string;
+    save?: boolean;
+  }) => void;
   updateValues: Omit<T, "name">;
 };
 
@@ -89,22 +94,24 @@ export const updateActionInTree = <T extends BaseAction>({
   id,
   selectedComponentId,
   componentActions,
-  updateTreeComponentActions,
+  updateTreeComponentAttrs,
   updateValues,
 }: UpdateActionProps<T>) => {
-  updateTreeComponentActions(
-    selectedComponentId,
-    componentActions.map((action: Action) => {
-      if (action.id === id) {
-        return {
-          ...action,
-          action: {
-            ...action.action,
-            ...updateValues,
-          },
-        };
-      }
-      return action;
-    }),
-  );
+  updateTreeComponentAttrs({
+    componentIds: [selectedComponentId],
+    attrs: {
+      actions: componentActions.map((action: Action) => {
+        if (action.id === id) {
+          return {
+            ...action,
+            action: {
+              ...action.action,
+              ...updateValues,
+            },
+          };
+        }
+        return action;
+      }),
+    },
+  });
 };

@@ -17,8 +17,8 @@ export const ActionsTab = ({ component }: Props) => {
   const openAction = useEditorStore((state) => state.openAction);
   const setOpenAction = useEditorStore((state) => state.setOpenAction);
   const setCopiedAction = useEditorStore((state) => state.setCopiedAction);
-  const updateTreeComponentActions = useEditorStore(
-    (state) => state.updateTreeComponentActions,
+  const updateTreeComponentAttrs = useEditorStore(
+    (state) => state.updateTreeComponentAttrs,
   );
 
   const [addForm, { open, close }] = useDisclosure(false);
@@ -88,7 +88,10 @@ export const ActionsTab = ({ component }: Props) => {
         (a) => a !== id && a !== `seq_${id}`,
       ),
     });
-    updateTreeComponentActions(component.id!, updatedActions);
+    updateTreeComponentAttrs({
+      componentIds: [component.id!],
+      attrs: { actions: updatedActions },
+    });
   };
 
   const baseItem = {

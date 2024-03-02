@@ -18,7 +18,6 @@ import {
   getTreeComponentMutableProps,
   recoverTreeComponentAttrs,
   updateTreeComponent,
-  updateTreeComponentActions,
   updateTreeComponentAttrs,
   updateTreeComponentAttrs2,
   updateTreeComponentChildren,
@@ -234,7 +233,6 @@ export type EditorState = {
     children: Component[],
     save?: boolean,
   ) => any;
-  updateTreeComponentActions: (componentId: string, actions: Action[]) => void;
   updateTreeComponentAttrs: (params: {
     componentIds: string[];
     attrs: Partial<Component>;
@@ -586,37 +584,6 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
               false,
               "editor/updateTreeComponentChildren",
             ),
-          // any action change
-          updateTreeComponentActions: (componentId, actions) => {
-            set(
-              (state: EditorState) => {
-                const copy = cloneDeep(state.tree);
-                // TODO: get this back
-                // updateTreeComponentActions(copy.root, componentId, actions);
-                if (!state.isPreviewMode)
-                  debouncedUpdatePageState(
-                    encodeSchema(
-                      JSON.stringify(removeKeysRecursive(copy, ["error"])),
-                    ),
-                    state.currentProjectId ?? "",
-                    state.currentPageId ?? "",
-                    state.setIsSaving,
-                  );
-
-                // const component = getComponentById(copy.root, componentId);
-
-                return {
-                  tree: {
-                    ...copy,
-                    // name: `Edited ${component?.name}`,
-                    timestamp: Date.now(),
-                  },
-                };
-              },
-              false,
-              "editor/updateTreeComponentActions",
-            );
-          },
           updateTreeComponentAttrs: ({
             componentIds,
             attrs,
