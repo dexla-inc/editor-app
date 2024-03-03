@@ -37,6 +37,7 @@ export const dataMapper = {
   Image,
   Container,
   Form: Container,
+  Card: Container,
   Table,
   Autocomplete,
   GoogleMap,

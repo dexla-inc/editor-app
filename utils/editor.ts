@@ -615,7 +615,7 @@ export const getParentComponentData = (
   treeRoot: Component,
   componentId: string,
 ): Component | null => {
-  const parentComponentNames = ["Container", "Table", "Form"];
+  const parentComponentNames = ["Container", "Table", "Form", "Card"];
   let parentWithOnLoad: Component | null = null;
   crawl(
     treeRoot,
