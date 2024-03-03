@@ -40,7 +40,8 @@ export const EditableComponent = ({
 
   let currentState = useComputeCurrentState(component, isEditorMode);
 
-  if (shareableContent.parentState) currentState = shareableContent.parentState;
+  if (shareableContent?.parentState)
+    currentState = shareableContent.parentState;
 
   const isResizing = useEditorStore((state) => state.isResizing);
   const { computeChildStyles } = useComputeChildStyles();
