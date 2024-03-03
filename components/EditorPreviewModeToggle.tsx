@@ -16,10 +16,7 @@ export const EditorPreviewModeToggle = () => {
   const setNavbarWidth = useUserConfigStore((state) => state.setNavbarWidth);
 
   return (
-    <Tooltip
-      label={isPreviewMode ? "Change to edit mode" : "Change to preview mode"}
-      fz="xs"
-    >
+    <Tooltip label={isPreviewMode ? "Edit mode" : "Preview mode"} fz="xs">
       <Group position="center">
         <Switch
           size="md"

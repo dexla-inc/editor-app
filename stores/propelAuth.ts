@@ -41,11 +41,13 @@ export const usePropelAuthStore = create<AuthState>()(
         }
       },
       initializeAuth: async (authInfo: WithAuthInfoProps) => {
+        console.log("InstantiatePropelAuthStore", authInfo);
+
         const companies = authInfo?.orgHelper?.getOrgs() || [];
         const activeCompanyId = get().activeCompanyId;
-        const activeCompany = activeCompanyId
-          ? companies.find((company) => company.orgId === activeCompanyId)
-          : companies[0];
+        const activeCompany =
+          companies.find((company) => company.orgId === activeCompanyId) ||
+          companies[0];
 
         set({
           accessToken: authInfo?.accessToken || "",
