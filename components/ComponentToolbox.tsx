@@ -1,5 +1,4 @@
 import { ActionIconTransparent } from "@/components/ActionIconTransparent";
-import { useAppMode } from "@/hooks/useAppMode";
 import { useDraggable } from "@/hooks/useDraggable";
 import { useOnDragStart } from "@/hooks/useOnDragStart";
 import { useEditorStore } from "@/stores/editor";
@@ -30,7 +29,7 @@ type Props = {
 
 export const ComponentToolbox = ({ customComponentModal }: Props) => {
   const isResizing = useEditorStore((state) => state.isResizing);
-  const { isPreviewMode } = useAppMode();
+  const isPreviewMode = useUserConfigStore((state) => state.isPreviewMode);
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const editorTheme = useEditorStore((state) => state.theme);
   const editorTree = useEditorStore((state) => state.tree);

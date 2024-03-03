@@ -22,12 +22,11 @@ export const useGetPageData = ({
   projectId: string;
   pageId: string;
 }) => {
-  const { startLoading, stopLoading, setIsLoading } = useAppStore((state) => ({
+  const { stopLoading, setIsLoading } = useAppStore((state) => ({
     startLoading: state.startLoading,
     stopLoading: state.stopLoading,
     setIsLoading: state.setIsLoading,
   }));
-  const resetTree = useEditorStore((state) => state.resetTree);
 
   const setEditorTree = useEditorStore((state) => state.setTree);
 
@@ -37,7 +36,6 @@ export const useGetPageData = ({
   }));
 
   const getPageData = async ({ signal }: getPageDataParams) => {
-    resetTree();
     const page = await getPageState(projectId, pageId, { signal });
 
     setIsLoading(true);

@@ -74,7 +74,7 @@ export const GridColumn = forwardRef(
       <>
         <Box
           ref={ref}
-          component={Resizable}
+          {...(!isPreviewMode ? { component: Resizable } : {})}
           p="xs"
           size={{ height: style?.height }}
           style={{
