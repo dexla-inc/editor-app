@@ -74,7 +74,7 @@ export const EditorNavbarComponentsSection = () => {
   }, []);
 
   return (
-    <Stack spacing="xl">
+    <Stack spacing="xl" p="xs" pr={0}>
       <SegmentedControl
         value={componentTypeToShow}
         onChange={setComponentTypeToShow}

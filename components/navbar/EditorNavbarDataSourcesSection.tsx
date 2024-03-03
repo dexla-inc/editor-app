@@ -58,7 +58,6 @@ export const EditorNavbarDataSourcesSection = () => {
               >
                 Datasource settings
               </Link>
-              .
             </Text>
           </WarningAlert>
         )}
@@ -76,6 +75,7 @@ export const EditorNavbarDataSourcesSection = () => {
                 };
               })}
             />
+
             {datasource && <DataSourceForm datasource={datasource} />}
             <RedirectUrlForm />
           </Stack>

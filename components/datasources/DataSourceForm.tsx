@@ -14,11 +14,11 @@ import { SegmentedControlInput } from "../SegmentedControlInput";
 import { validateSwaggerUrl } from "./SwaggerURLInput";
 import { SwaggerURLInputRevised } from "./SwaggerURLInputRevised";
 
-export const DataSourceForm = ({
-  datasource,
-}: {
+type Props = {
   datasource: DataSourceResponse;
-}) => {
+};
+
+export const DataSourceForm = ({ datasource }: Props) => {
   const projectId = useEditorStore((state) => state.currentProjectId) as string;
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm<DataSourceParams>({
@@ -79,6 +79,7 @@ export const DataSourceForm = ({
         />
         <SwaggerURLInputRevised
           datasourceId={datasource.id}
+          updated={datasource.updated}
           {...form.getInputProps("swaggerUrl")}
         />
         <TextInput
