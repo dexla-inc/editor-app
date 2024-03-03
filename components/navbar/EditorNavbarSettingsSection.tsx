@@ -1,11 +1,12 @@
 import { SettingsButton } from "@/components/navbar/SettingsButtons";
+import { Stack } from "@mantine/core";
 import { useRouter } from "next/router";
 
 export const EditorNavbarSettingsSection = () => {
   const router = useRouter();
 
   const settings = (
-    <>
+    <Stack p="xs" pr={0}>
       <SettingsButton
         iconName="IconSettings"
         text="General"
@@ -21,13 +22,12 @@ export const EditorNavbarSettingsSection = () => {
         text="Domain"
         href={`/projects/${router.query.id}/settings/domain`}
       />
-      <SettingsButton
+      {/* <SettingsButton
         iconName="IconLanguage"
         text="Language"
         href={`/projects/${router.query.id}/settings/language`}
-        disabled
-      />
-    </>
+      /> */}
+    </Stack>
   );
   return settings;
 };

@@ -5,7 +5,7 @@ const FONT_SIZE = 12;
 
 export const EditorAssetsSection = () => {
   return (
-    <Tabs variant="default" defaultValue="images">
+    <Tabs variant="default" defaultValue="images" p="xs" pr={0}>
       <Tabs.List grow>
         <Tabs.Tab value="images" sx={{ fontSize: FONT_SIZE }}>
           Images

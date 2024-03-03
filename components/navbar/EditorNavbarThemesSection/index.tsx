@@ -171,7 +171,7 @@ export const EditorNavbarThemesSection =
           onSubmit={form.onSubmit(onSubmit)}
           weightsList={weightsList}
         />
-        <Stack spacing="xl">
+        <Stack spacing="xl" p="xs" pr={0}>
           <Stack spacing={4}>
             <Title order={6} fw={600}>
               Color palette

@@ -66,7 +66,7 @@ export const EditorNavbarCustomCodeSection = () => {
 
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
-      <Stack>
+      <Stack p="xs" pr={0}>
         <Stack spacing={0}>
           <Text size="xs" fw="bold">
             Head Code

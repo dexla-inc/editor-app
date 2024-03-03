@@ -37,7 +37,7 @@ export const EditorNavbarDataSourcesSection = () => {
   }, [datasource]);
 
   return (
-    <>
+    <Stack p="xs" pr={0} spacing={0}>
       <PaneHeading
         text={"Data Source"}
         dataSourceType={"API"}
@@ -85,6 +85,6 @@ export const EditorNavbarDataSourcesSection = () => {
           ></EmptyDatasourcesPlaceholder>
         )}
       </Stack>
-    </>
+    </Stack>
   );
 };
