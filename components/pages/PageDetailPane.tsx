@@ -28,7 +28,7 @@ export default function PageDetailPane({ page, setPage }: PageDetailPaneProps) {
   };
 
   return (
-    <Box>
+    <Box p="xs" pr={0}>
       <SegmentedControl
         size="xs"
         style={{ width: "100%" }}

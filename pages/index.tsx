@@ -66,7 +66,7 @@ const HomePage = ({ id, page, faviconUrl }: Props) => {
           href={faviconUrl ?? "/favicon.ico"}
         />
       </Head>
-      <Live pageId={page.id} projectId={id} />;
+      <Live pageId={page.id} projectId={id} />
     </>
   );
 };
