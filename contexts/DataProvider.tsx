@@ -208,7 +208,7 @@ export const DataProvider = ({ children }: DataProviderProps) => {
     shareableContent,
     staticFallback,
   }: GetValueProps) => {
-    if (value === undefined) return;
+    if (value === undefined) return staticFallback || undefined;
     let dataType = value?.dataType ?? "static";
 
     const valueHandlers = {
