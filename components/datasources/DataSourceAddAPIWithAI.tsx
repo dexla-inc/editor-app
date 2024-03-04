@@ -95,7 +95,7 @@ export default function DataSourceAddAPIWithAI({ projectId }: Props) {
         >
           Generate
         </Button>
-        {api && <ApiInfoForm api={api} projectId={projectId} />}
+        {api && <ApiInfoForm api={api} />}
       </Stack>
     </Container>
   );

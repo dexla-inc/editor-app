@@ -1,12 +1,11 @@
 import AuthenticationApiKey from "@/components/datasources/AuthenticationApiKey";
 import AuthenticationBearer from "@/components/datasources/AuthenticationBearer";
 import { ExampleResponseDropdown } from "@/components/datasources/AuthenticationInputs";
-import { Endpoint, RequestBody } from "@/requests/datasources/types";
+import { RequestBody } from "@/requests/datasources/types";
 import { DataSourceStepperProps } from "@/utils/dashboardTypes";
 import { Stack } from "@mantine/core";
 
 interface AuthenticationStepProps extends DataSourceStepperProps {
-  endpoints: Array<Endpoint> | undefined;
   loginEndpointId: string | null;
   setLoginEndpointId: (loginEndpointId: string | null) => void;
   refreshEndpointId: string | null;
@@ -22,7 +21,7 @@ interface AuthenticationStepProps extends DataSourceStepperProps {
   setUserEndpointLabel: (userEndpointLabel: string | null) => void;
   exampleResponse: ExampleResponseDropdown[] | undefined;
   setExampleResponse: (
-    exampleResponse: ExampleResponseDropdown[] | undefined
+    exampleResponse: ExampleResponseDropdown[] | undefined,
   ) => void;
   expiryProperty: string | null;
   setExpiryProperty: (expiryProperty: string | null) => void;
@@ -38,7 +37,6 @@ export default function AuthenticationStep({
   startLoading,
   stopLoading,
   dataSource,
-  endpoints,
   loginEndpointId,
   setLoginEndpointId,
   setLoginEndpointLabel,
@@ -70,7 +68,6 @@ export default function AuthenticationStep({
           startLoading={startLoading}
           stopLoading={stopLoading}
           dataSource={dataSource}
-          endpoints={endpoints}
           loginEndpointId={loginEndpointId}
           setLoginEndpointId={setLoginEndpointId}
           setLoginEndpointLabel={setLoginEndpointLabel}

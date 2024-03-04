@@ -14,7 +14,7 @@ import {
 } from "@/components/datasources/AuthenticationInputs";
 import TextInputComponent from "@/components/datasources/TextInputComponent";
 import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
-import { Endpoint, RequestBody } from "@/requests/datasources/types";
+import { RequestBody } from "@/requests/datasources/types";
 import { useDataSourceStore } from "@/stores/datasource";
 import { DataSourceStepperProps } from "@/utils/dashboardTypes";
 import {
@@ -31,7 +31,6 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 
 export interface BearerTokenAuthenticationProps extends DataSourceStepperProps {
-  endpoints: Array<Endpoint> | undefined;
   loginEndpointId: string | null;
   setLoginEndpointId: (loginEndpointId: string | null) => void;
   refreshEndpointId: string | null;
@@ -63,7 +62,6 @@ export default function AuthenticationBearer({
   startLoading,
   stopLoading,
   dataSource,
-  endpoints,
   loginEndpointId,
   setLoginEndpointId,
   setLoginEndpointLabel,
@@ -89,7 +87,10 @@ export default function AuthenticationBearer({
   const clearApiAuthConfig = useDataSourceStore(
     (state) => state.clearApiAuthConfig,
   );
-  const { invalidate } = useDataSourceEndpoints(projectId);
+  const { data: endpoints, invalidate } = useDataSourceEndpoints(
+    projectId,
+    dataSource?.id,
+  );
 
   const form = useForm<AuthenticationBearerTokenParams>({
     validateInputOnBlur: true,
@@ -108,8 +109,8 @@ export default function AuthenticationBearer({
     },
   });
 
-  const postEndpoints = filterAndMapEndpoints(endpoints, "POST");
-  const getEndpoints = filterAndMapEndpoints(endpoints, "GET");
+  const postEndpoints = filterAndMapEndpoints(endpoints?.results, "POST");
+  const getEndpoints = filterAndMapEndpoints(endpoints?.results, "GET");
 
   const onSubmit = async (values: AuthenticationBearerTokenParams) => {
     try {
@@ -265,9 +266,9 @@ export default function AuthenticationBearer({
 
   useEffect(() => {
     if (fromPage && endpoints) {
-      const loginEndpoint = getAuthEndpoint("ACCESS", endpoints);
-      const refreshEndpoint = getAuthEndpoint("REFRESH", endpoints);
-      const userEndpoint = getAuthEndpoint("USER", endpoints);
+      const loginEndpoint = getAuthEndpoint("ACCESS", endpoints?.results);
+      const refreshEndpoint = getAuthEndpoint("REFRESH", endpoints?.results);
+      const userEndpoint = getAuthEndpoint("USER", endpoints?.results);
 
       loginEndpoint?.id && setLoginEndpoint(loginEndpoint.id);
       refreshEndpoint?.id && setRefreshEndpoint(refreshEndpoint.id);

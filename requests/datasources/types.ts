@@ -27,7 +27,7 @@ export interface DataSourceResponse {
   id: string;
   name: string;
   authenticationScheme: AuthenticationSchemes;
-  environment: string;
+  environment: string; //EnvironmentTypes
   baseUrl: string;
   swaggerUrl: string;
   updated: number;
@@ -146,7 +146,7 @@ export type DataSourceAuthResponse = {
 
 export type ApiFromAI = Pick<
   DataSourceResponse,
-  "name" | "baseUrl" | "authenticationScheme"
+  "name" | "baseUrl" | "authenticationScheme" | "environment"
 > & {
   apiDocsUrl?: string;
   apiAuthTokenDocsUrl?: string;
