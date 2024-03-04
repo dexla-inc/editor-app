@@ -99,142 +99,173 @@ export const GridColumn = forwardRef(
             bottomLeft: false,
             topLeft: false,
           }}
-          handleStyles={{
-            right: {
-              width: handleOffset * 4,
-              right: (handleOffset + 20) * -1,
-              zIndex: 90,
-            },
-          }}
-          handleComponent={{
-            right: <Box h={40} id={`handler-${props.id}`} />,
-          }}
-          onResizeStart={(e: any, direction: any, ref: any, delta: any) => {
-            const rect = ref.getBoundingClientRect();
-            const initialSpan = ref.style?.gridColumn.split(" ")[1];
-            setIsResizing(true);
-            setInitialWidth(Math.floor(rect.width));
-            setInitialSpan(parseInt(initialSpan, 10));
+          {...(!isPreviewMode
+            ? {
+                handleStyles: {
+                  right: {
+                    width: handleOffset * 4,
+                    right: (handleOffset + 20) * -1,
+                    zIndex: 90,
+                  },
+                },
+              }
+            : {})}
+          {...(!isPreviewMode
+            ? {
+                handleComponent: {
+                  right: <Box h={40} id={`handler-${props.id}`} />,
+                },
+              }
+            : {})}
+          {...(!isPreviewMode
+            ? {
+                onResizeStart: (
+                  e: any,
+                  direction: any,
+                  ref: any,
+                  delta: any,
+                ) => {
+                  const rect = ref.getBoundingClientRect();
+                  const initialSpan = ref.style?.gridColumn.split(" ")[1];
+                  setIsResizing(true);
+                  setInitialWidth(Math.floor(rect.width));
+                  setInitialSpan(parseInt(initialSpan, 10));
 
-            if (nextSibling) {
-              const nextSiblingEl = iframeWindow?.document.getElementById(
-                nextSibling?.id!,
-              );
+                  if (nextSibling) {
+                    const nextSiblingEl = iframeWindow?.document.getElementById(
+                      nextSibling?.id!,
+                    );
 
-              if (nextSiblingEl) {
-                const initialNextSiblingSpan =
-                  nextSiblingEl.style?.gridColumn.split(" ")[1];
+                    if (nextSiblingEl) {
+                      const initialNextSiblingSpan =
+                        nextSiblingEl.style?.gridColumn.split(" ")[1];
 
-                if (initialNextSiblingSpan) {
-                  setInitialNextSiblingSpan(
-                    parseInt(initialNextSiblingSpan, 10),
+                      if (initialNextSiblingSpan) {
+                        setInitialNextSiblingSpan(
+                          parseInt(initialNextSiblingSpan, 10),
+                        );
+                      }
+                    }
+                  }
+                },
+              }
+            : {})}
+          {...(!isPreviewMode
+            ? {
+                onResize: (
+                  e: DragEvent,
+                  direction: any,
+                  ref: any,
+                  delta: any,
+                ) => {
+                  const snapIndicator = iframeWindow?.document.getElementById(
+                    "column-snap-indicator",
                   );
-                }
+                  const handler = iframeWindow?.document.getElementById(
+                    `handler-${props.id}`,
+                  );
+                  const snapIndicatorRect =
+                    snapIndicator?.getBoundingClientRect();
+                  const handlerRect = handler?.getBoundingClientRect();
+
+                  const isGoingLeft = delta.width < 0;
+                  const rect = ref.getBoundingClientRect();
+                  const newSpan = Math.floor(
+                    (Math.floor(rect.width) * initialSpan) / initialWidth,
+                  );
+                  const spanDiff = Math.abs(newSpan - initialSpan);
+
+                  const nextSiblingEl = iframeWindow?.document.getElementById(
+                    nextSibling?.id!,
+                  );
+
+                  if (nextSiblingEl) {
+                    const newSiblingSpan = isGoingLeft
+                      ? initialNextSiblingSpan + spanDiff
+                      : initialNextSiblingSpan - spanDiff;
+
+                    setColumnSpan(nextSibling?.id!, newSiblingSpan);
+                  }
+
+                  const isHalfTheParent =
+                    newSpan === Math.floor(parent?.props?.gridSize / 2);
+                  const isAThirdOfTheParent =
+                    newSpan === Math.floor(parent?.props?.gridSize / 3);
+
+                  if (isHalfTheParent && handlerRect && snapIndicatorRect) {
+                    const txt = snapIndicator?.querySelector("#text");
+                    if (txt) {
+                      txt.textContent = "1/2";
+                    }
+
+                    snapIndicator!.style.top = `${
+                      handlerRect.top - handlerRect.height
+                    }px`;
+                    snapIndicator!.style.left = `${
+                      e.clientX - snapIndicatorRect.width
+                    }px`;
+                    snapIndicator!.style.display = "block";
+                  } else if (
+                    isAThirdOfTheParent &&
+                    handlerRect &&
+                    snapIndicatorRect
+                  ) {
+                    const txt = snapIndicator?.querySelector("#text");
+                    if (txt) {
+                      txt.textContent = "1/3";
+                    }
+
+                    snapIndicator!.style.top = `${
+                      handlerRect.top - handlerRect.height
+                    }px`;
+                    snapIndicator!.style.left = `${
+                      e.clientX - snapIndicatorRect.width
+                    }px`;
+                    snapIndicator!.style.display = "block";
+                  } else {
+                    snapIndicator!.style.display = "none";
+                  }
+
+                  setColumnSpan(props.id, newSpan);
+                },
               }
-            }
-          }}
-          onResize={(e: DragEvent, direction: any, ref: any, delta: any) => {
-            const snapIndicator = iframeWindow?.document.getElementById(
-              "column-snap-indicator",
-            );
-            const handler = iframeWindow?.document.getElementById(
-              `handler-${props.id}`,
-            );
-            const snapIndicatorRect = snapIndicator?.getBoundingClientRect();
-            const handlerRect = handler?.getBoundingClientRect();
+            : {})}
+          {...(!isPreviewMode
+            ? {
+                onResizeStop: () => {
+                  const editorTree = useEditorStore.getState().tree;
+                  const copy = cloneDeep(editorTree);
+                  console.log("onresizeStop");
+                  updateTreeComponent(copy.root, props.id, {
+                    span: columnSpans[props.id] ?? 0,
+                    resized: true,
+                  });
 
-            const isGoingLeft = delta.width < 0;
-            const rect = ref.getBoundingClientRect();
-            const newSpan = Math.floor(
-              (Math.floor(rect.width) * initialSpan) / initialWidth,
-            );
-            const spanDiff = Math.abs(newSpan - initialSpan);
+                  if (nextSibling) {
+                    updateTreeComponent(copy.root, nextSibling.id!, {
+                      span: columnSpans[nextSibling.id!] ?? 0,
+                      resized: false,
+                    });
 
-            const nextSiblingEl = iframeWindow?.document.getElementById(
-              nextSibling?.id!,
-            );
+                    const nextSiblingComp = getComponentById(
+                      copy.root,
+                      nextSibling.id!,
+                    );
+                    if (nextSiblingComp) {
+                      calculateGridSizes(nextSiblingComp);
+                    }
+                  }
 
-            if (nextSiblingEl) {
-              const newSiblingSpan = isGoingLeft
-                ? initialNextSiblingSpan + spanDiff
-                : initialNextSiblingSpan - spanDiff;
+                  const component = getComponentById(copy.root, props.id!);
+                  if (component) {
+                    calculateGridSizes(component);
+                  }
 
-              setColumnSpan(nextSibling?.id!, newSiblingSpan);
-            }
-
-            const isHalfTheParent =
-              newSpan === Math.floor(parent?.props?.gridSize / 2);
-            const isAThirdOfTheParent =
-              newSpan === Math.floor(parent?.props?.gridSize / 3);
-
-            if (isHalfTheParent && handlerRect && snapIndicatorRect) {
-              const txt = snapIndicator?.querySelector("#text");
-              if (txt) {
-                txt.textContent = "1/2";
+                  setEditorTree(copy);
+                  setIsResizing(false);
+                },
               }
-
-              snapIndicator!.style.top = `${
-                handlerRect.top - handlerRect.height
-              }px`;
-              snapIndicator!.style.left = `${
-                e.clientX - snapIndicatorRect.width
-              }px`;
-              snapIndicator!.style.display = "block";
-            } else if (
-              isAThirdOfTheParent &&
-              handlerRect &&
-              snapIndicatorRect
-            ) {
-              const txt = snapIndicator?.querySelector("#text");
-              if (txt) {
-                txt.textContent = "1/3";
-              }
-
-              snapIndicator!.style.top = `${
-                handlerRect.top - handlerRect.height
-              }px`;
-              snapIndicator!.style.left = `${
-                e.clientX - snapIndicatorRect.width
-              }px`;
-              snapIndicator!.style.display = "block";
-            } else {
-              snapIndicator!.style.display = "none";
-            }
-
-            setColumnSpan(props.id, newSpan);
-          }}
-          onResizeStop={() => {
-            const editorTree = useEditorStore.getState().tree;
-            const copy = cloneDeep(editorTree);
-            console.log("onresizeStop");
-            updateTreeComponent(copy.root, props.id, {
-              span: columnSpans[props.id] ?? 0,
-              resized: true,
-            });
-
-            if (nextSibling) {
-              updateTreeComponent(copy.root, nextSibling.id!, {
-                span: columnSpans[nextSibling.id!] ?? 0,
-                resized: false,
-              });
-
-              const nextSiblingComp = getComponentById(
-                copy.root,
-                nextSibling.id!,
-              );
-              if (nextSiblingComp) {
-                calculateGridSizes(nextSiblingComp);
-              }
-            }
-
-            const component = getComponentById(copy.root, props.id!);
-            if (component) {
-              calculateGridSizes(component);
-            }
-
-            setEditorTree(copy);
-            setIsResizing(false);
-          }}
+            : {})}
         >
           {children}
         </Box>
