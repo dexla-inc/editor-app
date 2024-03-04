@@ -300,7 +300,7 @@ export default function AuthenticationBearer({
       onError={(error) => console.error(error)}
     >
       <Stack pb={fromPage ? "lg" : 100}>
-        {dataSource?.swaggerUrl ? (
+        {endpoints?.results ? (
           <>
             <Select
               label="Login Endpoint (POST)"
@@ -329,7 +329,6 @@ export default function AuthenticationBearer({
               placeholder="/v1/login/refresh"
               searchable
               clearable
-              required
               data={postEndpoints ?? []}
               {...(refreshEndpointId
                 ? { value: refreshEndpointId }
@@ -338,6 +337,7 @@ export default function AuthenticationBearer({
                 form.setFieldValue("refreshEndpointId", value as string);
                 setRefreshEndpoint(value ?? "");
               }}
+              //required
             />
             <Select
               label="User Endpoint (GET)"
@@ -387,7 +387,7 @@ export default function AuthenticationBearer({
             />
           </>
         )}
-        {dataSource?.swaggerUrl && loginEndpointId ? (
+        {endpoints?.results && loginEndpointId ? (
           <Select
             label="Access token property"
             description="The property name of the access token in the response"
@@ -417,7 +417,7 @@ export default function AuthenticationBearer({
             required={!!loginEndpointId}
           />
         )}
-        {dataSource?.swaggerUrl && refreshEndpointId ? (
+        {endpoints?.results && refreshEndpointId ? (
           <Select
             label="Refresh token property"
             description="The property name of the refresh token in the response"
@@ -433,7 +433,7 @@ export default function AuthenticationBearer({
               form.setFieldValue("refreshToken", value as string);
               setRefreshToken && setRefreshToken(value);
             }}
-            required
+            required={!!refreshEndpointId}
           />
         ) : (
           <TextInputComponent
@@ -447,7 +447,7 @@ export default function AuthenticationBearer({
             required={!!refreshEndpointId}
           />
         )}
-        {dataSource?.swaggerUrl && loginEndpointId ? (
+        {endpoints?.results && loginEndpointId ? (
           <Select
             label="Access token expiry property"
             description="The property name of the expiry of the access token in the response"
