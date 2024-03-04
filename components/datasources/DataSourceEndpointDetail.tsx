@@ -496,6 +496,29 @@ export const DataSourceEndpointDetail = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.methodType]);
 
+  useEffect(() => {
+    // Check if `body` is a valid JSON string and parse it
+    try {
+      const bodyObj = state.body && JSON.parse(state.body);
+      const newRequestBody = Object.keys(bodyObj).map((key) => ({
+        name: key,
+        type: typeof bodyObj[key], // You might need a more sophisticated method to determine the type
+        description: null, // Assuming you don't have descriptions in your JSON string
+        value: bodyObj[key],
+      }));
+
+      // Update the `requestBody` state with the new array
+      dispatch({
+        type: "SET_FIELD",
+        payload: { field: "requestBody", value: newRequestBody },
+      });
+    } catch (error) {
+      // Handle error if `body` is not a valid JSON string
+      console.error("Error parsing JSON body:", error);
+    }
+    // This effect should run every time `state.body` changes
+  }, [state.body]);
+
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
       <Stack

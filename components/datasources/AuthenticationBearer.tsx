@@ -29,6 +29,7 @@ import {
 import { useForm } from "@mantine/form";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
+import { InformationAlert } from "../Alerts";
 
 export interface BearerTokenAuthenticationProps extends DataSourceStepperProps {
   loginEndpointId: string | null;
@@ -299,213 +300,217 @@ export default function AuthenticationBearer({
       onSubmit={form.onSubmit(onSubmit)}
       onError={(error) => console.error(error)}
     >
-      <Stack pb={fromPage ? "lg" : 100}>
-        {dataSource?.swaggerUrl ? (
-          <>
-            <Select
-              label="Login Endpoint (POST)"
-              description="The endpoint used to login to your API"
-              placeholder="/v1/login"
-              searchable
-              clearable
-              required
-              data={postEndpoints ?? []}
-              {...(loginEndpointId
-                ? { value: loginEndpointId }
-                : { ...form.getInputProps("loginEndpointId") })}
-              onChange={(value) => {
-                form.setFieldValue("loginEndpointId", value as string);
-                setLoginEndpoint(value ?? "");
-                setRequestBodyObject(
-                  postEndpoints,
-                  setLoginRequestBody,
-                  value as string,
-                );
-              }}
-            />
-            <Select
-              label="Refresh Endpoint (POST)"
-              description="The endpoint used to refresh your API token"
-              placeholder="/v1/login/refresh"
-              searchable
-              clearable
-              required
-              data={postEndpoints ?? []}
-              {...(refreshEndpointId
-                ? { value: refreshEndpointId }
-                : { ...form.getInputProps("refreshEndpointId") })}
-              onChange={(value) => {
-                form.setFieldValue("refreshEndpointId", value as string);
-                setRefreshEndpoint(value ?? "");
-              }}
-            />
-            <Select
-              label="User Endpoint (GET)"
-              description="The endpoint used to user information"
-              placeholder="/v1/user"
-              searchable
-              clearable
-              data={getEndpoints ?? []}
-              {...(userEndpointId
-                ? { value: userEndpointId }
-                : { ...form.getInputProps("userEndpointId") })}
-              onChange={(value) => {
-                form.setFieldValue("userEndpointId", value as string);
-                setUserEndpoint(value ?? "");
-              }}
-            />
-          </>
-        ) : (
-          <>
-            <TextInputComponent
-              label="Login Endpoint (POST)"
-              description="The endpoint used to login to your API"
-              placeholder="/v1/login"
-              value={loginEndpointId}
-              form={form}
-              propertyName="loginEndpointId"
-              setProperty={(value) => setLoginEndpoint(value ?? "")}
-            />
-            <TextInputComponent
-              label="Refresh Endpoint (POST)"
-              description="The endpoint used to refresh your API token"
-              placeholder="/v1/login/refresh"
-              value={refreshEndpointId}
-              form={form}
-              propertyName="refreshEndpointId"
-              setProperty={(value) => setRefreshEndpoint(value ?? "")}
-            />
+      {endpoints?.results && endpoints.results.length === 0 ? (
+        <InformationAlert text="Add your login API endpoints first then configure this." />
+      ) : (
+        <Stack pb={fromPage ? "lg" : 100}>
+          {endpoints?.results && endpoints.results.length > 0 ? (
+            <>
+              <Select
+                label="Login Endpoint (POST)"
+                description="The endpoint used to login to your API"
+                placeholder="/v1/login"
+                searchable
+                clearable
+                required
+                data={postEndpoints ?? []}
+                {...(loginEndpointId
+                  ? { value: loginEndpointId }
+                  : { ...form.getInputProps("loginEndpointId") })}
+                onChange={(value) => {
+                  form.setFieldValue("loginEndpointId", value as string);
+                  setLoginEndpoint(value ?? "");
+                  setRequestBodyObject(
+                    postEndpoints,
+                    setLoginRequestBody,
+                    value as string,
+                  );
+                }}
+              />
+              <Select
+                label="Refresh Endpoint (POST)"
+                description="The endpoint used to refresh your API token"
+                placeholder="/v1/login/refresh"
+                searchable
+                clearable
+                data={postEndpoints ?? []}
+                {...(refreshEndpointId
+                  ? { value: refreshEndpointId }
+                  : { ...form.getInputProps("refreshEndpointId") })}
+                onChange={(value) => {
+                  form.setFieldValue("refreshEndpointId", value as string);
+                  setRefreshEndpoint(value ?? "");
+                }}
+                //required
+              />
+              <Select
+                label="User Endpoint (GET)"
+                description="The endpoint used to user information"
+                placeholder="/v1/user"
+                searchable
+                clearable
+                data={getEndpoints ?? []}
+                {...(userEndpointId
+                  ? { value: userEndpointId }
+                  : { ...form.getInputProps("userEndpointId") })}
+                onChange={(value) => {
+                  form.setFieldValue("userEndpointId", value as string);
+                  setUserEndpoint(value ?? "");
+                }}
+              />
+            </>
+          ) : (
+            <>
+              <TextInputComponent
+                label="Login Endpoint (POST)"
+                description="The endpoint used to login to your API"
+                placeholder="/v1/login"
+                value={loginEndpointId}
+                form={form}
+                propertyName="loginEndpointId"
+                setProperty={(value) => setLoginEndpoint(value ?? "")}
+              />
+              <TextInputComponent
+                label="Refresh Endpoint (POST)"
+                description="The endpoint used to refresh your API token"
+                placeholder="/v1/login/refresh"
+                value={refreshEndpointId}
+                form={form}
+                propertyName="refreshEndpointId"
+                setProperty={(value) => setRefreshEndpoint(value ?? "")}
+              />
 
-            <TextInputComponent
-              label="User Endpoint (GET)"
-              description="The endpoint used to user information"
-              placeholder="/v1/user"
-              value={userEndpointId}
-              form={form}
-              propertyName="userEndpointId"
-              setProperty={(value) => setUserEndpoint(value ?? "")}
+              <TextInputComponent
+                label="User Endpoint (GET)"
+                description="The endpoint used to user information"
+                placeholder="/v1/user"
+                value={userEndpointId}
+                form={form}
+                propertyName="userEndpointId"
+                setProperty={(value) => setUserEndpoint(value ?? "")}
+              />
+            </>
+          )}
+          {endpoints?.results && loginEndpointId ? (
+            <Select
+              label="Access token property"
+              description="The property name of the access token in the response"
+              placeholder="access"
+              searchable
+              clearable
+              nothingFound="Not found. Update your swagger to include the response property"
+              data={exampleResponse ?? []}
+              {...(accessToken
+                ? { value: accessToken }
+                : { ...form.getInputProps("accessToken") })}
+              onChange={(value) => {
+                form.setFieldValue("accessToken", value as string);
+                setAccessToken && setAccessToken(value);
+              }}
+              required
             />
-          </>
-        )}
-        {dataSource?.swaggerUrl && loginEndpointId ? (
-          <Select
-            label="Access token property"
-            description="The property name of the access token in the response"
-            placeholder="access"
-            searchable
-            clearable
-            nothingFound="Not found. Update your swagger to include the response property"
-            data={exampleResponse ?? []}
-            {...(accessToken
-              ? { value: accessToken }
-              : { ...form.getInputProps("accessToken") })}
-            onChange={(value) => {
-              form.setFieldValue("accessToken", value as string);
-              setAccessToken && setAccessToken(value);
-            }}
-            required
-          />
-        ) : (
-          <TextInputComponent
-            label="Access token property"
-            description="The property name of the access token in the response"
-            placeholder="access"
-            form={form}
-            propertyName="accessToken"
-            value={accessToken}
-            setProperty={setAccessToken}
-            required={!!loginEndpointId}
-          />
-        )}
-        {dataSource?.swaggerUrl && refreshEndpointId ? (
-          <Select
-            label="Refresh token property"
-            description="The property name of the refresh token in the response"
-            placeholder="refresh"
-            searchable
-            clearable
-            nothingFound="Not found. Update your swagger to include the response property"
-            data={exampleResponse ?? []}
-            {...(refreshToken
-              ? { value: refreshToken }
-              : { ...form.getInputProps("refreshToken") })}
-            onChange={(value) => {
-              form.setFieldValue("refreshToken", value as string);
-              setRefreshToken && setRefreshToken(value);
-            }}
-            required
-          />
-        ) : (
-          <TextInputComponent
-            label="Refresh token property"
-            description="The property name of the refresh token in the response"
-            placeholder="refresh"
-            form={form}
-            propertyName="refreshToken"
-            value={refreshToken}
-            setProperty={setRefreshToken}
-            required={!!refreshEndpointId}
-          />
-        )}
-        {dataSource?.swaggerUrl && loginEndpointId ? (
-          <Select
-            label="Access token expiry property"
-            description="The property name of the expiry of the access token in the response"
-            placeholder="expires_in"
-            searchable
-            clearable
-            nothingFound={
-              exampleResponse
-                ? "Not found. Update your swagger to include the response property"
-                : "No options"
-            }
-            data={exampleResponse ?? []}
-            {...(expiryProperty
-              ? { value: expiryProperty }
-              : { ...form.getInputProps("expiryProperty") })}
-            onChange={(value) => {
-              form.setFieldValue("expiryProperty", value as string);
-              setExpiryProperty && setExpiryProperty(value);
-            }}
-            required
-          />
-        ) : (
-          <TextInputComponent
-            label="Access token expiry property"
-            description="The property name of the expiry of the access token in the response"
-            placeholder="expires_in"
-            form={form}
-            propertyName="expiryProperty"
-            value={accessToken}
-            setProperty={setExpiryProperty}
-            required={!!loginEndpointId}
-          />
-        )}
-        {fromPage ? (
-          <Flex>
-            <Button type="submit">Save</Button>
-          </Flex>
-        ) : (
-          <>
-            <Divider></Divider>
-            <Group position="apart">
-              <BackButton onClick={prevStep}></BackButton>
-              <Flex gap="lg" align="end">
-                {!isLoading && (
-                  <Anchor onClick={nextStep}>
-                    Skip, I use an external auth provider
-                  </Anchor>
-                )}
-                <NextButton
-                  isLoading={isLoading}
-                  disabled={isLoading}
-                  isSubmit={true}
-                ></NextButton>
-              </Flex>
-            </Group>
-          </>
-        )}
-      </Stack>
+          ) : (
+            <TextInputComponent
+              label="Access token property"
+              description="The property name of the access token in the response"
+              placeholder="access"
+              form={form}
+              propertyName="accessToken"
+              value={accessToken}
+              setProperty={setAccessToken}
+              required={!!loginEndpointId}
+            />
+          )}
+          {endpoints?.results && refreshEndpointId ? (
+            <Select
+              label="Refresh token property"
+              description="The property name of the refresh token in the response"
+              placeholder="refresh"
+              searchable
+              clearable
+              nothingFound="Not found. Update your swagger to include the response property"
+              data={exampleResponse ?? []}
+              {...(refreshToken
+                ? { value: refreshToken }
+                : { ...form.getInputProps("refreshToken") })}
+              onChange={(value) => {
+                form.setFieldValue("refreshToken", value as string);
+                setRefreshToken && setRefreshToken(value);
+              }}
+              required={!!refreshEndpointId}
+            />
+          ) : (
+            <TextInputComponent
+              label="Refresh token property"
+              description="The property name of the refresh token in the response"
+              placeholder="refresh"
+              form={form}
+              propertyName="refreshToken"
+              value={refreshToken}
+              setProperty={setRefreshToken}
+              required={!!refreshEndpointId}
+            />
+          )}
+          {endpoints?.results && loginEndpointId ? (
+            <Select
+              label="Access token expiry property"
+              description="The property name of the expiry of the access token in the response"
+              placeholder="expires_in"
+              searchable
+              clearable
+              nothingFound={
+                exampleResponse
+                  ? "Not found. Update your swagger to include the response property"
+                  : "No options"
+              }
+              data={exampleResponse ?? []}
+              {...(expiryProperty
+                ? { value: expiryProperty }
+                : { ...form.getInputProps("expiryProperty") })}
+              onChange={(value) => {
+                form.setFieldValue("expiryProperty", value as string);
+                setExpiryProperty && setExpiryProperty(value);
+              }}
+              required
+            />
+          ) : (
+            <TextInputComponent
+              label="Access token expiry property"
+              description="The property name of the expiry of the access token in the response"
+              placeholder="expires_in"
+              form={form}
+              propertyName="expiryProperty"
+              value={accessToken}
+              setProperty={setExpiryProperty}
+              required={!!loginEndpointId}
+            />
+          )}
+          {fromPage ? (
+            <Flex>
+              <Button type="submit">Save</Button>
+            </Flex>
+          ) : (
+            <>
+              <Divider></Divider>
+              <Group position="apart">
+                <BackButton onClick={prevStep}></BackButton>
+                <Flex gap="lg" align="end">
+                  {!isLoading && (
+                    <Anchor onClick={nextStep}>
+                      Skip, I use an external auth provider
+                    </Anchor>
+                  )}
+                  <NextButton
+                    isLoading={isLoading}
+                    disabled={isLoading}
+                    isSubmit={true}
+                  ></NextButton>
+                </Flex>
+              </Group>
+            </>
+          )}
+        </Stack>
+      )}
     </form>
   );
 }
