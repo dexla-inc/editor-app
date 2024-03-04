@@ -505,9 +505,16 @@ const handleSuccess = async (
 export function constructHeaders(endpoint?: Endpoint, authHeaderKey = "") {
   const contentType = endpoint?.mediaType || "application/json";
 
+  const endpointHeaders = endpoint?.headers.reduce((acc, header) => {
+    // @ts-ignore
+    acc[header.name] = header.value;
+    return acc;
+  }, {});
+
   return {
     "Content-Type": contentType,
     ...(authHeaderKey ? { Authorization: authHeaderKey } : {}),
+    ...endpointHeaders,
   };
 }
 
@@ -520,9 +527,10 @@ export async function performFetch(
 ) {
   const isGetMethodType = endpoint?.methodType === "GET";
 
+  const headers = constructHeaders(endpoint, authHeaderKey);
   const response = await fetch(url, {
     method: endpoint?.methodType,
-    headers: constructHeaders(endpoint, authHeaderKey),
+    headers: headers,
     ...(!!body && !isGetMethodType ? { body: JSON.stringify(body) } : {}),
   });
 
