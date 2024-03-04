@@ -118,19 +118,18 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
             spacing={10}
             grow={!hasParentComponentData}
           >
-            {!isDynamic && (
-              <StaticFormFieldsBuilder
-                field={f}
-                form={form}
-                component={component}
-              />
-            )}
-            {isDynamic && (
+            {isDynamic ? (
               <DynamicFormFieldsBuilder
                 form={form}
                 component={component}
                 endpoints={endpoints}
                 field={f}
+              />
+            ) : (
+              <StaticFormFieldsBuilder
+                field={f}
+                form={form}
+                component={component}
               />
             )}
             {hasParentComponentData && (
