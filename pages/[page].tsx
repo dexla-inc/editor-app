@@ -1,9 +1,8 @@
 import { Live } from "@/components/Live";
 import { withPageOnLoad } from "@/hoc/withPageOnLoad";
-import { PageResponse } from "@/requests/pages/types";
+import { DeploymentPage } from "@/requests/deployments/types";
 import { getProject } from "@/requests/projects/queries-noauth";
 import { useEditorStore } from "@/stores/editor";
-import { useUserConfigStore } from "@/stores/userConfig";
 import { getPageProps } from "@/utils/serverside";
 import { GetServerSidePropsContext } from "next";
 import Head from "next/head";
@@ -27,16 +26,15 @@ export const getServerSideProps = async ({
 
 type Props = {
   id: string;
-  page: PageResponse;
+  page: DeploymentPage;
   faviconUrl?: string;
 };
 
 function LivePage({ id, page, faviconUrl }: Props) {
-  const setCurrentPageAndProjectIds = useEditorStore(
-    (state) => state.setCurrentPageAndProjectIds,
-  );
-  const setPreviewMode = useUserConfigStore((state) => state.setPreviewMode);
-  const setIsLive = useEditorStore((state) => state.setIsLive);
+  const setCurrentPageAndProjectIds =
+    useEditorStore.getState().setCurrentPageAndProjectIds;
+  const setPreviewMode = useEditorStore.getState().setPreviewMode;
+  const setIsLive = useEditorStore.getState().setIsLive;
 
   useEffect(() => {
     if (id && page.id) {
@@ -44,7 +42,8 @@ function LivePage({ id, page, faviconUrl }: Props) {
       setPreviewMode(true);
       setIsLive(true);
     }
-  }, [id, page.id, setCurrentPageAndProjectIds, setPreviewMode, setIsLive]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, page.id]);
 
   return (
     <>
