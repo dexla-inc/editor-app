@@ -220,7 +220,7 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
               edge: "left",
             });
 
-            removeComponentFromParent(copy.root, id, parentTree?.id!);
+            removeComponentFromParent(copy.root, component, parentTree?.id!);
             setEditorTree(copy, {
               action: `Wrapped ${component.name} with a Container`,
             });

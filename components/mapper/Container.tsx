@@ -1,9 +1,8 @@
 import { CardAndContainerWrapper } from "@/components/mapper/CardAndContainerWrapper";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { setComponentBorder } from "@/utils/branding";
-import { convertSizeToPx } from "@/utils/defaultSizes";
 import { EditableComponentMapper } from "@/utils/editor";
-import { FlexProps, LoadingOverlay, Flex as MantineFlex } from "@mantine/core";
+import { FlexProps } from "@mantine/core";
 import merge from "lodash.merge";
 import { forwardRef } from "react";
 

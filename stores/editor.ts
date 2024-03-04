@@ -390,14 +390,25 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
             set(
               (state: EditorState) => {
                 const copy = cloneDeep(state.tree);
-                // TODO: get this back
-                // updateTreeComponentChildren(copy.root, componentId, children);
+                updateTreeComponentChildren(copy.root, componentId, children);
+
+                children.forEach((child) => {
+                  state.componentMutableAttrs = {
+                    ...state.componentMutableAttrs,
+                    ...getTreeComponentMutableProps(child),
+                  };
+                });
+
+                const treeWithRecoveredAttrs = recoverTreeComponentAttrs(
+                  state.tree,
+                  state.componentMutableAttrs,
+                );
 
                 if (save && !state.isPreviewMode) {
                   debouncedUpdatePageState(
                     encodeSchema(
                       JSON.stringify(
-                        removeKeysRecursive(copy, [
+                        removeKeysRecursive(treeWithRecoveredAttrs, [
                           "error",
                           "collapsed",
                           "depth",
@@ -412,14 +423,15 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
                   );
                 }
 
-                // const component = getComponentById(copy.root, componentId);
+                const component = state.componentMutableAttrs[componentId];
 
                 return {
                   tree: {
                     ...copy,
-                    // name: `Edited ${component?.name}`,
+                    name: `Edited ${component?.name}`,
                     timestamp: Date.now(),
                   },
+                  componentMutableAttrs: state.componentMutableAttrs,
                 };
               },
               false,

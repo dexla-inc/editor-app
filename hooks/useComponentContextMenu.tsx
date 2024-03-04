@@ -88,7 +88,7 @@ export const useComponentContextMenu = () => {
         edge: "left",
       });
 
-      removeComponentFromParent(copy.root, component.id!, parent?.id!);
+      removeComponentFromParent(copy.root, component, parent?.id!);
       setEditorTree(copy, {
         action: `Wrapped ${component.name} with a Container`,
       });

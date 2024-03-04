@@ -1,13 +1,6 @@
-import { Tile } from "@/components/templates/dashboard";
-import { PageResponse } from "@/requests/pages/types";
-import {
-  MantineThemeExtended,
-  emptyEditorTree,
-  useEditorStore,
-} from "@/stores/editor";
+import { MantineThemeExtended, useEditorStore } from "@/stores/editor";
 import { Action } from "@/utils/actions";
 import { GRAY_OUTLINE } from "@/utils/branding";
-import { structureMapper } from "@/utils/componentMapper";
 import { GRID_SIZE } from "@/utils/config";
 import { calculateGridSizes } from "@/utils/grid";
 import cloneDeep from "lodash.clonedeep";
@@ -33,6 +26,7 @@ export type EditableComponentMapper = {
   shareableContent?: any;
   isPreviewMode?: boolean;
   style?: CSSObject;
+  ref?: any;
 };
 
 type ComponentBase = {
@@ -452,7 +446,9 @@ export const updateTreeComponentAttrs2 = (
   }
 
   merge(newComponent, { props: alwaysDefaultProps });
-  merge(newComponent, omit(attrs, ["props"]));
+  Object.entries(omit(attrs, ["props"])).forEach(([key, value]) => {
+    newComponent[key as keyof Component] = value;
+  });
 
   return newComponent;
 };
@@ -463,8 +459,15 @@ export const recoverTreeComponentAttrs = (
 ) => {
   crawl(
     tree.root,
-    (node, context) => {
-      merge(node, componentMutableAttrs[node.id!]);
+    (nodeTree, context) => {
+      const node = {
+        ...componentMutableAttrs[nodeTree.id!],
+        children: nodeTree.children,
+      };
+      if (context.parent?.children) {
+        context.parent.children[context.index] = node;
+      }
+      context.replace(node);
     },
     { order: "bfs" },
   );
@@ -492,21 +495,20 @@ export const extractComponentMutableAttrs = (
 };
 
 export const updateTreeComponentChildren = (
-  treeRoot: Component,
+  treeRoot: ComponentTree,
   id: string,
   children: Component[],
 ) => {
-  // TODO: get this back
-  // crawl(
-  //   treeRoot,
-  //   (node, context) => {
-  //     if (node.id === id) {
-  //       node.children = children;
-  //       context.break();
-  //     }
-  //   },
-  //   { order: "bfs" },
-  // );
+  crawl(
+    treeRoot,
+    (node, context) => {
+      if (node.id === id) {
+        node.children = children;
+        context.break();
+      }
+    },
+    { order: "bfs" },
+  );
 };
 
 //TODO: make it run through the new component list and find the parent component by id
@@ -619,7 +621,8 @@ export const addComponent = (
   dropIndex?: number,
 ): string => {
   const copy = cloneDeep(componentToAdd);
-  replaceIdsDeeply(copy);
+  // TODO: should be get back with it?
+  // replaceIdsDeeply(copy);
   const directChildren = ["Modal", "Drawer", "Toast"];
   const isGrid = copy.name === "Grid";
   const isColumn = copy.name === "GridColumn";
@@ -1005,14 +1008,14 @@ const addNodeToTarget = (
 
 export const moveComponent = (
   treeRoot: ComponentStructure,
-  id: string,
+  componentToAdd: ComponentStructure,
   dropTarget: DropTarget,
 ) => {
   let targetComponent = null;
   crawl(
     treeRoot,
     (node, context) => {
-      if (node.id === id) {
+      if (node.id === componentToAdd.id) {
         const isGrid = node.name === "Grid";
         if (isGrid) {
           targetComponent = addNodeToTarget(
@@ -1027,7 +1030,7 @@ export const moveComponent = (
         } else {
           const parent = context.parent;
           const items = (parent?.children?.map((c) => c.id) ?? []) as string[];
-          const oldIndex = items.indexOf(id);
+          const oldIndex = items.indexOf(componentToAdd.id!);
           let newIndex = items.indexOf(dropTarget.id);
 
           if (
@@ -1065,11 +1068,10 @@ export const moveComponent = (
 
 export const moveComponentToDifferentParent = (
   treeRoot: ComponentStructure,
-  id: string,
+  componentToAdd: ComponentStructure,
   dropTarget: DropTarget,
   newParentId: string,
 ) => {
-  const componentToAdd = getComponentById(treeRoot, id) as Component;
   const isGrid = componentToAdd.name === "Grid";
   let targetComponent = null;
 
@@ -1141,7 +1143,7 @@ export const moveComponentToDifferentParent = (
 
 export const removeComponentFromParent = (
   treeRoot: ComponentTree,
-  id: string,
+  componentToAdd: ComponentStructure,
   parentId: string,
 ) => {
   let shouldRecalculate = false;
@@ -1150,12 +1152,11 @@ export const removeComponentFromParent = (
   crawl(
     treeRoot,
     (node, context) => {
-      if (node.id === id && context.parent?.id === parentId) {
+      if (node.id === componentToAdd.id && context.parent?.id === parentId) {
         context.parent?.children?.splice(context.index, 1);
-        const component =
-          useEditorStore.getState().componentMutableAttrs[node.id];
         shouldRecalculate =
-          component.name === "GridColumn" || component.name === "Grid";
+          componentToAdd.name === "GridColumn" ||
+          componentToAdd.name === "Grid";
         targetComponent = context.parent;
         context.remove();
         context.break();

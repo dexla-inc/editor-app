@@ -1,10 +1,10 @@
 import { useEditorStore } from "@/stores/editor";
-import { Component, ComponentTree } from "@/utils/editor";
+import { Component, ComponentStructure, ComponentTree } from "@/utils/editor";
 import crawl from "tree-crawl";
 
-export const calculateGridSizes = (tree?: ComponentTree) => {
+export const calculateGridSizes = (tree?: ComponentStructure) => {
   if (!tree) {
-    tree = useEditorStore.getState().tree.root;
+    tree = useEditorStore.getState().tree.root as ComponentStructure;
   }
   const setColumnSpan = useEditorStore.getState().setColumnSpan;
   const componentResizedMap: { [parentId: string]: Component } = {};
@@ -12,8 +12,10 @@ export const calculateGridSizes = (tree?: ComponentTree) => {
   crawl(
     tree,
     (nodeTree, context) => {
-      const node =
-        useEditorStore.getState().componentMutableAttrs[nodeTree.id!];
+      // TODO: workaround
+      const node = nodeTree?.name
+        ? nodeTree
+        : useEditorStore.getState().componentMutableAttrs[nodeTree?.id!];
       if (node.name === "Grid") {
         const parentTree = context.parent;
         const parent =
