@@ -19,10 +19,7 @@ import { SettingsTabHeader } from "@/components/settings/SettingsTabHeader";
 import { SettingsTabs } from "@/components/settings/SettingsTabs";
 import { updateDataSource } from "@/requests/datasources/mutations";
 import { getSwagger } from "@/requests/datasources/queries";
-import {
-  getDataSource,
-  getDataSourceEndpoints,
-} from "@/requests/datasources/queries-noauth";
+import { getDataSource } from "@/requests/datasources/queries-noauth";
 import {
   AuthenticationSchemes,
   DataSourceParams,
@@ -54,18 +51,15 @@ export default function DataSourcePage() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
-  const { id, name, dataSourceId } = router.query as {
+  const { id, name, dataSourceId, type } = router.query as {
     id: string;
     name: string;
     dataSourceId: string;
+    type: string;
   };
 
   const [dataSource, setDataSource] = useState<DataSourceResponse>(
     {} as DataSourceResponse,
-  );
-
-  const [endpoints, setEndpoints] = useState<Array<Endpoint> | undefined>(
-    undefined,
   );
 
   const [authenticationScheme, setAuthenticationScheme] =
@@ -181,11 +175,6 @@ export default function DataSourcePage() {
       setAuthenticationScheme(result.authenticationScheme);
 
       result.authValue && setAuthValue(result.authValue);
-
-      const endpointsResult = await getDataSourceEndpoints(id, {
-        dataSourceId,
-      });
-      setEndpoints(endpointsResult.results);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataSourceId, id]);
@@ -228,11 +217,13 @@ export default function DataSourcePage() {
                     ></SuccessAlert>
                   </>
                 )}
-                <SwaggerURLInput
-                  isLoading={isLoading}
-                  swaggerUrl={swaggerUrl}
-                  setSwaggerUrl={setSwaggerUrl}
-                />
+                {type !== "manual" && (
+                  <SwaggerURLInput
+                    isLoading={isLoading}
+                    swaggerUrl={swaggerUrl}
+                    setSwaggerUrl={setSwaggerUrl}
+                  />
+                )}
                 <BasicDetailsInputs
                   form={form}
                   setAuthenticationScheme={setAuthenticationScheme}
@@ -265,7 +256,6 @@ export default function DataSourcePage() {
                     startLoading={startLoading}
                     stopLoading={stopLoading}
                     dataSource={dataSource}
-                    endpoints={endpoints}
                     loginEndpointId={loginEndpointId}
                     setLoginEndpointId={setLoginEndpointId}
                     refreshEndpointId={refreshEndpointId}

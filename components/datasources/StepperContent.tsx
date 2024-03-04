@@ -33,23 +33,23 @@ export default function StepperContent({
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
   const [dataSource, setDataSource] = useState<DataSourceResponse>(
-    {} as DataSourceResponse
+    {} as DataSourceResponse,
   );
   const [endpoints, setEndpoints] = useState<Array<Endpoint> | undefined>(
-    undefined
+    undefined,
   );
   const [loginEndpointId, setLoginEndpointId] = useState<string | null>(null);
   const [loginEndpointLabel, setLoginEndpointLabel] = useState<string | null>(
-    null
+    null,
   );
   const [refreshEndpointLabel, setRefreshEndpointLabel] = useState<
     string | null
   >(null);
   const [userEndpointLabel, setUserEndpointLabel] = useState<string | null>(
-    null
+    null,
   );
   const [refreshEndpointId, setRefreshEndpointId] = useState<string | null>(
-    null
+    null,
   );
 
   const [userEndpointId, setUserEndpointId] = useState<string | null>(null);
@@ -102,7 +102,6 @@ export default function StepperContent({
           stopLoading={stopLoading}
           dataSource={dataSource}
           setDataSource={setDataSource}
-          endpoints={endpoints}
           loginEndpointId={loginEndpointId}
           setLoginEndpointId={setLoginEndpointId}
           setLoginEndpointLabel={setLoginEndpointLabel}

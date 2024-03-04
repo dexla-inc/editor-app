@@ -47,12 +47,22 @@ export default function MantineStyledButton({
       >
         <Stack align="center">
           {logoUrl && (
-            <Image src={logoUrl} alt={title} width={200} height={200} />
+            <Image
+              src={logoUrl}
+              alt={title}
+              width={200}
+              height={200}
+              style={{
+                background: "white",
+                padding: theme.spacing.md,
+                borderRadius: theme.radius.md,
+              }}
+            />
           )}
           <Title>{title}</Title>
-          <Stack spacing={0} align="center">
-            <Text>{description}</Text>
-            <Text size="sm" c="dimmed">
+          <Stack spacing={0}>
+            <Text align="center">{description}</Text>
+            <Text size="sm" c="dimmed" align="center">
               {caption}
             </Text>
           </Stack>

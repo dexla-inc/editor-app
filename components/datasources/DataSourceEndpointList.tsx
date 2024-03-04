@@ -14,7 +14,7 @@ export const DataSourceEndpointList = ({
   dataSourceId,
   baseUrl,
 }: DataSourceEndpointListProps) => {
-  const { data: endpoints } = useDataSourceEndpoints(projectId);
+  const { data: endpoints } = useDataSourceEndpoints(projectId, dataSourceId);
 
   return (
     <>

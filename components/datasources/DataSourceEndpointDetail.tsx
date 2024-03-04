@@ -36,9 +36,9 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { Editor } from "@monaco-editor/react";
 import debounce from "lodash.debounce";
 import { useEffect, useReducer, useState } from "react";
+import { MonacoEditorJson } from "../MonacoEditorJson";
 
 const MethodTypeArray: MethodTypes[] = [
   "GET",
@@ -154,7 +154,7 @@ export const DataSourceEndpointDetail = ({
   const [warningMessage, setWarningMessage] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<string | null>("example");
   const [activeBodyType, setActiveBodyType] = useState<"raw" | "fields">("raw");
-  const { invalidate } = useDataSourceEndpoints(projectId);
+  const { invalidate } = useDataSourceEndpoints(projectId, dataSourceId);
 
   const theme = useMantineTheme();
 
@@ -398,7 +398,7 @@ export const DataSourceEndpointDetail = ({
         for (const param of parameters) {
           if (
             param.value !== null &&
-            param.location.toLowerCase() === "query".toLowerCase()
+            param.location.toLowerCase() === "Query".toLowerCase()
           ) {
             urlParams.append(param.name, param.value?.toString());
           }
@@ -524,7 +524,7 @@ export const DataSourceEndpointDetail = ({
             onChange={(value) => {
               handleInputChange("mediaType", value as MediaTypes);
             }}
-          ></Select>
+          />
         </Flex>
         <Flex gap="md">
           <Select
@@ -536,7 +536,7 @@ export const DataSourceEndpointDetail = ({
               handleInputChange("methodType", value as MethodTypes);
             }}
             sx={{ width: 110 }}
-          ></Select>
+          />
           <TextInput
             label="Relative URL"
             placeholder="v1/user"
@@ -573,7 +573,6 @@ export const DataSourceEndpointDetail = ({
               sx={{ width: 110 }}
             /> */}
             <TextInput
-              size="sm"
               placeholder="name"
               value={item.name}
               onChange={(event) =>
@@ -618,12 +617,12 @@ export const DataSourceEndpointDetail = ({
           <Flex key={index} align="center" gap="md">
             <Select
               data={[
-                { label: "Query", value: "query" },
-                { label: "Path", value: "path" },
-                { label: "Header", value: "header" },
-                { label: "Cookie", value: "cookie" },
+                { label: "Query", value: "Query" },
+                { label: "Path", value: "Path" },
+                { label: "Header", value: "Header" },
+                { label: "Cookie", value: "Cookie" },
               ]}
-              value={item.location}
+              value={item.location ?? "Query"}
               onChange={(value) =>
                 handleArrayChange(
                   index,
@@ -636,7 +635,6 @@ export const DataSourceEndpointDetail = ({
             />
 
             <TextInput
-              size="sm"
               placeholder="name"
               value={item.name}
               onChange={(event) => {
@@ -693,19 +691,10 @@ export const DataSourceEndpointDetail = ({
               sx={{ maxWidth: "200px" }}
             />
             {activeBodyType === "raw" && (
-              <Editor
-                height={endpoint.body ? "250px" : "100px"}
-                defaultLanguage="json"
+              <MonacoEditorJson
                 value={state.body}
                 onChange={(value) => {
                   debouncedInputChange("body", value);
-                }}
-                options={{
-                  wordWrap: "on",
-                  scrollBeyondLastLine: false,
-                  minimap: {
-                    enabled: false,
-                  },
                 }}
               />
             )}
@@ -730,7 +719,6 @@ export const DataSourceEndpointDetail = ({
                     sx={{ width: 110 }}
                   />
                   <TextInput
-                    size="sm"
                     placeholder="name"
                     value={item.name}
                     onChange={(event) =>
@@ -785,36 +773,18 @@ export const DataSourceEndpointDetail = ({
             </Tabs.Tab>
           </Tabs.List>
           <Tabs.Panel value="example" pt="xs">
-            <Editor
-              height={endpoint.exampleResponse ? "250px" : "100px"}
-              defaultLanguage="json"
+            <MonacoEditorJson
               value={state.exampleResponse}
               onChange={(value) => {
                 debouncedInputChange("exampleResponse", value);
               }}
-              options={{
-                wordWrap: "on",
-                scrollBeyondLastLine: false,
-                minimap: {
-                  enabled: false,
-                },
-              }}
             />
           </Tabs.Panel>
           <Tabs.Panel value="error" pt="xs">
-            <Editor
-              height={endpoint.errorExampleResponse ? "250px" : "100px"}
-              defaultLanguage="json"
+            <MonacoEditorJson
               value={state.errorExampleResponse}
               onChange={(value) => {
                 debouncedInputChange("errorExampleResponse", value);
-              }}
-              options={{
-                wordWrap: "on",
-                scrollBeyondLastLine: false,
-                minimap: {
-                  enabled: false,
-                },
               }}
             />
           </Tabs.Panel>
