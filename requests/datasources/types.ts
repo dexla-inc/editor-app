@@ -27,7 +27,7 @@ export interface DataSourceResponse {
   id: string;
   name: string;
   authenticationScheme: AuthenticationSchemes;
-  environment: EnvironmentTypes;
+  environment: string; //EnvironmentTypes
   baseUrl: string;
   swaggerUrl: string;
   updated: number;
