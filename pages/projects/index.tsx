@@ -5,6 +5,7 @@ import { useProjectListQuery } from "@/hooks/reactQuery/useProjectListQuery";
 import { useProjectMutatation } from "@/hooks/reactQuery/useProjectMutation";
 import { createProject } from "@/requests/projects/mutations";
 import { useAppStore } from "@/stores/app";
+import { useEditorStore } from "@/stores/editor";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { ICON_SIZE } from "@/utils/config";
@@ -22,7 +23,7 @@ import { IconSearch } from "@tabler/icons-react";
 import debounce from "lodash.debounce";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Projects() {
   const router = useRouter();
@@ -37,9 +38,8 @@ export default function Projects() {
   const { setPageCancelled } = useUserConfigStore((state) => ({
     setPageCancelled: state.setPageCancelled,
   }));
-  // const initializeVariableList = useVariableStore(
-  //   (state) => state.initializeVariableList,
-  // );
+
+  const resetTree = useEditorStore((state) => state.resetTree);
 
   const goToEditor = async (projectId: string, pageId: string) => {
     router.push(`/projects/${projectId}/editor/${pageId}`);
@@ -73,6 +73,11 @@ export default function Projects() {
 
     router.push(url);
   };
+
+  useEffect(() => {
+    resetTree();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // TODO: Add this back when so we get rid of InitializeVariables.ts
   // useVariableListQuery({ onSuccess: initializeVariableList });

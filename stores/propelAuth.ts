@@ -41,8 +41,6 @@ export const usePropelAuthStore = create<AuthState>()(
         }
       },
       initializeAuth: async (authInfo: WithAuthInfoProps) => {
-        console.log("InstantiatePropelAuthStore", authInfo);
-
         const companies = authInfo?.orgHelper?.getOrgs() || [];
         const activeCompanyId = get().activeCompanyId;
         const activeCompany =

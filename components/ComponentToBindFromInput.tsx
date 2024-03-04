@@ -112,7 +112,36 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
           }
           w="100%"
         />
-      ) : null}
+      ) : fieldType === "url" ? (
+        <TextInput
+          {...commonProps}
+          type="url"
+          placeholder={placeholder}
+          value={value?.static}
+          onChange={(e) =>
+            onChange({
+              ...value,
+              dataType: "static",
+              static: e.currentTarget.value,
+            })
+          }
+          {...props}
+        />
+      ) : (
+        <TextInput
+          {...commonProps}
+          placeholder={placeholder}
+          value={value?.static}
+          onChange={(e) =>
+            onChange({
+              ...value,
+              dataType: "static",
+              static: e.currentTarget.value,
+            })
+          }
+          {...props}
+        />
+      )}
     </ComponentToBindWrapper>
   );
 };
