@@ -54,6 +54,7 @@ export const RedirectUrlForm = () => {
             };
           })}
           {...form.getInputProps("redirectSlug")}
+          clearable
         />
         <Button type="submit" loading={isLoading}>
           Save

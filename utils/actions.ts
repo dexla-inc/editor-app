@@ -267,7 +267,8 @@ export const useNavigationAction = ({
     url += `?${queryStrings.join("&")}`;
   }
 
-  router.push(url);
+  console.log("useNavigationAction", url);
+  router.push(url.replace("//", "/"));
 };
 
 export const useGoToUrlAction = async ({
