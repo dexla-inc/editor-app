@@ -11,6 +11,7 @@ import { GRID_SIZE } from "@/utils/config";
 import {
   Component,
   ComponentStructure,
+  ComponentTree,
   EditorTree,
   EditorTreeCopy,
   getTreeComponentMutableProps,
@@ -158,7 +159,7 @@ export type EditorState = {
   currentPageId?: string;
   hoveredComponentId?: string;
   selectedComponentIds?: string[];
-  copiedComponent?: Component;
+  copiedComponent?: ComponentTree;
   componentToAdd?: ComponentStructure;
   iframeWindow?: Window;
   currentTargetId?: string;
@@ -192,7 +193,7 @@ export type EditorState = {
     pickingComponentToBindFrom?: ComponentToBind,
   ) => void;
   setComponentToBind: (componentToBind?: string) => void;
-  setCopiedComponent: (copiedComponent?: Component) => void;
+  setCopiedComponent: (copiedComponent?: ComponentTree) => void;
   setPages: (pages: PageResponse[]) => void;
   setTheme: (theme: MantineThemeExtended) => void;
   setIframeWindow: (iframeWindow: Window) => void;
@@ -454,7 +455,7 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
 
                 componentIds.forEach((id) => {
                   state.componentMutableAttrs[id] = updateTreeComponentAttrs2(
-                    state.componentMutableAttrs[id],
+                    state.componentMutableAttrs[id] ?? {},
                     attrs,
                     currentState,
                     currentLanguage,

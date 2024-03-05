@@ -93,10 +93,22 @@ export function arrayMove<T>(array: T[], from: number, to: number): T[] {
 }
 
 export const replaceIdsDeeply = (treeRoot: Component) => {
+  const updateTreeComponentAttrs =
+    useEditorStore.getState().updateTreeComponentAttrs;
+  const componentMutableAttrs = useEditorStore.getState().componentMutableAttrs;
   crawl(
     treeRoot,
-    (node) => {
-      node.id = nanoid();
+    async (node) => {
+      const newId = nanoid();
+      const nodeAttrs = componentMutableAttrs[node.id!];
+      nodeAttrs.id = newId;
+      await updateTreeComponentAttrs({
+        componentIds: [newId],
+        attrs: nodeAttrs,
+        save: false,
+      });
+
+      node.id = newId;
     },
     { order: "bfs" },
   );
@@ -600,10 +612,13 @@ export const addComponent = (
   componentToAdd: ComponentStructure,
   dropTarget: DropTarget,
   dropIndex?: number,
+  isPaste?: boolean,
 ): string => {
   const copy = cloneDeep(componentToAdd);
-  // TODO: should be get back with it?
-  // replaceIdsDeeply(copy);
+  if (isPaste) {
+    replaceIdsDeeply(copy);
+  }
+
   const directChildren = ["Modal", "Drawer", "Toast"];
   const isGrid = copy.name === "Grid";
   const isColumn = copy.name === "GridColumn";

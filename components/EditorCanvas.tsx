@@ -159,12 +159,13 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
     const selectedComponentId = useEditorStore
       .getState()
       .selectedComponentIds?.at(-1);
-
-    const selectedComponent =
-      useEditorStore.getState().componentMutableAttrs[selectedComponentId!];
+    const componentToCopy = getComponentTreeById(
+      editorTree.root,
+      selectedComponentId!,
+    )!;
     if (!isPreviewMode && selectedComponentId) {
-      setCopiedComponent(selectedComponent);
-      copyToClipboard(selectedComponent);
+      setCopiedComponent(componentToCopy);
+      copyToClipboard(componentToCopy);
     }
   }, [editorTree.root, isPreviewMode, setCopiedComponent]);
 
@@ -181,11 +182,13 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
 
   const pasteCopiedComponent = useCallback(async () => {
     const clipboardContent = pasteFromClipboard();
-    let componentToPaste =
+    let componentToPasteTree =
       (clipboardContent as typeof copiedComponent) || copiedComponent;
-    if (!componentToPaste || isPreviewMode) {
+    if (!componentToPasteTree || isPreviewMode) {
       return;
     }
+    const componentToPaste =
+      useEditorStore.getState().componentMutableAttrs[componentToPasteTree.id!];
 
     const selectedComponentId = useEditorStore
       .getState()
@@ -240,6 +243,7 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
         edge: isGridItems ? "center" : "top",
       },
       componentIndex,
+      true,
     );
 
     setEditorTree(editorTreeCopy, {
