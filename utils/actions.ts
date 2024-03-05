@@ -573,7 +573,7 @@ export const useApiCallAction = async ({
   setNonEditorActions,
 }: APICallActionParams): Promise<any> => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-  if (entity.props) {
+  if (entity.props && action.showLoader) {
     setLoadingState(entity.id!, true, updateTreeComponent);
   }
 
@@ -653,7 +653,7 @@ export const useApiCallAction = async ({
       return prev;
     });
   } finally {
-    if (entity.props) {
+    if (entity.props && action.showLoader) {
       setLoadingState(entity.id!, false, updateTreeComponent);
     }
   }
