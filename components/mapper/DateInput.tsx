@@ -20,8 +20,6 @@ const DateInputComponent = ({
 }: Props) => {
   const {
     children,
-    isDisabled,
-    disabled,
     icon: iconName,
     iconPosition,
     triggers,
@@ -40,7 +38,10 @@ const DateInputComponent = ({
       {...(iconName && isPositionLeft && { icon: <Icon name={iconName} /> })}
       {...(iconName &&
         !isPositionLeft && { rightSection: <Icon name={iconName} /> })}
-      disabled={isDisabled ? true : false}
+      {...props}
+      {...componentProps}
+      {...triggers}
+      style={{}}
       styles={{
         root: {
           position: "relative",
@@ -49,9 +50,6 @@ const DateInputComponent = ({
         },
         input: customStyle,
       }}
-      {...props}
-      {...componentProps}
-      {...triggers}
     >
       {component.children && component.children.length > 0
         ? component.children?.map((child) => renderTree(child))

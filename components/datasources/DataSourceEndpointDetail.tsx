@@ -192,7 +192,6 @@ export const DataSourceEndpointDetail = ({
     body: endpoint.body ?? "",
     mediaType: endpoint.mediaType ?? "application/json",
     withCredentials: endpoint.withCredentials ?? null,
-    authenticationScheme: endpoint.authenticationScheme ?? "NONE",
     exampleResponse: endpoint.exampleResponse ?? "",
     errorExampleResponse: endpoint.errorExampleResponse ?? "",
     isServerRequest: endpoint.isServerRequest ?? false,

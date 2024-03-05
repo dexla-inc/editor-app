@@ -1,5 +1,5 @@
 import {
-  DataSourceAuthResponse,
+  DataSourceAuthListResponse,
   DataSourceEndpointsListParams,
   DataSourceResponse,
   DataSourcesListParams,
@@ -66,13 +66,13 @@ export const getDataSource = async (projectId: string, id: string) => {
   return response;
 };
 
-export const getDataSourceAuth = async (projectId: string, id: string) => {
-  let url = `/projects/${projectId}/datasources/${id}/auth`;
+export const getDataSourceAuth = async (projectId: string) => {
+  let url = `/projects/${projectId}/datasources/auth`;
 
-  const response = (await getWithoutAuth<DataSourceAuthResponse>(
+  const response = (await getWithoutAuth<DataSourceAuthListResponse>(
     url,
     {},
-  )) as DataSourceAuthResponse;
+  )) as DataSourceAuthListResponse;
 
   return response;
 };

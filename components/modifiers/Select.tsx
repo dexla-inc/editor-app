@@ -36,6 +36,7 @@ export const Modifier = withModifier(
           withAsterisk: selectedComponent?.props?.withAsterisk,
           clearable: selectedComponent?.props?.clearable,
           searchable: selectedComponent?.props?.searchable,
+          multiSelect: selectedComponent?.props?.multiSelect,
           customText: selectedComponent?.props?.customText,
           customLinkText: selectedComponent?.props?.customLinkText,
           customLinkUrl: selectedComponent?.props?.customLinkUrl,
@@ -72,6 +73,21 @@ export const Modifier = withModifier(
                   props: {
                     size: value,
                     style: { height: inputSizes[value] },
+                  },
+                },
+              });
+            }}
+          />
+          <SegmentedControlYesNo
+            label="Multiple Select"
+            {...form.getInputProps("multiSelect")}
+            onChange={(value) => {
+              form.setFieldValue("multiSelect", value);
+              debouncedTreeComponentAttrsUpdate({
+                componentIds: selectedComponentIds,
+                attrs: {
+                  props: {
+                    multiSelect: value,
                   },
                 },
               });

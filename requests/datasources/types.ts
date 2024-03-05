@@ -68,7 +68,6 @@ export type Endpoint = {
   methodType: MethodTypes;
   description: string | null;
   mediaType: MediaTypes;
-  authenticationScheme: AuthenticationSchemes;
   headers: Header[];
   parameters: Parameter[];
   requestBody: RequestBody[];
@@ -133,6 +132,10 @@ export const AuthenticationSchemeLabels: Record<AuthenticationSchemes, string> =
     BASIC: "Basic Auth",
     API_KEY: "API Key",
   };
+
+export type DataSourceAuthListResponse = {
+  authConfigurations: Record<string, Omit<DataSourceAuthResponse, "type">>;
+};
 
 export type DataSourceAuthResponse = {
   type: AuthenticationSchemes;

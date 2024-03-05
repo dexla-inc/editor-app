@@ -346,7 +346,7 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
           setTree: (tree, options) => {
             set(
               (state: EditorState) => {
-                if (!options?.onLoad && !state.isPreviewMode) {
+                if (!options?.onLoad && !state.isPreviewMode && !state.isLive) {
                   debouncedUpdatePageState(
                     encodeSchema(JSON.stringify(tree)),
                     state.currentProjectId ?? "",
@@ -405,7 +405,7 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
                   state.componentMutableAttrs,
                 );
 
-                if (save && !state.isPreviewMode) {
+                if (save && !state.isPreviewMode && !state.isLive) {
                   debouncedUpdatePageState(
                     encodeSchema(
                       JSON.stringify(
@@ -466,7 +466,7 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
                   state.tree,
                   state.componentMutableAttrs,
                 );
-                if (save && !state.isPreviewMode) {
+                if (save && !state.isPreviewMode && !state.isLive) {
                   debouncedUpdatePageState(
                     encodeSchema(
                       JSON.stringify(

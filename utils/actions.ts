@@ -255,7 +255,7 @@ export const useNavigationAction = ({
   }
 
   let url = isLive
-    ? `/${action.pageSlug}`
+    ? `/${action.pageSlug}`.replace("//", "/")
     : `/projects/${projectId}/editor/${action.pageId}`;
 
   if (action.queryStrings && Object.keys(action.queryStrings).length) {
@@ -268,7 +268,7 @@ export const useNavigationAction = ({
   }
 
   console.log("useNavigationAction", url);
-  router.push(url.replace("//", "/"));
+  router.push(url);
 };
 
 export const useGoToUrlAction = async ({
@@ -513,16 +513,18 @@ const handleSuccess = async (
 export function constructHeaders(endpoint?: Endpoint, authHeaderKey = "") {
   const contentType = endpoint?.mediaType || "application/json";
 
-  const endpointHeaders = endpoint?.headers.reduce((acc, header) => {
-    // @ts-ignore
-    acc[header.name] = header.value;
-    return acc;
-  }, {});
+  const endpointHeaders = endpoint?.headers
+    .filter((e) => e.name !== "Authorization")
+    .reduce((acc, header) => {
+      // @ts-ignore
+      acc[header.name] = header.value;
+      return acc;
+    }, {});
 
   return {
     "Content-Type": contentType,
-    ...(authHeaderKey ? { Authorization: authHeaderKey } : {}),
     ...endpointHeaders,
+    ...(authHeaderKey ? { Authorization: authHeaderKey } : {}),
   };
 }
 
@@ -555,6 +557,10 @@ export async function performFetch(
     throw new Error(error);
   }
 
+  if (response.status === 204) {
+    return null;
+  }
+
   return response.json();
 }
 
@@ -582,7 +588,7 @@ export const useApiCallAction = async ({
 }: APICallActionParams): Promise<any> => {
   const updateTreeComponentAttrs =
     useEditorStore.getState().updateTreeComponentAttrs;
-  if (entity.props) {
+  if (entity.props && action.showLoader) {
     setLoadingState(entity.id!, true, updateTreeComponentAttrs);
   }
 
@@ -595,10 +601,8 @@ export const useApiCallAction = async ({
 
     let responseJson: any;
 
-    const authHeaderKey =
-      endpoint?.authenticationScheme === "BEARER"
-        ? "Bearer " + accessToken
-        : "";
+    // TODO: Need to do this properly when we support more auth than bearer
+    const authHeaderKey = accessToken ? "Bearer " + accessToken : "";
 
     const fetchUrl = endpoint?.isServerRequest
       ? `/api/proxy?targetUrl=${encodeURIComponent(url)}`
@@ -607,16 +611,15 @@ export const useApiCallAction = async ({
     switch (action.authType) {
       case "login":
         responseJson = await performFetch(url, endpoint, body);
-        const mergedAuthConfig = { ...responseJson, ...action.authConfig };
+        const apiAuthConfig = useDataSourceStore.getState().apiAuthConfig;
+        const authConfig =
+          apiAuthConfig?.authConfigurations[endpoint.dataSourceId];
+        const mergedAuthConfig = { ...responseJson, ...authConfig };
         const setAuthTokens = useDataSourceStore.getState().setAuthTokens;
 
         setAuthTokens(mergedAuthConfig);
         break;
       case "logout":
-        const clearAuthTokens = useDataSourceStore.getState().clearAuthTokens;
-
-        clearAuthTokens();
-
         responseJson = await performFetch(
           fetchUrl,
           endpoint,
@@ -624,12 +627,16 @@ export const useApiCallAction = async ({
           authHeaderKey,
         );
 
+        const clearAuthTokens = useDataSourceStore.getState().clearAuthTokens;
+
+        clearAuthTokens();
+
         break;
       default:
         const refreshAccessToken =
           useDataSourceStore.getState().refreshAccessToken;
 
-        refreshAccessToken();
+        refreshAccessToken(endpoint.dataSourceId);
 
         responseJson = await performFetch(
           fetchUrl,
@@ -661,7 +668,7 @@ export const useApiCallAction = async ({
       return prev;
     });
   } finally {
-    if (entity.props) {
+    if (entity.props && action.showLoader) {
       setLoadingState(entity.id!, false, updateTreeComponentAttrs);
     }
   }

@@ -27,7 +27,6 @@ export const Modifier = withModifier(
           description: selectedComponent?.props?.description,
           radius: selectedComponent?.props?.radius,
           size: selectedComponent?.props?.size,
-          disabled: selectedComponent?.props?.isDisabled,
           withAsterisk: selectedComponent?.props?.withAsterisk,
           clearable: selectedComponent?.props?.clearable,
           valueFormat: selectedComponent?.props?.valueFormat,
