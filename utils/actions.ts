@@ -550,6 +550,10 @@ export async function performFetch(
     throw new Error(error);
   }
 
+  if (response.status === 204) {
+    return null;
+  }
+
   return response.json();
 }
 
@@ -605,16 +609,16 @@ export const useApiCallAction = async ({
         setAuthTokens(mergedAuthConfig);
         break;
       case "logout":
-        const clearAuthTokens = useDataSourceStore.getState().clearAuthTokens;
-
-        clearAuthTokens();
-
         responseJson = await performFetch(
           fetchUrl,
           endpoint,
           body,
           authHeaderKey,
         );
+
+        const clearAuthTokens = useDataSourceStore.getState().clearAuthTokens;
+
+        clearAuthTokens();
 
         break;
       default:
