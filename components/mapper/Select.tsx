@@ -43,8 +43,11 @@ const SelectComponent = forwardRef(
       ...componentProps
     } = component.props as any;
 
-    const Wrapper = multiSelect ? MantineMultiSelect : MantineSelect;
-    const OuterWrapper = multiSelect && !isPreviewMode ? Box : Fragment;
+    const MantineSelectWrapper = multiSelect
+      ? MantineMultiSelect
+      : MantineSelect;
+    const MantineSelectParentWrapper =
+      multiSelect && !isPreviewMode ? Box : Fragment;
 
     const componentId = component.id as string;
     const { dataLabelKey, dataValueKey, resultsKey } = component.onLoad ?? {};
@@ -102,8 +105,8 @@ const SelectComponent = forwardRef(
     }, [inputValue]);
 
     return (
-      <OuterWrapper {...omit(props, ["onChange"])}>
-        <Wrapper
+      <MantineSelectParentWrapper {...omit(props, ["onChange"])}>
+        <MantineSelectWrapper
           ref={ref}
           {...props}
           {...componentProps}
@@ -133,7 +136,7 @@ const SelectComponent = forwardRef(
           label={undefined}
           value={inputValue}
         />
-      </OuterWrapper>
+      </MantineSelectParentWrapper>
     );
   },
 );
