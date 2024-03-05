@@ -18,7 +18,6 @@ export const AddNewDataSourceEndpoint = ({
     description: null,
     mediaType: "application/json",
     withCredentials: null,
-    authenticationScheme: "NONE",
     headers: [],
     parameters: [],
     requestBody: [],

@@ -198,7 +198,6 @@ export default function PagesStep({
         requestBody: [],
         mediaType: "application/json",
         withCredentials: null,
-        authenticationScheme: "NONE",
         exampleResponse,
         errorExampleResponse: "",
         isServerRequest: false,

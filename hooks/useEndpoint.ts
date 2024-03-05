@@ -49,10 +49,7 @@ export const useEndpoint = ({
     : url;
 
   const apiCall = async () => {
-    const authHeaderKey =
-      endpoint?.authenticationScheme === "BEARER"
-        ? "Bearer " + accessToken
-        : "";
+    const authHeaderKey = accessToken ? "Bearer " + accessToken : "";
 
     return performFetch(fetchUrl, endpoint, body, authHeaderKey).then(
       (response) => {

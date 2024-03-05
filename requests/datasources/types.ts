@@ -68,7 +68,6 @@ export type Endpoint = {
   methodType: MethodTypes;
   description: string | null;
   mediaType: MediaTypes;
-  authenticationScheme: AuthenticationSchemes;
   headers: Header[];
   parameters: Parameter[];
   requestBody: RequestBody[];
@@ -135,7 +134,7 @@ export const AuthenticationSchemeLabels: Record<AuthenticationSchemes, string> =
   };
 
 export type DataSourceAuthListResponse = {
-  authConfigurations: Record<string, DataSourceAuthResponse>;
+  authConfigurations: Record<string, Omit<DataSourceAuthResponse, "type">>;
 };
 
 export type DataSourceAuthResponse = {

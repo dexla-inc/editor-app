@@ -506,16 +506,18 @@ const handleSuccess = async (
 export function constructHeaders(endpoint?: Endpoint, authHeaderKey = "") {
   const contentType = endpoint?.mediaType || "application/json";
 
-  const endpointHeaders = endpoint?.headers.reduce((acc, header) => {
-    // @ts-ignore
-    acc[header.name] = header.value;
-    return acc;
-  }, {});
+  const endpointHeaders = endpoint?.headers
+    .filter((e) => e.name !== "Authorization")
+    .reduce((acc, header) => {
+      // @ts-ignore
+      acc[header.name] = header.value;
+      return acc;
+    }, {});
 
   return {
     "Content-Type": contentType,
-    ...(authHeaderKey ? { Authorization: authHeaderKey } : {}),
     ...endpointHeaders,
+    ...(authHeaderKey ? { Authorization: authHeaderKey } : {}),
   };
 }
 
@@ -584,10 +586,8 @@ export const useApiCallAction = async ({
 
     let responseJson: any;
 
-    const authHeaderKey =
-      endpoint?.authenticationScheme === "BEARER"
-        ? "Bearer " + accessToken
-        : "";
+    // TODO: Need to do this properly when we support more auth than bearer
+    const authHeaderKey = accessToken ? "Bearer " + accessToken : "";
 
     const fetchUrl = endpoint?.isServerRequest
       ? `/api/proxy?targetUrl=${encodeURIComponent(url)}`
