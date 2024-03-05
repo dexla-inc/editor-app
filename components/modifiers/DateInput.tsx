@@ -27,7 +27,6 @@ export const Modifier = withModifier(
           description: selectedComponent?.props?.description,
           radius: selectedComponent?.props?.radius,
           size: selectedComponent?.props?.size,
-          disabled: selectedComponent?.props?.isDisabled,
           withAsterisk: selectedComponent?.props?.withAsterisk,
           clearable: selectedComponent?.props?.clearable,
           valueFormat: selectedComponent?.props?.valueFormat,
@@ -162,16 +161,6 @@ export const Modifier = withModifier(
               form.setFieldValue("clearable", value);
               debouncedTreeUpdate(selectedComponentIds, {
                 clearable: value,
-              });
-            }}
-          />
-          <SegmentedControlYesNo
-            label="Disabled"
-            {...form.getInputProps("disabled")}
-            onChange={(value) => {
-              form.setFieldValue("disabled", value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                disabled: value,
               });
             }}
           />
