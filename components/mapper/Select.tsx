@@ -7,19 +7,31 @@ import { useEndpoint } from "@/hooks/useEndpoint";
 import { useInputsStore } from "@/stores/inputs";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
-import { Select as MantineSelect, SelectProps } from "@mantine/core";
+import {
+  Box,
+  MultiSelect as MantineMultiSelect,
+  Select as MantineSelect,
+  MultiSelectProps,
+  SelectProps,
+} from "@mantine/core";
 import debounce from "lodash.debounce";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
-import { forwardRef, memo, useEffect, useState } from "react";
+import { omit } from "next/dist/shared/lib/router/utils/omit";
+import { Fragment, forwardRef, memo, useEffect, useState } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
-} & SelectProps;
+  isPreviewMode: boolean;
+} & SelectProps &
+  MultiSelectProps;
 
 const SelectComponent = forwardRef(
-  ({ renderTree, component, children: child, ...props }: Props, ref) => {
+  (
+    { renderTree, component, children: child, isPreviewMode, ...props }: Props,
+    ref,
+  ) => {
     const {
       children,
       triggers,
@@ -27,8 +39,15 @@ const SelectComponent = forwardRef(
       dataType,
       bg,
       textColor,
+      multiSelect,
       ...componentProps
     } = component.props as any;
+
+    const MantineSelectWrapper = multiSelect
+      ? MantineMultiSelect
+      : MantineSelect;
+    const MantineSelectParentWrapper =
+      multiSelect && !isPreviewMode ? Box : Fragment;
 
     const componentId = component.id as string;
     const { dataLabelKey, dataValueKey, resultsKey } = component.onLoad ?? {};
@@ -86,35 +105,38 @@ const SelectComponent = forwardRef(
     }, [inputValue]);
 
     return (
-      <MantineSelect
-        ref={ref}
-        {...props}
-        {...componentProps}
-        onChange={handleChange}
-        onSearchChange={debouncedHandleSearchChange}
-        {...restTriggers}
-        style={{}}
-        styles={{
-          root: {
-            position: "relative",
-            ...pick(customStyle, [
-              "display",
-              "width",
-              "height",
-              "minHeight",
-              "minWidth",
-            ]),
-          },
-          input: customStyle,
-        }}
-        withinPortal={false}
-        maxDropdownHeight={150}
-        data={data}
-        dropdownComponent={CustomDropdown}
-        rightSection={loading ? <InputLoader /> : null}
-        label={undefined}
-        value={inputValue}
-      />
+      <MantineSelectParentWrapper {...omit(props, ["onChange"])}>
+        <MantineSelectWrapper
+          ref={ref}
+          {...props}
+          {...componentProps}
+          onChange={handleChange}
+          onSearchChange={debouncedHandleSearchChange}
+          {...restTriggers}
+          style={{}}
+          styles={{
+            root: {
+              position: "relative",
+              ...pick(customStyle, [
+                "display",
+                "width",
+                "height",
+                "minHeight",
+                "minWidth",
+              ]),
+            },
+            input: customStyle,
+            values: { height: "inherit" },
+          }}
+          withinPortal={false}
+          maxDropdownHeight={150}
+          data={data}
+          dropdownComponent={CustomDropdown}
+          rightSection={loading ? <InputLoader /> : null}
+          label={undefined}
+          value={inputValue}
+        />
+      </MantineSelectParentWrapper>
     );
   },
 );

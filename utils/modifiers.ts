@@ -395,7 +395,6 @@ export const requiredModifiers: RequiredModifiers = {
     placeholder: "DD MMM YYYY",
     valueFormat: "DD MMM YYYY",
     description: "",
-    disabled: "false",
     withAsterisk: "false",
     clearable: "false",
     icon: "",
