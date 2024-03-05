@@ -19,7 +19,7 @@ export function filterAndMapEndpoints(
     .filter((endpoint) => endpoint.methodType === methodType)
     .map((endpoint) => ({
       value: endpoint.id,
-      label: endpoint.relativeUrl,
+      label: `${endpoint.relativeUrl} | ${endpoint.description}`,
       exampleresponse: endpoint.exampleResponse,
       requestbody: endpoint.requestBody,
     }))

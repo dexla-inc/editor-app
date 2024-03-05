@@ -26,8 +26,6 @@ export async function getPageProps(
         page: redirectSlug,
       });
 
-      console.log("redirectSlug", redirectSlug, page);
-
       return {
         redirect: {
           destination: `/${redirectSlug}`.replace("//", "/"),

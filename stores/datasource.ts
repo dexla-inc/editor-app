@@ -1,4 +1,8 @@
-import { DataSourceAuthResponse, Endpoint } from "@/requests/datasources/types";
+import {
+  DataSourceAuthListResponse,
+  DataSourceAuthResponse,
+  Endpoint,
+} from "@/requests/datasources/types";
 import Cookies from "js-cookie";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
@@ -9,11 +13,11 @@ export type AuthState = {
 };
 
 type DataSourceState = {
-  apiAuthConfig?: Omit<DataSourceAuthResponse, "type">;
+  apiAuthConfig?: DataSourceAuthListResponse;
   clearApiAuthConfig: () => void;
   setApiAuthConfig: (endpoints: Endpoint[]) => void;
   hasTokenExpired: () => boolean;
-  refreshAccessToken: () => Promise<void>;
+  refreshAccessToken: (dataSourceId: string) => Promise<void>;
   setAuthTokens: (response: any) => void;
   clearAuthTokens: () => void;
   authState: AuthState;
@@ -55,7 +59,7 @@ export const useDataSourceStore = create<DataSourceState>()(
           }
           return true;
         },
-        refreshAccessToken: async () => {
+        refreshAccessToken: async (dataSourceId: string) => {
           const refreshToken = Cookies.get("refreshToken");
 
           if (!refreshToken || refreshToken === "undefined") {
@@ -71,7 +75,8 @@ export const useDataSourceStore = create<DataSourceState>()(
             return;
           }
 
-          const url = apiAuthConfig?.refreshTokenUrl as string;
+          const url = apiAuthConfig?.authConfigurations[dataSourceId]
+            .refreshTokenUrl as string;
 
           const response = await fetch(url, {
             method: "POST",
@@ -95,23 +100,61 @@ export const useDataSourceStore = create<DataSourceState>()(
             },
           });
         },
-        setApiAuthConfig: async (endpoints) => {
-          const accessEndpoint = findEndpointByType(endpoints, "ACCESS");
-          const refreshEndpoint = findEndpointByType(endpoints, "REFRESH");
-          const userEndpoint = findEndpointByType(endpoints, "USER");
+        setApiAuthConfig: (endpoints) => {
+          const authConfigurations: Record<string, DataSourceAuthResponse> =
+            endpoints.reduce<Record<string, DataSourceAuthResponse>>(
+              (acc, endpoint) => {
+                const {
+                  dataSourceId,
+                  authentication,
+                  authenticationScheme,
+                  url,
+                } = endpoint;
 
-          const apiAuthConfig = {
-            accessTokenUrl: accessEndpoint?.url as string,
-            refreshTokenUrl: refreshEndpoint?.url as string,
-            userEndpointUrl: userEndpoint?.url as string,
-            accessTokenProperty: accessEndpoint?.authentication.tokenKey,
-            refreshTokenProperty: refreshEndpoint?.authentication.tokenKey,
-            expiryTokenProperty:
-              accessEndpoint?.authentication.tokenSecondaryKey,
+                if (!acc[dataSourceId]) {
+                  acc[dataSourceId] = {
+                    type: authenticationScheme,
+                    accessTokenUrl: undefined,
+                    refreshTokenUrl: undefined,
+                    userEndpointUrl: undefined,
+                    accessTokenProperty: undefined,
+                    refreshTokenProperty: undefined,
+                    expiryTokenProperty: undefined,
+                  };
+                }
+
+                switch (authentication.endpointType) {
+                  case "ACCESS":
+                    acc[dataSourceId].accessTokenUrl = url ?? undefined;
+                    acc[dataSourceId].accessTokenProperty =
+                      authentication.tokenKey;
+                    acc[dataSourceId].expiryTokenProperty =
+                      authentication.tokenSecondaryKey;
+                    break;
+                  case "REFRESH":
+                    acc[dataSourceId].refreshTokenUrl = url ?? undefined;
+                    acc[dataSourceId].refreshTokenProperty =
+                      authentication.tokenKey;
+                    break;
+                  case "USER":
+                    acc[dataSourceId].userEndpointUrl = url ?? undefined;
+                    break;
+                  default:
+                    // Handle other types or ignore
+                    break;
+                }
+
+                return acc;
+              },
+              {},
+            );
+
+          const apiAuthConfig: DataSourceAuthListResponse = {
+            authConfigurations,
           };
-
           set({ apiAuthConfig });
         },
+
         clearApiAuthConfig: () => {
           set(
             { apiAuthConfig: undefined },

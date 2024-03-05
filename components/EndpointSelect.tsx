@@ -52,7 +52,7 @@ export const EndpointSelect = ({ value, ...props }: EndpointSelectProps) => {
   const selectData = useMemo(() => {
     return (
       endpoints?.results?.map((endpoint) => ({
-        label: endpoint.relativeUrl,
+        label: `${endpoint.relativeUrl} | ${endpoint.description}`,
         value: endpoint.id,
         method: endpoint.methodType,
       })) ?? []
