@@ -2,7 +2,12 @@ import { useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { componentMapper } from "@/utils/componentMapper";
 import { NAVBAR_WIDTH } from "@/utils/config";
-import { DropTarget, Edge, getClosestEdge } from "@/utils/editor";
+import {
+  DropTarget,
+  Edge,
+  getClosestEdge,
+  getComponentTreeById,
+} from "@/utils/editor";
 import debounce from "lodash.debounce";
 import { useCallback, useState } from "react";
 
@@ -26,7 +31,7 @@ const debouncedDragEnter = debounce((event: any, id: string) => {
   const comp = useEditorStore.getState().componentMutableAttrs[id];
   const isTryingToDropInsideItself =
     activeComponent && activeId !== id
-      ? !!useEditorStore.getState().componentMutableAttrs[id]
+      ? !!getComponentTreeById(activeComponent!, id)
       : false;
 
   if (id === "root" || id === "content-wrapper") {
