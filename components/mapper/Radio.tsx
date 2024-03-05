@@ -1,15 +1,11 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { isSame } from "@/utils/componentComparison";
-import { Component } from "@/utils/editor";
+import { EditableComponentMapper } from "@/utils/editor";
 import { Group, Radio as MantineRadio, RadioGroupProps } from "@mantine/core";
 import merge from "lodash.merge";
 import { forwardRef, memo, useState } from "react";
 
-type Props = {
-  renderTree: (component: Component) => any;
-  component: Component;
-  isPreviewMode?: boolean;
-} & RadioGroupProps;
+type Props = EditableComponentMapper & RadioGroupProps;
 
 const RadioComponent = forwardRef(
   ({ renderTree, component, isPreviewMode, ...props }: Props, ref) => {
@@ -58,18 +54,19 @@ const RadioComponent = forwardRef(
             ? component.children?.map((child) =>
                 renderTree({
                   ...child,
-                  props: {
-                    ...child.props,
-                    isInsideGroup: isPreviewMode,
-                    checked: isPreviewMode
-                      ? child?.props?.value?.toString() === _value?.toString()
-                      : false,
-                    triggers: {
-                      onChange: (val: string) => {
-                        setValue(val);
-                      },
-                    },
-                  },
+                  // TODO: find a way of getting this back
+                  // props: {
+                  //   ...child.props,
+                  //   isInsideGroup: isPreviewMode,
+                  //   checked: isPreviewMode
+                  //     ? child?.props?.value?.toString() === _value?.toString()
+                  //     : false,
+                  //   triggers: {
+                  //     onChange: (val: string) => {
+                  //       setValue(val);
+                  //     },
+                  //   },
+                  // },
                 }),
               )
             : children}

@@ -4,14 +4,11 @@ import { useAppMode } from "@/hooks/useAppMode";
 import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
 import { convertSizeToPx } from "@/utils/defaultSizes";
-import { Component } from "@/utils/editor";
+import { EditableComponentMapper } from "@/utils/editor";
 import { BoxProps, MantineSize } from "@mantine/core";
 import { forwardRef, memo } from "react";
 
-type Props = {
-  renderTree: (component: Component) => any;
-  component: Component;
-} & BoxProps;
+type Props = EditableComponentMapper & BoxProps;
 
 const GridColumnComponent = forwardRef(
   ({ renderTree, component, ...props }: Props, ref) => {

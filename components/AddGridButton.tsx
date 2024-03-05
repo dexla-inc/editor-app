@@ -2,6 +2,7 @@ import { ActionIconDefault } from "@/components/ActionIconDefault";
 import { emptyEditorTree, useEditorStore } from "@/stores/editor";
 import cloneDeep from "lodash.clonedeep";
 import { nanoid } from "nanoid";
+import { EditorTreeCopy } from "@/utils/editor";
 
 export const AddGridButton = () => {
   const setEditorTree = useEditorStore((state) => state.setTree);
@@ -22,7 +23,7 @@ export const AddGridButton = () => {
       .concat(emptyEditorTree.root.children[0]);
 
     copy.root.children.reverse();
-    setEditorTree(copy);
+    setEditorTree(copy as EditorTreeCopy);
   };
 
   return (

@@ -1,6 +1,6 @@
 import { useDataContext } from "@/contexts/DataProvider";
 import { safeJsonParse } from "@/utils/common";
-import { Component } from "@/utils/editor";
+import { EditableComponentMapper } from "@/utils/editor";
 import { Box, BoxProps, Overlay, Skeleton, Text } from "@mantine/core";
 import {
   GoogleMap,
@@ -12,11 +12,8 @@ import merge from "lodash.merge";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { useCallback, useEffect, useState } from "react";
 
-type Props = {
-  renderTree: (component: Component) => any;
-  component: Component;
+type Props = EditableComponentMapper & {
   onClick?: (e: any) => void;
-  shareableContent?: any;
 } & BoxProps;
 
 type GoogleMapProps = {

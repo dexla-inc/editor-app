@@ -10,13 +10,14 @@ import { encodeSchema } from "@/utils/compression";
 import { GRID_SIZE } from "@/utils/config";
 import {
   Component,
+  ComponentStructure,
+  ComponentTree,
   EditorTree,
-  getComponentById,
-  updateTreeComponent,
-  updateTreeComponentActions,
-  updateTreeComponentAttrs,
+  EditorTreeCopy,
+  getTreeComponentMutableProps,
+  recoverTreeComponentAttrs,
+  updateTreeComponentAttrs2,
   updateTreeComponentChildren,
-  updateTreeComponentStates,
 } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { removeKeysRecursive } from "@/utils/removeKeys";
@@ -46,44 +47,56 @@ export const emptyEditorTree = {
   timestamp: initialTimestamp,
   root: {
     id: "root",
-    name: "Container",
-    description: "Root component",
     children: [
       {
         id: "content-wrapper",
-        name: "Grid",
-        description: "Body",
-        props: {
-          gridSize: GRID_SIZE,
-          ...initialGridValues,
-          style: {
-            ...initialGridValues.style,
-            gap: "0",
-            minHeight: "20px",
-          },
-        },
         children: [
           {
             id: "main-content",
-            name: "GridColumn",
-            description: "Main Content",
-            props: {
-              span: GRID_SIZE,
-              ...initialGridColumnValues,
-              style: {
-                ...initialGridColumnValues.style,
-                height: "100vh",
-                paddingLeft: "0px",
-                paddingTop: "0px",
-                paddingRight: "0px",
-                paddingBottom: "0px",
-                backgroundSize: "contain",
-              },
-            },
           },
         ],
       },
     ],
+  },
+};
+
+const emptyEditorComponentMutableAttrs = {
+  root: {
+    id: "root",
+    name: "Container",
+    description: "Root component",
+  },
+  "content-wrapper": {
+    id: "content-wrapper",
+    name: "Grid",
+    description: "Body",
+    props: {
+      gridSize: GRID_SIZE,
+      ...initialGridValues,
+      style: {
+        ...initialGridValues.style,
+        gap: "0",
+        minHeight: "20px",
+      },
+    },
+  },
+  "main-content": {
+    id: "main-content",
+    name: "GridColumn",
+    description: "Main Content",
+    props: {
+      span: GRID_SIZE,
+      ...initialGridColumnValues,
+      style: {
+        ...initialGridColumnValues.style,
+        height: "100vh",
+        paddingLeft: "0px",
+        paddingTop: "0px",
+        paddingRight: "0px",
+        paddingBottom: "0px",
+        backgroundSize: "contain",
+      },
+    },
   },
 };
 
@@ -141,12 +154,13 @@ export type ClipboardProps = {
 
 export type EditorState = {
   tree: EditorTree;
+  componentMutableAttrs: Record<string, Component>;
   currentProjectId?: string;
   currentPageId?: string;
   hoveredComponentId?: string;
   selectedComponentIds?: string[];
-  copiedComponent?: Component;
-  componentToAdd?: Component;
+  copiedComponent?: ComponentTree;
+  componentToAdd?: ComponentStructure;
   iframeWindow?: Window;
   currentTargetId?: string;
   theme: MantineThemeExtended;
@@ -179,13 +193,13 @@ export type EditorState = {
     pickingComponentToBindFrom?: ComponentToBind,
   ) => void;
   setComponentToBind: (componentToBind?: string) => void;
-  setCopiedComponent: (copiedComponent?: Component) => void;
+  setCopiedComponent: (copiedComponent?: ComponentTree) => void;
   setPages: (pages: PageResponse[]) => void;
   setTheme: (theme: MantineThemeExtended) => void;
   setIframeWindow: (iframeWindow: Window) => void;
   setCurrentTargetId: (currentTargetId?: string) => void;
   setTree: (
-    tree: EditorTree,
+    tree: EditorTreeCopy,
     options?: { onLoad?: boolean; action?: string },
   ) => void;
   resetTree: () => void;
@@ -193,33 +207,18 @@ export type EditorState = {
     currentProjectId: string,
     currentPageId: string,
   ) => void;
-  setComponentToAdd: (componentToAdd?: Component) => void;
-  updateTreeComponent: (params: {
-    componentId: string;
-    props: any;
-    forceState?: string;
-    save?: boolean;
-  }) => void;
-  updateTreeComponents: (
-    componentIds: string[],
-    props: any,
-    save?: boolean,
-  ) => void;
-  updateTreeComponentStates: (
-    componentId: string,
-    states: any,
-    save?: boolean,
-  ) => void;
+  setComponentToAdd: (componentToAdd?: ComponentStructure) => void;
   updateTreeComponentChildren: (
     componentId: string,
     children: Component[],
     save?: boolean,
   ) => any;
-  updateTreeComponentActions: (componentId: string, actions: Action[]) => void;
-  updateTreeComponentAttrs: (
-    componentIds: string[],
-    attrs: Partial<Component>,
-  ) => void;
+  updateTreeComponentAttrs: (params: {
+    componentIds: string[];
+    attrs: Partial<Component>;
+    forceState?: string;
+    save?: boolean;
+  }) => void;
   setTreeComponentCurrentState: (
     componentId: string,
     currentState: string,
@@ -272,7 +271,7 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
   liveblocks(
     devtools(
       temporal(
-        (set) => ({
+        (set, get) => ({
           setTriggeredLogicFlow: async (lf) =>
             set({ lf }, false, "editor/setTriggeredLogicFlow"),
           lf: [],
@@ -292,6 +291,7 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
           nonEditorActions: {},
           collapsedItemsCount: 0,
           tree: emptyEditorTree,
+          componentMutableAttrs: emptyEditorComponentMutableAttrs,
           theme: defaultTheme,
           pages: [],
           selectedComponentId: "content-wrapper",
@@ -355,12 +355,21 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
                   );
                 }
 
+                const newComponentMutableAttrs = getTreeComponentMutableProps(
+                  tree.root,
+                );
+
                 return {
                   tree: {
                     ...tree,
                     name: options?.action || "Generic move",
                     timestamp: Date.now(),
                   },
+                  componentMutableAttrs: merge(
+                    {},
+                    state.componentMutableAttrs,
+                    newComponentMutableAttrs,
+                  ),
                 };
               },
               false,
@@ -377,123 +386,6 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
               "editor/resetTree",
             );
           },
-          // any props change
-          updateTreeComponent: ({
-            componentId,
-            props,
-            forceState,
-            save = true,
-          }) => {
-            set(
-              (prev: EditorState) => {
-                const copy = cloneDeep(prev.tree);
-                const currentState =
-                  prev.currentTreeComponentsStates?.[componentId] ?? "default";
-                const currentLanguage = forceState ?? prev.language;
-
-                updateTreeComponent(
-                  copy.root,
-                  componentId,
-                  props,
-                  currentState,
-                  currentLanguage,
-                );
-                if (save && !prev.isPreviewMode && !prev.isLive) {
-                  debouncedUpdatePageState(
-                    encodeSchema(
-                      JSON.stringify(removeKeysRecursive(copy, ["error"])),
-                    ),
-                    prev.currentProjectId ?? "",
-                    prev.currentPageId ?? "",
-                    prev.setIsSaving,
-                  );
-                }
-
-                const component = getComponentById(copy.root, componentId);
-
-                return {
-                  tree: {
-                    ...copy,
-                    name: `Edited ${component?.name}`,
-                    timestamp: Date.now(),
-                  },
-                };
-              },
-              false,
-              "editor/updateTreeComponent",
-            );
-          },
-          updateTreeComponents: (componentIds, props, save = true) => {
-            set(
-              (prev: EditorState) => {
-                const lastComponentId = componentIds[componentIds.length - 1];
-                const copy = cloneDeep(prev.tree);
-                const currentState =
-                  prev.currentTreeComponentsStates?.[lastComponentId] ??
-                  "default";
-                const currentLanguage = prev.language;
-
-                updateTreeComponent(
-                  copy.root,
-                  componentIds,
-                  props,
-                  currentState,
-                  currentLanguage,
-                );
-                if (save && !prev.isPreviewMode && !prev.isLive) {
-                  debouncedUpdatePageState(
-                    encodeSchema(
-                      JSON.stringify(removeKeysRecursive(copy, ["error"])),
-                    ),
-                    prev.currentProjectId ?? "",
-                    prev.currentPageId ?? "",
-                    prev.setIsSaving,
-                  );
-                }
-
-                return {
-                  tree: {
-                    ...cloneDeep(copy),
-                    name: `Edited multiple components`,
-                    timestamp: Date.now(),
-                  },
-                };
-              },
-              false,
-              "editor/updateTreeComponents",
-            );
-          },
-          updateTreeComponentStates: (componentId, states, save = true) => {
-            set(
-              (prev: EditorState) => {
-                const copy = cloneDeep(prev.tree);
-
-                updateTreeComponentStates(copy.root, componentId, states);
-                if (save && !prev.isPreviewMode && !prev.isLive) {
-                  debouncedUpdatePageState(
-                    encodeSchema(
-                      JSON.stringify(removeKeysRecursive(copy, ["error"])),
-                    ),
-                    prev.currentProjectId ?? "",
-                    prev.currentPageId ?? "",
-                    prev.setIsSaving,
-                  );
-                }
-
-                const component = getComponentById(copy.root, componentId);
-
-                return {
-                  tree: {
-                    ...cloneDeep(copy),
-                    name: `Edited ${component?.name}`,
-                    timestamp: Date.now(),
-                  },
-                };
-              },
-              false,
-              "editor/updateTreeComponentStates",
-            );
-          },
           // anything out of .props that changes .children[]
           updateTreeComponentChildren: (componentId, children, save = true) =>
             set(
@@ -501,11 +393,23 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
                 const copy = cloneDeep(state.tree);
                 updateTreeComponentChildren(copy.root, componentId, children);
 
+                children.forEach((child) => {
+                  state.componentMutableAttrs = {
+                    ...state.componentMutableAttrs,
+                    ...getTreeComponentMutableProps(child),
+                  };
+                });
+
+                const treeWithRecoveredAttrs = recoverTreeComponentAttrs(
+                  state.tree,
+                  state.componentMutableAttrs,
+                );
+
                 if (save && !state.isPreviewMode && !state.isLive) {
                   debouncedUpdatePageState(
                     encodeSchema(
                       JSON.stringify(
-                        removeKeysRecursive(copy, [
+                        removeKeysRecursive(treeWithRecoveredAttrs, [
                           "error",
                           "collapsed",
                           "depth",
@@ -520,7 +424,7 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
                   );
                 }
 
-                const component = getComponentById(copy.root, componentId);
+                const component = state.componentMutableAttrs[componentId];
 
                 return {
                   tree: {
@@ -528,62 +432,55 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
                     name: `Edited ${component?.name}`,
                     timestamp: Date.now(),
                   },
+                  componentMutableAttrs: state.componentMutableAttrs,
                 };
               },
               false,
               "editor/updateTreeComponentChildren",
             ),
-          // any action change
-          updateTreeComponentActions: (componentId, actions) => {
+          updateTreeComponentAttrs: async ({
+            componentIds,
+            attrs,
+            forceState,
+            save = true,
+          }) => {
             set(
               (state: EditorState) => {
-                const copy = cloneDeep(state.tree);
-                updateTreeComponentActions(copy.root, componentId, actions);
-                if (!state.isPreviewMode && !state.isLive)
+                const lastComponentId = componentIds.at(-1)!;
+                const currentState =
+                  forceState ??
+                  state.currentTreeComponentsStates?.[lastComponentId] ??
+                  "default";
+                const currentLanguage = state.language;
+
+                componentIds.forEach((id) => {
+                  state.componentMutableAttrs[id] = updateTreeComponentAttrs2(
+                    state.componentMutableAttrs[id] ?? {},
+                    attrs,
+                    currentState,
+                    currentLanguage,
+                  );
+                });
+
+                const treeWithRecoveredAttrs = recoverTreeComponentAttrs(
+                  state.tree,
+                  state.componentMutableAttrs,
+                );
+                if (save && !state.isPreviewMode && !state.isLive) {
                   debouncedUpdatePageState(
                     encodeSchema(
-                      JSON.stringify(removeKeysRecursive(copy, ["error"])),
+                      JSON.stringify(
+                        removeKeysRecursive(treeWithRecoveredAttrs, ["error"]),
+                      ),
                     ),
                     state.currentProjectId ?? "",
                     state.currentPageId ?? "",
                     state.setIsSaving,
                   );
-
-                const component = getComponentById(copy.root, componentId);
-
-                return {
-                  tree: {
-                    ...copy,
-                    name: `Edited ${component?.name}`,
-                    timestamp: Date.now(),
-                  },
-                };
-              },
-              false,
-              "editor/updateTreeComponentActions",
-            );
-          },
-          updateTreeComponentAttrs: (
-            componentIds: string[],
-            attrs: Partial<Component>,
-          ) => {
-            set(
-              (state: EditorState) => {
-                const copy = cloneDeep(state.tree);
-
-                updateTreeComponentAttrs(copy.root, componentIds, attrs);
-                if (!state.isPreviewMode && !state.isLive)
-                  debouncedUpdatePageState(
-                    encodeSchema(
-                      JSON.stringify(removeKeysRecursive(copy, ["error"])),
-                    ),
-                    state.currentProjectId ?? "",
-                    state.currentPageId ?? "",
-                    state.setIsSaving,
-                  );
+                }
 
                 return {
-                  tree: copy,
+                  componentMutableAttrs: state.componentMutableAttrs,
                 };
               },
               false,
@@ -607,12 +504,18 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
               "editor/setTreeComponentCurrentState",
             );
           },
-          setCurrentPageAndProjectIds: (currentProjectId, currentPageId) =>
-            set(
-              { currentProjectId, currentPageId },
-              false,
-              "editor/setCurrentPageAndProjectIds",
-            ),
+          setCurrentPageAndProjectIds: (currentProjectId, currentPageId) => {
+            if (
+              get().currentProjectId !== currentProjectId ||
+              get().currentPageId !== currentPageId
+            ) {
+              set(
+                { currentProjectId, currentPageId },
+                false,
+                "editor/setCurrentPageAndProjectIds",
+              );
+            }
+          },
           setComponentToAdd: (componentToAdd) =>
             set({ componentToAdd }, false, "editor/setComponentToAdd"),
           setSelectedComponentIds: (cb) => {

@@ -2,17 +2,13 @@ import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { useChangeState } from "@/hooks/useChangeState";
 import { useInputsStore } from "@/stores/inputs";
 import { isSame } from "@/utils/componentComparison";
-import { Component } from "@/utils/editor";
+import { EditableComponentMapper } from "@/utils/editor";
 import { CheckboxProps, Checkbox as MantineCheckbox } from "@mantine/core";
 import debounce from "lodash.debounce";
 import merge from "lodash.merge";
 import { ChangeEvent, memo, useCallback, useState } from "react";
 
-type Props = {
-  renderTree: (component: Component) => any;
-  component: Component;
-  isPreviewMode?: boolean;
-} & CheckboxProps;
+type Props = EditableComponentMapper & CheckboxProps;
 
 const CheckboxComponent = ({
   renderTree,

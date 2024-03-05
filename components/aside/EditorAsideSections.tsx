@@ -55,7 +55,6 @@ import { useUserConfigStore } from "@/stores/userConfig";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { componentMapper } from "@/utils/componentMapper";
 import { dataMapper } from "@/utils/dataMapper";
-import { getAllComponentsByIds, getComponentById } from "@/utils/editor";
 import { Modifiers } from "@/utils/modifiers";
 import {
   ActionIcon,
@@ -134,7 +133,8 @@ const excludeComponentsForState = ["Text", "Title"];
 
 export const EditorAsideSections = () => {
   // TODO: Create own function to do this
-  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+  const updateTreeComponentAttrs =
+    useEditorStore.getState().updateTreeComponentAttrs;
   const setTreeComponentCurrentState = useEditorStore(
     (state) => state.setTreeComponentCurrentState,
   );
@@ -144,7 +144,6 @@ export const EditorAsideSections = () => {
   const selectedComponentIds = useEditorStore(
     (state) => state.selectedComponentIds,
   );
-  const editorTree = useEditorStore((state) => state.tree);
   const openAction = useEditorStore((state) => state.openAction);
   const setOpenAction = useEditorStore((state) => state.setOpenAction);
   const currentTreeComponentsStates = useEditorStore(
@@ -160,16 +159,16 @@ export const EditorAsideSections = () => {
   const [tab, setTab] = useState<Tab>("design");
   const selectedComponentId = useDeferredValue(_selectedComponentId);
   const [createState, setCreateState] = useState<undefined | string>(undefined);
-
-  const component = useMemo(
-    () => getComponentById(editorTree.root, selectedComponentId as string),
-    [editorTree.root, selectedComponentId],
+  const component = useEditorStore(
+    (state) => state.componentMutableAttrs[selectedComponentId!],
   );
   const componentName = component?.name ?? "content-wrapper";
 
-  const components = useMemo(
-    () => getAllComponentsByIds(editorTree.root, selectedComponentIds!),
-    [editorTree.root, selectedComponentIds],
+  const components = useEditorStore(
+    (state) =>
+      (state.selectedComponentIds ?? [])?.map(
+        (id) => state.componentMutableAttrs[id],
+      ),
   );
   const { getComponentsStates } = useComponentStates();
   const isMappedComponent = components.some(
@@ -227,9 +226,9 @@ export const EditorAsideSections = () => {
   ));
 
   const onClickResetToDefault = () => {
-    updateTreeComponent({
-      componentId: selectedComponentId!,
-      props: component?.props,
+    updateTreeComponentAttrs({
+      componentIds: [selectedComponentId!],
+      attrs: { props: component?.props },
       forceState: currentState,
     });
   };
@@ -346,9 +345,9 @@ export const EditorAsideSections = () => {
                             selectedComponentId,
                             createState,
                           );
-                          updateTreeComponent({
-                            componentId: selectedComponentId,
-                            props: {},
+                          updateTreeComponentAttrs({
+                            componentIds: [selectedComponentId],
+                            attrs: { props: {} },
                             save: true,
                           });
                           setCreateState(undefined);

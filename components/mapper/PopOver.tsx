@@ -1,15 +1,12 @@
 import { useAppMode } from "@/hooks/useAppMode";
 import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
-import { Component, getComponentById } from "@/utils/editor";
+import { Component, EditableComponentMapper } from "@/utils/editor";
 import { Box, Popover as MantinePopOver, PopoverProps } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { memo, useEffect } from "react";
 
-type Props = {
-  renderTree: (component: Component) => any;
-  component: Component;
-} & Omit<PopoverProps, "opened">;
+type Props = EditableComponentMapper & Omit<PopoverProps, "opened">;
 
 const PopOverComponent = ({
   renderTree,
@@ -48,11 +45,12 @@ const PopOverComponent = ({
   const handleClose = () => {
     close();
     propOnClose?.();
-    const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+    const updateTreeComponentAttrs =
+      useEditorStore.getState().updateTreeComponentAttrs;
 
-    updateTreeComponent({
-      componentId: component.id!,
-      props: { opened: false },
+    updateTreeComponentAttrs({
+      componentIds: [component.id!],
+      attrs: { props: { opened: false } },
       save: false,
     });
   };
@@ -65,7 +63,7 @@ const PopOverComponent = ({
   const isOpened = isPreviewMode
     ? opened
     : selectedComponentId === component.id ||
-      !!getComponentById(component, selectedComponentId as string);
+      !!useEditorStore.getState().componentMutableAttrs[selectedComponentId!];
 
   const target = (isLive ? window : iframeWindow)?.document.getElementById(
     "iframe-content",

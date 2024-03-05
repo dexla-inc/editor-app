@@ -1,6 +1,6 @@
 import { SwitchSelector } from "@/components/SwitchSelector";
 import { withModifier } from "@/hoc/withModifier";
-import { debouncedTreeUpdate } from "@/utils/editor";
+import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -32,8 +32,8 @@ export const Modifier = withModifier(
             {...form.getInputProps("withAsterisk")}
             onChange={(event) => {
               form.setFieldValue("withAsterisk", event.currentTarget.checked);
-              debouncedTreeUpdate(selectedComponentIds, {
-                withAsterisk: event.currentTarget.checked,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: { props: { withAsterisk: event.currentTarget.checked } },
               });
             }}
           />

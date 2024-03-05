@@ -1,5 +1,5 @@
 import { isSame } from "@/utils/componentComparison";
-import { Component } from "@/utils/editor";
+import { EditableComponentMapper } from "@/utils/editor";
 import {
   Table as MantineTable,
   ScrollArea,
@@ -10,11 +10,7 @@ import { forwardRef, memo } from "react";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useEndpoint } from "@/hooks/useEndpoint";
 
-type Props = {
-  renderTree: (component: Component, shareableContent: any) => any;
-  component: Component;
-  shareableContent?: any;
-} & TableProps;
+type Props = EditableComponentMapper & TableProps;
 
 export const TableComponent = forwardRef(
   ({ renderTree, component, shareableContent, ...props }: Props, ref) => {

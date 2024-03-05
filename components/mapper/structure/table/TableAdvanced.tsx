@@ -1,10 +1,10 @@
 import { jsonStructure as headerStructure } from "@/components/mapper/structure/table/TableActionsRow";
 import { defaultTheme } from "@/utils/branding";
-import { Component } from "@/utils/editor";
+import { ComponentStructure } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { nanoid } from "nanoid";
 
-export const jsonStructure = (props?: any): Component => {
+export const jsonStructure = (props?: any): ComponentStructure => {
   const theme = props.theme ?? defaultTheme;
   const { table: defaultTableValues, button, input } = requiredModifiers;
   const tableHeader = headerStructure({ theme, button, input });

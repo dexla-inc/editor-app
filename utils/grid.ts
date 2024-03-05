@@ -1,29 +1,39 @@
 import { useEditorStore } from "@/stores/editor";
-import { Component } from "@/utils/editor";
+import { Component, ComponentStructure, ComponentTree } from "@/utils/editor";
 import crawl from "tree-crawl";
 
-export const calculateGridSizes = (tree?: Component) => {
+export const calculateGridSizes = (tree?: ComponentStructure) => {
   if (!tree) {
-    tree = useEditorStore.getState().tree.root;
+    tree = useEditorStore.getState().tree.root as ComponentStructure;
   }
   const setColumnSpan = useEditorStore.getState().setColumnSpan;
   const componentResizedMap: { [parentId: string]: Component } = {};
 
   crawl(
     tree,
-    (node, context) => {
+    (nodeTree, context) => {
+      // TODO: workaround
+      const node = nodeTree?.name
+        ? nodeTree
+        : useEditorStore.getState().componentMutableAttrs[nodeTree?.id!];
       if (node.name === "Grid") {
-        const parent = context.parent as Component;
+        const parentTree = context.parent;
+        const parent =
+          useEditorStore.getState().componentMutableAttrs[parentTree?.id!];
         if (parent?.name === "GridColumn") {
           node.props!.gridSize = parent.props!.span;
         }
       } else if (node.name === "GridColumn") {
-        const parent = context.parent as Component;
+        const parentTree = context.parent;
+        const parent =
+          useEditorStore.getState().componentMutableAttrs[parentTree?.id!];
         if (parent?.name === "Grid") {
           const sibilings =
-            (parent.children ?? []).filter(
-              (child) => child.name === "GridColumn",
-            ) ?? [];
+            (parentTree?.children ?? []).filter((childTree) => {
+              const child =
+                useEditorStore.getState().componentMutableAttrs[childTree?.id!];
+              return child.name === "GridColumn";
+            }) ?? [];
 
           const isAlone = sibilings.length === 1;
           // if there's no resized column in the current depth and the current column is resized, skip this column,

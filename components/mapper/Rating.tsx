@@ -1,13 +1,10 @@
 import { isSame } from "@/utils/componentComparison";
-import { Component } from "@/utils/editor";
+import { EditableComponentMapper } from "@/utils/editor";
 import { Rating as MantineRating, RatingProps } from "@mantine/core";
 import { forwardRef, memo } from "react";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 
-type Props = {
-  renderTree: (component: Component) => any;
-  component: Component;
-} & RatingProps;
+type Props = EditableComponentMapper & RatingProps;
 
 const RatingComponent = forwardRef(
   ({ renderTree, component, ...props }: Props, ref) => {

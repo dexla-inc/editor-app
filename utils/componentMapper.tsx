@@ -109,7 +109,7 @@ import * as RadialChartStructure from "@/components/mapper/structure/charts/Radi
 import * as TableStructure from "@/components/mapper/structure/table/Table";
 import * as TableCellStructure from "@/components/mapper/structure/table/TableCell";
 import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
-import { Component } from "@/utils/editor";
+import { Component, ComponentStructure } from "@/utils/editor";
 
 import { FileButton } from "@/components/mapper/FileButton";
 import { TabsList } from "@/components/mapper/TabsList";
@@ -894,7 +894,7 @@ export type ComponentMapper = {
 
 export const componentMapper: ComponentMapper = {
   Avatar: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       <Avatar component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["avatar", "spacing", "size", "border", "effects"],
@@ -902,7 +902,7 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Badge: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       <Badge component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["badge", "spacing", "size", "border", "effects"],
@@ -910,7 +910,7 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Breadcrumb: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       <Breadcrumb
         component={props.component}
         renderTree={props.renderTree}
@@ -923,7 +923,7 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Stepper: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       <Stepper
         component={props.component}
         renderTree={props.renderTree}
@@ -937,7 +937,7 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Grid: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       <Grid component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["grid", "spacing", "size", "background", "border", "effects"],
@@ -961,7 +961,7 @@ export const componentMapper: ComponentMapper = {
     blockedToolboxActions: ["wrap-with-container"],
   },
   GridColumn: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       <GridColumn component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["gridColumn", "size", "spacing", "background", "effects"],
@@ -984,7 +984,7 @@ export const componentMapper: ComponentMapper = {
     blockedToolboxActions: ["wrap-with-container"],
   },
   Container: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       <Container component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: [
@@ -1002,7 +1002,7 @@ export const componentMapper: ComponentMapper = {
   },
 
   Card: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       <Card component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: [
@@ -1019,7 +1019,7 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Select: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       <Select
         component={props.component}
         renderTree={props.renderTree}
@@ -1034,7 +1034,7 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Input: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       <Input component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["input", "spacing", "size", "border", "effects"],
@@ -1043,7 +1043,7 @@ export const componentMapper: ComponentMapper = {
     isValidatable: true,
   },
   DateInput: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       <DateInput
         component={props.component}
         renderTree={props.renderTree}
@@ -1058,7 +1058,7 @@ export const componentMapper: ComponentMapper = {
     isValidatable: true,
   },
   Text: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       <Text component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["text", "background", "spacing", "size", "border", "effects"],
@@ -1066,7 +1066,7 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Title: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       <Title component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["text", "spacing", "size", "border", "effects"],
@@ -1074,7 +1074,7 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Textarea: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       <Textarea component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["textarea", "spacing", "size", "border", "effects"],
@@ -1083,7 +1083,7 @@ export const componentMapper: ComponentMapper = {
     isValidatable: true,
   },
   Link: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       <Link component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["link", "spacing", "size", "border", "effects"],
@@ -1091,7 +1091,7 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   NavLink: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       <NavLink component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["navLink", "spacing", "size", "border", "effects"],
@@ -1099,7 +1099,7 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Icon: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       <Icon component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["icon", "spacing", "border", "effects"],
@@ -1107,7 +1107,7 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Autocomplete: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       <Autocomplete component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["autocomplete", "spacing", "size", "border", "effects"],
@@ -1115,7 +1115,7 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Progress: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       <Progress component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["progress"],
@@ -1123,7 +1123,7 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Table: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       <Table component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["table", "spacing", "size", "border", "effects"],
@@ -1138,7 +1138,7 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   TableHead: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       <TableHead component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: [],
@@ -1146,7 +1146,7 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: [],
   },
   TableBody: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       <TableBody component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: [],
@@ -1154,7 +1154,7 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: [],
   },
   TableRow: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       <TableRow component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["size"],
@@ -1162,7 +1162,7 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: [],
   },
   TableCell: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       <TableCell component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: [],
@@ -1170,7 +1170,7 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: [],
   },
   TableHeaderCell: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       <TableHeaderCell
         component={props.component}
         renderTree={props.renderTree}
@@ -1181,7 +1181,7 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: [],
   },
   FileUpload: {
-    Component: (props: { component: Component; renderTree: any }) => {
+    Component: (props: { component: ComponentStructure; renderTree: any }) => {
       return (
         <FileUpload
           component={props.component}
@@ -1199,7 +1199,7 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   FileButton: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       // @ts-ignore
       <FileButton
         onChange={(files) => {
@@ -1221,7 +1221,7 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Checkbox: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       <Checkbox component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["checkbox", "spacing", "size", "border", "effects"],
@@ -1229,7 +1229,7 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Switch: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       <Switch
         component={props.component}
         renderTree={props.renderTree}
@@ -1243,7 +1243,7 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   RadioItem: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       // @ts-ignore
       <RadioItem component={props.component} renderTree={props.renderTree} />
     ),
@@ -1259,7 +1259,7 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Radio: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       <Radio
         component={props.component}
         renderTree={props.renderTree}
@@ -1272,7 +1272,7 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Rating: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       <Rating
         component={props.component}
         renderTree={props.renderTree}
@@ -1286,7 +1286,7 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Image: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       // eslint-disable-next-line jsx-a11y/alt-text
       <Image component={props.component} renderTree={props.renderTree} />
     ),
@@ -1295,7 +1295,7 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Divider: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       <Divider component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["divider", "spacing", "size", "border", "effects"],
@@ -1303,7 +1303,7 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Pagination: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       <Pagination
         component={props.component}
         renderTree={props.renderTree}
@@ -1315,7 +1315,7 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Alert: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       <Alert
         component={props.component}
         renderTree={props.renderTree}
@@ -1328,7 +1328,7 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Tabs: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       <Tabs
         component={props.component}
         renderTree={props.renderTree}
@@ -1349,7 +1349,7 @@ export const componentMapper: ComponentMapper = {
     ],
   },
   Tab: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       <Tab
         component={props.component}
         renderTree={props.renderTree}
@@ -1363,7 +1363,7 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   TabsList: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       <TabsList
         component={props.component}
         renderTree={props.renderTree}
@@ -1376,7 +1376,7 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   TabsPanel: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       <TabsPanel
         component={props.component}
         renderTree={props.renderTree}
@@ -1390,7 +1390,7 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Accordion: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       <Accordion
         component={props.component}
         renderTree={props.renderTree}
@@ -1412,7 +1412,7 @@ export const componentMapper: ComponentMapper = {
     ],
   },
   AccordionItem: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       <AccordionItem
         component={props.component}
         renderTree={props.renderTree}
@@ -1426,7 +1426,7 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   AccordionControl: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       <AccordionControl
         component={props.component}
         renderTree={props.renderTree}
@@ -1439,7 +1439,7 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   AccordionPanel: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       <AccordionPanel
         component={props.component}
         renderTree={props.renderTree}
@@ -1452,7 +1452,7 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Navbar: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       <Navbar
         component={props.component}
         renderTree={props.renderTree}
@@ -1465,7 +1465,7 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   AppBar: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       <AppBar component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["layout", "background", "spacing", "size", "border", "effects"],
@@ -1473,7 +1473,7 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   BarChart: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       <BarChart component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["chart", "spacing", "size", "border", "effects"],
@@ -1481,7 +1481,7 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   LineChart: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       <LineChart component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["chart", "spacing", "size", "border", "effects"],
@@ -1489,7 +1489,7 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   PieChart: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       <PieChart component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["chart", "spacing", "size", "border", "effects"],
@@ -1497,7 +1497,7 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   AreaChart: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       <AreaChart component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["chart", "spacing", "size", "border", "effects"],
@@ -1505,7 +1505,7 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   RadarChart: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       <RadarChart component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["chart", "spacing", "size", "border", "effects"],
@@ -1513,7 +1513,7 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   RadialChart: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       <RadialChart component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["chart", "spacing", "size", "border", "effects"],
@@ -1521,7 +1521,7 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Button: {
-    Component: (props: { component: Component; renderTree: any }) => {
+    Component: (props: { component: ComponentStructure; renderTree: any }) => {
       return (
         <Button component={props.component} renderTree={props.renderTree} />
       );
@@ -1538,7 +1538,7 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   CountdownButton: {
-    Component: (props: { component: Component; renderTree: any }) => {
+    Component: (props: { component: ComponentStructure; renderTree: any }) => {
       return (
         <CountdownButton
           component={props.component}
@@ -1558,7 +1558,7 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   ButtonIcon: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       <ButtonIcon
         component={props.component}
         renderTree={props.renderTree}
@@ -1580,7 +1580,7 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Form: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       <Form component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["layout", "spacing", "size", "border", "effects"],
@@ -1588,7 +1588,7 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Modal: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       // @ts-ignore
       <Modal component={props.component} renderTree={props.renderTree} />
     ),
@@ -1597,7 +1597,7 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Drawer: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       // @ts-ignore
       <Drawer component={props.component} renderTree={props.renderTree} />
     ),
@@ -1606,7 +1606,7 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   PopOver: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       // @ts-ignore
       <PopOver component={props.component} renderTree={props.renderTree} />
     ),
@@ -1615,7 +1615,7 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   GoogleMap: {
-    Component: (props: { component: Component; renderTree: any }) => (
+    Component: (props: { component: ComponentStructure; renderTree: any }) => (
       <GoogleMapPlugin
         component={props.component}
         renderTree={props.renderTree}

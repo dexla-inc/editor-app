@@ -43,26 +43,33 @@ function findIntersectedKeyValues(objects: Component[]) {
 
 export const withModifier = (Modifier: ComponentType<WithModifier>) => {
   const Config = ({ initiallyOpened }: any) => {
-    const editorTree = useEditorStore((state) => state.tree);
     const selectedComponentIds = useEditorStore(
       (state) => state.selectedComponentIds,
+    );
+    const selectedComponents = useEditorStore((state) =>
+      Object.entries(state.componentMutableAttrs).reduce(
+        (acc, [id, component]) => {
+          if (selectedComponentIds?.includes(id)) {
+            acc.push(component);
+          }
+          return acc;
+        },
+        [] as Component[],
+      ),
     );
     const language = useEditorStore((state) => state.language);
     const currentTreeComponentsStates = useEditorStore(
       (state) => state.currentTreeComponentsStates,
     );
 
-    const selectedComponents = cloneDeep(
-      getAllComponentsByIds(editorTree.root, selectedComponentIds!),
-    );
-
     const currentState =
-      currentTreeComponentsStates?.[selectedComponents[0].id || ""] ??
+      currentTreeComponentsStates?.[selectedComponentIds?.[0] || ""] ??
       "default";
 
     const mergedCustomData = useMemo(() => {
-      return selectedComponents.map((selectedComponent) => {
+      return selectedComponents?.map((selectedComponent) => {
         merge(
+          {},
           selectedComponent?.props,
           selectedComponent?.languages?.[language],
           selectedComponent?.states?.[currentState],

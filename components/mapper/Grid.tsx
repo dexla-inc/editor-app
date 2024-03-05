@@ -3,17 +3,13 @@ import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
 import { GRID_SIZE } from "@/utils/config";
 import { convertSizeToPx } from "@/utils/defaultSizes";
-import { Component } from "@/utils/editor";
+import { EditableComponentMapper } from "@/utils/editor";
 import { calculateGridSizes } from "@/utils/grid";
 import { Box, BoxProps, MantineSize, useMantineTheme } from "@mantine/core";
 import { usePrevious } from "@mantine/hooks";
-import cloneDeep from "lodash.clonedeep";
 import { forwardRef, memo, useEffect } from "react";
 
-export type GridProps = {
-  renderTree: (component: Component) => any;
-  component: Component;
-} & BoxProps;
+export type GridProps = EditableComponentMapper & BoxProps;
 
 const GridComponent = forwardRef(
   ({ renderTree, component, ...props }: GridProps, ref) => {
@@ -68,7 +64,7 @@ const GridComponent = forwardRef(
       >
         {component.children &&
           component.children.length > 0 &&
-          component.children?.map((child: Component) => renderTree(child))}
+          component.children?.map((child) => renderTree(child))}
       </Box>
     );
   },

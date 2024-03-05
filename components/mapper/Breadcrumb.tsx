@@ -1,5 +1,5 @@
 import { isSame } from "@/utils/componentComparison";
-import { Component } from "@/utils/editor";
+import { EditableComponentMapper } from "@/utils/editor";
 import {
   BreadcrumbsProps,
   Breadcrumbs as MantineBreadcrumbs,
@@ -7,10 +7,7 @@ import {
 import { forwardRef, memo } from "react";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 
-type Props = {
-  renderTree: (component: Component) => any;
-  component: Component;
-} & BreadcrumbsProps;
+type Props = EditableComponentMapper & BreadcrumbsProps;
 
 const BreadcrumbComponent = forwardRef(
   ({ renderTree, component, ...props }: Props, ref) => {

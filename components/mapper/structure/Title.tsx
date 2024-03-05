@@ -1,10 +1,10 @@
 import { defaultTheme } from "@/utils/branding";
-import { Component } from "@/utils/editor";
+import { ComponentStructure } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { nanoid } from "nanoid";
 import merge from "lodash.merge";
 
-export const jsonStructure = (props?: any): Component => {
+export const jsonStructure = (props?: any): ComponentStructure => {
   const theme = props.theme ?? defaultTheme;
   const { order = 1, ...rest } = props.props || {};
   const size = theme.headings.sizes[`h${order}`];

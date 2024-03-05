@@ -7,7 +7,6 @@ import { useInputsStore } from "@/stores/inputs";
 import { useVariableStore } from "@/stores/variables";
 import { APICallAction } from "@/utils/actions";
 import { isObject, jsonInString, safeJsonParse } from "@/utils/common";
-import { getAllComponentsByName, getComponentById } from "@/utils/editor";
 import { ValueProps } from "@/utils/types";
 import get from "lodash.get";
 import merge from "lodash.merge";
@@ -58,7 +57,6 @@ export const DataContext = createContext<DataContextProps | null>(null);
 
 export const DataProvider = ({ children }: DataProviderProps) => {
   const variablesList = useVariableStore((state) => state.variableList); // Is this persisted store required any longer?
-  const editorTree = useEditorStore((state) => state.tree);
   const inputsStore = useInputsStore((state) => state.inputValues);
   const browser = useRouter();
   const auth = useDataSourceStore((state) => state.getAuthState());
@@ -71,14 +69,24 @@ export const DataProvider = ({ children }: DataProviderProps) => {
   const actionActionsList = useEditorStore((state) => state.actions);
   const { isPreviewMode } = useAppMode();
   const isLive = useEditorStore((state) => state.isLive);
-  const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentIds?.at(-1),
+  const selectedComponent = useEditorStore(
+    (state) => state.componentMutableAttrs[state.selectedComponentIds?.at(-1)!],
   );
-  let selectedComponent = null;
-  if (selectedComponentId) {
-    selectedComponent = getComponentById(editorTree.root, selectedComponentId);
-  }
-  // Adding this because we need to initialize the API auth config on page refresh so it is available for deployed apps
+  const isEditorMode = !isPreviewMode && !isLive;
+  const allInputComponents = useEditorStore((state) =>
+    Object.values(state.componentMutableAttrs).filter((c) =>
+      [
+        "Input",
+        "Select",
+        "Checkbox",
+        "RadioGroup",
+        "Switch",
+        "Textarea",
+        "Autocomplete",
+      ].includes(c?.name!),
+    ),
+  );
+
   const setApiAuthConfig = useDataSourceStore(
     (state) => state.setApiAuthConfig,
   );
@@ -89,8 +97,6 @@ export const DataProvider = ({ children }: DataProviderProps) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [endpoints?.results]);
-
-  const isEditorMode = !isPreviewMode && !isLive;
 
   const nodes = logicFlowsEditorNodes.length
     ? logicFlowsEditorNodes
@@ -141,7 +147,7 @@ export const DataProvider = ({ children }: DataProviderProps) => {
         { list: {} } as any,
       )
     : actionsList?.reduce(
-        (acc, action) => {
+        (acc: any, action: any) => {
           const { endpoint: endpointId } = action.action as APICallAction;
           if (action.action.name === "apiCall" && endpointId) {
             const endpoint = endpoints?.results.find(
@@ -193,15 +199,7 @@ export const DataProvider = ({ children }: DataProviderProps) => {
     { list: {} } as any,
   );
 
-  const components = getAllComponentsByName(editorTree.root, [
-    "Input",
-    "Select",
-    "Checkbox",
-    "RadioGroup",
-    "Switch",
-    "Textarea",
-    "Autocomplete",
-  ]).reduce(
+  const components = allInputComponents.reduce(
     (acc, component) => {
       const value = inputsStore[component?.id!];
       component = { ...component, name: component.description! };

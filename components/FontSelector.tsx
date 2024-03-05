@@ -1,5 +1,5 @@
 import { useEditorStore } from "@/stores/editor";
-import { debouncedTreeUpdate } from "@/utils/editor";
+import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { Select, SelectProps } from "@mantine/core";
 
 type Props = Omit<SelectProps, "data" | "onChange"> & {
@@ -26,12 +26,16 @@ export const FontSelector = ({
     form.setFieldValue("fontTag", value as string);
     const selectedFont = fonts.find((font) => font.value === value).font;
 
-    debouncedTreeUpdate(selectedComponentIds, {
-      fontTag: value,
-      style: {
-        fontSize: selectedFont.fontSize,
-        fontWeight: selectedFont.fontWeight,
-        lineHeight: selectedFont.lineHeight,
+    debouncedTreeComponentAttrsUpdate({
+      attrs: {
+        props: {
+          fontTag: value,
+          style: {
+            fontSize: selectedFont.fontSize,
+            fontWeight: selectedFont.fontWeight,
+            lineHeight: selectedFont.lineHeight,
+          },
+        },
       },
     });
   };

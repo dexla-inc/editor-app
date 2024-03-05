@@ -89,7 +89,7 @@ export const DynamicSettings = ({
   useEffect(() => {
     if (form.isTouched()) {
       onSave?.(component, form).then(() => {
-        debouncedTreeComponentAttrsUpdate(form.values);
+        debouncedTreeComponentAttrsUpdate({ attrs: form.values });
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

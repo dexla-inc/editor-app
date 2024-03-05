@@ -1,13 +1,10 @@
 import { isSame } from "@/utils/componentComparison";
-import { Component } from "@/utils/editor";
+import { EditableComponentMapper } from "@/utils/editor";
 import { Tabs as MantineTabs, TabsProps } from "@mantine/core";
 import { forwardRef, memo } from "react";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 
-type Props = {
-  renderTree: (component: Component) => any;
-  component: Component;
-} & TabsProps;
+type Props = EditableComponentMapper & TabsProps;
 
 const TabsComponent = forwardRef(
   ({ renderTree, component, ...props }: Props, ref) => {
@@ -19,7 +16,8 @@ const TabsComponent = forwardRef(
           ? component.children?.map((child) =>
               renderTree({
                 ...child,
-                props: { ...child.props, tabVariant: componentProps.variant },
+                // TODO: get this back
+                // props: { ...child.props, tabVariant: componentProps.variant },
               }),
             )
           : children}

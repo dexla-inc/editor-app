@@ -7,7 +7,7 @@ import { useChangeState } from "@/hooks/useChangeState";
 import { useEditorStore } from "@/stores/editor";
 import { useInputsStore } from "@/stores/inputs";
 import { isSame } from "@/utils/componentComparison";
-import { Component } from "@/utils/editor";
+import { EditableComponentMapper } from "@/utils/editor";
 import {
   ActionIcon,
   Group,
@@ -20,12 +20,7 @@ import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { forwardRef, memo, useEffect } from "react";
 
-type Props = {
-  renderTree: (component: Component) => any;
-  component: Component;
-  isPreviewMode: Boolean;
-} & NumberInputProps &
-  TextInputProps;
+type Props = EditableComponentMapper & NumberInputProps & TextInputProps;
 
 const InputComponent = forwardRef(
   ({ renderTree, component, isPreviewMode, ...props }: Props, ref) => {

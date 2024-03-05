@@ -24,7 +24,7 @@ import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
 import { useVariableStore } from "@/stores/variables";
 import { readDataFromStream } from "@/utils/api";
-import { Component, getComponentById } from "@/utils/editor";
+import { Component } from "@/utils/editor";
 import { executeFlow } from "@/utils/logicFlows";
 import { UseFormReturnType } from "@mantine/form";
 import { showNotification } from "@mantine/notifications";
@@ -337,11 +337,13 @@ export const useChangeVisibilityAction = ({
   action,
   computeValue,
 }: TogglePropsActionParams) => {
-  const editorStore = useEditorStore.getState();
-  const updateTreeComponent = editorStore.updateTreeComponent;
-  const tree = editorStore.tree;
+  const updateTreeComponentAttrs = useEditorStore(
+    (state) => state.updateTreeComponentAttrs,
+  );
   const componentId = computeValue({ value: action.componentId });
-  const component = getComponentById(tree.root, componentId);
+  const component = useEditorStore(
+    (state) => state.componentMutableAttrs[componentId],
+  );
 
   const defaultDisplayValue = getComponentInitialDisplayValue(component?.name!);
 
@@ -361,10 +363,12 @@ export const useChangeVisibilityAction = ({
   );
 
   // Update the component with the new display value
-  updateTreeComponent({
-    componentId,
-    props: {
-      style: { display: newDisplay },
+  updateTreeComponentAttrs({
+    componentIds: [componentId],
+    attrs: {
+      props: {
+        style: { display: newDisplay },
+      },
     },
     save: false,
   });
@@ -396,8 +400,11 @@ export const useChangeStateAction = ({
   const updateTreeComponentAttrs =
     useEditorStore.getState().updateTreeComponentAttrs;
 
-  updateTreeComponentAttrs([componentId], {
-    onLoad: { currentState: action.state },
+  updateTreeComponentAttrs({
+    componentIds: [componentId],
+    attrs: {
+      onLoad: { currentState: action.state },
+    },
   });
 };
 
@@ -560,9 +567,12 @@ export async function performFetch(
 const setLoadingState = (
   componentId: string,
   isLoading: boolean,
-  updateTreeComponent: Function,
+  updateTreeComponentAttrs: Function,
 ) => {
-  updateTreeComponent({ componentId, props: { loading: isLoading } });
+  updateTreeComponentAttrs({
+    componentIds: [componentId],
+    attrs: { props: { loading: isLoading } },
+  });
 };
 
 export const useApiCallAction = async ({
@@ -576,9 +586,10 @@ export const useApiCallAction = async ({
   endpointResults,
   setNonEditorActions,
 }: APICallActionParams): Promise<any> => {
-  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+  const updateTreeComponentAttrs =
+    useEditorStore.getState().updateTreeComponentAttrs;
   if (entity.props && action.showLoader) {
-    setLoadingState(entity.id!, true, updateTreeComponent);
+    setLoadingState(entity.id!, true, updateTreeComponentAttrs);
   }
 
   const endpoint = endpointResults?.find((e) => e.id === action.endpoint)!;
@@ -658,7 +669,7 @@ export const useApiCallAction = async ({
     });
   } finally {
     if (entity.props && action.showLoader) {
-      setLoadingState(entity.id!, false, updateTreeComponent);
+      setLoadingState(entity.id!, false, updateTreeComponentAttrs);
     }
   }
 };

@@ -19,7 +19,7 @@ const TableFormComponent = ({ component }: { component: Component }) => {
 
   useEffect(() => {
     if (form.isTouched()) {
-      debouncedTreeComponentAttrsUpdate(form.values);
+      debouncedTreeComponentAttrsUpdate({ attrs: form.values });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.values]);

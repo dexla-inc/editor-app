@@ -1,7 +1,7 @@
 import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
 import { withModifier } from "@/hoc/withModifier";
 import { ICON_SIZE } from "@/utils/config";
-import { debouncedTreeUpdate } from "@/utils/editor";
+import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import {
   ActionIcon,
@@ -66,7 +66,7 @@ export const Modifier = withModifier(
         styles: updatedMapStyle,
       };
       form.setFieldValue("options.styles", updatedMapStyle);
-      debouncedTreeUpdate(selectedComponentIds, { options });
+      debouncedTreeComponentAttrsUpdate({ attrs: { props: { options } } });
     };
 
     const updateMapStyle = (id: number, field: string, val: any) => {
@@ -81,7 +81,7 @@ export const Modifier = withModifier(
         ...(form.values.options as any),
         styles: updatedMapStyles,
       };
-      debouncedTreeUpdate(selectedComponentIds, { options });
+      debouncedTreeComponentAttrsUpdate({ attrs: { props: { options } } });
     };
 
     const removeMapStyle = (id: number) => {
@@ -92,7 +92,7 @@ export const Modifier = withModifier(
         ...(form.values.options as any),
         styles: updatedMapStyles,
       };
-      debouncedTreeUpdate(selectedComponentIds, { options });
+      debouncedTreeComponentAttrsUpdate({ attrs: { props: { options } } });
     };
 
     const [isApiKey, setIsApiKey] = useState(false);
@@ -124,7 +124,9 @@ export const Modifier = withModifier(
                   ...(form.values.options as any),
                   mapTypeId: value as string,
                 };
-                debouncedTreeUpdate(selectedComponentIds, { options });
+                debouncedTreeComponentAttrsUpdate({
+                  attrs: { props: { options } },
+                });
               }}
             />
             <Select
@@ -136,8 +138,8 @@ export const Modifier = withModifier(
               ]}
               onChange={(value) => {
                 form.setFieldValue("language", value as string);
-                debouncedTreeUpdate(selectedComponentIds, {
-                  language: value,
+                debouncedTreeComponentAttrsUpdate({
+                  attrs: { props: { language: value } },
                 });
               }}
             />
@@ -146,12 +148,16 @@ export const Modifier = withModifier(
               {...form.getInputProps("options.mapTypeControl")}
               onChange={(value) => {
                 form.setFieldValue("options.mapTypeControl", value);
-                debouncedTreeUpdate(selectedComponentIds, {
-                  options: {
-                    mapTypeControl: value,
-                    streetViewControl: value,
-                    fullscreenControl: value,
-                    zoomControl: value,
+                debouncedTreeComponentAttrsUpdate({
+                  attrs: {
+                    props: {
+                      options: {
+                        mapTypeControl: value,
+                        streetViewControl: value,
+                        fullscreenControl: value,
+                        zoomControl: value,
+                      },
+                    },
                   },
                 });
               }}
@@ -161,8 +167,12 @@ export const Modifier = withModifier(
               {...form.getInputProps("fade")}
               onChange={(value) => {
                 form.setFieldValue("fade", value);
-                debouncedTreeUpdate(selectedComponentIds, {
-                  fade: value,
+                debouncedTreeComponentAttrsUpdate({
+                  attrs: {
+                    props: {
+                      fade: value,
+                    },
+                  },
                 });
               }}
             />

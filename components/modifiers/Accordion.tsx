@@ -4,8 +4,8 @@ import { useEditorStore } from "@/stores/editor";
 import { structureMapper } from "@/utils/componentMapper";
 import {
   Component,
-  debouncedTreeComponentChildrenUpdate,
-  debouncedTreeUpdate,
+  debouncedTreeComponentAttrsUpdate,
+  getComponentTreeById,
 } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Select, Stack } from "@mantine/core";
@@ -30,11 +30,17 @@ const createItem = (id: string) => () => {
 
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
+    const editorTree = useEditorStore((state) => state.tree);
+    const selectedComponentTree = getComponentTreeById(
+      editorTree.root,
+      selectedComponentIds.at(-1)!,
+    );
     const form = useForm({
       initialValues: {
         variant: "default",
-        value: selectedComponent.children?.[0]?.props?.value,
-        numberOfItems: selectedComponent.children?.length,
+        // TODO: get this back
+        // value: selectedComponent.children?.[0]?.props?.value,
+        numberOfItems: selectedComponentTree?.children?.length,
       },
     });
 
@@ -50,24 +56,26 @@ export const Modifier = withModifier(
         merge({}, requiredModifiers.accordion, {
           variant: selectedComponent.props?.variant,
           value: selectedComponent.props?.value,
-          numberOfItems: selectedComponent.children?.length,
+          numberOfItems: selectedComponentTree?.children?.length,
         }),
       );
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedComponent]);
 
     const addCarouselSlide = (accordion: Component, id: string) => {
-      const newItem = createItem(id)();
-      const updatedChildren = [
-        ...Array.from(accordion?.children ?? []),
-        newItem,
-      ];
-      debouncedTreeComponentChildrenUpdate(updatedChildren);
+      // TODO: get this back
+      // const newItem = createItem(id)();
+      // const updatedChildren = [
+      //   ...Array.from(accordion?.children ?? []),
+      //   newItem,
+      // ];
+      // debouncedTreeComponentChildrenUpdate(updatedChildren);
     };
 
     const removeItem = (accordion: Component, newSize: string) => {
-      const updatedChildren = accordion?.children?.slice(0, Number(newSize));
-      debouncedTreeComponentChildrenUpdate(updatedChildren!);
+      // TODO: get this back
+      // const updatedChildren = accordion?.children?.slice(0, Number(newSize));
+      // debouncedTreeComponentChildrenUpdate(updatedChildren!);
     };
 
     return (
@@ -83,23 +91,26 @@ export const Modifier = withModifier(
             {...form.getInputProps("variant")}
             onChange={(value) => {
               form.setFieldValue("variant", value as string);
-              debouncedTreeUpdate(selectedComponentIds, { variant: value });
+              debouncedTreeComponentAttrsUpdate({
+                attrs: { props: { variant: value } },
+              });
             }}
           />
-          <Select
-            label="Default Value"
-            size="xs"
-            data={
-              selectedComponent.children?.map(
-                (key) => key.props?.value!,
-              ) as string[]
-            }
-            {...form.getInputProps("value")}
-            onChange={(value) => {
-              form.setFieldValue("value", value as string);
-              debouncedTreeUpdate(selectedComponentIds, { value });
-            }}
-          />
+          {/*TODO: get this back*/}
+          {/*<Select*/}
+          {/*  label="Default Value"*/}
+          {/*  size="xs"*/}
+          {/*  data={*/}
+          {/*    selectedComponent.children?.map(*/}
+          {/*      (key) => key.props?.value!,*/}
+          {/*    ) as string[]*/}
+          {/*  }*/}
+          {/*  {...form.getInputProps("value")}*/}
+          {/*  onChange={(value) => {*/}
+          {/*    form.setFieldValue("value", value as string);*/}
+          {/*    debouncedTreeUpdate(selectedComponentIds, { value });*/}
+          {/*  }}*/}
+          {/*/>*/}
           <UnitInput
             label="Number of Items"
             disabledUnits={["%", "vh", "vw", "rem", "px", "auto"]}

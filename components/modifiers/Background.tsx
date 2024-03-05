@@ -5,7 +5,7 @@ import { TopLabel } from "@/components/TopLabel";
 import { UnitInput } from "@/components/UnitInput";
 import { withModifier } from "@/hoc/withModifier";
 import { useChangeState } from "@/hooks/useChangeState";
-import { debouncedTreeUpdate } from "@/utils/editor";
+import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { SegmentedControl, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -68,7 +68,7 @@ export const Modifier = withModifier(
 
     const setFieldValue = (key: any, value: any) => {
       form.setFieldValue(key, value);
-      debouncedTreeUpdate(selectedComponentIds, { [key]: value });
+      debouncedTreeComponentAttrsUpdate({ attrs: { props: { [key]: value } } });
     };
 
     const { setBackgroundColor } = useChangeState({});
@@ -124,8 +124,10 @@ export const Modifier = withModifier(
               const value = e.target.value;
               form.setFieldValue("backgroundImage", value);
 
-              debouncedTreeUpdate(selectedComponentIds, {
-                style: { backgroundImage: `url(${value})` },
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: { style: { backgroundImage: `url(${value})` } },
+                },
               });
             }}
           />
@@ -140,8 +142,10 @@ export const Modifier = withModifier(
             onChange={(value) => {
               form.setFieldValue("backgroundSize", value as any);
               setBackgroundSize(value as string);
-              debouncedTreeUpdate(selectedComponentIds, {
-                style: { backgroundSize: value },
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: { style: { backgroundSize: value } },
+                },
               });
             }}
           />
@@ -154,8 +158,10 @@ export const Modifier = withModifier(
               onChange={(value) => {
                 form.setFieldValue("backgroundSize", value as any);
                 setBackgroundSize(value as string);
-                debouncedTreeUpdate(selectedComponentIds, {
-                  style: { backgroundSize: value },
+                debouncedTreeComponentAttrsUpdate({
+                  attrs: {
+                    props: { style: { backgroundSize: value } },
+                  },
                 });
               }}
             />
@@ -170,8 +176,10 @@ export const Modifier = withModifier(
             {...form.getInputProps("backgroundPositionX")}
             onChange={(value) => {
               form.setFieldValue("backgroundPositionX", value as any);
-              debouncedTreeUpdate(selectedComponentIds, {
-                style: { backgroundPositionX: value },
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: { style: { backgroundPositionX: value } },
+                },
               });
             }}
           />
@@ -180,8 +188,10 @@ export const Modifier = withModifier(
             {...form.getInputProps("backgroundPositionY")}
             onChange={(value) => {
               form.setFieldValue("backgroundPositionY", value as any);
-              debouncedTreeUpdate(selectedComponentIds, {
-                style: { backgroundPositionY: value },
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: { style: { backgroundPositionY: value } },
+                },
               });
             }}
           />
@@ -196,8 +206,10 @@ export const Modifier = withModifier(
               {...form.getInputProps("backgroundRepeat")}
               onChange={(value) => {
                 form.setFieldValue("backgroundRepeat", value as any);
-                debouncedTreeUpdate(selectedComponentIds, {
-                  style: { backgroundRepeat: value },
+                debouncedTreeComponentAttrsUpdate({
+                  attrs: {
+                    props: { style: { backgroundRepeat: value } },
+                  },
                 });
               }}
             />
@@ -213,8 +225,10 @@ export const Modifier = withModifier(
               {...form.getInputProps("backgroundAttachment")}
               onChange={(value) => {
                 form.setFieldValue("backgroundAttachment", value as any);
-                debouncedTreeUpdate(selectedComponentIds, {
-                  style: { backgroundAttachment: value },
+                debouncedTreeComponentAttrsUpdate({
+                  attrs: {
+                    props: { style: { backgroundAttachment: value } },
+                  },
                 });
               }}
             />

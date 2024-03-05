@@ -1,14 +1,9 @@
 import { useEndpoint } from "@/hooks/useEndpoint";
 import { convertSizeToPx } from "@/utils/defaultSizes";
-import { Component } from "@/utils/editor";
+import { EditableComponentMapper } from "@/utils/editor";
 import { FlexProps, LoadingOverlay, Flex as MantineFlex } from "@mantine/core";
 
-type Props = {
-  renderTree: (component: Component, shareableContent: any) => any;
-  component: Component;
-  ref: any;
-  shareableContent?: any;
-} & FlexProps;
+type Props = EditableComponentMapper & FlexProps;
 
 export const CardAndContainerWrapper = ({
   renderTree,
@@ -42,19 +37,11 @@ export const CardAndContainerWrapper = ({
         data.map((item: any, parentIndex: number) => {
           return component.children && component.children.length > 0
             ? component.children?.map((child) =>
-                renderTree(
-                  {
-                    ...child,
-                    props: {
-                      ...child.props,
-                    },
-                  },
-                  {
-                    ...props.shareableContent,
-                    data: item,
-                    parentIndex,
-                  },
-                ),
+                renderTree(child, {
+                  ...props.shareableContent,
+                  data: item,
+                  parentIndex,
+                }),
               )
             : children;
         })}
@@ -73,13 +60,7 @@ export const CardAndContainerWrapper = ({
         )}
       {!endpointId && component.children && component.children.length > 0
         ? component.children?.map((child) =>
-            renderTree(
-              {
-                ...child,
-                props: { ...child.props },
-              },
-              props.shareableContent,
-            ),
+            renderTree(child, props.shareableContent),
           )
         : children}
     </MantineFlex>

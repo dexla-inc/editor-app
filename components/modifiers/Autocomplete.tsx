@@ -4,7 +4,7 @@ import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon"
 import { withModifier } from "@/hoc/withModifier";
 import { useEditorStore } from "@/stores/editor";
 import { inputSizes } from "@/utils/defaultSizes";
-import { debouncedTreeUpdate } from "@/utils/editor";
+import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { SegmentedControl, Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -46,7 +46,7 @@ export const Modifier = withModifier(
 
     const setFieldValue = (key: any, value: any) => {
       form.setFieldValue(key, value);
-      debouncedTreeUpdate(selectedComponentIds, { [key]: value });
+      debouncedTreeComponentAttrsUpdate({ attrs: { props: { [key]: value } } });
     };
 
     return (
@@ -66,9 +66,13 @@ export const Modifier = withModifier(
             {...form.getInputProps("size")}
             onChange={(value) => {
               form.setFieldValue("size", value as string);
-              debouncedTreeUpdate(selectedComponentIds, {
-                size: value,
-                style: { height: inputSizes[value] },
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: {
+                    size: value,
+                    style: { height: inputSizes[value] },
+                  },
+                },
               });
             }}
           />
@@ -77,8 +81,12 @@ export const Modifier = withModifier(
             selectedIcon={(form.values.icon as any)?.props?.name}
             onIconSelect={(iconName: string) => {
               form.setFieldValue("iconName", iconName);
-              debouncedTreeUpdate(selectedComponentIds, {
-                iconName,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: {
+                    iconName,
+                  },
+                },
               });
             }}
           />

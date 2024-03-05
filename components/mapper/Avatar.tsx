@@ -2,16 +2,12 @@ import { useDataContext } from "@/contexts/DataProvider";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { isSame } from "@/utils/componentComparison";
-import { Component } from "@/utils/editor";
+import { EditableComponentMapper } from "@/utils/editor";
 import { AvatarProps, Avatar as MantineAvatar } from "@mantine/core";
 import merge from "lodash.merge";
 import { forwardRef, memo } from "react";
 
-type Props = {
-  renderTree: (component: Component) => any;
-  component: Component;
-  shareableContent?: any;
-} & AvatarProps;
+type Props = EditableComponentMapper & AvatarProps;
 
 const AvatarComponent = forwardRef(
   ({ renderTree, component, shareableContent, ...props }: Props, ref) => {

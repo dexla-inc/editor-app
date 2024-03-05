@@ -1,14 +1,11 @@
 import { isSame } from "@/utils/componentComparison";
-import { Component } from "@/utils/editor";
+import { EditableComponentMapper } from "@/utils/editor";
 import { Switch as MantineSwitch, SwitchProps } from "@mantine/core";
 import { forwardRef, memo } from "react";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useInputsStore } from "@/stores/inputs";
 
-type Props = {
-  renderTree: (component: Component) => any;
-  component: Component;
-} & SwitchProps;
+type Props = EditableComponentMapper & SwitchProps;
 
 const SwitchComponent = forwardRef(
   ({ renderTree, component, ...props }: Props, ref) => {

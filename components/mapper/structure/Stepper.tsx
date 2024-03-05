@@ -1,9 +1,9 @@
 import { structureMapper } from "@/utils/componentMapper";
-import { Component } from "@/utils/editor";
+import { Component, ComponentStructure } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { nanoid } from "nanoid";
 
-export const jsonStructure = (props?: any): Component => {
+export const jsonStructure = (props?: any): ComponentStructure => {
   const stepperId = nanoid();
 
   const defaultButton = structureMapper["Button"].structure({});

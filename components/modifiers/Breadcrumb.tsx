@@ -1,5 +1,5 @@
 import { withModifier } from "@/hoc/withModifier";
-import { debouncedTreeUpdate } from "@/utils/editor";
+import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -32,8 +32,8 @@ export const Modifier = withModifier(
             {...form.getInputProps("separator")}
             onChange={(e) => {
               form.setFieldValue("separator", e.target.value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                separator: e.target.value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: { props: { separator: e.target.value } },
               });
             }}
           />

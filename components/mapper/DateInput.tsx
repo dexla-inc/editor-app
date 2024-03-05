@@ -1,7 +1,7 @@
 import { Icon } from "@/components/Icon";
 import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { isSame } from "@/utils/componentComparison";
-import { Component } from "@/utils/editor";
+import { EditableComponentMapper } from "@/utils/editor";
 import {
   DatePickerInputProps,
   DatePickerInput as MantineDatePickerInput,
@@ -10,11 +10,7 @@ import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { memo } from "react";
 
-type Props = {
-  renderTree: (component: Component) => any;
-  component: Component;
-  isPreviewMode?: boolean;
-} & DatePickerInputProps;
+type Props = EditableComponentMapper & DatePickerInputProps;
 
 const DateInputComponent = ({
   renderTree,

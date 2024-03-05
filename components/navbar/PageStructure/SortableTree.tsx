@@ -93,6 +93,9 @@ export function NavbarLayersSection({
     const { children } = state.tree.root;
     return children;
   });
+  const componentMutableAttrs = useEditorStore(
+    (state) => state.componentMutableAttrs,
+  );
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentIds?.at(-1),
   );
@@ -329,8 +332,8 @@ export function NavbarLayersSection({
               component={component}
               key={component.id}
               id={component.id!}
-              name={component.name}
-              value={component.description as string}
+              name={componentMutableAttrs[component.id!].name}
+              value={componentMutableAttrs[component.id!].description as string}
               depth={
                 component.id === activeId && projected
                   ? projected.depth
@@ -357,11 +360,13 @@ export function NavbarLayersSection({
               <SortableTreeItem
                 component={activeItem}
                 id={activeId}
-                name={activeItem.name!}
+                name={componentMutableAttrs[activeItem.id!].name!}
                 depth={activeItem.depth}
                 clone
                 childCount={getChildCount(items as TreeItems, activeId) + 1}
-                value={activeItem.description!.toString()}
+                value={componentMutableAttrs[
+                  activeItem.id!
+                ].description!.toString()}
                 indentationWidth={indentationWidth}
               />
             ) : null}

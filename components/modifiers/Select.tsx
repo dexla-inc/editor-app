@@ -5,7 +5,7 @@ import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon"
 import { withModifier } from "@/hoc/withModifier";
 import { useEditorStore } from "@/stores/editor";
 import { inputSizes } from "@/utils/defaultSizes";
-import { debouncedTreeUpdate } from "@/utils/editor";
+import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { SegmentedControl, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -48,7 +48,7 @@ export const Modifier = withModifier(
 
     const setFieldValue = (key: any, value: any) => {
       form.setFieldValue(key, value);
-      debouncedTreeUpdate(selectedComponentIds, { [key]: value });
+      debouncedTreeComponentAttrsUpdate({ attrs: { props: { [key]: value } } });
     };
 
     return (
@@ -68,9 +68,13 @@ export const Modifier = withModifier(
             {...form.getInputProps("size")}
             onChange={(value) => {
               form.setFieldValue("size", value as string);
-              debouncedTreeUpdate(selectedComponentIds, {
-                size: value,
-                style: { height: inputSizes[value] },
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: {
+                    size: value,
+                    style: { height: inputSizes[value] },
+                  },
+                },
               });
             }}
           />
@@ -79,8 +83,13 @@ export const Modifier = withModifier(
             {...form.getInputProps("multiSelect")}
             onChange={(value) => {
               form.setFieldValue("multiSelect", value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                multiSelect: value,
+              debouncedTreeComponentAttrsUpdate({
+                componentIds: selectedComponentIds,
+                attrs: {
+                  props: {
+                    multiSelect: value,
+                  },
+                },
               });
             }}
           />
@@ -89,8 +98,12 @@ export const Modifier = withModifier(
             {...form.getInputProps("searchable")}
             onChange={(value) => {
               form.setFieldValue("searchable", value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                searchable: value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: {
+                    searchable: value,
+                  },
+                },
               });
             }}
           />
@@ -99,8 +112,12 @@ export const Modifier = withModifier(
             {...form.getInputProps("clearable")}
             onChange={(value) => {
               form.setFieldValue("clearable", value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                clearable: value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: {
+                    clearable: value,
+                  },
+                },
               });
             }}
           />

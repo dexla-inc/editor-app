@@ -2,7 +2,7 @@ import { Icon } from "@/components/Icon";
 import { TopLabel } from "@/components/TopLabel";
 import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
 import { Button, Flex, Group, Stack, TextInput } from "@mantine/core";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Component, debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { VisibilityModifier } from "@/components/data/VisibilityModifier";
 import { useForm } from "@mantine/form";
@@ -19,12 +19,9 @@ export const SelectOptionsForm = ({ component }: { component: Component }) => {
     },
   });
 
-  const [label, setKey] = useState("");
-  const [value, setValue] = useState("");
-
   useEffect(() => {
-    if (form.isTouched()) {
-      debouncedTreeComponentAttrsUpdate(form.values);
+    if (form.isTouched() && form.isDirty()) {
+      debouncedTreeComponentAttrsUpdate({ attrs: form.values });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.values]);
@@ -37,12 +34,7 @@ export const SelectOptionsForm = ({ component }: { component: Component }) => {
           type="button"
           compact
           onClick={() => {
-            form.setFieldValue(
-              "data",
-              form.values.props.data.concat({ label, value }),
-            );
-            setKey("");
-            setValue("");
+            form.insertListItem("props.data", { label: "", value: "" });
           }}
           variant="default"
           sx={{ marginRight: 0 }}
@@ -54,48 +46,26 @@ export const SelectOptionsForm = ({ component }: { component: Component }) => {
 
       <Flex direction="column" gap="10px">
         {/* @ts-ignore*/}
-        {form.values.props.data.map(({ label, value }, index) => {
+        {form.values.props.data.map((_, index) => {
           return (
             <Group key={index} style={{ flexWrap: "nowrap" }}>
               <TextInput
                 size="xs"
                 placeholder="label"
-                value={label}
-                onChange={(event) => {
-                  form.setValues((prev) => {
-                    if (prev.props?.data[index].label) {
-                      prev.props.data[index].label = event.target.value;
-                    }
-
-                    return prev;
-                  });
-                }}
+                {...form.getInputProps(`props.data.${index}.label`)}
                 style={{ width: "50%" }}
               />
               <TextInput
                 size="xs"
                 placeholder="value"
-                value={value}
-                onChange={(event) => {
-                  form.setValues((prev) => {
-                    if (prev?.props?.data[index].value) {
-                      prev.props.data[index].value = event.target.value;
-                    }
-
-                    return prev;
-                  });
-                }}
+                {...form.getInputProps(`props.data.${index}.value`)}
                 style={{ width: "50%" }}
               />
 
               <Icon
                 name={ICON_DELETE}
                 onClick={() => {
-                  form.setValues((prev) => {
-                    return prev?.props?.data.filter(
-                      (_: any, i: number) => index !== i,
-                    );
-                  });
+                  form.removeListItem("props.data", index);
                 }}
                 style={{ cursor: "pointer" }}
               />

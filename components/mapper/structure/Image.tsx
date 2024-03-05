@@ -1,8 +1,8 @@
 import { defaultImageValues } from "@/components/modifiers/Image";
-import { Component } from "@/utils/editor";
+import { ComponentStructure } from "@/utils/editor";
 import { nanoid } from "nanoid";
 
-export const jsonStructure = (props?: any): Component => {
+export const jsonStructure = (props?: any): ComponentStructure => {
   return {
     id: nanoid(),
     name: "Image",

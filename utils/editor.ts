@@ -1,16 +1,8 @@
-import { Tile } from "@/components/templates/dashboard";
-import { PageResponse } from "@/requests/pages/types";
-import {
-  MantineThemeExtended,
-  emptyEditorTree,
-  useEditorStore,
-} from "@/stores/editor";
+import { MantineThemeExtended, useEditorStore } from "@/stores/editor";
 import { Action } from "@/utils/actions";
 import { GRAY_OUTLINE } from "@/utils/branding";
-import { structureMapper } from "@/utils/componentMapper";
 import { GRID_SIZE } from "@/utils/config";
 import { calculateGridSizes } from "@/utils/grid";
-import { templatesMapper } from "@/utils/templatesMapper";
 import cloneDeep from "lodash.clonedeep";
 import debounce from "lodash.debounce";
 import every from "lodash.every";
@@ -22,13 +14,29 @@ import { nanoid } from "nanoid";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { CSSProperties } from "react";
 import crawl from "tree-crawl";
+import { CSSObject } from "@mantine/core";
+
+export type ComponentStructure = {
+  children?: ComponentStructure[];
+} & Component;
+
+export type EditableComponentMapper = {
+  renderTree: (component: ComponentTree, shareableContent?: any) => any;
+  component: ComponentTree & Component;
+  shareableContent?: any;
+  isPreviewMode?: boolean;
+  style?: CSSObject;
+  ref?: any;
+};
+
+type ComponentBase = {
+  id?: string;
+};
 
 export type Component = {
-  id?: string;
   name: string;
   description?: string;
   title?: string;
-  children?: Component[];
   props?: { [key: string]: any };
   blockDroppingChildrenInside?: boolean;
   fixedPosition?: {
@@ -38,18 +46,32 @@ export type Component = {
   actions?: Action[];
   onLoad?: any;
   dataType?: "static" | "dynamic";
-  parentDataComponentId?: string;
   states?: Record<string, any>;
   languages?: Record<string, any>;
-};
+  isBeingAdded?: boolean;
+
+  // page structure props - can be removed if we change page structure solution
+  depth?: number;
+} & ComponentBase;
+
+export type ComponentTree = {
+  // TODO: this needs to be a ComponentTree[]
+  children?: ComponentTree[];
+} & ComponentBase;
 
 export type Row = {
   columns: number;
-  components: Component[];
+  components: ComponentStructure[];
 };
 
 export type EditorTree = {
-  root: Component;
+  root: ComponentTree;
+  name: string;
+  timestamp: number;
+};
+
+export type EditorTreeCopy = {
+  root: ComponentStructure;
   name: string;
   timestamp: number;
 };
@@ -71,207 +93,103 @@ export function arrayMove<T>(array: T[], from: number, to: number): T[] {
 }
 
 export const replaceIdsDeeply = (treeRoot: Component) => {
+  const updateTreeComponentAttrs =
+    useEditorStore.getState().updateTreeComponentAttrs;
+  const componentMutableAttrs = useEditorStore.getState().componentMutableAttrs;
   crawl(
     treeRoot,
-    (node) => {
-      node.id = nanoid();
+    async (node) => {
+      const newId = nanoid();
+      const nodeAttrs = componentMutableAttrs[node.id!];
+      nodeAttrs.id = newId;
+      await updateTreeComponentAttrs({
+        componentIds: [newId],
+        attrs: nodeAttrs,
+        save: false,
+      });
+
+      node.id = newId;
     },
     { order: "bfs" },
   );
 };
 
-export const traverseComponents = (
-  components: Component[],
-  theme: MantineThemeExtended,
-): Component[] => {
-  return components
-    .filter((c) => !!c.name)
-    .map((component) => {
-      const isTable = component.name === "Table";
+// TODO: get this back - not sure if we need this
+// export const getEditorTreeFromPageStructure = (
+//   tree: { rows: Row[] },
+//   theme: MantineThemeExtended,
+//   pages: PageResponse[],
+// ) => {
+//   const editorTree: { root: ComponentStructure } & Omit<EditorTree, "root"> = {
+//     name: "Initial State",
+//     timestamp: Date.now(),
+//     root: {
+//       ...emptyEditorTree.root,
+//       children: [
+//         {
+//           id: "content-wrapper",
+//           name: "Container",
+//           description: "Root Container",
+//           props: {
+//             style: {
+//               width: "100%",
+//               display: "flex",
+//               flexDirection: "column",
+//               boxSizing: "border-box",
+//               minHeight: "20px",
+//             },
+//           },
+//           children: tree.rows.map((row: Row) => {
+//             return {
+//               id: nanoid(),
+//               name: "Container",
+//               description: "Container",
+//               props: {
+//                 style: {
+//                   width: "100%",
+//                   backgroundColor: "White.6",
+//                   display: "flex",
+//                   flexDirection: "row",
+//                 },
+//               },
+//               children: traverseComponents(row.components, theme),
+//             };
+//           }),
+//         },
+//       ],
+//     },
+//   };
+//
+//   return editorTree;
+// };
 
-      let tableData = {};
-      if (isTable && component?.props?.data?.length > 0) {
-        const headers = Object.keys(component?.props?.data[0]).reduce(
-          (acc, key) => {
-            return {
-              ...acc,
-              [key]: true,
-            };
-          },
-          {},
-        );
-
-        tableData = {
-          headers,
-          config: { filter: false, sorting: false, pagination: false },
-        };
-      }
-
-      const structureDefinition = structureMapper[component.name];
-
-      const newComponent = structureDefinition.structure({
-        ...component,
-        props: {
-          ...(component?.props ?? {}),
-          ...(isTable
-            ? {
-                exampleData: { value: component?.props?.data ?? {} },
-                ...tableData,
-              }
-            : {}),
-        },
-        theme,
-      });
-      if (component.children) {
-        newComponent.children = traverseComponents(component.children, theme);
-      }
-
-      return newComponent;
-    });
-};
-
-export const getEditorTreeFromPageStructure = (
-  tree: { rows: Row[] },
-  theme: MantineThemeExtended,
-  pages: PageResponse[],
-) => {
-  const editorTree: EditorTree = {
-    name: "Initial State",
-    timestamp: Date.now(),
-    root: {
-      ...emptyEditorTree.root,
-      children: [
-        {
-          id: "content-wrapper",
-          name: "Container",
-          description: "Root Container",
-          props: {
-            style: {
-              width: "100%",
-              display: "flex",
-              flexDirection: "column",
-              boxSizing: "border-box",
-              minHeight: "20px",
-            },
-          },
-          children: tree.rows.map((row: Row) => {
-            return {
-              id: nanoid(),
-              name: "Container",
-              description: "Container",
-              props: {
-                style: {
-                  width: "100%",
-                  backgroundColor: "White.6",
-                  display: "flex",
-                  flexDirection: "row",
-                },
-              },
-              children: traverseComponents(row.components, theme),
-            };
-          }),
-        },
-      ],
-    },
-  };
-
-  return editorTree;
-};
-
-export const getEditorTreeFromTemplateData = (
-  tree: { template: { name: string; data: any } },
-  theme: MantineThemeExtended,
-  pages: PageResponse[],
-) => {
-  // @ts-ignore
-  const template = templatesMapper[tree.template.name];
-  const editorTree: EditorTree = template(tree.template.data, theme, pages);
-  return editorTree;
-};
-
-export const getEditorTreeFromTemplateTileData = async (
-  tree: { template: { name: string; tiles: Tile[] } },
-  theme: MantineThemeExtended,
-  pages: PageResponse[],
-  projectId: string,
-  pageId: string,
-) => {
-  // @ts-ignore
-  const template = templatesMapper[tree.template.name];
-  const editorTree: EditorTree = await template(
-    tree.template,
-    theme,
-    pages,
-    projectId,
-    pageId,
-  );
-  return editorTree;
-};
-
-export const getNewComponents = (
-  tree: { rows: Row[] },
-  theme: MantineThemeExtended,
-  pages: PageResponse[],
-  fromAi?: boolean,
-): Component => {
-  return {
-    id: nanoid(),
-    name: "Container",
-    description: "Container",
-    props: {
-      isBeingAdded: true,
-      style: {
-        width: "100%",
-        flexDirection: "column",
-      },
-    },
-    children: tree.rows.map((row: Row) => {
-      return {
-        id: nanoid(),
-        name: "Container",
-        description: "Container",
-        props: {
-          style: {
-            width: "100%",
-            rowGap: fromAi ? "8px" : "0px",
-            columnGap: fromAi ? "8px" : "0px",
-          },
-        },
-        children:
-          row.components && row.components.length > 0
-            ? traverseComponents(row.components, theme)
-            : [],
-      };
-    }),
-  };
-};
-
-export const getNewComponent = (
-  components: Component[],
-  theme: MantineThemeExtended,
-  pages: PageResponse[],
-): Component => {
-  const firstComponent = components[0];
-  const structureDefinition = structureMapper[firstComponent.name];
-  const firstComponentStructure = structureDefinition.structure({
-    ...firstComponent,
-    props: {
-      ...(firstComponent?.props ?? {}),
-    },
-    theme,
-  });
-
-  return {
-    id: nanoid(),
-    name: firstComponentStructure.name,
-    description: firstComponentStructure.name,
-    props: { ...firstComponentStructure.props },
-    children:
-      firstComponent.children && firstComponent.children.length > 0
-        ? traverseComponents(firstComponent.children, theme)
-        : [],
-  };
-};
+// TODO: get this back - not sure if we need this
+// export const getNewComponent = (
+//   components: ComponentStructure[],
+//   theme: MantineThemeExtended,
+//   pages: PageResponse[],
+// ): ComponentStructure => {
+//   const firstComponent = components[0];
+//   const structureDefinition = structureMapper[firstComponent.name];
+//   const firstComponentStructure = structureDefinition.structure({
+//     ...firstComponent,
+//     props: {
+//       ...(firstComponent?.props ?? {}),
+//     },
+//     theme,
+//   });
+//
+//   return {
+//     id: nanoid(),
+//     name: firstComponentStructure.name,
+//     description: firstComponentStructure.name,
+//     props: { ...firstComponentStructure.props },
+//     children:
+//       firstComponent.children && firstComponent.children.length > 0
+//         ? traverseComponents(firstComponent.children, theme)
+//         : [],
+//   };
+// };
 
 export type TileType = {
   node: Component;
@@ -279,12 +197,14 @@ export type TileType = {
   count: number;
 };
 
-export const getTiles = (treeRoot: Component): TileType[] => {
+export const getTiles = (treeRoot: ComponentTree): TileType[] => {
   let tiles: TileType[] = [];
 
   crawl(
     treeRoot,
-    (node) => {
+    (nodeTree) => {
+      const node =
+        useEditorStore.getState().componentMutableAttrs[nodeTree.id!];
       const name = node.description?.replace(".tile", "");
       if (
         node.description?.endsWith(".tile") &&
@@ -319,9 +239,9 @@ export const getTileData = (treeRoot: Component): { [key: string]: any } => {
         if (node.name.endsWith("Chart")) {
           type = `{
             data: {
-              series: { 
-                name: string; 
-                data: number[] 
+              series: {
+                name: string;
+                data: number[]
               }[]
               xaxis: { categories: string[] }
             }
@@ -348,69 +268,70 @@ export const getTileData = (treeRoot: Component): { [key: string]: any } => {
   return data;
 };
 
-// recursively replace all tile.data with the actual tile data
-const replaceTileData = (node: Component, tile: any, entities: object) => {
-  if (node.description?.startsWith("tile.data.")) {
-    const key = node.description?.replace("tile.data.", "");
-    const val = tile.data[key];
+// TODO: get this back - not used, needs deleting?
+// // recursively replace all tile.data with the actual tile data
+// const replaceTileData = (node: Component, tile: any, entities: object) => {
+//   if (node.description?.startsWith("tile.data.")) {
+//     const key = node.description?.replace("tile.data.", "");
+//     const val = tile.data[key];
+//
+//     if (node.name === "Text" || node.name === "Title") {
+//       // @ts-ignore
+//       node.props.children = val;
+//     }
+//
+//     if (node.name.endsWith("Chart")) {
+//       try {
+//         const data = typeof val === "string" ? JSON.parse(val).data : val.data;
+//         node.props = {
+//           ...node.props,
+//           ...data,
+//         };
+//       } catch (error) {
+//         // do nothing
+//       }
+//     }
+//
+//     // @ts-ignore
+//     node.props.data = { value: val };
+//   }
+//
+//   if (node.children) {
+//     node.children?.map((child) => replaceTileData(child, tile, entities)) ?? [];
+//   }
+//
+//   return node;
+// };
+//
+// export const replaceTilesData = (
+//   tree: EditorTree,
+//   tiles: any[],
+//   entities: object,
+// ): EditorTree => {
+//   // crawl(
+//   //   tree.root,
+//   //   (node) => {
+//   //     if (node.description?.endsWith(".tile")) {
+//   //       const name = node.description?.replace(".tile", "");
+//   //       const tile = tiles.find((t) => t.name === `${name}Tile`);
+//   //
+//   //       node.children =
+//   //         node.children?.map((child) =>
+//   //           replaceTileData(child, tile, entities as object),
+//   //         ) ?? [];
+//   //     }
+//   //   },
+//   //   { order: "bfs" },
+//   // );
+//   //
+//   return tree;
+// };
 
-    if (node.name === "Text" || node.name === "Title") {
-      // @ts-ignore
-      node.props.children = val;
-    }
-
-    if (node.name.endsWith("Chart")) {
-      try {
-        const data = typeof val === "string" ? JSON.parse(val).data : val.data;
-        node.props = {
-          ...node.props,
-          ...data,
-        };
-      } catch (error) {
-        // do nothing
-      }
-    }
-
-    // @ts-ignore
-    node.props.data = { value: val };
-  }
-
-  if (node.children) {
-    node.children?.map((child) => replaceTileData(child, tile, entities)) ?? [];
-  }
-
-  return node;
-};
-
-export const replaceTilesData = (
-  tree: EditorTree,
-  tiles: any[],
-  entities: object,
-): EditorTree => {
-  crawl(
-    tree.root,
-    (node) => {
-      if (node.description?.endsWith(".tile")) {
-        const name = node.description?.replace(".tile", "");
-        const tile = tiles.find((t) => t.name === `${name}Tile`);
-
-        node.children =
-          node.children?.map((child) =>
-            replaceTileData(child, tile, entities as object),
-          ) ?? [];
-      }
-    },
-    { order: "bfs" },
-  );
-
-  return tree;
-};
-
-export const getComponentById = (
-  treeRoot: Component,
+export const getComponentTreeById = (
+  treeRoot: ComponentTree,
   id: string,
-): Component | null => {
-  let found: Component | null = null;
+): ComponentTree | null => {
+  let found: ComponentTree | null = null;
 
   crawl(
     treeRoot,
@@ -427,10 +348,10 @@ export const getComponentById = (
 };
 
 export const getAllComponentsByIds = (
-  treeRoot: Component,
+  treeRoot: ComponentTree,
   ids: string[],
-): Component[] => {
-  let found: Component[] = [];
+): ComponentTree[] => {
+  let found: ComponentTree[] = [];
 
   crawl(
     treeRoot,
@@ -445,23 +366,12 @@ export const getAllComponentsByIds = (
   return found;
 };
 
-export const getComponentBeingAddedId = (
-  treeRoot: Component,
-): string | null => {
-  let id = null;
-
-  crawl(
-    treeRoot,
-    (node, context) => {
-      if (node.props?.isBeingAdded === true) {
-        id = node.id;
-        context.break();
-      }
-    },
-    { order: "bfs" },
+export const getComponentBeingAddedId = (): string | null => {
+  return (
+    Object.values(useEditorStore.getState().componentMutableAttrs).find(
+      (component) => component.isBeingAdded,
+    )?.id || null
   );
-
-  return id;
 };
 
 const translatableFieldsKeys = [
@@ -497,88 +407,87 @@ const pickStyleFields = (value: string, key: string) => {
   return value !== "" && styleFieldsKeys.includes(key);
 };
 
-export const updateTreeComponentAttrs = (
-  treeRoot: Component,
-  ids: string[],
+export const updateTreeComponentAttrs2 = (
+  component: Component,
   attrs: Partial<Component>,
-) => {
-  crawl(
-    treeRoot,
-    (node) => {
-      if (ids.includes(node.id!)) {
-        merge(node, attrs);
-      }
-    },
-    { order: "bfs" },
-  );
-};
-
-export const updateTreeComponent = (
-  treeRoot: Component,
-  ids: string | string[],
-  props: any,
   state: string = "default",
   language: string = "default",
 ) => {
-  ids = Array.isArray(ids) ? ids : [ids];
-
-  const translatableFields = pickBy(props, pickTranslatableFields);
-  const styleFields = pickBy(props, pickStyleFields);
-  const alwaysDefaultFields = omit(props ?? {}, [
+  const newComponent = cloneDeep(component);
+  const translatableProps = pickBy(attrs.props, pickTranslatableFields);
+  const styleProps = pickBy(attrs.props, pickStyleFields);
+  const alwaysDefaultProps = omit(attrs.props ?? {}, [
     ...translatableFieldsKeys,
     ...styleFieldsKeys,
   ]);
 
-  crawl(
-    treeRoot,
-    (node, context) => {
-      if (ids.includes(node.id!)) {
-        if (language === "default") {
-          node.props = merge(node.props, translatableFields);
-        } else {
-          node.languages = merge(node.languages, {
-            [language]: translatableFields,
-          });
-        }
+  if (language === "default") {
+    merge(newComponent, { props: translatableProps });
+  } else {
+    merge(newComponent, { languages: { [language]: translatableProps } });
+  }
 
-        if (state === "default") {
-          node.props = merge(node.props, styleFields);
-        } else {
-          node.states = merge(node.states, {
-            [state]: styleFields,
-          });
-        }
+  if (state === "default") {
+    merge(newComponent, { props: styleProps });
+  } else {
+    merge(newComponent, {
+      states: {
+        [state]: styleProps,
+      },
+    });
+  }
 
-        node.props = merge(node.props, alwaysDefaultFields);
+  merge(newComponent, { props: alwaysDefaultProps });
+  Object.entries(omit(attrs, ["props"])).forEach(([key, value]) => {
+    newComponent[key as keyof Component] = value;
+  });
 
-        // TODO: uncomment when we have a solution to  loop only the ids list
-        // context.break();
-      }
-    },
-    { order: "bfs" },
-  );
+  return newComponent;
 };
 
-export const updateTreeComponentStates = (
-  treeRoot: Component,
-  id: string,
-  states: any,
+export const recoverTreeComponentAttrs = (
+  tree: EditorTree,
+  componentMutableAttrs: Record<string, Component>,
 ) => {
   crawl(
-    treeRoot,
-    (node, context) => {
-      if (node.id === id) {
-        node.states = merge(node.states, states);
-
-        context.break();
+    tree.root,
+    (nodeTree, context) => {
+      const node = {
+        ...componentMutableAttrs[nodeTree.id!],
+        children: nodeTree.children,
+      };
+      if (context.parent?.children) {
+        context.parent.children[context.index] = node;
       }
+      context.replace(node);
     },
     { order: "bfs" },
   );
+
+  return tree;
+};
+
+export const getTreeComponentMutableProps = (treeRoot: Component) => {
+  const newComponentMutableAttrs: Record<string, any> = {};
+  crawl(
+    treeRoot,
+    (node, context) => {
+      newComponentMutableAttrs[node.id!] = extractComponentMutableAttrs(node);
+    },
+    { order: "bfs" },
+  );
+
+  return newComponentMutableAttrs;
+};
+
+export const extractComponentMutableAttrs = (
+  component: Partial<ComponentTree>,
+) => {
+  return omit(component, ["children"]);
 };
 
 export const updateTreeComponentChildren = (
-  treeRoot: Component,
+  treeRoot: ComponentTree,
   id: string,
   children: Component[],
 ) => {
@@ -594,37 +503,24 @@ export const updateTreeComponentChildren = (
   );
 };
 
-export const updateTreeComponentActions = (
-  treeRoot: Component,
-  id: string,
-  actions: Action[],
-) => {
-  crawl(
-    treeRoot,
-    (node, context) => {
-      if (node.id === id) {
-        node.actions = actions;
-        context.break();
-      }
-    },
-    { order: "bfs" },
-  );
-};
-
+//TODO: make it run through the new component list and find the parent component by id
 export const getParentComponentData = (
-  treeRoot: Component,
+  treeRoot: ComponentTree,
   componentId: string,
 ): Component | null => {
   const parentComponentNames = ["Container", "Table", "Form", "Card"];
   let parentWithOnLoad: Component | null = null;
   crawl(
     treeRoot,
-    (node, context) => {
+    (nodeTree, context) => {
+      const node =
+        useEditorStore.getState().componentMutableAttrs[nodeTree.id!];
       if (
         !isEmpty(node.onLoad?.endpointId) &&
         parentComponentNames.includes(node.name)
       ) {
-        const childComponent = getComponentById(node, componentId);
+        const childComponent =
+          useEditorStore.getState().componentMutableAttrs[componentId];
         if (childComponent) {
           parentWithOnLoad = node;
           context.break();
@@ -638,10 +534,10 @@ export const getParentComponentData = (
 };
 
 export const getComponentParent = (
-  treeRoot: Component,
+  treeRoot: ComponentStructure,
   id: string,
-): Component | null => {
-  let parent: Component | null = null;
+): ComponentStructure | null => {
+  let parent: ComponentStructure | null = null;
   crawl(
     treeRoot,
     (node, context) => {
@@ -690,8 +586,10 @@ export const getAllComponentsByName = (
   return components;
 };
 
-export const getAllChildrenComponents = (treeRoot: Component): Component[] => {
-  const components: Component[] = [];
+export const getAllChildrenComponents = (
+  treeRoot: ComponentTree,
+): ComponentTree[] => {
+  const components: ComponentTree[] = [];
 
   crawl(
     treeRoot,
@@ -704,21 +602,23 @@ export const getAllChildrenComponents = (treeRoot: Component): Component[] => {
   return components;
 };
 
-export const getComponentIndex = (parent: Component, id: string) => {
+export const getComponentIndex = (parent: ComponentTree, id: string) => {
   if (!parent) return -1;
-  return (
-    parent.children?.findIndex((child: Component) => child.id === id) ?? -1
-  );
+  return parent.children?.findIndex((child) => child.id === id) ?? -1;
 };
 
 export const addComponent = (
-  treeRoot: Component,
-  componentToAdd: Component,
+  treeRoot: ComponentStructure,
+  componentToAdd: ComponentStructure,
   dropTarget: DropTarget,
   dropIndex?: number,
+  isPaste?: boolean,
 ): string => {
   const copy = cloneDeep(componentToAdd);
-  replaceIdsDeeply(copy);
+  if (isPaste) {
+    replaceIdsDeeply(copy);
+  }
+
   const directChildren = ["Modal", "Drawer", "Toast"];
   const isGrid = copy.name === "Grid";
   const isColumn = copy.name === "GridColumn";
@@ -844,27 +744,6 @@ export const debouncedTreeComponentChildrenUpdate = debounce(
   },
   300,
 );
-
-export const debouncedTreeUpdate = debounce(
-  (componentId, props, save = true) => {
-    const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-    const updateTreeComponents = useEditorStore.getState().updateTreeComponents;
-    if (Array.isArray(componentId)) {
-      updateTreeComponents(componentId, props, save);
-    } else {
-      updateTreeComponent({ componentId, props, save });
-    }
-  },
-  300,
-);
-
-export const debouncedTreeUpdateStates = debounce((...params: any[]) => {
-  const updateTreeComponentStates =
-    useEditorStore.getState().updateTreeComponentStates;
-  // @ts-ignore
-  updateTreeComponentStates(...params);
-}, 300);
-
 export const debouncedTreeRootChildrenUpdate = debounce(
   (value: Component[], save = true) => {
     const updateTreeComponentChildren =
@@ -877,12 +756,32 @@ export const debouncedTreeRootChildrenUpdate = debounce(
 );
 
 export const debouncedTreeComponentAttrsUpdate = debounce(
-  (value: Partial<Component>) => {
+  ({
+    componentIds = [],
+    attrs,
+    forceState,
+    save = true,
+  }: {
+    componentIds?: string[];
+    attrs: Partial<Component>;
+    forceState?: string;
+    save?: boolean;
+  }) => {
     const updateTreeComponentAttrs =
       useEditorStore.getState().updateTreeComponentAttrs;
-    const selectedComponentIds = useEditorStore.getState().selectedComponentIds;
+    const selectedComponentIds =
+      useEditorStore.getState().selectedComponentIds ?? [];
 
-    updateTreeComponentAttrs(selectedComponentIds!, value);
+    if (!componentIds.length) {
+      componentIds = selectedComponentIds;
+    }
+
+    updateTreeComponentAttrs({
+      componentIds,
+      attrs,
+      forceState,
+      save,
+    });
   },
   300,
 );
@@ -948,16 +847,16 @@ export const componentStyleMapper = (
 };
 
 const addNodeToTarget = (
-  treeRoot: Component,
-  targetNode: Component,
-  copy: Component,
-  context: crawl.Context<Component>,
+  treeRoot: ComponentStructure,
+  targetNode: ComponentStructure,
+  copy: ComponentStructure,
+  context: crawl.Context<ComponentStructure>,
   dropTarget: DropTarget,
   isMoving?: boolean,
   forceTarget?: boolean,
   dropIndex?: number,
 ) => {
-  const parent = context.parent as Component;
+  const parent = context.parent as ComponentStructure;
   const isAddingToXAxis =
     dropTarget.edge === "left" || dropTarget.edge === "right";
   const isAddingToYAxis =
@@ -1101,20 +1000,18 @@ const addNodeToTarget = (
     // @ts-ignore
     target.children?.splice(i, 0, gridColumn);
   }
-
-  return target;
 };
 
 export const moveComponent = (
-  treeRoot: Component,
-  id: string,
+  treeRoot: ComponentStructure,
+  componentToAdd: ComponentStructure,
   dropTarget: DropTarget,
 ) => {
   let targetComponent = null;
   crawl(
     treeRoot,
     (node, context) => {
-      if (node.id === id) {
+      if (node.id === componentToAdd.id) {
         const isGrid = node.name === "Grid";
         if (isGrid) {
           targetComponent = addNodeToTarget(
@@ -1129,7 +1026,7 @@ export const moveComponent = (
         } else {
           const parent = context.parent;
           const items = (parent?.children?.map((c) => c.id) ?? []) as string[];
-          const oldIndex = items.indexOf(id);
+          const oldIndex = items.indexOf(componentToAdd.id!);
           let newIndex = items.indexOf(dropTarget.id);
 
           if (
@@ -1166,12 +1063,11 @@ export const moveComponent = (
 };
 
 export const moveComponentToDifferentParent = (
-  treeRoot: Component,
-  id: string,
+  treeRoot: ComponentStructure,
+  componentToAdd: ComponentStructure,
   dropTarget: DropTarget,
   newParentId: string,
 ) => {
-  const componentToAdd = getComponentById(treeRoot, id) as Component;
   const isGrid = componentToAdd.name === "Grid";
   let targetComponent = null;
 
@@ -1242,8 +1138,8 @@ export const moveComponentToDifferentParent = (
 };
 
 export const removeComponentFromParent = (
-  treeRoot: Component,
-  id: string,
+  treeRoot: ComponentTree,
+  componentToAdd: ComponentStructure,
   parentId: string,
 ) => {
   let shouldRecalculate = false;
@@ -1252,9 +1148,11 @@ export const removeComponentFromParent = (
   crawl(
     treeRoot,
     (node, context) => {
-      if (node.id === id && context.parent?.id === parentId) {
+      if (node.id === componentToAdd.id && context.parent?.id === parentId) {
         context.parent?.children?.splice(context.index, 1);
-        shouldRecalculate = node.name === "GridColumn" || node.name === "Grid";
+        shouldRecalculate =
+          componentToAdd.name === "GridColumn" ||
+          componentToAdd.name === "Grid";
         targetComponent = context.parent;
         context.remove();
         context.break();
@@ -1268,7 +1166,7 @@ export const removeComponentFromParent = (
   }
 };
 
-export const removeComponent = (treeRoot: Component, id: string) => {
+export const removeComponent = (treeRoot: ComponentStructure, id: string) => {
   let shouldRecalculate = false;
   let targetComponent = null;
 

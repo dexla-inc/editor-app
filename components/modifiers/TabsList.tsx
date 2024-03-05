@@ -1,7 +1,7 @@
 import { TopLabel } from "@/components/TopLabel";
 import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon";
 import { withModifier } from "@/hoc/withModifier";
-import { debouncedTreeUpdate } from "@/utils/editor";
+import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Checkbox, SegmentedControl, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -88,8 +88,8 @@ export const Modifier = withModifier(
               {...form.getInputProps("position")}
               onChange={(value) => {
                 form.setFieldValue("position", value as string);
-                debouncedTreeUpdate(selectedComponentIds, {
-                  position: value,
+                debouncedTreeComponentAttrsUpdate({
+                  attrs: { props: { position: value } },
                 });
               }}
             />
@@ -100,8 +100,8 @@ export const Modifier = withModifier(
             {...form.getInputProps("disableLine", { type: "checkbox" })}
             onChange={(e) => {
               form.setFieldValue("disableLine", e.target.checked);
-              debouncedTreeUpdate(selectedComponentIds, {
-                disableLine: e.target.checked,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: { props: { disableLine: e.target.checked } },
               });
             }}
           />

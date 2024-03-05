@@ -1,5 +1,5 @@
 import cloneDeep from "lodash.clonedeep";
-import { Component, addComponent } from "@/utils/editor";
+import { Component, addComponent, EditorTreeCopy } from "@/utils/editor";
 import { structureMapper } from "@/utils/componentMapper";
 import { useEditorStore } from "@/stores/editor";
 import { jsonStructure as accordionItemSchema } from "@/components/mapper/structure/AccordionItem";
@@ -10,7 +10,7 @@ export const addColumnToolboxAction = ({ component }: any) => {
   const editorTree = useEditorStore.getState().tree;
   const setEditorTree = useEditorStore.getState().setTree;
 
-  const copy = cloneDeep(editorTree);
+  const copy = cloneDeep(editorTree) as EditorTreeCopy;
   const ColumnSchema = structureMapper["GridColumn"].structure({});
 
   addComponent(
@@ -32,7 +32,7 @@ export const insertRowToolboxAction = ({ parent }: any) => {
   const editorTree = useEditorStore.getState().tree;
   const setEditorTree = useEditorStore.getState().setTree;
 
-  const copy = cloneDeep(editorTree);
+  const copy = cloneDeep(editorTree) as EditorTreeCopy;
   const ColumnSchema = structureMapper["GridColumn"].structure({});
   const GridSchema = structureMapper["Grid"].structure({});
 
@@ -52,7 +52,7 @@ export const addColumnToParentToolboxAction = ({ parent }: any) => {
   const editorTree = useEditorStore.getState().tree;
   const setEditorTree = useEditorStore.getState().setTree;
 
-  const copy = cloneDeep(editorTree);
+  const copy = cloneDeep(editorTree) as EditorTreeCopy;
   const ColumnSchema = structureMapper["GridColumn"].structure({});
 
   addComponent(
@@ -74,7 +74,7 @@ export const insertGridToolboxAction = ({ component }: any) => {
   const editorTree = useEditorStore.getState().tree;
   const setEditorTree = useEditorStore.getState().setTree;
 
-  const copy = cloneDeep(editorTree);
+  const copy = cloneDeep(editorTree) as EditorTreeCopy;
   const GridSchema = structureMapper["Grid"].structure({});
 
   addComponent(copy.root, GridSchema, {
@@ -89,7 +89,7 @@ export const addAccordionItemToolboxAction = ({ component }: any) => {
   const editorTree = useEditorStore.getState().tree;
   const setEditorTree = useEditorStore.getState().setTree;
 
-  const copy = cloneDeep(editorTree);
+  const copy = cloneDeep(editorTree) as EditorTreeCopy;
 
   addComponent(copy.root, accordionItemSchema({}), {
     id: component.id!,
@@ -107,7 +107,7 @@ export const addTabToolboxAction = ({ component }: any) => {
     (child: Component) => child.name === "TabsList",
   );
 
-  const copy = cloneDeep(editorTree);
+  const copy = cloneDeep(editorTree) as EditorTreeCopy;
 
   addComponent(copy.root, tabsPanelSchema({ props: { value: "new-tab" } }), {
     id: component.id!,

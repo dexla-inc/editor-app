@@ -1,17 +1,14 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
-import { Component } from "@/utils/editor";
+import { EditableComponentMapper } from "@/utils/editor";
 import {
   Pagination as MantinePagination,
   PaginationProps,
 } from "@mantine/core";
 import { forwardRef, memo } from "react";
 
-type Props = {
-  renderTree: (component: Component) => any;
-  component: Component;
-} & PaginationProps;
+type Props = EditableComponentMapper & PaginationProps;
 
 const PaginationComponent = forwardRef(
   ({ renderTree, component, ...props }: Props, ref) => {
@@ -20,8 +17,12 @@ const PaginationComponent = forwardRef(
     const { onChange, ...allTriggers } = triggers || {};
 
     const customOnChange = (value: any) => {
-      const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-      updateTreeComponent({ componentId: component.id!, props: { value } });
+      const updateTreeComponentAttrs =
+        useEditorStore.getState().updateTreeComponentAttrs;
+      updateTreeComponentAttrs({
+        componentIds: [component.id!],
+        attrs: { props: { value } },
+      });
       onChange && onChange(value);
     };
 

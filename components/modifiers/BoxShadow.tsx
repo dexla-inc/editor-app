@@ -10,7 +10,10 @@ import { getThemeColor } from "@/components/modifiers/Border";
 import { withModifier } from "@/hoc/withModifier";
 import { CardStyle } from "@/requests/projects/types";
 import { useEditorStore } from "@/stores/editor";
-import { debouncedTreeUpdate, getColorFromTheme } from "@/utils/editor";
+import {
+  debouncedTreeComponentAttrsUpdate,
+  getColorFromTheme,
+} from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Flex, SegmentedControl, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -81,8 +84,8 @@ export const Modifier = withModifier(
                 form.setFieldValue(styleKey, cardStyles[styleKey]);
               });
 
-              debouncedTreeUpdate(selectedComponentIds, {
-                style: cardStyles,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: { props: { style: cardStyles } },
               });
             }}
           />
@@ -100,8 +103,12 @@ export const Modifier = withModifier(
                 onChange={(value) => {
                   form.setFieldValue("inset", value as string);
                   const boxShadow = `${value} ${xOffset} ${yOffset} ${blur} ${spread} ${color}`;
-                  debouncedTreeUpdate(selectedComponentIds, {
-                    style: { boxShadow },
+                  debouncedTreeComponentAttrsUpdate({
+                    attrs: {
+                      props: {
+                        style: { boxShadow },
+                      },
+                    },
                   });
                 }}
               />
@@ -113,8 +120,12 @@ export const Modifier = withModifier(
                 onChange={(value) => {
                   form.setFieldValue("xOffset", value as string);
                   const boxShadow = `${inset} ${value} ${yOffset} ${blur} ${spread} ${color}`;
-                  debouncedTreeUpdate(selectedComponentIds, {
-                    style: { boxShadow },
+                  debouncedTreeComponentAttrsUpdate({
+                    attrs: {
+                      props: {
+                        style: { boxShadow },
+                      },
+                    },
                   });
                 }}
                 options={[
@@ -128,8 +139,12 @@ export const Modifier = withModifier(
                 onChange={(value) => {
                   form.setFieldValue("yOffset", value as string);
                   const boxShadow = `${inset} ${xOffset} ${value} ${blur} ${spread} ${color}`;
-                  debouncedTreeUpdate(selectedComponentIds, {
-                    style: { boxShadow },
+                  debouncedTreeComponentAttrsUpdate({
+                    attrs: {
+                      props: {
+                        style: { boxShadow },
+                      },
+                    },
                   });
                 }}
                 options={[
@@ -145,8 +160,12 @@ export const Modifier = withModifier(
                 onChange={(value) => {
                   form.setFieldValue("blur", value as string);
                   const boxShadow = `${inset} ${xOffset} ${yOffset} ${value} ${spread} ${color}`;
-                  debouncedTreeUpdate(selectedComponentIds, {
-                    style: { boxShadow },
+                  debouncedTreeComponentAttrsUpdate({
+                    attrs: {
+                      props: {
+                        style: { boxShadow },
+                      },
+                    },
                   });
                 }}
                 options={[
@@ -161,8 +180,12 @@ export const Modifier = withModifier(
                   form.setFieldValue("spread", value as string);
                   const boxShadow = `${inset} ${xOffset} ${yOffset} ${blur} ${value} ${color}`;
 
-                  debouncedTreeUpdate(selectedComponentIds, {
-                    style: { boxShadow },
+                  debouncedTreeComponentAttrsUpdate({
+                    attrs: {
+                      props: {
+                        style: { boxShadow },
+                      },
+                    },
                   });
                 }}
                 options={[
@@ -179,8 +202,12 @@ export const Modifier = withModifier(
                 form.setFieldValue("color", _value);
                 const boxShadow = `${inset} ${xOffset} ${yOffset} ${blur} ${spread} ${value}`;
 
-                debouncedTreeUpdate(selectedComponentIds, {
-                  style: { boxShadow },
+                debouncedTreeComponentAttrsUpdate({
+                  attrs: {
+                    props: {
+                      style: { boxShadow },
+                    },
+                  },
                 });
               }}
             />

@@ -1,14 +1,11 @@
 import { useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
-import { Component, getComponentById } from "@/utils/editor";
+import { EditableComponentMapper } from "@/utils/editor";
 import { DrawerProps, Drawer as MantineDrawer } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useEffect } from "react";
 
-type Props = {
-  renderTree: (component: Component) => any;
-  component: Component;
-} & Omit<DrawerProps, "opened">;
+type Props = EditableComponentMapper & Omit<DrawerProps, "opened">;
 
 export const Drawer = ({
   renderTree,
@@ -35,11 +32,12 @@ export const Drawer = ({
   const handleClose = () => {
     close();
     propOnClose && propOnClose();
-    const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+    const updateTreeComponentAttrs =
+      useEditorStore.getState().updateTreeComponentAttrs;
 
-    updateTreeComponent({
-      componentId: component.id!,
-      props: { opened: false },
+    updateTreeComponentAttrs({
+      componentIds: [component.id!],
+      attrs: { props: { opened: false } },
       save: false,
     });
   };
@@ -59,7 +57,9 @@ export const Drawer = ({
         isPreviewMode
           ? opened
           : selectedComponentId === component.id ||
-            !!getComponentById(component, selectedComponentId as string)
+            !!useEditorStore.getState().componentMutableAttrs[
+              selectedComponentId!
+            ]
       }
       onClose={isPreviewMode ? handleClose : () => {}}
       title={title}

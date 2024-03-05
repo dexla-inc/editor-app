@@ -2,6 +2,7 @@ import type { UniqueIdentifier } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 
 import type { FlattenedItem, TreeItem, TreeItems } from "./types";
+import { useEditorStore } from "@/stores/editor";
 
 function getDragDepth(offset: number, indentationWidth: number) {
   return Math.round(offset / indentationWidth);
@@ -58,13 +59,19 @@ export function getProjection(
   }
 }
 
-function getMaxDepth({ previousItem }: { previousItem: FlattenedItem }) {
+function getMaxDepth({
+  previousItem: previousItemTree,
+}: {
+  previousItem: FlattenedItem;
+}) {
+  const previousItem =
+    useEditorStore.getState().componentMutableAttrs[previousItemTree.id!];
   if (previousItem?.blockDroppingChildrenInside) {
-    return previousItem.depth;
+    return previousItem.depth ?? 0;
   }
 
   if (previousItem) {
-    return previousItem.depth + 1;
+    return (previousItem.depth ?? 0) + 1;
   }
 
   return 0;
@@ -115,19 +122,19 @@ export const getAllAncestors = (
 };
 
 export function buildTree(flattenedItems: FlattenedItem[]): TreeItems {
-  const root: TreeItem = { id: "root", name: "Container", children: [] };
+  const root: TreeItem = { id: "root", children: [] };
   const nodes: Record<string, TreeItem> = { [root.id as string]: root };
   const items = flattenedItems.map((item) => ({ ...item, children: [] }));
 
   for (const item of items) {
-    const { id, name, children } = item;
+    const { id, children } = item;
     if (id === undefined) {
       continue;
     }
     const parentId = item.parentId ?? root.id ?? "content-wrapper";
     const parent = nodes[parentId] ?? findItem(items, parentId);
 
-    nodes[id] = { id, name, children };
+    nodes[id] = { id, children };
     parent.children?.push(item);
   }
 

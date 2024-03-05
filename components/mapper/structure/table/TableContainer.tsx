@@ -1,4 +1,4 @@
-import { Component } from "@/utils/editor";
+import { ComponentStructure } from "@/utils/editor";
 import { nanoid } from "nanoid";
 
 const badgeColor = {
@@ -7,7 +7,7 @@ const badgeColor = {
   Active: "Success.9",
 };
 
-export const jsonStructure = (props?: any): Component => {
+export const jsonStructure = (props?: any): ComponentStructure => {
   const theme = props.theme;
 
   return {

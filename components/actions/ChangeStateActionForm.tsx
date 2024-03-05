@@ -4,7 +4,6 @@ import { useDataContext } from "@/contexts/DataProvider";
 import { useComponentStates } from "@/hooks/useComponentStates";
 import { useEditorStore } from "@/stores/editor";
 import { ChangeStateAction } from "@/utils/actions";
-import { getComponentById } from "@/utils/editor";
 import { Stack } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 
@@ -27,7 +26,9 @@ export const ChangeStateActionForm = ({ form }: Props) => {
 
   const { computeValue } = useDataContext()!;
 
-  const component = getComponentById(editorTree.root, selectedComponentId!);
+  const component = useEditorStore(
+    (state) => state.componentMutableAttrs[selectedComponentId!],
+  );
 
   const pickedId = computeValue({ value: form.values.componentId });
   const componentStatesList = getComponentsStates([pickedId]);

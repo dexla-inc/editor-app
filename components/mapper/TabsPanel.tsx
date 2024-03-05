@@ -1,13 +1,10 @@
 import { isSame } from "@/utils/componentComparison";
-import { Component } from "@/utils/editor";
+import { EditableComponentMapper } from "@/utils/editor";
 import { Tabs as MantineTabs, TabsPanelProps } from "@mantine/core";
 import { forwardRef, memo } from "react";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 
-type Props = {
-  renderTree: (component: Component) => any;
-  component: Component;
-} & TabsPanelProps;
+type Props = EditableComponentMapper & TabsPanelProps;
 
 const TabsPanelComponent = forwardRef(
   ({ renderTree, component, ...props }: Props, ref) => {

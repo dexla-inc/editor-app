@@ -12,7 +12,7 @@ import {
 import { ICON_DELETE, ICON_SIZE, NAVBAR_WIDTH } from "@/utils/config";
 import {
   addComponent,
-  getComponentById,
+  EditorTreeCopy,
   getComponentIndex,
   getComponentParent,
   removeComponent,
@@ -32,7 +32,7 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
   const isPreviewMode = useUserConfigStore((state) => state.isPreviewMode);
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const editorTheme = useEditorStore((state) => state.theme);
-  const editorTree = useEditorStore((state) => state.tree);
+  const editorTree = useEditorStore((state) => state.tree as EditorTreeCopy);
   const setEditorTree = useEditorStore((state) => state.setTree);
   const setSelectedComponentIds = useEditorStore(
     (state) => state.setSelectedComponentIds,
@@ -43,7 +43,9 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
 
   const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
 
-  const component = getComponentById(editorTree.root, selectedComponentId!);
+  const component = useEditorStore(
+    (state) => state.componentMutableAttrs[selectedComponentId!],
+  );
 
   const id = component?.id;
   const componentData = componentMapper[component?.name || ""];
@@ -63,7 +65,7 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
 
   const blockedToolboxActions = componentData?.blockedToolboxActions || [];
 
-  const parent = useMemo(
+  const parentTree = useMemo(
     () => (id ? getComponentParent(editorTree.root, id) : null),
     [editorTree.root, id],
   );
@@ -118,7 +120,7 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
     return null;
   }
 
-  const haveNonRootParent = parent && parent.id !== "root";
+  const haveNonRootParent = parentTree && parentTree.id !== "root";
 
   if (!selectedComponentId || !component) {
     return null;
@@ -178,7 +180,7 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            setSelectedComponentIds(() => [parent.id!]);
+            setSelectedComponentIds(() => [parentTree.id!]);
           }}
         />
       )}
@@ -199,15 +201,15 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
               };
             }
 
-            const copy = cloneDeep(editorTree);
+            const copy = cloneDeep(editorTree) as EditorTreeCopy;
             const containerId = addComponent(
               copy.root,
               container,
               {
-                id: parent?.id!,
+                id: parentTree?.id!,
                 edge: "left",
               },
-              getComponentIndex(parent!, id),
+              getComponentIndex(parentTree!, id),
             );
 
             addComponent(copy.root, component, {
@@ -215,7 +217,7 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
               edge: "left",
             });
 
-            removeComponentFromParent(copy.root, id, parent?.id!);
+            removeComponentFromParent(copy.root, component, parentTree?.id!);
             setEditorTree(copy, {
               action: `Wrapped ${component.name} with a Container`,
             });
@@ -240,9 +242,11 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
             iconName={ICON_DELETE}
             tooltip="Delete"
             onClick={() => {
-              const copy = cloneDeep(editorTree);
-              removeComponent(copy.root, component?.id!);
-              setEditorTree(copy, { action: `Removed ${component?.name}` });
+              const editorTreeCopy = cloneDeep(editorTree) as EditorTreeCopy;
+              removeComponent(editorTreeCopy.root, component?.id!);
+              setEditorTree(editorTreeCopy, {
+                action: `Removed ${component?.name}`,
+              });
             }}
           />
           {customComponentModal && (

@@ -5,7 +5,7 @@ import { withModifier } from "@/hoc/withModifier";
 import { useChangeState } from "@/hooks/useChangeState";
 import { useEditorStore } from "@/stores/editor";
 import { inputSizes } from "@/utils/defaultSizes";
-import { debouncedTreeUpdate } from "@/utils/editor";
+import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -38,9 +38,7 @@ export const Modifier = withModifier(
 
     const handleIconPropsChange = (key: string, value: string) => {
       form.setFieldValue(key, value);
-      debouncedTreeUpdate(selectedComponentIds, {
-        [key]: value,
-      });
+      debouncedTreeComponentAttrsUpdate({ attrs: { props: { [key]: value } } });
     };
 
     return (
@@ -52,9 +50,16 @@ export const Modifier = withModifier(
             {...form.getInputProps("size")}
             onChange={(value) => {
               form.setFieldValue("size", value as string);
-              debouncedTreeUpdate(selectedComponentIds, {
-                size: value,
-                style: { height: inputSizes[value], width: inputSizes[value] },
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: {
+                    size: value,
+                    style: {
+                      height: inputSizes[value],
+                      width: inputSizes[value],
+                    },
+                  },
+                },
               });
             }}
           />

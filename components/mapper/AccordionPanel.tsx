@@ -1,5 +1,5 @@
 import { isSame } from "@/utils/componentComparison";
-import { Component } from "@/utils/editor";
+import { EditableComponentMapper } from "@/utils/editor";
 import {
   Accordion as MantineAccordion,
   AccordionPanelProps,
@@ -7,10 +7,7 @@ import {
 import { forwardRef, memo } from "react";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 
-type Props = {
-  renderTree: (component: Component) => any;
-  component: Component;
-} & AccordionPanelProps;
+type Props = EditableComponentMapper & AccordionPanelProps;
 
 const AccordionPanelComponent = forwardRef(
   ({ renderTree, component, ...props }: Props, ref) => {

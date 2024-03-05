@@ -6,7 +6,7 @@ import {
   DropTarget,
   Edge,
   getClosestEdge,
-  getComponentById,
+  getComponentTreeById,
 } from "@/utils/editor";
 import debounce from "lodash.debounce";
 import { useCallback, useState } from "react";
@@ -15,7 +15,6 @@ const debouncedDragEnter = debounce((event: any, id: string) => {
   const isResizing = useEditorStore.getState().isResizing;
   if (isResizing) return;
 
-  const editorTree = useEditorStore.getState().tree;
   const componentToAdd = useEditorStore.getState().componentToAdd;
   const selectedComponentId = useEditorStore
     .getState()
@@ -26,12 +25,13 @@ const debouncedDragEnter = debounce((event: any, id: string) => {
   const isTabPinned = useUserConfigStore.getState().isTabPinned;
   const activeId = componentToAdd?.id ?? selectedComponentId;
 
-  const activeComponent = getComponentById(editorTree.root, activeId!);
+  const activeComponent =
+    useEditorStore.getState().componentMutableAttrs[activeId!];
 
-  const comp = getComponentById(editorTree.root, id);
+  const comp = useEditorStore.getState().componentMutableAttrs[id];
   const isTryingToDropInsideItself =
     activeComponent && activeId !== id
-      ? !!getComponentById(activeComponent!, id)
+      ? !!getComponentTreeById(activeComponent!, id)
       : false;
 
   if (id === "root" || id === "content-wrapper") {
@@ -76,7 +76,6 @@ export const useDroppable = ({
   onDrop: (droppedId: string, dropTarget: DropTarget) => void;
   currentWindow?: Window;
 }) => {
-  const editorTree = useEditorStore((state) => state.tree);
   const isPageStructure = useEditorStore((state) => state.isPageStructure);
   const setCurrentTargetId = useEditorStore(
     (state) => state.setCurrentTargetId,
@@ -85,7 +84,7 @@ export const useDroppable = ({
   const [edge, setEdge] = useState<Edge>();
   const currentTargetId = useEditorStore((state) => state.currentTargetId);
   const componentToAdd = useEditorStore((state) => state.componentToAdd);
-  const component = getComponentById(editorTree.root, id);
+  const component = useEditorStore((state) => state.componentMutableAttrs[id]);
 
   const handleDrop = useCallback(
     (event: React.DragEvent) => {

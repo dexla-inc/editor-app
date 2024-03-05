@@ -1,7 +1,7 @@
 import { decodeSchema, encodeSchema } from "@/utils/compression";
-import { Component } from "@/utils/editor";
+import { Component, ComponentTree } from "@/utils/editor";
 
-export const copyToClipboard = (content: Component) => {
+export const copyToClipboard = (content: ComponentTree) => {
   try {
     const _content = encodeSchema(JSON.stringify(content));
     localStorage.setItem("component", _content);

@@ -4,7 +4,7 @@ import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { TopLabel } from "@/components/TopLabel";
 import { withModifier } from "@/hoc/withModifier";
 import { useChangeState } from "@/hooks/useChangeState";
-import { debouncedTreeUpdate } from "@/utils/editor";
+import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { SegmentedControl, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -42,7 +42,7 @@ export const Modifier = withModifier(
 
     const setFieldValue = (key: any, value: any) => {
       form.setFieldValue(key, value);
-      debouncedTreeUpdate(selectedComponentIds, { [key]: value });
+      debouncedTreeComponentAttrsUpdate({ attrs: { props: { [key]: value } } });
     };
 
     const { setBackgroundColor } = useChangeState({});
@@ -54,8 +54,12 @@ export const Modifier = withModifier(
             {...form.getInputProps("size")}
             onChange={(value) => {
               form.setFieldValue("size", value as string);
-              debouncedTreeUpdate(selectedComponentIds, {
-                size: value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: {
+                    size: value,
+                  },
+                },
               });
             }}
             showNone={false}
@@ -65,8 +69,12 @@ export const Modifier = withModifier(
             {...form.getInputProps("radius")}
             onChange={(value) => {
               form.setFieldValue("radius", value as string);
-              debouncedTreeUpdate(selectedComponentIds, {
-                radius: value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: {
+                    radius: value,
+                  },
+                },
               });
             }}
           />
@@ -75,8 +83,12 @@ export const Modifier = withModifier(
             {...form.getInputProps("color")}
             onChange={(value: string) => {
               form.setFieldValue("color", value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                color: value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: {
+                    color: value,
+                  },
+                },
               });
             }}
           />

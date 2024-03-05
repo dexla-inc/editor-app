@@ -2,14 +2,11 @@ import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useAppMode } from "@/hooks/useAppMode";
 import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
-import { Component, getComponentById } from "@/utils/editor";
+import { EditableComponentMapper } from "@/utils/editor";
 import { Modal as MantineModal, ModalProps } from "@mantine/core";
 import { forwardRef, memo } from "react";
 
-type Props = {
-  renderTree: (component: Component) => any;
-  component: Component;
-} & Omit<ModalProps, "opened">;
+type Props = EditableComponentMapper & Omit<ModalProps, "opened">;
 
 export const ModalComponent = forwardRef(
   ({ renderTree, component, ...props }: Props, ref) => {
@@ -43,11 +40,12 @@ export const ModalComponent = forwardRef(
 
     const handleClose = () => {
       onclose && onclose();
-      const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+      const updateTreeComponentAttrs =
+        useEditorStore.getState().updateTreeComponentAttrs;
 
-      updateTreeComponent({
-        componentId: component.id!,
-        props: { opened: false },
+      updateTreeComponentAttrs({
+        componentIds: [component.id!],
+        attrs: { props: { opened: false } },
         save: false,
       });
     };
@@ -66,7 +64,9 @@ export const ModalComponent = forwardRef(
           isPreviewMode
             ? opened
             : (selectedComponentId === component.id ||
-                !!getComponentById(component, selectedComponentId as string)) &&
+                !!useEditorStore.getState().componentMutableAttrs[
+                  selectedComponentId!
+                ]) &&
               !forceHide
         }
         {...props}

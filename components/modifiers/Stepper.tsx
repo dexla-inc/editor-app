@@ -6,9 +6,8 @@ import { useEditorStore } from "@/stores/editor";
 import { structureMapper } from "@/utils/componentMapper";
 import {
   Component,
-  debouncedTreeComponentChildrenUpdate,
-  debouncedTreeUpdate,
-  getComponentById,
+  debouncedTreeComponentAttrsUpdate,
+  getComponentTreeById,
 } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { SegmentedControl, Select, Stack } from "@mantine/core";
@@ -39,12 +38,16 @@ export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
     const editorTree = useEditorStore((state) => state.tree);
     const form = useForm();
+    const selectedComponentTree = getComponentTreeById(
+      editorTree.root,
+      selectedComponentIds.at(-1)!,
+    );
 
     useEffect(() => {
       form.setValues(
         merge({}, defaultStepperValues, {
           activeStep: String(selectedComponent.props?.activeStep),
-          numberOfSteps: selectedComponent.children?.length,
+          numberOfSteps: selectedComponentTree?.children?.length,
           orientation: selectedComponent.props?.orientation,
           color: selectedComponent.props?.color,
         }),
@@ -55,28 +58,30 @@ export const Modifier = withModifier(
     }, [selectedComponent]);
 
     const addStepperStep = (stepper: Component, length: number) => {
-      const newStepperStep = createStepper()(selectedComponentIds[0]);
-      const newStepperSteps = Array.from({ length }, (_, i) => i + 1).map(
-        (_, i) => newStepperStep,
-      );
-      const updatedChildren = [
-        ...Array.from(stepper?.children ?? []),
-        ...newStepperSteps,
-      ];
-      debouncedTreeComponentChildrenUpdate(updatedChildren!);
+      // TODO: get this back
+      // const newStepperStep = createStepper()(selectedComponentIds[0]);
+      // const newStepperSteps = Array.from({ length }, (_, i) => i + 1).map(
+      //   (_, i) => newStepperStep,
+      // );
+      // const updatedChildren = [
+      //   ...Array.from(stepper?.children ?? []),
+      //   ...newStepperSteps,
+      // ];
+      // debouncedTreeComponentChildrenUpdate(updatedChildren!);
     };
 
     const removeStepperStep = (stepper: Component, newSize: string) => {
-      const updatedChildren = stepper?.children?.slice(0, Number(newSize));
-      debouncedTreeComponentChildrenUpdate(updatedChildren!);
-
-      if (form.values.activeStep === newSize) {
-        const newActiveStep = String(Number(newSize) - 1);
-        form.setFieldValue("activeStep", newActiveStep);
-        debouncedTreeUpdate(selectedComponentIds, {
-          activeStep: newActiveStep,
-        });
-      }
+      // TODO: get this back
+      // const updatedChildren = stepper?.children?.slice(0, Number(newSize));
+      // debouncedTreeComponentChildrenUpdate(updatedChildren!);
+      //
+      // if (form.values.activeStep === newSize) {
+      //   const newActiveStep = String(Number(newSize) - 1);
+      //   form.setFieldValue("activeStep", newActiveStep);
+      //   debouncedTreeUpdate(selectedComponentIds, {
+      //     activeStep: newActiveStep,
+      //   });
+      // }
     };
 
     return (
@@ -94,8 +99,8 @@ export const Modifier = withModifier(
             {...form.getInputProps("activeStep")}
             onChange={(value) => {
               form.setFieldValue("activeStep", String(value));
-              debouncedTreeUpdate(selectedComponentIds, {
-                activeStep: value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: { props: { activeStep: value } },
               });
             }}
           />
@@ -103,18 +108,18 @@ export const Modifier = withModifier(
             label="Number of Steps"
             {...form.getInputProps("numberOfSteps")}
             onChange={(value) => {
-              const stepper = getComponentById(
-                editorTree.root,
-                selectedComponent?.id!,
-              );
-              if (Number(value) > Number(form.values.numberOfSteps)) {
-                const length =
-                  Number(value) - Number(form.values.numberOfSteps);
-                addStepperStep(stepper!, length);
-              } else {
-                removeStepperStep(stepper!, value);
-              }
-              form.setFieldValue("numberOfSteps", Number(value));
+              // TODO: get this back
+              // const stepper = useEditorStore.getState().componentMutableAttrs[
+              //               selectedComponent.id!
+              //             ];
+              // if (Number(value) > Number(form.values.numberOfSteps)) {
+              //   const length =
+              //     Number(value) - Number(form.values.numberOfSteps);
+              //   addStepperStep(stepper!, length);
+              // } else {
+              //   removeStepperStep(stepper!, value);
+              // }
+              // form.setFieldValue("numberOfSteps", Number(value));
             }}
           />
           <Stack spacing={2}>
@@ -144,8 +149,8 @@ export const Modifier = withModifier(
               {...form.getInputProps("orientation")}
               onChange={(value) => {
                 form.setFieldValue("orientation", value as string);
-                debouncedTreeUpdate(selectedComponentIds, {
-                  orientation: value,
+                debouncedTreeComponentAttrsUpdate({
+                  attrs: { props: { orientation: value } },
                 });
               }}
             />
@@ -155,8 +160,8 @@ export const Modifier = withModifier(
                 {...form.getInputProps("color")}
                 onChange={(value: string) => {
                   form.setFieldValue("color", value);
-                  debouncedTreeUpdate(selectedComponentIds, {
-                    color: value,
+                  debouncedTreeComponentAttrsUpdate({
+                    attrs: { props: { color: value } },
                   });
                 }}
               />

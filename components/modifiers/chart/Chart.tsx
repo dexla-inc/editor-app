@@ -1,7 +1,7 @@
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { withModifier } from "@/hoc/withModifier";
 import { scrollbarStyles } from "@/utils/branding";
-import { debouncedTreeUpdate } from "@/utils/editor";
+import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Divider, Stack, Text, Textarea } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -56,7 +56,9 @@ export const Modifier = withModifier(
             {...form.getInputProps("labelColor")}
             onChange={(e) => {
               form.setFieldValue("labelColor", e);
-              debouncedTreeUpdate(selectedComponentIds, { labelColor: e });
+              debouncedTreeComponentAttrsUpdate({
+                attrs: { props: { labelColor: e } },
+              });
             }}
           />
           {!isRadialOnly && (
@@ -65,7 +67,9 @@ export const Modifier = withModifier(
               {...form.getInputProps("foreColor")}
               onChange={(e) => {
                 form.setFieldValue("foreColor", e);
-                debouncedTreeUpdate(selectedComponentIds, { foreColor: e });
+                debouncedTreeComponentAttrsUpdate({
+                  attrs: { props: { foreColor: e } },
+                });
               }}
             />
           )}
@@ -79,8 +83,10 @@ export const Modifier = withModifier(
             onChange={(e) => {
               form.setFieldValue("data", e.currentTarget.value);
               try {
-                debouncedTreeUpdate(selectedComponentIds, {
-                  series: JSON.parse(e.currentTarget.value ?? ""),
+                debouncedTreeComponentAttrsUpdate({
+                  attrs: {
+                    props: { series: JSON.parse(e.currentTarget.value ?? "") },
+                  },
                 });
               } catch (error) {
                 console.error(error);
@@ -106,8 +112,10 @@ export const Modifier = withModifier(
                         categories: JSON.parse(e.currentTarget.value ?? ""),
                       },
                     };
-                debouncedTreeUpdate(selectedComponentIds, {
-                  options,
+                debouncedTreeComponentAttrsUpdate({
+                  attrs: {
+                    props: { options },
+                  },
                 });
               } catch (error) {
                 console.error(error);
@@ -131,8 +139,10 @@ export const Modifier = withModifier(
                       colors[index] = e;
                       form.setFieldValue("colors", colors);
                       try {
-                        debouncedTreeUpdate(selectedComponentIds, {
-                          chartColors: colors,
+                        debouncedTreeComponentAttrsUpdate({
+                          attrs: {
+                            props: { chartColors: colors },
+                          },
                         });
                       } catch (error) {
                         console.error(error);

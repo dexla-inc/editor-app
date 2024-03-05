@@ -1,6 +1,6 @@
 import { UnitInput } from "@/components/UnitInput";
 import { withModifier } from "@/hoc/withModifier";
-import { debouncedTreeUpdate } from "@/utils/editor";
+import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Group, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -39,8 +39,8 @@ export const Modifier = withModifier(
               {...form.getInputProps("width")}
               onChange={(value) => {
                 form.setFieldValue("width", value as string);
-                debouncedTreeUpdate(selectedComponentIds, {
-                  style: { width: value },
+                debouncedTreeComponentAttrsUpdate({
+                  attrs: { props: { style: { width: value } } },
                 });
               }}
             />
@@ -50,8 +50,8 @@ export const Modifier = withModifier(
               {...form.getInputProps("height")}
               onChange={(value) => {
                 form.setFieldValue("height", value as string);
-                debouncedTreeUpdate(selectedComponentIds, {
-                  style: { height: value },
+                debouncedTreeComponentAttrsUpdate({
+                  attrs: { props: { style: { height: value } } },
                 });
               }}
             />
@@ -63,8 +63,8 @@ export const Modifier = withModifier(
               {...form.getInputProps("minWidth")}
               onChange={(value) => {
                 form.setFieldValue("minWidth", value as string);
-                debouncedTreeUpdate(selectedComponentIds, {
-                  style: { minWidth: value },
+                debouncedTreeComponentAttrsUpdate({
+                  attrs: { props: { style: { minWidth: value } } },
                 });
               }}
             />
@@ -74,8 +74,8 @@ export const Modifier = withModifier(
               {...form.getInputProps("minHeight")}
               onChange={(value) => {
                 form.setFieldValue("minHeight", value as string);
-                debouncedTreeUpdate(selectedComponentIds, {
-                  style: { minHeight: value },
+                debouncedTreeComponentAttrsUpdate({
+                  attrs: { props: { style: { minHeight: value } } },
                 });
               }}
             />
@@ -87,8 +87,8 @@ export const Modifier = withModifier(
               {...form.getInputProps("maxWidth")}
               onChange={(value) => {
                 form.setFieldValue("maxWidth", value as string);
-                debouncedTreeUpdate(selectedComponentIds, {
-                  style: { maxWidth: value },
+                debouncedTreeComponentAttrsUpdate({
+                  attrs: { props: { style: { maxWidth: value } } },
                 });
               }}
             />
@@ -98,8 +98,8 @@ export const Modifier = withModifier(
               {...form.getInputProps("maxHeight")}
               onChange={(value) => {
                 form.setFieldValue("maxHeight", value as string);
-                debouncedTreeUpdate(selectedComponentIds, {
-                  style: { maxHeight: value },
+                debouncedTreeComponentAttrsUpdate({
+                  attrs: { props: { style: { maxHeight: value } } },
                 });
               }}
             />

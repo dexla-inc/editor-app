@@ -1,6 +1,6 @@
 import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
 import { withModifier } from "@/hoc/withModifier";
-import { debouncedTreeUpdate } from "@/utils/editor";
+import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -36,8 +36,8 @@ export const Modifier = withModifier(
             {...form.getInputProps("placeholder")}
             onChange={(e) => {
               form.setFieldValue("placeholder", e.target.value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                placeholder: e.target.value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: { props: { placeholder: e.target.value } },
               });
             }}
           />
@@ -46,8 +46,12 @@ export const Modifier = withModifier(
             {...form.getInputProps("withAsterisk")}
             onChange={(value) => {
               form.setFieldValue("withAsterisk", value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                withAsterisk: value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: {
+                    withAsterisk: value,
+                  },
+                },
               });
             }}
           />
@@ -56,8 +60,12 @@ export const Modifier = withModifier(
             {...form.getInputProps("autosize")}
             onChange={(value) => {
               form.setFieldValue("autosize", value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                autosize: value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: {
+                    autosize: value,
+                  },
+                },
               });
             }}
           />

@@ -4,7 +4,7 @@ import { generateStructureFromScreenshot } from "@/requests/ai/queries";
 import { useEditorStore } from "@/stores/editor";
 import { THIN_DARK_OUTLINE, THIN_GREEN_OUTLINE } from "@/utils/branding";
 import { ICON_SIZE } from "@/utils/config";
-import { Component, DropTarget, getComponentById } from "@/utils/editor";
+import { Component, DropTarget } from "@/utils/editor";
 import {
   Flex,
   Popover,
@@ -40,10 +40,8 @@ export default function AIPromptTextInput() {
 
     let selectedComponent = null;
     if (selectedComponentId) {
-      selectedComponent = getComponentById(
-        editorTree.root,
-        selectedComponentId,
-      );
+      selectedComponent =
+        useEditorStore.getState().componentMutableAttrs[selectedComponentId];
     }
 
     const dropTarget = {

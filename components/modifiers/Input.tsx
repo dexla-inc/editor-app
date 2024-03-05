@@ -5,7 +5,7 @@ import { withModifier } from "@/hoc/withModifier";
 import { useEditorStore } from "@/stores/editor";
 import { INPUT_TYPES_DATA } from "@/utils/dashboardTypes";
 import { inputSizes } from "@/utils/defaultSizes";
-import { debouncedTreeUpdate } from "@/utils/editor";
+import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -52,8 +52,12 @@ export const Modifier = withModifier(
             {...form.getInputProps("placeholder")}
             onChange={(e) => {
               form.setFieldValue("placeholder", e.target.value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                placeholder: e.target.value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: {
+                    placeholder: e.target.value,
+                  },
+                },
               });
             }}
           />
@@ -64,8 +68,12 @@ export const Modifier = withModifier(
             {...form.getInputProps("type")}
             onChange={(value) => {
               form.setFieldValue("type", value as string);
-              debouncedTreeUpdate(selectedComponentIds, {
-                type: value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: {
+                    type: value,
+                  },
+                },
               });
             }}
           />
@@ -76,8 +84,12 @@ export const Modifier = withModifier(
                 {...form.getInputProps("displayRequirements")}
                 onChange={(value) => {
                   form.setFieldValue("displayRequirements", value);
-                  debouncedTreeUpdate(selectedComponentIds, {
-                    displayRequirements: value,
+                  debouncedTreeComponentAttrsUpdate({
+                    attrs: {
+                      props: {
+                        displayRequirements: value,
+                      },
+                    },
                   });
                 }}
               />
@@ -91,8 +103,12 @@ export const Modifier = withModifier(
                 {...form.getInputProps("passwordRange")}
                 onChange={(value) => {
                   form.setFieldValue("passwordRange", value);
-                  debouncedTreeUpdate(selectedComponentIds, {
-                    passwordRange: value,
+                  debouncedTreeComponentAttrsUpdate({
+                    attrs: {
+                      props: {
+                        passwordRange: value,
+                      },
+                    },
                   });
                 }}
               />
@@ -101,8 +117,12 @@ export const Modifier = withModifier(
                 {...form.getInputProps("passwordNumber")}
                 onChange={(value) => {
                   form.setFieldValue("passwordNumber", value);
-                  debouncedTreeUpdate(selectedComponentIds, {
-                    passwordNumber: value,
+                  debouncedTreeComponentAttrsUpdate({
+                    attrs: {
+                      props: {
+                        passwordNumber: value,
+                      },
+                    },
                   });
                 }}
               />
@@ -111,8 +131,12 @@ export const Modifier = withModifier(
                 {...form.getInputProps("passwordLower")}
                 onChange={(value) => {
                   form.setFieldValue("passwordLower", value);
-                  debouncedTreeUpdate(selectedComponentIds, {
-                    passwordLower: value,
+                  debouncedTreeComponentAttrsUpdate({
+                    attrs: {
+                      props: {
+                        passwordLower: value,
+                      },
+                    },
                   });
                 }}
               />
@@ -121,8 +145,12 @@ export const Modifier = withModifier(
                 {...form.getInputProps("passwordUpper")}
                 onChange={(value) => {
                   form.setFieldValue("passwordUpper", value);
-                  debouncedTreeUpdate(selectedComponentIds, {
-                    passwordUpper: value,
+                  debouncedTreeComponentAttrsUpdate({
+                    attrs: {
+                      props: {
+                        passwordUpper: value,
+                      },
+                    },
                   });
                 }}
               />
@@ -131,8 +159,12 @@ export const Modifier = withModifier(
                 {...form.getInputProps("passwordSpecial")}
                 onChange={(value) => {
                   form.setFieldValue("passwordSpecial", value);
-                  debouncedTreeUpdate(selectedComponentIds, {
-                    passwordSpecial: value,
+                  debouncedTreeComponentAttrsUpdate({
+                    attrs: {
+                      props: {
+                        passwordSpecial: value,
+                      },
+                    },
                   });
                 }}
               />
@@ -144,9 +176,13 @@ export const Modifier = withModifier(
             {...form.getInputProps("size")}
             onChange={(value) => {
               form.setFieldValue("size", value as string);
-              debouncedTreeUpdate(selectedComponentIds, {
-                size: value,
-                style: { height: inputSizes[value] },
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: {
+                    size: value,
+                    style: { height: inputSizes[value] },
+                  },
+                },
               });
             }}
           />
@@ -156,8 +192,12 @@ export const Modifier = withModifier(
             onIconSelect={(iconName: string) => {
               const icon = { props: { name: iconName } };
               form.setFieldValue("icon.props.name", iconName);
-              debouncedTreeUpdate(selectedComponentIds, {
-                icon,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: {
+                    icon,
+                  },
+                },
               });
             }}
           />
@@ -166,8 +206,12 @@ export const Modifier = withModifier(
             {...form.getInputProps("withAsterisk")}
             onChange={(value) => {
               form.setFieldValue("withAsterisk", value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                withAsterisk: value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: {
+                    withAsterisk: value,
+                  },
+                },
               });
             }}
           />
@@ -176,8 +220,12 @@ export const Modifier = withModifier(
             {...form.getInputProps("clearable")}
             onChange={(value) => {
               form.setFieldValue("clearable", value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                clearable: value,
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: {
+                    clearable: value,
+                  },
+                },
               });
             }}
           />

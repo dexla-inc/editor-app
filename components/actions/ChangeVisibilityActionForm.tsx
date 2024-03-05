@@ -1,7 +1,6 @@
 import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 import { useEditorStore } from "@/stores/editor";
 import { ActionFormProps, TogglePropsAction } from "@/utils/actions";
-import { getComponentById } from "@/utils/editor";
 import { Stack } from "@mantine/core";
 import { VisibilityModifier } from "../data/VisibilityModifier";
 
@@ -18,8 +17,9 @@ export const ChangeVisibilityActionForm = ({ form }: Props) => {
     (state) => state.setPickingComponentToBindTo,
   );
 
-  const editorTree = useEditorStore((state) => state.tree);
-  const component = getComponentById(editorTree.root, selectedComponentId!);
+  const component = useEditorStore(
+    (state) => state.componentMutableAttrs[selectedComponentId!],
+  );
 
   return (
     <Stack spacing="xs">

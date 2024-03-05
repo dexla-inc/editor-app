@@ -37,6 +37,7 @@ import { usePropelAuthStore } from "@/stores/propelAuth";
 import { flexStyles } from "@/utils/branding";
 import { useRouter } from "next/router";
 import { ErrorBoundary } from "react-error-boundary";
+import { useEffect } from "react";
 
 export const Shell = ({ children, navbar, aside }: AppShellProps) => {
   const resetTree = useEditorStore((state) => state.resetTree);
@@ -50,9 +51,13 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
   const projectId = router.query.id as string;
   const currentPageId = router.query.page as string;
 
-  const { data: pageListQuery } = usePageListQuery(projectId);
+  const { data: pageListQuery, isFetched } = usePageListQuery(projectId);
 
-  setPages(pageListQuery?.results ?? []);
+  useEffect(() => {
+    if (isFetched) {
+      setPages(pageListQuery?.results!);
+    }
+  }, [pageListQuery, isFetched]);
 
   const isDexlaAdmin = usePropelAuthStore((state) => state.isDexlaAdmin);
   const clear = useTemporalStore((state) => state.clear);

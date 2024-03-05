@@ -17,9 +17,12 @@ export const useContentEditable = (componentId: string) => {
 
   const exitEditMode = useCallback(() => {
     if (ref.current) {
-      updateTreeComponentAttrs([componentId], {
-        onLoad: {
-          children: { dataType: "static", static: ref.current.innerText },
+      updateTreeComponentAttrs({
+        componentIds: [componentId],
+        attrs: {
+          onLoad: {
+            children: { dataType: "static", static: ref.current.innerText },
+          },
         },
       });
     }
