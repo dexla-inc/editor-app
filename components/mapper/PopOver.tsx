@@ -1,11 +1,7 @@
 import { useAppMode } from "@/hooks/useAppMode";
 import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
-import {
-  Component,
-  EditableComponentMapper,
-  getComponentById,
-} from "@/utils/editor";
+import { Component, EditableComponentMapper } from "@/utils/editor";
 import { Box, Popover as MantinePopOver, PopoverProps } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { memo, useEffect } from "react";
@@ -67,7 +63,7 @@ const PopOverComponent = ({
   const isOpened = isPreviewMode
     ? opened
     : selectedComponentId === component.id ||
-      !!getComponentById(component, selectedComponentId as string);
+      !!useEditorStore.getState().componentMutableAttrs[selectedComponentId!];
 
   const target = (isLive ? window : iframeWindow)?.document.getElementById(
     "iframe-content",

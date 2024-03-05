@@ -1,7 +1,6 @@
 import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 import { useEditorStore } from "@/stores/editor";
 import { ActionFormProps, TogglePropsAction } from "@/utils/actions";
-import { getComponentById } from "@/utils/editor";
 import { Stack } from "@mantine/core";
 import { VisibilityModifier } from "../data/VisibilityModifier";
 

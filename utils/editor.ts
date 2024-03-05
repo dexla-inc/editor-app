@@ -335,26 +335,6 @@ export const getComponentTreeById = (
   return found;
 };
 
-export const getComponentById = (
-  treeRoot: Component,
-  id: string,
-): Component | null => {
-  let found: Component | null = null;
-
-  crawl(
-    treeRoot,
-    (node, context) => {
-      if (node.id === id) {
-        found = node as Component;
-        context.break();
-      }
-    },
-    { order: "bfs" },
-  );
-
-  return found;
-};
-
 export const getAllComponentsByIds = (
   treeRoot: ComponentTree,
   ids: string[],
@@ -527,7 +507,8 @@ export const getParentComponentData = (
         !isEmpty(node.onLoad?.endpointId) &&
         parentComponentNames.includes(node.name)
       ) {
-        const childComponent = getComponentById(node, componentId);
+        const childComponent =
+          useEditorStore.getState().componentMutableAttrs[componentId];
         if (childComponent) {
           parentWithOnLoad = node;
           context.break();

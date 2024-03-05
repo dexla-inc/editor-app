@@ -24,7 +24,7 @@ import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
 import { useVariableStore } from "@/stores/variables";
 import { readDataFromStream } from "@/utils/api";
-import { Component, getComponentById } from "@/utils/editor";
+import { Component } from "@/utils/editor";
 import { executeFlow } from "@/utils/logicFlows";
 import { UseFormReturnType } from "@mantine/form";
 import { showNotification } from "@mantine/notifications";

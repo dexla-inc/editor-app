@@ -1,6 +1,6 @@
 import { useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
-import { EditableComponentMapper, getComponentById } from "@/utils/editor";
+import { EditableComponentMapper } from "@/utils/editor";
 import { DrawerProps, Drawer as MantineDrawer } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useEffect } from "react";
@@ -57,7 +57,9 @@ export const Drawer = ({
         isPreviewMode
           ? opened
           : selectedComponentId === component.id ||
-            !!getComponentById(component, selectedComponentId as string)
+            !!useEditorStore.getState().componentMutableAttrs[
+              selectedComponentId!
+            ]
       }
       onClose={isPreviewMode ? handleClose : () => {}}
       title={title}

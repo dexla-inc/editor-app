@@ -4,7 +4,6 @@ import { useDataContext } from "@/contexts/DataProvider";
 import { useComponentStates } from "@/hooks/useComponentStates";
 import { useEditorStore } from "@/stores/editor";
 import { ChangeStateAction } from "@/utils/actions";
-import { getComponentById } from "@/utils/editor";
 import { Stack } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 

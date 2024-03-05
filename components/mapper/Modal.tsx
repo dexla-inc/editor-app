@@ -2,7 +2,7 @@ import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useAppMode } from "@/hooks/useAppMode";
 import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
-import { EditableComponentMapper, getComponentById } from "@/utils/editor";
+import { EditableComponentMapper } from "@/utils/editor";
 import { Modal as MantineModal, ModalProps } from "@mantine/core";
 import { forwardRef, memo } from "react";
 
@@ -64,7 +64,9 @@ export const ModalComponent = forwardRef(
           isPreviewMode
             ? opened
             : (selectedComponentId === component.id ||
-                !!getComponentById(component, selectedComponentId as string)) &&
+                !!useEditorStore.getState().componentMutableAttrs[
+                  selectedComponentId!
+                ]) &&
               !forceHide
         }
         {...props}

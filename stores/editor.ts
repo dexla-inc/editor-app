@@ -437,7 +437,7 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
               false,
               "editor/updateTreeComponentChildren",
             ),
-          updateTreeComponentAttrs: ({
+          updateTreeComponentAttrs: async ({
             componentIds,
             attrs,
             forceState,

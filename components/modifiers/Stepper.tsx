@@ -109,10 +109,9 @@ export const Modifier = withModifier(
             {...form.getInputProps("numberOfSteps")}
             onChange={(value) => {
               // TODO: get this back
-              // const stepper = getComponentById(
-              //   editorTree.root,
-              //   selectedComponent?.id!,
-              // );
+              // const stepper = useEditorStore.getState().componentMutableAttrs[
+              //               selectedComponent.id!
+              //             ];
               // if (Number(value) > Number(form.values.numberOfSteps)) {
               //   const length =
               //     Number(value) - Number(form.values.numberOfSteps);
