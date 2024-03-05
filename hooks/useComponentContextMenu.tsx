@@ -132,6 +132,7 @@ export const useComponentContextMenu = () => {
           edge: "bottom",
         },
         getComponentIndex(parentComponent!, componentId) + 1,
+        true,
       );
 
       setEditorTree(copy, { action: `Pasted ${componentName}` });
