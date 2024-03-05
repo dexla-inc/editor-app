@@ -255,7 +255,7 @@ export const useNavigationAction = ({
   }
 
   let url = isLive
-    ? `/${action.pageSlug}`
+    ? `/${action.pageSlug}`.replace("//", "/")
     : `/projects/${projectId}/editor/${action.pageId}`;
 
   if (action.queryStrings && Object.keys(action.queryStrings).length) {
@@ -268,7 +268,7 @@ export const useNavigationAction = ({
   }
 
   console.log("useNavigationAction", url);
-  router.push(url.replace("//", "/"));
+  router.push(url);
 };
 
 export const useGoToUrlAction = async ({
@@ -618,7 +618,7 @@ export const useApiCallAction = async ({
         const refreshAccessToken =
           useDataSourceStore.getState().refreshAccessToken;
 
-        refreshAccessToken();
+        refreshAccessToken(endpoint.dataSourceId);
 
         responseJson = await performFetch(
           fetchUrl,

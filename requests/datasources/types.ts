@@ -134,6 +134,10 @@ export const AuthenticationSchemeLabels: Record<AuthenticationSchemes, string> =
     API_KEY: "API Key",
   };
 
+export type DataSourceAuthListResponse = {
+  authConfigurations: Record<string, DataSourceAuthResponse>;
+};
+
 export type DataSourceAuthResponse = {
   type: AuthenticationSchemes;
   accessTokenUrl?: string;
