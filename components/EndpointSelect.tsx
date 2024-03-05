@@ -3,7 +3,6 @@ import { colors } from "@/components/datasources/DataSourceEndpoint";
 import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
 import { Endpoint } from "@/requests/datasources/types";
 import { MethodTypes } from "@/requests/types";
-import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
 import { Box, Flex, Group, Select, SelectProps, Text } from "@mantine/core";
 import { forwardRef, useCallback, useEffect, useMemo, useState } from "react";
@@ -42,9 +41,6 @@ interface EndpointSelectProps extends Omit<SelectProps, "data"> {
 }
 
 export const EndpointSelect = ({ value, ...props }: EndpointSelectProps) => {
-  const setApiAuthConfig = useDataSourceStore(
-    (state) => state.setApiAuthConfig,
-  );
   const projectId = useEditorStore((state) => state.currentProjectId);
   const { data: endpoints } = useDataSourceEndpoints(projectId);
   const [selectedEndpoint, setSelectedEndpoint] = useState<Endpoint>();
@@ -74,11 +70,10 @@ export const EndpointSelect = ({ value, ...props }: EndpointSelectProps) => {
 
   useEffect(() => {
     if (endpoints?.results) {
-      setApiAuthConfig(endpoints.results);
       const foundEndpoint = endpoints.results.find((e) => e.id === value);
       setSelectedEndpoint(foundEndpoint);
     }
-  }, [endpoints?.results, value, setApiAuthConfig]);
+  }, [endpoints?.results, value]);
 
   return (
     <>

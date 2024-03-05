@@ -1,8 +1,7 @@
+import EmptyDatasourcesPlaceholder from "@/components/datasources/EmptyDatasourcesPlaceholder";
 import { EndpointRequestInputs } from "@/components/EndpointRequestInputs";
 import { EndpointSelect } from "@/components/EndpointSelect";
-import EmptyDatasourcesPlaceholder from "@/components/datasources/EmptyDatasourcesPlaceholder";
 import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
-import { useDataSourceStore } from "@/stores/datasource";
 import {
   ActionFormProps,
   APICallAction,
@@ -10,7 +9,6 @@ import {
 } from "@/utils/actions";
 import { Stack } from "@mantine/core";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
 import { SegmentedControlInput } from "../SegmentedControlInput";
 import { SegmentedControlYesNo } from "../SegmentedControlYesNo";
 
@@ -21,16 +19,6 @@ export const APICallActionForm = ({ form }: Props) => {
   const projectId = router.query.id as string;
 
   const { data: endpoints } = useDataSourceEndpoints(projectId);
-  const setApiAuthConfig = useDataSourceStore(
-    (state) => state.setApiAuthConfig,
-  );
-
-  useEffect(() => {
-    if (endpoints?.results) {
-      setApiAuthConfig(endpoints.results);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [endpoints?.results]);
 
   const selectedEndpoint = endpoints?.results?.find(
     (e) => e.id === form.values.endpoint,

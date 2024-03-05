@@ -13,7 +13,7 @@ import get from "lodash.get";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { useRouter } from "next/router";
-import { createContext, useContext } from "react";
+import { createContext, useContext, useEffect } from "react";
 import { useNodes } from "reactflow";
 
 type DataProviderProps = {
@@ -65,6 +65,7 @@ export const DataProvider = ({ children }: DataProviderProps) => {
   const logicFlowsEditorNodes = useNodes<NodeData>();
   const projectId = useEditorStore((state) => state.currentProjectId ?? "");
   const { data: endpoints } = useDataSourceEndpoints(projectId);
+
   const nonEditorActions = useEditorStore((state) => state.nonEditorActions);
   const logicFlowsActionNodes = useEditorStore((state) => state.lf);
   const actionActionsList = useEditorStore((state) => state.actions);
@@ -77,6 +78,18 @@ export const DataProvider = ({ children }: DataProviderProps) => {
   if (selectedComponentId) {
     selectedComponent = getComponentById(editorTree.root, selectedComponentId);
   }
+  // Adding this because we need to initialize the API auth config on page refresh so it is available for deployed apps
+  const setApiAuthConfig = useDataSourceStore(
+    (state) => state.setApiAuthConfig,
+  );
+
+  useEffect(() => {
+    if (endpoints?.results) {
+      setApiAuthConfig(endpoints.results);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [endpoints?.results]);
+
   const isEditorMode = !isPreviewMode && !isLive;
 
   const nodes = logicFlowsEditorNodes.length
