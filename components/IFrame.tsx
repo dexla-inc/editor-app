@@ -13,7 +13,7 @@ import {
   Stack,
   Text,
 } from "@mantine/core";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
 type Props = {
@@ -74,14 +74,6 @@ export const IFrame = ({ children, projectId, ...props }: Props) => {
 
   const styles = getContainerStyles(isTabPinned);
 
-  const handleMouseDown = useCallback(() => {
-    if (isTabPinned) {
-      setActiveTab("layers");
-    } else {
-      setActiveTab(undefined);
-    }
-  }, [isTabPinned, setActiveTab]);
-
   if (!theme) {
     return null;
   }
@@ -115,7 +107,6 @@ export const IFrame = ({ children, projectId, ...props }: Props) => {
   ) : (
     <Box
       id="iframe-canvas"
-      onMouseDown={handleMouseDown}
       ref={setContentRef as any}
       component="iframe"
       style={styles}

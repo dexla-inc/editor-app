@@ -89,10 +89,9 @@ export function NavbarLayersSection({
   indicator = false,
   indentationWidth = 10,
 }: Props) {
-  const items = useEditorStore((state) => {
-    const { children } = state.tree.root;
-    return children;
-  });
+  const tree = useEditorStore((state) => state.tree);
+  const items = tree.root.children;
+
   const componentMutableAttrs = useEditorStore(
     (state) => state.componentMutableAttrs,
   );
