@@ -5,7 +5,8 @@ import { useEditorStore } from "@/stores/editor";
 import { EditableComponentMapper } from "@/utils/editor";
 import { FlexProps } from "@mantine/core";
 import merge from "lodash.merge";
-import { forwardRef } from "react";
+import { forwardRef, memo } from "react";
+import { isSame } from "@/utils/componentComparison";
 
 type Props = EditableComponentMapper & FlexProps;
 
@@ -35,4 +36,4 @@ export const CardComponent = forwardRef(
 );
 CardComponent.displayName = "Card";
 
-export const Card = withComponentWrapper<Props>(CardComponent);
+export const Card = memo(withComponentWrapper<Props>(CardComponent), isSame);
