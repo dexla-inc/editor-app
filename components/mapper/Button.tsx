@@ -16,14 +16,7 @@ type Props = EditableComponentMapper & ButtonProps & ReactElement<"Button">;
 
 const ButtonComponent = forwardRef(
   (
-    {
-      renderTree,
-      component,
-      isPreviewMode,
-      style,
-      shareableContent,
-      ...props
-    }: Props,
+    { component, isPreviewMode, style, shareableContent, ...props }: Props,
     ref,
   ) => {
     const {
@@ -36,18 +29,17 @@ const ButtonComponent = forwardRef(
       color,
       ...componentProps
     } = component.props as any;
-
+    console.log("ButtonComponent -> component", component.id);
     const theme = useEditorStore((state) => state.theme);
 
     const contentEditableProps = useContentEditable(component.id as string);
 
     const { computeValue } = useDataContext()!;
-    const childrenValue =
-      computeValue({
-        value: component.onLoad?.children,
-        shareableContent,
-        staticFallback: component.props?.children,
-      }) ?? component.props?.children;
+    const childrenValue = computeValue({
+      value: component.onLoad?.children,
+      shareableContent,
+      staticFallback: component.props?.children,
+    });
 
     const defaultTriggers = isPreviewMode
       ? {}
