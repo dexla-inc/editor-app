@@ -26,7 +26,7 @@ export const usePropsWithOverwrites = (
 
   const hoverStateFunc = (e: React.MouseEvent<HTMLElement>) => {
     if (currentState === "default" && component.states?.hover) {
-      //setTreeComponentCurrentState(e.currentTarget.id, "hover");
+      setTreeComponentCurrentState(e.currentTarget.id, "hover");
     }
   };
 
