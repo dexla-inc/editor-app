@@ -11,6 +11,7 @@ export const FaviconUrl = () => {
   const projectId = useEditorStore((state) => state.currentProjectId) as string;
   const { data: project } = useProjectQuery(projectId);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedPatchProject = useCallback(
     debounce(async (url) => {
       const patchParams = [

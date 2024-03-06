@@ -36,8 +36,8 @@ import { useEditorStore, useTemporalStore } from "@/stores/editor";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { flexStyles } from "@/utils/branding";
 import { useRouter } from "next/router";
-import { ErrorBoundary } from "react-error-boundary";
 import { useEffect } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 
 export const Shell = ({ children, navbar, aside }: AppShellProps) => {
   const resetTree = useEditorStore((state) => state.resetTree);
@@ -57,7 +57,7 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
     if (isFetched) {
       setPages(pageListQuery?.results!);
     }
-  }, [pageListQuery, isFetched]);
+  }, [pageListQuery, isFetched, setPages]);
 
   const isDexlaAdmin = usePropelAuthStore((state) => state.isDexlaAdmin);
   const clear = useTemporalStore((state) => state.clear);

@@ -97,7 +97,7 @@ const SelectComponent = forwardRef(
 
     useEffect(() => {
       onChange && onChange(inputValue);
-    }, [inputValue]);
+    }, [inputValue, onChange]);
 
     return (
       <MantineSelectParentWrapper {...omit(props, ["onChange"])}>

@@ -20,6 +20,7 @@ export const TriggerLogicFlowActionForm = ({ form }: Props) => {
         form.setFieldValue("logicFlow", selectedFlow);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFetched, form.values.logicFlowId]);
 
   return (

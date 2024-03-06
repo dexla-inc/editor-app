@@ -11,8 +11,8 @@ import {
 } from "@/utils/componentMapper";
 import { ICON_DELETE, ICON_SIZE, NAVBAR_WIDTH } from "@/utils/config";
 import {
-  addComponent,
   EditorTreeCopy,
+  addComponent,
   getComponentIndex,
   getComponentParent,
   removeComponent,
