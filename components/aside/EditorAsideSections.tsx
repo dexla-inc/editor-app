@@ -243,8 +243,9 @@ export const EditorAsideSections = () => {
       </Flex>
       {tab === "design" && (
         <Stack spacing="xs">
-          {selectedComponentId} &&
-          <StateSelector componentName={componentName} />
+          {selectedComponentId && (
+            <StateSelector componentName={componentName} />
+          )}
           {designSections}
         </Stack>
       )}
