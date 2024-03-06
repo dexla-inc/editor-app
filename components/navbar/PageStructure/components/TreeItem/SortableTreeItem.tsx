@@ -4,6 +4,7 @@ import { AnimateLayoutChanges, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
 import { TreeItem, Props as TreeItemProps } from "./TreeItem";
+import { useEditorStore } from "@/stores/editor";
 
 interface Props extends TreeItemProps {
   id: UniqueIdentifier;
@@ -15,6 +16,11 @@ const animateLayoutChanges: AnimateLayoutChanges = ({
 }) => (isSorting || wasDragging ? false : true);
 
 export function SortableTreeItem({ id, depth, ...props }: Props) {
+  const component = useEditorStore((state) => ({
+    name: state.componentMutableAttrs[id].name,
+    value: state.componentMutableAttrs[id].description?.toString(),
+  }));
+
   const {
     attributes,
     isDragging,
@@ -47,6 +53,8 @@ export function SortableTreeItem({ id, depth, ...props }: Props) {
         ...listeners,
       }}
       {...props}
+      name={component.name}
+      value={component.value}
     />
   );
 }

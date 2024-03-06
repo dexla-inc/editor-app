@@ -39,7 +39,7 @@ import {
 
 export interface Props extends Omit<HTMLAttributes<HTMLLIElement>, "id"> {
   id: any;
-  name: string;
+  name?: string;
   childCount?: number;
   clone?: boolean;
   collapsed?: boolean;
@@ -50,7 +50,7 @@ export interface Props extends Omit<HTMLAttributes<HTMLLIElement>, "id"> {
   handleProps?: any;
   indicator?: boolean;
   indentationWidth: number;
-  value: string;
+  value?: string;
   onCollapse?(): void;
   onRemove?(): void;
   wrapperRef?(node: HTMLLIElement): void;

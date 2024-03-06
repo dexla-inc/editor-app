@@ -39,8 +39,6 @@ const blackList = ["name", "value", "children"];
 
 export const useComponentContextMenu = () => {
   const { showContextMenu, destroy } = useContextMenu();
-
-  const editorTree = useEditorStore((state) => state.tree as EditorTreeCopy);
   const editorTheme = useEditorStore((state) => state.theme);
   const copiedProperties = useEditorStore((state) => state.copiedProperties);
   const isPageStructure = useEditorStore((state) => state.isPageStructure);
@@ -63,6 +61,7 @@ export const useComponentContextMenu = () => {
       const container = structureMapper[componentName].structure({
         theme: editorTheme,
       });
+      const editorTree = useEditorStore.getState().tree as EditorTreeCopy;
       const parent = getComponentParent(editorTree.root, component?.id!);
 
       if (container.props && container.props.style) {
@@ -96,7 +95,7 @@ export const useComponentContextMenu = () => {
         setSelectedComponentIds(() => [containerId]);
       }, 100);
     },
-    [editorTheme, editorTree, setEditorTree, setSelectedComponentIds],
+    [editorTheme, setEditorTree, setSelectedComponentIds],
   );
 
   const deleteComponent = useCallback(
@@ -107,17 +106,19 @@ export const useComponentContextMenu = () => {
         component.id !== "main-content" &&
         component.id !== "content-wrapper"
       ) {
+        const editorTree = useEditorStore.getState().tree as EditorTreeCopy;
         const editorTreeCopy = cloneDeep(editorTree) as EditorTreeCopy;
         removeComponent(editorTreeCopy.root, component.id);
         setEditorTree(editorTreeCopy, { action: `Removed ${component?.name}` });
         clearSelection();
       }
     },
-    [clearSelection, editorTree, setEditorTree],
+    [clearSelection, setEditorTree],
   );
 
   const duplicateComponent = useCallback(
     async (component: Component) => {
+      const editorTree = useEditorStore.getState().tree as EditorTreeCopy;
       const copy = cloneDeep(editorTree);
       const componentId = component?.id!;
       const componentName = component.name!;
@@ -139,7 +140,7 @@ export const useComponentContextMenu = () => {
       setSelectedComponentIds(() => [newSelectedId]);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [editorTree, setEditorTree],
+    [setEditorTree],
   );
 
   const copyComponent = useCallback(

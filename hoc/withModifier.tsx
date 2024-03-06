@@ -58,13 +58,11 @@ export const withModifier = (Modifier: ComponentType<WithModifier>) => {
       ),
     );
     const language = useEditorStore((state) => state.language);
-    const currentTreeComponentsStates = useEditorStore(
-      (state) => state.currentTreeComponentsStates,
+    const currentState = useEditorStore(
+      (state) =>
+        state.currentTreeComponentsStates?.[selectedComponentIds?.[0] || ""] ??
+        "default",
     );
-
-    const currentState =
-      currentTreeComponentsStates?.[selectedComponentIds?.[0] || ""] ??
-      "default";
 
     const mergedCustomData = useMemo(() => {
       return selectedComponents?.map((selectedComponent) => {
