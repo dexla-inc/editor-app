@@ -49,6 +49,8 @@ export const usePropsWithOverwrites = (
         triggers: !isEditorMode
           ? {
               ...triggers,
+              // Critical Rerender Bug: Commenting this out doesn't stop the re render, think it is DataProvider as it
+              // stopped when I commented out parts from editor store
               onMouseOver: triggers?.onHover ?? hoverStateFunc,
               onMouseLeave: leaveHoverStateFunc,
               ...(isDisabledState && {

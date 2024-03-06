@@ -109,7 +109,7 @@ const InputComponent = forwardRef(
 
       // Cleanup function to clear the timeout if the component unmounts or if inputValue changes
       return () => clearTimeout(timer);
-    }, [inputValue]);
+    }, [inputValue, onChange]);
 
     return (
       <>

@@ -1,3 +1,4 @@
+import { useEditorStore } from "@/stores/editor";
 import {
   DARK_MODE,
   LIGHT_MODE,
@@ -6,10 +7,6 @@ import {
 } from "@/utils/branding";
 import { Box, Text } from "@mantine/core";
 import { forwardRef } from "react";
-
-type SavingDisplayProps = {
-  isSaving: boolean;
-};
 
 const isSavingDisplay = {
   saving: {
@@ -22,34 +19,31 @@ const isSavingDisplay = {
   },
 };
 
-export const SavingDisplay = forwardRef<HTMLDivElement, SavingDisplayProps>(
-  ({ isSaving, ...props }: SavingDisplayProps, ref) => {
-    const saving = isSaving ? "saving" : "saved";
+export const SavingDisplay = forwardRef<HTMLDivElement>(({ ...props }, ref) => {
+  const isSaving = useEditorStore((state) => state.isSaving);
 
-    return (
-      <Box
-        ref={ref}
-        {...props}
-        sx={(theme) => ({
-          border:
-            theme.colorScheme === "dark"
-              ? THIN_DARK_OUTLINE
-              : THIN_GRAY_OUTLINE,
-          backgroundColor:
-            theme.colorScheme === "dark" ? DARK_MODE : LIGHT_MODE,
-          width: 65,
-          textAlign: "center",
-          padding: 1,
-          borderRadius: theme.radius.sm,
-          cursor: "pointer",
-        })}
-      >
-        <Text color={isSavingDisplay[saving].color} size="sm">
-          {isSavingDisplay[saving].text}
-        </Text>
-      </Box>
-    );
-  },
-);
+  const saving = isSaving ? "saving" : "saved";
+
+  return (
+    <Box
+      ref={ref}
+      {...props}
+      sx={(theme) => ({
+        border:
+          theme.colorScheme === "dark" ? THIN_DARK_OUTLINE : THIN_GRAY_OUTLINE,
+        backgroundColor: theme.colorScheme === "dark" ? DARK_MODE : LIGHT_MODE,
+        width: 65,
+        textAlign: "center",
+        padding: 1,
+        borderRadius: theme.radius.sm,
+        cursor: "pointer",
+      })}
+    >
+      <Text color={isSavingDisplay[saving].color} size="sm">
+        {isSavingDisplay[saving].text}
+      </Text>
+    </Box>
+  );
+});
 
 SavingDisplay.displayName = "SavingDisplay";

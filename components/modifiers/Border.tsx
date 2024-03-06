@@ -55,10 +55,9 @@ export const getThemeColor = (theme: any, hex: string) => {
 
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
-    const { theme, setTheme } = useEditorStore((state) => ({
-      theme: state.theme,
-      setTheme: state.setTheme,
-    }));
+    const theme = useEditorStore((state) => state.theme);
+    const setTheme = useEditorStore((state) => state.setTheme);
+
     const style = selectedComponent?.props?.style;
 
     const isBorderRadiusAllSame = allEqual<string[]>([

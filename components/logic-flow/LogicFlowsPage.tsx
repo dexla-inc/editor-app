@@ -61,7 +61,7 @@ export const LogicFlowsPage = ({ flow }: Props) => {
       const data = JSON.parse(decodeSchema(flow.data as string));
       restoreFlow(data as any);
     }
-  }, [flow?.data]);
+  }, [flow.data, restoreFlow]);
 
   const { mutate: updateFlow } = useMutation({
     mutationKey: ["logic-flow", flow?.id],
@@ -146,6 +146,7 @@ export const LogicFlowsPage = ({ flow }: Props) => {
     }
 
     return () => clearTimeout(timeout);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.values]);
 
   const onSubmit = async ({ label, ...values }: any) => {

@@ -63,6 +63,7 @@ export const ColorSelector = ({
   useEffect(() => {
     debouncedOnValueChangeRef.current(hexa, friendlyName);
     // Make sure to cancel the debounced call on effect cleanup
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     return () => debouncedOnValueChangeRef.current.cancel();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hexa, friendlyName]);

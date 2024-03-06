@@ -28,10 +28,8 @@ const defaultBoxShadowValues = requiredModifiers.boxShadow;
 
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
-    const { theme, setTheme } = useEditorStore((state) => ({
-      theme: state.theme,
-      setTheme: state.setTheme,
-    }));
+    const theme = useEditorStore((state) => state.theme);
+    const setTheme = useEditorStore((state) => state.setTheme);
 
     let { style = {} } = selectedComponent.props!;
     const boxShadow =

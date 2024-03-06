@@ -6,13 +6,13 @@ import { structureMapper } from "@/utils/componentMapper";
 import { NAVBAR_WIDTH } from "@/utils/config";
 import {
   Component,
+  EditorTreeCopy,
   addComponent,
+  debouncedTreeComponentAttrsUpdate,
   getComponentIndex,
   getComponentParent,
   removeComponent,
   removeComponentFromParent,
-  EditorTreeCopy,
-  debouncedTreeComponentAttrsUpdate,
 } from "@/utils/editor";
 import {
   IconBoxMargin,
@@ -149,7 +149,7 @@ export const useComponentContextMenu = () => {
       setCopiedComponent(copiedComponent);
       copyToClipboard(copiedComponent);
     },
-    [setCopiedComponent, editorTree.root],
+    [setCopiedComponent],
   );
 
   const copyProperties = useCallback(
@@ -162,7 +162,7 @@ export const useComponentContextMenu = () => {
         componentStates: targetComponent.states!,
       });
     },
-    [setCopiedProperties, editorTree.root],
+    [setCopiedProperties],
   );
 
   const pasteProperties = useCallback(

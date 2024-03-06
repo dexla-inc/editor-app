@@ -2,17 +2,17 @@ import { useEditorStore } from "@/stores/editor";
 import { componentMapper } from "@/utils/componentMapper";
 import {
   Component,
+  ComponentStructure,
   DropTarget,
+  EditorTreeCopy,
   addComponent,
   getComponentIndex,
   getComponentParent,
+  getComponentTreeById,
   moveComponent,
   moveComponentToDifferentParent,
   removeComponent,
   removeComponentFromParent,
-  getComponentTreeById,
-  EditorTreeCopy,
-  ComponentStructure,
 } from "@/utils/editor";
 import cloneDeep from "lodash.clonedeep";
 import { useCallback } from "react";
