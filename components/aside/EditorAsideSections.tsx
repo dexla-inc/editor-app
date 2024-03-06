@@ -146,8 +146,10 @@ export const EditorAsideSections = () => {
   );
   const openAction = useEditorStore((state) => state.openAction);
   const setOpenAction = useEditorStore((state) => state.setOpenAction);
-  const currentTreeComponentsStates = useEditorStore(
-    (state) => state.currentTreeComponentsStates,
+  const selectedComponentId = useDeferredValue(_selectedComponentId);
+  const currentState = useEditorStore(
+    (state) =>
+      state.currentTreeComponentsStates?.[selectedComponentId!] ?? "default",
   );
   const initiallyOpenedModifiersByComponent = useUserConfigStore(
     (state) => state.initiallyOpenedModifiersByComponent,
@@ -157,7 +159,7 @@ export const EditorAsideSections = () => {
   );
 
   const [tab, setTab] = useState<Tab>("design");
-  const selectedComponentId = useDeferredValue(_selectedComponentId);
+
   const [createState, setCreateState] = useState<undefined | string>(undefined);
   const component = useEditorStore(
     (state) => state.componentMutableAttrs[selectedComponentId!],
@@ -215,9 +217,6 @@ export const EditorAsideSections = () => {
       },
     };
   });
-
-  const currentState =
-    currentTreeComponentsStates?.[selectedComponentId!] ?? "default";
 
   const designSections = sections?.map(({ Component, ...item }) => (
     <SidebarSection {...item} key={item.label}>

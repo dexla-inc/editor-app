@@ -4,9 +4,6 @@ import { useCallback, useMemo, useState } from "react";
 export const useHoverEvents = () => {
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
 
-  const hoveredComponentId = useEditorStore(
-    (state) => state.hoveredComponentId,
-  );
   const setHoveredComponentId = useEditorStore(
     (state) => state.setHoveredComponentId,
   );
@@ -74,8 +71,10 @@ export const useHoverEvents = () => {
     (e: any) => {
       e.stopPropagation();
       const leaveId = e.currentTarget.id;
+      const isHovered =
+        useEditorStore.getState().hoveredComponentId === leaveId;
       setTimeout(() => {
-        if (hoveredComponentId === leaveId) {
+        if (isHovered) {
           setHoveredComponentId("");
           setOverlayStyles((prevStyles) => ({
             ...prevStyles,
@@ -84,7 +83,7 @@ export const useHoverEvents = () => {
         }
       }, 10);
     },
-    [hoveredComponentId, setHoveredComponentId],
+    [setHoveredComponentId],
   );
 
   return {
