@@ -55,10 +55,8 @@ export const getThemeColor = (theme: any, hex: string) => {
 
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
-    const { theme, setTheme } = useEditorStore((state) => ({
-      theme: state.theme,
-      setTheme: state.setTheme,
-    }));
+    const theme = useEditorStore((state) => state.theme);
+    const isCardComponent = selectedComponent?.name === "Card";
     const style = selectedComponent?.props?.style;
 
     const isBorderRadiusAllSame = allEqual<string[]>([
@@ -110,6 +108,9 @@ export const Modifier = withModifier(
             borderRightWidth: style?.borderRightWidth,
             borderBottomWidth: style?.borderBottomWidth,
             borderLeftWidth: style?.borderLeftWidth,
+            ...(isCardComponent && {
+              cardStyle: selectedComponent?.props?.cardStyle ?? "ROUNDED",
+            }),
           },
         ),
       );
@@ -199,22 +200,18 @@ export const Modifier = withModifier(
       }
       return `border${startCase(form.values.showBorder as string)}${val}`;
     };
+
     return (
       <form key={selectedComponent?.id}>
-        {selectedComponent?.name === "Card" ? (
+        {isCardComponent ? (
           <CardStyleSelector
-            value={theme.cardStyle}
+            value={(form.values.cardStyle ?? theme.cardStyle) as CardStyle}
             onChange={(value) => {
               const cardStyles = getCardStyling(
                 value as CardStyle,
                 theme.colors["Border"][6],
                 theme.defaultRadius,
               );
-
-              setTheme({
-                ...theme,
-                cardStyle: value as CardStyle,
-              });
 
               Object.keys(cardStyles).forEach((key) => {
                 const styleKey = key as keyof CardStyleProps;
@@ -225,6 +222,7 @@ export const Modifier = withModifier(
                 attrs: {
                   props: {
                     style: cardStyles,
+                    cardStyle: value as CardStyle,
                   },
                 },
               });

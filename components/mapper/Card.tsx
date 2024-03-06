@@ -2,10 +2,8 @@ import { getCardStyling } from "@/components/CardStyleSelector";
 import { CardAndContainerWrapper } from "@/components/mapper/CardAndContainerWrapper";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useEditorStore } from "@/stores/editor";
-import { convertSizeToPx } from "@/utils/defaultSizes";
 import { EditableComponentMapper } from "@/utils/editor";
-import { FlexProps, LoadingOverlay, Flex as MantineFlex } from "@mantine/core";
-import isEmpty from "lodash.isempty";
+import { FlexProps } from "@mantine/core";
 import merge from "lodash.merge";
 import { forwardRef } from "react";
 
@@ -21,7 +19,7 @@ export const CardComponent = forwardRef(
       theme.defaultRadius,
     );
 
-    const customStyle = merge(props.style, cardStylingProps);
+    const customStyle = merge({}, cardStylingProps, props.style);
 
     return (
       <CardAndContainerWrapper

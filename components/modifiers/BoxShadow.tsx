@@ -28,10 +28,8 @@ const defaultBoxShadowValues = requiredModifiers.boxShadow;
 
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
-    const { theme, setTheme } = useEditorStore((state) => ({
-      theme: state.theme,
-      setTheme: state.setTheme,
-    }));
+    const theme = useEditorStore((state) => state.theme);
+    const isCardComponent = selectedComponent?.name === "Card";
 
     let { style = {} } = selectedComponent.props!;
     const boxShadow =
@@ -57,6 +55,9 @@ export const Modifier = withModifier(
           blur,
           spread,
           color: getThemeColor(theme, color),
+          ...(isCardComponent && {
+            cardStyle: selectedComponent?.props?.cardStyle ?? "ROUNDED",
+          }),
         }),
       );
       // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -64,9 +65,9 @@ export const Modifier = withModifier(
 
     return (
       <form key={selectedComponent?.id}>
-        {selectedComponent?.name === "Card" ? (
+        {isCardComponent ? (
           <CardStyleSelector
-            value={theme.cardStyle}
+            value={(form.values.cardStyle ?? theme.cardStyle) as CardStyle}
             onChange={(value) => {
               const cardStyles = getCardStyling(
                 value as CardStyle,
@@ -74,18 +75,13 @@ export const Modifier = withModifier(
                 theme.defaultRadius,
               );
 
-              setTheme({
-                ...theme,
-                cardStyle: value as CardStyle,
-              });
-
               Object.keys(cardStyles).forEach((key) => {
                 const styleKey = key as keyof CardStyleProps;
                 form.setFieldValue(styleKey, cardStyles[styleKey]);
               });
 
               debouncedTreeComponentAttrsUpdate({
-                attrs: { props: { style: cardStyles } },
+                attrs: { props: { style: cardStyles, cardStyle: value } },
               });
             }}
           />
