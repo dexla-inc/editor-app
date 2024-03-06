@@ -111,7 +111,7 @@ export const EditableComponent = ({
           },
           ...(isResizing || !isEditorMode ? {} : droppable),
           id: component.id,
-          //isPreviewMode: !isEditorMode,
+          isPreviewMode: !isEditorMode,
           style: childStyles,
           sx: tealOutline,
           ...(isEditorMode && {
