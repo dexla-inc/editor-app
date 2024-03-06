@@ -4,7 +4,8 @@ import { setComponentBorder } from "@/utils/branding";
 import { EditableComponentMapper } from "@/utils/editor";
 import { FlexProps } from "@mantine/core";
 import merge from "lodash.merge";
-import { forwardRef } from "react";
+import { forwardRef, memo } from "react";
+import { isSame } from "@/utils/componentComparison";
 
 type Props = EditableComponentMapper & FlexProps;
 
@@ -27,4 +28,7 @@ export const ContainerComponent = forwardRef(
 );
 ContainerComponent.displayName = "Container";
 
-export const Container = withComponentWrapper<Props>(ContainerComponent);
+export const Container = memo(
+  withComponentWrapper<Props>(ContainerComponent),
+  isSame,
+);

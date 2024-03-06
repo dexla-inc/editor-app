@@ -2,10 +2,12 @@ import { useEndpoint } from "@/hooks/useEndpoint";
 import { convertSizeToPx } from "@/utils/defaultSizes";
 import { EditableComponentMapper } from "@/utils/editor";
 import { FlexProps, LoadingOverlay, Flex as MantineFlex } from "@mantine/core";
+import { memo } from "react";
+import { isSame } from "@/utils/componentComparison";
 
 type Props = EditableComponentMapper & FlexProps;
 
-export const CardAndContainerWrapper = ({
+const CardAndContainerWrapperInner = ({
   renderTree,
   component,
   ref,
@@ -66,3 +68,8 @@ export const CardAndContainerWrapper = ({
     </MantineFlex>
   );
 };
+
+export const CardAndContainerWrapper = memo(
+  CardAndContainerWrapperInner,
+  isSame,
+);
