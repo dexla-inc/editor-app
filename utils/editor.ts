@@ -228,7 +228,6 @@ export const getTiles = (treeRoot: ComponentTree): TileType[] => {
 };
 
 export const getTileData = (treeRoot: Component): { [key: string]: any } => {
-  console.log("1");
   let data: { [key: string]: any } = {};
 
   crawl(
@@ -332,7 +331,6 @@ export const getComponentTreeById = (
   treeRoot: ComponentTree,
   id: string,
 ): ComponentTree | null => {
-  console.log("1");
   let found: ComponentTree | null = null;
 
   crawl(
@@ -354,7 +352,6 @@ export const getAllComponentsByIds = (
   ids: string[],
 ): ComponentTree[] => {
   let found: ComponentTree[] = [];
-  console.log("1");
   crawl(
     treeRoot,
     (node, context) => {
@@ -369,7 +366,6 @@ export const getAllComponentsByIds = (
 };
 
 export const getComponentBeingAddedId = (): string | null => {
-  console.log("1");
   return (
     Object.values(useEditorStore.getState().componentMutableAttrs).find(
       (component) => component.isBeingAdded,
@@ -403,12 +399,10 @@ const styleFieldsKeys = [
 ];
 
 const pickTranslatableFields = (value: string, key: string) => {
-  console.log("2");
   return value !== "" && translatableFieldsKeys.includes(key);
 };
 
 const pickStyleFields = (value: string, key: string) => {
-  console.log("2");
   return value !== "" && styleFieldsKeys.includes(key);
 };
 
@@ -418,7 +412,6 @@ export const updateTreeComponentAttrs2 = (
   state: string = "default",
   language: string = "default",
 ) => {
-  console.log("2");
   const newComponent = cloneDeep(component);
   const translatableProps = pickBy(attrs.props, pickTranslatableFields);
   const styleProps = pickBy(attrs.props, pickStyleFields);
@@ -455,7 +448,6 @@ export const recoverTreeComponentAttrs = (
   tree: EditorTree,
   componentMutableAttrs: Record<string, Component>,
 ) => {
-  console.log("2");
   crawl(
     tree.root,
     (nodeTree, context) => {
@@ -475,7 +467,6 @@ export const recoverTreeComponentAttrs = (
 };
 
 export const getTreeComponentMutableProps = (treeRoot: Component) => {
-  console.log("2");
   const newComponentMutableAttrs: Record<string, any> = {};
   crawl(
     treeRoot,
@@ -491,7 +482,6 @@ export const getTreeComponentMutableProps = (treeRoot: Component) => {
 export const extractComponentMutableAttrs = (
   component: Partial<ComponentTree>,
 ) => {
-  console.log("2");
   return omit(component, ["children"]);
 };
 
@@ -500,7 +490,6 @@ export const updateTreeComponentChildren = (
   id: string,
   children: Component[],
 ) => {
-  console.log("3");
   crawl(
     treeRoot,
     (node, context) => {
@@ -518,7 +507,6 @@ export const getParentComponentData = (
   treeRoot: ComponentTree,
   componentId: string,
 ): Component | null => {
-  console.log("3");
   const parentComponentNames = ["Container", "Table", "Form", "Card"];
   let parentWithOnLoad: Component | null = null;
   crawl(
@@ -548,7 +536,6 @@ export const getComponentParent = (
   treeRoot: ComponentStructure,
   id: string,
 ): ComponentStructure | null => {
-  console.log("3");
   let parent: ComponentStructure | null = null;
   crawl(
     treeRoot,
@@ -568,7 +555,6 @@ function objectsIntersect(
   obj: { [key: string]: any },
   criteriaObject: Record<string, any>,
 ) {
-  console.log("3");
   return every(criteriaObject, (value, key) => get(obj, key) === value);
 }
 
@@ -577,7 +563,6 @@ export const getAllComponentsByName = (
   componentName: string | string[],
   propCriterias = {},
 ): Component[] => {
-  console.log("getAllComponentsByName");
   const components: Component[] = [];
 
   if (!Array.isArray(componentName)) {
@@ -603,7 +588,6 @@ export const getAllComponentsByName = (
 export const getAllChildrenComponents = (
   treeRoot: ComponentTree,
 ): ComponentTree[] => {
-  console.log("getAllChildrenComponents");
   const components: ComponentTree[] = [];
 
   crawl(
@@ -617,9 +601,7 @@ export const getAllChildrenComponents = (
   return components;
 };
 
-//
 export const getComponentIndex = (parent: ComponentTree, id: string) => {
-  console.log("getComponentIndex");
   if (!parent) return -1;
   return parent.children?.findIndex((child) => child.id === id) ?? -1;
 };
@@ -631,7 +613,6 @@ export const addComponent = (
   dropIndex?: number,
   isPaste?: boolean,
 ): string => {
-  console.log("5");
   const copy = cloneDeep(componentToAdd);
   if (isPaste) {
     replaceIdsDeeply(copy);
@@ -874,7 +855,6 @@ const addNodeToTarget = (
   forceTarget?: boolean,
   dropIndex?: number,
 ) => {
-  console.log("addNodeToTarget");
   const parent = context.parent as ComponentStructure;
   const isAddingToXAxis =
     dropTarget.edge === "left" || dropTarget.edge === "right";

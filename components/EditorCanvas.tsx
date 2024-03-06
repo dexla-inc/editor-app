@@ -36,7 +36,6 @@ type Props = {
 };
 
 const EditorCanvasComponent = ({ projectId }: Props) => {
-  console.log("EditorCanvasComponent");
   const undo = useTemporalStore((state) => state.undo);
   const redo = useTemporalStore((state) => state.redo);
   const pastStates = useTemporalStore((state) => state.pastStates);
@@ -340,7 +339,6 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
       useEditorStore.getState().componentMutableAttrs[componentTree.id!];
     const componentToRender = componentMapper[component.name];
 
-    console.log("componentToRender", componentToRender);
     if (!componentToRender) {
       return (
         <EditableComponentContainer
