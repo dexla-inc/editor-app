@@ -41,7 +41,7 @@ export const EditableComponent = ({
     (state) => state.componentMutableAttrs[id] ?? {},
   );
 
-  let currentState = useComputeCurrentState(component, isEditorMode);
+  let currentState = useComputeCurrentState(component);
 
   if (shareableContent?.parentState)
     currentState = shareableContent.parentState;
@@ -111,7 +111,7 @@ export const EditableComponent = ({
           },
           ...(isResizing || !isEditorMode ? {} : droppable),
           id: component.id,
-          isPreviewMode: !isEditorMode,
+          //isPreviewMode: !isEditorMode,
           style: childStyles,
           sx: tealOutline,
           ...(isEditorMode && {
