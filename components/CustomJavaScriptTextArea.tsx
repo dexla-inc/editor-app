@@ -31,6 +31,7 @@ export function CustomJavaScriptTextArea({
 
   const [completionDisposable, setCompletionDisposable] = useState<any>();
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedOnChange = useCallback(
     debounce((value) => {
       onChange(value);

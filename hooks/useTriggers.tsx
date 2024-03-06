@@ -17,7 +17,6 @@ const nonDefaultActionTriggers = ["onSuccess", "onError"];
 
 type UseTriggersProps = {
   entity: Component | PageResponse;
-  isEditorMode?: boolean;
 };
 
 export const useTriggers = ({ entity }: UseTriggersProps) => {

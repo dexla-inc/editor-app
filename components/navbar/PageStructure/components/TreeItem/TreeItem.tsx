@@ -16,7 +16,6 @@ import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { structureMapper } from "@/utils/componentMapper";
 import { ICON_SIZE } from "@/utils/config";
 import {
-  Component,
   ComponentTree,
   debouncedTreeComponentAttrsUpdate,
 } from "@/utils/editor";

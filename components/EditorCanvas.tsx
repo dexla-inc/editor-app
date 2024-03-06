@@ -3,7 +3,7 @@
 import { ComponentToolbox } from "@/components/ComponentToolbox";
 import { CustomComponentModal } from "@/components/CustomComponentModal";
 import { Droppable } from "@/components/Droppable";
-import { EditableComponent } from "@/components/EditableComponent";
+import { EditableComponentContainer } from "@/components/EditableComponentContainer";
 import { IFrame } from "@/components/IFrame";
 import { useAppMode } from "@/hooks/useAppMode";
 import { useHotkeysOnIframe } from "@/hooks/useHotkeysOnIframe";
@@ -15,65 +15,28 @@ import {
 import { copyToClipboard, pasteFromClipboard } from "@/utils/clipboard";
 import { componentMapper, structureMapper } from "@/utils/componentMapper";
 import { encodeSchema } from "@/utils/compression";
-import { CURSOR_COLORS, HEADER_HEIGHT } from "@/utils/config";
+import { HEADER_HEIGHT } from "@/utils/config";
 import {
+  ComponentTree,
+  EditorTreeCopy,
   addComponent,
   getComponentIndex,
   getComponentParent,
-  removeComponent,
-  ComponentTree,
-  EditorTreeCopy,
   getComponentTreeById,
+  removeComponent,
 } from "@/utils/editor";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Box, Paper } from "@mantine/core";
 import { useDisclosure, useHotkeys } from "@mantine/hooks";
 import cloneDeep from "lodash.clonedeep";
-import { memo, ReactNode, useCallback } from "react";
+import { memo, useCallback } from "react";
 
 type Props = {
   projectId: string;
 };
 
-type EditableComponentContainerProps = {
-  children: ReactNode;
-  componentTree: ComponentTree;
-  shareableContent: any;
-};
-
-const EditableComponentContainer = ({
-  children,
-  componentTree,
-  shareableContent,
-}: EditableComponentContainerProps) => {
-  const isSelected = useEditorStore(
-    (state) => state.selectedComponentIds?.includes(componentTree.id!),
-  );
-
-  const selectedByOther = useEditorStore((state) => {
-    const other = state.liveblocks?.others?.find(({ presence }: any) => {
-      return presence.selectedComponentIds?.includes(componentTree.id);
-    });
-
-    if (!other) return null;
-
-    return CURSOR_COLORS[other.connectionId % CURSOR_COLORS.length];
-  });
-
-  return (
-    <EditableComponent
-      id={componentTree.id!}
-      component={componentTree}
-      isSelected={isSelected}
-      selectedByOther={selectedByOther ?? undefined}
-      shareableContent={shareableContent}
-    >
-      {children}
-    </EditableComponent>
-  );
-};
-
 const EditorCanvasComponent = ({ projectId }: Props) => {
+  console.log("EditorCanvasComponent");
   const undo = useTemporalStore((state) => state.undo);
   const redo = useTemporalStore((state) => state.redo);
   const pastStates = useTemporalStore((state) => state.pastStates);
@@ -377,6 +340,7 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
       useEditorStore.getState().componentMutableAttrs[componentTree.id!];
     const componentToRender = componentMapper[component.name];
 
+    console.log("componentToRender", componentToRender);
     if (!componentToRender) {
       return (
         <EditableComponentContainer

@@ -36,7 +36,7 @@ export const Modifier = withModifier(
         setIcon(value);
         form.setFieldValue("icon", value);
       },
-      [selectedComponentIds, form],
+      [form],
     );
 
     useEffect(() => {

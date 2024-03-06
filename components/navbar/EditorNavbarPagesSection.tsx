@@ -16,6 +16,7 @@ export const EditorNavbarPagesSection = () => {
   const { data: pageListQuery } = usePageListQuery(projectId);
   const [pages, setPages] = useState<PageResponse[] | undefined>();
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedSearch = useCallback(
     debounce((query) => setSearch(query), 150),
     // eslint-disable-next-line react-hooks/exhaustive-deps

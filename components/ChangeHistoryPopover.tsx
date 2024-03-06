@@ -43,15 +43,6 @@ const convertTimestampToTimeTaken = (timestamp: number) => {
 
 export const ChangeHistoryPopover: FC = () => {
   usePreventNavigationOnSaving();
-
-  const currentState = useEditorStore((state) => ({
-    isSaving: state.isSaving,
-    tree: {
-      name: state.tree.name,
-      timestamp: state.tree.timestamp,
-    },
-  }));
-
   const pageId = useEditorStore((state) => state.currentPageId);
   const tree = useEditorStore((state) => state.tree);
   const currentProjectId = useEditorStore((state) => state.currentProjectId);
@@ -61,7 +52,12 @@ export const ChangeHistoryPopover: FC = () => {
     useTemporalStore((state) => ({
       changeHistory: [
         ...state.pastStates,
-        currentState,
+        {
+          tree: {
+            name: tree.name,
+            timestamp: tree.timestamp,
+          },
+        },
         ...state.futureStates,
       ].reduce(
         (acc, { tree }, index) => {
@@ -140,7 +136,7 @@ export const ChangeHistoryPopover: FC = () => {
           offset={0}
         >
           <Popover.Target>
-            <SavingDisplay isSaving={currentState.isSaving} />
+            <SavingDisplay />
           </Popover.Target>
           <Popover.Dropdown
             sx={{

@@ -14,7 +14,7 @@ import {
 } from "@/hooks/useMergedProps";
 import { useTriggers } from "@/hooks/useTriggers";
 import { useEditorStore } from "@/stores/editor";
-import { Component, ComponentTree } from "@/utils/editor";
+import { ComponentTree } from "@/utils/editor";
 import { BoxProps } from "@mantine/core";
 import { PropsWithChildren, cloneElement } from "react";
 
@@ -38,7 +38,7 @@ export const EditableComponent = ({
   const isLive = useEditorStore((state) => state.isLive);
   const isEditorMode = !isPreviewMode && !isLive;
   const component = useEditorStore(
-    (state) => state.componentMutableAttrs[componentTree.id!] ?? {},
+    (state) => state.componentMutableAttrs[id] ?? {},
   );
 
   let currentState = useComputeCurrentState(component, isEditorMode);
@@ -59,7 +59,6 @@ export const EditableComponent = ({
 
   const triggers = useTriggers({
     entity: component,
-    isEditorMode,
   });
 
   const { overlayStyles, handleMouseEnter, handleMouseLeave } =

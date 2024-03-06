@@ -107,7 +107,7 @@ const AutocompleteComponent = forwardRef(
         onItemSubmit && onItemSubmit(inputValue.value);
         setItemSubmitted(false);
       }
-    }, [itemSubmitted]);
+    }, [inputValue, itemSubmitted, onItemSubmit]);
 
     return (
       <MantineAutocomplete

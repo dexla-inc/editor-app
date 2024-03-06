@@ -57,6 +57,7 @@ export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
     const theme = useEditorStore((state) => state.theme);
     const isCardComponent = selectedComponent?.name === "Card";
+
     const style = selectedComponent?.props?.style;
 
     const isBorderRadiusAllSame = allEqual<string[]>([
