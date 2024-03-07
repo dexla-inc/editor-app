@@ -117,9 +117,11 @@
     "@types/webfontloader": "^1.6.38",
     "eslint": "8.49.0",
     "eslint-config-next": "13.4.19",
+    "eslint-plugin-unused-imports": "^3.1.0",
     "husky": "^8.0.0",
     "lint-staged": "^14.0.1",
     "prettier": "^3.0.3",
+    "prettier-plugin-organize-imports": "^3.2.4",
     "react-nu-anglepicker": "^1.0.2",
     "tsc-files": "^1.1.4"
   }

@@ -25,7 +25,6 @@ import {
   IconForms,
   IconTrash,
 } from "@tabler/icons-react";
-import cloneDeep from "lodash.clonedeep";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { MouseEventHandler, useCallback } from "react";
 
@@ -70,9 +69,8 @@ export const useComponentContextMenu = () => {
           padding: "0px",
         };
       }
-      const copy = cloneDeep(editorTree);
       const containerId = addComponent(
-        copy.root,
+        editorTree.root,
         container,
         {
           id: parent?.id!,
@@ -81,13 +79,13 @@ export const useComponentContextMenu = () => {
         getComponentIndex(parent!, component.id!),
       );
 
-      addComponent(copy.root, component, {
+      addComponent(editorTree.root, component, {
         id: containerId,
         edge: "left",
       });
 
-      removeComponentFromParent(copy.root, component, parent?.id!);
-      setEditorTree(copy, {
+      removeComponentFromParent(editorTree.root, component, parent?.id!);
+      setEditorTree(editorTree, {
         action: `Wrapped ${component.name} with a Container`,
       });
       setTimeout(() => {
@@ -106,9 +104,8 @@ export const useComponentContextMenu = () => {
         component.id !== "content-wrapper"
       ) {
         const editorTree = useEditorStore.getState().tree as EditorTreeCopy;
-        const editorTreeCopy = cloneDeep(editorTree) as EditorTreeCopy;
-        removeComponent(editorTreeCopy.root, component.id);
-        setEditorTree(editorTreeCopy, { action: `Removed ${component?.name}` });
+        removeComponent(editorTree.root, component.id);
+        setEditorTree(editorTree, { action: `Removed ${component?.name}` });
         clearSelection();
       }
     },
@@ -118,14 +115,13 @@ export const useComponentContextMenu = () => {
   const duplicateComponent = useCallback(
     async (component: Component) => {
       const editorTree = useEditorStore.getState().tree as EditorTreeCopy;
-      const copy = cloneDeep(editorTree);
       const componentId = component?.id!;
       const componentName = component.name!;
       const targetId = determinePasteTarget(componentId);
-      const parentComponent = getComponentParent(copy.root, targetId);
+      const parentComponent = getComponentParent(editorTree.root, targetId);
 
       const newSelectedId = addComponent(
-        copy.root,
+        editorTree.root,
         component,
         {
           id: parentComponent!.id as string,
@@ -135,7 +131,7 @@ export const useComponentContextMenu = () => {
         true,
       );
 
-      setEditorTree(copy, { action: `Pasted ${componentName}` });
+      setEditorTree(editorTree, { action: `Pasted ${componentName}` });
       setSelectedComponentIds(() => [newSelectedId]);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps

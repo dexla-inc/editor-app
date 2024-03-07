@@ -5,19 +5,14 @@ import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { structureMapper } from "@/utils/componentMapper";
 import { encodeSchema } from "@/utils/compression";
 import { ICON_SIZE } from "@/utils/config";
-import {
-  Component,
-  getComponentTreeById,
-  replaceIdsDeeply,
-} from "@/utils/editor";
-import { Button, Group, Modal, Select, Stack, TextInput } from "@mantine/core";
+import { getComponentTreeById, replaceIdsDeeply } from "@/utils/editor";
+import { Button, Modal, Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { showNotification } from "@mantine/notifications";
 import { IconNewSection } from "@tabler/icons-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import cloneDeep from "lodash.clonedeep";
-import { useRouter } from "next/router";
 import merge from "lodash.merge";
+import { useRouter } from "next/router";
 
 type Props = {
   customComponentModal: any;

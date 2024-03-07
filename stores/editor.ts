@@ -25,7 +25,6 @@ import { createClient } from "@liveblocks/client";
 import { WithLiveblocks, liveblocks } from "@liveblocks/zustand";
 import { MantineSize, MantineTheme, Tuple } from "@mantine/core";
 import { User } from "@propelauth/react";
-import cloneDeep from "lodash.clonedeep";
 import debounce from "lodash.debounce";
 import isEqual from "lodash.isequal";
 import merge from "lodash.merge";
@@ -386,8 +385,11 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
           updateTreeComponentChildren: (componentId, children, save = true) =>
             set(
               (state: EditorState) => {
-                const copy = cloneDeep(state.tree);
-                updateTreeComponentChildren(copy.root, componentId, children);
+                updateTreeComponentChildren(
+                  state.tree.root,
+                  componentId,
+                  children,
+                );
 
                 children.forEach((child) => {
                   state.componentMutableAttrs = {
@@ -424,7 +426,7 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
 
                 return {
                   tree: {
-                    ...copy,
+                    ...state.tree,
                     name: `Edited ${component?.name}`,
                     timestamp: Date.now(),
                   },
