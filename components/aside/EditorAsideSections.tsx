@@ -1,7 +1,11 @@
 import SidebarSection from "@/components/SidebarSection";
-import { ActionsTab } from "@/components/actions/ActionsTab";
 import { StateSelector } from "@/components/aside/StateSelector";
-import { Data } from "@/components/data/Data";
+const ActionsTab = dynamic(() =>
+  import("@/components/actions/ActionsTab").then((mod) => mod.ActionsTab),
+);
+const Data = dynamic(() =>
+  import("@/components/data/Data").then((mod) => mod.Data),
+);
 const AccordionModifier = dynamic(
   () => import("@/components/modifiers/Accordion"),
 );
