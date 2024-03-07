@@ -26,7 +26,7 @@ export type Options = {
   mapTypeControl: boolean;
 };
 
-const Modifier = withModifier(({ selectedComponent, selectedComponentIds }) => {
+const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm();
 
   useEffect(() => {

@@ -21,7 +21,7 @@ const initialValues = {
   striped: false,
 };
 
-const Modifier = withModifier(({ selectedComponent, selectedComponentIds }) => {
+const Modifier = withModifier(({ selectedComponent }) => {
   const {
     data: dataProp,
     exampleData,

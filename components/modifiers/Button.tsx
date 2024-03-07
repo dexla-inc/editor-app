@@ -13,65 +13,64 @@ import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
 import { useCallback, useEffect, useState } from "react";
 
-const Modifier = withModifier(
-  ({ selectedComponent, selectedComponentIds, currentState }) => {
-    const form = useForm();
-    const theme = useEditorStore((state) => state.theme);
-    const [icon, setIcon] = useState(selectedComponent.props?.icon);
+const Modifier = withModifier(({ selectedComponent }) => {
+  const form = useForm();
+  const theme = useEditorStore((state) => state.theme);
+  const [icon, setIcon] = useState(selectedComponent.props?.icon);
 
-    const changeIcon = useCallback(
-      (value?: string, iconPosition?: string) => {
-        debouncedTreeComponentAttrsUpdate({
-          attrs: {
-            props: {
-              icon: value,
-              iconPosition: iconPosition,
-            },
+  const changeIcon = useCallback(
+    (value?: string, iconPosition?: string) => {
+      debouncedTreeComponentAttrsUpdate({
+        attrs: {
+          props: {
+            icon: value,
+            iconPosition: iconPosition,
           },
-        });
-        setIcon(value);
-        form.setFieldValue("icon", value);
-      },
-      [form],
+        },
+      });
+      setIcon(value);
+      form.setFieldValue("icon", value);
+    },
+    [form],
+  );
+
+  useEffect(() => {
+    form.setValues(
+      merge({}, requiredModifiers.button, {
+        type: selectedComponent.props?.type,
+        variant: selectedComponent.props?.variant,
+        size: selectedComponent?.props?.size ?? theme.inputSize,
+        icon: icon,
+        color: selectedComponent.props?.color ?? "Primary.6",
+        textColor: selectedComponent.props?.textColor ?? "PrimaryText.6",
+        width: selectedComponent.props?.style?.width,
+      }),
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedComponent]);
 
-    useEffect(() => {
-      form.setValues(
-        merge({}, requiredModifiers.button, {
-          type: selectedComponent.props?.type,
-          variant: selectedComponent.props?.variant,
-          size: selectedComponent?.props?.size ?? theme.inputSize,
-          icon: icon,
-          color: selectedComponent.props?.color ?? "Primary.6",
-          textColor: selectedComponent.props?.textColor ?? "PrimaryText.6",
-          width: selectedComponent.props?.style?.width,
-        }),
-      );
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedComponent]);
+  const { setBackgroundColor } = useChangeState({});
 
-    const { setBackgroundColor } = useChangeState({});
-
-    return (
-      <form>
-        <Stack spacing="xs">
-          <SegmentedControlSizes
-            label="Size"
-            sizing={inputSizes}
-            {...form.getInputProps("size")}
-            onChange={(value) => {
-              form.setFieldValue("size", value as string);
-              debouncedTreeComponentAttrsUpdate({
-                attrs: {
-                  props: {
-                    size: value,
-                    style: { height: inputSizes[value] },
-                  },
+  return (
+    <form>
+      <Stack spacing="xs">
+        <SegmentedControlSizes
+          label="Size"
+          sizing={inputSizes}
+          {...form.getInputProps("size")}
+          onChange={(value) => {
+            form.setFieldValue("size", value as string);
+            debouncedTreeComponentAttrsUpdate({
+              attrs: {
+                props: {
+                  size: value,
+                  style: { height: inputSizes[value] },
                 },
-              });
-            }}
-          />
-          {/* <Select
+              },
+            });
+          }}
+        />
+        {/* <Select
             label="Variant"
             size="xs"
             data={[
@@ -89,100 +88,94 @@ const Modifier = withModifier(
               });
             }}
           /> */}
+        <SegmentedControlInput
+          label="Type"
+          data={[
+            { label: "Button", value: "button" },
+            { label: "Submit", value: "submit" },
+          ]}
+          {...form.getInputProps("type")}
+          onChange={(value) => {
+            form.setFieldValue("type", value as string);
+            debouncedTreeComponentAttrsUpdate({
+              attrs: {
+                props: {
+                  type: value,
+                },
+              },
+            });
+          }}
+        />
+        <ThemeColorSelector
+          label="Button Color"
+          {...form.getInputProps("color")}
+          onChange={(value: string) => setBackgroundColor("color", value, form)}
+        />
+        <ThemeColorSelector
+          label="Text Color"
+          {...form.getInputProps("textColor")}
+          onChange={(value: string) => {
+            form.setFieldValue("textColor", value);
+            debouncedTreeComponentAttrsUpdate({
+              attrs: {
+                props: {
+                  textColor: value,
+                },
+              },
+            });
+          }}
+        />
+        <SegmentedControlInput
+          label="Width"
+          data={[
+            { label: "Fit Content", value: "fit-content" },
+            { label: "100%", value: "100%" },
+          ]}
+          {...form.getInputProps("width")}
+          onChange={(value) => {
+            form.setFieldValue("width", value as string);
+            debouncedTreeComponentAttrsUpdate({
+              attrs: {
+                props: {
+                  width: value,
+                },
+              },
+            });
+          }}
+        />
+        <IconSelector
+          topLabel="Icon"
+          selectedIcon={icon}
+          onIconSelect={(value: string) => {
+            changeIcon(value, selectedComponent.props?.iconPosition ?? "left");
+          }}
+          onIconDelete={() => {
+            changeIcon(undefined, undefined);
+          }}
+        />
+        {icon && (
           <SegmentedControlInput
-            label="Type"
+            label="Icon Position"
             data={[
-              { label: "Button", value: "button" },
-              { label: "Submit", value: "submit" },
+              { label: "Left", value: "left" },
+              { label: "Right", value: "right" },
             ]}
-            {...form.getInputProps("type")}
+            {...form.getInputProps("iconPosition")}
             onChange={(value) => {
-              form.setFieldValue("type", value as string);
+              form.setFieldValue("iconPosition", value as string);
               debouncedTreeComponentAttrsUpdate({
                 attrs: {
                   props: {
-                    type: value,
+                    iconPosition: value,
                   },
                 },
               });
             }}
           />
-          <ThemeColorSelector
-            label="Button Color"
-            {...form.getInputProps("color")}
-            onChange={(value: string) =>
-              setBackgroundColor("color", value, form, currentState)
-            }
-          />
-          <ThemeColorSelector
-            label="Text Color"
-            {...form.getInputProps("textColor")}
-            onChange={(value: string) => {
-              form.setFieldValue("textColor", value);
-              debouncedTreeComponentAttrsUpdate({
-                attrs: {
-                  props: {
-                    textColor: value,
-                  },
-                },
-              });
-            }}
-          />
-          <SegmentedControlInput
-            label="Width"
-            data={[
-              { label: "Fit Content", value: "fit-content" },
-              { label: "100%", value: "100%" },
-            ]}
-            {...form.getInputProps("width")}
-            onChange={(value) => {
-              form.setFieldValue("width", value as string);
-              debouncedTreeComponentAttrsUpdate({
-                attrs: {
-                  props: {
-                    width: value,
-                  },
-                },
-              });
-            }}
-          />
-          <IconSelector
-            topLabel="Icon"
-            selectedIcon={icon}
-            onIconSelect={(value: string) => {
-              changeIcon(
-                value,
-                selectedComponent.props?.iconPosition ?? "left",
-              );
-            }}
-            onIconDelete={() => {
-              changeIcon(undefined, undefined);
-            }}
-          />
-          {icon && (
-            <SegmentedControlInput
-              label="Icon Position"
-              data={[
-                { label: "Left", value: "left" },
-                { label: "Right", value: "right" },
-              ]}
-              {...form.getInputProps("iconPosition")}
-              onChange={(value) => {
-                form.setFieldValue("iconPosition", value as string);
-                debouncedTreeComponentAttrsUpdate({
-                  attrs: {
-                    props: {
-                      iconPosition: value,
-                    },
-                  },
-                });
-              }}
-            />
-          )}
-        </Stack>
-      </form>
-    );
-  },
-);
+        )}
+      </Stack>
+    </form>
+  );
+});
 
 export default Modifier;

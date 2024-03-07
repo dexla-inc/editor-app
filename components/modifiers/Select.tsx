@@ -17,7 +17,7 @@ import {
 import merge from "lodash.merge";
 import { useEffect } from "react";
 
-const Modifier = withModifier(({ selectedComponent, selectedComponentIds }) => {
+const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm();
   const theme = useEditorStore((state) => state.theme);
 
@@ -79,7 +79,6 @@ const Modifier = withModifier(({ selectedComponent, selectedComponentIds }) => {
           onChange={(value) => {
             form.setFieldValue("multiSelect", value);
             debouncedTreeComponentAttrsUpdate({
-              componentIds: selectedComponentIds,
               attrs: {
                 props: {
                   multiSelect: value,

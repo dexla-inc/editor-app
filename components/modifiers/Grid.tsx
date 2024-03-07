@@ -8,7 +8,7 @@ import merge from "lodash.merge";
 import { useEffect } from "react";
 import { SegmentedControlSizes } from "../SegmentedControlSizes";
 
-const Modifier = withModifier(({ selectedComponent, selectedComponentIds }) => {
+const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm();
 
   useEffect(() => {

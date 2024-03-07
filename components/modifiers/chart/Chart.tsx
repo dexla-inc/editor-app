@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 
 const initialValues = requiredModifiers.chart;
 
-const Modifier = withModifier(({ selectedComponent, selectedComponentIds }) => {
+const Modifier = withModifier(({ selectedComponent }) => {
   const [length, setLength] = useState(0);
 
   const isPieOrRadial =

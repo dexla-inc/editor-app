@@ -9,7 +9,7 @@ import { useEffect } from "react";
 
 export const defaultPopOverValues = requiredModifiers.popOver;
 
-const Modifier = withModifier(({ selectedComponent, selectedComponentIds }) => {
+const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm({
     initialValues: merge({}, defaultPopOverValues, {
       position: selectedComponent?.props?.position,

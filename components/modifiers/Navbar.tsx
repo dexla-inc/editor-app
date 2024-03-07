@@ -11,7 +11,7 @@ import { ThemeColorSelector } from "../ThemeColorSelector";
 
 const initialValues = requiredModifiers.navbar;
 
-const Modifier = withModifier(({ selectedComponent, selectedComponentIds }) => {
+const Modifier = withModifier(({ selectedComponent }) => {
   const editorTree = useEditorStore((state) => state.tree);
   const setTree = useEditorStore((state) => state.setTree);
 

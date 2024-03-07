@@ -9,7 +9,7 @@ import { useEffect } from "react";
 import { SizeSelector } from "../SizeSelector";
 import { SwitchSelector } from "../SwitchSelector";
 
-const Modifier = withModifier(({ selectedComponent, selectedComponentIds }) => {
+const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm();
 
   useEffect(() => {

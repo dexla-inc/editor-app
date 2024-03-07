@@ -2,7 +2,6 @@ import { SegmentedControlSizes } from "@/components/SegmentedControlSizes";
 import { TopLabel } from "@/components/TopLabel";
 import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon";
 import { withModifier } from "@/hoc/withModifier";
-import { useEditorStore } from "@/stores/editor";
 import { gapSizes } from "@/utils/defaultSizes";
 import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
@@ -107,9 +106,8 @@ const alignItemsData = [
   },
 ];
 
-const Modifier = withModifier(({ selectedComponent, selectedComponentIds }) => {
+const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm();
-  const theme = useEditorStore((state) => state.theme);
 
   let isFlexDirectionColumn =
     selectedComponent.props?.style?.flexDirection === "column";

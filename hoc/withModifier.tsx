@@ -1,16 +1,14 @@
 import { useEditorStore } from "@/stores/editor";
-import { Component, getAllComponentsByIds } from "@/utils/editor";
+import { Component } from "@/utils/editor";
 import cloneDeep from "lodash.clonedeep";
 import get from "lodash.get";
 import merge from "lodash.merge";
 import set from "lodash.set";
 
-import { ComponentType, useMemo } from "react";
+import { ComponentType } from "react";
 
 type WithModifier = {
-  selectedComponentIds: string[];
   selectedComponent: Component;
-  currentState: string;
 };
 
 function getObjectPaths(obj: any, parentKey = ""): string[] {
@@ -43,52 +41,35 @@ function findIntersectedKeyValues(objects: Component[]) {
 
 export const withModifier = (Modifier: ComponentType<WithModifier>) => {
   const Config = ({ initiallyOpened }: any) => {
-    const selectedComponentIds = useEditorStore(
-      (state) => state.selectedComponentIds,
+    const hasSelectedComponentIds = useEditorStore(
+      (state) => state.selectedComponentIds?.length,
     );
-    const selectedComponents = useEditorStore((state) =>
-      Object.entries(state.componentMutableAttrs).reduce(
-        (acc, [id, component]) => {
-          if (selectedComponentIds?.includes(id)) {
-            acc.push(component);
-          }
-          return acc;
-        },
-        [] as Component[],
-      ),
-    );
-    const language = useEditorStore((state) => state.language);
-    const currentState = useEditorStore(
-      (state) =>
-        state.currentTreeComponentsStates?.[selectedComponentIds?.[0] || ""] ??
-        "default",
-    );
-
-    const mergedCustomData = useMemo(() => {
-      return selectedComponents?.map((selectedComponent) => {
-        merge(
+    const component = useEditorStore((state) => {
+      const lastSelectedComponentId = state.selectedComponentIds?.[0]!;
+      const currentState =
+        state.currentTreeComponentsStates?.[lastSelectedComponentId] ??
+        "default";
+      const mergedCustomData = state.selectedComponentIds?.map((id) => {
+        const selectedComponent = state.componentMutableAttrs[id];
+        return merge(
           {},
           selectedComponent?.props,
-          selectedComponent?.languages?.[language],
+          selectedComponent?.languages?.[state.language],
           selectedComponent?.states?.[currentState],
         );
-        return selectedComponent;
       });
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedComponents, currentState, language]);
 
-    const component = findIntersectedKeyValues(mergedCustomData as Component[]);
+      return findIntersectedKeyValues(mergedCustomData as Component[]);
+    });
 
-    if (!initiallyOpened || !selectedComponentIds?.length) {
+    if (!initiallyOpened || !hasSelectedComponentIds) {
       return null;
     }
 
     return (
       <Modifier
         {...{
-          selectedComponentIds: selectedComponentIds!,
           selectedComponent: component as Component,
-          currentState,
         }}
       />
     );

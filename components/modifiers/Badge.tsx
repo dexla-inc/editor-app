@@ -11,120 +11,114 @@ import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
 import { useEffect, useState } from "react";
 
-const Modifier = withModifier(
-  ({ selectedComponent, selectedComponentIds, currentState }) => {
-    const form = useForm();
+const Modifier = withModifier(({ selectedComponent }) => {
+  const form = useForm();
 
-    const [backgroundType, setBackgroundType] = useState("single");
+  const [backgroundType, setBackgroundType] = useState("single");
 
-    useEffect(() => {
-      form.setValues(
-        merge({}, requiredModifiers.badge, {
-          type: selectedComponent.props?.type,
-          size: selectedComponent.props?.size,
-          radius: selectedComponent.props?.radius,
-          color: selectedComponent.props?.color,
-          bg: selectedComponent.props?.bg,
-        }),
-      );
-
-      setBackgroundType(
-        selectedComponent.props?.bg?.includes("gradient")
-          ? "gradient"
-          : "single",
-      );
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedComponent]);
-
-    const setFieldValue = (key: any, value: any) => {
-      form.setFieldValue(key, value);
-      debouncedTreeComponentAttrsUpdate({ attrs: { props: { [key]: value } } });
-    };
-
-    const { setBackgroundColor } = useChangeState({});
-
-    return (
-      <form>
-        <Stack spacing="xs">
-          <SizeSelector
-            {...form.getInputProps("size")}
-            onChange={(value) => {
-              form.setFieldValue("size", value as string);
-              debouncedTreeComponentAttrsUpdate({
-                attrs: {
-                  props: {
-                    size: value,
-                  },
-                },
-              });
-            }}
-            showNone={false}
-          />
-          <SizeSelector
-            label="Radius"
-            {...form.getInputProps("radius")}
-            onChange={(value) => {
-              form.setFieldValue("radius", value as string);
-              debouncedTreeComponentAttrsUpdate({
-                attrs: {
-                  props: {
-                    radius: value,
-                  },
-                },
-              });
-            }}
-          />
-          <ThemeColorSelector
-            label="Color"
-            {...form.getInputProps("color")}
-            onChange={(value: string) => {
-              form.setFieldValue("color", value);
-              debouncedTreeComponentAttrsUpdate({
-                attrs: {
-                  props: {
-                    color: value,
-                  },
-                },
-              });
-            }}
-          />
-          <Stack spacing={0}>
-            <TopLabel text="Background Type" />
-            <SegmentedControl
-              size="xs"
-              data={[
-                { label: "Single", value: "single" },
-                { label: "Gradient", value: "gradient" },
-              ]}
-              value={backgroundType}
-              onChange={(value) => {
-                setBackgroundType(value as string);
-                if (value === "single") {
-                  setFieldValue("bg", "White.6");
-                } else {
-                  setFieldValue("bg", requiredModifiers.background.bgGradient);
-                }
-              }}
-            />
-          </Stack>
-          {backgroundType === "single" ? (
-            <ThemeColorSelector
-              label="Background"
-              {...form.getInputProps("bg")}
-              onChange={(value: string) =>
-                setBackgroundColor("bg", value, form, currentState)
-              }
-            />
-          ) : (
-            <GradientPicker
-              getValue={() => form.getInputProps("bg").value}
-              setFieldValue={setFieldValue}
-            />
-          )}
-        </Stack>
-      </form>
+  useEffect(() => {
+    form.setValues(
+      merge({}, requiredModifiers.badge, {
+        type: selectedComponent.props?.type,
+        size: selectedComponent.props?.size,
+        radius: selectedComponent.props?.radius,
+        color: selectedComponent.props?.color,
+        bg: selectedComponent.props?.bg,
+      }),
     );
-  },
-);
+
+    setBackgroundType(
+      selectedComponent.props?.bg?.includes("gradient") ? "gradient" : "single",
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedComponent]);
+
+  const setFieldValue = (key: any, value: any) => {
+    form.setFieldValue(key, value);
+    debouncedTreeComponentAttrsUpdate({ attrs: { props: { [key]: value } } });
+  };
+
+  const { setBackgroundColor } = useChangeState({});
+
+  return (
+    <form>
+      <Stack spacing="xs">
+        <SizeSelector
+          {...form.getInputProps("size")}
+          onChange={(value) => {
+            form.setFieldValue("size", value as string);
+            debouncedTreeComponentAttrsUpdate({
+              attrs: {
+                props: {
+                  size: value,
+                },
+              },
+            });
+          }}
+          showNone={false}
+        />
+        <SizeSelector
+          label="Radius"
+          {...form.getInputProps("radius")}
+          onChange={(value) => {
+            form.setFieldValue("radius", value as string);
+            debouncedTreeComponentAttrsUpdate({
+              attrs: {
+                props: {
+                  radius: value,
+                },
+              },
+            });
+          }}
+        />
+        <ThemeColorSelector
+          label="Color"
+          {...form.getInputProps("color")}
+          onChange={(value: string) => {
+            form.setFieldValue("color", value);
+            debouncedTreeComponentAttrsUpdate({
+              attrs: {
+                props: {
+                  color: value,
+                },
+              },
+            });
+          }}
+        />
+        <Stack spacing={0}>
+          <TopLabel text="Background Type" />
+          <SegmentedControl
+            size="xs"
+            data={[
+              { label: "Single", value: "single" },
+              { label: "Gradient", value: "gradient" },
+            ]}
+            value={backgroundType}
+            onChange={(value) => {
+              setBackgroundType(value as string);
+              if (value === "single") {
+                setFieldValue("bg", "White.6");
+              } else {
+                setFieldValue("bg", requiredModifiers.background.bgGradient);
+              }
+            }}
+          />
+        </Stack>
+        {backgroundType === "single" ? (
+          <ThemeColorSelector
+            label="Background"
+            {...form.getInputProps("bg")}
+            onChange={(value: string) => setBackgroundColor("bg", value, form)}
+          />
+        ) : (
+          <GradientPicker
+            getValue={() => form.getInputProps("bg").value}
+            setFieldValue={setFieldValue}
+          />
+        )}
+      </Stack>
+    </form>
+  );
+});
 
 export default Modifier;

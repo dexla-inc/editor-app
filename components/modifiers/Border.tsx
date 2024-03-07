@@ -49,7 +49,7 @@ export const getThemeColor = (theme: any, hex: string) => {
   }, "Border.6");
 };
 
-const Modifier = withModifier(({ selectedComponent, selectedComponentIds }) => {
+const Modifier = withModifier(({ selectedComponent }) => {
   const theme = useEditorStore((state) => state.theme);
   const isCardComponent = selectedComponent?.name === "Card";
 

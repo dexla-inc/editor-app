@@ -34,7 +34,7 @@ import { pick } from "next/dist/lib/pick";
 
 const defaultTextValues = requiredModifiers.text;
 
-const Modifier = withModifier(({ selectedComponent, selectedComponentIds }) => {
+const Modifier = withModifier(({ selectedComponent }) => {
   const theme = useEditorStore((state) => state.theme);
 
   const shadow = selectedComponent?.props?.style?.textShadow ?? "";
@@ -85,11 +85,7 @@ const Modifier = withModifier(({ selectedComponent, selectedComponentIds }) => {
     <form>
       <Stack spacing="xs">
         {!isTitle && (
-          <FontSelector
-            {...form.getInputProps("fontTag")}
-            form={form as any}
-            selectedComponentIds={selectedComponentIds}
-          />
+          <FontSelector {...form.getInputProps("fontTag")} form={form as any} />
         )}
         {isTitle && (
           <SegmentedControlInput

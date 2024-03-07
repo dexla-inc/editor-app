@@ -6,7 +6,7 @@ import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
 import { ChangeEvent, useEffect } from "react";
 
-const Modifier = withModifier(({ selectedComponent, selectedComponentIds }) => {
+const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm();
 
   useEffect(() => {

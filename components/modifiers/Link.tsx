@@ -8,7 +8,7 @@ import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
 import { useEffect } from "react";
 
-const Modifier = withModifier(({ selectedComponent, selectedComponentIds }) => {
+const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm();
 
   useEffect(() => {
@@ -24,11 +24,7 @@ const Modifier = withModifier(({ selectedComponent, selectedComponentIds }) => {
   return (
     <form>
       <Stack spacing="xs">
-        <FontSelector
-          {...form.getInputProps("fontTag")}
-          form={form as any}
-          selectedComponentIds={selectedComponentIds}
-        />
+        <FontSelector {...form.getInputProps("fontTag")} form={form as any} />
         <ThemeColorSelector
           label="Color"
           value={form.getInputProps("color").value}

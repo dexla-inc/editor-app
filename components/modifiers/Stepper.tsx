@@ -27,12 +27,11 @@ const createStepper = () => (stepperId: string) => {
   });
 };
 
-const Modifier = withModifier(({ selectedComponent, selectedComponentIds }) => {
+const Modifier = withModifier(({ selectedComponent }) => {
   const editorTree = useEditorStore((state) => state.tree);
   const form = useForm();
-  const selectedComponentTree = getComponentTreeById(
-    editorTree.root,
-    selectedComponentIds.at(-1)!,
+  const selectedComponentTree = useEditorStore((state) =>
+    getComponentTreeById(editorTree.root, state.selectedComponentIds?.at(-1)!),
   );
 
   useEffect(() => {

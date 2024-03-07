@@ -22,7 +22,7 @@ import { useEffect } from "react";
 
 const defaultBoxShadowValues = requiredModifiers.boxShadow;
 
-const Modifier = withModifier(({ selectedComponent, selectedComponentIds }) => {
+const Modifier = withModifier(({ selectedComponent }) => {
   const theme = useEditorStore((state) => state.theme);
   const isCardComponent = selectedComponent?.name === "Card";
 

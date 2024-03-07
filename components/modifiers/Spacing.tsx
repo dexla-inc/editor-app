@@ -21,7 +21,7 @@ type SpacingeModifierProps = {
   marginRight?: string;
 };
 
-const Modifier = withModifier(({ selectedComponent, selectedComponentIds }) => {
+const Modifier = withModifier(({ selectedComponent }) => {
   const initialValues = requiredModifiers.spacing;
   const style = selectedComponent?.props?.style;
 
@@ -85,17 +85,9 @@ const Modifier = withModifier(({ selectedComponent, selectedComponentIds }) => {
   return (
     <form key={selectedComponent?.id}>
       <Stack spacing="xs">
-        <SpacingControl
-          type="Padding"
-          form={form}
-          selectedComponentIds={selectedComponentIds}
-        />
+        <SpacingControl type="Padding" form={form} />
         {selectedComponent?.name !== "GridColumn" && (
-          <SpacingControl
-            type="Margin"
-            form={form}
-            selectedComponentIds={selectedComponentIds}
-          />
+          <SpacingControl type="Margin" form={form} />
         )}
       </Stack>
     </form>

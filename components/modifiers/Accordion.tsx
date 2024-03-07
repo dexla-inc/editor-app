@@ -24,11 +24,10 @@ const createItem = (id: string) => () => {
   });
 };
 
-const Modifier = withModifier(({ selectedComponent, selectedComponentIds }) => {
+const Modifier = withModifier(({ selectedComponent }) => {
   const editorTree = useEditorStore((state) => state.tree);
-  const selectedComponentTree = getComponentTreeById(
-    editorTree.root,
-    selectedComponentIds.at(-1)!,
+  const selectedComponentTree = useEditorStore((state) =>
+    getComponentTreeById(editorTree.root, state.selectedComponentIds?.at(-1)!),
   );
   const form = useForm({
     initialValues: {
