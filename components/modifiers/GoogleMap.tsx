@@ -17,7 +17,6 @@ import {
 import { useForm } from "@mantine/form";
 import { IconPlus, IconTrash } from "@tabler/icons-react";
 import merge from "lodash.merge";
-import { useEffect, useState } from "react";
 
 export type Styler = Record<string, string | Record<string, any>[]>;
 export type Options = {
@@ -27,18 +26,13 @@ export type Options = {
 };
 
 const Modifier = withModifier(({ selectedComponent }) => {
-  const form = useForm();
-
-  useEffect(() => {
-    form.setValues(
-      merge({}, requiredModifiers.mapSettings, {
-        language: selectedComponent.props?.language,
-        options: selectedComponent.props?.options,
-        fade: selectedComponent.props?.fade,
-      }),
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponent]);
+  const form = useForm({
+    initialValues: merge({}, requiredModifiers.mapSettings, {
+      language: selectedComponent.props?.language,
+      options: selectedComponent.props?.options,
+      fade: selectedComponent.props?.fade,
+    }),
+  });
 
   const addMapStyle = () => {
     const newMapStyle: Styler = {
@@ -90,14 +84,6 @@ const Modifier = withModifier(({ selectedComponent }) => {
     };
     debouncedTreeComponentAttrsUpdate({ attrs: { props: { options } } });
   };
-
-  const [isApiKey, setIsApiKey] = useState(false);
-
-  useEffect(() => {
-    (form.values.apiKey as string)?.length > 0
-      ? setIsApiKey(true)
-      : setIsApiKey(false);
-  }, [form.values.apiKey]);
 
   return (
     <form key={selectedComponent?.id}>

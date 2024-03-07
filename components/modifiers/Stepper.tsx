@@ -14,7 +14,6 @@ import { SegmentedControl, Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconArrowNarrowDown, IconArrowNarrowRight } from "@tabler/icons-react";
 import merge from "lodash.merge";
-import { useEffect } from "react";
 import { ThemeColorSelector } from "../ThemeColorSelector";
 
 const defaultStepperValues = requiredModifiers.stepper;
@@ -29,24 +28,17 @@ const createStepper = () => (stepperId: string) => {
 
 const Modifier = withModifier(({ selectedComponent }) => {
   const editorTree = useEditorStore((state) => state.tree);
-  const form = useForm();
   const selectedComponentTree = useEditorStore((state) =>
     getComponentTreeById(editorTree.root, state.selectedComponentIds?.at(-1)!),
   );
-
-  useEffect(() => {
-    form.setValues(
-      merge({}, defaultStepperValues, {
-        activeStep: String(selectedComponent.props?.activeStep),
-        numberOfSteps: selectedComponentTree?.children?.length,
-        orientation: selectedComponent.props?.orientation,
-        color: selectedComponent.props?.color,
-      }),
-    );
-
-    // Disabling the lint here because we don't want this to be updated every time the form changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponent]);
+  const form = useForm({
+    initialValues: merge({}, defaultStepperValues, {
+      activeStep: String(selectedComponent.props?.activeStep),
+      numberOfSteps: selectedComponentTree?.children?.length,
+      orientation: selectedComponent.props?.orientation,
+      color: selectedComponent.props?.color,
+    }),
+  });
 
   const addStepperStep = (stepper: Component, length: number) => {
     // TODO: get this back

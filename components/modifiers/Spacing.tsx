@@ -4,7 +4,6 @@ import { requiredModifiers } from "@/utils/modifiers";
 import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
-import { useEffect } from "react";
 
 type SpacingeModifierProps = {
   showPadding: "padding-all" | "padding-sides";
@@ -36,51 +35,51 @@ const Modifier = withModifier(({ selectedComponent }) => {
     style?.marginTop === style?.marginRight;
 
   const form = useForm<SpacingeModifierProps>({
-    initialValues: {
-      showPadding: isPaddingAllSame ? "padding-all" : "padding-sides",
-      showMargin: isMarginAllSame ? "margin-all" : "margin-sides",
-      padding: "0px",
-      margin: "0px",
-      ...initialValues,
-    },
+    initialValues: merge(
+      {},
+      initialValues,
+      {
+        showPadding: isPaddingAllSame
+          ? "padding-all"
+          : ("padding-sides" as any),
+        showMargin: isMarginAllSame ? "margin-all" : ("margin-sides" as any),
+        padding: isPaddingAllSame
+          ? style?.paddingTop
+          : `${style?.paddingTop} ${style?.paddingRight} ${style?.paddingBottom} ${style?.paddingLeft}`,
+        margin: isMarginAllSame
+          ? style?.marginTop
+          : `${style?.marginTop} ${style?.marginRight} ${style?.marginBottom} ${style?.marginLeft}`,
+      },
+      {
+        padding: selectedComponent?.props?.style?.padding,
+        paddingTop:
+          selectedComponent?.props?.style?.paddingTop ??
+          selectedComponent?.props?.style?.padding,
+        paddingBottom:
+          selectedComponent?.props?.style?.paddingBottom ??
+          selectedComponent?.props?.style?.padding,
+        paddingLeft:
+          selectedComponent?.props?.style?.paddingLeft ??
+          selectedComponent?.props?.style?.padding,
+        paddingRight:
+          selectedComponent?.props?.style?.paddingRight ??
+          selectedComponent?.props?.style?.padding,
+        margin: selectedComponent?.props?.style?.margin,
+        marginTop:
+          selectedComponent?.props?.style?.marginTop ??
+          selectedComponent?.props?.style?.margin,
+        marginBottom:
+          selectedComponent?.props?.style?.marginBottom ??
+          selectedComponent?.props?.style?.margin,
+        marginLeft:
+          selectedComponent?.props?.style?.marginLeft ??
+          selectedComponent?.props?.style?.margin,
+        marginRight:
+          selectedComponent?.props?.style?.marginRight ??
+          selectedComponent?.props?.style?.margin,
+      },
+    ),
   });
-
-  useEffect(() => {
-    form.setValues(
-      merge(
-        {},
-        {
-          padding: selectedComponent?.props?.style?.padding,
-          paddingTop:
-            selectedComponent?.props?.style?.paddingTop ??
-            selectedComponent?.props?.style?.padding,
-          paddingBottom:
-            selectedComponent?.props?.style?.paddingBottom ??
-            selectedComponent?.props?.style?.padding,
-          paddingLeft:
-            selectedComponent?.props?.style?.paddingLeft ??
-            selectedComponent?.props?.style?.padding,
-          paddingRight:
-            selectedComponent?.props?.style?.paddingRight ??
-            selectedComponent?.props?.style?.padding,
-          margin: selectedComponent?.props?.style?.margin,
-          marginTop:
-            selectedComponent?.props?.style?.marginTop ??
-            selectedComponent?.props?.style?.margin,
-          marginBottom:
-            selectedComponent?.props?.style?.marginBottom ??
-            selectedComponent?.props?.style?.margin,
-          marginLeft:
-            selectedComponent?.props?.style?.marginLeft ??
-            selectedComponent?.props?.style?.margin,
-          marginRight:
-            selectedComponent?.props?.style?.marginRight ??
-            selectedComponent?.props?.style?.margin,
-        },
-      ),
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponent]);
 
   return (
     <form key={selectedComponent?.id}>

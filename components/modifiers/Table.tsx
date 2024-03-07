@@ -5,7 +5,6 @@ import { useForm } from "@mantine/form";
 import get from "lodash.get";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
-import { useEffect } from "react";
 
 type TableModifierProps = {
   data: string;
@@ -49,19 +48,14 @@ const Modifier = withModifier(({ selectedComponent }) => {
     data = get(dataProp?.base, dataPath.replace("[0]", ""));
   }
 
-  const form = useForm<TableModifierProps>();
-
-  useEffect(() => {
-    form.setValues(
-      merge({}, initialValues, {
-        data: JSON.stringify(data, null, 2),
-        headers: headers,
-        config: config,
-        striped: striped,
-      }),
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponent]);
+  const form = useForm<TableModifierProps>({
+    initialValues: merge({}, initialValues, {
+      data: JSON.stringify(data, null, 2),
+      headers: headers,
+      config: config,
+      striped: striped,
+    }),
+  });
 
   return (
     <form>

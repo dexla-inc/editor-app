@@ -5,24 +5,18 @@ import { requiredModifiers } from "@/utils/modifiers";
 import { NumberInput, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
-import { useEffect } from "react";
 import { SizeSelector } from "../SizeSelector";
 import { SwitchSelector } from "../SwitchSelector";
 
 const Modifier = withModifier(({ selectedComponent }) => {
-  const form = useForm();
-
-  useEffect(() => {
-    form.setValues(
-      merge({}, requiredModifiers.progress, {
-        color: selectedComponent.props?.color,
-        size: selectedComponent.props?.size,
-        value: selectedComponent.props?.value,
-        animate: selectedComponent.props?.animate,
-      }),
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponent]);
+  const form = useForm({
+    initialValues: merge({}, requiredModifiers.progress, {
+      color: selectedComponent.props?.color,
+      size: selectedComponent.props?.size,
+      value: selectedComponent.props?.value,
+      animate: selectedComponent.props?.animate,
+    }),
+  });
 
   return (
     <form>
