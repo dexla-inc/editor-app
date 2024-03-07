@@ -12,7 +12,7 @@ type Props = EditableComponentMapper & TextProps;
 
 const TextComponent = forwardRef(
   (
-    { renderTree, component, isPreviewMode, shareableContent, ...props }: Props,
+    { component, isPreviewMode, shareableContent, ...props }: Props,
     ref: any,
   ) => {
     const contentEditableProps = useContentEditable(component.id as string);

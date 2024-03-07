@@ -15,7 +15,7 @@ import { ReactElement, forwardRef, memo } from "react";
 type Props = EditableComponentMapper & ActionIconProps & ReactElement<"Button">;
 
 const ButtonIconComponent = forwardRef(
-  ({ renderTree, component, ...props }: Props, ref) => {
+  ({ component, ...props }: Props, ref) => {
     const {
       children,
       triggers,

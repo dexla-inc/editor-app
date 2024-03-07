@@ -1,3 +1,4 @@
+import { useDataContext } from "@/contexts/DataProvider";
 import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { useContentEditable } from "@/hooks/useContentEditable";
 import { EditableComponentMapper } from "@/utils/editor";
@@ -7,12 +8,10 @@ import {
   FileButton as MantineFileButton,
 } from "@mantine/core";
 import merge from "lodash.merge";
-import { useDataContext } from "@/contexts/DataProvider";
 
 type Props = EditableComponentMapper & FileButtonProps;
 
 export const FileButton = ({
-  renderTree,
   component,
   onChange,
   isPreviewMode,

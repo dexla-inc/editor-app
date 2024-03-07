@@ -3,7 +3,6 @@ import { Component } from "@/utils/editor";
 import merge from "lodash.merge";
 
 type Props = {
-  renderTree: (component: Component) => any;
   component: Component;
 };
 

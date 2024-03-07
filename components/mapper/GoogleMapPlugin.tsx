@@ -36,7 +36,6 @@ type Position = {
 const defaultCenter = { lat: 25.816347481537285, lng: -80.1219500315037 };
 
 export const GoogleMapPlugin = ({
-  renderTree,
   component,
   shareableContent,
   ...props
