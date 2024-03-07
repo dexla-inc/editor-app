@@ -13,8 +13,6 @@ export const usePropsWithOverwrites = (
   isEditorMode: boolean,
   currentState: any,
   triggers: any,
-  handleMouseEnter: (e: any) => void,
-  handleMouseLeave: (e: any) => void,
 ) => {
   const language = useEditorStore((state) => state.language);
   const { checkIfIsDisabledState, handleComponentIfDisabledState } =
@@ -46,21 +44,16 @@ export const usePropsWithOverwrites = (
       component.states?.[currentState],
       {
         disabled: isDisabledState,
-        triggers: !isEditorMode
-          ? {
-              ...triggers,
-              // Critical Rerender Bug: Commenting this out doesn't stop the re render, think it is DataProvider as it
-              // stopped when I commented out parts from editor store
-              onMouseOver: triggers?.onHover ?? hoverStateFunc,
-              onMouseLeave: leaveHoverStateFunc,
-              ...(isDisabledState && {
-                onKeyDown: handleComponentIfDisabledState,
-              }),
-            }
-          : {
-              onMouseOver: handleMouseEnter,
-              onMouseLeave: handleMouseLeave,
-            },
+        triggers: !isEditorMode && {
+          ...triggers,
+          // Critical Rerender Bug: Commenting this out doesn't stop the re render, think it is DataProvider as it
+          // stopped when I commented out parts from editor store
+          onMouseOver: triggers?.onHover ?? hoverStateFunc,
+          onMouseLeave: leaveHoverStateFunc,
+          ...(isDisabledState && {
+            onKeyDown: handleComponentIfDisabledState,
+          }),
+        },
       },
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps

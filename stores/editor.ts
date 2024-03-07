@@ -157,7 +157,6 @@ export type EditorState = {
   componentMutableAttrs: Record<string, Component>;
   currentProjectId?: string;
   currentPageId?: string;
-  hoveredComponentId?: string;
   selectedComponentIds?: string[];
   copiedComponent?: ComponentTree;
   componentToAdd?: ComponentStructure;
@@ -180,10 +179,8 @@ export type EditorState = {
   copiedAction?: Action[];
   sequentialTo?: string;
   openAction?: OpenAction;
-  isPageStructure?: boolean;
   copiedProperties?: ClipboardProps;
   setCopiedProperties: (copiedProperties: ClipboardProps) => void;
-  setIsPageStructure: (isPageStructure: boolean) => void;
   setOpenAction: (openAction: OpenAction) => void;
   setSequentialTo: (sequentialTo?: string) => void;
   setPickingComponentToBindTo: (
@@ -223,7 +220,6 @@ export type EditorState = {
     componentId: string,
     currentState: string,
   ) => void;
-  setHoveredComponentId: (hoveredComponentId?: string) => void;
   setSelectedComponentIds: (cb: (ids: string[]) => string[]) => void;
   clearSelection: (id?: string) => void;
   setIsSaving: (isSaving: boolean) => void;
@@ -552,8 +548,6 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
             ),
           setIsLive: (value) =>
             set({ isLive: value }, false, "editor/setIsLive"),
-          setIsPageStructure: (isPageStructure) =>
-            set({ isPageStructure }, false, "editor/setIsPageStructure"),
           setIsStructureCollapsed: (value) =>
             set(
               { isStructureCollapsed: value },
@@ -578,8 +572,6 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
               false,
               "editor/setHighlightedComponentId",
             ),
-          setHoveredComponentId: (hoveredComponentId) =>
-            set({ hoveredComponentId }, false, "editor/setHoveredComponentId"),
           setIsResizing: (isResizing) =>
             set({ isResizing }, false, "editor/setIsResizing"),
           setColumnSpan: (id, span) =>

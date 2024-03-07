@@ -7,7 +7,6 @@ import {
   ORANGE_BASE_SHADOW,
   THIN_GREEN_BASE_SHADOW,
   THIN_ORANGE_BASE_SHADOW,
-  hoverStyles,
 } from "@/utils/branding";
 import { DROP_INDICATOR_WIDTH } from "@/utils/config";
 import { useMemo } from "react";
@@ -17,14 +16,12 @@ type Props = {
   componentId: string;
   isSelected?: boolean;
   selectedByOther?: string;
-  overlayStyles?: any;
 };
 
 export const useEditorShadows = ({
   componentId,
   isSelected,
   selectedByOther,
-  overlayStyles,
 }: Props) => {
   const { isPreviewMode } = useAppMode();
   const isEditorMode = useEditorStore(
@@ -39,9 +36,6 @@ export const useEditorShadows = ({
   );
   const isHighlighted = useEditorStore(
     (state) => state.highlightedComponentId === componentId,
-  );
-  const shouldDisplayOverlay = useEditorStore(
-    (state) => state.hoveredComponentId === componentId,
   );
   const onDrop = useOnDrop();
 
@@ -118,10 +112,9 @@ export const useEditorShadows = ({
       },
       "&:hover": {
         boxShadow: thinBaseShadow,
-        ...(shouldDisplayOverlay && hoverStyles(overlayStyles)),
       },
     }),
-    [shouldDisplayOverlay, thinBaseShadow, overlayStyles, shadows],
+    [thinBaseShadow, shadows],
   );
 
   if (!isEditorMode) {
