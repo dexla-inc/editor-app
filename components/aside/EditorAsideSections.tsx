@@ -1,54 +1,83 @@
-import { SidebarSection } from "@/components/SidebarSection";
+import SidebarSection from "@/components/SidebarSection";
 import { ActionsTab } from "@/components/actions/ActionsTab";
 import { StateSelector } from "@/components/aside/StateSelector";
 import { Data } from "@/components/data/Data";
-import * as AccordionModifier from "@/components/modifiers/Accordion";
-import * as AccordionItemModifier from "@/components/modifiers/AccordionItem";
-import * as AlertModifier from "@/components/modifiers/Alert";
-import * as AutocompleteModifier from "@/components/modifiers/Autocomplete";
-import * as AvatarModifier from "@/components/modifiers/Avatar";
-import * as BackgroundModifier from "@/components/modifiers/Background";
-import * as BadgeModifier from "@/components/modifiers/Badge";
-import * as BorderModifier from "@/components/modifiers/Border";
-import * as BoxShadowModifier from "@/components/modifiers/BoxShadow";
-import * as BreadcrumbModifier from "@/components/modifiers/Breadcrumb";
-import * as ButtonModifier from "@/components/modifiers/Button";
-import * as ButtonIconModifier from "@/components/modifiers/ButtonIcon";
-import * as CheckboxModifier from "@/components/modifiers/Checkbox";
-import * as CountdownButtonModifier from "@/components/modifiers/CountdownButton";
-import * as DateInputModifier from "@/components/modifiers/DateInput";
-import * as DividerModifier from "@/components/modifiers/Divider";
-import * as DrawerModifier from "@/components/modifiers/Drawer";
-import * as EffectsModifier from "@/components/modifiers/Effects";
-import * as FileButtonModifier from "@/components/modifiers/FileButton";
-import * as GoogleMapModifier from "@/components/modifiers/GoogleMap";
-import * as GridModifier from "@/components/modifiers/Grid";
-import * as GridColumnModifier from "@/components/modifiers/GridColumn";
-import * as IconModifier from "@/components/modifiers/Icon";
-import * as ImageModifier from "@/components/modifiers/Image";
-import * as InputModifier from "@/components/modifiers/Input";
-import * as LayoutModifier from "@/components/modifiers/Layout";
-import * as LinkModifier from "@/components/modifiers/Link";
-import * as ModalModifier from "@/components/modifiers/Modal";
-import * as NavLinkModifier from "@/components/modifiers/NavLink";
-import * as NavbarModifier from "@/components/modifiers/Navbar";
-import * as PopOverModifier from "@/components/modifiers/PopOver";
-import * as PositionModifier from "@/components/modifiers/Position";
-import * as ProgressModifier from "@/components/modifiers/Progress";
-import * as RadioModifier from "@/components/modifiers/Radio";
-import * as RadioItemModifier from "@/components/modifiers/RadioItem";
-import * as SelectModifier from "@/components/modifiers/Select";
-import * as SizeModifier from "@/components/modifiers/Size";
-import * as SpacingModifier from "@/components/modifiers/Spacing";
-import * as StepperModifier from "@/components/modifiers/Stepper";
-import * as TabModifier from "@/components/modifiers/Tab";
-import * as TableModifier from "@/components/modifiers/Table";
-import * as TabsModifier from "@/components/modifiers/Tabs";
-import * as TabsListModifier from "@/components/modifiers/TabsList";
-import * as TabsPanelModifier from "@/components/modifiers/TabsPanel";
-import * as TextModifier from "@/components/modifiers/Text";
-import * as TextareaModifier from "@/components/modifiers/Textaarea";
-import * as ChartModifier from "@/components/modifiers/chart/Chart";
+const AccordionModifier = lazy(
+  () => import("@/components/modifiers/Accordion"),
+);
+const AccordionItemModifier = lazy(
+  () => import("@/components/modifiers/AccordionItem"),
+);
+const AlertModifier = lazy(() => import("@/components/modifiers/Alert"));
+const AutocompleteModifier = lazy(
+  () => import("@/components/modifiers/Autocomplete"),
+);
+const AvatarModifier = lazy(() => import("@/components/modifiers/Avatar"));
+const BackgroundModifier = lazy(
+  () => import("@/components/modifiers/Background"),
+);
+const BadgeModifier = lazy(() => import("@/components/modifiers/Badge"));
+const BorderModifier = lazy(() => import("@/components/modifiers/Border"));
+const BoxShadowModifier = lazy(
+  () => import("@/components/modifiers/BoxShadow"),
+);
+const BreadcrumbModifier = lazy(
+  () => import("@/components/modifiers/Breadcrumb"),
+);
+const ButtonModifier = lazy(() => import("@/components/modifiers/Button"));
+const ButtonIconModifier = lazy(
+  () => import("@/components/modifiers/ButtonIcon"),
+);
+const CheckboxModifier = lazy(() => import("@/components/modifiers/Checkbox"));
+const CountdownButtonModifier = lazy(
+  () => import("@/components/modifiers/CountdownButton"),
+);
+const DateInputModifier = lazy(
+  () => import("@/components/modifiers/DateInput"),
+);
+const DividerModifier = lazy(() => import("@/components/modifiers/Divider"));
+const DrawerModifier = lazy(() => import("@/components/modifiers/Drawer"));
+const EffectsModifier = lazy(() => import("@/components/modifiers/Effects"));
+const FileButtonModifier = lazy(
+  () => import("@/components/modifiers/FileButton"),
+);
+const GoogleMapModifier = lazy(
+  () => import("@/components/modifiers/GoogleMap"),
+);
+const GridModifier = lazy(() => import("@/components/modifiers/Grid"));
+const GridColumnModifier = lazy(
+  () => import("@/components/modifiers/GridColumn"),
+);
+const IconModifier = lazy(() => import("@/components/modifiers/Icon"));
+const ImageModifier = lazy(() => import("@/components/modifiers/Image"));
+const InputModifier = lazy(() => import("@/components/modifiers/Input"));
+const LayoutModifier = lazy(() => import("@/components/modifiers/Layout"));
+const LinkModifier = lazy(() => import("@/components/modifiers/Link"));
+const ModalModifier = lazy(() => import("@/components/modifiers/Modal"));
+const NavLinkModifier = lazy(() => import("@/components/modifiers/NavLink"));
+const NavbarModifier = lazy(() => import("@/components/modifiers/Navbar"));
+const PopOverModifier = lazy(() => import("@/components/modifiers/PopOver"));
+const PositionModifier = lazy(() => import("@/components/modifiers/Position"));
+const ProgressModifier = lazy(() => import("@/components/modifiers/Progress"));
+const RadioModifier = lazy(() => import("@/components/modifiers/Radio"));
+const RadioItemModifier = lazy(
+  () => import("@/components/modifiers/RadioItem"),
+);
+const SelectModifier = lazy(() => import("@/components/modifiers/Select"));
+const SizeModifier = lazy(() => import("@/components/modifiers/Size"));
+const SpacingModifier = lazy(() => import("@/components/modifiers/Spacing"));
+const StepperModifier = lazy(() => import("@/components/modifiers/Stepper"));
+const TabModifier = lazy(() => import("@/components/modifiers/Tab"));
+const TableModifier = lazy(() => import("@/components/modifiers/Table"));
+const TabsModifier = lazy(() => import("@/components/modifiers/Tabs"));
+const TabsListModifier = lazy(() => import("@/components/modifiers/TabsList"));
+const TabsPanelModifier = lazy(
+  () => import("@/components/modifiers/TabsPanel"),
+);
+const TextModifier = lazy(() => import("@/components/modifiers/Text"));
+const TextareaModifier = lazy(() => import("@/components/modifiers/Textarea"));
+const ChartModifier = lazy(() => import("@/components/modifiers/chart/Chart"));
+
 import { useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { componentMapper } from "@/utils/componentMapper";
@@ -63,7 +92,7 @@ import {
   Text,
 } from "@mantine/core";
 import intersection from "lodash.intersection";
-import { useDeferredValue, useEffect, useState } from "react";
+import { lazy, useDeferredValue, useEffect, useState } from "react";
 
 type SectionsMapper = {
   [key in Modifiers]: any;
@@ -121,7 +150,7 @@ const sectionMapper: SectionsMapper = {
 
 type Tab = "design" | "data" | "actions";
 
-export const EditorAsideSections = () => {
+const EditorAsideSections = () => {
   const _selectedComponentId = useEditorStore(
     (state) => state.selectedComponentIds?.at(-1),
   );
@@ -254,3 +283,5 @@ export const EditorAsideSections = () => {
     </Stack>
   );
 };
+
+export default EditorAsideSections;

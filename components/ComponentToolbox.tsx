@@ -31,6 +31,8 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
   const isPreviewMode = useUserConfigStore((state) => state.isPreviewMode);
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const editorTheme = useEditorStore((state) => state.theme);
+
+  // Move to functions
   const editorTree = useEditorStore((state) => state.tree as EditorTreeCopy);
   const setEditorTree = useEditorStore((state) => state.setTree);
   const setSelectedComponentIds = useEditorStore(

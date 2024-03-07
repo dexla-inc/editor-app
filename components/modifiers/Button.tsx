@@ -17,7 +17,7 @@ import { useCallback, useEffect, useState } from "react";
 export const icon = IconClick;
 export const label = "Button";
 
-export const Modifier = withModifier(
+const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds, currentState }) => {
     const form = useForm();
     const theme = useEditorStore((state) => state.theme);
@@ -188,3 +188,5 @@ export const Modifier = withModifier(
     );
   },
 );
+
+export default Modifier;

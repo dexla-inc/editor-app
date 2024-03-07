@@ -25,7 +25,7 @@ import { useEffect } from "react";
 export const icon = IconLayout;
 export const label = "Position";
 
-export const Modifier = withModifier(({ selectedComponent }) => {
+const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm();
 
   useEffect(() => {
@@ -201,3 +201,5 @@ export const Modifier = withModifier(({ selectedComponent }) => {
     </form>
   );
 });
+
+export default Modifier;

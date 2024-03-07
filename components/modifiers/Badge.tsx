@@ -15,7 +15,7 @@ import { useEffect, useState } from "react";
 export const icon = IconIdBadge;
 export const label = "Badge";
 
-export const Modifier = withModifier(
+const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds, currentState }) => {
     const form = useForm();
 
@@ -130,3 +130,5 @@ export const Modifier = withModifier(
     );
   },
 );
+
+export default Modifier;

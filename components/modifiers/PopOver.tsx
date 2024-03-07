@@ -13,51 +13,51 @@ export const label = "PopOver";
 
 export const defaultPopOverValues = requiredModifiers.popOver;
 
-export const Modifier = withModifier(
-  ({ selectedComponent, selectedComponentIds }) => {
-    const form = useForm({
-      initialValues: merge({}, defaultPopOverValues, {
+const Modifier = withModifier(({ selectedComponent, selectedComponentIds }) => {
+  const form = useForm({
+    initialValues: merge({}, defaultPopOverValues, {
+      position: selectedComponent?.props?.position,
+    }),
+  });
+
+  useEffect(() => {
+    form.setValues(
+      merge({}, defaultPopOverValues, {
         position: selectedComponent?.props?.position,
       }),
-    });
-
-    useEffect(() => {
-      form.setValues(
-        merge({}, defaultPopOverValues, {
-          position: selectedComponent?.props?.position,
-        }),
-      );
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedComponent]);
-
-    return (
-      <form>
-        <Stack spacing="xs">
-          <Stack spacing={2}>
-            <TopLabel text="Position" />
-            <SegmentedControl
-              size="xs"
-              data={[
-                { label: "Left", value: "left" },
-                { label: "Top", value: "top" },
-                { label: "Right", value: "right" },
-                { label: "Bottom", value: "bottom" },
-              ]}
-              {...form.getInputProps("position")}
-              onChange={(value) => {
-                form.setFieldValue("position", value as string);
-                debouncedTreeComponentAttrsUpdate({
-                  attrs: {
-                    props: {
-                      position: value,
-                    },
-                  },
-                });
-              }}
-            />
-          </Stack>
-        </Stack>
-      </form>
     );
-  },
-);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedComponent]);
+
+  return (
+    <form>
+      <Stack spacing="xs">
+        <Stack spacing={2}>
+          <TopLabel text="Position" />
+          <SegmentedControl
+            size="xs"
+            data={[
+              { label: "Left", value: "left" },
+              { label: "Top", value: "top" },
+              { label: "Right", value: "right" },
+              { label: "Bottom", value: "bottom" },
+            ]}
+            {...form.getInputProps("position")}
+            onChange={(value) => {
+              form.setFieldValue("position", value as string);
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: {
+                    position: value,
+                  },
+                },
+              });
+            }}
+          />
+        </Stack>
+      </Stack>
+    </form>
+  );
+});
+
+export default Modifier;

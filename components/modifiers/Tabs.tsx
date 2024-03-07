@@ -13,103 +13,103 @@ import { useEffect } from "react";
 export const icon = IconLayoutKanban;
 export const label = "Tabs";
 
-export const Modifier = withModifier(
-  ({ selectedComponent, selectedComponentIds }) => {
-    const form = useForm();
+const Modifier = withModifier(({ selectedComponent, selectedComponentIds }) => {
+  const form = useForm();
 
-    useEffect(() => {
-      form.setValues(
-        merge({}, requiredModifiers.tabs, {
-          defaultValue: selectedComponent?.props?.defaultValue,
-          variant: selectedComponent?.props?.variant,
-          orientation: selectedComponent?.props?.orientation,
-          radius: selectedComponent?.props?.radius,
-          color: selectedComponent?.props?.color,
-          grow: selectedComponent?.props?.grow,
-        }),
-      );
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedComponent]);
+  useEffect(() => {
+    form.setValues(
+      merge({}, requiredModifiers.tabs, {
+        defaultValue: selectedComponent?.props?.defaultValue,
+        variant: selectedComponent?.props?.variant,
+        orientation: selectedComponent?.props?.orientation,
+        radius: selectedComponent?.props?.radius,
+        color: selectedComponent?.props?.color,
+        grow: selectedComponent?.props?.grow,
+      }),
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedComponent]);
 
-    return (
-      <form>
-        <Stack spacing="xs">
-          <TextInput
-            label="Default Value"
-            size="xs"
-            {...form.getInputProps("defaultValue")}
-            onChange={(e) => {
-              form.setFieldValue("defaultValue", e.target.value);
-              debouncedTreeComponentAttrsUpdate({
-                attrs: { props: { defaultValue: e.target.value } },
-              });
-            }}
-          />
-          <Group noWrap>
-            <Select
-              label="Variant"
-              size="xs"
-              data={[
-                { label: "Default", value: "default" },
-                { label: "Outline", value: "outline" },
-                { label: "Pills", value: "pills" },
-              ]}
-              {...form.getInputProps("variant")}
-              onChange={(value) => {
-                form.setFieldValue("variant", value as string);
-                debouncedTreeComponentAttrsUpdate({
-                  attrs: { props: { variant: value } },
-                });
-              }}
-            />
-            <SizeSelector
-              label="Radius"
-              {...form.getInputProps("radius")}
-              onChange={(value) => {
-                form.setFieldValue("radius", value as string);
-                debouncedTreeComponentAttrsUpdate({
-                  attrs: { props: { radius: value } },
-                });
-              }}
-            />
-          </Group>
+  return (
+    <form>
+      <Stack spacing="xs">
+        <TextInput
+          label="Default Value"
+          size="xs"
+          {...form.getInputProps("defaultValue")}
+          onChange={(e) => {
+            form.setFieldValue("defaultValue", e.target.value);
+            debouncedTreeComponentAttrsUpdate({
+              attrs: { props: { defaultValue: e.target.value } },
+            });
+          }}
+        />
+        <Group noWrap>
           <Select
-            label="Orientation"
+            label="Variant"
             size="xs"
             data={[
-              { label: "Horizontal", value: "horizontal" },
-              { label: "Vertical", value: "vertical" },
+              { label: "Default", value: "default" },
+              { label: "Outline", value: "outline" },
+              { label: "Pills", value: "pills" },
             ]}
-            {...form.getInputProps("orientation")}
+            {...form.getInputProps("variant")}
             onChange={(value) => {
-              form.setFieldValue("orientation", value as string);
+              form.setFieldValue("variant", value as string);
               debouncedTreeComponentAttrsUpdate({
-                attrs: { props: { orientation: value } },
+                attrs: { props: { variant: value } },
               });
             }}
           />
-          <ThemeColorSelector
-            label="Color"
-            {...form.getInputProps("color")}
-            onChange={(value: string) => {
-              form.setFieldValue("color", value);
+          <SizeSelector
+            label="Radius"
+            {...form.getInputProps("radius")}
+            onChange={(value) => {
+              form.setFieldValue("radius", value as string);
               debouncedTreeComponentAttrsUpdate({
-                attrs: { props: { color: value } },
+                attrs: { props: { radius: value } },
               });
             }}
           />
-          <SwitchSelector
-            topLabel="Grow"
-            {...form.getInputProps("grow")}
-            onChange={(event) => {
-              form.setFieldValue("grow", event.currentTarget.checked);
-              debouncedTreeComponentAttrsUpdate({
-                attrs: { props: { grow: event.currentTarget.checked } },
-              });
-            }}
-          />
-        </Stack>
-      </form>
-    );
-  },
-);
+        </Group>
+        <Select
+          label="Orientation"
+          size="xs"
+          data={[
+            { label: "Horizontal", value: "horizontal" },
+            { label: "Vertical", value: "vertical" },
+          ]}
+          {...form.getInputProps("orientation")}
+          onChange={(value) => {
+            form.setFieldValue("orientation", value as string);
+            debouncedTreeComponentAttrsUpdate({
+              attrs: { props: { orientation: value } },
+            });
+          }}
+        />
+        <ThemeColorSelector
+          label="Color"
+          {...form.getInputProps("color")}
+          onChange={(value: string) => {
+            form.setFieldValue("color", value);
+            debouncedTreeComponentAttrsUpdate({
+              attrs: { props: { color: value } },
+            });
+          }}
+        />
+        <SwitchSelector
+          topLabel="Grow"
+          {...form.getInputProps("grow")}
+          onChange={(event) => {
+            form.setFieldValue("grow", event.currentTarget.checked);
+            debouncedTreeComponentAttrsUpdate({
+              attrs: { props: { grow: event.currentTarget.checked } },
+            });
+          }}
+        />
+      </Stack>
+    </form>
+  );
+});
+
+export default Modifier;

@@ -1,4 +1,4 @@
-import { Editor } from "@/components/Editor";
+import Editor from "@/components/Editor";
 import { withPageOnLoad } from "@/hoc/withPageOnLoad";
 import { GetServerSidePropsContext } from "next";
 import { memo } from "react";

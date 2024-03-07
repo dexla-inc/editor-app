@@ -17,7 +17,7 @@ import { useCallback, useEffect, useState } from "react";
 export const icon = IconClockHour5;
 export const label = "Countdown Button";
 
-export const Modifier = withModifier(
+const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds, currentState }) => {
     const form = useForm();
     const theme = useEditorStore((state) => state.theme);
@@ -141,3 +141,5 @@ export const Modifier = withModifier(
     );
   },
 );
+
+export default Modifier;

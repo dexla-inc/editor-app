@@ -1,7 +1,7 @@
 import { EndpointRequestInputs } from "@/components/EndpointRequestInputs";
 import { EndpointSelect } from "@/components/EndpointSelect";
 import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
-import { SidebarSection } from "@/components/SidebarSection";
+import SidebarSection from "@/components/SidebarSection";
 import { VisibilityModifier } from "@/components/data/VisibilityModifier";
 import { useData } from "@/hooks/useData";
 import { Endpoint } from "@/requests/datasources/types";

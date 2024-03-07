@@ -17,7 +17,7 @@ import { SegmentedControlSizes } from "../SegmentedControlSizes";
 export const icon = IconCircleDot;
 export const label = "Button Icon";
 
-export const Modifier = withModifier(
+const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds, currentState }) => {
     const form = useForm();
     const { setBackgroundColor } = useChangeState({});
@@ -95,3 +95,5 @@ export const Modifier = withModifier(
     );
   },
 );
+
+export default Modifier;

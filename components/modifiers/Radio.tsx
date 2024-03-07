@@ -11,34 +11,34 @@ import { useEffect } from "react";
 export const icon = IconRadio;
 export const label = "Radio";
 
-export const Modifier = withModifier(
-  ({ selectedComponent, selectedComponentIds }) => {
-    const form = useForm();
+const Modifier = withModifier(({ selectedComponent, selectedComponentIds }) => {
+  const form = useForm();
 
-    useEffect(() => {
-      form.setValues(
-        merge({}, requiredModifiers.radio, {
-          withAsterisk: selectedComponent?.props?.withAsterisk,
-        }),
-      );
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedComponent]);
-
-    return (
-      <form>
-        <Stack spacing="xs">
-          <SwitchSelector
-            topLabel="Required"
-            {...form.getInputProps("withAsterisk")}
-            onChange={(event) => {
-              form.setFieldValue("withAsterisk", event.currentTarget.checked);
-              debouncedTreeComponentAttrsUpdate({
-                attrs: { props: { withAsterisk: event.currentTarget.checked } },
-              });
-            }}
-          />
-        </Stack>
-      </form>
+  useEffect(() => {
+    form.setValues(
+      merge({}, requiredModifiers.radio, {
+        withAsterisk: selectedComponent?.props?.withAsterisk,
+      }),
     );
-  },
-);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedComponent]);
+
+  return (
+    <form>
+      <Stack spacing="xs">
+        <SwitchSelector
+          topLabel="Required"
+          {...form.getInputProps("withAsterisk")}
+          onChange={(event) => {
+            form.setFieldValue("withAsterisk", event.currentTarget.checked);
+            debouncedTreeComponentAttrsUpdate({
+              attrs: { props: { withAsterisk: event.currentTarget.checked } },
+            });
+          }}
+        />
+      </Stack>
+    </form>
+  );
+});
+
+export default Modifier;

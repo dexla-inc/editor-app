@@ -13,7 +13,7 @@ import { useEffect } from "react";
 export const icon = IconClick;
 export const label = "Nav Link";
 
-export const Modifier = withModifier(
+const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds, currentState }) => {
     const form = useForm();
     const { setBackgroundColor } = useChangeState({});
@@ -112,3 +112,5 @@ export const Modifier = withModifier(
     );
   },
 );
+
+export default Modifier;

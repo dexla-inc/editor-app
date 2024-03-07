@@ -12,7 +12,7 @@ export const label = "Image";
 
 export const defaultImageValues = requiredModifiers.image;
 
-export const Modifier = withModifier(({ selectedComponent }) => {
+const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm();
 
   useEffect(() => {
@@ -49,3 +49,5 @@ export const Modifier = withModifier(({ selectedComponent }) => {
     </form>
   );
 });
+
+export default Modifier;

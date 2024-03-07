@@ -30,7 +30,7 @@ type SidebarSectionProps = {
   noPadding?: boolean;
 };
 
-export function SidebarSection({
+export default function SidebarSection({
   id,
   icon: Icon,
   label,

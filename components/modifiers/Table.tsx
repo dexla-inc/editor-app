@@ -25,94 +25,94 @@ const initialValues = {
   striped: false,
 };
 
-export const Modifier = withModifier(
-  ({ selectedComponent, selectedComponentIds }) => {
-    const {
-      data: dataProp,
-      exampleData,
-      dataPath,
-      headers,
-      config,
-      repeatedIndex,
-      striped,
-    } = pick(selectedComponent.props!, [
-      "data",
-      "exampleData",
-      "dataPath",
-      "headers",
-      "config",
-      "repeatedIndex",
-      "striped",
-    ]);
+const Modifier = withModifier(({ selectedComponent, selectedComponentIds }) => {
+  const {
+    data: dataProp,
+    exampleData,
+    dataPath,
+    headers,
+    config,
+    repeatedIndex,
+    striped,
+  } = pick(selectedComponent.props!, [
+    "data",
+    "exampleData",
+    "dataPath",
+    "headers",
+    "config",
+    "repeatedIndex",
+    "striped",
+  ]);
 
-    let data = dataProp?.value ?? exampleData?.value;
+  let data = dataProp?.value ?? exampleData?.value;
 
-    if (typeof repeatedIndex !== "undefined" && dataPath) {
-      const path = dataPath.replace("[0]", `[${repeatedIndex}]`);
-      data = get(dataProp?.base ?? {}, path) ?? data;
-    } else if (dataPath) {
-      data = get(dataProp?.base, dataPath.replace("[0]", ""));
-    }
+  if (typeof repeatedIndex !== "undefined" && dataPath) {
+    const path = dataPath.replace("[0]", `[${repeatedIndex}]`);
+    data = get(dataProp?.base ?? {}, path) ?? data;
+  } else if (dataPath) {
+    data = get(dataProp?.base, dataPath.replace("[0]", ""));
+  }
 
-    const form = useForm<TableModifierProps>();
+  const form = useForm<TableModifierProps>();
 
-    useEffect(() => {
-      form.setValues(
-        merge({}, initialValues, {
-          data: JSON.stringify(data, null, 2),
-          headers: headers,
-          config: config,
-          striped: striped,
-        }),
-      );
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedComponent]);
-
-    return (
-      <form>
-        <Stack spacing="xs">
-          <Switch
-            label="Striped"
-            {...form.getInputProps("striped")}
-            onChange={(event) => {
-              form.setFieldValue("striped", event.currentTarget.checked);
-              debouncedTreeComponentAttrsUpdate({
-                attrs: { props: { striped: event.currentTarget.checked } },
-              });
-            }}
-          />
-          <Switch
-            size="xs"
-            label="Sorting"
-            checked={get(form.values.config, "sorting", false)}
-            onChange={(e) => {
-              const config = {
-                ...form.values.config,
-                sorting: e.currentTarget.checked,
-              };
-              form.setFieldValue("config", config);
-              debouncedTreeComponentAttrsUpdate({
-                attrs: { props: { config } },
-              });
-            }}
-          />
-          <Switch
-            size="xs"
-            label="Select"
-            checked={get(form.values.config, "select", false)}
-            onChange={(e) => {
-              const config = {
-                ...form.values.config,
-                select: e.currentTarget.checked,
-              };
-              form.setFieldValue("config", config);
-              debouncedTreeComponentAttrsUpdate({
-                attrs: { props: { config } },
-              });
-            }}
-          />
-        </Stack>
-      </form>
+  useEffect(() => {
+    form.setValues(
+      merge({}, initialValues, {
+        data: JSON.stringify(data, null, 2),
+        headers: headers,
+        config: config,
+        striped: striped,
+      }),
     );
-  },
-);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedComponent]);
+
+  return (
+    <form>
+      <Stack spacing="xs">
+        <Switch
+          label="Striped"
+          {...form.getInputProps("striped")}
+          onChange={(event) => {
+            form.setFieldValue("striped", event.currentTarget.checked);
+            debouncedTreeComponentAttrsUpdate({
+              attrs: { props: { striped: event.currentTarget.checked } },
+            });
+          }}
+        />
+        <Switch
+          size="xs"
+          label="Sorting"
+          checked={get(form.values.config, "sorting", false)}
+          onChange={(e) => {
+            const config = {
+              ...form.values.config,
+              sorting: e.currentTarget.checked,
+            };
+            form.setFieldValue("config", config);
+            debouncedTreeComponentAttrsUpdate({
+              attrs: { props: { config } },
+            });
+          }}
+        />
+        <Switch
+          size="xs"
+          label="Select"
+          checked={get(form.values.config, "select", false)}
+          onChange={(e) => {
+            const config = {
+              ...form.values.config,
+              select: e.currentTarget.checked,
+            };
+            form.setFieldValue("config", config);
+            debouncedTreeComponentAttrsUpdate({
+              attrs: { props: { config } },
+            });
+          }}
+        />
+      </Stack>
+    </form>
+  );
+});
+
+export default Modifier;

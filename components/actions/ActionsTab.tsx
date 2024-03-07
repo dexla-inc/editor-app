@@ -1,4 +1,4 @@
-import { SidebarSection } from "@/components/SidebarSection";
+import SidebarSection from "@/components/SidebarSection";
 import { ActionSettingsForm } from "@/components/actions/ActionSettingsForm";
 import { ActionsForm } from "@/components/actions/ActionsForm";
 import { useEditorStore } from "@/stores/editor";
