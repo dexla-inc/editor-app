@@ -17,12 +17,8 @@ import {
 import { requiredModifiers } from "@/utils/modifiers";
 import { Flex, SegmentedControl, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconShadow } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
-
-export const icon = IconShadow;
-export const label = "Shadow";
 
 const defaultBoxShadowValues = requiredModifiers.boxShadow;
 

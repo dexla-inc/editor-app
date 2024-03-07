@@ -4,12 +4,8 @@ import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconRadio } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
-
-export const icon = IconRadio;
-export const label = "Radio";
 
 const Modifier = withModifier(({ selectedComponent, selectedComponentIds }) => {
   const form = useForm();

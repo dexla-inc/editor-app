@@ -12,14 +12,10 @@ import {
   IconArrowBarDown,
   IconArrowBarUp,
   IconArrowsMoveVertical,
-  IconInputSearch,
 } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
 import { IconSelector } from "../IconSelector";
-
-export const icon = IconInputSearch;
-export const label = "Autocomplete";
 
 const Modifier = withModifier(({ selectedComponent, selectedComponentIds }) => {
   const form = useForm();

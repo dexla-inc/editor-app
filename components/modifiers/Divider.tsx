@@ -5,12 +5,8 @@ import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconDivide } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
-
-export const icon = IconDivide;
-export const label = "Divider";
 
 const Modifier = withModifier(({ selectedComponent, selectedComponentIds }) => {
   const form = useForm();

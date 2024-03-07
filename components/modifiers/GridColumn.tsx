@@ -12,7 +12,6 @@ import {
   IconLayoutAlignCenter,
   IconLayoutAlignLeft,
   IconLayoutAlignRight,
-  IconLayoutColumns,
   IconLayoutDistributeHorizontal,
   IconRotate2,
   IconTextWrap,
@@ -21,9 +20,6 @@ import {
 import merge from "lodash.merge";
 import { useEffect } from "react";
 import { SegmentedControlSizes } from "../SegmentedControlSizes";
-
-export const label = "Grid Column";
-export const icon = IconLayoutColumns;
 
 const Modifier = withModifier(({ selectedComponent, selectedComponentIds }) => {
   const form = useForm();

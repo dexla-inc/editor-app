@@ -6,14 +6,10 @@ import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { SegmentedControl, Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconForms } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
 import { SegmentedControlInput } from "../SegmentedControlInput";
 import { SegmentedControlYesNo } from "../SegmentedControlYesNo";
-
-export const icon = IconForms;
-export const label = "Date Input";
 
 const Modifier = withModifier(({ selectedComponent, selectedComponentIds }) => {
   const form = useForm();

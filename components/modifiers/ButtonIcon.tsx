@@ -9,13 +9,9 @@ import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconCircleDot } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
 import { SegmentedControlSizes } from "../SegmentedControlSizes";
-
-export const icon = IconCircleDot;
-export const label = "Button Icon";
 
 const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds, currentState }) => {

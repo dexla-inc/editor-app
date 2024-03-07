@@ -9,13 +9,9 @@ import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { SegmentedControl, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconTexture } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect, useState } from "react";
 import { AssetsTextInput } from "../AssetsTextInput";
-
-export const icon = IconTexture;
-export const label = "Background";
 
 const extractBackgroundUrl = (backgroundImageValue: string): string => {
   const urlRegex = /url\(['"]?([^'"\(\)]+)['"]?\)/;

@@ -10,12 +10,8 @@ import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconClick } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useCallback, useEffect, useState } from "react";
-
-export const icon = IconClick;
-export const label = "Button";
 
 const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds, currentState }) => {

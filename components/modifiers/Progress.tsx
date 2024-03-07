@@ -4,14 +4,10 @@ import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { NumberInput, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconLoader2 } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
 import { SizeSelector } from "../SizeSelector";
 import { SwitchSelector } from "../SwitchSelector";
-
-export const icon = IconLoader2;
-export const label = "Progress";
 
 const Modifier = withModifier(({ selectedComponent, selectedComponentIds }) => {
   const form = useForm();

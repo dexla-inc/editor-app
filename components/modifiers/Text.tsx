@@ -26,15 +26,11 @@ import {
   IconOverline,
   IconPlus,
   IconStrikethrough,
-  IconTextSize,
   IconUnderline,
   IconX,
 } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
-
-export const icon = IconTextSize;
-export const label = "Content";
 
 const defaultTextValues = requiredModifiers.text;
 

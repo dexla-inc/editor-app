@@ -3,12 +3,8 @@ import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Stack, Switch, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconFileUpload } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { ChangeEvent, useEffect } from "react";
-
-export const icon = IconFileUpload;
-export const label = "File Upload";
 
 const Modifier = withModifier(({ selectedComponent, selectedComponentIds }) => {
   const form = useForm();

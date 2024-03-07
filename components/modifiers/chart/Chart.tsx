@@ -5,13 +5,9 @@ import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Divider, Stack, Text, Textarea } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconChartInfographic } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { useEffect, useState } from "react";
-
-export const label = "Chart";
-export const icon = IconChartInfographic;
 
 const initialValues = requiredModifiers.chart;
 

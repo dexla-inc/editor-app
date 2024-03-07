@@ -13,13 +13,9 @@ import {
   IconArrowBarDown,
   IconArrowBarUp,
   IconArrowsMoveVertical,
-  IconSelect,
 } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
-
-export const icon = IconSelect;
-export const label = "Select";
 
 const Modifier = withModifier(({ selectedComponent, selectedComponentIds }) => {
   const form = useForm();

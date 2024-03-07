@@ -3,12 +3,8 @@ import { withModifier } from "@/hoc/withModifier";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconBoxModel2 } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
-
-export const icon = IconBoxModel2;
-export const label = "Spacing";
 
 type SpacingeModifierProps = {
   showPadding: "padding-all" | "padding-sides";

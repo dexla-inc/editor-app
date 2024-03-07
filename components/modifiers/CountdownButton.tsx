@@ -10,12 +10,8 @@ import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconClockHour5 } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useCallback, useEffect, useState } from "react";
-
-export const icon = IconClockHour5;
-export const label = "Countdown Button";
 
 const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds, currentState }) => {

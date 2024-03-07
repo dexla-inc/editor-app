@@ -22,7 +22,6 @@ import {
   IconBorderCorners,
   IconBorderLeft,
   IconBorderRight,
-  IconBorderStyle,
   IconBorderTop,
   IconLineDashed,
   IconLineDotted,
@@ -33,9 +32,6 @@ import {
 import merge from "lodash.merge";
 import startCase from "lodash.startcase";
 import { useEffect } from "react";
-
-export const icon = IconBorderStyle;
-export const label = "Border";
 
 export const defaultBorderValues = requiredModifiers.border;
 

@@ -4,13 +4,9 @@ import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconLayoutGrid } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
 import { SegmentedControlSizes } from "../SegmentedControlSizes";
-
-export const label = "Grid";
-export const icon = IconLayoutGrid;
 
 const Modifier = withModifier(({ selectedComponent, selectedComponentIds }) => {
   const form = useForm();

@@ -2,14 +2,10 @@ import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { Stack, Switch } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconTable } from "@tabler/icons-react";
 import get from "lodash.get";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { useEffect } from "react";
-
-export const icon = IconTable;
-export const label = "Table";
 
 type TableModifierProps = {
   data: string;

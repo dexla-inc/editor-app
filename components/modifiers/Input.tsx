@@ -9,13 +9,9 @@ import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconForms } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
 import { RangeSliderInput } from "../RangeSliderInput";
-
-export const icon = IconForms;
-export const label = "Input";
 
 const Modifier = withModifier(({ selectedComponent, selectedComponentIds }) => {
   const form = useForm();

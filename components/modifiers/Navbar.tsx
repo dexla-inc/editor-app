@@ -5,15 +5,11 @@ import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconLayoutSidebar } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
 import { ThemeColorSelector } from "../ThemeColorSelector";
 
 const initialValues = requiredModifiers.navbar;
-
-export const label = "Navbar";
-export const icon = IconLayoutSidebar;
 
 const Modifier = withModifier(({ selectedComponent, selectedComponentIds }) => {
   const editorTree = useEditorStore((state) => state.tree);

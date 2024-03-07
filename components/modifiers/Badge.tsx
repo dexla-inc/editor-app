@@ -8,12 +8,8 @@ import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { SegmentedControl, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconIdBadge } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect, useState } from "react";
-
-export const icon = IconIdBadge;
-export const label = "Badge";
 
 const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds, currentState }) => {

@@ -13,7 +13,6 @@ import {
   IconArrowNarrowRight,
   IconArrowsDiff,
   IconArrowsHorizontal,
-  IconLayout2,
   IconLayoutAlignCenter,
   IconLayoutAlignLeft,
   IconLayoutAlignRight,
@@ -25,9 +24,6 @@ import {
 } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
-
-export const icon = IconLayout2;
-export const label = "Layout";
 
 export let GROW_FLEX_DEFAULT = "1 0 auto";
 export let SHRINK_FLEX_DEFAULT = "0 1 auto";

@@ -4,12 +4,8 @@ import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { SegmentedControl, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconLayoutSidebarLeftCollapse } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
-
-export const icon = IconLayoutSidebarLeftCollapse;
-export const label = "PopOver";
 
 export const defaultPopOverValues = requiredModifiers.popOver;
 

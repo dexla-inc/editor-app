@@ -12,17 +12,10 @@ import {
 import { requiredModifiers } from "@/utils/modifiers";
 import { SegmentedControl, Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import {
-  IconArrowAutofitContent,
-  IconArrowNarrowDown,
-  IconArrowNarrowRight,
-} from "@tabler/icons-react";
+import { IconArrowNarrowDown, IconArrowNarrowRight } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
 import { ThemeColorSelector } from "../ThemeColorSelector";
-
-export const icon = IconArrowAutofitContent;
-export const label = "Stepper";
 
 const defaultStepperValues = requiredModifiers.stepper;
 

@@ -15,12 +15,9 @@ import {
   Text,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconMapPin, IconPlus, IconTrash } from "@tabler/icons-react";
+import { IconPlus, IconTrash } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect, useState } from "react";
-
-export const icon = IconMapPin;
-export const label = "Map Settings";
 
 export type Styler = Record<string, string | Record<string, any>[]>;
 export type Options = {

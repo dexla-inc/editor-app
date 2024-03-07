@@ -10,13 +10,9 @@ import {
   IconLayoutAlignLeft,
   IconLayoutAlignRight,
   IconLayoutDistributeHorizontal,
-  IconLayoutKanban,
 } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
-
-export const icon = IconLayoutKanban;
-export const label = "Tabs List";
 
 const Modifier = withModifier(({ selectedComponent, selectedComponentIds }) => {
   const form = useForm();

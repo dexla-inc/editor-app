@@ -17,13 +17,9 @@ import {
   IconAlignBoxCenterMiddle,
   IconAlignBoxLeftMiddle,
   IconAlignBoxRightMiddle,
-  IconLayout,
 } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
-
-export const icon = IconLayout;
-export const label = "Position";
 
 const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm();

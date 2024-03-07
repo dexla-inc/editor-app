@@ -7,13 +7,9 @@ import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconUser } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
 import { SegmentedControlSizes } from "../SegmentedControlSizes";
-
-export const icon = IconUser;
-export const label = "Avatar";
 
 const Modifier = withModifier(({ selectedComponent, selectedComponentIds }) => {
   const form = useForm();
