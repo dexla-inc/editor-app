@@ -4,15 +4,9 @@ import { Select, SelectProps } from "@mantine/core";
 
 type Props = Omit<SelectProps, "data" | "onChange"> & {
   form: any;
-  selectedComponentIds: string[];
 };
 
-export const FontSelector = ({
-  label = "Type",
-  form,
-  selectedComponentIds,
-  ...restProps
-}: Props) => {
+export const FontSelector = ({ label = "Type", form, ...restProps }: Props) => {
   const theme = useEditorStore((state) => state.theme);
 
   const fonts = theme.fonts.reduce((acc, font) => {

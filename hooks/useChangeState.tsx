@@ -44,6 +44,12 @@ export const useChangeState = ({
   const backgroundColor = getColorFromTheme(theme, bg) ?? defaultBg;
   const color = getColorFromTheme(theme, textColor) ?? "black";
 
+  const currentState = useEditorStore(
+    (state) =>
+      state.currentTreeComponentsStates?.[state.selectedComponentIds?.[0]!] ??
+      "default",
+  );
+
   const componentsWithBackgroundModifier = Object.entries(
     componentMapper,
   ).reduce((acc, [componentName, { modifiers }]) => {
@@ -60,7 +66,6 @@ export const useChangeState = ({
     key: string,
     value: string,
     form: any,
-    currentState: string,
     component?: Component,
   ) => {
     const hoverBackground = getHoverColor(value);

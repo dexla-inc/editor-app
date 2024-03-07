@@ -3,14 +3,10 @@ import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconLayoutBottombarCollapse } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
 
-export const icon = IconLayoutBottombarCollapse;
-export const label = "Accordion Item";
-
-export const Modifier = withModifier(({ selectedComponent }) => {
+const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm();
 
   useEffect(() => {
@@ -40,3 +36,5 @@ export const Modifier = withModifier(({ selectedComponent }) => {
     </form>
   );
 });
+
+export default Modifier;

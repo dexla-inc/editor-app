@@ -1,3 +1,4 @@
+import { Icon } from "@/components/Icon";
 import { OpenAction, useEditorStore } from "@/stores/editor";
 import { DARK_COLOR, HOVERED } from "@/utils/branding";
 import { ICON_SIZE } from "@/utils/config";
@@ -13,11 +14,12 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { IconChevronDown, IconTrash } from "@tabler/icons-react";
+import startCase from "lodash.startcase";
 import { PropsWithChildren } from "react";
 
 type SidebarSectionProps = {
   id: string;
-  icon: React.FC<any>;
+  icon: string;
   label: string;
   initiallyOpened?: boolean;
   links?: { label: string; link: string }[];
@@ -30,9 +32,9 @@ type SidebarSectionProps = {
   noPadding?: boolean;
 };
 
-export function SidebarSection({
+export default function SidebarSection({
   id,
-  icon: Icon,
+  icon,
   label,
   initiallyOpened: isExpanded = false,
   children,
@@ -108,10 +110,10 @@ export function SidebarSection({
                 variant={isDarkTheme ? "default" : "light"}
                 size={30}
               >
-                <Icon size={ICON_SIZE} />
+                <Icon name={icon} size={ICON_SIZE} />
               </ThemeIcon>
               <Text size="xs" ml="md">
-                {label}
+                {startCase(label)}
               </Text>
             </Box>
             {children && (

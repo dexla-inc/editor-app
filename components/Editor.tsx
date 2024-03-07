@@ -3,7 +3,7 @@
 import { Shell } from "@/components/AppShell";
 import { Cursor } from "@/components/Cursor";
 import { EditorCanvas } from "@/components/EditorCanvas";
-import { EditorAsideSections } from "@/components/aside/EditorAsideSections";
+import EditorAsideSections from "@/components/aside/EditorAsideSections";
 import { EditorNavbarSections } from "@/components/navbar/EditorNavbarSections";
 import { useAppMode } from "@/hooks/useAppMode";
 import { useGetPageData } from "@/hooks/useGetPageData";
@@ -26,7 +26,7 @@ type Props = {
   pageId: string;
 };
 
-export const Editor = ({ projectId, pageId }: Props) => {
+const Editor = ({ projectId, pageId }: Props) => {
   const setCurrentPageAndProjectIds = useEditorStore(
     (state) => state.setCurrentPageAndProjectIds,
   );
@@ -127,3 +127,5 @@ export const Editor = ({ projectId, pageId }: Props) => {
     </>
   );
 };
+
+export default Editor;

@@ -12,136 +12,130 @@ import {
   IconArrowBarDown,
   IconArrowBarUp,
   IconArrowsMoveVertical,
-  IconInputSearch,
 } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
 import { IconSelector } from "../IconSelector";
 
-export const icon = IconInputSearch;
-export const label = "Autocomplete";
+const Modifier = withModifier(({ selectedComponent }) => {
+  const form = useForm();
+  const theme = useEditorStore((state) => state.theme);
+  const pages = useEditorStore((state) => state.pages);
 
-export const Modifier = withModifier(
-  ({ selectedComponent, selectedComponentIds }) => {
-    const form = useForm();
-    const theme = useEditorStore((state) => state.theme);
-    const pages = useEditorStore((state) => state.pages);
+  useEffect(() => {
+    form.setValues(
+      merge({}, requiredModifiers.autocomplete, {
+        size: selectedComponent?.props?.size ?? theme.inputSize,
+        placeholder: selectedComponent?.props?.placeholder,
+        iconName: selectedComponent?.props?.iconName,
+        data: selectedComponent?.props?.data,
+        withAsterisk: selectedComponent?.props?.withAsterisk,
+        customText: selectedComponent?.props?.customText,
+        customLinkText: selectedComponent?.props?.customLinkText,
+        customLinkUrl: selectedComponent?.props?.customLinkUrl,
+        dropdownPosition: selectedComponent?.props?.dropdownPosition,
+      }),
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedComponent]);
 
-    useEffect(() => {
-      form.setValues(
-        merge({}, requiredModifiers.autocomplete, {
-          size: selectedComponent?.props?.size ?? theme.inputSize,
-          placeholder: selectedComponent?.props?.placeholder,
-          iconName: selectedComponent?.props?.iconName,
-          data: selectedComponent?.props?.data,
-          withAsterisk: selectedComponent?.props?.withAsterisk,
-          customText: selectedComponent?.props?.customText,
-          customLinkText: selectedComponent?.props?.customLinkText,
-          customLinkUrl: selectedComponent?.props?.customLinkUrl,
-          dropdownPosition: selectedComponent?.props?.dropdownPosition,
-        }),
-      );
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedComponent]);
+  const setFieldValue = (key: any, value: any) => {
+    form.setFieldValue(key, value);
+    debouncedTreeComponentAttrsUpdate({ attrs: { props: { [key]: value } } });
+  };
 
-    const setFieldValue = (key: any, value: any) => {
-      form.setFieldValue(key, value);
-      debouncedTreeComponentAttrsUpdate({ attrs: { props: { [key]: value } } });
-    };
-
-    return (
-      <form>
-        <Stack spacing="xs">
-          <TextInput
-            label="Placeholder"
+  return (
+    <form>
+      <Stack spacing="xs">
+        <TextInput
+          label="Placeholder"
+          size="xs"
+          {...form.getInputProps("placeholder")}
+          onChange={(e) => {
+            setFieldValue("placeholder", e.target.value);
+          }}
+        />
+        <SegmentedControlSizes
+          label="Size"
+          sizing={inputSizes}
+          {...form.getInputProps("size")}
+          onChange={(value) => {
+            form.setFieldValue("size", value as string);
+            debouncedTreeComponentAttrsUpdate({
+              attrs: {
+                props: {
+                  size: value,
+                  style: { height: inputSizes[value] },
+                },
+              },
+            });
+          }}
+        />
+        <IconSelector
+          topLabel="Icon"
+          selectedIcon={(form.values.icon as any)?.props?.name}
+          onIconSelect={(iconName: string) => {
+            form.setFieldValue("iconName", iconName);
+            debouncedTreeComponentAttrsUpdate({
+              attrs: {
+                props: {
+                  iconName,
+                },
+              },
+            });
+          }}
+        />
+        <Stack spacing={2}>
+          <TopLabel text="Dropdown Position" />
+          <SegmentedControl
             size="xs"
-            {...form.getInputProps("placeholder")}
-            onChange={(e) => {
-              setFieldValue("placeholder", e.target.value);
+            data={dropdownData}
+            styles={{
+              label: {
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100%",
+              },
             }}
-          />
-          <SegmentedControlSizes
-            label="Size"
-            sizing={inputSizes}
-            {...form.getInputProps("size")}
+            {...form.getInputProps("dropdownPosition")}
             onChange={(value) => {
-              form.setFieldValue("size", value as string);
-              debouncedTreeComponentAttrsUpdate({
-                attrs: {
-                  props: {
-                    size: value,
-                    style: { height: inputSizes[value] },
-                  },
-                },
-              });
+              setFieldValue("dropdownPosition", value);
             }}
-          />
-          <IconSelector
-            topLabel="Icon"
-            selectedIcon={(form.values.icon as any)?.props?.name}
-            onIconSelect={(iconName: string) => {
-              form.setFieldValue("iconName", iconName);
-              debouncedTreeComponentAttrsUpdate({
-                attrs: {
-                  props: {
-                    iconName,
-                  },
-                },
-              });
-            }}
-          />
-          <Stack spacing={2}>
-            <TopLabel text="Dropdown Position" />
-            <SegmentedControl
-              size="xs"
-              data={dropdownData}
-              styles={{
-                label: {
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  height: "100%",
-                },
-              }}
-              {...form.getInputProps("dropdownPosition")}
-              onChange={(value) => {
-                setFieldValue("dropdownPosition", value);
-              }}
-            />
-          </Stack>
-          <TextInput
-            label="Custom Text"
-            size="xs"
-            {...form.getInputProps("customText")}
-            onChange={(e) => {
-              setFieldValue("customText", e.target.value);
-            }}
-          />
-          <TextInput
-            label="Custom Link Description"
-            size="xs"
-            {...form.getInputProps("customLinkText")}
-            onChange={(e) => {
-              setFieldValue("customLinkText", e.target.value);
-            }}
-          />
-          <Select
-            label="Custom Page Link"
-            size="xs"
-            {...form.getInputProps("customLinkUrl")}
-            onChange={(value) => {
-              setFieldValue("customLinkUrl", value);
-            }}
-            data={pages.map((page) => ({
-              label: page.title,
-              value: page.id,
-            }))}
           />
         </Stack>
-      </form>
-    );
-  },
-);
+        <TextInput
+          label="Custom Text"
+          size="xs"
+          {...form.getInputProps("customText")}
+          onChange={(e) => {
+            setFieldValue("customText", e.target.value);
+          }}
+        />
+        <TextInput
+          label="Custom Link Description"
+          size="xs"
+          {...form.getInputProps("customLinkText")}
+          onChange={(e) => {
+            setFieldValue("customLinkText", e.target.value);
+          }}
+        />
+        <Select
+          label="Custom Page Link"
+          size="xs"
+          {...form.getInputProps("customLinkUrl")}
+          onChange={(value) => {
+            setFieldValue("customLinkUrl", value);
+          }}
+          data={pages.map((page) => ({
+            label: page.title,
+            value: page.id,
+          }))}
+        />
+      </Stack>
+    </form>
+  );
+});
 
 const dropdownData = [
   {
@@ -169,3 +163,5 @@ const dropdownData = [
     value: "flip",
   },
 ];
+
+export default Modifier;

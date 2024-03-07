@@ -1,7 +1,7 @@
 import { EndpointRequestInputs } from "@/components/EndpointRequestInputs";
 import { EndpointSelect } from "@/components/EndpointSelect";
 import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
-import { SidebarSection } from "@/components/SidebarSection";
+import SidebarSection from "@/components/SidebarSection";
 import { VisibilityModifier } from "@/components/data/VisibilityModifier";
 import { useData } from "@/hooks/useData";
 import { Endpoint } from "@/requests/datasources/types";
@@ -13,7 +13,6 @@ import { extractKeys } from "@/utils/data";
 import { Component, debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { Divider, Flex, Select, Text, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconDatabase } from "@tabler/icons-react";
 import get from "lodash.get";
 import { useEffect, useState } from "react";
 
@@ -102,7 +101,7 @@ export const DynamicSettings = ({
         noPadding={true}
         initiallyOpened={initiallyOpened}
         label="Load Data"
-        icon={IconDatabase}
+        icon="IconDatabase"
         onClick={(id: string, opened: boolean) =>
           id === "data" && setInitiallyOpened(opened)
         }
