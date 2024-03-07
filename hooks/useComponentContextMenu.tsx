@@ -186,8 +186,8 @@ export const useComponentContextMenu = () => {
     forceDestroyContextMenu: destroy,
     componentContextMenu: (
       component: Component,
-      clickX: number,
-      clickY: number,
+      clickX?: number,
+      clickY?: number,
     ) =>
       showContextMenu(
         [
@@ -270,8 +270,8 @@ export const useComponentContextEventHandler = (
   component: Component,
   componentContextMenu: (
     component: Component,
-    x?: number,
-    y?: number,
+    x?: number | undefined,
+    y?: number | undefined,
   ) => MouseEventHandler,
 ) => {
   return useCallback(
