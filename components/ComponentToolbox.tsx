@@ -20,7 +20,6 @@ import {
 } from "@/utils/editor";
 import { Group, Text, Tooltip, UnstyledButton } from "@mantine/core";
 import { IconGripVertical } from "@tabler/icons-react";
-import cloneDeep from "lodash.clonedeep";
 import { useCallback, useEffect, useMemo } from "react";
 
 type Props = {
@@ -201,9 +200,8 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
               };
             }
 
-            const copy = cloneDeep(editorTree) as EditorTreeCopy;
             const containerId = addComponent(
-              copy.root,
+              editorTree.root,
               container,
               {
                 id: parentTree?.id!,
@@ -212,13 +210,17 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
               getComponentIndex(parentTree!, id),
             );
 
-            addComponent(copy.root, component, {
+            addComponent(editorTree.root, component, {
               id: containerId,
               edge: "left",
             });
 
-            removeComponentFromParent(copy.root, component, parentTree?.id!);
-            setEditorTree(copy, {
+            removeComponentFromParent(
+              editorTree.root,
+              component,
+              parentTree?.id!,
+            );
+            setEditorTree(editorTree, {
               action: `Wrapped ${component.name} with a Container`,
             });
           }}
@@ -242,9 +244,8 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
             iconName={ICON_DELETE}
             tooltip="Delete"
             onClick={() => {
-              const editorTreeCopy = cloneDeep(editorTree) as EditorTreeCopy;
-              removeComponent(editorTreeCopy.root, component?.id!);
-              setEditorTree(editorTreeCopy, {
+              removeComponent(editorTree.root, component?.id!);
+              setEditorTree(editorTree, {
                 action: `Removed ${component?.name}`,
               });
             }}

@@ -14,7 +14,6 @@ import {
   removeComponent,
   removeComponentFromParent,
 } from "@/utils/editor";
-import cloneDeep from "lodash.clonedeep";
 import { useCallback } from "react";
 
 const parseId = (_id: string) => {
@@ -44,16 +43,15 @@ export const useOnDrop = () => {
         ? componentToAdd
         : useEditorStore.getState().componentMutableAttrs[_droppedId];
       dropTarget.id = parseId(dropTarget.id);
-      const editorTreeCopy = cloneDeep(editorTree) as EditorTreeCopy;
       const activeComponentTree = getComponentTreeById(
-        editorTreeCopy.root,
+        editorTree.root,
         activeComponent.id!,
       );
 
       let targetComponent =
         useEditorStore.getState().componentMutableAttrs[dropTarget.id];
       const targetParentComponentTree = getComponentParent(
-        editorTreeCopy.root,
+        editorTree.root as ComponentStructure,
         dropTarget.id,
       );
       const isParentContentWrapper =
@@ -64,14 +62,14 @@ export const useOnDrop = () => {
       if (!isMoving && activeComponent.id && componentToAdd && isDroppable) {
         if (componentToAdd.name === "Grid") {
           handleGridComponentAddition(
-            editorTreeCopy.root,
+            editorTree.root as ComponentStructure,
             dropTarget,
             targetComponent,
             componentToAdd,
           );
         } else {
           handleComponentAddition(
-            editorTreeCopy.root,
+            editorTree.root as ComponentStructure,
             dropTarget,
             targetComponent,
             componentToAdd,
@@ -91,7 +89,7 @@ export const useOnDrop = () => {
           }
 
           handleGridReorderingOrMoving(
-            editorTreeCopy.root,
+            editorTree.root as ComponentStructure,
             activeComponent,
             targetComponent,
             dropTarget,
@@ -99,17 +97,21 @@ export const useOnDrop = () => {
           );
         } else {
           handleReorderingOrMoving(
-            editorTreeCopy.root,
+            editorTree.root as ComponentStructure,
             activeComponent,
             targetComponent,
             dropTarget,
           );
         }
       } else if (isDroppable) {
-        handleRootDrop(editorTreeCopy.root, activeComponent, dropTarget);
+        handleRootDrop(
+          editorTree.root as ComponentStructure,
+          activeComponent,
+          dropTarget,
+        );
       }
 
-      setEditorTree(editorTreeCopy);
+      setEditorTree(editorTree as EditorTreeCopy);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [

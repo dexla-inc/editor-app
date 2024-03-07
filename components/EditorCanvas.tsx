@@ -17,6 +17,7 @@ import { componentMapper, structureMapper } from "@/utils/componentMapper";
 import { encodeSchema } from "@/utils/compression";
 import { HEADER_HEIGHT } from "@/utils/config";
 import {
+  ComponentStructure,
   ComponentTree,
   EditorTreeCopy,
   addComponent,
@@ -28,7 +29,6 @@ import {
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Box, Paper } from "@mantine/core";
 import { useDisclosure, useHotkeys } from "@mantine/hooks";
-import cloneDeep from "lodash.clonedeep";
 import { memo, useCallback } from "react";
 
 type Props = {
@@ -65,7 +65,6 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
       selectedComponentIds.length > 0 &&
       !isPreviewMode
     ) {
-      const editorTreeCopy = cloneDeep(editorTree) as EditorTreeCopy;
       const modals = Object.values(
         useEditorStore.getState().componentMutableAttrs,
       ).filter((c) => c.name === "Modal");
@@ -76,13 +75,13 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
         const comp =
           useEditorStore.getState().componentMutableAttrs[selectedComponentId];
         const parentTree = getComponentParent(
-          editorTreeCopy.root,
+          editorTree.root as ComponentStructure,
           selectedComponentId,
         );
         const parent =
           useEditorStore.getState().componentMutableAttrs[parentTree?.id!];
         const grandParent = getComponentParent(
-          editorTreeCopy.root,
+          editorTree.root as ComponentStructure,
           parentTree?.id!,
         );
 
@@ -99,20 +98,28 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
         ) {
           return;
         }
-        removeComponent(editorTreeCopy.root, selectedComponentId);
+        removeComponent(
+          editorTree.root as ComponentStructure,
+          selectedComponentId,
+        );
         if (
           comp?.name === "GridColumn" &&
           parent?.name === "Grid" &&
           parentTree?.children?.length === 0
         ) {
-          removeComponent(editorTreeCopy.root, parentTree.id!);
+          removeComponent(
+            editorTree.root as ComponentStructure,
+            parentTree.id!,
+          );
         }
         if (targetModal) {
           setSelectedComponentIds(() => [targetModal.id!]);
         } else {
           setSelectedComponentIds(() => []);
         }
-        setEditorTree(editorTreeCopy, { action: `Removed ${comp?.name}` });
+        setEditorTree(editorTree as EditorTreeCopy, {
+          action: `Removed ${comp?.name}`,
+        });
       });
     }
   }, [isPreviewMode, editorTree, setSelectedComponentIds, setEditorTree]);
@@ -155,14 +162,13 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
     const selectedComponentId = useEditorStore
       .getState()
       .selectedComponentIds?.at(-1);
-    const editorTreeCopy = cloneDeep(editorTree) as EditorTreeCopy;
 
     if (!selectedComponentId || selectedComponentId === "root")
       return "content-wrapper";
     const component =
       useEditorStore.getState().componentMutableAttrs[selectedComponentId];
     const componentTree = getComponentTreeById(
-      editorTreeCopy.root,
+      editorTree.root,
       selectedComponentId,
     );
     let targetId = selectedComponentId;
@@ -187,7 +193,7 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
       isAllowedGridMatch;
     if (addAsSiblingFlag) {
       const parentComponentTree = getComponentParent(
-        editorTreeCopy.root,
+        editorTree.root as ComponentStructure,
         selectedComponentId,
       );
       targetId = parentComponentTree?.id as string;
@@ -198,7 +204,7 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
     }
 
     const newSelectedId = addComponent(
-      editorTreeCopy.root,
+      editorTree.root as ComponentStructure,
       componentToPaste,
       {
         id: targetId,
@@ -208,7 +214,7 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
       true,
     );
 
-    setEditorTree(editorTreeCopy, {
+    setEditorTree(editorTree as EditorTreeCopy, {
       action: `Pasted ${componentToPaste.name}`,
     });
     setSelectedComponentIds(() => [newSelectedId]);

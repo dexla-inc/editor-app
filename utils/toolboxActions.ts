@@ -1,20 +1,23 @@
-import cloneDeep from "lodash.clonedeep";
-import { Component, addComponent, EditorTreeCopy } from "@/utils/editor";
-import { structureMapper } from "@/utils/componentMapper";
-import { useEditorStore } from "@/stores/editor";
 import { jsonStructure as accordionItemSchema } from "@/components/mapper/structure/AccordionItem";
-import { jsonStructure as tabsPanelSchema } from "@/components/mapper/structure/TabsPanel";
 import { jsonStructure as tabSchema } from "@/components/mapper/structure/Tab";
+import { jsonStructure as tabsPanelSchema } from "@/components/mapper/structure/TabsPanel";
+import { useEditorStore } from "@/stores/editor";
+import { structureMapper } from "@/utils/componentMapper";
+import {
+  Component,
+  ComponentStructure,
+  EditorTreeCopy,
+  addComponent,
+} from "@/utils/editor";
 
 export const addColumnToolboxAction = ({ component }: any) => {
-  const editorTree = useEditorStore.getState().tree;
+  const editorTree = useEditorStore.getState().tree as EditorTreeCopy;
   const setEditorTree = useEditorStore.getState().setTree;
 
-  const copy = cloneDeep(editorTree) as EditorTreeCopy;
   const ColumnSchema = structureMapper["GridColumn"].structure({});
 
   addComponent(
-    copy.root,
+    editorTree.root,
     {
       ...ColumnSchema,
       props: { ...ColumnSchema.props, resetTargetResized: true },
@@ -25,19 +28,18 @@ export const addColumnToolboxAction = ({ component }: any) => {
     },
   );
 
-  setEditorTree(copy);
+  setEditorTree(editorTree);
 };
 
 export const insertRowToolboxAction = ({ parent }: any) => {
-  const editorTree = useEditorStore.getState().tree;
+  const editorTree = useEditorStore.getState().tree as EditorTreeCopy;
   const setEditorTree = useEditorStore.getState().setTree;
 
-  const copy = cloneDeep(editorTree) as EditorTreeCopy;
   const ColumnSchema = structureMapper["GridColumn"].structure({});
   const GridSchema = structureMapper["Grid"].structure({});
 
   addComponent(
-    copy.root,
+    editorTree.root,
     { ...GridSchema, children: [ColumnSchema] },
     {
       id: parent?.id!,
@@ -45,18 +47,17 @@ export const insertRowToolboxAction = ({ parent }: any) => {
     },
   );
 
-  setEditorTree(copy);
+  setEditorTree(editorTree);
 };
 
 export const addColumnToParentToolboxAction = ({ parent }: any) => {
-  const editorTree = useEditorStore.getState().tree;
+  const editorTree = useEditorStore.getState().tree as EditorTreeCopy;
   const setEditorTree = useEditorStore.getState().setTree;
 
-  const copy = cloneDeep(editorTree) as EditorTreeCopy;
   const ColumnSchema = structureMapper["GridColumn"].structure({});
 
   addComponent(
-    copy.root,
+    editorTree.root,
     {
       ...ColumnSchema,
       props: { ...ColumnSchema.props, resetTargetResized: true },
@@ -67,36 +68,33 @@ export const addColumnToParentToolboxAction = ({ parent }: any) => {
     },
   );
 
-  setEditorTree(copy);
+  setEditorTree(editorTree);
 };
 
 export const insertGridToolboxAction = ({ component }: any) => {
-  const editorTree = useEditorStore.getState().tree;
+  const editorTree = useEditorStore.getState().tree as EditorTreeCopy;
   const setEditorTree = useEditorStore.getState().setTree;
 
-  const copy = cloneDeep(editorTree) as EditorTreeCopy;
   const GridSchema = structureMapper["Grid"].structure({});
 
-  addComponent(copy.root, GridSchema, {
+  addComponent(editorTree.root, GridSchema, {
     id: component.id!,
     edge: "center",
   });
 
-  setEditorTree(copy);
+  setEditorTree(editorTree);
 };
 
 export const addAccordionItemToolboxAction = ({ component }: any) => {
-  const editorTree = useEditorStore.getState().tree;
+  const editorTree = useEditorStore.getState().tree as EditorTreeCopy;
   const setEditorTree = useEditorStore.getState().setTree;
 
-  const copy = cloneDeep(editorTree) as EditorTreeCopy;
-
-  addComponent(copy.root, accordionItemSchema({}), {
+  addComponent(editorTree.root, accordionItemSchema({}), {
     id: component.id!,
     edge: "center",
   });
 
-  setEditorTree(copy);
+  setEditorTree(editorTree);
 };
 
 export const addTabToolboxAction = ({ component }: any) => {
@@ -107,17 +105,23 @@ export const addTabToolboxAction = ({ component }: any) => {
     (child: Component) => child.name === "TabsList",
   );
 
-  const copy = cloneDeep(editorTree) as EditorTreeCopy;
+  addComponent(
+    editorTree.root as ComponentStructure,
+    tabsPanelSchema({ props: { value: "new-tab" } }),
+    {
+      id: component.id!,
+      edge: "center",
+    },
+  );
 
-  addComponent(copy.root, tabsPanelSchema({ props: { value: "new-tab" } }), {
-    id: component.id!,
-    edge: "center",
-  });
+  addComponent(
+    editorTree.root as ComponentStructure,
+    tabSchema({ props: { value: "new-tab" } }),
+    {
+      id: tabList.id!,
+      edge: "center",
+    },
+  );
 
-  addComponent(copy.root, tabSchema({ props: { value: "new-tab" } }), {
-    id: tabList.id!,
-    edge: "center",
-  });
-
-  setEditorTree(copy);
+  setEditorTree(editorTree as EditorTreeCopy);
 };
