@@ -270,8 +270,8 @@ export const useComponentContextEventHandler = (
   component: Component,
   componentContextMenu: (
     component: Component,
-    x: number,
-    y: number,
+    x?: number,
+    y?: number,
   ) => MouseEventHandler,
 ) => {
   return useCallback(
