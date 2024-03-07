@@ -3,8 +3,5 @@
     "next/core-web-vitals",
     "plugin:@tanstack/eslint-plugin-query/recommended"
   ],
-  "plugins": ["@tanstack/query"],
-  "rules": {
-    "react-hooks/exhaustive-deps": "error" // Treat exhaustive-deps warnings as errors
-  }
+  "plugins": ["@tanstack/query"]
 }

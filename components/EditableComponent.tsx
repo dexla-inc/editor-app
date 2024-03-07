@@ -5,7 +5,6 @@ import {
   useComponentContextMenu,
 } from "@/hooks/useComponentContextMenu";
 import { useEditorShadows } from "@/hooks/useEditorShadows";
-import { useHoverEvents } from "@/hooks/useHoverEvents";
 import {
   handleBackground,
   useComputeChildStyles,
@@ -61,14 +60,10 @@ export const EditableComponent = ({
     entity: component,
   });
 
-  const { overlayStyles, handleMouseEnter, handleMouseLeave } =
-    useHoverEvents();
-
   const { isPicking, droppable, tealOutline } = useEditorShadows({
     componentId: id,
     isSelected,
     selectedByOther,
-    overlayStyles,
   });
 
   const propsWithOverwrites = usePropsWithOverwrites(
@@ -76,8 +71,6 @@ export const EditableComponent = ({
     isEditorMode,
     currentState,
     triggers,
-    handleMouseEnter,
-    handleMouseLeave,
   );
 
   const childStyles = computeChildStyles(

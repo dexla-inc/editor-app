@@ -76,7 +76,6 @@ export const useDroppable = ({
   onDrop: (droppedId: string, dropTarget: DropTarget) => void;
   currentWindow?: Window;
 }) => {
-  const isPageStructure = useEditorStore((state) => state.isPageStructure);
   const setCurrentTargetId = useEditorStore(
     (state) => state.setCurrentTargetId,
   );
@@ -158,7 +157,7 @@ export const useDroppable = ({
       const topDist = mouseY - rect.top;
       const bottomDist = rect.bottom - mouseY;
 
-      if (isPageStructure && mouseX <= NAVBAR_WIDTH) {
+      if (mouseX <= NAVBAR_WIDTH) {
         handleEdgeSet({ leftDist, rightDist, topDist, bottomDist }, 2);
       } else {
         handleEdgeSet({ leftDist, rightDist, topDist, bottomDist }, 5);
@@ -171,7 +170,6 @@ export const useDroppable = ({
       currentTargetId,
       component?.blockDroppingChildrenInside,
       isResizing,
-      isPageStructure,
     ],
   );
 

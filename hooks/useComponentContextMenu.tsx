@@ -41,7 +41,6 @@ export const useComponentContextMenu = () => {
   const { showContextMenu, destroy } = useContextMenu();
   const editorTheme = useEditorStore((state) => state.theme);
   const copiedProperties = useEditorStore((state) => state.copiedProperties);
-  const isPageStructure = useEditorStore((state) => state.isPageStructure);
   const setEditorTree = useEditorStore((state) => state.setTree);
   const clearSelection = useEditorStore((state) => state.clearSelection);
   const setCopiedComponent = useEditorStore(
@@ -185,7 +184,11 @@ export const useComponentContextMenu = () => {
 
   return {
     forceDestroyContextMenu: destroy,
-    componentContextMenu: (component: Component) =>
+    componentContextMenu: (
+      component: Component,
+      clickX: number,
+      clickY: number,
+    ) =>
       showContextMenu(
         [
           {
@@ -254,8 +257,9 @@ export const useComponentContextMenu = () => {
         ],
         {
           styles: {
-            ...(isTabPinned &&
-              !isPageStructure && { root: { marginLeft: NAVBAR_WIDTH } }),
+            ...(clickX !== undefined && {
+              root: { marginLeft: NAVBAR_WIDTH },
+            }),
           },
         },
       ),
@@ -264,7 +268,11 @@ export const useComponentContextMenu = () => {
 
 export const useComponentContextEventHandler = (
   component: Component,
-  componentContextMenu: (component: Component) => MouseEventHandler,
+  componentContextMenu: (
+    component: Component,
+    x: number,
+    y: number,
+  ) => MouseEventHandler,
 ) => {
   return useCallback(
     (event: any) => {
@@ -273,7 +281,11 @@ export const useComponentContextEventHandler = (
       }
 
       event.preventDefault();
-      componentContextMenu(component)(event);
+      // Capture the click position
+      const clickX = event.clientX;
+      const clickY = event.clientY;
+
+      componentContextMenu(component, clickX, clickY)(event);
     },
     [component, componentContextMenu],
   );

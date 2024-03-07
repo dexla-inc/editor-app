@@ -62,9 +62,7 @@ export const NavbarSection = ({
   const setIsStructureCollapsed = useEditorStore(
     (state) => state.setIsStructureCollapsed,
   );
-  const setIsPageStructure = useEditorStore(
-    (state) => state.setIsPageStructure,
-  );
+
   const { ref } = useHover();
 
   const hasCollapsedItems = collapsedItemsCount > 0;
@@ -175,8 +173,6 @@ export const NavbarSection = ({
   const itemTab = (
     <Stack
       ref={ref}
-      onMouseEnter={() => setIsPageStructure(true)}
-      onMouseLeave={() => setIsPageStructure(false)}
       sx={(theme) =>
         merge(
           {
