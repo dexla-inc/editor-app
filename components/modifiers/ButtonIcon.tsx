@@ -10,26 +10,20 @@ import { requiredModifiers } from "@/utils/modifiers";
 import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
-import { useEffect } from "react";
 import { SegmentedControlSizes } from "../SegmentedControlSizes";
 
 const Modifier = withModifier(({ selectedComponent }) => {
-  const form = useForm();
-  const { setBackgroundColor } = useChangeState({});
   const theme = useEditorStore((state) => state.theme);
-
-  useEffect(() => {
-    form.setValues(
-      merge({}, requiredModifiers.buttonIcon, {
-        size: selectedComponent?.props?.size ?? theme.inputSize,
-        color: selectedComponent.props?.color,
-        iconName: selectedComponent.props?.iconName,
-        iconSize: selectedComponent.props?.iconSize,
-        iconColor: selectedComponent.props?.iconColor,
-      }),
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponent]);
+  const form = useForm({
+    initialValues: merge({}, requiredModifiers.buttonIcon, {
+      size: selectedComponent?.props?.size ?? theme.inputSize,
+      color: selectedComponent.props?.color,
+      iconName: selectedComponent.props?.iconName,
+      iconSize: selectedComponent.props?.iconSize,
+      iconColor: selectedComponent.props?.iconColor,
+    }),
+  });
+  const { setBackgroundColor } = useChangeState({});
 
   const handleIconPropsChange = (key: string, value: string) => {
     form.setFieldValue(key, value);

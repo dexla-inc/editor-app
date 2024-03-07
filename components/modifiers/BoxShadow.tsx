@@ -18,7 +18,6 @@ import { requiredModifiers } from "@/utils/modifiers";
 import { Flex, SegmentedControl, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
-import { useEffect } from "react";
 
 const defaultBoxShadowValues = requiredModifiers.boxShadow;
 
@@ -39,24 +38,19 @@ const Modifier = withModifier(({ selectedComponent }) => {
   const spread = values[4];
   const color = values.slice(5).join(" ");
 
-  const form = useForm();
-
-  useEffect(() => {
-    form.setValues(
-      merge({}, defaultBoxShadowValues, {
-        inset,
-        xOffset,
-        yOffset,
-        blur,
-        spread,
-        color: getThemeColor(theme, color),
-        ...(isCardComponent && {
-          cardStyle: selectedComponent?.props?.cardStyle ?? "ROUNDED",
-        }),
+  const form = useForm({
+    initialValues: merge({}, defaultBoxShadowValues, {
+      inset,
+      xOffset,
+      yOffset,
+      blur,
+      spread,
+      color: getThemeColor(theme, color),
+      ...(isCardComponent && {
+        cardStyle: selectedComponent?.props?.cardStyle ?? "ROUNDED",
       }),
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponent]);
+    }),
+  });
 
   return (
     <form key={selectedComponent?.id}>

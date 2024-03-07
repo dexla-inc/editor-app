@@ -5,24 +5,18 @@ import { requiredModifiers } from "@/utils/modifiers";
 import { Group, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
-import { useEffect } from "react";
 
 const Modifier = withModifier(({ selectedComponent }) => {
-  const form = useForm();
-
-  useEffect(() => {
-    form.setValues(
-      merge({}, requiredModifiers.size, {
-        width: selectedComponent.props?.style?.width,
-        height: selectedComponent.props?.style?.height,
-        minWidth: selectedComponent.props?.style?.minWidth,
-        minHeight: selectedComponent.props?.style?.minHeight,
-        maxWidth: selectedComponent.props?.style?.maxWidth,
-        maxHeight: selectedComponent.props?.style?.maxHeight,
-      }),
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponent]);
+  const form = useForm({
+    initialValues: merge({}, requiredModifiers.size, {
+      width: selectedComponent.props?.style?.width,
+      height: selectedComponent.props?.style?.height,
+      minWidth: selectedComponent.props?.style?.minWidth,
+      minHeight: selectedComponent.props?.style?.minHeight,
+      maxWidth: selectedComponent.props?.style?.maxWidth,
+      maxHeight: selectedComponent.props?.style?.maxHeight,
+    }),
+  });
 
   return (
     <form key={selectedComponent?.id}>

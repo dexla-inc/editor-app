@@ -8,24 +8,18 @@ import { requiredModifiers } from "@/utils/modifiers";
 import { Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
-import { useEffect } from "react";
 import { SegmentedControlSizes } from "../SegmentedControlSizes";
 
 const Modifier = withModifier(({ selectedComponent }) => {
-  const form = useForm();
   const theme = useEditorStore((state) => state.theme);
-
-  useEffect(() => {
-    form.setValues(
-      merge({}, requiredModifiers.avatar, {
-        variant: selectedComponent.props?.variant,
-        radius: selectedComponent.props?.radius,
-        size: selectedComponent.props?.size ?? theme.inputSize,
-        color: selectedComponent.props?.color,
-      }),
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponent]);
+  const form = useForm({
+    initialValues: merge({}, requiredModifiers.avatar, {
+      variant: selectedComponent.props?.variant,
+      radius: selectedComponent.props?.radius,
+      size: selectedComponent.props?.size ?? theme.inputSize,
+      color: selectedComponent.props?.color,
+    }),
+  });
 
   const variantOptions: Record<string, string> = {
     Default: "default",

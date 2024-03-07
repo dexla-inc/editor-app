@@ -10,33 +10,27 @@ import { requiredModifiers } from "@/utils/modifiers";
 import { Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
-import { useEffect } from "react";
 import { RangeSliderInput } from "../RangeSliderInput";
 
 const Modifier = withModifier(({ selectedComponent }) => {
-  const form = useForm();
   const theme = useEditorStore((state) => state.theme);
-
-  useEffect(() => {
-    form.setValues(
-      merge({}, requiredModifiers.input, {
-        size: selectedComponent?.props?.size ?? theme.inputSize,
-        placeholder: selectedComponent?.props?.placeholder,
-        type: selectedComponent?.props?.type,
-        icon: selectedComponent?.props?.icon,
-        withAsterisk: selectedComponent?.props?.withAsterisk,
-        clearable: selectedComponent?.props?.clearable,
-        displayRequirements:
-          selectedComponent?.props?.displayRequirements ?? false,
-        passwordRange: selectedComponent?.props?.passwordRange,
-        passwordNumber: selectedComponent?.props?.passwordNumber,
-        passwordLower: selectedComponent?.props?.passwordLower,
-        passwordUpper: selectedComponent?.props?.passwordUpper,
-        passwordSpecial: selectedComponent?.props?.passwordSpecial,
-      }),
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponent]);
+  const form = useForm({
+    initialValues: merge({}, requiredModifiers.input, {
+      size: selectedComponent?.props?.size ?? theme.inputSize,
+      placeholder: selectedComponent?.props?.placeholder,
+      type: selectedComponent?.props?.type,
+      icon: selectedComponent?.props?.icon,
+      withAsterisk: selectedComponent?.props?.withAsterisk,
+      clearable: selectedComponent?.props?.clearable,
+      displayRequirements:
+        selectedComponent?.props?.displayRequirements ?? false,
+      passwordRange: selectedComponent?.props?.passwordRange,
+      passwordNumber: selectedComponent?.props?.passwordNumber,
+      passwordLower: selectedComponent?.props?.passwordLower,
+      passwordUpper: selectedComponent?.props?.passwordUpper,
+      passwordSpecial: selectedComponent?.props?.passwordSpecial,
+    }),
+  });
 
   return (
     <form>

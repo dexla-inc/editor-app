@@ -11,12 +11,30 @@ import { requiredModifiers } from "@/utils/modifiers";
 import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
 const Modifier = withModifier(({ selectedComponent }) => {
-  const form = useForm();
   const theme = useEditorStore((state) => state.theme);
   const [icon, setIcon] = useState(selectedComponent.props?.icon);
+  const form = useForm({
+    initialValues: merge(
+      {},
+      requiredModifiers.button,
+      {
+        color: "Primary.6",
+        textColor: "PrimaryText.6",
+      },
+      {
+        variant: selectedComponent.props?.variant,
+        size: selectedComponent?.props?.size ?? theme.inputSize,
+        icon: icon,
+        color: selectedComponent.props?.color,
+        textColor: selectedComponent.props?.textColor,
+        width: selectedComponent.props?.style?.width,
+        duration: selectedComponent.props?.duration,
+      },
+    ),
+  });
 
   const changeIcon = useCallback(
     (value?: string, iconPosition?: string) => {
@@ -28,29 +46,6 @@ const Modifier = withModifier(({ selectedComponent }) => {
     },
     [form],
   );
-
-  useEffect(() => {
-    form.setValues(
-      merge(
-        {},
-        requiredModifiers.button,
-        {
-          color: "Primary.6",
-          textColor: "PrimaryText.6",
-        },
-        {
-          variant: selectedComponent.props?.variant,
-          size: selectedComponent?.props?.size ?? theme.inputSize,
-          icon: icon,
-          color: selectedComponent.props?.color,
-          textColor: selectedComponent.props?.textColor,
-          width: selectedComponent.props?.style?.width,
-          duration: selectedComponent.props?.duration,
-        },
-      ),
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponent]);
 
   const { setBackgroundColor } = useChangeState({});
 

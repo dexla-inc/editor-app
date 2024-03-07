@@ -19,25 +19,19 @@ import {
   IconAlignBoxRightMiddle,
 } from "@tabler/icons-react";
 import merge from "lodash.merge";
-import { useEffect } from "react";
 
 const Modifier = withModifier(({ selectedComponent }) => {
-  const form = useForm();
-
-  useEffect(() => {
-    form.setValues(
-      merge({}, requiredModifiers.position, {
-        position: selectedComponent?.props?.style?.position,
-        top: selectedComponent?.props?.style?.top,
-        right: selectedComponent?.props?.style?.right,
-        bottom: selectedComponent?.props?.style?.bottom,
-        left: selectedComponent?.props?.style?.left,
-        zIndex: selectedComponent?.props?.style?.zIndex,
-        alignSelf: selectedComponent?.props?.style?.alignSelf,
-      }),
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponent]);
+  const form = useForm({
+    initialValues: merge({}, requiredModifiers.position, {
+      position: selectedComponent?.props?.style?.position,
+      top: selectedComponent?.props?.style?.top,
+      right: selectedComponent?.props?.style?.right,
+      bottom: selectedComponent?.props?.style?.bottom,
+      left: selectedComponent?.props?.style?.left,
+      zIndex: selectedComponent?.props?.style?.zIndex,
+      alignSelf: selectedComponent?.props?.style?.alignSelf,
+    }),
+  });
 
   return (
     <form key={selectedComponent?.id}>

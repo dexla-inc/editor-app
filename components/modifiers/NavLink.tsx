@@ -7,26 +7,19 @@ import { requiredModifiers } from "@/utils/modifiers";
 import { Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
-import { useEffect } from "react";
 
 const Modifier = withModifier(({ selectedComponent }) => {
-  const form = useForm();
+  const form = useForm({
+    initialValues: merge({}, requiredModifiers.navLink, {
+      icon: selectedComponent?.props?.icon,
+      bg: selectedComponent?.props?.bg ?? "transparent",
+      color: selectedComponent?.props?.color,
+      iconColor:
+        selectedComponent?.props?.iconColor ?? selectedComponent?.props?.color,
+      textAlign: selectedComponent?.props?.style?.textAlign,
+    }),
+  });
   const { setBackgroundColor } = useChangeState({});
-
-  useEffect(() => {
-    form.setValues(
-      merge({}, requiredModifiers.navLink, {
-        icon: selectedComponent?.props?.icon,
-        bg: selectedComponent?.props?.bg ?? "transparent",
-        color: selectedComponent?.props?.color,
-        iconColor:
-          selectedComponent?.props?.iconColor ??
-          selectedComponent?.props?.color,
-        textAlign: selectedComponent?.props?.style?.textAlign,
-      }),
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponent]);
 
   return (
     <form>

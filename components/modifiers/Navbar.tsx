@@ -6,26 +6,19 @@ import { requiredModifiers } from "@/utils/modifiers";
 import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
-import { useEffect } from "react";
 import { ThemeColorSelector } from "../ThemeColorSelector";
 
 const initialValues = requiredModifiers.navbar;
 
 const Modifier = withModifier(({ selectedComponent }) => {
   const editorTree = useEditorStore((state) => state.tree);
-  const setTree = useEditorStore((state) => state.setTree);
 
-  const form = useForm();
-
-  useEffect(() => {
-    form.setValues(
-      merge({}, initialValues, {
-        width: selectedComponent?.props?.style?.width,
-        bg: selectedComponent?.props?.bg ?? "transparent",
-      }),
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponent]);
+  const form = useForm({
+    initialValues: merge({}, initialValues, {
+      width: selectedComponent?.props?.style?.width,
+      bg: selectedComponent?.props?.bg ?? "transparent",
+    }),
+  });
 
   const setNavbarWidth = (value: string) => {
     const contentWrapper = editorTree.root.children?.find(

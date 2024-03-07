@@ -6,21 +6,15 @@ import { requiredModifiers } from "@/utils/modifiers";
 import { Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
-import { useEffect } from "react";
 
 const Modifier = withModifier(({ selectedComponent }) => {
-  const form = useForm();
-
-  useEffect(() => {
-    form.setValues(
-      merge({}, requiredModifiers.tab, {
-        value: selectedComponent?.props?.value,
-        icon: selectedComponent?.props?.icon,
-        iconColor: selectedComponent?.props?.iconColor,
-      }),
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponent]);
+  const form = useForm({
+    initialValues: merge({}, requiredModifiers.tab, {
+      value: selectedComponent?.props?.value,
+      icon: selectedComponent?.props?.icon,
+      iconColor: selectedComponent?.props?.iconColor,
+    }),
+  });
 
   return (
     <form>

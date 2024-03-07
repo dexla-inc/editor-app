@@ -6,6 +6,7 @@ import merge from "lodash.merge";
 import set from "lodash.set";
 
 import { ComponentType } from "react";
+import { useShallow } from "zustand/react/shallow";
 
 type WithModifier = {
   selectedComponent: Component;
@@ -44,23 +45,25 @@ export const withModifier = (Modifier: ComponentType<WithModifier>) => {
     const hasSelectedComponentIds = useEditorStore(
       (state) => state.selectedComponentIds?.length,
     );
-    const component = useEditorStore((state) => {
-      const lastSelectedComponentId = state.selectedComponentIds?.[0]!;
-      const currentState =
-        state.currentTreeComponentsStates?.[lastSelectedComponentId] ??
-        "default";
-      const mergedCustomData = state.selectedComponentIds?.map((id) => {
-        const selectedComponent = state.componentMutableAttrs[id];
-        return merge(
-          {},
-          selectedComponent?.props,
-          selectedComponent?.languages?.[state.language],
-          selectedComponent?.states?.[currentState],
-        );
-      });
+    const component = useEditorStore(
+      useShallow((state) => {
+        const lastSelectedComponentId = state.selectedComponentIds?.[0]!;
+        const currentState =
+          state.currentTreeComponentsStates?.[lastSelectedComponentId] ??
+          "default";
+        const mergedCustomData = state.selectedComponentIds?.map((id) => {
+          const selectedComponent = state.componentMutableAttrs[id];
+          return merge(
+            {},
+            selectedComponent?.props,
+            selectedComponent?.languages?.[state.language],
+            selectedComponent?.states?.[currentState],
+          );
+        });
 
-      return findIntersectedKeyValues(mergedCustomData as Component[]);
-    });
+        return findIntersectedKeyValues(mergedCustomData as Component[]);
+      }),
+    );
 
     if (!initiallyOpened || !hasSelectedComponentIds) {
       return null;
