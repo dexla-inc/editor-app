@@ -20,7 +20,7 @@ const NavLinkComponent = forwardRef(
     ref,
   ) => {
     const theme = useThemeStore((state) => state.theme);
-    const currentPageId = useEditorStore((state) => state.currentPageId);
+    const currentPageId = useEditorTreeStore((state) => state.currentPageId);
     const contentEditableProps = useContentEditable(
       component.id as string,
       ref,

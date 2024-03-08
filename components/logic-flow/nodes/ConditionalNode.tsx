@@ -2,6 +2,7 @@ import { OutputForm } from "@/components/logic-flow/OutputForm";
 import { CustomNode, NodeData } from "@/components/logic-flow/nodes/CustomNode";
 import { useVariableListQuery } from "@/hooks/reactQuery/useVariableListQuery";
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { useFlowStore } from "@/stores/flow";
 import { Button, Select, Stack } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
@@ -38,7 +39,9 @@ type NodeFormType = {
 export const NodeForm = ({ form }: NodeFormType) => {
   const selectedNode = useFlowStore((state) => state.selectedNode);
   const isUpdating = useFlowStore((state) => state.isUpdating);
-  const projectId = useEditorStore((state) => state.currentProjectId) as string;
+  const projectId = useEditorTreeStore(
+    (state) => state.currentProjectId,
+  ) as string;
 
   const { data: variables } = useVariableListQuery(projectId);
 

@@ -8,8 +8,8 @@ type Props = {
 };
 
 const InitializeVariables = ({ pageProps }: Props) => {
-  const projectId = useEditorStore((state) => state.currentProjectId);
-  const pageId = useEditorStore((state) => state.currentPageId);
+  const projectId = useEditorTreeStore((state) => state.currentProjectId);
+  const pageId = useEditorTreeStore((state) => state.currentPageId);
   const _projectId = pageProps.id || projectId;
   const _pageId = pageProps.page?.id || pageId;
   const initializeVariableList = useVariableStore(

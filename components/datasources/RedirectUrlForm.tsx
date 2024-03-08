@@ -1,6 +1,7 @@
 import { useProjectQuery } from "@/hooks/reactQuery/useProjectQuery";
 import { patchProject } from "@/requests/projects/mutations";
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { convertToPatchParams } from "@/utils/dashboardTypes";
 import { Button, Select, Stack, Title } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -11,7 +12,9 @@ type Params = {
 };
 
 export const RedirectUrlForm = () => {
-  const projectId = useEditorStore((state) => state.currentProjectId) as string;
+  const projectId = useEditorTreeStore(
+    (state) => state.currentProjectId,
+  ) as string;
 
   const { data: project } = useProjectQuery(projectId);
 

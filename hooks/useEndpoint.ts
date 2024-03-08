@@ -2,6 +2,7 @@ import { useDataContext } from "@/contexts/DataProvider";
 import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { performFetch, prepareRequestData } from "@/utils/actions";
 import { DEFAULT_STALE_TIME } from "@/utils/config";
 import { Component } from "@/utils/editor";
@@ -31,7 +32,7 @@ export const useEndpoint = ({
     staleTime = DEFAULT_STALE_TIME,
   } = component.onLoad ?? {};
 
-  const projectId = useEditorStore((state) => state.currentProjectId);
+  const projectId = useEditorTreeStore((state) => state.currentProjectId);
   const { data: endpoints } = useDataSourceEndpoints(projectId);
   const endpoint = endpoints?.results?.find((e) => e.id === endpointId);
   const { computeValue } = useDataContext()!;
