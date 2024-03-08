@@ -2,7 +2,6 @@ import { useDataContext } from "@/contexts/DataProvider";
 import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
 import { PageResponse } from "@/requests/pages/types";
 import { useEditorStore } from "@/stores/editor";
-import { useEditorTreeStore } from "@/stores/editorTree";
 import {
   Action,
   ActionTrigger,
@@ -13,6 +12,7 @@ import { decodeSchema } from "@/utils/compression";
 import { Component } from "@/utils/editor";
 import { Router, useRouter } from "next/router";
 import { ChangeEvent } from "react";
+import { useEditorTreeStore } from "@/stores/editorTree";
 
 const nonDefaultActionTriggers = ["onSuccess", "onError"];
 
