@@ -1,5 +1,5 @@
 import { useVariableListQuery } from "@/hooks/reactQuery/useVariableListQuery";
-import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { useVariableStore } from "@/stores/variables";
 import { useEffect } from "react";
 
