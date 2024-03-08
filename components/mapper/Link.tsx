@@ -15,7 +15,10 @@ const LinkComponent = forwardRef(
     const { triggers, variable, ...componentProps } = component.props as any;
     const { style, ...restProps } = props;
 
-    const contentEditableProps = useContentEditable(component.id as string);
+    const contentEditableProps = useContentEditable(
+      component.id as string,
+      ref,
+    );
 
     const { computeValue } = useDataContext()!;
     const childrenValue =
@@ -34,7 +37,7 @@ const LinkComponent = forwardRef(
         {...restProps}
         {...componentProps}
         {...triggers}
-        ref={ref ?? contentEditableProps.ref}
+        ref={ref}
         style={customStyle}
       >
         {childrenValue}

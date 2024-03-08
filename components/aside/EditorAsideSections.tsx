@@ -28,10 +28,6 @@ const EditorAsideSections = () => {
 
   const setOpenAction = useEditorStore((state) => state.setOpenAction);
   const selectedComponentId = useDeferredValue(_selectedComponentId);
-  const currentState = useEditorStore(
-    (state) =>
-      state.currentTreeComponentsStates?.[selectedComponentId!] ?? "default",
-  );
   const initiallyOpenedModifiersByComponent = useUserConfigStore(
     (state) => state.initiallyOpenedModifiersByComponent,
   );
@@ -102,7 +98,7 @@ const EditorAsideSections = () => {
 
   const designSections = sections?.map(({ Component, ...item }) => (
     <SidebarSection {...item} key={item.label}>
-      <Component key={currentState} initiallyOpened={item.initiallyOpened} />
+      <Component initiallyOpened={item.initiallyOpened} />
     </SidebarSection>
   ));
 

@@ -48,7 +48,10 @@ const CountdownButtonComponent = forwardRef(
 
     const theme = useThemeStore((state) => state.theme);
 
-    const contentEditableProps = useContentEditable(component.id as string);
+    const contentEditableProps = useContentEditable(
+      component.id as string,
+      ref,
+    );
 
     const { computeValue } = useDataContext()!;
     const childrenValue = computeValue({
@@ -111,7 +114,7 @@ const CountdownButtonComponent = forwardRef(
         {...triggers}
         style={customStyle}
         styles={{ root: DISABLED_HOVER }}
-        ref={ref ?? contentEditableProps.ref}
+        ref={ref}
       >
         {childrenValue} {count > 0 ? ` in ${count} ${durationUnit}` : ""}
       </MantineButton>

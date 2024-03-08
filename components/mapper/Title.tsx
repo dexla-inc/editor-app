@@ -13,7 +13,10 @@ const TitleComponent = forwardRef(
     { component, isPreviewMode, shareableContent, ...props }: Props,
     ref: any,
   ) => {
-    const contentEditableProps = useContentEditable(component.id as string);
+    const contentEditableProps = useContentEditable(
+      component.id as string,
+      ref,
+    );
 
     const { triggers, variable, ...componentProps } = component.props as any;
     const { style, ...restProps } = props as any;
@@ -31,7 +34,7 @@ const TitleComponent = forwardRef(
         {...restProps}
         {...componentProps}
         {...triggers}
-        ref={ref ?? contentEditableProps.ref}
+        ref={ref}
         key={`${component.id}`}
         style={{
           ...style,

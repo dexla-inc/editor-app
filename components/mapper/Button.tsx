@@ -32,7 +32,10 @@ const ButtonComponent = forwardRef(
 
     const theme = useThemeStore((state) => state.theme);
 
-    const contentEditableProps = useContentEditable(component.id as string);
+    const contentEditableProps = useContentEditable(
+      component.id as string,
+      ref,
+    );
 
     const { computeValue } = useDataContext()!;
     const childrenValue = useMemo(
@@ -89,7 +92,7 @@ const ButtonComponent = forwardRef(
         {...triggers}
         style={customStyle}
         styles={{ root: DISABLED_HOVER }}
-        ref={ref ?? contentEditableProps.ref}
+        ref={ref}
       >
         {childrenValue}
       </MantineButton>

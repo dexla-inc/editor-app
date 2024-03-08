@@ -15,7 +15,10 @@ const TextComponent = forwardRef(
     { component, isPreviewMode, shareableContent, ...props }: Props,
     ref: any,
   ) => {
-    const contentEditableProps = useContentEditable(component.id as string);
+    const contentEditableProps = useContentEditable(
+      component.id as string,
+      ref,
+    );
     const {
       triggers,
       hideIfDataIsEmpty,
@@ -43,7 +46,7 @@ const TextComponent = forwardRef(
         {...restProps}
         {...componentProps}
         {...triggers}
-        ref={ref ?? contentEditableProps.ref}
+        ref={ref}
         style={customStyle}
       >
         {!hideIfDataIsEmpty && childrenValue}

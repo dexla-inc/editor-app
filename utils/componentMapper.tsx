@@ -1202,7 +1202,7 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: ComponentStructure; renderTree: any }) => (
       // @ts-ignore
       <FileButton
-        onChange={(files) => {
+        onChange={(files: any) => {
           saveFile(props.component, files);
         }}
         component={props.component}
