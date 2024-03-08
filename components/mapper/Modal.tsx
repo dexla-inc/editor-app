@@ -12,7 +12,7 @@ type Props = EditableComponentMapper & Omit<ModalProps, "opened">;
 
 export const ModalComponent = forwardRef(
   ({ renderTree, component, ...props }: Props, ref) => {
-    const selectedComponentId = useEditorStore(
+    const selectedComponentId = useEditorTreeStore(
       (state) => state.selectedComponentIds?.at(-1),
     );
     const theme = useThemeStore((state) => state.theme);

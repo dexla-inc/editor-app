@@ -5,6 +5,7 @@ import { ApiType } from "@/utils/dashboardTypes";
 import { Stack } from "@mantine/core";
 import React from "react";
 import { ThemeColorSelector } from "../ThemeColorSelector";
+import { useEditorTreeStore } from "@/stores/editorTree";
 
 type Props = ActionFormProps<Omit<ShowNotificationAction, "name">>;
 
@@ -15,7 +16,7 @@ export const ShowNotificationActionForm = ({ form }: Props) => {
   const setComponentToBind = useEditorStore(
     (state) => state.setComponentToBind,
   );
-  const selectedComponentId = useEditorStore(
+  const selectedComponentId = useEditorTreeStore(
     (state) => state.selectedComponentIds?.at(-1),
   );
 

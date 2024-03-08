@@ -1,8 +1,7 @@
-import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
 
 export const useComponentStates = () => {
-  const selectedComponentIds = useEditorStore(
+  const selectedComponentIds = useEditorTreeStore(
     (state) => state.selectedComponentIds,
   );
   const components = useEditorTreeStore(

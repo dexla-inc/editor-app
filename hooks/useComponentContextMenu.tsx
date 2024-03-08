@@ -2,7 +2,6 @@ import { useContextMenu } from "@/contexts/ContextMenuProvider";
 import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useThemeStore } from "@/stores/theme";
-import { useUserConfigStore } from "@/stores/userConfig";
 import { copyToClipboard } from "@/utils/clipboard";
 import { structureMapper } from "@/utils/componentMapper";
 import { NAVBAR_WIDTH } from "@/utils/config";
@@ -42,14 +41,13 @@ export const useComponentContextMenu = () => {
   const editorTheme = useThemeStore((state) => state.theme);
   const copiedProperties = useEditorStore((state) => state.copiedProperties);
   const setEditorTree = useEditorTreeStore((state) => state.setTree);
-  const clearSelection = useEditorStore((state) => state.clearSelection);
   const setCopiedComponent = useEditorStore(
     (state) => state.setCopiedComponent,
   );
   const setCopiedProperties = useEditorStore(
     (state) => state.setCopiedProperties,
   );
-  const setSelectedComponentIds = useEditorStore(
+  const setSelectedComponentIds = useEditorTreeStore(
     (state) => state.setSelectedComponentIds,
   );
 
@@ -105,10 +103,9 @@ export const useComponentContextMenu = () => {
         const editorTree = useEditorTreeStore.getState().tree as EditorTreeCopy;
         removeComponent(editorTree.root, component.id);
         setEditorTree(editorTree, { action: `Removed ${component?.name}` });
-        clearSelection();
       }
     },
-    [clearSelection, setEditorTree],
+    [setEditorTree],
   );
 
   const duplicateComponent = useCallback(

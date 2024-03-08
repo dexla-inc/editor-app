@@ -48,7 +48,7 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
   const currentProjectId = useEditorStore((state) => state.currentProjectId);
   const currentPageId = useEditorStore((state) => state.currentPageId);
   const setIsSaving = useEditorStore((state) => state.setIsSaving);
-  const setSelectedComponentIds = useEditorStore(
+  const setSelectedComponentIds = useEditorTreeStore(
     (state) => state.setSelectedComponentIds,
   );
   const [canvasRef] = useAutoAnimate();
@@ -56,7 +56,8 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
     useDisclosure(false);
 
   const deleteComponent = useCallback(() => {
-    const selectedComponentIds = useEditorStore.getState().selectedComponentIds;
+    const selectedComponentIds =
+      useEditorTreeStore.getState().selectedComponentIds;
     if (
       selectedComponentIds &&
       selectedComponentIds.length > 0 &&
@@ -124,7 +125,7 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
   }, [isPreviewMode, editorTree, setSelectedComponentIds, setEditorTree]);
 
   const copySelectedComponent = useCallback(() => {
-    const selectedComponentId = useEditorStore
+    const selectedComponentId = useEditorTreeStore
       .getState()
       .selectedComponentIds?.at(-1);
     const componentToCopy = getComponentTreeById(
@@ -138,7 +139,7 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
   }, [editorTree.root, isPreviewMode, setCopiedComponent]);
 
   const cutSelectedComponent = useCallback(() => {
-    const selectedComponentId = useEditorStore
+    const selectedComponentId = useEditorTreeStore
       .getState()
       .selectedComponentIds?.at(-1);
 
@@ -160,7 +161,7 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
         componentToPasteTree.id!
       ];
 
-    const selectedComponentId = useEditorStore
+    const selectedComponentId = useEditorTreeStore
       .getState()
       .selectedComponentIds?.at(-1);
 

@@ -7,6 +7,7 @@ import { getPageProps } from "@/utils/serverside";
 import { GetServerSidePropsContext } from "next";
 import Head from "next/head";
 import { useEffect } from "react";
+import { useEditorTreeStore } from "@/stores/editorTree";
 
 export const getServerSideProps = async ({
   req,
@@ -32,8 +33,8 @@ type Props = {
 
 function LivePage({ id, page, faviconUrl }: Props) {
   const setCurrentPageAndProjectIds =
-    useEditorStore.getState().setCurrentPageAndProjectIds;
-  const setPreviewMode = useEditorStore.getState().setPreviewMode;
+    useEditorTreeStore.getState().setCurrentPageAndProjectIds;
+  const setPreviewMode = useEditorTreeStore.getState().setPreviewMode;
   const setIsLive = useEditorStore.getState().setIsLive;
 
   useEffect(() => {

@@ -70,7 +70,7 @@ export const DataProvider = ({ children }: DataProviderProps) => {
   const actionActionsList = useEditorStore((state) => state.actions);
   const { isPreviewMode } = useAppMode();
   const isLive = useEditorStore((state) => state.isLive);
-  const selectedComponentIds = useEditorStore(
+  const selectedComponentIds = useEditorTreeStore(
     (state) => state.selectedComponentIds,
   );
   const selectedComponent = useEditorTreeStore(

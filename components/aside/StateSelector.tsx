@@ -24,17 +24,17 @@ export const StateSelector = ({ componentName }: Props) => {
   const [createState, setCreateState] = useState<undefined | string>(undefined);
   const excludeComponentsForState = ["Text", "Title"];
 
-  const setTreeComponentCurrentState = useEditorStore(
+  const setTreeComponentCurrentState = useEditorTreeStore(
     (state) => state.setTreeComponentCurrentState,
   );
-  const selectedComponentId = useEditorStore(
+  const selectedComponentId = useEditorTreeStore(
     (state) => state.selectedComponentIds?.at(-1),
   ) as string;
   const component = useEditorTreeStore(
     (state) => state.componentMutableAttrs[selectedComponentId!],
   );
 
-  const currentState = useEditorStore(
+  const currentState = useEditorTreeStore(
     (state) =>
       state.currentTreeComponentsStates?.[selectedComponentId!] ?? "default",
   );

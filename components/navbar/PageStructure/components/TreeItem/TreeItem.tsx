@@ -89,10 +89,10 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
     const [editable, { toggle: toggleEdit, close: closeEdit }] =
       useDisclosure(false);
     const editFieldRef = useRef<HTMLInputElement>(null);
-    const isSelected = useEditorStore(
+    const isSelected = useEditorTreeStore(
       (state) => state.selectedComponentIds?.includes(id),
     );
-    const setSelectedComponentIds = useEditorStore(
+    const setSelectedComponentIds = useEditorTreeStore(
       (state) => state.setSelectedComponentIds,
     );
     const isDarkTheme = useUserConfigStore((state) => state.isDarkTheme);

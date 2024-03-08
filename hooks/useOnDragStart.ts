@@ -1,8 +1,8 @@
-import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { useCallback } from "react";
 
 export const useOnDragStart = () => {
-  const setSelectedComponentIds = useEditorStore(
+  const setSelectedComponentIds = useEditorTreeStore(
     (state) => state.setSelectedComponentIds,
   );
 

@@ -22,7 +22,7 @@ type ActionProps = {
 };
 
 export const ActionsForm = ({ sequentialTo, close }: ActionProps) => {
-  const selectedComponentId = useEditorStore
+  const selectedComponentId = useEditorTreeStore
     .getState()
     .selectedComponentIds?.at(-1);
   const updateTreeComponentAttrs =

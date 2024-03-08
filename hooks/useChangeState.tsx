@@ -1,4 +1,5 @@
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { useThemeStore } from "@/stores/theme";
 import { getHoverColor } from "@/utils/branding";
 import { componentMapper, structureMapper } from "@/utils/componentMapper";
@@ -45,7 +46,7 @@ export const useChangeState = ({
   const backgroundColor = getColorFromTheme(theme, bg) ?? defaultBg;
   const color = getColorFromTheme(theme, textColor) ?? "black";
 
-  const currentState = useEditorStore(
+  const currentState = useEditorTreeStore(
     (state) =>
       state.currentTreeComponentsStates?.[state.selectedComponentIds?.[0]!] ??
       "default",

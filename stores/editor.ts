@@ -26,15 +26,11 @@ export type ClipboardProps = {
 };
 
 export type EditorState = {
-  currentProjectId?: string;
-  currentPageId?: string;
-  selectedComponentIds?: string[];
   copiedComponent?: ComponentTree;
   componentToAdd?: ComponentStructure;
   iframeWindow?: Window;
   currentTargetId?: string;
   isSaving: boolean;
-  isPreviewMode: boolean;
   isLive: boolean;
   isNavBarVisible: boolean;
   activeTab?: SectionId;
@@ -43,9 +39,7 @@ export type EditorState = {
   pickingComponentToBindTo?: ComponentToBind;
   pickingComponentToBindFrom?: ComponentToBind;
   componentToBind?: string;
-  currentTreeComponentsStates?: {
-    [key: string]: string;
-  };
+
   copiedAction?: Action[];
   sequentialTo?: string;
   openAction?: OpenAction;
@@ -64,19 +58,8 @@ export type EditorState = {
   setPages: (pages: PageResponse[]) => void;
   setIframeWindow: (iframeWindow: Window) => void;
   setCurrentTargetId: (currentTargetId?: string) => void;
-  setCurrentPageAndProjectIds: (
-    currentProjectId: string,
-    currentPageId: string,
-  ) => void;
   setComponentToAdd: (componentToAdd?: ComponentStructure) => void;
-  setTreeComponentCurrentState: (
-    componentId: string,
-    currentState: string,
-  ) => void;
-  setSelectedComponentIds: (cb: (ids: string[]) => string[]) => void;
-  clearSelection: (id?: string) => void;
   setIsSaving: (isSaving: boolean) => void;
-  setPreviewMode: (value: boolean) => void;
   setIsLive: (value: boolean) => void;
   setIsNavBarVisible: () => void;
   setActiveTab: (activeTab?: SectionId) => void;
@@ -130,7 +113,6 @@ export const useEditorStore = create<EditorState>()(
       collapsedItemsCount: 0,
       pages: [],
       selectedComponentId: "content-wrapper",
-      selectedComponentIds: ["content-wrapper"],
       language: "default",
       projectId: "",
       setCopiedProperties: (copiedProperties) =>
@@ -172,63 +154,15 @@ export const useEditorStore = create<EditorState>()(
       setCurrentTargetId: (currentTargetId) =>
         set({ currentTargetId }, false, "editor/setCurrentTargetId"),
       isSaving: false,
-      setTreeComponentCurrentState: (componentId, currentState = "default") => {
-        set(
-          (prev) => {
-            return {
-              currentTreeComponentsStates: {
-                ...prev.currentTreeComponentsStates,
-                [componentId]: currentState,
-              },
-            };
-          },
-          false,
-          "editor/setTreeComponentCurrentState",
-        );
-      },
-      setCurrentPageAndProjectIds: (currentProjectId, currentPageId) => {
-        if (
-          get().currentProjectId !== currentProjectId ||
-          get().currentPageId !== currentPageId
-        ) {
-          set(
-            { currentProjectId, currentPageId },
-            false,
-            "editor/setCurrentPageAndProjectIds",
-          );
-        }
-      },
       setComponentToAdd: (componentToAdd) =>
         set({ componentToAdd }, false, "editor/setComponentToAdd"),
-      setSelectedComponentIds: (cb) => {
-        return set(
-          (state) => {
-            const selectedComponentIds = cb(state.selectedComponentIds ?? []);
-            return { selectedComponentIds };
-          },
-          false,
-          "editor/setSelectedComponentIds",
-        );
-      },
-      clearSelection: (id) =>
-        set(
-          { selectedComponentIds: [id ?? "content-wrapper"] },
-          false,
-          "editor/clearSelection",
-        ),
       setIsSaving: (isSaving) => set({ isSaving }, false, "editor/setIsSaving"),
-      isPreviewMode: false,
       isLive: false,
       isNavBarVisible: true,
       isStructureCollapsed: false,
       setActiveTab: (activeTab) =>
         set({ activeTab }, false, "editor/setActiveTab"),
-      setPreviewMode: (value) =>
-        set(
-          { isPreviewMode: value, currentTreeComponentsStates: {} },
-          false,
-          "editor/setPreviewMode",
-        ),
+
       setIsLive: (value) => set({ isLive: value }, false, "editor/setIsLive"),
       setIsStructureCollapsed: (value) =>
         set(
