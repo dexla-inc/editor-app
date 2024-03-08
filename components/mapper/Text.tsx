@@ -6,7 +6,7 @@ import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import { Text as MantineText, TextProps } from "@mantine/core";
 import merge from "lodash.merge";
-import { forwardRef, memo } from "react";
+import { forwardRef, memo, useMemo } from "react";
 
 type Props = EditableComponentMapper & TextProps;
 
@@ -34,11 +34,19 @@ const TextComponent = forwardRef(
 
     const { computeValue } = useDataContext()!;
 
-    const childrenValue =
-      computeValue({
-        value: component.onLoad?.children,
+    const childrenValue = useMemo(
+      () =>
+        computeValue({
+          value: component.onLoad?.children,
+          shareableContent,
+        }) ?? component.props?.children,
+      [
+        computeValue,
+        component.onLoad?.children,
+        component.props?.children,
         shareableContent,
-      }) ?? component.props?.children;
+      ],
+    );
 
     return (
       <MantineText

@@ -1,13 +1,11 @@
-import { useEditorStore } from "@/stores/editor";
-import { useEditorTreeStore } from "@/stores/editorTree";
 import { Component } from "@/utils/editor";
 import cloneDeep from "lodash.clonedeep";
 import get from "lodash.get";
 import merge from "lodash.merge";
 import set from "lodash.set";
 
-import { ComponentType } from "react";
-import { useShallow } from "zustand/react/shallow";
+import { ComponentType, useMemo } from "react";
+import { useEditorTreeStore } from "@/stores/editorTree";
 
 type WithModifier = {
   selectedComponent: Component;
@@ -46,25 +44,40 @@ export const withModifier = (Modifier: ComponentType<WithModifier>) => {
     const selectedComponentIds = useEditorTreeStore(
       (state) => state.selectedComponentIds,
     );
-    const component = useEditorTreeStore(
-      useShallow((state) => {
-        const lastSelectedComponentId = selectedComponentIds?.[0]!;
-        const currentState =
-          // state.currentTreeComponentsStates?.[lastSelectedComponentId] ??
-          "default";
-        const mergedCustomData = selectedComponentIds?.map((id) => {
-          const selectedComponent = state.componentMutableAttrs[id];
-          return merge(
-            {},
-            selectedComponent?.props,
-            selectedComponent?.languages?.["en"],
-            selectedComponent?.states?.[currentState],
-          );
-        });
-
-        return findIntersectedKeyValues(mergedCustomData as Component[]);
-      }),
+    const selectedComponents = useEditorTreeStore((state) =>
+      Object.entries(state.componentMutableAttrs).reduce(
+        (acc, [id, component]) => {
+          if (selectedComponentIds?.includes(id)) {
+            acc.push(component);
+          }
+          return acc;
+        },
+        [] as Component[],
+      ),
     );
+    const language = "en";
+    const currentTreeComponentsStates = useEditorTreeStore(
+      (state) => state.currentTreeComponentsStates,
+    );
+
+    const currentState =
+      currentTreeComponentsStates?.[selectedComponentIds?.[0] || ""] ??
+      "default";
+
+    const mergedCustomData = useMemo(() => {
+      return selectedComponents?.map((selectedComponent) => {
+        merge(
+          {},
+          selectedComponent?.props,
+          selectedComponent?.languages?.[language],
+          selectedComponent?.states?.[currentState],
+        );
+        return selectedComponent;
+      });
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedComponents, currentState, language]);
+
+    const component = findIntersectedKeyValues(mergedCustomData as Component[]);
 
     if (!initiallyOpened || !selectedComponentIds?.length) {
       return null;
