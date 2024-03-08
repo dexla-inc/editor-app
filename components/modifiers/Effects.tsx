@@ -5,26 +5,20 @@ import { requiredModifiers } from "@/utils/modifiers";
 import { NumberInput, Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
-import { useEffect } from "react";
 
 const Modifier = withModifier(({ selectedComponent }) => {
-  const form = useForm();
-
-  useEffect(() => {
-    form.setValues(
-      merge({}, requiredModifiers.effects, {
-        cursor: selectedComponent.props?.style?.cursor,
-        overflow: selectedComponent.props?.style?.overflow,
-        opacity: selectedComponent.props?.style?.opacity,
-        tooltip: selectedComponent.props?.tooltip,
-        javascriptCode: selectedComponent.props?.javascriptCode ?? "",
-        display: selectedComponent.props?.style?.display,
-        tooltipColor: selectedComponent.props?.tooltipColor,
-        tooltipPosition: selectedComponent.props?.tooltipPosition,
-      }),
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponent]);
+  const form = useForm({
+    initialValues: merge({}, requiredModifiers.effects, {
+      cursor: selectedComponent.props?.style?.cursor,
+      overflow: selectedComponent.props?.style?.overflow,
+      opacity: selectedComponent.props?.style?.opacity,
+      tooltip: selectedComponent.props?.tooltip,
+      javascriptCode: selectedComponent.props?.javascriptCode ?? "",
+      display: selectedComponent.props?.style?.display,
+      tooltipColor: selectedComponent.props?.tooltipColor,
+      tooltipPosition: selectedComponent.props?.tooltipPosition,
+    }),
+  });
 
   return (
     <form key={selectedComponent?.id}>

@@ -5,7 +5,6 @@ import { requiredModifiers } from "@/utils/modifiers";
 import { SegmentedControl, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
-import { useEffect } from "react";
 
 export const defaultPopOverValues = requiredModifiers.popOver;
 
@@ -15,15 +14,6 @@ const Modifier = withModifier(({ selectedComponent }) => {
       position: selectedComponent?.props?.position,
     }),
   });
-
-  useEffect(() => {
-    form.setValues(
-      merge({}, defaultPopOverValues, {
-        position: selectedComponent?.props?.position,
-      }),
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponent]);
 
   return (
     <form>

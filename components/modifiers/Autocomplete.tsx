@@ -14,30 +14,25 @@ import {
   IconArrowsMoveVertical,
 } from "@tabler/icons-react";
 import merge from "lodash.merge";
-import { useEffect } from "react";
 import { IconSelector } from "../IconSelector";
 
 const Modifier = withModifier(({ selectedComponent }) => {
-  const form = useForm();
   const theme = useEditorStore((state) => state.theme);
-  const pages = useEditorStore((state) => state.pages);
+  const form = useForm({
+    initialValues: merge({}, requiredModifiers.autocomplete, {
+      size: selectedComponent?.props?.size ?? theme.inputSize,
+      placeholder: selectedComponent?.props?.placeholder,
+      iconName: selectedComponent?.props?.iconName,
+      data: selectedComponent?.props?.data,
+      withAsterisk: selectedComponent?.props?.withAsterisk,
+      customText: selectedComponent?.props?.customText,
+      customLinkText: selectedComponent?.props?.customLinkText,
+      customLinkUrl: selectedComponent?.props?.customLinkUrl,
+      dropdownPosition: selectedComponent?.props?.dropdownPosition,
+    }),
+  });
 
-  useEffect(() => {
-    form.setValues(
-      merge({}, requiredModifiers.autocomplete, {
-        size: selectedComponent?.props?.size ?? theme.inputSize,
-        placeholder: selectedComponent?.props?.placeholder,
-        iconName: selectedComponent?.props?.iconName,
-        data: selectedComponent?.props?.data,
-        withAsterisk: selectedComponent?.props?.withAsterisk,
-        customText: selectedComponent?.props?.customText,
-        customLinkText: selectedComponent?.props?.customLinkText,
-        customLinkUrl: selectedComponent?.props?.customLinkUrl,
-        dropdownPosition: selectedComponent?.props?.dropdownPosition,
-      }),
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponent]);
+  const pages = useEditorStore((state) => state.pages);
 
   const setFieldValue = (key: any, value: any) => {
     form.setFieldValue(key, value);
@@ -73,7 +68,7 @@ const Modifier = withModifier(({ selectedComponent }) => {
         />
         <IconSelector
           topLabel="Icon"
-          selectedIcon={(form.values.icon as any)?.props?.name}
+          selectedIcon={form.values.iconName}
           onIconSelect={(iconName: string) => {
             form.setFieldValue("iconName", iconName);
             debouncedTreeComponentAttrsUpdate({

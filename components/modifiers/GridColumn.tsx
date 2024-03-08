@@ -18,24 +18,18 @@ import {
   IconX,
 } from "@tabler/icons-react";
 import merge from "lodash.merge";
-import { useEffect } from "react";
 import { SegmentedControlSizes } from "../SegmentedControlSizes";
 
 const Modifier = withModifier(({ selectedComponent }) => {
-  const form = useForm();
-
-  useEffect(() => {
-    form.setValues(
-      merge({}, requiredModifiers.gridColumn, {
-        alignSelf: selectedComponent.props?.style?.alignSelf,
-        justifyContent: selectedComponent.props?.style?.justifyContent,
-        gridAutoFlow: selectedComponent.props?.style?.gridAutoFlow,
-        gap: selectedComponent.props?.gap,
-        flexWrap: selectedComponent.props?.style?.flexWrap,
-      }),
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponent]);
+  const form = useForm({
+    initialValues: merge({}, requiredModifiers.gridColumn, {
+      alignSelf: selectedComponent.props?.style?.alignSelf,
+      justifyContent: selectedComponent.props?.style?.justifyContent,
+      gridAutoFlow: selectedComponent.props?.style?.gridAutoFlow,
+      gap: selectedComponent.props?.gap,
+      flexWrap: selectedComponent.props?.style?.flexWrap,
+    }),
+  });
 
   return (
     <form>
