@@ -12,6 +12,7 @@ import {
 } from "@mantine/core";
 import { useState } from "react";
 import { ActionIconDefault } from "../ActionIconDefault";
+import { useEditorTreeStore } from "@/stores/editorTree";
 
 type Props = {
   datasourceId: string;
@@ -23,7 +24,9 @@ export const SwaggerURLInputRevised = ({
   updated,
   ...props
 }: Props) => {
-  const projectId = useEditorStore((state) => state.currentProjectId) as string;
+  const projectId = useEditorTreeStore(
+    (state) => state.currentProjectId,
+  ) as string;
   const [isLoading, setIsLoading] = useState(false);
   const lastUpdated = new Date(updated).toLocaleString();
   const { invalidate: invalidateDataSourceEndpoints } =

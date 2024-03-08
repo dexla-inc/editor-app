@@ -44,7 +44,7 @@ export const useCheckIfIsLive = () => {
 
     setLiveIfHasCustomDomain();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router?.state?.pathname]);
+  }, [router?.pathname]);
 
   return urlType === "live";
 };

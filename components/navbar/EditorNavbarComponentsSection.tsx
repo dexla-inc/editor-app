@@ -4,6 +4,7 @@ import { useCustomComponentList } from "@/hooks/reactQuery/useCustomComponentLis
 import { useUserTheme } from "@/hooks/useUserTheme";
 import { CustomComponentResponse } from "@/requests/components/types";
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import {
   ComponentCategoryType,
@@ -56,7 +57,9 @@ export const EditorNavbarComponentsSection = () => {
   const [query, setQuery] = useState<string>("");
   const [componentTypeToShow, setComponentTypeToShow] =
     useState<string>("default");
-  const projectId = useEditorStore((state) => state.currentProjectId) as string;
+  const projectId = useEditorTreeStore(
+    (state) => state.currentProjectId,
+  ) as string;
   const activeCompany = usePropelAuthStore((state) => state.activeCompany);
   const customStackRef = useRef<HTMLDivElement>(null);
   const userTheme = useUserTheme(projectId);

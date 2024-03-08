@@ -62,7 +62,7 @@ export const DataProvider = ({ children }: DataProviderProps) => {
   const browser = useRouter();
   const auth = useDataSourceStore((state) => state.getAuthState());
   const logicFlowsEditorNodes = useNodes<NodeData>();
-  const projectId = useEditorStore((state) => state.currentProjectId ?? "");
+  const projectId = useEditorTreeStore((state) => state.currentProjectId ?? "");
   const { data: endpoints } = useDataSourceEndpoints(projectId);
 
   const nonEditorActions = useEditorStore((state) => state.nonEditorActions);

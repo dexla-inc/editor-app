@@ -3,7 +3,7 @@ import { useDataContext } from "@/contexts/DataProvider";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useChangeState } from "@/hooks/useChangeState";
 import { useContentEditable } from "@/hooks/useContentEditable";
-import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { useThemeStore } from "@/stores/theme";
 import { NavigationAction } from "@/utils/actions";
 import { getColorValue } from "@/utils/branding";
@@ -20,7 +20,7 @@ const NavLinkComponent = forwardRef(
     ref,
   ) => {
     const theme = useThemeStore((state) => state.theme);
-    const currentPageId = useEditorStore((state) => state.currentPageId);
+    const currentPageId = useEditorTreeStore((state) => state.currentPageId);
     const contentEditableProps = useContentEditable(
       component.id as string,
       ref,

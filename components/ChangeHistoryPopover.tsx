@@ -1,6 +1,7 @@
 import { SavingDisplay } from "@/components/SavingDisplay";
 import { usePreventNavigationOnSaving } from "@/hooks/usePreventNavigationOnSaving";
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import {
   DARK_MODE,
   GRAY_WHITE_COLOR,
@@ -28,9 +29,11 @@ const convertTimestampToTimeTaken = (timestamp: number) => {
 
 export const ChangeHistoryPopover: FC = () => {
   usePreventNavigationOnSaving();
-  const pageId = useEditorStore((state) => state.currentPageId);
+  const pageId = useEditorTreeStore((state) => state.currentPageId);
   //const editorTree = useEditorTreeStore((state) => state.tree);
-  const currentProjectId = useEditorStore((state) => state.currentProjectId);
+  const currentProjectId = useEditorTreeStore(
+    (state) => state.currentProjectId,
+  );
   const setIsSaving = useEditorStore((state) => state.setIsSaving);
 
   // TODO: Turning off for now, will need to revisit

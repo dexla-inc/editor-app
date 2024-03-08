@@ -3,12 +3,15 @@ import { useProjectQuery } from "@/hooks/reactQuery/useProjectQuery";
 import { patchProject } from "@/requests/projects/mutations";
 import { PatchParams } from "@/requests/types";
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import debounce from "lodash.debounce";
 import { useCallback, useEffect, useState } from "react";
 
 export const FaviconUrl = () => {
   const [faviconUrl, setFaviconUrl] = useState("");
-  const projectId = useEditorStore((state) => state.currentProjectId) as string;
+  const projectId = useEditorTreeStore(
+    (state) => state.currentProjectId,
+  ) as string;
   const { data: project } = useProjectQuery(projectId);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps

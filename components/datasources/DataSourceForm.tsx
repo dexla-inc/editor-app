@@ -13,13 +13,16 @@ import { Icon } from "../Icon";
 import { SegmentedControlInput } from "../SegmentedControlInput";
 import { validateSwaggerUrl } from "./SwaggerURLInput";
 import { SwaggerURLInputRevised } from "./SwaggerURLInputRevised";
+import { useEditorTreeStore } from "@/stores/editorTree";
 
 type Props = {
   datasource: DataSourceResponse;
 };
 
 export const DataSourceForm = ({ datasource }: Props) => {
-  const projectId = useEditorStore((state) => state.currentProjectId) as string;
+  const projectId = useEditorTreeStore(
+    (state) => state.currentProjectId,
+  ) as string;
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm<DataSourceParams>({
     validate: {

@@ -3,7 +3,7 @@ import {
   deleteLogicFlow,
 } from "@/requests/logicflows/mutations";
 import { LogicFlowResponse } from "@/requests/logicflows/types";
-import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { BORDER_COLOR } from "@/utils/branding";
 import { decodeSchema } from "@/utils/compression";
 import { nodesData } from "@/utils/logicFlows";
@@ -38,7 +38,7 @@ export const LogicFlowCard = ({ flow, onEdit, onClick }: FlowCardProps) => {
   const theme = useMantineTheme();
   const client = useQueryClient();
 
-  const projectId = useEditorStore((state) => state.currentProjectId ?? "");
+  const projectId = useEditorTreeStore((state) => state.currentProjectId ?? "");
 
   const data = JSON.parse(decodeSchema(flow.data as string)) as unknown as {
     nodes: Node[];

@@ -45,8 +45,10 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
   const editorTree = useEditorTreeStore((state) => state.tree);
   const setEditorTree = useEditorTreeStore((state) => state.setTree);
   const { isPreviewMode } = useAppMode();
-  const currentProjectId = useEditorStore((state) => state.currentProjectId);
-  const currentPageId = useEditorStore((state) => state.currentPageId);
+  const currentProjectId = useEditorTreeStore(
+    (state) => state.currentProjectId,
+  );
+  const currentPageId = useEditorTreeStore((state) => state.currentPageId);
   const setIsSaving = useEditorStore((state) => state.setIsSaving);
   const setSelectedComponentIds = useEditorTreeStore(
     (state) => state.setSelectedComponentIds,
