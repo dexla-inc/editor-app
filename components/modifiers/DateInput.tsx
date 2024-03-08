@@ -7,24 +7,30 @@ import { requiredModifiers } from "@/utils/modifiers";
 import { SegmentedControl, Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
+import { useEffect } from "react";
 import { SegmentedControlInput } from "../SegmentedControlInput";
 import { SegmentedControlYesNo } from "../SegmentedControlYesNo";
 
 const Modifier = withModifier(({ selectedComponent }) => {
-  const form = useForm({
-    initialValues: merge({}, requiredModifiers.dateInput, {
-      type: selectedComponent?.props?.type,
-      placeholder: selectedComponent?.props?.placeholder,
-      description: selectedComponent?.props?.description,
-      radius: selectedComponent?.props?.radius,
-      size: selectedComponent?.props?.size,
-      withAsterisk: selectedComponent?.props?.withAsterisk,
-      clearable: selectedComponent?.props?.clearable,
-      valueFormat: selectedComponent?.props?.valueFormat,
-      icon: selectedComponent?.props?.icon,
-      iconPosition: selectedComponent?.props?.iconPosition,
-    }),
-  });
+  const form = useForm();
+
+  useEffect(() => {
+    form.setValues(
+      merge({}, requiredModifiers.dateInput, {
+        type: selectedComponent?.props?.type,
+        placeholder: selectedComponent?.props?.placeholder,
+        description: selectedComponent?.props?.description,
+        radius: selectedComponent?.props?.radius,
+        size: selectedComponent?.props?.size,
+        withAsterisk: selectedComponent?.props?.withAsterisk,
+        clearable: selectedComponent?.props?.clearable,
+        valueFormat: selectedComponent?.props?.valueFormat,
+        icon: selectedComponent?.props?.icon,
+        iconPosition: selectedComponent?.props?.iconPosition,
+      }),
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedComponent]);
 
   return (
     <form>

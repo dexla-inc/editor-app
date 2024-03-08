@@ -15,24 +15,29 @@ import {
   IconArrowsMoveVertical,
 } from "@tabler/icons-react";
 import merge from "lodash.merge";
+import { useEffect } from "react";
 const Modifier = withModifier(({ selectedComponent }) => {
   const theme = useThemeStore((state) => state.theme);
-  const form = useForm({
-    initialValues: merge({}, requiredModifiers.select, {
-      size: selectedComponent?.props?.size ?? theme.inputSize,
-      placeholder: selectedComponent?.props?.placeholder,
-      icon: selectedComponent?.props?.icon,
-      data: selectedComponent?.props?.data,
-      withAsterisk: selectedComponent?.props?.withAsterisk,
-      clearable: selectedComponent?.props?.clearable,
-      searchable: selectedComponent?.props?.searchable,
-      multiSelect: selectedComponent?.props?.multiSelect,
-      customText: selectedComponent?.props?.customText,
-      customLinkText: selectedComponent?.props?.customLinkText,
-      customLinkUrl: selectedComponent?.props?.customLinkUrl,
-      dropdownPosition: selectedComponent?.props?.dropdownPosition,
-    }),
-  });
+  const form = useForm();
+  useEffect(() => {
+    form.setValues(
+      merge({}, requiredModifiers.select, {
+        size: selectedComponent?.props?.size ?? theme.inputSize,
+        placeholder: selectedComponent?.props?.placeholder,
+        icon: selectedComponent?.props?.icon,
+        data: selectedComponent?.props?.data,
+        withAsterisk: selectedComponent?.props?.withAsterisk,
+        clearable: selectedComponent?.props?.clearable,
+        searchable: selectedComponent?.props?.searchable,
+        multiSelect: selectedComponent?.props?.multiSelect,
+        customText: selectedComponent?.props?.customText,
+        customLinkText: selectedComponent?.props?.customLinkText,
+        customLinkUrl: selectedComponent?.props?.customLinkUrl,
+        dropdownPosition: selectedComponent?.props?.dropdownPosition,
+      }),
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedComponent]);
 
   const setFieldValue = (key: any, value: any) => {
     form.setFieldValue(key, value);

@@ -27,6 +27,17 @@ const Modifier = withModifier(({ selectedComponent }) => {
     },
   });
 
+  useEffect(() => {
+    form.setValues(
+      merge({}, requiredModifiers.accordion, {
+        variant: selectedComponent.props?.variant,
+        value: selectedComponent.props?.value,
+        numberOfItems: selectedComponentTree?.children?.length,
+      }),
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedComponent]);
+
   const data: Record<string, string> = {
     Default: "default",
     Contained: "contained",

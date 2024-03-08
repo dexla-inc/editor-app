@@ -37,22 +37,20 @@ const EditorAsideSections = () => {
 
   const [tab, setTab] = useState<Tab>("design");
 
-  const component = useEditorTreeStore(
-    (state) => state.componentMutableAttrs[selectedComponentId!],
-  );
-  const componentName = component?.name ?? "content-wrapper";
-
-  const selectedComponentIds = useEditorTreeStore(
-    (state) => state.selectedComponentIds,
-  );
-
-  const components = useEditorTreeStore(
+  const componentName = useEditorTreeStore(
     (state) =>
-      selectedComponentIds?.map((id) => state.componentMutableAttrs[id]),
-  ) as Component[];
+      state.componentMutableAttrs[selectedComponentId!]?.name ??
+      "content-wrapper",
+  );
 
-  const isMappedComponent = components?.some(
-    (c) => componentMapper[c?.name as string],
+  const mappedModifiers = useEditorTreeStore((state) =>
+    intersection(
+      ...(state.selectedComponentIds ?? [])?.map(
+        (id) =>
+          componentMapper[state.componentMutableAttrs[id].name]?.modifiers ??
+          [],
+      ),
+    ),
   );
 
   // useEffect(() => {
@@ -64,7 +62,7 @@ const EditorAsideSections = () => {
 
   const isContentWrapperSelected = selectedComponentId === "content-wrapper";
 
-  if (!isMappedComponent || isContentWrapperSelected) {
+  if (isContentWrapperSelected) {
     return (
       <Box p="xl">
         <Center>
@@ -75,10 +73,6 @@ const EditorAsideSections = () => {
       </Box>
     );
   }
-
-  const mappedModifiers = intersection(
-    ...components.map((c) => componentMapper[c?.name as string]?.modifiers),
-  );
 
   const sections = mappedModifiers?.map((id) => {
     const modifier = modifierSectionMapper[id];
@@ -110,12 +104,10 @@ const EditorAsideSections = () => {
     {
       label: "Data",
       value: "data",
-      //disabled: (selectedComponentIds ?? []).length > 1,
     },
     {
       label: "Actions",
       value: "actions",
-      //disabled: (selectedComponentIds ?? []).length > 1,
     },
   ].filter(
     (item) => item.value !== "data" || (item.value === "data" && DataSection),
@@ -144,8 +136,8 @@ const EditorAsideSections = () => {
           {designSections}
         </Stack>
       )}
-      {tab === "data" && <Data component={component!} />}
-      {tab === "actions" && <ActionsTab component={component!} />}
+      {tab === "data" && <Data />}
+      {tab === "actions" && <ActionsTab />}
     </Stack>
   );
 };

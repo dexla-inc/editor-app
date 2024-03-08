@@ -15,23 +15,29 @@ import {
   IconArrowsMoveVertical,
 } from "@tabler/icons-react";
 import merge from "lodash.merge";
+import { useEffect } from "react";
 import { IconSelector } from "../IconSelector";
 
 const Modifier = withModifier(({ selectedComponent }) => {
   const theme = useThemeStore((state) => state.theme);
-  const form = useForm({
-    initialValues: merge({}, requiredModifiers.autocomplete, {
-      size: selectedComponent?.props?.size ?? theme.inputSize,
-      placeholder: selectedComponent?.props?.placeholder,
-      iconName: selectedComponent?.props?.iconName,
-      data: selectedComponent?.props?.data,
-      withAsterisk: selectedComponent?.props?.withAsterisk,
-      customText: selectedComponent?.props?.customText,
-      customLinkText: selectedComponent?.props?.customLinkText,
-      customLinkUrl: selectedComponent?.props?.customLinkUrl,
-      dropdownPosition: selectedComponent?.props?.dropdownPosition,
-    }),
-  });
+  const form = useForm();
+
+  useEffect(() => {
+    form.setValues(
+      merge({}, requiredModifiers.autocomplete, {
+        size: selectedComponent?.props?.size ?? theme.inputSize,
+        placeholder: selectedComponent?.props?.placeholder,
+        iconName: selectedComponent?.props?.iconName,
+        data: selectedComponent?.props?.data,
+        withAsterisk: selectedComponent?.props?.withAsterisk,
+        customText: selectedComponent?.props?.customText,
+        customLinkText: selectedComponent?.props?.customLinkText,
+        customLinkUrl: selectedComponent?.props?.customLinkUrl,
+        dropdownPosition: selectedComponent?.props?.dropdownPosition,
+      }),
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedComponent]);
 
   const pages = useEditorStore((state) => state.pages);
 
@@ -69,7 +75,7 @@ const Modifier = withModifier(({ selectedComponent }) => {
         />
         <IconSelector
           topLabel="Icon"
-          selectedIcon={form.values.iconName}
+          selectedIcon={form.values.iconName as string}
           onIconSelect={(iconName: string) => {
             form.setFieldValue("iconName", iconName);
             debouncedTreeComponentAttrsUpdate({

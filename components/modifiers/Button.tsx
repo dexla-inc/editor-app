@@ -11,22 +11,27 @@ import { requiredModifiers } from "@/utils/modifiers";
 import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 const Modifier = withModifier(({ selectedComponent }) => {
   const theme = useThemeStore((state) => state.theme);
   const [icon, setIcon] = useState(selectedComponent.props?.icon);
-  const form = useForm({
-    initialValues: merge({}, requiredModifiers.button, {
-      type: selectedComponent.props?.type,
-      variant: selectedComponent.props?.variant,
-      size: selectedComponent?.props?.size ?? theme.inputSize,
-      icon: icon,
-      color: selectedComponent.props?.color ?? "Primary.6",
-      textColor: selectedComponent.props?.textColor ?? "PrimaryText.6",
-      width: selectedComponent.props?.style?.width,
-    }),
-  });
+  const form = useForm();
+
+  useEffect(() => {
+    form.setValues(
+      merge({}, requiredModifiers.button, {
+        type: selectedComponent.props?.type,
+        variant: selectedComponent.props?.variant,
+        size: selectedComponent?.props?.size ?? theme.inputSize,
+        icon: icon,
+        color: selectedComponent.props?.color ?? "Primary.6",
+        textColor: selectedComponent.props?.textColor ?? "PrimaryText.6",
+        width: selectedComponent.props?.style?.width,
+      }),
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedComponent]);
 
   const changeIcon = useCallback(
     (value?: string, iconPosition?: string) => {

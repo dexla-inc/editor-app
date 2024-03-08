@@ -34,7 +34,6 @@ export const ActionSettingsForm = ({
   const updateTreeComponentAttrs = useEditorTreeStore(
     (state) => state.updateTreeComponentAttrs,
   );
-  console.log("ActionSettingsForm");
   const form = useForm({
     initialValues: { ...defaultValues, ...action.action },
   });

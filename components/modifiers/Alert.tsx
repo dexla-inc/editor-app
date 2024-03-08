@@ -5,16 +5,22 @@ import { requiredModifiers } from "@/utils/modifiers";
 import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
+import { useEffect } from "react";
 import { IconSelector } from "../IconSelector";
 
 const Modifier = withModifier(({ selectedComponent }) => {
-  const form = useForm({
-    initialValues: merge({}, requiredModifiers.alert, {
-      color: selectedComponent.props?.color,
-      icon: selectedComponent.props?.icon,
-      iconColor: selectedComponent.props?.iconColor,
-    }),
-  });
+  const form = useForm();
+
+  useEffect(() => {
+    form.setValues(
+      merge({}, requiredModifiers.alert, {
+        color: selectedComponent.props?.color,
+        icon: selectedComponent.props?.icon,
+        iconColor: selectedComponent.props?.iconColor,
+      }),
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedComponent]);
 
   return (
     <form>
