@@ -1,4 +1,5 @@
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { componentMapper } from "@/utils/componentMapper";
 import {
   Component,
@@ -26,8 +27,8 @@ const parseId = (_id: string) => {
 };
 
 export const useOnDrop = () => {
-  const editorTree = useEditorStore((state) => state.tree);
-  const setEditorTree = useEditorStore((state) => state.setTree);
+  const editorTree = useEditorTreeStore((state) => state.tree);
+  const setEditorTree = useEditorTreeStore((state) => state.setTree);
   const componentToAdd = useEditorStore((state) => state.componentToAdd);
   const setComponentToAdd = useEditorStore((state) => state.setComponentToAdd);
   const setSelectedComponentIds = useEditorStore(
@@ -41,7 +42,7 @@ export const useOnDrop = () => {
       // const droppedId = parseId(_droppedId ?? componentToAdd?.id);
       const activeComponent = componentToAdd
         ? componentToAdd
-        : useEditorStore.getState().componentMutableAttrs[_droppedId];
+        : useEditorTreeStore.getState().componentMutableAttrs[_droppedId];
       dropTarget.id = parseId(dropTarget.id);
       const activeComponentTree = getComponentTreeById(
         editorTree.root,
@@ -49,7 +50,7 @@ export const useOnDrop = () => {
       );
 
       let targetComponent =
-        useEditorStore.getState().componentMutableAttrs[dropTarget.id];
+        useEditorTreeStore.getState().componentMutableAttrs[dropTarget.id];
       const targetParentComponentTree = getComponentParent(
         editorTree.root as ComponentStructure,
         dropTarget.id,
@@ -140,7 +141,9 @@ export const useOnDrop = () => {
     } else {
       const targetParentTree = getComponentParent(treeRoot, dropTarget.id);
       const targetParent =
-        useEditorStore.getState().componentMutableAttrs[targetParentTree?.id!];
+        useEditorTreeStore.getState().componentMutableAttrs[
+          targetParentTree?.id!
+        ];
       if (targetParent && allowedParentTypes?.includes(targetParent.name)) {
         const newSelectedId = addComponent(treeRoot, componentToAdd, {
           id: targetParent.id as string,

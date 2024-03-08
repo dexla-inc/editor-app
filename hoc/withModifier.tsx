@@ -1,4 +1,5 @@
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { Component } from "@/utils/editor";
 import cloneDeep from "lodash.clonedeep";
 import get from "lodash.get";
@@ -42,21 +43,21 @@ function findIntersectedKeyValues(objects: Component[]) {
 
 export const withModifier = (Modifier: ComponentType<WithModifier>) => {
   const Config = ({ initiallyOpened }: any) => {
-    const hasSelectedComponentIds = useEditorStore(
-      (state) => state.selectedComponentIds?.length,
+    const selectedComponentIds = useEditorStore(
+      (state) => state.selectedComponentIds,
     );
-    const component = useEditorStore(
+    const component = useEditorTreeStore(
       useShallow((state) => {
-        const lastSelectedComponentId = state.selectedComponentIds?.[0]!;
+        const lastSelectedComponentId = selectedComponentIds?.[0]!;
         const currentState =
-          state.currentTreeComponentsStates?.[lastSelectedComponentId] ??
+          // state.currentTreeComponentsStates?.[lastSelectedComponentId] ??
           "default";
-        const mergedCustomData = state.selectedComponentIds?.map((id) => {
+        const mergedCustomData = selectedComponentIds?.map((id) => {
           const selectedComponent = state.componentMutableAttrs[id];
           return merge(
             {},
             selectedComponent?.props,
-            selectedComponent?.languages?.[state.language],
+            selectedComponent?.languages?.["en"],
             selectedComponent?.states?.[currentState],
           );
         });
@@ -65,7 +66,7 @@ export const withModifier = (Modifier: ComponentType<WithModifier>) => {
       }),
     );
 
-    if (!initiallyOpened || !hasSelectedComponentIds) {
+    if (!initiallyOpened || !selectedComponentIds?.length) {
       return null;
     }
 

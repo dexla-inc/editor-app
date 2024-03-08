@@ -1,30 +1,15 @@
 import { SavingDisplay } from "@/components/SavingDisplay";
 import { usePreventNavigationOnSaving } from "@/hooks/usePreventNavigationOnSaving";
+import { useEditorStore } from "@/stores/editor";
 import {
-  debouncedUpdatePageState,
-  useEditorStore,
-  useTemporalStore,
-} from "@/stores/editor";
-import {
-  DARK_COLOR,
   DARK_MODE,
-  GRAY_COLOR,
   GRAY_WHITE_COLOR,
   THIN_DARK_OUTLINE,
   THIN_GRAY_OUTLINE,
 } from "@/utils/branding";
-import { encodeSchema } from "@/utils/compression";
-import {
-  Button,
-  Flex,
-  List,
-  Popover,
-  Text,
-  useMantineTheme,
-} from "@mantine/core";
+import { Flex, Popover, useMantineTheme } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { FC } from "react";
-import { ActionIconDefault } from "./ActionIconDefault";
 
 const convertTimestampToTimeTaken = (timestamp: number) => {
   const now = Date.now();
@@ -44,55 +29,55 @@ const convertTimestampToTimeTaken = (timestamp: number) => {
 export const ChangeHistoryPopover: FC = () => {
   usePreventNavigationOnSaving();
   const pageId = useEditorStore((state) => state.currentPageId);
-  const tree = useEditorStore((state) => state.tree);
+  //const editorTree = useEditorTreeStore((state) => state.tree);
   const currentProjectId = useEditorStore((state) => state.currentProjectId);
   const setIsSaving = useEditorStore((state) => state.setIsSaving);
 
-  const { changeHistory, pastStates, undo, redo, futureStates } =
-    useTemporalStore((state) => ({
-      changeHistory: [
-        ...state.pastStates,
-        {
-          tree: {
-            name: tree.name,
-            timestamp: tree.timestamp,
-          },
-        },
-        ...state.futureStates,
-      ].reduce(
-        (acc, { tree }, index) => {
-          return index === 0
-            ? acc
-            : acc.concat({
-                name: tree?.name,
-                timestamp: tree?.timestamp,
-              });
-        },
-        [] as Array<{
-          name?: string;
-          timestamp?: number;
-        }>,
-      ),
-      pastStates: state.pastStates,
-      futureStates: state.futureStates,
-      undo: state.undo,
-      redo: state.redo,
-    }));
+  // TODO: Turning off for now, will need to revisit
+  // const { changeHistory, pastStates, undo, redo, futureStates } =
+  //   useTemporalStore((state) => ({
+  //     changeHistory: [
+  //       ...state.pastStates,
+  //       {
+  //         tree: {
+  //           name: tree.name,
+  //           timestamp: tree.timestamp,
+  //         },
+  //       },
+  //       ...state.futureStates,
+  //     ].reduce(
+  //       (acc, { tree }, index) => {
+  //         return index === 0
+  //           ? acc
+  //           : acc.concat({
+  //               name: tree?.name,
+  //               timestamp: tree?.timestamp,
+  //             });
+  //       },
+  //       [] as Array<{
+  //         name?: string;
+  //         timestamp?: number;
+  //       }>,
+  //     ),
+  //     pastStates: state.pastStates,
+  //     futureStates: state.futureStates,
+  //     undo: state.undo,
+  //     redo: state.redo,
+  //   }));
 
   const [opened, { close, open }] = useDisclosure(false);
   const theme = useMantineTheme();
 
-  const handlePageStateChange = (
-    operation: (steps?: number | undefined) => void,
-  ) => {
-    operation();
-    debouncedUpdatePageState(
-      encodeSchema(JSON.stringify(tree)),
-      currentProjectId ?? "",
-      pageId ?? "",
-      setIsSaving,
-    );
-  };
+  // const handlePageStateChange = (
+  //   operation: (steps?: number | undefined) => void,
+  // ) => {
+  //   operation();
+  //   debouncedUpdatePageState(
+  //     encodeSchema(JSON.stringify(tree)),
+  //     currentProjectId ?? "",
+  //     pageId ?? "",
+  //   );
+  // };
 
   return (
     <Flex
@@ -106,7 +91,7 @@ export const ChangeHistoryPopover: FC = () => {
         background: theme.colorScheme === "dark" ? DARK_MODE : GRAY_WHITE_COLOR,
       })}
     >
-      <Button.Group>
+      {/* <Button.Group>
         <ActionIconDefault
           iconName="IconArrowBackUp"
           tooltip="Undo"
@@ -123,7 +108,7 @@ export const ChangeHistoryPopover: FC = () => {
           radius={"0px 4px 4px 0px"}
           size="sm"
         />
-      </Button.Group>
+      </Button.Group> */}
       <div onMouseEnter={open} onMouseLeave={close}>
         <Popover
           width={200}
@@ -138,7 +123,7 @@ export const ChangeHistoryPopover: FC = () => {
           <Popover.Target>
             <SavingDisplay />
           </Popover.Target>
-          <Popover.Dropdown
+          {/* <Popover.Dropdown
             sx={{
               display: changeHistory.length ? "block" : "none",
               padding: "10px 5px",
@@ -208,7 +193,7 @@ export const ChangeHistoryPopover: FC = () => {
                 })
                 .reverse()}
             </List>
-          </Popover.Dropdown>
+          </Popover.Dropdown> */}
         </Popover>
       </div>
     </Flex>

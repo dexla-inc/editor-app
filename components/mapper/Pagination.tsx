@@ -1,5 +1,5 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import {
@@ -17,8 +17,9 @@ const PaginationComponent = forwardRef(
     const { onChange, ...allTriggers } = triggers || {};
 
     const customOnChange = (value: any) => {
+      console.log("Pagination");
       const updateTreeComponentAttrs =
-        useEditorStore.getState().updateTreeComponentAttrs;
+        useEditorTreeStore.getState().updateTreeComponentAttrs;
       updateTreeComponentAttrs({
         componentIds: [component.id!],
         attrs: { props: { value } },

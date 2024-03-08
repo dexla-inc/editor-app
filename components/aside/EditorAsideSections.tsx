@@ -5,6 +5,7 @@ import { useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { componentMapper } from "@/utils/componentMapper";
 import { dataMapper } from "@/utils/dataMapper";
+import { Component } from "@/utils/editor";
 import {
   Box,
   Center,
@@ -15,6 +16,7 @@ import {
 } from "@mantine/core";
 import intersection from "lodash.intersection";
 import { useDeferredValue, useState } from "react";
+import { useEditorTreeStore } from "../../stores/editorTree";
 import { ActionsTab, Data, modifierSectionMapper } from "./dynamicModifiers";
 
 type Tab = "design" | "data" | "actions";
@@ -39,19 +41,21 @@ const EditorAsideSections = () => {
 
   const [tab, setTab] = useState<Tab>("design");
 
-  const component = useEditorStore(
+  const component = useEditorTreeStore(
     (state) => state.componentMutableAttrs[selectedComponentId!],
   );
   const componentName = component?.name ?? "content-wrapper";
 
-  const components = useEditorStore(
-    (state) =>
-      (state.selectedComponentIds ?? [])?.map(
-        (id) => state.componentMutableAttrs[id],
-      ),
+  const selectedComponentIds = useEditorStore(
+    (state) => state.selectedComponentIds,
   );
 
-  const isMappedComponent = components.some(
+  const components = useEditorTreeStore(
+    (state) =>
+      selectedComponentIds?.map((id) => state.componentMutableAttrs[id]),
+  ) as Component[];
+
+  const isMappedComponent = components?.some(
     (c) => componentMapper[c?.name as string],
   );
 

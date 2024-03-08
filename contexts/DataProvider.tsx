@@ -3,6 +3,7 @@ import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoint
 import { useAppMode } from "@/hooks/useAppMode";
 import { AuthState, useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { useInputsStore } from "@/stores/inputs";
 import { useVariableStore } from "@/stores/variables";
 import { APICallAction } from "@/utils/actions";
@@ -69,11 +70,14 @@ export const DataProvider = ({ children }: DataProviderProps) => {
   const actionActionsList = useEditorStore((state) => state.actions);
   const { isPreviewMode } = useAppMode();
   const isLive = useEditorStore((state) => state.isLive);
-  const selectedComponent = useEditorStore(
-    (state) => state.componentMutableAttrs[state.selectedComponentIds?.at(-1)!],
+  const selectedComponentIds = useEditorStore(
+    (state) => state.selectedComponentIds,
+  );
+  const selectedComponent = useEditorTreeStore(
+    (state) => state.componentMutableAttrs[selectedComponentIds?.at(-1)!],
   );
   const isEditorMode = !isPreviewMode && !isLive;
-  const allInputComponents = useEditorStore((state) =>
+  const allInputComponents = useEditorTreeStore((state) =>
     Object.values(state.componentMutableAttrs).filter((c) =>
       [
         "Input",

@@ -43,6 +43,7 @@ import { useEditorStore } from "@/stores/editor";
 import { debouncedTreeRootChildrenUpdate } from "@/utils/editor";
 import { CSS } from "@dnd-kit/utilities";
 import { usePrevious } from "@mantine/hooks";
+import { useEditorTreeStore } from "../../../stores/editorTree";
 
 const measuring = {
   droppable: {
@@ -89,7 +90,7 @@ export function NavbarLayersSection({
   indicator = false,
   indentationWidth = 10,
 }: Props) {
-  const items = useEditorStore((state) => {
+  const items = useEditorTreeStore((state) => {
     const { children } = state.tree.root;
     return children;
   });

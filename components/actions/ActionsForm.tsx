@@ -1,11 +1,12 @@
 import { Icon } from "@/components/Icon";
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import {
   Action,
   ActionTrigger,
+  ActionType,
   SequentialTrigger,
   actions,
-  ActionType,
 } from "@/utils/actions";
 import { componentMapper } from "@/utils/componentMapper";
 import { ICON_SIZE } from "@/utils/config";
@@ -25,7 +26,8 @@ export const ActionsForm = ({ sequentialTo, close }: ActionProps) => {
     .getState()
     .selectedComponentIds?.at(-1);
   const updateTreeComponentAttrs =
-    useEditorStore.getState().updateTreeComponentAttrs;
+    useEditorTreeStore.getState().updateTreeComponentAttrs;
+  console.log("ActionsForm");
   const copiedAction = useEditorStore.getState().copiedAction;
   const setCopiedAction = useEditorStore.getState().setCopiedAction;
   const setSequentialTo = useEditorStore.getState().setSequentialTo;
@@ -39,7 +41,7 @@ export const ActionsForm = ({ sequentialTo, close }: ActionProps) => {
     },
   });
 
-  const component = useEditorStore(
+  const component = useEditorTreeStore(
     (state) => state.componentMutableAttrs[selectedComponentId!],
   );
   const componentActions = component?.actions ?? [];

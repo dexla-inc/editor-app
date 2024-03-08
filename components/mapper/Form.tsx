@@ -1,6 +1,7 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useEndpoint } from "@/hooks/useEndpoint";
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { useInputsStore } from "@/stores/inputs";
 import { isSame } from "@/utils/componentComparison";
 import { componentMapper } from "@/utils/componentMapper";
@@ -74,8 +75,9 @@ const FormComponent = forwardRef(
       if (!isPreviewMode) {
         return;
       }
+      console.log("Form");
       const updateTreeComponentAttrs =
-        useEditorStore.getState().updateTreeComponentAttrs;
+        useEditorTreeStore.getState().updateTreeComponentAttrs;
 
       invalidComponents.map((component) => {
         updateTreeComponentAttrs({

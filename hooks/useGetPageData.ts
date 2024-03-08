@@ -1,6 +1,6 @@
 import { getPageState } from "@/requests/pages/queries-noauth";
 import { useAppStore } from "@/stores/app";
-import { emptyEditorTree, useEditorStore } from "@/stores/editor";
+import { emptyEditorTree, useEditorTreeStore } from "@/stores/editorTree";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { decodeSchema } from "@/utils/compression";
 import { useQuery } from "@tanstack/react-query";
@@ -28,7 +28,7 @@ export const useGetPageData = ({
     setIsLoading: state.setIsLoading,
   }));
 
-  const setEditorTree = useEditorStore((state) => state.setTree);
+  const setEditorTree = useEditorTreeStore((state) => state.setTree);
 
   const { pageCancelled, setPageCancelled } = useUserConfigStore((state) => ({
     pageCancelled: state.pageCancelled,

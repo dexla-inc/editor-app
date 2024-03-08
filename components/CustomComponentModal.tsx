@@ -1,5 +1,6 @@
 import { upsertCustomComponent } from "@/requests/components/mutations";
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { structureMapper } from "@/utils/componentMapper";
@@ -63,14 +64,14 @@ export const CustomComponentModal = ({
   });
 
   const handleSubmitCustomComponent = (values: any) => {
-    const editorTree = useEditorStore.getState().tree;
+    const editorTree = useEditorTreeStore.getState().tree;
     customComponentModal.close();
     const componentTree = getComponentTreeById(
       editorTree.root,
       selectedComponentId as string,
     );
     const component =
-      useEditorStore.getState().componentMutableAttrs[selectedComponentId!];
+      useEditorTreeStore.getState().componentMutableAttrs[selectedComponentId!];
 
     const copy = merge({}, component, componentTree);
     replaceIdsDeeply(copy);

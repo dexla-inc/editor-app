@@ -1,6 +1,6 @@
 import { UnitInput } from "@/components/UnitInput";
 import { withModifier } from "@/hoc/withModifier";
-import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Stack } from "@mantine/core";
@@ -11,7 +11,7 @@ import { ThemeColorSelector } from "../ThemeColorSelector";
 const initialValues = requiredModifiers.navbar;
 
 const Modifier = withModifier(({ selectedComponent }) => {
-  const editorTree = useEditorStore((state) => state.tree);
+  const editorTree = useEditorTreeStore((state) => state.tree);
 
   const form = useForm({
     initialValues: merge({}, initialValues, {

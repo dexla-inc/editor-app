@@ -5,7 +5,7 @@ import { TemplateParams, TemplateTypes } from "@/requests/templates/types";
 import { upsertTile } from "@/requests/tiles/mutations";
 import { TileParams } from "@/requests/tiles/types";
 import { useAppStore } from "@/stores/app";
-import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { encodeSchema } from "@/utils/compression";
 import { getTileData, getTiles } from "@/utils/editor";
@@ -26,7 +26,7 @@ export const SaveTemplateButton = () => {
         message: "Please wait while we save your template",
       });
 
-      const editorTree = useEditorStore.getState().tree;
+      const editorTree = useEditorTreeStore.getState().tree;
       const { id: projectId, page: pageId } = router.query as {
         id: string;
         page: string;

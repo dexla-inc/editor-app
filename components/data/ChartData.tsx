@@ -1,9 +1,9 @@
 import { DynamicSettings } from "@/components/data/forms/DynamicSettings";
 import { Endpoint } from "@/requests/datasources/types";
 import { PagingResponse } from "@/requests/types";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { Component } from "@/utils/editor";
 import { SegmentedControl, Stack } from "@mantine/core";
-import { useEditorStore } from "@/stores/editor";
 
 export type DataProps = {
   component: Component;
@@ -12,7 +12,8 @@ export type DataProps = {
 };
 
 export const ChartData = ({ component, endpoints, dataType }: DataProps) => {
-  const updateTreeComponentAttrs = useEditorStore(
+  console.log("ChartData");
+  const updateTreeComponentAttrs = useEditorTreeStore(
     (state) => state.updateTreeComponentAttrs,
   );
 

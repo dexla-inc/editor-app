@@ -1,6 +1,7 @@
 import { ActionIconDefault } from "@/components/ActionIconDefault";
 import { useComponentStates } from "@/hooks/useComponentStates";
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import {
   ActionIcon,
@@ -29,7 +30,7 @@ export const StateSelector = ({ componentName }: Props) => {
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentIds?.at(-1),
   ) as string;
-  const component = useEditorStore(
+  const component = useEditorTreeStore(
     (state) => state.componentMutableAttrs[selectedComponentId!],
   );
 
@@ -37,7 +38,7 @@ export const StateSelector = ({ componentName }: Props) => {
     (state) =>
       state.currentTreeComponentsStates?.[selectedComponentId!] ?? "default",
   );
-  const updateTreeComponentAttrs = useEditorStore(
+  const updateTreeComponentAttrs = useEditorTreeStore(
     (state) => state.updateTreeComponentAttrs,
   );
 

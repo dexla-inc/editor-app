@@ -29,6 +29,7 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { ErrorBoundary } from "react-error-boundary";
+import { useEditorTreeStore } from "../stores/editorTree";
 
 export const Shell = ({ children, navbar, aside }: AppShellProps) => {
   const router = useRouter();
@@ -100,7 +101,7 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
           setIsWindowError(true);
         }}
         onReset={() => {
-          const resetTree = useEditorStore.getState().resetTree;
+          const resetTree = useEditorTreeStore.getState().resetTree;
           resetTree();
         }}
       >

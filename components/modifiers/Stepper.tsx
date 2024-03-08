@@ -3,6 +3,7 @@ import { UnitInput } from "@/components/UnitInput";
 import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon";
 import { withModifier } from "@/hoc/withModifier";
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import {
   Component,
   debouncedTreeComponentAttrsUpdate,
@@ -18,7 +19,7 @@ import { ThemeColorSelector } from "../ThemeColorSelector";
 const defaultStepperValues = requiredModifiers.stepper;
 
 const Modifier = withModifier(({ selectedComponent }) => {
-  const editorTree = useEditorStore((state) => state.tree);
+  const editorTree = useEditorTreeStore((state) => state.tree);
   const selectedComponentTree = useEditorStore((state) =>
     getComponentTreeById(editorTree.root, state.selectedComponentIds?.at(-1)!),
   );
@@ -83,7 +84,7 @@ const Modifier = withModifier(({ selectedComponent }) => {
           {...form.getInputProps("numberOfSteps")}
           onChange={(value) => {
             // TODO: get this back
-            // const stepper = useEditorStore.getState().componentMutableAttrs[
+            // const stepper = useEditorTreeStore.getState().componentMutableAttrs[
             //               selectedComponent.id!
             //             ];
             // if (Number(value) > Number(form.values.numberOfSteps)) {

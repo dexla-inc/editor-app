@@ -18,7 +18,7 @@ export const useThemeStore = create<ThemeState>()(
           set(
             (prev) => ({ theme: merge(prev.theme, theme) }),
             false,
-            "editor/setTheme",
+            "theme/setTheme",
           ),
       }),
       {

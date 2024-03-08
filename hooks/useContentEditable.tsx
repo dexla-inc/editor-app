@@ -1,4 +1,4 @@
-import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAppMode } from "./useAppMode";
 
@@ -7,16 +7,14 @@ export const useContentEditable = (componentId: string) => {
   const ref = useRef<HTMLDivElement>(null);
   const { isPreviewMode } = useAppMode();
 
-  const updateTreeComponentAttrs = useEditorStore(
-    (state) => state.updateTreeComponentAttrs,
-  );
-
   const toggleEdit = useCallback((enable: boolean) => {
     setIsEditable(enable);
   }, []);
 
   const exitEditMode = useCallback(() => {
     if (ref.current) {
+      const updateTreeComponentAttrs =
+        useEditorTreeStore.getState().updateTreeComponentAttrs;
       updateTreeComponentAttrs({
         componentIds: [componentId],
         attrs: {
@@ -27,7 +25,7 @@ export const useContentEditable = (componentId: string) => {
       });
     }
     toggleEdit(false);
-  }, [updateTreeComponentAttrs, componentId, toggleEdit]);
+  }, [componentId, toggleEdit]);
 
   const handleDoubleClick = useCallback(
     (e: React.MouseEvent) => {

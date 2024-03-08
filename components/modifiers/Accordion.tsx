@@ -1,6 +1,7 @@
 import { UnitInput } from "@/components/UnitInput";
 import { withModifier } from "@/hoc/withModifier";
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import {
   Component,
   debouncedTreeComponentAttrsUpdate,
@@ -13,7 +14,7 @@ import merge from "lodash.merge";
 import { useEffect } from "react";
 
 const Modifier = withModifier(({ selectedComponent }) => {
-  const editorTree = useEditorStore((state) => state.tree);
+  const editorTree = useEditorTreeStore((state) => state.tree);
   const selectedComponentTree = useEditorStore((state) =>
     getComponentTreeById(editorTree.root, state.selectedComponentIds?.at(-1)!),
   );

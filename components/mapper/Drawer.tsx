@@ -1,4 +1,5 @@
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { useThemeStore } from "@/stores/theme";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { EditableComponentMapper } from "@/utils/editor";
@@ -33,8 +34,9 @@ export const Drawer = ({
   const handleClose = () => {
     close();
     propOnClose && propOnClose();
+    console.log("Drawer");
     const updateTreeComponentAttrs =
-      useEditorStore.getState().updateTreeComponentAttrs;
+      useEditorTreeStore.getState().updateTreeComponentAttrs;
 
     updateTreeComponentAttrs({
       componentIds: [component.id!],
@@ -58,7 +60,7 @@ export const Drawer = ({
         isPreviewMode
           ? opened
           : selectedComponentId === component.id ||
-            !!useEditorStore.getState().componentMutableAttrs[
+            !!useEditorTreeStore.getState().componentMutableAttrs[
               selectedComponentId!
             ]
       }

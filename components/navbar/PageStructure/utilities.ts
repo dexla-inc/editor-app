@@ -1,8 +1,7 @@
+import { useEditorTreeStore } from "@/stores/editorTree";
 import type { UniqueIdentifier } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
-
 import type { FlattenedItem, TreeItem, TreeItems } from "./types";
-import { useEditorStore } from "@/stores/editor";
 
 function getDragDepth(offset: number, indentationWidth: number) {
   return Math.round(offset / indentationWidth);
@@ -65,7 +64,7 @@ function getMaxDepth({
   previousItem: FlattenedItem;
 }) {
   const previousItem =
-    useEditorStore.getState().componentMutableAttrs[previousItemTree.id!];
+    useEditorTreeStore.getState().componentMutableAttrs[previousItemTree.id!];
   if (previousItem?.blockDroppingChildrenInside) {
     return previousItem.depth ?? 0;
   }

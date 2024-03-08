@@ -2,6 +2,7 @@
 // @refresh reset
 import { EditableComponent } from "@/components/EditableComponent";
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { CURSOR_COLORS } from "@/utils/config";
 import { ComponentTree } from "@/utils/editor";
 import { ReactNode } from "react";
@@ -21,7 +22,7 @@ export const EditableComponentContainer = ({
     (state) => state.selectedComponentIds?.includes(componentTree.id!),
   );
 
-  const selectedByOther = useEditorStore((state) => {
+  const selectedByOther = useEditorTreeStore((state) => {
     const other = state.liveblocks?.others?.find(({ presence }: any) => {
       return presence.selectedComponentIds?.includes(componentTree.id);
     });

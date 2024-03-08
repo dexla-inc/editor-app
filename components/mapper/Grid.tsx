@@ -1,5 +1,5 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { isSame } from "@/utils/componentComparison";
 import { GRID_SIZE } from "@/utils/config";
 import { convertSizeToPx } from "@/utils/defaultSizes";
@@ -14,7 +14,7 @@ export type GridProps = EditableComponentMapper & BoxProps;
 const GridComponent = forwardRef(
   ({ renderTree, component, ...props }: GridProps, ref) => {
     const theme = useMantineTheme();
-    const setEditorTree = useEditorStore((state) => state.setTree);
+    const setEditorTree = useEditorTreeStore((state) => state.setTree);
     const {
       style = {},
       gridSize,
