@@ -1,6 +1,7 @@
 import { SavingDisplay } from "@/components/SavingDisplay";
 import { usePreventNavigationOnSaving } from "@/hooks/usePreventNavigationOnSaving";
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import {
   DARK_MODE,
   GRAY_WHITE_COLOR,
