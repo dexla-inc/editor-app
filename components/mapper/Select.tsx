@@ -23,10 +23,7 @@ import { Fragment, forwardRef, memo, useEffect, useState } from "react";
 type Props = EditableComponentMapper & SelectProps & MultiSelectProps;
 
 const SelectComponent = forwardRef(
-  (
-    { renderTree, component, children: child, isPreviewMode, ...props }: Props,
-    ref,
-  ) => {
+  ({ component, children: child, isPreviewMode, ...props }: Props, ref) => {
     const {
       children,
       triggers,

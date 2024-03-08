@@ -1,5 +1,16 @@
-import { Logo } from "@/components/Logo";
-
+import { AIChatHistoryButton } from "@/components/AIChatHistoryButton";
+import { AddGridButton } from "@/components/AddGridButton";
+import { ChangeHistoryPopover } from "@/components/ChangeHistoryPopover";
+import { ChangeThemeButton } from "@/components/ChangeThemeButton";
+import { DeployButton } from "@/components/DeployButton";
+import { EditorPreviewModeToggle } from "@/components/EditorPreviewModeToggle";
+import { Icon } from "@/components/Icon";
+import { SaveTemplateButton } from "@/components/SaveTemplateButton";
+import DashboardRedirector from "@/components/editor/DashboardRedirector";
+import OpenLogicFlowsButton from "@/components/editor/OpenLogicFlowsButton";
+import { VariablesButton } from "@/components/variables/VariablesButton";
+import { useEditorStore } from "@/stores/editor";
+import { usePropelAuthStore } from "@/stores/propelAuth";
 import {
   ASIDE_WIDTH,
   HEADER_HEIGHT,
@@ -13,55 +24,16 @@ import {
   Button,
   Group,
   Header,
-  Select,
   Tooltip,
 } from "@mantine/core";
 import Link from "next/link";
-
-import { AIChatHistoryButton } from "@/components/AIChatHistoryButton";
-import AIPromptTextInput from "@/components/AIPromptTextInput";
-import { ActionIconDefault } from "@/components/ActionIconDefault";
-import { AddGridButton } from "@/components/AddGridButton";
-import { ChangeHistoryPopover } from "@/components/ChangeHistoryPopover";
-import { ChangeThemeButton } from "@/components/ChangeThemeButton";
-import { DeployButton } from "@/components/DeployButton";
-import { EditorPreviewModeToggle } from "@/components/EditorPreviewModeToggle";
-import { Icon } from "@/components/Icon";
-import { OtherAvatars } from "@/components/OtherAvatars";
-import { SaveTemplateButton } from "@/components/SaveTemplateButton";
-import { VariablesButton } from "@/components/variables/VariablesButton";
-import { useLogicFlows } from "@/hooks/logic-flow/useLogicFlows";
-import { usePageListQuery } from "@/hooks/reactQuery/usePageListQuery";
-import { useEditorStore, useTemporalStore } from "@/stores/editor";
-import { usePropelAuthStore } from "@/stores/propelAuth";
-import { flexStyles } from "@/utils/branding";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 
 export const Shell = ({ children, navbar, aside }: AppShellProps) => {
-  const resetTree = useEditorStore((state) => state.resetTree);
-  const setIsWindowError = useEditorStore((state) => state.setIsWindowError);
-
-  const language = useEditorStore((state) => state.language);
-  const setLanguage = useEditorStore((state) => state.setLanguage);
-  const setPages = useEditorStore((state) => state.setPages);
-
   const router = useRouter();
   const projectId = router.query.id as string;
-  const currentPageId = router.query.page as string;
-
-  const { data: pageListQuery, isFetched } = usePageListQuery(projectId);
-
-  useEffect(() => {
-    if (isFetched) {
-      setPages(pageListQuery?.results!);
-    }
-  }, [pageListQuery, isFetched, setPages]);
-
   const isDexlaAdmin = usePropelAuthStore((state) => state.isDexlaAdmin);
-  const clear = useTemporalStore((state) => state.clear);
-  const { openLogicFlowsModal } = useLogicFlows();
 
   return (
     <AppShell
@@ -70,40 +42,13 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
       header={
         <Header height={HEADER_HEIGHT} sx={{ zIndex: 110 }}>
           <Group h={HEADER_HEIGHT} px="xs" align="center" position="apart">
-            <Group>
-              <Tooltip withinPortal label="Back to dashboard" fz="xs">
-                <Link onClick={() => clear()} href="/projects">
-                  <Logo />
-                </Link>
-              </Tooltip>
-              <AIPromptTextInput />
-              <OtherAvatars />
-            </Group>
+            <DashboardRedirector />
             <Group noWrap position="right" spacing="xs">
-              <Select
-                label="Language"
-                value={language}
-                onChange={setLanguage}
-                size="xs"
-                data={[
-                  { value: "default", label: "English" },
-                  { value: "french", label: "French" },
-                ]}
-                sx={{
-                  ...flexStyles,
-                  whiteSpace: "nowrap",
-                  width: "160px",
-                }}
-                display="none"
-              />
+              {/* <LanguageSelector /> */}
               {isDexlaAdmin && <AddGridButton />}
               {isDexlaAdmin && <SaveTemplateButton />}
               {isDexlaAdmin && <AIChatHistoryButton projectId={projectId} />}
-              <ActionIconDefault
-                iconName="IconGitBranch"
-                tooltip="Logic Flows"
-                onClick={openLogicFlowsModal}
-              />
+              <OpenLogicFlowsButton />
               <VariablesButton projectId={projectId} />
               <ChangeHistoryPopover />
               <EditorPreviewModeToggle />
@@ -119,12 +64,7 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
                   Invite
                 </Button>
               </Tooltip>
-              <DeployButton
-                projectId={projectId}
-                page={pageListQuery?.results?.find(
-                  (p) => p.id === currentPageId,
-                )}
-              />
+              <DeployButton />
               <ChangeThemeButton />
             </Group>
           </Group>
@@ -156,9 +96,11 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
         onError={(error, info) => {
           console.error("Error:", error);
           console.error("Info:", info);
+          const setIsWindowError = useEditorStore.getState().setIsWindowError;
           setIsWindowError(true);
         }}
         onReset={() => {
+          const resetTree = useEditorStore.getState().resetTree;
           resetTree();
         }}
       >

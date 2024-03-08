@@ -23,14 +23,7 @@ type Props = EditableComponentMapper & ButtonProps & ReactElement<"Button">;
 
 const CountdownButtonComponent = forwardRef(
   (
-    {
-      renderTree,
-      component,
-      isPreviewMode,
-      style,
-      shareableContent,
-      ...props
-    }: Props,
+    { component, isPreviewMode, style, shareableContent, ...props }: Props,
     ref,
   ) => {
     const {

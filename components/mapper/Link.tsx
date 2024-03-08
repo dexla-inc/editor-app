@@ -11,7 +11,7 @@ import { forwardRef, memo } from "react";
 type Props = EditableComponentMapper & AnchorProps;
 
 const LinkComponent = forwardRef(
-  ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
+  ({ component, shareableContent, ...props }: Props, ref) => {
     const { triggers, variable, ...componentProps } = component.props as any;
     const { style, ...restProps } = props;
 

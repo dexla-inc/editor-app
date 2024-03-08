@@ -11,7 +11,7 @@ import { forwardRef, memo } from "react";
 type Props = EditableComponentMapper & PaginationProps;
 
 const PaginationComponent = forwardRef(
-  ({ renderTree, component, ...props }: Props, ref) => {
+  ({ component, ...props }: Props, ref) => {
     const { triggers, ...componentProps } = component.props as any;
 
     const { onChange, ...allTriggers } = triggers || {};

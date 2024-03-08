@@ -11,7 +11,6 @@ const ReactApexChart = dynamic(() => import("react-apexcharts"), {
 });
 
 type Props = {
-  renderTree: (component: Component) => any;
   component: Component;
   isPreviewMode?: boolean;
 } & BoxProps;
@@ -23,7 +22,7 @@ export const getChartColor = (
 ) =>
   color ? getColorFromTheme(theme, color) : getColorFromTheme(theme, altColor);
 
-export const Chart = ({ renderTree, component, ...props }: Props) => {
+export const Chart = ({ component, ...props }: Props) => {
   const {
     children,
     data,

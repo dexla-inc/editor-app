@@ -23,7 +23,7 @@ import { forwardRef, memo, useEffect } from "react";
 type Props = EditableComponentMapper & NumberInputProps & TextInputProps;
 
 const InputComponent = forwardRef(
-  ({ renderTree, component, isPreviewMode, ...props }: Props, ref) => {
+  ({ component, isPreviewMode, ...props }: Props, ref) => {
     const iframeWindow = useEditorStore((state) => state.iframeWindow);
 
     const {
