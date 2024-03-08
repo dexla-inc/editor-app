@@ -1,4 +1,5 @@
 import { useEditorStore } from "@/stores/editor";
+import { useThemeStore } from "@/stores/theme";
 import {
   Anchor as MantineAnchor,
   Box as MantineBox,
@@ -10,7 +11,7 @@ import {
 type LinkProps = { text: string; link: string; url: string };
 
 const FixedLink = ({ text, link, url }: LinkProps) => {
-  const theme = useEditorStore((state) => state.theme);
+  const theme = useThemeStore((state) => state.theme);
   const fontSize = theme.fonts.find((font) => font.tag === "P")?.fontSize;
   return (
     <MantineGroup

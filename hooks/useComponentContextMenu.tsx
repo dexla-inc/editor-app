@@ -1,5 +1,6 @@
 import { useContextMenu } from "@/contexts/ContextMenuProvider";
 import { useEditorStore } from "@/stores/editor";
+import { useThemeStore } from "@/stores/theme";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { copyToClipboard } from "@/utils/clipboard";
 import { structureMapper } from "@/utils/componentMapper";
@@ -27,7 +28,6 @@ import {
 } from "@tabler/icons-react";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { MouseEventHandler, useCallback } from "react";
-
 const determinePasteTarget = (selectedId: string | undefined) => {
   if (!selectedId) return "content-wrapper";
   if (selectedId === "root") return "content-wrapper";
@@ -38,7 +38,7 @@ const blackList = ["name", "value", "children"];
 
 export const useComponentContextMenu = () => {
   const { showContextMenu, destroy } = useContextMenu();
-  const editorTheme = useEditorStore((state) => state.theme);
+  const editorTheme = useThemeStore((state) => state.theme);
   const copiedProperties = useEditorStore((state) => state.copiedProperties);
   const setEditorTree = useEditorStore((state) => state.setTree);
   const clearSelection = useEditorStore((state) => state.clearSelection);

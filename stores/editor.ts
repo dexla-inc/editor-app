@@ -2,10 +2,7 @@ import { NodeData } from "@/components/logic-flow/nodes/CustomNode";
 import { SectionId } from "@/components/navbar/EditorNavbarSections";
 import { updatePageState } from "@/requests/pages/mutations";
 import { PageResponse } from "@/requests/pages/types";
-import { CardStyle } from "@/requests/projects/types";
-import { Font, Logo, ResponsiveBreakpoint } from "@/requests/themes/types";
 import { Action } from "@/utils/actions";
-import { defaultTheme } from "@/utils/branding";
 import { encodeSchema } from "@/utils/compression";
 import { GRID_SIZE } from "@/utils/config";
 import {
@@ -23,7 +20,6 @@ import { requiredModifiers } from "@/utils/modifiers";
 import { removeKeysRecursive } from "@/utils/removeKeys";
 import { createClient } from "@liveblocks/client";
 import { WithLiveblocks, liveblocks } from "@liveblocks/zustand";
-import { MantineSize, MantineTheme, Tuple } from "@mantine/core";
 import { User } from "@propelauth/react";
 import debounce from "lodash.debounce";
 import isEqual from "lodash.isequal";
@@ -99,42 +95,6 @@ const emptyEditorComponentMutableAttrs = {
   },
 };
 
-// Copy the properties from ThemeMutationParams
-export interface MantineThemeExtended extends MantineTheme {
-  colors: ExtendedMantineThemeColors;
-  fonts: Font[];
-  defaultRadius: MantineSize;
-  defaultSpacing: MantineSize;
-  inputSize: MantineSize;
-  defaultFont?: string;
-  hasCompactButtons?: boolean;
-  cardStyle?: CardStyle;
-  theme: "LIGHT" | "DARK";
-  responsiveBreakpoints?: ResponsiveBreakpoint[];
-  faviconUrl?: string;
-  logoUrl?: string;
-  logos?: Logo[];
-}
-
-interface CustomColors {
-  Primary: Tuple<string, 10>;
-  PrimaryText: Tuple<string, 10>;
-  Secondary: Tuple<string, 10>;
-  SecondaryText: Tuple<string, 10>;
-  Tertiary: Tuple<string, 10>;
-  TertiaryText: Tuple<string, 10>;
-  Background: Tuple<string, 10>;
-  Danger: Tuple<string, 10>;
-  Warning: Tuple<string, 10>;
-  Success: Tuple<string, 10>;
-  Neutral: Tuple<string, 10>;
-  Black: Tuple<string, 10>;
-  White: Tuple<string, 10>;
-  Border: Tuple<string, 10>;
-}
-
-export type ExtendedMantineThemeColors = CustomColors & MantineTheme["colors"];
-
 export type ComponentToBind = {
   componentId: string;
   onPick?: (props: any) => void;
@@ -161,7 +121,6 @@ export type EditorState = {
   componentToAdd?: ComponentStructure;
   iframeWindow?: Window;
   currentTargetId?: string;
-  theme: MantineThemeExtended;
   isSaving: boolean;
   isPreviewMode: boolean;
   isLive: boolean;
@@ -191,7 +150,6 @@ export type EditorState = {
   setComponentToBind: (componentToBind?: string) => void;
   setCopiedComponent: (copiedComponent?: ComponentTree) => void;
   setPages: (pages: PageResponse[]) => void;
-  setTheme: (theme: MantineThemeExtended) => void;
   setIframeWindow: (iframeWindow: Window) => void;
   setCurrentTargetId: (currentTargetId?: string) => void;
   setTree: (
@@ -287,7 +245,6 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
           collapsedItemsCount: 0,
           tree: emptyEditorTree,
           componentMutableAttrs: emptyEditorComponentMutableAttrs,
-          theme: defaultTheme,
           pages: [],
           selectedComponentId: "content-wrapper",
           selectedComponentIds: ["content-wrapper"],
@@ -326,12 +283,7 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
           },
           setCopiedComponent: (copiedComponent) =>
             set({ copiedComponent }, false, "editor/setCopiedComponent"),
-          setTheme: (theme) =>
-            set(
-              (prev) => ({ theme: merge(prev.theme, theme) }),
-              false,
-              "editor/setTheme",
-            ),
+
           setIframeWindow: (iframeWindow) =>
             set({ iframeWindow }, false, "editor/setIframeWindow"),
           setCurrentTargetId: (currentTargetId) =>

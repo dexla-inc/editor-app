@@ -1,9 +1,8 @@
-import { useEditorStore } from "@/stores/editor";
+import { useThemeStore } from "@/stores/theme";
 import { inputSizes, radiusSizes } from "@/utils/defaultSizes";
 import { getColorFromTheme } from "@/utils/editor";
-
 export const useBrandingStyles = () => {
-  const theme = useEditorStore((state) => state.theme);
+  const theme = useThemeStore((state) => state.theme);
   const borderColor = getColorFromTheme(theme, "Border.6");
   // TODO: Need to be able to support multiple texts
   const textFont = theme.fonts?.find((font) => font.tag === "P");

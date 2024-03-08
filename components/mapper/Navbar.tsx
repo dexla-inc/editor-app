@@ -1,14 +1,13 @@
-import { useEditorStore } from "@/stores/editor";
+import { useThemeStore } from "@/stores/theme";
 import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper, getColorFromTheme } from "@/utils/editor";
 import { Box, BoxProps, ScrollArea } from "@mantine/core";
 import merge from "lodash.merge";
 import { memo } from "react";
-
 type Props = EditableComponentMapper & BoxProps;
 
 const NavbarComponent = ({ renderTree, component, ...props }: Props) => {
-  const theme = useEditorStore((state) => state.theme);
+  const theme = useThemeStore((state) => state.theme);
 
   const { children, bg = "", ...componentProps } = component.props as any;
 

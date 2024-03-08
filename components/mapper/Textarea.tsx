@@ -1,8 +1,8 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { useChangeState } from "@/hooks/useChangeState";
-import { useEditorStore } from "@/stores/editor";
 import { useInputsStore } from "@/stores/inputs";
+import { useThemeStore } from "@/stores/theme";
 import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import {
@@ -14,7 +14,6 @@ import debounce from "lodash.debounce";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { ChangeEvent, forwardRef, memo, useCallback, useState } from "react";
-
 type Props = EditableComponentMapper & TextareaProps;
 
 const TextareaComponent = forwardRef(
@@ -28,7 +27,7 @@ const TextareaComponent = forwardRef(
       textColor,
       ...componentProps
     } = component.props as any;
-    const theme = useEditorStore((state) => state.theme);
+    const theme = useThemeStore((state) => state.theme);
     const inputValue = useInputsStore((state) => state.getValue(component.id!));
     const setStoreInputValue = useInputsStore((state) => state.setInputValue);
     const { color, backgroundColor } = useChangeState({ bg, textColor });

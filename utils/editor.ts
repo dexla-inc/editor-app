@@ -1,4 +1,4 @@
-import { MantineThemeExtended, useEditorStore } from "@/stores/editor";
+import { useEditorStore } from "@/stores/editor";
 import { Action } from "@/utils/actions";
 import { GRAY_OUTLINE } from "@/utils/branding";
 import { GRID_SIZE } from "@/utils/config";
@@ -14,6 +14,7 @@ import { nanoid } from "nanoid";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { CSSProperties } from "react";
 import crawl from "tree-crawl";
+import { MantineThemeExtended } from "./types";
 
 export type ComponentStructure = {
   children?: ComponentStructure[];

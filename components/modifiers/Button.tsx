@@ -4,7 +4,7 @@ import { SegmentedControlSizes } from "@/components/SegmentedControlSizes";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { withModifier } from "@/hoc/withModifier";
 import { useChangeState } from "@/hooks/useChangeState";
-import { useEditorStore } from "@/stores/editor";
+import { useThemeStore } from "@/stores/theme";
 import { inputSizes } from "@/utils/defaultSizes";
 import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
@@ -14,7 +14,7 @@ import merge from "lodash.merge";
 import { useCallback, useState } from "react";
 
 const Modifier = withModifier(({ selectedComponent }) => {
-  const theme = useEditorStore((state) => state.theme);
+  const theme = useThemeStore((state) => state.theme);
   const [icon, setIcon] = useState(selectedComponent.props?.icon);
   const form = useForm({
     initialValues: merge({}, requiredModifiers.button, {

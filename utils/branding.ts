@@ -1,6 +1,6 @@
-import { MantineThemeExtended } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { splitValueAndUnit } from "@/utils/splitValueAndUnit";
+import { MantineThemeExtended } from "@/utils/types";
 import {
   CSSObject,
   DEFAULT_THEME,

@@ -1,10 +1,11 @@
 import { useEditorStore } from "@/stores/editor";
+import { useThemeStore } from "@/stores/theme";
 import { defaultTheme } from "@/utils/branding";
 import { useEffect, useState } from "react";
 import { useProjectQuery } from "./reactQuery/useProjectQuery";
 
 export const useUserTheme = (projectId: string) => {
-  const setTheme = useEditorStore((state) => state.setTheme);
+  const setTheme = useThemeStore((state) => state.setTheme);
   const [internalTheme, setInternalTheme] = useState<any>(null);
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const isLive = useEditorStore((state) => state.isLive);

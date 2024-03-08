@@ -9,7 +9,7 @@ import { UnitInput } from "@/components/UnitInput";
 import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon";
 import { withModifier } from "@/hoc/withModifier";
 import { CardStyle } from "@/requests/projects/types";
-import { useEditorStore } from "@/stores/editor";
+import { useThemeStore } from "@/stores/theme";
 import { allEqual } from "@/utils/common";
 import { INPUT_SIZE } from "@/utils/config";
 import { radiusSizes } from "@/utils/defaultSizes";
@@ -50,7 +50,7 @@ export const getThemeColor = (theme: any, hex: string) => {
 };
 
 const Modifier = withModifier(({ selectedComponent }) => {
-  const theme = useEditorStore((state) => state.theme);
+  const theme = useThemeStore((state) => state.theme);
   const isCardComponent = selectedComponent?.name === "Card";
 
   const style = selectedComponent?.props?.style;

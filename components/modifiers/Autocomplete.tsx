@@ -3,6 +3,7 @@ import { TopLabel } from "@/components/TopLabel";
 import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon";
 import { withModifier } from "@/hoc/withModifier";
 import { useEditorStore } from "@/stores/editor";
+import { useThemeStore } from "@/stores/theme";
 import { inputSizes } from "@/utils/defaultSizes";
 import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
@@ -17,7 +18,7 @@ import merge from "lodash.merge";
 import { IconSelector } from "../IconSelector";
 
 const Modifier = withModifier(({ selectedComponent }) => {
-  const theme = useEditorStore((state) => state.theme);
+  const theme = useThemeStore((state) => state.theme);
   const form = useForm({
     initialValues: merge({}, requiredModifiers.autocomplete, {
       size: selectedComponent?.props?.size ?? theme.inputSize,

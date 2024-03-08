@@ -3,7 +3,6 @@ import { UnitInput } from "@/components/UnitInput";
 import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon";
 import { withModifier } from "@/hoc/withModifier";
 import { useEditorStore } from "@/stores/editor";
-import { structureMapper } from "@/utils/componentMapper";
 import {
   Component,
   debouncedTreeComponentAttrsUpdate,
@@ -17,14 +16,6 @@ import merge from "lodash.merge";
 import { ThemeColorSelector } from "../ThemeColorSelector";
 
 const defaultStepperValues = requiredModifiers.stepper;
-
-const theme = useEditorStore.getState().theme;
-const createStepper = () => (stepperId: string) => {
-  return structureMapper["StepperStep"].structure({
-    theme,
-    stepperId,
-  });
-};
 
 const Modifier = withModifier(({ selectedComponent }) => {
   const editorTree = useEditorStore((state) => state.tree);

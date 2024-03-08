@@ -1,5 +1,6 @@
 import { Draggable } from "@/components/Draggable";
 import { useEditorStore } from "@/stores/editor";
+import { useThemeStore } from "@/stores/theme";
 import { structureMapper } from "@/utils/componentMapper";
 import { toSpaced } from "@/utils/dashboardTypes";
 import { Box, Text } from "@mantine/core";
@@ -14,7 +15,7 @@ type Props = {
 
 export const DraggableComponent = ({ id, text, data, icon }: Props) => {
   const pages = useEditorStore((state) => state.pages);
-  const theme = useEditorStore((state) => state.theme);
+  const theme = useThemeStore((state) => state.theme);
   const [draggableData, setDraggableData] = useState<any>(data);
 
   useEffect(() => {

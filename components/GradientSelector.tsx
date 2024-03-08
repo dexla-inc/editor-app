@@ -1,5 +1,5 @@
 import { TopLabel } from "@/components/TopLabel";
-import { useEditorStore } from "@/stores/editor";
+import { useThemeStore } from "@/stores/theme";
 import { DARK_COLOR } from "@/utils/branding";
 import { getColorFromTheme } from "@/utils/editor";
 import {
@@ -147,7 +147,7 @@ const AngleItem = ({ angle, setAngle }: any) => {
 };
 
 const GradientSelector = ({ getValue, setFieldValue }: GradientPickerProps) => {
-  const theme = useEditorStore((state) => state.theme);
+  const theme = useThemeStore((state) => state.theme);
 
   const form = useForm({
     initialValues: {

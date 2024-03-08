@@ -1,11 +1,11 @@
-import { MantineThemeExtended, useEditorStore } from "@/stores/editor";
+import { useThemeStore } from "@/stores/theme";
 import { Component, getColorFromTheme } from "@/utils/editor";
+import { MantineThemeExtended } from "@/utils/types";
 import { BoxProps } from "@mantine/core";
 import { ApexOptions } from "apexcharts";
 import get from "lodash.get";
 import merge from "lodash.merge";
 import dynamic from "next/dynamic";
-
 const ReactApexChart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
 });
@@ -37,7 +37,7 @@ export const Chart = ({ component, ...props }: Props) => {
     ...componentProps
   } = component.props as any;
 
-  const theme = useEditorStore((state) => state.theme);
+  const theme = useThemeStore((state) => state.theme);
   const isPieOrRadial =
     type === "pie" || type === "donut" || type === "radialBar";
 
