@@ -12,7 +12,10 @@ type Props = EditableComponentMapper & BadgeProps;
 
 const BadgeComponent = forwardRef(
   ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
-    const contentEditableProps = useContentEditable(component.id as string);
+    const contentEditableProps = useContentEditable(
+      component.id as string,
+      ref,
+    );
     const { style, color, variable, ...componentProps } =
       component.props as any;
 
@@ -32,7 +35,7 @@ const BadgeComponent = forwardRef(
     return (
       <MantineBadge
         {...contentEditableProps}
-        ref={ref ?? contentEditableProps.ref}
+        ref={ref}
         styles={{
           inner: customStyle,
           root: DISABLED_HOVER,

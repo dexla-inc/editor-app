@@ -21,7 +21,10 @@ const NavLinkComponent = forwardRef(
   ) => {
     const theme = useThemeStore((state) => state.theme);
     const currentPageId = useEditorStore((state) => state.currentPageId);
-    const contentEditableProps = useContentEditable(component.id as string);
+    const contentEditableProps = useContentEditable(
+      component.id as string,
+      ref,
+    );
 
     const activePageId = (
       component.actions?.find(
@@ -70,7 +73,7 @@ const NavLinkComponent = forwardRef(
     return (
       <MantineNavLink
         {...contentEditableProps}
-        ref={ref ?? contentEditableProps.ref}
+        ref={ref}
         {...(icon && {
           icon: (
             <Icon
