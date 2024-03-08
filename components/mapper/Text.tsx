@@ -34,11 +34,19 @@ const TextComponent = forwardRef(
 
     const { computeValue } = useDataContext()!;
 
-    const childrenValue =
-      computeValue({
-        value: component.onLoad?.children,
+    const childrenValue = useMemo(
+      () =>
+        computeValue({
+          value: component.onLoad?.children,
+          shareableContent,
+        }) ?? component.props?.children,
+      [
+        computeValue,
+        component.onLoad?.children,
+        component.props?.children,
         shareableContent,
-      }) ?? component.props?.children;
+      ],
+    );
 
     return (
       <MantineText
