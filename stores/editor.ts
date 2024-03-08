@@ -200,14 +200,14 @@ export const useEditorStore = create<EditorState>()(
     setComponentToAdd: (componentToAdd) =>
       set({ componentToAdd }, false, "editor/setComponentToAdd"),
     setSelectedComponentIds: (cb) => {
-      return set(
-        (state) => {
-          const selectedComponentIds = cb(state.selectedComponentIds ?? []);
-          return { selectedComponentIds };
-        },
-        false,
-        "editor/setSelectedComponentIds",
-      );
+      // return set(
+      //   (state) => {
+      //     const selectedComponentIds = cb(state.selectedComponentIds ?? []);
+      //     return { selectedComponentIds };
+      //   },
+      //   false,
+      //   "editor/setSelectedComponentIds",
+      // );
     },
     clearSelection: (id) =>
       set(
