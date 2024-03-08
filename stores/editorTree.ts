@@ -15,12 +15,14 @@ import { removeKeysRecursive } from "@/utils/removeKeys";
 import { createClient } from "@liveblocks/client";
 import { WithLiveblocks, liveblocks } from "@liveblocks/zustand";
 import { User } from "@propelauth/react";
+import { produce } from "immer";
 import debounce from "lodash.debounce";
 import isEqual from "lodash.isequal";
 import merge from "lodash.merge";
 import { TemporalState, temporal } from "zundo";
 import { create, useStore } from "zustand";
 import { devtools } from "zustand/middleware";
+import { immer } from "zustand/middleware/immer";
 
 const client = createClient({
   publicApiKey: process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY ?? "",
@@ -142,7 +144,7 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
   liveblocks(
     devtools(
       temporal(
-        (set) => ({
+        immer((set) => ({
           setTree: (tree, options) => {
             set(
               (state: EditorTreeState) => {
@@ -246,6 +248,7 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
           }) => {
             set(
               (state: EditorTreeState) => {
+                console.log("updateTreeComponentAttrs", componentIds);
                 const lastComponentId = componentIds.at(-1)!;
                 const currentState =
                   // forceState ??
@@ -342,7 +345,7 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
               false,
               "editor/setPreviewMode",
             ),
-        }),
+        })),
         {
           partialize: (state) => {
             const { tree, columnSpans } = state;
