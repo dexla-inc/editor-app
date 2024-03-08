@@ -52,5 +52,6 @@
   "typescript.experimental.tsserver.web.enableProjectWideIntellisense": true,
   "javascript.updateImportsOnFileMove.enabled": "always",
   "githubPullRequests.pullBranch": "never",
-  "eslint.codeActionsOnSave.rules": null
+  "eslint.codeActionsOnSave.rules": null,
+  "prettier.requireConfig": true
 }

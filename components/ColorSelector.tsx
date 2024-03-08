@@ -5,7 +5,6 @@ import {
   ColorSwatch,
   Flex,
   Input,
-  MantineTheme,
   Popover,
   TextInput,
   Tooltip,
@@ -20,7 +19,6 @@ type Props = {
   hex?: string;
   isDefault: boolean;
   onValueChange?: (value: { friendlyName: string; hex: string }) => void;
-  mantineTheme: MantineTheme;
   deleteColor?: () => void;
   size?: number;
 };
@@ -30,7 +28,6 @@ export const ColorSelector = ({
   friendlyName: fetchedFriendlyName = "",
   isDefault,
   onValueChange,
-  mantineTheme,
   deleteColor,
   size,
 }: Props) => {
@@ -105,12 +102,12 @@ export const ColorSelector = ({
               size={size ? size : 36}
               radius="0px"
               withShadow={false}
-              style={{
+              sx={(theme) => ({
                 flex: "none",
-                borderTopLeftRadius: mantineTheme.radius.sm,
-                borderBottomLeftRadius: mantineTheme.radius.sm,
+                borderTopLeftRadius: theme.radius.sm,
+                borderBottomLeftRadius: theme.radius.sm,
                 borderRight: "0px",
-              }}
+              })}
             />
           </Tooltip>
         </Popover.Target>

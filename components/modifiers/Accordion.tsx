@@ -1,7 +1,6 @@
 import { UnitInput } from "@/components/UnitInput";
 import { withModifier } from "@/hoc/withModifier";
 import { useEditorStore } from "@/stores/editor";
-import { structureMapper } from "@/utils/componentMapper";
 import {
   Component,
   debouncedTreeComponentAttrsUpdate,
@@ -12,17 +11,6 @@ import { Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
 import { useEffect } from "react";
-
-const theme = useEditorStore.getState().theme;
-const createItem = (id: string) => () => {
-  return structureMapper["AccordionItem"].structure({
-    theme: theme,
-    props: {
-      value: `Item-${id}`,
-      style: {},
-    },
-  });
-};
 
 const Modifier = withModifier(({ selectedComponent }) => {
   const editorTree = useEditorStore((state) => state.tree);

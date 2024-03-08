@@ -2,7 +2,7 @@ import { IconSelector } from "@/components/IconSelector";
 import { SegmentedControlSizes } from "@/components/SegmentedControlSizes";
 import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
 import { withModifier } from "@/hoc/withModifier";
-import { useEditorStore } from "@/stores/editor";
+import { useThemeStore } from "@/stores/theme";
 import { INPUT_TYPES_DATA } from "@/utils/dashboardTypes";
 import { inputSizes } from "@/utils/defaultSizes";
 import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
@@ -11,9 +11,8 @@ import { Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
 import { RangeSliderInput } from "../RangeSliderInput";
-
 const Modifier = withModifier(({ selectedComponent }) => {
-  const theme = useEditorStore((state) => state.theme);
+  const theme = useThemeStore((state) => state.theme);
   const form = useForm({
     initialValues: merge({}, requiredModifiers.input, {
       size: selectedComponent?.props?.size ?? theme.inputSize,

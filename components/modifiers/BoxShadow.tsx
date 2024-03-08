@@ -9,7 +9,7 @@ import { UnitInput } from "@/components/UnitInput";
 import { getThemeColor } from "@/components/modifiers/Border";
 import { withModifier } from "@/hoc/withModifier";
 import { CardStyle } from "@/requests/projects/types";
-import { useEditorStore } from "@/stores/editor";
+import { useThemeStore } from "@/stores/theme";
 import {
   debouncedTreeComponentAttrsUpdate,
   getColorFromTheme,
@@ -22,7 +22,7 @@ import merge from "lodash.merge";
 const defaultBoxShadowValues = requiredModifiers.boxShadow;
 
 const Modifier = withModifier(({ selectedComponent }) => {
-  const theme = useEditorStore((state) => state.theme);
+  const theme = useThemeStore((state) => state.theme);
   const isCardComponent = selectedComponent?.name === "Card";
 
   let { style = {} } = selectedComponent.props!;

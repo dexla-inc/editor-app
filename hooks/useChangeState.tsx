@@ -1,4 +1,5 @@
 import { useEditorStore } from "@/stores/editor";
+import { useThemeStore } from "@/stores/theme";
 import { getHoverColor } from "@/utils/branding";
 import { componentMapper, structureMapper } from "@/utils/componentMapper";
 import {
@@ -39,7 +40,7 @@ export const useChangeState = ({
   textColor,
   isTransparentBackground,
 }: StateProps) => {
-  const theme = useEditorStore((state) => state.theme);
+  const theme = useThemeStore((state) => state.theme);
   const defaultBg = isTransparentBackground ? "transparent" : "white";
   const backgroundColor = getColorFromTheme(theme, bg) ?? defaultBg;
   const color = getColorFromTheme(theme, textColor) ?? "black";

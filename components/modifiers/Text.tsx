@@ -6,7 +6,7 @@ import { UnitInput } from "@/components/UnitInput";
 import { getThemeColor } from "@/components/modifiers/Border";
 import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon";
 import { withModifier } from "@/hoc/withModifier";
-import { useEditorStore } from "@/stores/editor";
+import { useThemeStore } from "@/stores/theme";
 import { ICON_SIZE } from "@/utils/config";
 import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
@@ -31,11 +31,10 @@ import {
 } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
-
 const defaultTextValues = requiredModifiers.text;
 
 const Modifier = withModifier(({ selectedComponent }) => {
-  const theme = useEditorStore((state) => state.theme);
+  const theme = useThemeStore((state) => state.theme);
 
   const shadow = selectedComponent?.props?.style?.textShadow ?? "";
   const getShadowStyle = (shadow: string) => {
