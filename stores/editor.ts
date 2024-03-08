@@ -108,153 +108,156 @@ export const debouncedUpdatePageState = debounce(updatePageState, 1000);
 // creates a store with undo/redo capability
 export const useEditorStore = create<EditorState>()(
   // @ts-ignore
-  devtools((set, get) => ({
-    setTriggeredLogicFlow: async (lf) =>
-      set({ lf }, false, "editor/setTriggeredLogicFlow"),
-    lf: [],
-    setTriggeredAction: async (actions) =>
-      set({ actions }, false, "editor/setTriggeredAction"),
-    actions: [],
-    setNonEditorActions: async (cb) => {
-      return set(
-        (state) => {
-          const nonEditorActions = cb(state.nonEditorActions);
-          return { nonEditorActions };
-        },
-        false,
-        "editor/setNonEditorActions",
-      );
-    },
-    nonEditorActions: {},
-    collapsedItemsCount: 0,
-    pages: [],
-    selectedComponentId: "content-wrapper",
-    selectedComponentIds: ["content-wrapper"],
-    language: "default",
-    projectId: "",
-    setCopiedProperties: (copiedProperties) =>
-      set({ copiedProperties }, false, "editor/setCopiedProperties"),
-    setOpenAction: (openAction) =>
-      set({ openAction }, false, "editor/setOpenAction"),
-    setPages: (pages) => set({ pages }, false, "editor/setPages"),
-    setPickingComponentToBindFrom: (pickingComponentToBindFrom) =>
-      set(
-        { pickingComponentToBindFrom },
-        false,
-        "editor/setPickingComponentToBindFrom",
-      ),
-    setPickingComponentToBindTo: (pickingComponentToBindTo) =>
-      set(
-        { pickingComponentToBindTo },
-        false,
-        "editor/setPickingComponentToBindTo",
-      ),
-    setSequentialTo: (sequentialTo) =>
-      set({ sequentialTo }, false, "editor/setSequentialTo"),
-    setComponentToBind: (componentToBind) => {
-      set(
-        (state) => {
-          componentToBind &&
-            state.pickingComponentToBindTo?.onPick &&
-            state.pickingComponentToBindTo?.onPick(componentToBind);
-          return { componentToBind };
-        },
-        false,
-        "editor/setComponentToBind",
-      );
-    },
-    setCopiedComponent: (copiedComponent) =>
-      set({ copiedComponent }, false, "editor/setCopiedComponent"),
-
-    setIframeWindow: (iframeWindow) =>
-      set({ iframeWindow }, false, "editor/setIframeWindow"),
-    setCurrentTargetId: (currentTargetId) =>
-      set({ currentTargetId }, false, "editor/setCurrentTargetId"),
-    isSaving: false,
-    setTreeComponentCurrentState: (componentId, currentState = "default") => {
-      set(
-        (prev) => {
-          return {
-            currentTreeComponentsStates: {
-              ...prev.currentTreeComponentsStates,
-              [componentId]: currentState,
-            },
-          };
-        },
-        false,
-        "editor/setTreeComponentCurrentState",
-      );
-    },
-    setCurrentPageAndProjectIds: (currentProjectId, currentPageId) => {
-      if (
-        get().currentProjectId !== currentProjectId ||
-        get().currentPageId !== currentPageId
-      ) {
-        set(
-          { currentProjectId, currentPageId },
+  devtools(
+    (set, get) => ({
+      setTriggeredLogicFlow: async (lf) =>
+        set({ lf }, false, "editor/setTriggeredLogicFlow"),
+      lf: [],
+      setTriggeredAction: async (actions) =>
+        set({ actions }, false, "editor/setTriggeredAction"),
+      actions: [],
+      setNonEditorActions: async (cb) => {
+        return set(
+          (state) => {
+            const nonEditorActions = cb(state.nonEditorActions);
+            return { nonEditorActions };
+          },
           false,
-          "editor/setCurrentPageAndProjectIds",
+          "editor/setNonEditorActions",
         );
-      }
-    },
-    setComponentToAdd: (componentToAdd) =>
-      set({ componentToAdd }, false, "editor/setComponentToAdd"),
-    setSelectedComponentIds: (cb) => {
-      return set(
-        (state) => {
-          const selectedComponentIds = cb(state.selectedComponentIds ?? []);
-          return { selectedComponentIds };
-        },
-        false,
-        "editor/setSelectedComponentIds",
-      );
-    },
-    clearSelection: (id) =>
-      set(
-        { selectedComponentIds: [id ?? "content-wrapper"] },
-        false,
-        "editor/clearSelection",
-      ),
-    setIsSaving: (isSaving) => set({ isSaving }, false, "editor/setIsSaving"),
-    isPreviewMode: false,
-    isLive: false,
-    isNavBarVisible: true,
-    isStructureCollapsed: false,
-    setActiveTab: (activeTab) =>
-      set({ activeTab }, false, "editor/setActiveTab"),
-    setPreviewMode: (value) =>
-      set(
-        { isPreviewMode: value, currentTreeComponentsStates: {} },
-        false,
-        "editor/setPreviewMode",
-      ),
-    setIsLive: (value) => set({ isLive: value }, false, "editor/setIsLive"),
-    setIsStructureCollapsed: (value) =>
-      set(
-        { isStructureCollapsed: value },
-        false,
-        "editor/setIsStructureCollapsed",
-      ),
-    setIsNavBarVisible: () =>
-      set(
-        (state) => ({ isNavBarVisible: !state.isNavBarVisible }),
-        false,
-        "editor/setIsNavBarVisible",
-      ),
-    setCopiedAction: (copiedAction) =>
-      set({ copiedAction }, false, "editor/setCopiedAction"),
-    setLanguage: (language) => set({ language }, false, "editor/setLanguage"),
-    setIsWindowError: (isWindowError) =>
-      set({ isWindowError }, false, "editor/setIsWindowError"),
-    setHighlightedComponentId: (componentId) =>
-      set(
-        { highlightedComponentId: componentId },
-        false,
-        "editor/setHighlightedComponentId",
-      ),
-    setIsResizing: (isResizing) =>
-      set({ isResizing }, false, "editor/setIsResizing"),
-    setCollapsedItemsCount: (collapsedItemsCount) =>
-      set({ collapsedItemsCount }, false, "editor/setCollapsedItemsCount"),
-  })),
+      },
+      nonEditorActions: {},
+      collapsedItemsCount: 0,
+      pages: [],
+      selectedComponentId: "content-wrapper",
+      selectedComponentIds: ["content-wrapper"],
+      language: "default",
+      projectId: "",
+      setCopiedProperties: (copiedProperties) =>
+        set({ copiedProperties }, false, "editor/setCopiedProperties"),
+      setOpenAction: (openAction) =>
+        set({ openAction }, false, "editor/setOpenAction"),
+      setPages: (pages) => set({ pages }, false, "editor/setPages"),
+      setPickingComponentToBindFrom: (pickingComponentToBindFrom) =>
+        set(
+          { pickingComponentToBindFrom },
+          false,
+          "editor/setPickingComponentToBindFrom",
+        ),
+      setPickingComponentToBindTo: (pickingComponentToBindTo) =>
+        set(
+          { pickingComponentToBindTo },
+          false,
+          "editor/setPickingComponentToBindTo",
+        ),
+      setSequentialTo: (sequentialTo) =>
+        set({ sequentialTo }, false, "editor/setSequentialTo"),
+      setComponentToBind: (componentToBind) => {
+        set(
+          (state) => {
+            componentToBind &&
+              state.pickingComponentToBindTo?.onPick &&
+              state.pickingComponentToBindTo?.onPick(componentToBind);
+            return { componentToBind };
+          },
+          false,
+          "editor/setComponentToBind",
+        );
+      },
+      setCopiedComponent: (copiedComponent) =>
+        set({ copiedComponent }, false, "editor/setCopiedComponent"),
+
+      setIframeWindow: (iframeWindow) =>
+        set({ iframeWindow }, false, "editor/setIframeWindow"),
+      setCurrentTargetId: (currentTargetId) =>
+        set({ currentTargetId }, false, "editor/setCurrentTargetId"),
+      isSaving: false,
+      setTreeComponentCurrentState: (componentId, currentState = "default") => {
+        set(
+          (prev) => {
+            return {
+              currentTreeComponentsStates: {
+                ...prev.currentTreeComponentsStates,
+                [componentId]: currentState,
+              },
+            };
+          },
+          false,
+          "editor/setTreeComponentCurrentState",
+        );
+      },
+      setCurrentPageAndProjectIds: (currentProjectId, currentPageId) => {
+        if (
+          get().currentProjectId !== currentProjectId ||
+          get().currentPageId !== currentPageId
+        ) {
+          set(
+            { currentProjectId, currentPageId },
+            false,
+            "editor/setCurrentPageAndProjectIds",
+          );
+        }
+      },
+      setComponentToAdd: (componentToAdd) =>
+        set({ componentToAdd }, false, "editor/setComponentToAdd"),
+      setSelectedComponentIds: (cb) => {
+        return set(
+          (state) => {
+            const selectedComponentIds = cb(state.selectedComponentIds ?? []);
+            return { selectedComponentIds };
+          },
+          false,
+          "editor/setSelectedComponentIds",
+        );
+      },
+      clearSelection: (id) =>
+        set(
+          { selectedComponentIds: [id ?? "content-wrapper"] },
+          false,
+          "editor/clearSelection",
+        ),
+      setIsSaving: (isSaving) => set({ isSaving }, false, "editor/setIsSaving"),
+      isPreviewMode: false,
+      isLive: false,
+      isNavBarVisible: true,
+      isStructureCollapsed: false,
+      setActiveTab: (activeTab) =>
+        set({ activeTab }, false, "editor/setActiveTab"),
+      setPreviewMode: (value) =>
+        set(
+          { isPreviewMode: value, currentTreeComponentsStates: {} },
+          false,
+          "editor/setPreviewMode",
+        ),
+      setIsLive: (value) => set({ isLive: value }, false, "editor/setIsLive"),
+      setIsStructureCollapsed: (value) =>
+        set(
+          { isStructureCollapsed: value },
+          false,
+          "editor/setIsStructureCollapsed",
+        ),
+      setIsNavBarVisible: () =>
+        set(
+          (state) => ({ isNavBarVisible: !state.isNavBarVisible }),
+          false,
+          "editor/setIsNavBarVisible",
+        ),
+      setCopiedAction: (copiedAction) =>
+        set({ copiedAction }, false, "editor/setCopiedAction"),
+      setLanguage: (language) => set({ language }, false, "editor/setLanguage"),
+      setIsWindowError: (isWindowError) =>
+        set({ isWindowError }, false, "editor/setIsWindowError"),
+      setHighlightedComponentId: (componentId) =>
+        set(
+          { highlightedComponentId: componentId },
+          false,
+          "editor/setHighlightedComponentId",
+        ),
+      setIsResizing: (isResizing) =>
+        set({ isResizing }, false, "editor/setIsResizing"),
+      setCollapsedItemsCount: (collapsedItemsCount) =>
+        set({ collapsedItemsCount }, false, "editor/setCollapsedItemsCount"),
+    }),
+    { name: "Editor store" },
+  ),
 );

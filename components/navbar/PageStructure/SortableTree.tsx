@@ -100,9 +100,6 @@ export function NavbarLayersSection({
   const isStructureCollapsed = useEditorStore(
     (state) => state.isStructureCollapsed,
   );
-  const setCollapsedItemsCount = useEditorStore(
-    (state) => state.setCollapsedItemsCount,
-  );
   const setItems = useCallback((updateItems: any, save = true) => {
     debouncedTreeRootChildrenUpdate(updateItems, save);
   }, []);
@@ -162,9 +159,6 @@ export function NavbarLayersSection({
         [] as string[],
       );
 
-    const count = (collapsedItems ?? []).length;
-    setCollapsedItemsCount(count);
-
     return removeChildrenOf(
       flattenedTree,
       // @ts-ignore
@@ -175,7 +169,6 @@ export function NavbarLayersSection({
     selectedComponentId,
     didStructureCollapedChange,
     isStructureCollapsed,
-    setCollapsedItemsCount,
     activeId,
   ]);
 
