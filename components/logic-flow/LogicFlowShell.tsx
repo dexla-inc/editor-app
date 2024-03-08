@@ -3,7 +3,7 @@ import { AppShell, AppShellProps, Box } from "@mantine/core";
 
 import { LogicFlowFormModal } from "@/components/logic-flow/LogicFlowFormModal";
 import { LogicFlowResponse } from "@/requests/logicflows/types";
-import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { LOGICFLOW_BACKGROUND } from "@/utils/branding";
 import { ErrorBoundary } from "react-error-boundary";
 
@@ -17,7 +17,7 @@ export const LogicFlowShell = ({
   aside,
   header,
 }: ShellProps) => {
-  const resetTree = useEditorStore((state) => state.resetTree);
+  const resetTree = useEditorTreeStore((state) => state.resetTree);
 
   return (
     <AppShell

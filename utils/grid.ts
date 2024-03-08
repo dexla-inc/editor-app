@@ -1,12 +1,13 @@
 import { useEditorStore } from "@/stores/editor";
-import { Component, ComponentStructure, ComponentTree } from "@/utils/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
+import { Component, ComponentStructure } from "@/utils/editor";
 import crawl from "tree-crawl";
 
 export const calculateGridSizes = (tree?: ComponentStructure) => {
   if (!tree) {
-    tree = useEditorStore.getState().tree.root as ComponentStructure;
+    tree = useEditorTreeStore.getState().tree.root as ComponentStructure;
   }
-  const setColumnSpan = useEditorStore.getState().setColumnSpan;
+  const setColumnSpan = useEditorTreeStore.getState().setColumnSpan;
   const componentResizedMap: { [parentId: string]: Component } = {};
 
   crawl(
@@ -15,23 +16,25 @@ export const calculateGridSizes = (tree?: ComponentStructure) => {
       // TODO: workaround
       const node = nodeTree?.name
         ? nodeTree
-        : useEditorStore.getState().componentMutableAttrs[nodeTree?.id!];
+        : useEditorTreeStore.getState().componentMutableAttrs[nodeTree?.id!];
       if (node.name === "Grid") {
         const parentTree = context.parent;
         const parent =
-          useEditorStore.getState().componentMutableAttrs[parentTree?.id!];
+          useEditorTreeStore.getState().componentMutableAttrs[parentTree?.id!];
         if (parent?.name === "GridColumn") {
           node.props!.gridSize = parent.props!.span;
         }
       } else if (node.name === "GridColumn") {
         const parentTree = context.parent;
         const parent =
-          useEditorStore.getState().componentMutableAttrs[parentTree?.id!];
+          useEditorTreeStore.getState().componentMutableAttrs[parentTree?.id!];
         if (parent?.name === "Grid") {
           const sibilings =
             (parentTree?.children ?? []).filter((childTree) => {
               const child =
-                useEditorStore.getState().componentMutableAttrs[childTree?.id!];
+                useEditorTreeStore.getState().componentMutableAttrs[
+                  childTree?.id!
+                ];
               return child.name === "GridColumn";
             }) ?? [];
 

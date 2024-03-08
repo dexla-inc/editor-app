@@ -1,4 +1,5 @@
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import {
   EditorTreeCopy,
   getComponentIndex,
@@ -28,8 +29,8 @@ export const GridColumn = forwardRef(
   ) => {
     const { flexWrap, ...style } = gridColumnStyles;
     const theme = useMantineTheme();
-    const columnSpans = useEditorStore((state) => state.columnSpans ?? {});
-    const setColumnSpan = useEditorStore((state) => state.setColumnSpan);
+    const columnSpans = useEditorTreeStore((state) => state.columnSpans ?? {});
+    const setColumnSpan = useEditorTreeStore((state) => state.setColumnSpan);
     const iframeWindow = useEditorStore((state) => state.iframeWindow);
     const isResizing = useEditorStore((state) => state.isResizing);
     const setIsResizing = useEditorStore((state) => state.setIsResizing);
@@ -38,7 +39,7 @@ export const GridColumn = forwardRef(
     const [initialNextSiblingSpan, setInitialNextSiblingSpan] = useState(0);
 
     const parent = useMemo(() => {
-      const editorTree = useEditorStore.getState().tree as EditorTreeCopy;
+      const editorTree = useEditorTreeStore.getState().tree as EditorTreeCopy;
       return getComponentParent(editorTree.root, props.id!);
     }, [props.id]);
     const siblings = (parent?.children ?? []).filter(
@@ -231,9 +232,9 @@ export const GridColumn = forwardRef(
             ? {
                 onResizeStop: async () => {
                   const updateTreeComponentAttrs =
-                    useEditorStore.getState().updateTreeComponentAttrs;
+                    useEditorTreeStore.getState().updateTreeComponentAttrs;
 
-                  await updateTreeComponentAttrs({
+                  updateTreeComponentAttrs({
                     componentIds: [props.id],
                     attrs: {
                       props: {
@@ -244,7 +245,7 @@ export const GridColumn = forwardRef(
                   });
 
                   if (nextSibling) {
-                    await updateTreeComponentAttrs({
+                    updateTreeComponentAttrs({
                       componentIds: [nextSibling.id!],
                       attrs: {
                         props: {
@@ -255,7 +256,7 @@ export const GridColumn = forwardRef(
                     });
 
                     const nextSiblingComp =
-                      useEditorStore.getState().componentMutableAttrs[
+                      useEditorTreeStore.getState().componentMutableAttrs[
                         nextSibling.id!
                       ];
                     if (nextSiblingComp) {
@@ -264,7 +265,9 @@ export const GridColumn = forwardRef(
                   }
 
                   const component =
-                    useEditorStore.getState().componentMutableAttrs[props.id!];
+                    useEditorTreeStore.getState().componentMutableAttrs[
+                      props.id!
+                    ];
                   if (component) {
                     calculateGridSizes(component);
                   }

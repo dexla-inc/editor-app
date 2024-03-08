@@ -70,12 +70,9 @@ export const updatePageState = async (
   state: PageStateParams["state"],
   projectId: string,
   pageId: string,
-  setIsSaving: (isSaving: boolean) => void,
 ) => {
-  setIsSaving(true);
   const url = `/projects/${projectId}/pages/${pageId}/state`;
   const response = (await post<any>(url, { state })) as any;
-  setIsSaving(false);
   return response;
 };
 

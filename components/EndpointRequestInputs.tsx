@@ -30,10 +30,6 @@ export const EndpointRequestInputs = ({
     (state) => state.selectedComponentIds?.at(-1),
   );
 
-  const component = useEditorStore(
-    (state) => state.componentMutableAttrs[selectedComponentId!],
-  );
-
   return (
     <Stack spacing={2}>
       {[

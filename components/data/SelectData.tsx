@@ -2,7 +2,7 @@ import { DynamicSettings } from "@/components/data/forms/DynamicSettings";
 import { SelectOptionsForm } from "@/components/data/forms/static/SelectOptionsForm";
 import { Endpoint } from "@/requests/datasources/types";
 import { PagingResponse } from "@/requests/types";
-import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { Component } from "@/utils/editor";
 import { SegmentedControl, Select, Stack, Text, Title } from "@mantine/core";
 
@@ -13,7 +13,8 @@ export type DataProps = {
 };
 
 export const SelectData = ({ component, endpoints, dataType }: DataProps) => {
-  const updateTreeComponentAttrs = useEditorStore(
+  console.log("SelectData");
+  const updateTreeComponentAttrs = useEditorTreeStore(
     (state) => state.updateTreeComponentAttrs,
   );
 

@@ -17,7 +17,7 @@ import Link from "next/link";
 import { DashboardCompanySelector } from "@/components/DashboardCompanySelector";
 import { DashboardNavLinks } from "@/components/DashboardNavLinks";
 import { DashboardUserMenu } from "@/components/DashboardUserMenu";
-import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { ChangeThemeButton } from "./ChangeThemeButton";
@@ -29,7 +29,7 @@ export interface ShellProps extends AppShellProps {
 export const DashboardShell = ({ children, aside }: ShellProps) => {
   // This state needs to move to the parent component
   const [isLoading, setIsLoading] = useState(false);
-  const resetTree = useEditorStore((state) => state.resetTree);
+  const resetTree = useEditorTreeStore((state) => state.resetTree);
 
   return (
     <AppShell

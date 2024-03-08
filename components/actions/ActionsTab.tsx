@@ -2,6 +2,7 @@ import SidebarSection from "@/components/SidebarSection";
 import { ActionSettingsForm } from "@/components/actions/ActionSettingsForm";
 import { ActionsForm } from "@/components/actions/ActionsForm";
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { Action, actionMapper } from "@/utils/actions";
 import { Component } from "@/utils/editor";
 import { Box, Button, Stack } from "@mantine/core";
@@ -16,10 +17,10 @@ export const ActionsTab = ({ component }: Props) => {
   const openAction = useEditorStore((state) => state.openAction);
   const setOpenAction = useEditorStore((state) => state.setOpenAction);
   const setCopiedAction = useEditorStore((state) => state.setCopiedAction);
-  const updateTreeComponentAttrs = useEditorStore(
+  const updateTreeComponentAttrs = useEditorTreeStore(
     (state) => state.updateTreeComponentAttrs,
   );
-
+  console.log("updateTreeComponentAttrs");
   const [addForm, { open, close }] = useDisclosure(false);
 
   const getActionsBySequentialToOrId = (id: string) => {

@@ -22,6 +22,7 @@ import {
 import { Group, Text, Tooltip, UnstyledButton } from "@mantine/core";
 import { IconGripVertical } from "@tabler/icons-react";
 import { useCallback, useEffect, useMemo } from "react";
+import { useEditorTreeStore } from "../stores/editorTree";
 
 type Props = {
   customComponentModal: any;
@@ -34,8 +35,10 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
   const editorTheme = useThemeStore((state) => state.theme);
 
   // Move to functions
-  const editorTree = useEditorStore((state) => state.tree as EditorTreeCopy);
-  const setEditorTree = useEditorStore((state) => state.setTree);
+  const editorTree = useEditorTreeStore(
+    (state) => state.tree as EditorTreeCopy,
+  );
+  const setEditorTree = useEditorTreeStore((state) => state.setTree);
   const setSelectedComponentIds = useEditorStore(
     (state) => state.setSelectedComponentIds,
   );
@@ -45,7 +48,7 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
 
   const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
 
-  const component = useEditorStore(
+  const component = useEditorTreeStore(
     (state) => state.componentMutableAttrs[selectedComponentId!],
   );
 

@@ -10,7 +10,7 @@ import { createPageList, createPages } from "@/requests/pages/mutations";
 import { PageAIResponse, PageBody } from "@/requests/pages/types";
 import { createVariable } from "@/requests/variables/mutations";
 import { useAppStore } from "@/stores/app";
-import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { GRAY_WHITE_COLOR } from "@/utils/branding";
 import { ICON_SIZE } from "@/utils/config";
 import {
@@ -69,7 +69,7 @@ export default function PagesStep({
   description,
   industry,
 }: PagesStepProps) {
-  const resetTree = useEditorStore((state) => state.resetTree);
+  const resetTree = useEditorTreeStore((state) => state.resetTree);
   const theme = useMantineTheme();
   // const initiallPageGeneration = useRef(false);
   // const updatePage = (index: number, value: string) => {

@@ -1,7 +1,7 @@
 import { DynamicSettings } from "@/components/data/forms/DynamicSettings";
 import { Endpoint } from "@/requests/datasources/types";
 import { PagingResponse } from "@/requests/types";
-import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { Component } from "@/utils/editor";
 import {
   Box,
@@ -20,7 +20,7 @@ export type DataProps = {
 };
 
 export const TableData = ({ component, endpoints, dataType }: DataProps) => {
-  const updateTreeComponentAttrs = useEditorStore(
+  const updateTreeComponentAttrs = useEditorTreeStore(
     (state) => state.updateTreeComponentAttrs,
   );
 

@@ -1,10 +1,13 @@
 import { useEditorStore } from "@/stores/editor";
-import { getAllComponentsByIds } from "@/utils/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 
 export const useComponentStates = () => {
-  const components = useEditorStore(
+  const selectedComponentIds = useEditorStore(
+    (state) => state.selectedComponentIds,
+  );
+  const components = useEditorTreeStore(
     (state) =>
-      state.selectedComponentIds?.map((id) => state.componentMutableAttrs[id]),
+      selectedComponentIds?.map((id) => state.componentMutableAttrs[id]),
   );
 
   type ComponentAppearence = {

@@ -1,4 +1,5 @@
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { componentMapper } from "@/utils/componentMapper";
 import { NAVBAR_WIDTH } from "@/utils/config";
@@ -26,9 +27,9 @@ const debouncedDragEnter = debounce((event: any, id: string) => {
   const activeId = componentToAdd?.id ?? selectedComponentId;
 
   const activeComponent =
-    useEditorStore.getState().componentMutableAttrs[activeId!];
+    useEditorTreeStore.getState().componentMutableAttrs[activeId!];
 
-  const comp = useEditorStore.getState().componentMutableAttrs[id];
+  const comp = useEditorTreeStore.getState().componentMutableAttrs[id];
   const isTryingToDropInsideItself =
     activeComponent && activeId !== id
       ? !!getComponentTreeById(activeComponent!, id)
@@ -83,7 +84,9 @@ export const useDroppable = ({
   const [edge, setEdge] = useState<Edge>();
   const currentTargetId = useEditorStore((state) => state.currentTargetId);
   const componentToAdd = useEditorStore((state) => state.componentToAdd);
-  const component = useEditorStore((state) => state.componentMutableAttrs[id]);
+  const component = useEditorTreeStore(
+    (state) => state.componentMutableAttrs[id],
+  );
 
   const handleDrop = useCallback(
     (event: React.DragEvent) => {

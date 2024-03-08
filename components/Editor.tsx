@@ -8,6 +8,7 @@ import { EditorNavbarSections } from "@/components/navbar/EditorNavbarSections";
 import { useAppMode } from "@/hooks/useAppMode";
 import { useGetPageData } from "@/hooks/useGetPageData";
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { globalStyles } from "@/utils/branding";
@@ -30,10 +31,10 @@ const Editor = ({ projectId, pageId }: Props) => {
   const setCurrentPageAndProjectIds = useEditorStore(
     (state) => state.setCurrentPageAndProjectIds,
   );
-  const liveblocks = useEditorStore((state) => state.liveblocks);
+  const liveblocks = useEditorTreeStore((state) => state.liveblocks);
   const { isPreviewMode } = useAppMode();
   const isNavBarVisible = useEditorStore((state) => state.isNavBarVisible);
-  const setCurrentUser = useEditorStore((state) => state.setCurrentUser);
+  const setCurrentUser = useEditorTreeStore((state) => state.setCurrentUser);
   const isDarkTheme = useUserConfigStore((state) => state.isDarkTheme);
   const user = usePropelAuthStore((state) => state.user);
 

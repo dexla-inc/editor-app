@@ -1,4 +1,5 @@
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { useRouter } from "next/router";
 import { useEffect, useRef } from "react";
 
@@ -9,7 +10,7 @@ export const usePreventNavigationOnSaving = () => {
   const router = useRouter();
   const isSaving = useEditorStore((state) => state.isSaving);
   const isSavingRef = useRef(isSaving);
-  const resetTree = useEditorStore((state) => state.resetTree);
+  const resetTree = useEditorTreeStore((state) => state.resetTree);
 
   useEffect(() => {
     isSavingRef.current = isSaving;

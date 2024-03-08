@@ -1,8 +1,8 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { isSame } from "@/utils/componentComparison";
 import {
-  Component,
   ComponentTree,
   EditableComponentMapper,
   getAllChildrenComponents,
@@ -44,7 +44,9 @@ const StepperComponent = forwardRef(
 
         step.children?.forEach((sectionTree) => {
           const section =
-            useEditorStore.getState().componentMutableAttrs[sectionTree?.id!];
+            useEditorTreeStore.getState().componentMutableAttrs[
+              sectionTree?.id!
+            ];
           if (section.name === "StepperStepHeader") {
             const allChildren = getAllChildrenComponents(section);
             allChildren.forEach((c) =>
@@ -80,7 +82,7 @@ const StepperComponent = forwardRef(
             const { header, content } = (child.children ?? []).reduce(
               (acc, currTree) => {
                 const curr =
-                  useEditorStore.getState().componentMutableAttrs[
+                  useEditorTreeStore.getState().componentMutableAttrs[
                     currTree?.id!
                   ];
                 if (curr.name === "StepperStepHeader") acc.header = curr;

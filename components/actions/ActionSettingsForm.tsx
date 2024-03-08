@@ -1,16 +1,17 @@
-import { useForm } from "@mantine/form";
-import { Action, ChangeLanguageAction } from "@/utils/actions";
+import { Icon } from "@/components/Icon";
+import { ActionButtons } from "@/components/actions/ActionButtons";
+import { ActionsForm } from "@/components/actions/ActionsForm";
 import {
   updateActionInTree,
   useActionData,
 } from "@/components/actions/_BaseActionFunctions";
 import { useEditorStore } from "@/stores/editor";
-import { ActionButtons } from "@/components/actions/ActionButtons";
+import { useEditorTreeStore } from "@/stores/editorTree";
+import { Action, ChangeLanguageAction } from "@/utils/actions";
 import { Button, Divider, Stack } from "@mantine/core";
-import { useEffect } from "react";
-import { Icon } from "@/components/Icon";
+import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
-import { ActionsForm } from "@/components/actions/ActionsForm";
+import { useEffect } from "react";
 
 type Props = {
   action: Action;
@@ -26,14 +27,14 @@ export const ActionSettingsForm = ({
   const [addSequentialForm, { open: openSequential, close: closeSequential }] =
     useDisclosure(false);
 
-  const editorTree = useEditorStore((state) => state.tree);
+  const editorTree = useEditorTreeStore((state) => state.tree);
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentIds?.at(-1),
   );
-  const updateTreeComponentAttrs = useEditorStore(
+  const updateTreeComponentAttrs = useEditorTreeStore(
     (state) => state.updateTreeComponentAttrs,
   );
-
+  console.log("ActionSettingsForm");
   const form = useForm({
     initialValues: { ...defaultValues, ...action.action },
   });

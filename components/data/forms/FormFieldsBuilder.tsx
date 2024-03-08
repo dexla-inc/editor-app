@@ -8,7 +8,7 @@ import {
 import { useComponentStates } from "@/hooks/useComponentStates";
 import { Endpoint } from "@/requests/datasources/types";
 import { PagingResponse } from "@/requests/types";
-import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { ICON_SIZE } from "@/utils/config";
 import {
   Component,
@@ -36,9 +36,9 @@ type Props = {
 };
 
 export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
-  const tree = useEditorStore((state) => state.tree);
+  const editorTree = useEditorTreeStore((state) => state.tree);
   const hasParentComponentData = !!getParentComponentData(
-    tree.root,
+    editorTree.root,
     component.id!,
   );
   const { getComponentsStates } = useComponentStates();

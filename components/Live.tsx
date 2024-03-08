@@ -4,10 +4,10 @@ import { EditableComponent } from "@/components/EditableComponent";
 import { LiveWrapper } from "@/components/LiveWrapper";
 import { useDeploymentsRecentQuery } from "@/hooks/reactQuery/useDeploymentsRecentQuery";
 import { useAppStore } from "@/stores/app";
-import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { componentMapper } from "@/utils/componentMapper";
 import { decodeSchema } from "@/utils/compression";
-import { Component, ComponentTree } from "@/utils/editor";
+import { ComponentTree } from "@/utils/editor";
 import { Box } from "@mantine/core";
 import { ReactNode, useCallback, useEffect, useMemo } from "react";
 
@@ -39,8 +39,8 @@ const EditableComponentContainer = ({
 };
 
 export const Live = ({ projectId, pageId }: Props) => {
-  const editorTree = useEditorStore((state) => state.tree);
-  const setEditorTree = useEditorStore((state) => state.setTree);
+  const editorTree = useEditorTreeStore((state) => state.tree);
+  const setEditorTree = useEditorTreeStore((state) => state.setTree);
   const setIsLoading = useAppStore((state) => state.setIsLoading);
   const isLoading = useAppStore((state) => state.isLoading);
   const { data: deployment } = useDeploymentsRecentQuery(projectId);
@@ -81,7 +81,7 @@ export const Live = ({ projectId, pageId }: Props) => {
       }
 
       const component =
-        useEditorStore.getState().componentMutableAttrs[componentTree.id!];
+        useEditorTreeStore.getState().componentMutableAttrs[componentTree.id!];
       const componentToRender = componentMapper[component.name];
 
       return (

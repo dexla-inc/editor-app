@@ -1,4 +1,5 @@
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { Action } from "@/utils/actions";
 import { GRAY_OUTLINE } from "@/utils/branding";
 import { GRID_SIZE } from "@/utils/config";
@@ -93,9 +94,11 @@ export function arrayMove<T>(array: T[], from: number, to: number): T[] {
 }
 
 export const replaceIdsDeeply = (treeRoot: Component) => {
+  console.log("replaceIdsDeeply");
   const updateTreeComponentAttrs =
-    useEditorStore.getState().updateTreeComponentAttrs;
-  const componentMutableAttrs = useEditorStore.getState().componentMutableAttrs;
+    useEditorTreeStore.getState().updateTreeComponentAttrs;
+  const componentMutableAttrs =
+    useEditorTreeStore.getState().componentMutableAttrs;
   crawl(
     treeRoot,
     async (node) => {
@@ -204,7 +207,7 @@ export const getTiles = (treeRoot: ComponentTree): TileType[] => {
     treeRoot,
     (nodeTree) => {
       const node =
-        useEditorStore.getState().componentMutableAttrs[nodeTree.id!];
+        useEditorTreeStore.getState().componentMutableAttrs[nodeTree.id!];
       const name = node.description?.replace(".tile", "");
       if (
         node.description?.endsWith(".tile") &&
@@ -367,7 +370,7 @@ export const getAllComponentsByIds = (
 
 export const getComponentBeingAddedId = (): string | null => {
   return (
-    Object.values(useEditorStore.getState().componentMutableAttrs).find(
+    Object.values(useEditorTreeStore.getState().componentMutableAttrs).find(
       (component) => component.isBeingAdded,
     )?.id || null
   );
@@ -512,13 +515,13 @@ export const getParentComponentData = (
     treeRoot,
     (nodeTree, context) => {
       const node =
-        useEditorStore.getState().componentMutableAttrs[nodeTree.id!];
+        useEditorTreeStore.getState().componentMutableAttrs[nodeTree.id!];
       if (
         !isEmpty(node.onLoad?.endpointId) &&
         parentComponentNames.includes(node.name)
       ) {
         const childComponent =
-          useEditorStore.getState().componentMutableAttrs[componentId];
+          useEditorTreeStore.getState().componentMutableAttrs[componentId];
         if (childComponent) {
           parentWithOnLoad = node;
           context.break();
@@ -735,7 +738,7 @@ export const getClosestEdge = (
 export const debouncedTreeComponentChildrenUpdate = debounce(
   async (value: Component[], save = true) => {
     const updateTreeComponentChildren =
-      useEditorStore.getState().updateTreeComponentChildren;
+      useEditorTreeStore.getState().updateTreeComponentChildren;
     const selectedComponentId = useEditorStore
       .getState()
       .selectedComponentIds?.at(-1);
@@ -751,8 +754,8 @@ export const debouncedTreeComponentChildrenUpdate = debounce(
 export const debouncedTreeRootChildrenUpdate = debounce(
   (value: Component[], save = true) => {
     const updateTreeComponentChildren =
-      useEditorStore.getState().updateTreeComponentChildren;
-    const tree = useEditorStore.getState().tree;
+      useEditorTreeStore.getState().updateTreeComponentChildren;
+    const tree = useEditorTreeStore.getState().tree;
 
     updateTreeComponentChildren(tree.root.id as string, value, save);
   },
@@ -771,8 +774,9 @@ export const debouncedTreeComponentAttrsUpdate = debounce(
     forceState?: string;
     save?: boolean;
   }) => {
+    console.log("debouncedTreeComponentAttrsUpdate");
     const updateTreeComponentAttrs =
-      useEditorStore.getState().updateTreeComponentAttrs;
+      useEditorTreeStore.getState().updateTreeComponentAttrs;
     const selectedComponentIds =
       useEditorStore.getState().selectedComponentIds ?? [];
 

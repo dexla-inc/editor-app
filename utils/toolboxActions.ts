@@ -2,6 +2,7 @@ import { jsonStructure as accordionItemSchema } from "@/components/mapper/struct
 import { jsonStructure as tabSchema } from "@/components/mapper/structure/Tab";
 import { jsonStructure as tabsPanelSchema } from "@/components/mapper/structure/TabsPanel";
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { structureMapper } from "@/utils/componentMapper";
 import {
   Component,
@@ -11,8 +12,8 @@ import {
 } from "@/utils/editor";
 
 export const addColumnToolboxAction = ({ component }: any) => {
-  const editorTree = useEditorStore.getState().tree as EditorTreeCopy;
-  const setEditorTree = useEditorStore.getState().setTree;
+  const editorTree = useEditorTreeStore.getState().tree as EditorTreeCopy;
+  const setEditorTree = useEditorTreeStore.getState().setTree;
 
   const ColumnSchema = structureMapper["GridColumn"].structure({});
 
@@ -32,8 +33,8 @@ export const addColumnToolboxAction = ({ component }: any) => {
 };
 
 export const insertRowToolboxAction = ({ parent }: any) => {
-  const editorTree = useEditorStore.getState().tree as EditorTreeCopy;
-  const setEditorTree = useEditorStore.getState().setTree;
+  const editorTree = useEditorTreeStore.getState().tree as EditorTreeCopy;
+  const setEditorTree = useEditorTreeStore.getState().setTree;
 
   const ColumnSchema = structureMapper["GridColumn"].structure({});
   const GridSchema = structureMapper["Grid"].structure({});
@@ -51,8 +52,8 @@ export const insertRowToolboxAction = ({ parent }: any) => {
 };
 
 export const addColumnToParentToolboxAction = ({ parent }: any) => {
-  const editorTree = useEditorStore.getState().tree as EditorTreeCopy;
-  const setEditorTree = useEditorStore.getState().setTree;
+  const editorTree = useEditorTreeStore.getState().tree as EditorTreeCopy;
+  const setEditorTree = useEditorTreeStore.getState().setTree;
 
   const ColumnSchema = structureMapper["GridColumn"].structure({});
 
@@ -72,8 +73,8 @@ export const addColumnToParentToolboxAction = ({ parent }: any) => {
 };
 
 export const insertGridToolboxAction = ({ component }: any) => {
-  const editorTree = useEditorStore.getState().tree as EditorTreeCopy;
-  const setEditorTree = useEditorStore.getState().setTree;
+  const editorTree = useEditorTreeStore.getState().tree as EditorTreeCopy;
+  const setEditorTree = useEditorTreeStore.getState().setTree;
 
   const GridSchema = structureMapper["Grid"].structure({});
 
@@ -86,8 +87,8 @@ export const insertGridToolboxAction = ({ component }: any) => {
 };
 
 export const addAccordionItemToolboxAction = ({ component }: any) => {
-  const editorTree = useEditorStore.getState().tree as EditorTreeCopy;
-  const setEditorTree = useEditorStore.getState().setTree;
+  const editorTree = useEditorTreeStore.getState().tree as EditorTreeCopy;
+  const setEditorTree = useEditorTreeStore.getState().setTree;
 
   addComponent(editorTree.root, accordionItemSchema({}), {
     id: component.id!,
@@ -98,8 +99,8 @@ export const addAccordionItemToolboxAction = ({ component }: any) => {
 };
 
 export const addTabToolboxAction = ({ component }: any) => {
-  const editorTree = useEditorStore.getState().tree;
-  const setEditorTree = useEditorStore.getState().setTree;
+  const editorTree = useEditorTreeStore.getState().tree;
+  const setEditorTree = useEditorTreeStore.getState().setTree;
 
   const tabList = component.children.find(
     (child: Component) => child.name === "TabsList",

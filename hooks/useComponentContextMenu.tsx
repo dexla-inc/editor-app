@@ -1,5 +1,6 @@
 import { useContextMenu } from "@/contexts/ContextMenuProvider";
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { useThemeStore } from "@/stores/theme";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { copyToClipboard } from "@/utils/clipboard";
@@ -40,7 +41,7 @@ export const useComponentContextMenu = () => {
   const { showContextMenu, destroy } = useContextMenu();
   const editorTheme = useThemeStore((state) => state.theme);
   const copiedProperties = useEditorStore((state) => state.copiedProperties);
-  const setEditorTree = useEditorStore((state) => state.setTree);
+  const setEditorTree = useEditorTreeStore((state) => state.setTree);
   const clearSelection = useEditorStore((state) => state.clearSelection);
   const setCopiedComponent = useEditorStore(
     (state) => state.setCopiedComponent,
@@ -52,14 +53,12 @@ export const useComponentContextMenu = () => {
     (state) => state.setSelectedComponentIds,
   );
 
-  const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
-
   const wrapIn = useCallback(
     (component: Component, componentName: string) => {
       const container = structureMapper[componentName].structure({
         theme: editorTheme,
       });
-      const editorTree = useEditorStore.getState().tree as EditorTreeCopy;
+      const editorTree = useEditorTreeStore.getState().tree as EditorTreeCopy;
       const parent = getComponentParent(editorTree.root, component?.id!);
 
       if (container.props && container.props.style) {
@@ -103,7 +102,7 @@ export const useComponentContextMenu = () => {
         component.id !== "main-content" &&
         component.id !== "content-wrapper"
       ) {
-        const editorTree = useEditorStore.getState().tree as EditorTreeCopy;
+        const editorTree = useEditorTreeStore.getState().tree as EditorTreeCopy;
         removeComponent(editorTree.root, component.id);
         setEditorTree(editorTree, { action: `Removed ${component?.name}` });
         clearSelection();
@@ -114,7 +113,7 @@ export const useComponentContextMenu = () => {
 
   const duplicateComponent = useCallback(
     async (component: Component) => {
-      const editorTree = useEditorStore.getState().tree as EditorTreeCopy;
+      const editorTree = useEditorTreeStore.getState().tree as EditorTreeCopy;
       const componentId = component?.id!;
       const componentName = component.name!;
       const targetId = determinePasteTarget(componentId);
@@ -141,7 +140,7 @@ export const useComponentContextMenu = () => {
   const copyComponent = useCallback(
     (component: Component) => {
       const copiedComponent =
-        useEditorStore.getState().componentMutableAttrs[component.id!];
+        useEditorTreeStore.getState().componentMutableAttrs[component.id!];
       setCopiedComponent(copiedComponent);
       copyToClipboard(copiedComponent);
     },
@@ -151,7 +150,7 @@ export const useComponentContextMenu = () => {
   const copyProperties = useCallback(
     (component: Component) => {
       const targetComponent =
-        useEditorStore.getState().componentMutableAttrs[component.id!];
+        useEditorTreeStore.getState().componentMutableAttrs[component.id!];
       setCopiedProperties({
         componentName: targetComponent.name,
         componentProps: targetComponent.props!,

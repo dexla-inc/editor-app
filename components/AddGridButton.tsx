@@ -1,13 +1,13 @@
 import { ActionIconDefault } from "@/components/ActionIconDefault";
-import { emptyEditorTree, useEditorStore } from "@/stores/editor";
+import { emptyEditorTree, useEditorTreeStore } from "@/stores/editorTree";
 import { EditorTreeCopy } from "@/utils/editor";
 import { nanoid } from "nanoid";
 
 export const AddGridButton = () => {
-  const setEditorTree = useEditorStore((state) => state.setTree);
+  const setEditorTree = useEditorTreeStore((state) => state.setTree);
 
   const addGrid = () => {
-    const editorTree = useEditorStore.getState().tree;
+    const editorTree = useEditorTreeStore.getState().tree;
     editorTree.root.children = (editorTree.root.children ?? [])
       .map((child) => {
         if (child.id !== "content-wrapper") return child;

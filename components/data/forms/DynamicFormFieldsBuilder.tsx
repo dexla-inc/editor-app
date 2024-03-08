@@ -1,6 +1,6 @@
 import { Endpoint } from "@/requests/datasources/types";
 import { PagingResponse } from "@/requests/types";
-import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { extractKeys } from "@/utils/data";
 import { Component, getParentComponentData } from "@/utils/editor";
 import { Select } from "@mantine/core";
@@ -24,7 +24,7 @@ export const DynamicFormFieldsBuilder = ({
   field,
   endpoints,
 }: DynamicFormFieldsBuilderProps) => {
-  const editorTree = useEditorStore((state) => state.tree);
+  const editorTree = useEditorTreeStore((state) => state.tree);
 
   const parentDataComponent = getParentComponentData(
     editorTree.root,

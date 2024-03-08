@@ -1,9 +1,9 @@
-import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { Component } from "@/utils/editor";
 
 export const saveFile = (component: Component, files: any) => {
   const updateTreeComponentAttrs =
-    useEditorStore.getState().updateTreeComponentAttrs;
+    useEditorTreeStore.getState().updateTreeComponentAttrs;
   updateTreeComponentAttrs({
     componentIds: [component.id!],
     attrs: {
