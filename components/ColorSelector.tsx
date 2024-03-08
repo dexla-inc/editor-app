@@ -73,16 +73,17 @@ export const ColorSelector = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchedHex, fetchedFriendlyName]);
 
-  useEffect(() => {
-    const handleKeyDown = (event: any) => {
-      if (event.key === "Escape") {
-        setOpened(false);
-      }
-    };
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [opened]);
+  // TODO: deleting because of 16 times handleKeyDown was triggered - find another solution
+  // useEffect(() => {
+  //   const handleKeyDown = (event: any) => {
+  //     if (event.key === "Escape") {
+  //       setOpened(false);
+  //     }
+  //   };
+  //   document.addEventListener("keydown", handleKeyDown);
+  //   return () => document.removeEventListener("keydown", handleKeyDown);
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [opened]);
 
   return (
     <Flex align="center" ref={ref}>

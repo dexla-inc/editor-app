@@ -176,7 +176,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
           e.stopPropagation();
           toggleEdit();
         }}
-        onKeyDown={handleKeyPress}
+        {...(editable && { onKeyDown: handleKeyPress })}
         onContextMenu={componentContextMenu(component)}
       >
         <div
