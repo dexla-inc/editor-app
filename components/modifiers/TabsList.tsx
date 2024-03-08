@@ -12,14 +12,20 @@ import {
   IconLayoutDistributeHorizontal,
 } from "@tabler/icons-react";
 import merge from "lodash.merge";
+import { useEffect } from "react";
 
 const Modifier = withModifier(({ selectedComponent }) => {
-  const form = useForm({
-    initialValues: merge({}, requiredModifiers.tabsList, {
-      position: selectedComponent.props?.position,
-      disableLine: selectedComponent.props?.disableLine,
-    }),
-  });
+  const form = useForm();
+
+  useEffect(() => {
+    form.setValues(
+      merge({}, requiredModifiers.tabsList, {
+        position: selectedComponent.props?.position,
+        disableLine: selectedComponent.props?.disableLine,
+      }),
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedComponent]);
 
   return (
     <form>

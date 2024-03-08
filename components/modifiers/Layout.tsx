@@ -22,6 +22,7 @@ import {
   IconX,
 } from "@tabler/icons-react";
 import merge from "lodash.merge";
+import { useEffect } from "react";
 
 export let GROW_FLEX_DEFAULT = "1 0 auto";
 export let SHRINK_FLEX_DEFAULT = "0 1 auto";
@@ -106,19 +107,24 @@ const alignItemsData = [
 ];
 
 const Modifier = withModifier(({ selectedComponent }) => {
-  const form = useForm({
-    initialValues: merge({}, defaultLayoutValues, {
-      gap: selectedComponent.props?.gap ?? "xs",
-      flex: selectedComponent.props?.style?.flex,
-      display: selectedComponent.props?.style?.display,
-      position: selectedComponent.props?.style?.position,
-      flexWrap: selectedComponent.props?.style?.flexWrap,
-      flexDirection: selectedComponent.props?.style?.flexDirection,
-      alignItems: selectedComponent.props?.style?.alignItems,
-      justifyContent: selectedComponent.props?.style?.justifyContent,
-      width: selectedComponent.props?.style?.width,
-    }),
-  });
+  const form = useForm();
+
+  useEffect(() => {
+    form.setValues(
+      merge({}, defaultLayoutValues, {
+        gap: selectedComponent.props?.gap ?? "xs",
+        flex: selectedComponent.props?.style?.flex,
+        display: selectedComponent.props?.style?.display,
+        position: selectedComponent.props?.style?.position,
+        flexWrap: selectedComponent.props?.style?.flexWrap,
+        flexDirection: selectedComponent.props?.style?.flexDirection,
+        alignItems: selectedComponent.props?.style?.alignItems,
+        justifyContent: selectedComponent.props?.style?.justifyContent,
+        width: selectedComponent.props?.style?.width,
+      }),
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedComponent]);
 
   let isFlexDirectionColumn =
     selectedComponent.props?.style?.flexDirection === "column";

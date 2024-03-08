@@ -4,15 +4,21 @@ import { requiredModifiers } from "@/utils/modifiers";
 import { Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
+import { useEffect } from "react";
 
 export const defaultImageValues = requiredModifiers.image;
 
 const Modifier = withModifier(({ selectedComponent }) => {
-  const form = useForm({
-    initialValues: merge({}, defaultImageValues, {
-      fit: selectedComponent?.props?.style?.fit,
-    }),
-  });
+  const form = useForm();
+
+  useEffect(() => {
+    form.setValues(
+      merge({}, requiredModifiers.icon, {
+        fit: selectedComponent?.props?.style?.fit,
+      }),
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedComponent]);
 
   return (
     <form>

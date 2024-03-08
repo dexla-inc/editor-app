@@ -4,15 +4,20 @@ import { requiredModifiers } from "@/utils/modifiers";
 import { Stack, Switch, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
-import { ChangeEvent } from "react";
+import { ChangeEvent, useEffect } from "react";
 
 const Modifier = withModifier(({ selectedComponent }) => {
-  const form = useForm({
-    initialValues: merge({}, requiredModifiers.fileButton, {
-      accept: selectedComponent.props?.accept,
-      multiple: selectedComponent.props?.multiple,
-    }),
-  });
+  const form = useForm();
+
+  useEffect(() => {
+    form.setValues(
+      merge({}, requiredModifiers.fileButton, {
+        accept: selectedComponent.props?.accept,
+        multiple: selectedComponent.props?.multiple,
+      }),
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedComponent]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();

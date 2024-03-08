@@ -15,6 +15,7 @@ import { useForm } from "@mantine/form";
 import { IconArrowNarrowDown, IconArrowNarrowRight } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { ThemeColorSelector } from "../ThemeColorSelector";
+import { useEffect } from "react";
 
 const defaultStepperValues = requiredModifiers.stepper;
 
@@ -23,14 +24,18 @@ const Modifier = withModifier(({ selectedComponent }) => {
   const selectedComponentTree = useEditorTreeStore((state) =>
     getComponentTreeById(editorTree.root, state.selectedComponentIds?.at(-1)!),
   );
-  const form = useForm({
-    initialValues: merge({}, defaultStepperValues, {
-      activeStep: String(selectedComponent.props?.activeStep),
-      numberOfSteps: selectedComponentTree?.children?.length,
-      orientation: selectedComponent.props?.orientation,
-      color: selectedComponent.props?.color,
-    }),
-  });
+  const form = useForm();
+
+  useEffect(() => {
+    form.setValues(
+      merge({}, defaultStepperValues, {
+        activeStep: String(selectedComponent.props?.activeStep),
+        numberOfSteps: selectedComponentTree?.children?.length,
+        orientation: selectedComponent.props?.orientation,
+        color: selectedComponent.props?.color,
+      }),
+    );
+  }, [selectedComponent]);
 
   const addStepperStep = (stepper: Component, length: number) => {
     // TODO: get this back

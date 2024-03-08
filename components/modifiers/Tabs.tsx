@@ -7,18 +7,23 @@ import { requiredModifiers } from "@/utils/modifiers";
 import { Group, Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
+import { useEffect } from "react";
 
 const Modifier = withModifier(({ selectedComponent }) => {
-  const form = useForm({
-    initialValues: merge({}, requiredModifiers.tabs, {
-      defaultValue: selectedComponent?.props?.defaultValue,
-      variant: selectedComponent?.props?.variant,
-      orientation: selectedComponent?.props?.orientation,
-      radius: selectedComponent?.props?.radius,
-      color: selectedComponent?.props?.color,
-      grow: selectedComponent?.props?.grow,
-    }),
-  });
+  const form = useForm();
+  useEffect(() => {
+    form.setValues(
+      merge({}, requiredModifiers.tabs, {
+        defaultValue: selectedComponent?.props?.defaultValue,
+        variant: selectedComponent?.props?.variant,
+        orientation: selectedComponent?.props?.orientation,
+        radius: selectedComponent?.props?.radius,
+        color: selectedComponent?.props?.color,
+        grow: selectedComponent?.props?.grow,
+      }),
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedComponent]);
 
   return (
     <form>
