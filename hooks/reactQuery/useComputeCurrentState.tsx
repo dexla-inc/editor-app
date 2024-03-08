@@ -1,12 +1,13 @@
 import { useDataContext } from "@/contexts/DataProvider";
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { Component } from "@/utils/editor";
 import { useMemo } from "react";
 
 export const useComputeCurrentState = (component: Component) => {
   const { computeValue } = useDataContext()!;
-  const isEditorMode = useEditorStore((state) => !state.isPreviewMode);
-  const currentTreeComponentsStates = useEditorStore(
+  const isEditorMode = useEditorTreeStore((state) => !state.isPreviewMode);
+  const currentTreeComponentsStates = useEditorTreeStore(
     (state) => state.currentTreeComponentsStates,
   );
 

@@ -31,7 +31,7 @@ export const useOnDrop = () => {
   const setEditorTree = useEditorTreeStore((state) => state.setTree);
   const componentToAdd = useEditorStore((state) => state.componentToAdd);
   const setComponentToAdd = useEditorStore((state) => state.setComponentToAdd);
-  const setSelectedComponentIds = useEditorStore(
+  const setSelectedComponentIds = useEditorTreeStore(
     (state) => state.setSelectedComponentIds,
   );
   const isResizing = useEditorStore((state) => state.isResizing);

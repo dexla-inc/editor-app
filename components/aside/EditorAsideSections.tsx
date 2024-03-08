@@ -22,7 +22,7 @@ import { ActionsTab, Data, modifierSectionMapper } from "./dynamicModifiers";
 type Tab = "design" | "data" | "actions";
 
 const EditorAsideSections = () => {
-  const _selectedComponentId = useEditorStore(
+  const _selectedComponentId = useEditorTreeStore(
     (state) => state.selectedComponentIds?.at(-1),
   );
 
@@ -42,7 +42,7 @@ const EditorAsideSections = () => {
   );
   const componentName = component?.name ?? "content-wrapper";
 
-  const selectedComponentIds = useEditorStore(
+  const selectedComponentIds = useEditorTreeStore(
     (state) => state.selectedComponentIds,
   );
 

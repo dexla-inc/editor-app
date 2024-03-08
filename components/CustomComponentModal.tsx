@@ -26,7 +26,7 @@ export const CustomComponentModal = ({
 }: Props) => {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const selectedComponentId = useEditorStore(
+  const selectedComponentId = useEditorTreeStore(
     (state) => state.selectedComponentIds?.at(-1),
   );
   const activeCompany = usePropelAuthStore((state) => state.activeCompany);

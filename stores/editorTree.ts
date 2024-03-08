@@ -92,27 +92,18 @@ export type EditorTreeState = {
   setTree: (
     tree: EditorTreeCopy,
     options?: { onLoad?: boolean; action?: string },
-    isPreviewMode?: boolean,
-    projectId?: string,
-    pageId?: string,
   ) => void;
   resetTree: () => void;
   componentMutableAttrs: Record<string, Component>;
   updateTreeComponentChildren: (
     componentId: string,
     children: Component[],
-    isPreviewMode?: boolean,
-    projectId?: string,
-    pageId?: string,
     save?: boolean,
   ) => any;
   updateTreeComponentAttrs: (params: {
     componentIds: string[];
     attrs: Partial<Component>;
     forceState?: string;
-    isPreviewMode?: boolean;
-    projectId?: string;
-    pageId?: string;
     save?: boolean;
   }) => void;
   currentUser?: User;
@@ -124,6 +115,23 @@ export type EditorTreeState = {
   setCursor: (cursor?: { x: number; y: number }) => void;
   setColumnSpan: (id: string, span: number) => void;
   columnSpans?: { [key: string]: number };
+  selectedComponentIds?: string[];
+  setSelectedComponentIds: (cb: (ids: string[]) => string[]) => void;
+  setCurrentPageAndProjectIds: (
+    currentProjectId: string,
+    currentPageId: string,
+  ) => void;
+  currentProjectId?: string;
+  currentPageId?: string;
+  isPreviewMode?: boolean;
+  setPreviewMode: (isPreviewMode: boolean) => void;
+  currentTreeComponentsStates?: {
+    [key: string]: string;
+  };
+  setTreeComponentCurrentState: (
+    componentId: string,
+    currentState: string,
+  ) => void;
 };
 
 export const debouncedUpdatePageState = debounce(updatePageState, 1000);
@@ -135,20 +143,14 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
     devtools(
       temporal(
         (set) => ({
-          setTree: (
-            tree,
-            options,
-            isPreviewMode = false,
-            projectId = "adeb8b9d70354bd3bf612f019d151345",
-            pageId = "2e726525b99641e49d32555f2781249a",
-          ) => {
+          setTree: (tree, options) => {
             set(
               (state: EditorTreeState) => {
-                if (!options?.onLoad && !isPreviewMode) {
+                if (!options?.onLoad && !state.isPreviewMode) {
                   debouncedUpdatePageState(
                     encodeSchema(JSON.stringify(tree)),
-                    projectId,
-                    pageId,
+                    state.currentProjectId ?? "",
+                    state.currentPageId ?? "",
                   );
                 }
 
@@ -183,14 +185,7 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
               "editorTree/resetTree",
             );
           },
-          updateTreeComponentChildren: (
-            componentId,
-            children,
-            isPreviewMode = false,
-            projectId = "adeb8b9d70354bd3bf612f019d151345",
-            pageId = "2e726525b99641e49d32555f2781249a",
-            save = true,
-          ) =>
+          updateTreeComponentChildren: (componentId, children, save = true) =>
             set(
               (state: EditorTreeState) => {
                 updateTreeComponentChildren(
@@ -211,7 +206,7 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                   state.componentMutableAttrs,
                 );
 
-                if (save && !isPreviewMode) {
+                if (save && !state.isPreviewMode) {
                   debouncedUpdatePageState(
                     encodeSchema(
                       JSON.stringify(
@@ -224,8 +219,8 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                         ]),
                       ),
                     ),
-                    projectId,
-                    pageId,
+                    state.currentProjectId ?? "",
+                    state.currentPageId ?? "",
                   );
                 }
 
@@ -247,9 +242,6 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
             componentIds,
             attrs,
             forceState,
-            isPreviewMode = false,
-            projectId = "adeb8b9d70354bd3bf612f019d151345",
-            pageId = "2e726525b99641e49d32555f2781249a",
             save = true,
           }) => {
             set(
@@ -272,15 +264,15 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                   state.tree,
                   state.componentMutableAttrs,
                 );
-                if (save && !isPreviewMode) {
+                if (save && !state.isPreviewMode) {
                   debouncedUpdatePageState(
                     encodeSchema(
                       JSON.stringify(
                         removeKeysRecursive(treeWithRecoveredAttrs, ["error"]),
                       ),
                     ),
-                    projectId,
-                    pageId,
+                    state.currentProjectId ?? "",
+                    state.currentPageId ?? "",
                   );
                 }
 
@@ -307,8 +299,50 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
               "editorTree/setColumnSpan",
             ),
           columnSpans: {},
+          selectedComponentIds: ["content-wrapper"],
+          setSelectedComponentIds: (cb) => {
+            return set(
+              (state) => {
+                const selectedComponentIds = cb(
+                  state.selectedComponentIds ?? [],
+                );
+                return { selectedComponentIds };
+              },
+              false,
+              "editor/setSelectedComponentIds",
+            );
+          },
+          setTreeComponentCurrentState: (
+            componentId,
+            currentState = "default",
+          ) => {
+            set(
+              (prev) => {
+                return {
+                  currentTreeComponentsStates: {
+                    ...prev.currentTreeComponentsStates,
+                    [componentId]: currentState,
+                  },
+                };
+              },
+              false,
+              "editor/setTreeComponentCurrentState",
+            );
+          },
+          setCurrentPageAndProjectIds: (currentProjectId, currentPageId) => {
+            set(
+              { currentProjectId, currentPageId },
+              false,
+              "editor/setCurrentPageAndProjectIds",
+            );
+          },
+          setPreviewMode: (value) =>
+            set(
+              { isPreviewMode: value, currentTreeComponentsStates: {} },
+              false,
+              "editor/setPreviewMode",
+            ),
         }),
-
         {
           partialize: (state) => {
             const { tree, columnSpans } = state;

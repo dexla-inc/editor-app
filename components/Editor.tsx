@@ -28,7 +28,7 @@ type Props = {
 };
 
 const Editor = ({ projectId, pageId }: Props) => {
-  const setCurrentPageAndProjectIds = useEditorStore(
+  const setCurrentPageAndProjectIds = useEditorTreeStore(
     (state) => state.setCurrentPageAndProjectIds,
   );
   const liveblocks = useEditorTreeStore((state) => state.liveblocks);

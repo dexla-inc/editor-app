@@ -25,7 +25,7 @@ const FormComponent = forwardRef(
     const { onSubmit, ...otherTriggers } = triggers || {};
     const { style, ...otherProps } = props as any;
     const gapPx = convertSizeToPx(gap, "gap");
-    const setState = useEditorStore(
+    const setState = useEditorTreeStore(
       (state) => state.setTreeComponentCurrentState,
     );
     const getInputValue = useInputsStore((state) => state.getValue);

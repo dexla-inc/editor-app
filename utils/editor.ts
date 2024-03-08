@@ -739,7 +739,7 @@ export const debouncedTreeComponentChildrenUpdate = debounce(
   async (value: Component[], save = true) => {
     const updateTreeComponentChildren =
       useEditorTreeStore.getState().updateTreeComponentChildren;
-    const selectedComponentId = useEditorStore
+    const selectedComponentId = useEditorTreeStore
       .getState()
       .selectedComponentIds?.at(-1);
 
@@ -778,7 +778,7 @@ export const debouncedTreeComponentAttrsUpdate = debounce(
     const updateTreeComponentAttrs =
       useEditorTreeStore.getState().updateTreeComponentAttrs;
     const selectedComponentIds =
-      useEditorStore.getState().selectedComponentIds ?? [];
+      useEditorTreeStore.getState().selectedComponentIds ?? [];
 
     if (!componentIds.length) {
       componentIds = selectedComponentIds;

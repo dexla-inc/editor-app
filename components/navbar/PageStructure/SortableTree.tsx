@@ -94,7 +94,7 @@ export function NavbarLayersSection({
     const { children } = state.tree.root;
     return children;
   });
-  const selectedComponentId = useEditorStore(
+  const selectedComponentId = useEditorTreeStore(
     (state) => state.selectedComponentIds?.at(-1),
   );
   const isStructureCollapsed = useEditorStore(

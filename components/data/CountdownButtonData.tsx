@@ -16,7 +16,6 @@ export const CountdownButtonData = ({ component, endpoints }: DataProps) => {
   const updateTreeComponentAttrs = useEditorTreeStore(
     (state) => state.updateTreeComponentAttrs,
   );
-  const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
 
   return (
     <Stack spacing="xs">
@@ -34,7 +33,6 @@ export const CountdownButtonData = ({ component, endpoints }: DataProps) => {
             attrs: {
               props: { duration: e },
             },
-            isPreviewMode,
           })
         }
       />

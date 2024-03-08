@@ -25,7 +25,7 @@ const StepperComponent = forwardRef(
     } = component.props as any;
 
     const [active, setActive] = useState(activeStep ?? 1);
-    const setTreeComponentCurrentState = useEditorStore(
+    const setTreeComponentCurrentState = useEditorTreeStore(
       (state) => state.setTreeComponentCurrentState,
     );
 

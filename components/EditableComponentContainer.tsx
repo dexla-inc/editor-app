@@ -18,7 +18,7 @@ export const EditableComponentContainer = ({
   componentTree,
   shareableContent,
 }: EditableComponentContainerProps) => {
-  const isSelected = useEditorStore(
+  const isSelected = useEditorTreeStore(
     (state) => state.selectedComponentIds?.includes(componentTree.id!),
   );
 

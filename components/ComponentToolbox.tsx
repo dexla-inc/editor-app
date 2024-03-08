@@ -22,7 +22,7 @@ import {
 import { Group, Text, Tooltip, UnstyledButton } from "@mantine/core";
 import { IconGripVertical } from "@tabler/icons-react";
 import { useCallback, useEffect, useMemo } from "react";
-import { useEditorTreeStore } from "../stores/editorTree";
+import { useEditorTreeStore } from "@/stores/editorTree";
 
 type Props = {
   customComponentModal: any;
@@ -39,10 +39,10 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
     (state) => state.tree as EditorTreeCopy,
   );
   const setEditorTree = useEditorTreeStore((state) => state.setTree);
-  const setSelectedComponentIds = useEditorStore(
+  const setSelectedComponentIds = useEditorTreeStore(
     (state) => state.setSelectedComponentIds,
   );
-  const selectedComponentId = useEditorStore(
+  const selectedComponentId = useEditorTreeStore(
     (state) => state.selectedComponentIds?.at(-1),
   );
 

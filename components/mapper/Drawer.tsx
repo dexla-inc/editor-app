@@ -15,7 +15,7 @@ export const Drawer = ({
   onClose: propOnClose,
   ...props
 }: Props) => {
-  const selectedComponentId = useEditorStore(
+  const selectedComponentId = useEditorTreeStore(
     (state) => state.selectedComponentIds?.at(-1),
   );
   const theme = useThemeStore((state) => state.theme);

@@ -28,7 +28,7 @@ export const ActionSettingsForm = ({
     useDisclosure(false);
 
   const editorTree = useEditorTreeStore((state) => state.tree);
-  const selectedComponentId = useEditorStore(
+  const selectedComponentId = useEditorTreeStore(
     (state) => state.selectedComponentIds?.at(-1),
   );
   const updateTreeComponentAttrs = useEditorTreeStore(
