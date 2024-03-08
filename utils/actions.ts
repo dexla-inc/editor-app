@@ -248,7 +248,7 @@ export const useNavigationAction = ({
 }: NavigationActionParams) => {
   const editorState = useEditorStore.getState();
   const isLive = editorState.isLive;
-  const projectId = editorState.currentProjectId;
+  const projectId = useEditorTreeStore.getState().currentProjectId;
 
   if (!action.pageId || !action.pageSlug) {
     console.error("Page Id is not defined");

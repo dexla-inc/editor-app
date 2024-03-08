@@ -5,6 +5,7 @@ import { Box, SegmentedControl } from "@mantine/core";
 import { useState } from "react";
 import PageActions from "./PageActions";
 import PageConfig from "./PageConfig";
+import { useEditorTreeStore } from "@/stores/editorTree";
 
 type PageDetailPaneProps = {
   page?: PageResponse | null | undefined;
@@ -14,8 +15,8 @@ type PageDetailPaneProps = {
 type Tab = "config" | "actions";
 export default function PageDetailPane({ page, setPage }: PageDetailPaneProps) {
   const [tab, setTab] = useState<Tab>("config");
-  const projectId = useEditorStore((state) => state.currentProjectId!);
-  const pageId = useEditorStore((state) => state.currentPageId!);
+  const projectId = useEditorTreeStore((state) => state.currentProjectId!);
+  const pageId = useEditorTreeStore((state) => state.currentPageId!);
 
   const onUpdatePage = async (values: any) => {
     setPage(values);

@@ -6,6 +6,7 @@ import {
   LogicFlowResponse,
 } from "@/requests/logicflows/types";
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { FlowData, useFlowStore } from "@/stores/flow";
 import { actionMapper } from "@/utils/actions";
 import { LOGICFLOW_BACKGROUND } from "@/utils/branding";
@@ -54,7 +55,7 @@ export const LogicFlowsPage = ({ flow }: Props) => {
   }));
   const updateNodeInternals = useUpdateNodeInternals();
   const previousSelectedNode = usePrevious(selectedNode);
-  const id = useEditorStore((state) => state.currentProjectId ?? "");
+  const id = useEditorTreeStore((state) => state.currentProjectId ?? "");
 
   useEffect(() => {
     if (flow?.data) {
