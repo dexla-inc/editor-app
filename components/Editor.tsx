@@ -39,10 +39,11 @@ const Editor = ({ projectId, pageId }: Props) => {
   const user = usePropelAuthStore((state) => state.user);
 
   useGetPageData({ projectId, pageId });
-  setCurrentPageAndProjectIds(projectId, pageId);
   const [roomEntered, setRoomEntered] = useState(false);
 
   useEffect(() => {
+    setCurrentPageAndProjectIds(projectId, pageId);
+
     if (pageId && !roomEntered) {
       liveblocks.enterRoom(pageId);
       setRoomEntered(true);
