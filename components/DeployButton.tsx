@@ -1,18 +1,22 @@
 import { ActionIconDefault } from "@/components/ActionIconDefault";
 import { Icon } from "@/components/Icon";
 import { useDeploymentsPageQuery } from "@/hooks/reactQuery/useDeploymentsPageQuery";
+import { usePageListQuery } from "@/hooks/reactQuery/usePageListQuery";
 import { useProjectQuery } from "@/hooks/reactQuery/useProjectQuery";
 import { createDeployment } from "@/requests/deployments/mutations";
 import { useAppStore } from "@/stores/app";
+import { useEditorStore } from "@/stores/editor";
 import { Button, Tooltip } from "@mantine/core";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
-type Props = {
-  projectId: string;
-  page?: any;
-};
+export const DeployButton = () => {
+  const router = useRouter();
+  const { id: projectId, page } = router.query as { id: string; page: string };
 
-export const DeployButton = ({ projectId, page }: Props) => {
+  const { data: pageListQuery, isFetched } = usePageListQuery(projectId);
+  const setPages = useEditorStore((state) => state.setPages);
+
   const { startLoading, stopLoading, isLoading } = useAppStore((state) => ({
     startLoading: state.startLoading,
     stopLoading: state.stopLoading,
@@ -67,9 +71,11 @@ export const DeployButton = ({ projectId, page }: Props) => {
 
     const prefix = isLocalhost || !customDomain ? `${projectId}.` : "";
 
+    const slug = pageListQuery?.results.find((p) => p.id === page)?.slug;
+
     const deployLink = new URL(
       `${isLocalhost ? "http" : "https"}://${prefix}${baseDomain}/${
-        page?.slug === "/" ? "" : page?.slug
+        slug === "/" ? "" : slug
       }`,
     );
 
@@ -101,6 +107,13 @@ export const DeployButton = ({ projectId, page }: Props) => {
       setHasDeployed(true);
     }
   }, [recentDeployment]);
+
+  // Don't think we need this. We should just fetch the pages on server side and pass down
+  useEffect(() => {
+    if (isFetched) {
+      setPages(pageListQuery?.results!);
+    }
+  }, [pageListQuery, isFetched, setPages]);
 
   return (
     <Button.Group>

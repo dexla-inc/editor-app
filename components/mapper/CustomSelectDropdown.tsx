@@ -1,4 +1,5 @@
-import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
+import { useThemeStore } from "@/stores/theme";
 import {
   Anchor as MantineAnchor,
   Box as MantineBox,
@@ -10,7 +11,7 @@ import {
 type LinkProps = { text: string; link: string; url: string };
 
 const FixedLink = ({ text, link, url }: LinkProps) => {
-  const theme = useEditorStore((state) => state.theme);
+  const theme = useThemeStore((state) => state.theme);
   const fontSize = theme.fonts.find((font) => font.tag === "P")?.fontSize;
   return (
     <MantineGroup
@@ -38,7 +39,7 @@ const FixedLink = ({ text, link, url }: LinkProps) => {
 };
 
 export const CustomDropdown = ({ children, ...props }: any) => {
-  const component = useEditorStore(
+  const component = useEditorTreeStore(
     (state) => state.componentMutableAttrs[props.id.split("-").at(0)],
   );
   const isComponent =

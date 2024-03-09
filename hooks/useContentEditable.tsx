@@ -1,43 +1,41 @@
-import { useEditorStore } from "@/stores/editor";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEditorTreeStore } from "@/stores/editorTree";
+import { useCallback, useState } from "react";
 import { useAppMode } from "./useAppMode";
 
-export const useContentEditable = (componentId: string) => {
+export const useContentEditable = (componentId: string, ref: any) => {
   const [isEditable, setIsEditable] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
   const { isPreviewMode } = useAppMode();
-
-  const updateTreeComponentAttrs = useEditorStore(
-    (state) => state.updateTreeComponentAttrs,
-  );
 
   const toggleEdit = useCallback((enable: boolean) => {
     setIsEditable(enable);
   }, []);
-
-  const exitEditMode = useCallback(() => {
-    if (ref.current) {
-      updateTreeComponentAttrs({
-        componentIds: [componentId],
-        attrs: {
-          onLoad: {
-            children: { dataType: "static", static: ref.current.innerText },
-          },
-        },
-      });
-    }
-    toggleEdit(false);
-  }, [updateTreeComponentAttrs, componentId, toggleEdit]);
 
   const handleDoubleClick = useCallback(
     (e: React.MouseEvent) => {
       if (!isPreviewMode) {
         e.preventDefault();
         toggleEdit(true);
+        ref?.current?.focus();
       }
     },
-    [toggleEdit, isPreviewMode],
+    [toggleEdit, isPreviewMode, ref],
   );
+
+  const exitEditMode = useCallback(() => {
+    if (ref?.current) {
+      const updateTreeComponentAttrs =
+        useEditorTreeStore.getState().updateTreeComponentAttrs;
+      updateTreeComponentAttrs({
+        componentIds: [componentId],
+        attrs: {
+          onLoad: {
+            children: { dataType: "static", static: ref?.current.innerText },
+          },
+        },
+      });
+    }
+    toggleEdit(false);
+  }, [componentId, toggleEdit]);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -58,28 +56,13 @@ export const useContentEditable = (componentId: string) => {
     [exitEditMode, isPreviewMode],
   );
 
-  useEffect(() => {
-    if (isEditable && ref.current && !isPreviewMode) {
-      const currentRef = ref.current;
-
-      // Add the event listener
-      currentRef.addEventListener("keydown", handleKeyDown);
-      currentRef.focus();
-
-      // Return a cleanup function
-      return () => {
-        if (currentRef) {
-          currentRef.removeEventListener("keydown", handleKeyDown);
-        }
-      };
-    }
-  }, [isEditable, isPreviewMode, handleKeyDown]);
-
   const contentEditableProps = {
     ref,
-    contentEditable: isEditable && !isPreviewMode,
-    onDoubleClick: handleDoubleClick,
-    onBlur: handleBlur,
+    ...(!isPreviewMode && {
+      contentEditable: isEditable,
+      onDoubleClick: handleDoubleClick,
+      ...(isEditable && { onBlur: handleBlur, onKeyDown: handleKeyDown }),
+    }),
   };
 
   return contentEditableProps;

@@ -1,6 +1,6 @@
 import { defaultImageValues } from "@/components/modifiers/Image";
-import { MantineThemeExtended } from "@/stores/editor";
 import { InputTypes } from "@/utils/dashboardTypes";
+import { MantineThemeExtended } from "@/utils/types";
 import { nanoid } from "nanoid";
 
 type Input = {

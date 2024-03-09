@@ -1,9 +1,9 @@
-import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { CURSOR_COLORS } from "@/utils/config";
 import { Avatar } from "@mantine/core";
 
 export const OtherAvatars = () => {
-  const liveblocks = useEditorStore((state) => state.liveblocks);
+  const liveblocks = useEditorTreeStore((state) => state.liveblocks);
 
   if (liveblocks.others.length === 0) return null;
 

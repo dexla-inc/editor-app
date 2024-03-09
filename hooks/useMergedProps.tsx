@@ -7,6 +7,7 @@ import { CSSObject } from "@mantine/core";
 import merge from "lodash.merge";
 import { useCallback, useMemo } from "react";
 import { useComponentStates } from "./useComponentStates";
+import { useEditorTreeStore } from "@/stores/editorTree";
 
 export const usePropsWithOverwrites = (
   component: Component,
@@ -20,7 +21,7 @@ export const usePropsWithOverwrites = (
 
   const isDisabledState = checkIfIsDisabledState(component.name, currentState);
   const setTreeComponentCurrentState =
-    useEditorStore.getState().setTreeComponentCurrentState;
+    useEditorTreeStore.getState().setTreeComponentCurrentState;
 
   const hoverStateFunc = (e: React.MouseEvent<HTMLElement>) => {
     if (currentState === "default" && component.states?.hover) {
@@ -104,7 +105,7 @@ export const useEditorClickHandler = (
   const setComponentToBind = useEditorStore(
     (state) => state.setComponentToBind,
   );
-  const setSelectedComponentIds = useEditorStore(
+  const setSelectedComponentIds = useEditorTreeStore(
     (state) => state.setSelectedComponentIds,
   );
   return useCallback(

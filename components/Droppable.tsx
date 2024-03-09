@@ -1,9 +1,9 @@
-import React, { PropsWithChildren } from "react";
-import { BoxProps, Box, useMantineTheme } from "@mantine/core";
-import { DROP_INDICATOR_WIDTH } from "@/utils/config";
 import { useDroppable } from "@/hooks/useDroppable";
-import { useEditorStore } from "@/stores/editor";
 import { useOnDrop } from "@/hooks/useOnDrop";
+import { useEditorStore } from "@/stores/editor";
+import { DROP_INDICATOR_WIDTH } from "@/utils/config";
+import { Box, BoxProps, useMantineTheme } from "@mantine/core";
+import { PropsWithChildren } from "react";
 
 type Props = {
   id: string;
@@ -14,6 +14,7 @@ export const Droppable = ({
   children,
   ...props
 }: PropsWithChildren<Props>) => {
+  console.log("Droppable");
   const theme = useMantineTheme();
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const currentTargetId = useEditorStore((state) => state.currentTargetId);

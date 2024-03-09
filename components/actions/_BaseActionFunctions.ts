@@ -1,7 +1,7 @@
 import { useAppStore } from "@/stores/app";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { Action, BaseAction } from "@/utils/actions";
 import { Component, EditorTree } from "@/utils/editor";
-import { useEditorStore } from "@/stores/editor";
 
 export function useLoadingState(): {
   startLoading: (loading: any) => void;
@@ -61,7 +61,7 @@ export function useActionData<T extends BaseAction>({
   selectedComponentId,
 }: UseSharedActionDataProps): SharedActionData<T> {
   const component =
-    useEditorStore.getState().componentMutableAttrs[selectedComponentId!];
+    useEditorTreeStore.getState().componentMutableAttrs[selectedComponentId!];
   const componentActions = component?.actions ?? [];
   const action: Action = componentActions.find(
     (a: Action) => a.id === actionId,

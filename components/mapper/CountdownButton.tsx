@@ -3,7 +3,7 @@ import { useDataContext } from "@/contexts/DataProvider";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { useContentEditable } from "@/hooks/useContentEditable";
-import { useEditorStore } from "@/stores/editor";
+import { useThemeStore } from "@/stores/theme";
 import { DISABLED_HOVER } from "@/utils/branding";
 import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper, getColorFromTheme } from "@/utils/editor";
@@ -23,14 +23,7 @@ type Props = EditableComponentMapper & ButtonProps & ReactElement<"Button">;
 
 const CountdownButtonComponent = forwardRef(
   (
-    {
-      renderTree,
-      component,
-      isPreviewMode,
-      style,
-      shareableContent,
-      ...props
-    }: Props,
+    { component, isPreviewMode, style, shareableContent, ...props }: Props,
     ref,
   ) => {
     const {
@@ -53,9 +46,12 @@ const CountdownButtonComponent = forwardRef(
     const [count, setCount] = useState(durationValue);
     const timerId = useRef<NodeJS.Timeout | null>(null);
 
-    const theme = useEditorStore((state) => state.theme);
+    const theme = useThemeStore((state) => state.theme);
 
-    const contentEditableProps = useContentEditable(component.id as string);
+    const contentEditableProps = useContentEditable(
+      component.id as string,
+      ref,
+    );
 
     const { computeValue } = useDataContext()!;
     const childrenValue = computeValue({
@@ -118,7 +114,7 @@ const CountdownButtonComponent = forwardRef(
         {...triggers}
         style={customStyle}
         styles={{ root: DISABLED_HOVER }}
-        ref={ref ?? contentEditableProps.ref}
+        ref={ref}
       >
         {childrenValue} {count > 0 ? ` in ${count} ${durationUnit}` : ""}
       </MantineButton>

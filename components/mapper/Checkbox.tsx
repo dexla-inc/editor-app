@@ -10,12 +10,7 @@ import { ChangeEvent, memo, useCallback, useState } from "react";
 
 type Props = EditableComponentMapper & CheckboxProps;
 
-const CheckboxComponent = ({
-  renderTree,
-  component,
-  isPreviewMode,
-  ...props
-}: Props) => {
+const CheckboxComponent = ({ component, isPreviewMode, ...props }: Props) => {
   const { label, value, triggers, bg, textColor, ...componentProps } =
     component.props as any;
   const { children, ...rest } = props;

@@ -1,5 +1,5 @@
 import { OpenThemeButton } from "@/components/OpenThemeButton";
-import { useEditorStore } from "@/stores/editor";
+import { useThemeStore } from "@/stores/theme";
 import {
   Box,
   ColorSwatch,
@@ -19,7 +19,7 @@ type ColorsArray = Array<{ label: string; value: string | null | undefined }>;
 // eslint-disable-next-line react/display-name
 const SelectItem = forwardRef<HTMLDivElement, any>(
   ({ value, label, ...other }: any, ref) => {
-    const theme = useEditorStore((state) => state.theme);
+    const theme = useThemeStore((state) => state.theme);
 
     if (value === "transparent") {
       return (
@@ -52,7 +52,7 @@ type Props = {
 } & Omit<SelectProps, "data">;
 
 export const ThemeColorSelector = ({ isGradient, ...props }: Props) => {
-  const theme = useEditorStore((state) => state.theme);
+  const theme = useThemeStore((state) => state.theme);
 
   const excludeColors = new Set([
     "blue",

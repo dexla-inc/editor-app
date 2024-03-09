@@ -8,11 +8,12 @@ import { useQueryClient } from "@tanstack/react-query";
 import { nanoid } from "nanoid";
 import { NodeData } from "@/components/logic-flow/nodes/CustomNode";
 import { NodeProps } from "reactflow";
+import { useEditorTreeStore } from "@/stores/editorTree";
 
 export const useLogicFlows = () => {
   const setShowFormModal = useFlowStore((state) => state.setShowFormModal);
-  const pageId = useEditorStore((state) => state.currentPageId);
-  const projectId = useEditorStore((state) => state.currentProjectId);
+  const pageId = useEditorTreeStore((state) => state.currentPageId);
+  const projectId = useEditorTreeStore((state) => state.currentProjectId);
   const setSelectedTabView = useFlowStore((state) => state.setSelectedTabView);
   const selectedTabView = useFlowStore((state) => state.selectedTabView);
   const onNodesChange = useFlowStore((state) => state.onNodesChange);

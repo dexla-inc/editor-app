@@ -4,6 +4,7 @@ import { Icon } from "@/components/Icon";
 import { QueryStringListItem } from "@/requests/pages/types";
 import { TemplateTypesOptions } from "@/requests/templates/types";
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
 import { Button, Flex, Group, Select, Text, TextInput } from "@mantine/core";
@@ -28,7 +29,7 @@ export const QueryStringsForm = ({
   const setComponentToBind = useEditorStore(
     (state) => state.setComponentToBind,
   );
-  const selectedComponentId = useEditorStore(
+  const selectedComponentId = useEditorTreeStore(
     (state) => state.selectedComponentIds?.at(-1),
   );
   const setPickingComponentToBindTo = useEditorStore(

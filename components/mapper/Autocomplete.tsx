@@ -20,7 +20,7 @@ import { forwardRef, memo, useEffect, useState } from "react";
 type Props = EditableComponentMapper & AutocompleteProps;
 
 const AutocompleteComponent = forwardRef(
-  ({ renderTree, component, children: child, ...props }: Props, ref) => {
+  ({ component, children: child, ...props }: Props, ref) => {
     const {
       children,
       triggers,

@@ -5,7 +5,7 @@ import { useProjectListQuery } from "@/hooks/reactQuery/useProjectListQuery";
 import { useProjectMutatation } from "@/hooks/reactQuery/useProjectMutation";
 import { createProject } from "@/requests/projects/mutations";
 import { useAppStore } from "@/stores/app";
-import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { ICON_SIZE } from "@/utils/config";
@@ -39,7 +39,7 @@ export default function Projects() {
     setPageCancelled: state.setPageCancelled,
   }));
 
-  const resetTree = useEditorStore((state) => state.resetTree);
+  const resetTree = useEditorTreeStore((state) => state.resetTree);
 
   const goToEditor = async (projectId: string, pageId: string) => {
     router.push(`/projects/${projectId}/editor/${pageId}`);

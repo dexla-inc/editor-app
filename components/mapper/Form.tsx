@@ -1,6 +1,7 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useEndpoint } from "@/hooks/useEndpoint";
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { useInputsStore } from "@/stores/inputs";
 import { isSame } from "@/utils/componentComparison";
 import { componentMapper } from "@/utils/componentMapper";
@@ -24,7 +25,7 @@ const FormComponent = forwardRef(
     const { onSubmit, ...otherTriggers } = triggers || {};
     const { style, ...otherProps } = props as any;
     const gapPx = convertSizeToPx(gap, "gap");
-    const setState = useEditorStore(
+    const setState = useEditorTreeStore(
       (state) => state.setTreeComponentCurrentState,
     );
     const getInputValue = useInputsStore((state) => state.getValue);
@@ -74,8 +75,9 @@ const FormComponent = forwardRef(
       if (!isPreviewMode) {
         return;
       }
+      console.log("Form");
       const updateTreeComponentAttrs =
-        useEditorStore.getState().updateTreeComponentAttrs;
+        useEditorTreeStore.getState().updateTreeComponentAttrs;
 
       invalidComponents.map((component) => {
         updateTreeComponentAttrs({

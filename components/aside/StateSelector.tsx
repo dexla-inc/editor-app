@@ -1,6 +1,7 @@
 import { ActionIconDefault } from "@/components/ActionIconDefault";
 import { useComponentStates } from "@/hooks/useComponentStates";
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import {
   ActionIcon,
@@ -23,21 +24,21 @@ export const StateSelector = ({ componentName }: Props) => {
   const [createState, setCreateState] = useState<undefined | string>(undefined);
   const excludeComponentsForState = ["Text", "Title"];
 
-  const setTreeComponentCurrentState = useEditorStore(
+  const setTreeComponentCurrentState = useEditorTreeStore(
     (state) => state.setTreeComponentCurrentState,
   );
-  const selectedComponentId = useEditorStore(
+  const selectedComponentId = useEditorTreeStore(
     (state) => state.selectedComponentIds?.at(-1),
   ) as string;
-  const component = useEditorStore(
+  const component = useEditorTreeStore(
     (state) => state.componentMutableAttrs[selectedComponentId!],
   );
 
-  const currentState = useEditorStore(
+  const currentState = useEditorTreeStore(
     (state) =>
       state.currentTreeComponentsStates?.[selectedComponentId!] ?? "default",
   );
-  const updateTreeComponentAttrs = useEditorStore(
+  const updateTreeComponentAttrs = useEditorTreeStore(
     (state) => state.updateTreeComponentAttrs,
   );
 

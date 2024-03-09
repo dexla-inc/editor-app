@@ -3,20 +3,18 @@ import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconLayoutBottombarCollapse } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
 
-export const icon = IconLayoutBottombarCollapse;
-export const label = "Accordion Item";
-
-export const Modifier = withModifier(({ selectedComponent }) => {
+const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm();
 
   useEffect(() => {
     form.setValues(
-      merge({}, requiredModifiers.accordionItem, {
-        value: selectedComponent.props?.value,
+      merge({}, requiredModifiers.alert, {
+        color: selectedComponent.props?.color,
+        icon: selectedComponent.props?.icon,
+        iconColor: selectedComponent.props?.iconColor,
       }),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -40,3 +38,5 @@ export const Modifier = withModifier(({ selectedComponent }) => {
     </form>
   );
 });
+
+export default Modifier;

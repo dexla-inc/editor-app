@@ -1,16 +1,14 @@
-import { useEditorStore } from "@/stores/editor";
-import { Component, getAllComponentsByIds } from "@/utils/editor";
+import { Component } from "@/utils/editor";
 import cloneDeep from "lodash.clonedeep";
 import get from "lodash.get";
 import merge from "lodash.merge";
 import set from "lodash.set";
 
 import { ComponentType, useMemo } from "react";
+import { useEditorTreeStore } from "@/stores/editorTree";
 
 type WithModifier = {
-  selectedComponentIds: string[];
   selectedComponent: Component;
-  currentState: string;
 };
 
 function getObjectPaths(obj: any, parentKey = ""): string[] {
@@ -43,10 +41,10 @@ function findIntersectedKeyValues(objects: Component[]) {
 
 export const withModifier = (Modifier: ComponentType<WithModifier>) => {
   const Config = ({ initiallyOpened }: any) => {
-    const selectedComponentIds = useEditorStore(
+    const selectedComponentIds = useEditorTreeStore(
       (state) => state.selectedComponentIds,
     );
-    const selectedComponents = useEditorStore((state) =>
+    const selectedComponents = useEditorTreeStore((state) =>
       Object.entries(state.componentMutableAttrs).reduce(
         (acc, [id, component]) => {
           if (selectedComponentIds?.includes(id)) {
@@ -57,12 +55,14 @@ export const withModifier = (Modifier: ComponentType<WithModifier>) => {
         [] as Component[],
       ),
     );
-    const language = useEditorStore((state) => state.language);
-    const currentState = useEditorStore(
-      (state) =>
-        state.currentTreeComponentsStates?.[selectedComponentIds?.[0] || ""] ??
-        "default",
+    const language = "en";
+    const currentTreeComponentsStates = useEditorTreeStore(
+      (state) => state.currentTreeComponentsStates,
     );
+
+    const currentState =
+      currentTreeComponentsStates?.[selectedComponentIds?.[0] || ""] ??
+      "default";
 
     const mergedCustomData = useMemo(() => {
       return selectedComponents?.map((selectedComponent) => {
@@ -86,9 +86,7 @@ export const withModifier = (Modifier: ComponentType<WithModifier>) => {
     return (
       <Modifier
         {...{
-          selectedComponentIds: selectedComponentIds!,
           selectedComponent: component as Component,
-          currentState,
         }}
       />
     );

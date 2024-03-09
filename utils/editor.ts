@@ -1,10 +1,10 @@
-import { MantineThemeExtended, useEditorStore } from "@/stores/editor";
+import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { Action } from "@/utils/actions";
 import { GRAY_OUTLINE } from "@/utils/branding";
 import { GRID_SIZE } from "@/utils/config";
 import { calculateGridSizes } from "@/utils/grid";
 import { CSSObject } from "@mantine/core";
-import cloneDeep from "lodash.clonedeep";
 import debounce from "lodash.debounce";
 import every from "lodash.every";
 import get from "lodash.get";
@@ -15,6 +15,7 @@ import { nanoid } from "nanoid";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { CSSProperties } from "react";
 import crawl from "tree-crawl";
+import { MantineThemeExtended } from "./types";
 
 export type ComponentStructure = {
   children?: ComponentStructure[];
@@ -93,9 +94,11 @@ export function arrayMove<T>(array: T[], from: number, to: number): T[] {
 }
 
 export const replaceIdsDeeply = (treeRoot: Component) => {
+  console.log("replaceIdsDeeply");
   const updateTreeComponentAttrs =
-    useEditorStore.getState().updateTreeComponentAttrs;
-  const componentMutableAttrs = useEditorStore.getState().componentMutableAttrs;
+    useEditorTreeStore.getState().updateTreeComponentAttrs;
+  const componentMutableAttrs =
+    useEditorTreeStore.getState().componentMutableAttrs;
   crawl(
     treeRoot,
     async (node) => {
@@ -204,7 +207,7 @@ export const getTiles = (treeRoot: ComponentTree): TileType[] => {
     treeRoot,
     (nodeTree) => {
       const node =
-        useEditorStore.getState().componentMutableAttrs[nodeTree.id!];
+        useEditorTreeStore.getState().componentMutableAttrs[nodeTree.id!];
       const name = node.description?.replace(".tile", "");
       if (
         node.description?.endsWith(".tile") &&
@@ -367,7 +370,7 @@ export const getAllComponentsByIds = (
 
 export const getComponentBeingAddedId = (): string | null => {
   return (
-    Object.values(useEditorStore.getState().componentMutableAttrs).find(
+    Object.values(useEditorTreeStore.getState().componentMutableAttrs).find(
       (component) => component.isBeingAdded,
     )?.id || null
   );
@@ -412,7 +415,6 @@ export const updateTreeComponentAttrs2 = (
   state: string = "default",
   language: string = "default",
 ) => {
-  const newComponent = cloneDeep(component);
   const translatableProps = pickBy(attrs.props, pickTranslatableFields);
   const styleProps = pickBy(attrs.props, pickStyleFields);
   const alwaysDefaultProps = omit(attrs.props ?? {}, [
@@ -421,27 +423,27 @@ export const updateTreeComponentAttrs2 = (
   ]);
 
   if (language === "default") {
-    merge(newComponent, { props: translatableProps });
+    merge(component, { props: translatableProps });
   } else {
-    merge(newComponent, { languages: { [language]: translatableProps } });
+    merge(component, { languages: { [language]: translatableProps } });
   }
 
   if (state === "default") {
-    merge(newComponent, { props: styleProps });
+    merge(component, { props: styleProps });
   } else {
-    merge(newComponent, {
+    merge(component, {
       states: {
         [state]: styleProps,
       },
     });
   }
 
-  merge(newComponent, { props: alwaysDefaultProps });
+  merge(component, { props: alwaysDefaultProps });
   Object.entries(omit(attrs, ["props"])).forEach(([key, value]) => {
-    newComponent[key as keyof Component] = value;
+    component[key as keyof Component] = value;
   });
 
-  return newComponent;
+  return component;
 };
 
 export const recoverTreeComponentAttrs = (
@@ -513,13 +515,13 @@ export const getParentComponentData = (
     treeRoot,
     (nodeTree, context) => {
       const node =
-        useEditorStore.getState().componentMutableAttrs[nodeTree.id!];
+        useEditorTreeStore.getState().componentMutableAttrs[nodeTree.id!];
       if (
         !isEmpty(node.onLoad?.endpointId) &&
         parentComponentNames.includes(node.name)
       ) {
         const childComponent =
-          useEditorStore.getState().componentMutableAttrs[componentId];
+          useEditorTreeStore.getState().componentMutableAttrs[componentId];
         if (childComponent) {
           parentWithOnLoad = node;
           context.break();
@@ -613,15 +615,14 @@ export const addComponent = (
   dropIndex?: number,
   isPaste?: boolean,
 ): string => {
-  const copy = cloneDeep(componentToAdd);
   if (isPaste) {
-    replaceIdsDeeply(copy);
+    replaceIdsDeeply(componentToAdd);
   }
 
   const directChildren = ["Modal", "Drawer", "Toast"];
-  const isGrid = copy.name === "Grid";
-  const isColumn = copy.name === "GridColumn";
-  const isNavbar = copy.name === "Navbar";
+  const isGrid = componentToAdd.name === "Grid";
+  const isColumn = componentToAdd.name === "GridColumn";
+  const isNavbar = componentToAdd.name === "Navbar";
   let targetComponent = null;
 
   crawl(
@@ -642,7 +643,7 @@ export const addComponent = (
         targetComponent = addNodeToTarget(
           treeRoot,
           node,
-          copy,
+          componentToAdd,
           context,
           dropTarget,
           false,
@@ -652,46 +653,53 @@ export const addComponent = (
 
         context.break();
       } else {
-        if (copy.fixedPosition) {
-          if (node.id === copy.fixedPosition.target) {
+        if (componentToAdd.fixedPosition) {
+          if (node.id === componentToAdd.fixedPosition.target) {
             if (
-              copy.fixedPosition.position === "left" ||
-              copy.fixedPosition.position === "top"
+              componentToAdd.fixedPosition.position === "left" ||
+              componentToAdd.fixedPosition.position === "top"
             ) {
-              node.children = [copy, ...(node.children || [])];
+              node.children = [componentToAdd, ...(node.children || [])];
             } else if (
-              copy.fixedPosition.position === "right" ||
-              copy.fixedPosition.position === "bottom"
+              componentToAdd.fixedPosition.position === "right" ||
+              componentToAdd.fixedPosition.position === "bottom"
             ) {
-              node.children = [...(node.children || []), copy];
+              node.children = [...(node.children || []), componentToAdd];
             }
 
             context.break();
           }
         } else {
           if (
-            directChildren.includes(copy.name) &&
+            directChildren.includes(componentToAdd.name) &&
             node.id === "content-wrapper"
           ) {
-            node.children = [...(node.children || []), copy];
+            node.children = [...(node.children || []), componentToAdd];
             context.break();
           } else if (node.id === dropTarget.id) {
-            const isPopOver = copy.name === "PopOver";
+            const isPopOver = componentToAdd.name === "PopOver";
             if (isPopOver) {
-              copy.props!.targetId = node.id;
-              copy.children = [...(copy.children || []), node];
-              context.parent?.children?.splice(context.index, 1, copy);
+              componentToAdd.props!.targetId = node.id;
+              componentToAdd.children = [
+                ...(componentToAdd.children || []),
+                node,
+              ];
+              context.parent?.children?.splice(
+                context.index,
+                1,
+                componentToAdd,
+              );
             } else {
               node.children = node.children ?? [];
 
               if (dropTarget.edge === "left" || dropTarget.edge === "top") {
                 const index = dropIndex ?? context.index - 1;
-                node.children.splice(index, 0, copy);
+                node.children.splice(index, 0, componentToAdd);
               } else if (["right", "bottom"].includes(dropTarget.edge)) {
                 const index = dropIndex ?? context.index + 1;
-                node.children.splice(index, 0, copy);
+                node.children.splice(index, 0, componentToAdd);
               } else if (dropTarget.edge === "center") {
-                node.children = [...(node.children || []), copy];
+                node.children = [...(node.children || []), componentToAdd];
               }
             }
 
@@ -707,7 +715,7 @@ export const addComponent = (
     calculateGridSizes(targetComponent);
   }
 
-  return copy.id as string;
+  return componentToAdd.id as string;
 };
 
 export type Edge = "left" | "right" | "top" | "bottom" | "center";
@@ -730,8 +738,8 @@ export const getClosestEdge = (
 export const debouncedTreeComponentChildrenUpdate = debounce(
   async (value: Component[], save = true) => {
     const updateTreeComponentChildren =
-      useEditorStore.getState().updateTreeComponentChildren;
-    const selectedComponentId = useEditorStore
+      useEditorTreeStore.getState().updateTreeComponentChildren;
+    const selectedComponentId = useEditorTreeStore
       .getState()
       .selectedComponentIds?.at(-1);
 
@@ -746,8 +754,8 @@ export const debouncedTreeComponentChildrenUpdate = debounce(
 export const debouncedTreeRootChildrenUpdate = debounce(
   (value: Component[], save = true) => {
     const updateTreeComponentChildren =
-      useEditorStore.getState().updateTreeComponentChildren;
-    const tree = useEditorStore.getState().tree;
+      useEditorTreeStore.getState().updateTreeComponentChildren;
+    const tree = useEditorTreeStore.getState().tree;
 
     updateTreeComponentChildren(tree.root.id as string, value, save);
   },
@@ -766,10 +774,11 @@ export const debouncedTreeComponentAttrsUpdate = debounce(
     forceState?: string;
     save?: boolean;
   }) => {
+    console.log("debouncedTreeComponentAttrsUpdate");
     const updateTreeComponentAttrs =
-      useEditorStore.getState().updateTreeComponentAttrs;
+      useEditorTreeStore.getState().updateTreeComponentAttrs;
     const selectedComponentIds =
-      useEditorStore.getState().selectedComponentIds ?? [];
+      useEditorTreeStore.getState().selectedComponentIds ?? [];
 
     if (!componentIds.length) {
       componentIds = selectedComponentIds;

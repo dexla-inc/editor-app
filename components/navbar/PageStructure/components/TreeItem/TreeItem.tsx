@@ -10,6 +10,7 @@ import React, {
 import styles from "@/components/navbar/PageStructure/components/TreeItem/TreeItem.module.scss";
 import { useComponentContextMenu } from "@/hooks/useComponentContextMenu";
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { DARK_COLOR, GRAY_WHITE_COLOR } from "@/utils/branding";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
@@ -88,14 +89,14 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
     const [editable, { toggle: toggleEdit, close: closeEdit }] =
       useDisclosure(false);
     const editFieldRef = useRef<HTMLInputElement>(null);
-    const isSelected = useEditorStore(
+    const isSelected = useEditorTreeStore(
       (state) => state.selectedComponentIds?.includes(id),
     );
-    const setSelectedComponentIds = useEditorStore(
+    const setSelectedComponentIds = useEditorTreeStore(
       (state) => state.setSelectedComponentIds,
     );
     const isDarkTheme = useUserConfigStore((state) => state.isDarkTheme);
-    const component = useEditorStore(
+    const component = useEditorTreeStore(
       (state) => state.componentMutableAttrs[componentTree.id!] || {},
     );
 
@@ -175,7 +176,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
           e.stopPropagation();
           toggleEdit();
         }}
-        onKeyDown={handleKeyPress}
+        {...(editable && { onKeyDown: handleKeyPress })}
         onContextMenu={componentContextMenu(component)}
       >
         <div

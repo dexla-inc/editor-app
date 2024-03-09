@@ -1,23 +1,21 @@
-import { SidebarSection } from "@/components/SidebarSection";
+import SidebarSection from "@/components/SidebarSection";
 import { ActionSettingsForm } from "@/components/actions/ActionSettingsForm";
 import { ActionsForm } from "@/components/actions/ActionsForm";
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { Action, actionMapper } from "@/utils/actions";
-import { Component } from "@/utils/editor";
 import { Box, Button, Stack } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconArrowBadgeRight, IconBolt } from "@tabler/icons-react";
 import startCase from "lodash.startcase";
 
-type Props = {
-  component: Component;
-};
-
-export const ActionsTab = ({ component }: Props) => {
+export const ActionsTab = () => {
+  const component = useEditorTreeStore(
+    (state) => state.componentMutableAttrs[state.selectedComponentIds?.at(-1)!],
+  );
   const openAction = useEditorStore((state) => state.openAction);
   const setOpenAction = useEditorStore((state) => state.setOpenAction);
   const setCopiedAction = useEditorStore((state) => state.setCopiedAction);
-  const updateTreeComponentAttrs = useEditorStore(
+  const updateTreeComponentAttrs = useEditorTreeStore(
     (state) => state.updateTreeComponentAttrs,
   );
 
@@ -51,7 +49,7 @@ export const ActionsTab = ({ component }: Props) => {
         return (
           sequentialAction.sequentialTo === action.id && (
             <SidebarSection
-              icon={IconArrowBadgeRight}
+              icon="IconArrowBadgeRight"
               {...item}
               key={item.label}
             >
@@ -121,7 +119,7 @@ export const ActionsTab = ({ component }: Props) => {
 
     return (
       item && (
-        <SidebarSection icon={IconBolt} {...item} key={item.label}>
+        <SidebarSection icon="IconBolt" {...item} key={item.label}>
           <ActionSettingsForm
             action={action}
             defaultValues={actionMapper[actionName]?.defaultValues}

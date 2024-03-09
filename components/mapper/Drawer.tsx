@@ -1,4 +1,6 @@
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
+import { useThemeStore } from "@/stores/theme";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { EditableComponentMapper } from "@/utils/editor";
 import { DrawerProps, Drawer as MantineDrawer } from "@mantine/core";
@@ -13,10 +15,10 @@ export const Drawer = ({
   onClose: propOnClose,
   ...props
 }: Props) => {
-  const selectedComponentId = useEditorStore(
+  const selectedComponentId = useEditorTreeStore(
     (state) => state.selectedComponentIds?.at(-1),
   );
-  const theme = useEditorStore((state) => state.theme);
+  const theme = useThemeStore((state) => state.theme);
   const isPreviewMode = useUserConfigStore((state) => state.isPreviewMode);
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
 
@@ -32,8 +34,9 @@ export const Drawer = ({
   const handleClose = () => {
     close();
     propOnClose && propOnClose();
+    console.log("Drawer");
     const updateTreeComponentAttrs =
-      useEditorStore.getState().updateTreeComponentAttrs;
+      useEditorTreeStore.getState().updateTreeComponentAttrs;
 
     updateTreeComponentAttrs({
       componentIds: [component.id!],
@@ -57,7 +60,7 @@ export const Drawer = ({
         isPreviewMode
           ? opened
           : selectedComponentId === component.id ||
-            !!useEditorStore.getState().componentMutableAttrs[
+            !!useEditorTreeStore.getState().componentMutableAttrs[
               selectedComponentId!
             ]
       }

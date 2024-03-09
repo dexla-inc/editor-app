@@ -1,23 +1,19 @@
 import { upsertCustomComponent } from "@/requests/components/mutations";
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { structureMapper } from "@/utils/componentMapper";
 import { encodeSchema } from "@/utils/compression";
 import { ICON_SIZE } from "@/utils/config";
-import {
-  Component,
-  getComponentTreeById,
-  replaceIdsDeeply,
-} from "@/utils/editor";
-import { Button, Group, Modal, Select, Stack, TextInput } from "@mantine/core";
+import { getComponentTreeById, replaceIdsDeeply } from "@/utils/editor";
+import { Button, Modal, Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { showNotification } from "@mantine/notifications";
 import { IconNewSection } from "@tabler/icons-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import cloneDeep from "lodash.clonedeep";
-import { useRouter } from "next/router";
 import merge from "lodash.merge";
+import { useRouter } from "next/router";
 
 type Props = {
   customComponentModal: any;
@@ -30,7 +26,7 @@ export const CustomComponentModal = ({
 }: Props) => {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const selectedComponentId = useEditorStore(
+  const selectedComponentId = useEditorTreeStore(
     (state) => state.selectedComponentIds?.at(-1),
   );
   const activeCompany = usePropelAuthStore((state) => state.activeCompany);
@@ -68,14 +64,14 @@ export const CustomComponentModal = ({
   });
 
   const handleSubmitCustomComponent = (values: any) => {
-    const editorTree = useEditorStore.getState().tree;
+    const editorTree = useEditorTreeStore.getState().tree;
     customComponentModal.close();
     const componentTree = getComponentTreeById(
       editorTree.root,
       selectedComponentId as string,
     );
     const component =
-      useEditorStore.getState().componentMutableAttrs[selectedComponentId!];
+      useEditorTreeStore.getState().componentMutableAttrs[selectedComponentId!];
 
     const copy = merge({}, component, componentTree);
     replaceIdsDeeply(copy);

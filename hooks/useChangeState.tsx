@@ -1,4 +1,6 @@
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
+import { useThemeStore } from "@/stores/theme";
 import { getHoverColor } from "@/utils/branding";
 import { componentMapper, structureMapper } from "@/utils/componentMapper";
 import {
@@ -39,10 +41,16 @@ export const useChangeState = ({
   textColor,
   isTransparentBackground,
 }: StateProps) => {
-  const theme = useEditorStore((state) => state.theme);
+  const theme = useThemeStore((state) => state.theme);
   const defaultBg = isTransparentBackground ? "transparent" : "white";
   const backgroundColor = getColorFromTheme(theme, bg) ?? defaultBg;
   const color = getColorFromTheme(theme, textColor) ?? "black";
+
+  const currentState = useEditorTreeStore(
+    (state) =>
+      state.currentTreeComponentsStates?.[state.selectedComponentIds?.[0]!] ??
+      "default",
+  );
 
   const componentsWithBackgroundModifier = Object.entries(
     componentMapper,
@@ -60,7 +68,6 @@ export const useChangeState = ({
     key: string,
     value: string,
     form: any,
-    currentState: string,
     component?: Component,
   ) => {
     const hoverBackground = getHoverColor(value);

@@ -9,7 +9,7 @@ import {
   QueryStringListItem,
 } from "@/requests/pages/types";
 import { useAppStore } from "@/stores/app";
-import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
 import { Button, Group, Stack, TextInput } from "@mantine/core";
@@ -31,7 +31,7 @@ export default function PageConfig({ page, setPage }: Props) {
   const router = useRouter();
   const projectId = router.query.id as string;
   const [slug, setSlug] = useState("");
-  const resetTree = useEditorStore((state) => state.resetTree);
+  const resetTree = useEditorTreeStore((state) => state.resetTree);
   const { invalidate } = usePageListQuery(projectId);
   const queryStringState = useState(
     page?.queryStrings

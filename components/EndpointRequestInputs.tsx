@@ -2,6 +2,7 @@ import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput"
 import { Endpoint } from "@/requests/datasources/types";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { ApiType } from "@/utils/dashboardTypes";
 import { Stack, Title } from "@mantine/core";
 import React from "react";
@@ -26,12 +27,8 @@ export const EndpointRequestInputs = ({
   const setComponentToBind = useEditorStore(
     (state) => state.setComponentToBind,
   );
-  const selectedComponentId = useEditorStore(
+  const selectedComponentId = useEditorTreeStore(
     (state) => state.selectedComponentIds?.at(-1),
-  );
-
-  const component = useEditorStore(
-    (state) => state.componentMutableAttrs[selectedComponentId!],
   );
 
   return (

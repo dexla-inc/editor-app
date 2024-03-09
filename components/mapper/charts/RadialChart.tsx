@@ -1,17 +1,14 @@
 import { Chart, getChartColor } from "@/components/mapper/charts/Chart";
-import { useEditorStore } from "@/stores/editor";
+import { useThemeStore } from "@/stores/theme";
 import { Component } from "@/utils/editor";
 import merge from "lodash.merge";
-import { Skeleton } from "@mantine/core";
-
 type Props = {
-  renderTree: (component: Component) => any;
   component: Component;
 };
 
 export const RadialChart = (props: Props) => {
   const { labelColor } = props.component.props as any;
-  const theme = useEditorStore((state) => state.theme);
+  const theme = useThemeStore((state) => state.theme);
   const _labelColor = getChartColor(theme, labelColor, "SecondaryText.5");
 
   const customProps = merge({}, props, {

@@ -3,11 +3,12 @@
 import { Shell } from "@/components/AppShell";
 import { Cursor } from "@/components/Cursor";
 import { EditorCanvas } from "@/components/EditorCanvas";
-import { EditorAsideSections } from "@/components/aside/EditorAsideSections";
+import EditorAsideSections from "@/components/aside/EditorAsideSections";
 import { EditorNavbarSections } from "@/components/navbar/EditorNavbarSections";
 import { useAppMode } from "@/hooks/useAppMode";
 import { useGetPageData } from "@/hooks/useGetPageData";
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { globalStyles } from "@/utils/branding";
@@ -26,22 +27,23 @@ type Props = {
   pageId: string;
 };
 
-export const Editor = ({ projectId, pageId }: Props) => {
-  const setCurrentPageAndProjectIds = useEditorStore(
+const Editor = ({ projectId, pageId }: Props) => {
+  const setCurrentPageAndProjectIds = useEditorTreeStore(
     (state) => state.setCurrentPageAndProjectIds,
   );
-  const liveblocks = useEditorStore((state) => state.liveblocks);
+  const liveblocks = useEditorTreeStore((state) => state.liveblocks);
   const { isPreviewMode } = useAppMode();
   const isNavBarVisible = useEditorStore((state) => state.isNavBarVisible);
-  const setCurrentUser = useEditorStore((state) => state.setCurrentUser);
+  const setCurrentUser = useEditorTreeStore((state) => state.setCurrentUser);
   const isDarkTheme = useUserConfigStore((state) => state.isDarkTheme);
   const user = usePropelAuthStore((state) => state.user);
 
   useGetPageData({ projectId, pageId });
-  setCurrentPageAndProjectIds(projectId, pageId);
   const [roomEntered, setRoomEntered] = useState(false);
 
   useEffect(() => {
+    setCurrentPageAndProjectIds(projectId, pageId);
+
     if (pageId && !roomEntered) {
       liveblocks.enterRoom(pageId);
       setRoomEntered(true);
@@ -127,3 +129,5 @@ export const Editor = ({ projectId, pageId }: Props) => {
     </>
   );
 };
+
+export default Editor;

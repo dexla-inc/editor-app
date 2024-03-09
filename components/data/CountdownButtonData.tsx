@@ -1,6 +1,7 @@
 import { FormFieldsBuilder } from "@/components/data/forms/FormFieldsBuilder";
 import { DataProps } from "@/components/data/type";
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { Stack } from "@mantine/core";
 import { UnitInput } from "../UnitInput";
 
@@ -11,8 +12,8 @@ export const CountdownButtonData = ({ component, endpoints }: DataProps) => {
       label: "Value",
     },
   ];
-
-  const updateTreeComponentAttrs = useEditorStore(
+  console.log("CountdownButtonData");
+  const updateTreeComponentAttrs = useEditorTreeStore(
     (state) => state.updateTreeComponentAttrs,
   );
 

@@ -4,6 +4,7 @@ import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoint
 import { Endpoint } from "@/requests/datasources/types";
 import { MethodTypes } from "@/requests/types";
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { Box, Flex, Group, Select, SelectProps, Text } from "@mantine/core";
 import { forwardRef, useCallback, useEffect, useMemo, useState } from "react";
 
@@ -41,7 +42,7 @@ interface EndpointSelectProps extends Omit<SelectProps, "data"> {
 }
 
 export const EndpointSelect = ({ value, ...props }: EndpointSelectProps) => {
-  const projectId = useEditorStore((state) => state.currentProjectId);
+  const projectId = useEditorTreeStore((state) => state.currentProjectId);
   const { data: endpoints } = useDataSourceEndpoints(projectId);
   const [selectedEndpoint, setSelectedEndpoint] = useState<Endpoint>();
 

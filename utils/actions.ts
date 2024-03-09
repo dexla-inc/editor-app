@@ -22,6 +22,7 @@ import { LogicFlowResponse } from "@/requests/logicflows/types";
 import { PageResponse } from "@/requests/pages/types";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { useVariableStore } from "@/stores/variables";
 import { readDataFromStream } from "@/utils/api";
 import { Component } from "@/utils/editor";
@@ -247,7 +248,7 @@ export const useNavigationAction = ({
 }: NavigationActionParams) => {
   const editorState = useEditorStore.getState();
   const isLive = editorState.isLive;
-  const projectId = editorState.currentProjectId;
+  const projectId = useEditorTreeStore.getState().currentProjectId;
 
   if (!action.pageId || !action.pageSlug) {
     console.error("Page Id is not defined");
@@ -337,11 +338,11 @@ export const useChangeVisibilityAction = ({
   action,
   computeValue,
 }: TogglePropsActionParams) => {
-  const updateTreeComponentAttrs = useEditorStore(
+  const updateTreeComponentAttrs = useEditorTreeStore(
     (state) => state.updateTreeComponentAttrs,
   );
   const componentId = computeValue({ value: action.componentId });
-  const component = useEditorStore(
+  const component = useEditorTreeStore(
     (state) => state.componentMutableAttrs[componentId],
   );
 
@@ -396,9 +397,8 @@ export const useChangeStateAction = ({
   computeValue,
 }: ChangeStateActionParams) => {
   const componentId = computeValue({ value: action.componentId });
-
   const updateTreeComponentAttrs =
-    useEditorStore.getState().updateTreeComponentAttrs;
+    useEditorTreeStore.getState().updateTreeComponentAttrs;
 
   updateTreeComponentAttrs({
     componentIds: [componentId],
@@ -586,8 +586,9 @@ export const useApiCallAction = async ({
   endpointResults,
   setNonEditorActions,
 }: APICallActionParams): Promise<any> => {
+  console.log("useApiCallAction");
   const updateTreeComponentAttrs =
-    useEditorStore.getState().updateTreeComponentAttrs;
+    useEditorTreeStore.getState().updateTreeComponentAttrs;
   if (entity.props && action.showLoader) {
     setLoadingState(entity.id!, true, updateTreeComponentAttrs);
   }

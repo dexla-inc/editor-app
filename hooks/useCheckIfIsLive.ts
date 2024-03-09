@@ -1,5 +1,5 @@
 import { getProject } from "@/requests/projects/queries-noauth";
-import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { getProjectType } from "@/utils/common";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -8,7 +8,7 @@ export const useCheckIfIsLive = () => {
   const router = useRouter();
   const projectId = router.query.id as string | undefined;
 
-  const setCurrentPageAndProjectIds = useEditorStore(
+  const setCurrentPageAndProjectIds = useEditorTreeStore(
     (state) => state.setCurrentPageAndProjectIds,
   );
 
@@ -43,8 +43,8 @@ export const useCheckIfIsLive = () => {
     };
 
     setLiveIfHasCustomDomain();
-    // @ts-ignore
-  }, [router?.state?.pathname]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router?.pathname]);
 
   return urlType === "live";
 };

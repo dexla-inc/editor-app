@@ -17,17 +17,12 @@ import {
   IconAlignBoxCenterMiddle,
   IconAlignBoxLeftMiddle,
   IconAlignBoxRightMiddle,
-  IconLayout,
 } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
 
-export const icon = IconLayout;
-export const label = "Position";
-
-export const Modifier = withModifier(({ selectedComponent }) => {
+const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm();
-
   useEffect(() => {
     form.setValues(
       merge({}, requiredModifiers.position, {
@@ -131,7 +126,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
             onChange={(value) => {
               form.setFieldValue("zIndex", value as number);
               debouncedTreeComponentAttrsUpdate({
-                attrs: { props: { zIndex: value } },
+                attrs: { props: { style: { zIndex: value } } },
               });
             }}
           />
@@ -201,3 +196,5 @@ export const Modifier = withModifier(({ selectedComponent }) => {
     </form>
   );
 });
+
+export default Modifier;

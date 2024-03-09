@@ -5,8 +5,8 @@ import {
 } from "@/requests/ai/types";
 import { BrandingAITheme } from "@/requests/projects/types";
 import { PagingResponse } from "@/requests/types";
-import { MantineThemeExtended } from "@/stores/editor";
 import { baseURL, get, getAuthToken } from "@/utils/api";
+import { MantineThemeExtended } from "@/utils/types";
 import {
   EventSourceMessage,
   fetchEventSource,

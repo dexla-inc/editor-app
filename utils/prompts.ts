@@ -1,5 +1,5 @@
-import { MantineThemeExtended } from "@/stores/editor";
 import { PromptParams } from "@/utils/prompt-types";
+import { MantineThemeExtended } from "@/utils/types";
 
 export const getTemplatePrompt = ({
   pageName,

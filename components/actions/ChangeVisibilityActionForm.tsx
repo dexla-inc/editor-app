@@ -2,12 +2,13 @@ import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput"
 import { useEditorStore } from "@/stores/editor";
 import { ActionFormProps, TogglePropsAction } from "@/utils/actions";
 import { Stack } from "@mantine/core";
+import { useEditorTreeStore } from "../../stores/editorTree";
 import { VisibilityModifier } from "../data/VisibilityModifier";
 
 type Props = ActionFormProps<Omit<TogglePropsAction, "name">>;
 
 export const ChangeVisibilityActionForm = ({ form }: Props) => {
-  const selectedComponentId = useEditorStore(
+  const selectedComponentId = useEditorTreeStore(
     (state) => state.selectedComponentIds?.at(-1),
   );
   const setComponentToBind = useEditorStore(
@@ -17,7 +18,7 @@ export const ChangeVisibilityActionForm = ({ form }: Props) => {
     (state) => state.setPickingComponentToBindTo,
   );
 
-  const component = useEditorStore(
+  const component = useEditorTreeStore(
     (state) => state.componentMutableAttrs[selectedComponentId!],
   );
 

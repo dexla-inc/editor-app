@@ -1,19 +1,13 @@
-import { useEditorStore } from "@/stores/editor";
+import { useThemeStore } from "@/stores/theme";
 import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { Select, SelectProps } from "@mantine/core";
 
 type Props = Omit<SelectProps, "data" | "onChange"> & {
   form: any;
-  selectedComponentIds: string[];
 };
 
-export const FontSelector = ({
-  label = "Type",
-  form,
-  selectedComponentIds,
-  ...restProps
-}: Props) => {
-  const theme = useEditorStore((state) => state.theme);
+export const FontSelector = ({ label = "Type", form, ...restProps }: Props) => {
+  const theme = useThemeStore((state) => state.theme);
 
   const fonts = theme.fonts.reduce((acc, font) => {
     if (font.type === "TEXT") {

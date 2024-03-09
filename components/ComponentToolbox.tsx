@@ -2,6 +2,7 @@ import { ActionIconTransparent } from "@/components/ActionIconTransparent";
 import { useDraggable } from "@/hooks/useDraggable";
 import { useOnDragStart } from "@/hooks/useOnDragStart";
 import { useEditorStore } from "@/stores/editor";
+import { useThemeStore } from "@/stores/theme";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { theme } from "@/utils/branding";
 import {
@@ -20,8 +21,8 @@ import {
 } from "@/utils/editor";
 import { Group, Text, Tooltip, UnstyledButton } from "@mantine/core";
 import { IconGripVertical } from "@tabler/icons-react";
-import cloneDeep from "lodash.clonedeep";
 import { useCallback, useEffect, useMemo } from "react";
+import { useEditorTreeStore } from "@/stores/editorTree";
 
 type Props = {
   customComponentModal: any;
@@ -31,19 +32,23 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
   const isResizing = useEditorStore((state) => state.isResizing);
   const isPreviewMode = useUserConfigStore((state) => state.isPreviewMode);
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
-  const editorTheme = useEditorStore((state) => state.theme);
-  const editorTree = useEditorStore((state) => state.tree as EditorTreeCopy);
-  const setEditorTree = useEditorStore((state) => state.setTree);
-  const setSelectedComponentIds = useEditorStore(
+  const editorTheme = useThemeStore((state) => state.theme);
+
+  // Move to functions
+  const editorTree = useEditorTreeStore(
+    (state) => state.tree as EditorTreeCopy,
+  );
+  const setEditorTree = useEditorTreeStore((state) => state.setTree);
+  const setSelectedComponentIds = useEditorTreeStore(
     (state) => state.setSelectedComponentIds,
   );
-  const selectedComponentId = useEditorStore(
+  const selectedComponentId = useEditorTreeStore(
     (state) => state.selectedComponentIds?.at(-1),
   );
 
   const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
 
-  const component = useEditorStore(
+  const component = useEditorTreeStore(
     (state) => state.componentMutableAttrs[selectedComponentId!],
   );
 
@@ -201,9 +206,8 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
               };
             }
 
-            const copy = cloneDeep(editorTree) as EditorTreeCopy;
             const containerId = addComponent(
-              copy.root,
+              editorTree.root,
               container,
               {
                 id: parentTree?.id!,
@@ -212,13 +216,17 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
               getComponentIndex(parentTree!, id),
             );
 
-            addComponent(copy.root, component, {
+            addComponent(editorTree.root, component, {
               id: containerId,
               edge: "left",
             });
 
-            removeComponentFromParent(copy.root, component, parentTree?.id!);
-            setEditorTree(copy, {
+            removeComponentFromParent(
+              editorTree.root,
+              component,
+              parentTree?.id!,
+            );
+            setEditorTree(editorTree, {
               action: `Wrapped ${component.name} with a Container`,
             });
           }}
@@ -242,9 +250,8 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
             iconName={ICON_DELETE}
             tooltip="Delete"
             onClick={() => {
-              const editorTreeCopy = cloneDeep(editorTree) as EditorTreeCopy;
-              removeComponent(editorTreeCopy.root, component?.id!);
-              setEditorTree(editorTreeCopy, {
+              removeComponent(editorTree.root, component?.id!);
+              setEditorTree(editorTree, {
                 action: `Removed ${component?.name}`,
               });
             }}

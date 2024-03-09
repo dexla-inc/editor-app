@@ -1,16 +1,13 @@
 import { Chart } from "@/components/mapper/charts/Chart";
-import { useEditorStore } from "@/stores/editor";
+import { useThemeStore } from "@/stores/theme";
 import { Component } from "@/utils/editor";
 import merge from "lodash.merge";
-import { Skeleton } from "@mantine/core";
-
 type Props = {
-  renderTree: (component: Component) => any;
   component: Component;
 };
 
 export const RadarChart = (props: Props) => {
-  const theme = useEditorStore((state) => state.theme);
+  const theme = useThemeStore((state) => state.theme);
 
   const customProps = merge({}, props, {
     component: {

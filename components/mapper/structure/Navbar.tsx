@@ -1,9 +1,9 @@
 import { defaultImageValues } from "@/components/modifiers/Image";
 import { PageResponse } from "@/requests/pages/types";
-import { MantineThemeExtended } from "@/stores/editor";
 import { defaultTheme } from "@/utils/branding";
 import { ComponentStructure, getColorFromTheme } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
+import { MantineThemeExtended } from "@/utils/types";
 import merge from "lodash.merge";
 import { nanoid } from "nanoid";
 

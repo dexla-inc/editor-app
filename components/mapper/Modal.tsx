@@ -1,6 +1,8 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useAppMode } from "@/hooks/useAppMode";
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
+import { useThemeStore } from "@/stores/theme";
 import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import { Modal as MantineModal, ModalProps } from "@mantine/core";
@@ -10,10 +12,10 @@ type Props = EditableComponentMapper & Omit<ModalProps, "opened">;
 
 export const ModalComponent = forwardRef(
   ({ renderTree, component, ...props }: Props, ref) => {
-    const selectedComponentId = useEditorStore(
+    const selectedComponentId = useEditorTreeStore(
       (state) => state.selectedComponentIds?.at(-1),
     );
-    const theme = useEditorStore((state) => state.theme);
+    const theme = useThemeStore((state) => state.theme);
     const { isPreviewMode } = useAppMode();
     const iframeWindow = useEditorStore((state) => state.iframeWindow);
 
@@ -40,8 +42,9 @@ export const ModalComponent = forwardRef(
 
     const handleClose = () => {
       onclose && onclose();
+      console.log("Modal");
       const updateTreeComponentAttrs =
-        useEditorStore.getState().updateTreeComponentAttrs;
+        useEditorTreeStore.getState().updateTreeComponentAttrs;
 
       updateTreeComponentAttrs({
         componentIds: [component.id!],
@@ -64,7 +67,7 @@ export const ModalComponent = forwardRef(
           isPreviewMode
             ? opened
             : (selectedComponentId === component.id ||
-                !!useEditorStore.getState().componentMutableAttrs[
+                !!useEditorTreeStore.getState().componentMutableAttrs[
                   selectedComponentId!
                 ]) &&
               !forceHide

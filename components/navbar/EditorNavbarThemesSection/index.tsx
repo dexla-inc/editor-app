@@ -15,7 +15,7 @@ import { CardStyle } from "@/requests/projects/types";
 import { saveTheme } from "@/requests/themes/mutations";
 import { ThemeResponse } from "@/requests/themes/types";
 import { useAppStore } from "@/stores/app";
-import { useEditorStore } from "@/stores/editor";
+import { useThemeStore } from "@/stores/theme";
 import { ICON_SIZE, INPUT_SIZE } from "@/utils/config";
 import { gapSizes, inputSizes, radiusSizes } from "@/utils/defaultSizes";
 import { getGoogleFonts } from "@/utils/googleFonts";
@@ -36,7 +36,6 @@ import { IconArrowsMaximize } from "@tabler/icons-react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-
 type EditorNavbarThemesSectionProps = {
   isActive: boolean;
 };
@@ -68,8 +67,8 @@ export const EditorNavbarThemesSection =
 
     const [opened, { open, close }] = useDisclosure(false);
 
-    const usersTheme = useEditorStore((state) => state.theme);
-    const setUsersTheme = useEditorStore((state) => state.setTheme);
+    const usersTheme = useThemeStore((state) => state.theme);
+    const setUsersTheme = useThemeStore((state) => state.setTheme);
 
     const projectId = router.query.id as string;
 
@@ -184,7 +183,6 @@ export const EditorNavbarThemesSection =
                   friendlyName={friendlyName}
                   hex={hex}
                   isDefault={form.values.colors[index].isDefault}
-                  mantineTheme={mantineTheme}
                   onValueChange={(value) => {
                     form.setFieldValue(
                       `colors.${index}.friendlyName`,

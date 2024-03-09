@@ -1,8 +1,8 @@
-import { useEditorStore } from "@/stores/editor";
+import { useThemeStore } from "@/stores/theme";
 import { Loader, LoaderProps } from "@mantine/core";
 
 export const InputLoader = (props: LoaderProps) => {
-  const theme = useEditorStore((state) => state.theme);
+  const theme = useThemeStore((state) => state.theme);
   return (
     <Loader
       {...props}

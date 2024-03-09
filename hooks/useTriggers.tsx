@@ -2,6 +2,7 @@ import { useDataContext } from "@/contexts/DataProvider";
 import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
 import { PageResponse } from "@/requests/pages/types";
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import {
   Action,
   ActionTrigger,
@@ -20,7 +21,7 @@ type UseTriggersProps = {
 };
 
 export const useTriggers = ({ entity }: UseTriggersProps) => {
-  const projectId = useEditorStore((state) => state.currentProjectId);
+  const projectId = useEditorTreeStore((state) => state.currentProjectId);
   const router = useRouter();
   const { computeValue } = useDataContext()!;
   const setNonEditorActions = useEditorStore(

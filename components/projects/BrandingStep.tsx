@@ -5,7 +5,7 @@ import { useProjectQuery } from "@/hooks/reactQuery/useProjectQuery";
 import { generateThemeFromScreenshot } from "@/requests/ai/queries";
 import { saveBasicTheme, saveTheme } from "@/requests/themes/mutations";
 import { Color, ThemeResponse } from "@/requests/themes/types";
-import { useEditorStore } from "@/stores/editor";
+import { useThemeStore } from "@/stores/theme";
 import { convertToBase64 } from "@/utils/common";
 import { componentMapper } from "@/utils/componentMapper";
 import { ICON_SIZE } from "@/utils/config";
@@ -113,10 +113,9 @@ export default function BrandingStep({
   const buttonComponent = componentMapper["Button"];
 
   const linkComponent = componentMapper["Link"];
-  const theme = useEditorStore((state) => state.theme);
-  const setTheme = useEditorStore((state) => state.setTheme);
+  const theme = useThemeStore((state) => state.theme);
+  const setTheme = useThemeStore((state) => state.setTheme);
   const project = useProjectQuery(projectId);
-  const userTheme = project.data?.branding;
 
   const previews = screenshots.map((file, index) => {
     const imageUrl = URL.createObjectURL(file);
@@ -308,7 +307,6 @@ export default function BrandingStep({
                     friendlyName={friendlyName}
                     hex={hex}
                     isDefault={themeResponse.colors[index].isDefault}
-                    mantineTheme={mantineTheme}
                     onValueChange={(value) => {
                       setThemeResponse((prevThemeResponse) => {
                         if (!prevThemeResponse) {

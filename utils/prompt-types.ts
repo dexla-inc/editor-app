@@ -1,6 +1,6 @@
 import { AIResponseTypes } from "@/requests/ai/types";
 import { TemplateDetail } from "@/requests/templates/types";
-import { MantineThemeExtended } from "@/stores/editor";
+import { MantineThemeExtended } from "@/utils/types";
 
 export type PromptParams = {
   pageName?: string;

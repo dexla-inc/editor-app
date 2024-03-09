@@ -43,6 +43,7 @@ import { useEditorStore } from "@/stores/editor";
 import { debouncedTreeRootChildrenUpdate } from "@/utils/editor";
 import { CSS } from "@dnd-kit/utilities";
 import { usePrevious } from "@mantine/hooks";
+import { useEditorTreeStore } from "../../../stores/editorTree";
 
 const measuring = {
   droppable: {
@@ -89,18 +90,15 @@ export function NavbarLayersSection({
   indicator = false,
   indentationWidth = 10,
 }: Props) {
-  const items = useEditorStore((state) => {
+  const items = useEditorTreeStore((state) => {
     const { children } = state.tree.root;
     return children;
   });
-  const selectedComponentId = useEditorStore(
+  const selectedComponentId = useEditorTreeStore(
     (state) => state.selectedComponentIds?.at(-1),
   );
   const isStructureCollapsed = useEditorStore(
     (state) => state.isStructureCollapsed,
-  );
-  const setCollapsedItemsCount = useEditorStore(
-    (state) => state.setCollapsedItemsCount,
   );
   const setItems = useCallback((updateItems: any, save = true) => {
     debouncedTreeRootChildrenUpdate(updateItems, save);
@@ -161,9 +159,6 @@ export function NavbarLayersSection({
         [] as string[],
       );
 
-    const count = (collapsedItems ?? []).length;
-    setCollapsedItemsCount(count);
-
     return removeChildrenOf(
       flattenedTree,
       // @ts-ignore
@@ -174,7 +169,6 @@ export function NavbarLayersSection({
     selectedComponentId,
     didStructureCollapedChange,
     isStructureCollapsed,
-    setCollapsedItemsCount,
     activeId,
   ]);
 

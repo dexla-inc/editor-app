@@ -5,7 +5,6 @@ import {
   ColorSwatch,
   Flex,
   Input,
-  MantineTheme,
   Popover,
   TextInput,
   Tooltip,
@@ -20,7 +19,6 @@ type Props = {
   hex?: string;
   isDefault: boolean;
   onValueChange?: (value: { friendlyName: string; hex: string }) => void;
-  mantineTheme: MantineTheme;
   deleteColor?: () => void;
   size?: number;
 };
@@ -30,7 +28,6 @@ export const ColorSelector = ({
   friendlyName: fetchedFriendlyName = "",
   isDefault,
   onValueChange,
-  mantineTheme,
   deleteColor,
   size,
 }: Props) => {
@@ -76,16 +73,17 @@ export const ColorSelector = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchedHex, fetchedFriendlyName]);
 
-  useEffect(() => {
-    const handleKeyDown = (event: any) => {
-      if (event.key === "Escape") {
-        setOpened(false);
-      }
-    };
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [opened]);
+  // TODO: deleting because of 16 times handleKeyDown was triggered - find another solution
+  // useEffect(() => {
+  //   const handleKeyDown = (event: any) => {
+  //     if (event.key === "Escape") {
+  //       setOpened(false);
+  //     }
+  //   };
+  //   document.addEventListener("keydown", handleKeyDown);
+  //   return () => document.removeEventListener("keydown", handleKeyDown);
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [opened]);
 
   return (
     <Flex align="center" ref={ref}>
@@ -105,12 +103,12 @@ export const ColorSelector = ({
               size={size ? size : 36}
               radius="0px"
               withShadow={false}
-              style={{
+              sx={(theme) => ({
                 flex: "none",
-                borderTopLeftRadius: mantineTheme.radius.sm,
-                borderBottomLeftRadius: mantineTheme.radius.sm,
+                borderTopLeftRadius: theme.radius.sm,
+                borderBottomLeftRadius: theme.radius.sm,
                 borderRight: "0px",
-              }}
+              })}
             />
           </Tooltip>
         </Popover.Target>

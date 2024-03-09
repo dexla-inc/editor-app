@@ -13,6 +13,7 @@ import {
 } from "@/hooks/useMergedProps";
 import { useTriggers } from "@/hooks/useTriggers";
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { ComponentTree } from "@/utils/editor";
 import { BoxProps } from "@mantine/core";
 import { PropsWithChildren, cloneElement } from "react";
@@ -36,7 +37,7 @@ export const EditableComponent = ({
   const { isPreviewMode } = useAppMode();
   const isLive = useEditorStore((state) => state.isLive);
   const isEditorMode = !isPreviewMode && !isLive;
-  const component = useEditorStore(
+  const component = useEditorTreeStore(
     (state) => state.componentMutableAttrs[id] ?? {},
   );
 

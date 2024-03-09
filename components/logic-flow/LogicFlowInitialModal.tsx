@@ -4,6 +4,7 @@ import { LogicFlowsPage } from "@/components/logic-flow/LogicFlowsPage";
 import { useFlowsQuery } from "@/hooks/reactQuery/useFlowsQuery";
 import { LogicFlowResponse } from "@/requests/logicflows/types";
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { useFlowStore } from "@/stores/flow";
 import { LOGICFLOW_BACKGROUND } from "@/utils/branding";
 import { Box, Button, Group, Stack, Tabs, Text } from "@mantine/core";
@@ -25,7 +26,9 @@ export const getServerSideProps = async ({
 export default function LogicFlowInitialModal({}: ContextModalProps) {
   const setShowFormModal = useFlowStore((state) => state.setShowFormModal);
   const resetFlow = useFlowStore((state) => state.resetFlow);
-  const projectId = useEditorStore((state) => state.currentProjectId) as string;
+  const projectId = useEditorTreeStore(
+    (state) => state.currentProjectId,
+  ) as string;
   const selectedTabView = useFlowStore((state) => state.selectedTabView);
   const setSelectedTabView = useFlowStore((state) => state.setSelectedTabView);
   const setIsRestored = useFlowStore((state) => state.setIsRestored);

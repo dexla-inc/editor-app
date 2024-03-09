@@ -1,12 +1,11 @@
 import { Icon as BaseIconComponent } from "@/components/Icon";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { useEditorStore } from "@/stores/editor";
+import { useThemeStore } from "@/stores/theme";
 import { getColorValue, globalStyles } from "@/utils/branding";
 import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import merge from "lodash.merge";
 import { forwardRef, memo } from "react";
-
 type Props = EditableComponentMapper;
 
 const IconComponent = forwardRef(
@@ -14,7 +13,7 @@ const IconComponent = forwardRef(
     const { children, color, bg, triggers, size, ...componentProps } =
       component.props as any;
 
-    const theme = useEditorStore((state) => state.theme);
+    const theme = useThemeStore((state) => state.theme);
     const width = globalStyles().sizing.icon[size];
     return (
       <BaseIconComponent

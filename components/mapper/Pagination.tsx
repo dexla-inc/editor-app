@@ -1,5 +1,5 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import {
@@ -11,14 +11,15 @@ import { forwardRef, memo } from "react";
 type Props = EditableComponentMapper & PaginationProps;
 
 const PaginationComponent = forwardRef(
-  ({ renderTree, component, ...props }: Props, ref) => {
+  ({ component, ...props }: Props, ref) => {
     const { triggers, ...componentProps } = component.props as any;
 
     const { onChange, ...allTriggers } = triggers || {};
 
     const customOnChange = (value: any) => {
+      console.log("Pagination");
       const updateTreeComponentAttrs =
-        useEditorStore.getState().updateTreeComponentAttrs;
+        useEditorTreeStore.getState().updateTreeComponentAttrs;
       updateTreeComponentAttrs({
         componentIds: [component.id!],
         attrs: { props: { value } },

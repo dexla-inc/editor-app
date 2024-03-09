@@ -3,6 +3,7 @@ import { ComponentToBindFromSelect } from "@/components/ComponentToBindFromSelec
 import { useDataContext } from "@/contexts/DataProvider";
 import { useComponentStates } from "@/hooks/useComponentStates";
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { ChangeStateAction } from "@/utils/actions";
 import { Stack } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
@@ -12,8 +13,8 @@ type Props = {
 };
 
 export const ChangeStateActionForm = ({ form }: Props) => {
-  const editorTree = useEditorStore((state) => state.tree);
-  const selectedComponentId = useEditorStore(
+  const editorTree = useEditorTreeStore((state) => state.tree);
+  const selectedComponentId = useEditorTreeStore(
     (state) => state.selectedComponentIds?.at(-1),
   );
   const setPickingComponentToBindTo = useEditorStore(
@@ -26,7 +27,7 @@ export const ChangeStateActionForm = ({ form }: Props) => {
 
   const { computeValue } = useDataContext()!;
 
-  const component = useEditorStore(
+  const component = useEditorTreeStore(
     (state) => state.componentMutableAttrs[selectedComponentId!],
   );
 
