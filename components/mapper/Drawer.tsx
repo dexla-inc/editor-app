@@ -15,9 +15,11 @@ export const Drawer = ({
   onClose: propOnClose,
   ...props
 }: Props) => {
-  const selectedComponentId = useEditorTreeStore(
-    (state) => state.selectedComponentIds?.at(-1),
-  );
+  // const selectedComponentId = useEditorTreeStore(
+  //   (state) => state.selectedComponentIds?.at(-1),
+  // );
+  const selectedComponentId = "main-content";
+  console.log("ComponentToolbox10");
   const theme = useThemeStore((state) => state.theme);
   const isPreviewMode = useUserConfigStore((state) => state.isPreviewMode);
   const iframeWindow = useEditorStore((state) => state.iframeWindow);

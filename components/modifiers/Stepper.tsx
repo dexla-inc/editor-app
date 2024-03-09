@@ -21,8 +21,10 @@ const defaultStepperValues = requiredModifiers.stepper;
 
 const Modifier = withModifier(({ selectedComponent }) => {
   const editorTree = useEditorTreeStore((state) => state.tree);
+  const selectedComponentIds = ["main-content"];
+  console.log("ComponentToolbox5");
   const selectedComponentTree = useEditorTreeStore((state) =>
-    getComponentTreeById(editorTree.root, state.selectedComponentIds?.at(-1)!),
+    getComponentTreeById(editorTree.root, selectedComponentIds?.at(-1)!),
   );
   const form = useForm();
 

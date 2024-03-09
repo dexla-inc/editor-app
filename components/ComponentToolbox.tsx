@@ -42,9 +42,12 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
   const setSelectedComponentIds = useEditorTreeStore(
     (state) => state.setSelectedComponentIds,
   );
+  //const selectedComponentId = "main-content"; console.log("ComponentToolbox1");
+
   const selectedComponentId = useEditorTreeStore(
     (state) => state.selectedComponentIds?.at(-1),
   );
+  console.log(selectedComponentId);
 
   const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
 

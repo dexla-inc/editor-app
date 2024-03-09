@@ -4,10 +4,12 @@ import { dataMapper } from "@/utils/dataMapper";
 import { Stack } from "@mantine/core";
 
 export const Data = () => {
-    const component = useEditorTreeStore(
-        (state) => state.componentMutableAttrs[state.selectedComponentIds?.at(-1)!],
-    );
-    const projectId = useEditorTreeStore((state) => state.currentProjectId);
+  const selectedComponentIds = ["main-content"];
+  console.log("ComponentToolbox3");
+  const component = useEditorTreeStore(
+    (state) => state.componentMutableAttrs[selectedComponentIds?.at(-1)!],
+  );
+  const projectId = useEditorTreeStore((state) => state.currentProjectId);
   const { data: endpoints } = useDataSourceEndpoints(projectId);
 
   const DataSection = dataMapper[component?.name as keyof typeof dataMapper];

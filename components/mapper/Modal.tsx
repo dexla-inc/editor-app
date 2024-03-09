@@ -12,9 +12,11 @@ type Props = EditableComponentMapper & Omit<ModalProps, "opened">;
 
 export const ModalComponent = forwardRef(
   ({ renderTree, component, ...props }: Props, ref) => {
-    const selectedComponentId = useEditorTreeStore(
-      (state) => state.selectedComponentIds?.at(-1),
-    );
+    // const selectedComponentId = useEditorTreeStore(
+    //   (state) => state.selectedComponentIds?.at(-1),
+    // );
+    const selectedComponentId = "main-content";
+    console.log("ComponentToolbox11");
     const theme = useThemeStore((state) => state.theme);
     const { isPreviewMode } = useAppMode();
     const iframeWindow = useEditorStore((state) => state.iframeWindow);

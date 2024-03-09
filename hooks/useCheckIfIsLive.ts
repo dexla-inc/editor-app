@@ -35,8 +35,6 @@ export const useCheckIfIsLive = () => {
           const project = await getProject(hostUrl, true);
           _projectId = project.id ?? projectId;
         }
-
-        setCurrentPageAndProjectIds(_projectId as string, "");
       } catch (error) {
         console.error("Error checking if live:", error);
       }

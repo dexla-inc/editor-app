@@ -18,26 +18,26 @@ export const EditableComponentContainer = ({
   componentTree,
   shareableContent,
 }: EditableComponentContainerProps) => {
-  const isSelected = useEditorTreeStore(
-    (state) => state.selectedComponentIds?.includes(componentTree.id!),
-  );
+  // const isSelected = useEditorTreeStore(
+  //   (state) => state.selectedComponentIds?.includes(componentTree.id!),
+  // );
 
-  const selectedByOther = useEditorTreeStore((state) => {
-    const other = state.liveblocks?.others?.find(({ presence }: any) => {
-      return presence.selectedComponentIds?.includes(componentTree.id);
-    });
+  // const selectedByOther = useEditorTreeStore((state) => {
+  //   const other = state.liveblocks?.others?.find(({ presence }: any) => {
+  //     return presence.selectedComponentIds?.includes(componentTree.id);
+  //   });
 
-    if (!other) return null;
+  //   if (!other) return null;
 
-    return CURSOR_COLORS[other.connectionId % CURSOR_COLORS.length];
-  });
+  //   return CURSOR_COLORS[other.connectionId % CURSOR_COLORS.length];
+  // });
 
   return (
     <EditableComponent
       id={componentTree.id!}
       component={componentTree}
-      isSelected={isSelected}
-      selectedByOther={selectedByOther ?? undefined}
+      //isSelected={isSelected}
+      //selectedByOther={selectedByOther ?? undefined}
       shareableContent={shareableContent}
     >
       {children}

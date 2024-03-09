@@ -25,6 +25,7 @@ export const ActionsForm = ({ sequentialTo, close }: ActionProps) => {
   const selectedComponentId = useEditorTreeStore
     .getState()
     .selectedComponentIds?.at(-1);
+  console.log("ActionsForm", selectedComponentId);
   const updateTreeComponentAttrs =
     useEditorTreeStore.getState().updateTreeComponentAttrs;
   const copiedAction = useEditorStore.getState().copiedAction;

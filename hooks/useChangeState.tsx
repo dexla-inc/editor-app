@@ -46,9 +46,11 @@ export const useChangeState = ({
   const backgroundColor = getColorFromTheme(theme, bg) ?? defaultBg;
   const color = getColorFromTheme(theme, textColor) ?? "black";
 
+  const selectedComponentIds = ["main-content"];
+  console.log("ComponentToolbox18");
   const currentState = useEditorTreeStore(
     (state) =>
-      state.currentTreeComponentsStates?.[state.selectedComponentIds?.[0]!] ??
+      state.currentTreeComponentsStates?.[selectedComponentIds?.[0]!] ??
       "default",
   );
 

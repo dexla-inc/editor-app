@@ -13,10 +13,11 @@ type Props = {
 };
 
 export const ChangeStateActionForm = ({ form }: Props) => {
-  const editorTree = useEditorTreeStore((state) => state.tree);
-  const selectedComponentId = useEditorTreeStore(
-    (state) => state.selectedComponentIds?.at(-1),
-  );
+  const selectedComponentId = "main-content";
+  console.log("ComponentToolbox5");
+  // const selectedComponentId = useEditorTreeStore(
+  //   (state) => state.selectedComponentIds?.at(-1),
+  // );
   const setPickingComponentToBindTo = useEditorStore(
     (state) => state.setPickingComponentToBindTo,
   );

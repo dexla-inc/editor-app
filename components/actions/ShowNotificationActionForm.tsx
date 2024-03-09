@@ -16,9 +16,11 @@ export const ShowNotificationActionForm = ({ form }: Props) => {
   const setComponentToBind = useEditorStore(
     (state) => state.setComponentToBind,
   );
-  const selectedComponentId = useEditorTreeStore(
-    (state) => state.selectedComponentIds?.at(-1),
-  );
+  // const selectedComponentId = useEditorTreeStore(
+  //   (state) => state.selectedComponentIds?.at(-1),
+  // );
+  const selectedComponentId = "main-content";
+  console.log("ComponentToolbox8");
 
   return (
     <Stack spacing={2}>

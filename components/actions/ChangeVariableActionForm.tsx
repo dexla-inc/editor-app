@@ -8,9 +8,11 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 type Props = ActionFormProps<Omit<ChangeVariableAction, "name">>;
 
 export const ChangeVariableActionForm = ({ form }: Props) => {
-  const selectedComponentId = useEditorTreeStore(
-    (state) => state.selectedComponentIds?.at(-1),
-  );
+  // const selectedComponentId = useEditorTreeStore(
+  //   (state) => state.selectedComponentIds?.at(-1),
+  // );
+  const selectedComponentId = "main-content";
+  console.log("ComponentToolbox6");
 
   return (
     <Stack spacing="xs">

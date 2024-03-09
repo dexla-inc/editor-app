@@ -28,9 +28,11 @@ export const ActionSettingsForm = ({
     useDisclosure(false);
 
   const editorTree = useEditorTreeStore((state) => state.tree);
-  const selectedComponentId = useEditorTreeStore(
-    (state) => state.selectedComponentIds?.at(-1),
-  );
+  const selectedComponentId = "main-content";
+  console.log("ComponentToolbox4");
+  // const selectedComponentId = useEditorTreeStore(
+  //   (state) => state.selectedComponentIds?.at(-1),
+  // );
   const updateTreeComponentAttrs = useEditorTreeStore(
     (state) => state.updateTreeComponentAttrs,
   );

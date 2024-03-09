@@ -41,9 +41,11 @@ function findIntersectedKeyValues(objects: Component[]) {
 
 export const withModifier = (Modifier: ComponentType<WithModifier>) => {
   const Config = ({ initiallyOpened }: any) => {
-    const selectedComponentIds = useEditorTreeStore(
-      (state) => state.selectedComponentIds,
-    );
+    const selectedComponentIds = ["main-content"];
+    console.log("ComponentToolbox7");
+    // const selectedComponentIds = useEditorTreeStore(
+    //   (state) => state.selectedComponentIds,
+    // );
     const selectedComponents = useEditorTreeStore((state) =>
       Object.entries(state.componentMutableAttrs).reduce(
         (acc, [id, component]) => {

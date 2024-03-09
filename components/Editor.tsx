@@ -41,23 +41,24 @@ const Editor = ({ projectId, pageId }: Props) => {
   useGetPageData({ projectId, pageId });
   const [roomEntered, setRoomEntered] = useState(false);
 
-  useEffect(() => {
-    setCurrentPageAndProjectIds(projectId, pageId);
+  // useEffect(() => {
+  //   console.log("Editor");
+  //   setCurrentPageAndProjectIds(projectId, pageId);
 
-    if (pageId && !roomEntered) {
-      liveblocks.enterRoom(pageId);
-      setRoomEntered(true);
-    }
+  //   if (pageId && !roomEntered) {
+  //     liveblocks.enterRoom(pageId);
+  //     setRoomEntered(true);
+  //   }
 
-    return () => {
-      if (liveblocks.status === "connected") {
-        liveblocks.leaveRoom();
-        setRoomEntered(false);
-      }
-    };
+  //   return () => {
+  //     if (liveblocks.status === "connected") {
+  //       liveblocks.leaveRoom();
+  //       setRoomEntered(false);
+  //     }
+  //   };
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pageId]);
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [pageId]);
 
   useEffect(() => {
     setCurrentUser(user);

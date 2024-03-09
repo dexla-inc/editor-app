@@ -57,6 +57,7 @@ const processValue = (value: any, type: string) => {
 export const DataContext = createContext<DataContextProps | null>(null);
 
 export const DataProvider = ({ children }: DataProviderProps) => {
+  console.log("DataProvider");
   const variablesList = useVariableStore((state) => state.variableList); // Is this persisted store required any longer?
   const inputsStore = useInputsStore((state) => state.inputValues);
   const browser = useRouter();
@@ -70,25 +71,28 @@ export const DataProvider = ({ children }: DataProviderProps) => {
   const actionActionsList = useEditorStore((state) => state.actions);
   const { isPreviewMode } = useAppMode();
   const isLive = useEditorStore((state) => state.isLive);
-  const selectedComponentIds = useEditorTreeStore(
-    (state) => state.selectedComponentIds,
-  );
+  const selectedComponentIds = ["main-content"];
+  // const selectedComponentIds = useEditorTreeStore(
+  //   (state) => state.selectedComponentIds,
+  // );
   const selectedComponent = useEditorTreeStore(
     (state) => state.componentMutableAttrs[selectedComponentIds?.at(-1)!],
   );
+  const componentMutableAttrs = useEditorTreeStore(
+    (state) => state.componentMutableAttrs,
+  );
   const isEditorMode = !isPreviewMode && !isLive;
-  const allInputComponents = useEditorTreeStore((state) =>
-    Object.values(state.componentMutableAttrs).filter((c) =>
-      [
-        "Input",
-        "Select",
-        "Checkbox",
-        "RadioGroup",
-        "Switch",
-        "Textarea",
-        "Autocomplete",
-      ].includes(c?.name!),
-    ),
+
+  const allInputComponents = Object.values(componentMutableAttrs).filter((c) =>
+    [
+      "Input",
+      "Select",
+      "Checkbox",
+      "RadioGroup",
+      "Switch",
+      "Textarea",
+      "Autocomplete",
+    ].includes(c?.name!),
   );
 
   const setApiAuthConfig = useDataSourceStore(

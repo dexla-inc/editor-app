@@ -9,8 +9,10 @@ import { useDisclosure } from "@mantine/hooks";
 import startCase from "lodash.startcase";
 
 export const ActionsTab = () => {
+  const selectedComponentIds = ["main-content"];
+  console.log("ComponentToolbox1");
   const component = useEditorTreeStore(
-    (state) => state.componentMutableAttrs[state.selectedComponentIds?.at(-1)!],
+    (state) => state.componentMutableAttrs[selectedComponentIds?.at(-1)!],
   );
   const openAction = useEditorStore((state) => state.openAction);
   const setOpenAction = useEditorStore((state) => state.setOpenAction);

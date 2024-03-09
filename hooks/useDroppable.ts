@@ -94,6 +94,7 @@ export const useDroppable = ({
       const selectedComponentId = useEditorTreeStore
         .getState()
         .selectedComponentIds?.at(-1);
+      console.log(selectedComponentId);
       const activeId = componentToAdd?.id ?? selectedComponentId;
 
       event.preventDefault();

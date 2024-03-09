@@ -739,6 +739,7 @@ export const debouncedTreeComponentChildrenUpdate = debounce(
   async (value: Component[], save = true) => {
     const updateTreeComponentChildren =
       useEditorTreeStore.getState().updateTreeComponentChildren;
+    console.log("debouncedTreeComponentChildrenUpdate");
     const selectedComponentId = useEditorTreeStore
       .getState()
       .selectedComponentIds?.at(-1);

@@ -27,9 +27,11 @@ export const StateSelector = ({ componentName }: Props) => {
   const setTreeComponentCurrentState = useEditorTreeStore(
     (state) => state.setTreeComponentCurrentState,
   );
-  const selectedComponentId = useEditorTreeStore(
-    (state) => state.selectedComponentIds?.at(-1),
-  ) as string;
+  // const selectedComponentId = useEditorTreeStore(
+  //   (state) => state.selectedComponentIds?.at(-1),
+  // ) as string;
+  const selectedComponentId = "main-content";
+  console.log("ComponentToolbox9");
   const component = useEditorTreeStore(
     (state) => state.componentMutableAttrs[selectedComponentId!],
   );

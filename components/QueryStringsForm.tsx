@@ -26,16 +26,6 @@ export const QueryStringsForm = ({
   const [queryValue, setQueryValue] = useState("");
   const [queryStrings, setQueryStrings] = queryStringState;
 
-  const setComponentToBind = useEditorStore(
-    (state) => state.setComponentToBind,
-  );
-  const selectedComponentId = useEditorTreeStore(
-    (state) => state.selectedComponentIds?.at(-1),
-  );
-  const setPickingComponentToBindTo = useEditorStore(
-    (state) => state.setPickingComponentToBindTo,
-  );
-
   const company = usePropelAuthStore((state) => state.activeCompany);
 
   return (

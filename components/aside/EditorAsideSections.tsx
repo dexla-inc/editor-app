@@ -22,35 +22,40 @@ import { ActionsTab, Data, modifierSectionMapper } from "./dynamicModifiers";
 type Tab = "design" | "data" | "actions";
 
 const EditorAsideSections = () => {
-  const _selectedComponentId = useEditorTreeStore(
-    (state) => state.selectedComponentIds?.at(-1),
-  );
+  // const _selectedComponentId = useEditorTreeStore(
+  //   (state) => state.selectedComponentIds?.at(-1),
+  // );
+  const selectedComponentId = "D_PsEe4oKZYbZ1uQ1gJeQ";
+  const selectedComponentIds = ["main-content"];
+  console.log("EditorAsideSections");
 
   const setOpenAction = useEditorStore((state) => state.setOpenAction);
-  const selectedComponentId = useDeferredValue(_selectedComponentId);
-  const initiallyOpenedModifiersByComponent = useUserConfigStore(
-    (state) => state.initiallyOpenedModifiersByComponent,
-  );
+  //const selectedComponentId = useDeferredValue(_selectedComponentId);
+  // const initiallyOpenedModifiersByComponent = useUserConfigStore(
+  //   (state) => state.initiallyOpenedModifiersByComponent,
+  // );
   const setInitiallyOpenedModifiersByComponent = useUserConfigStore(
     (state) => state.setInitiallyOpenedModifiersByComponent,
   );
 
   const [tab, setTab] = useState<Tab>("design");
 
-  const componentName = useEditorTreeStore(
-    (state) =>
-      state.componentMutableAttrs[selectedComponentId!]?.name ??
-      "content-wrapper",
+  const componentName = "main-content";
+  // const componentName = useEditorTreeStore(
+  //   (state) =>
+  //     state.componentMutableAttrs[selectedComponentId!]?.name ??
+  //     "content-wrapper",
+  // );
+
+  const componentMutableAttrs = useEditorTreeStore(
+    (state) => state.componentMutableAttrs,
   );
 
-  const mappedModifiers = useEditorTreeStore((state) =>
-    intersection(
-      ...(state.selectedComponentIds ?? [])?.map(
-        (id) =>
-          componentMapper[state.componentMutableAttrs[id].name]?.modifiers ??
-          [],
-      ),
-    ),
+  const mappedModifiers = intersection(
+    ...selectedComponentIds.map((id) => {
+      const componentName = componentMutableAttrs[id]?.name;
+      return componentMapper[componentName]?.modifiers ?? [];
+    }),
   );
 
   // useEffect(() => {
@@ -60,7 +65,7 @@ const EditorAsideSections = () => {
   //   // eslint-disable-next-line react-hooks/exhaustive-deps
   // }, [selectedComponentId]);
 
-  const isContentWrapperSelected = selectedComponentId === "content-wrapper";
+  const isContentWrapperSelected = false; //selectedComponentId === "content-wrapper";
 
   if (isContentWrapperSelected) {
     return (
@@ -74,30 +79,30 @@ const EditorAsideSections = () => {
     );
   }
 
-  const sections = mappedModifiers?.map((id) => {
-    const modifier = modifierSectionMapper[id];
+  // const sections = mappedModifiers?.map((id) => {
+  //   const modifier = modifierSectionMapper[id];
 
-    return {
-      id: id,
-      label: id,
-      icon: modifier.icon,
-      initiallyOpened:
-        initiallyOpenedModifiersByComponent[componentName]?.includes(id),
-      Component: modifier.Modifier,
-      onClick: (id: string, isOpen: boolean) => {
-        setInitiallyOpenedModifiersByComponent(componentName, id, isOpen);
-      },
-    };
-  });
+  //   return {
+  //     id: id,
+  //     label: id,
+  //     icon: modifier.icon,
+  //     // initiallyOpened:
+  //     //   initiallyOpenedModifiersByComponent[componentName]?.includes(id),
+  //     Component: modifier.Modifier,
+  //     onClick: (id: string, isOpen: boolean) => {
+  //       setInitiallyOpenedModifiersByComponent(componentName, id, isOpen);
+  //     },
+  //   };
+  // });
 
-  const designSections = sections?.map(({ Component, ...item }) => (
-    <SidebarSection {...item} key={item.label}>
-      <Component initiallyOpened={item.initiallyOpened} />
-    </SidebarSection>
-  ));
+  // const designSections = sections?.map(({ Component, ...item }) => (
+  //   <SidebarSection {...item} key={item.label}>
+  //     <Component initiallyOpened={item.initiallyOpened} />
+  //   </SidebarSection>
+  // ));
 
   // @ts-ignore
-  const DataSection = dataMapper[componentName];
+  //const DataSection = dataMapper[componentName];
 
   const tabs = [
     { label: "Design", value: "design" },
@@ -109,9 +114,10 @@ const EditorAsideSections = () => {
       label: "Actions",
       value: "actions",
     },
-  ].filter(
-    (item) => item.value !== "data" || (item.value === "data" && DataSection),
-  );
+  ];
+  // .filter(
+  //   (item) => item.value !== "data" || (item.value === "data" && DataSection),
+  // );
 
   return (
     <Stack>
@@ -130,10 +136,10 @@ const EditorAsideSections = () => {
       </Flex>
       {tab === "design" && (
         <Stack spacing="xs">
-          {selectedComponentId && (
+          {/* {selectedComponentId && (
             <StateSelector componentName={componentName} />
-          )}
-          {designSections}
+          )} */}
+          {/* {designSections} */}
         </Stack>
       )}
       {tab === "data" && <Data />}

@@ -60,6 +60,7 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
   const deleteComponent = useCallback(() => {
     const selectedComponentIds =
       useEditorTreeStore.getState().selectedComponentIds;
+    console.log("deleteComponent");
     if (
       selectedComponentIds &&
       selectedComponentIds.length > 0 &&

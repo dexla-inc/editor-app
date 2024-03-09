@@ -299,7 +299,7 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
               "editorTree/setColumnSpan",
             ),
           columnSpans: {},
-          selectedComponentIds: ["content-wrapper"],
+          selectedComponentIds: ["main-content"],
           setSelectedComponentIds: (cb) => {
             return set(
               (state) => {

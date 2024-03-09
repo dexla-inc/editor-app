@@ -26,9 +26,11 @@ export const CustomComponentModal = ({
 }: Props) => {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const selectedComponentId = useEditorTreeStore(
-    (state) => state.selectedComponentIds?.at(-1),
-  );
+  const selectedComponentId = "main-content";
+  console.log("ComponentToolbox2");
+  // const selectedComponentId = useEditorTreeStore(
+  //   (state) => state.selectedComponentIds?.at(-1),
+  // );
   const activeCompany = usePropelAuthStore((state) => state.activeCompany);
 
   const { mutate } = useMutation(upsertCustomComponent, {
