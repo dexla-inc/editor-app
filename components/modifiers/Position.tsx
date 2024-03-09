@@ -126,7 +126,7 @@ const Modifier = withModifier(({ selectedComponent }) => {
             onChange={(value) => {
               form.setFieldValue("zIndex", value as number);
               debouncedTreeComponentAttrsUpdate({
-                attrs: { props: { zIndex: value } },
+                attrs: { props: { style: { zIndex: value } } },
               });
             }}
           />

@@ -137,7 +137,7 @@ const Modifier = withModifier(({ selectedComponent }) => {
             debouncedTreeComponentAttrsUpdate({
               attrs: {
                 props: {
-                  width: value,
+                  style: { width: value },
                 },
               },
             });
