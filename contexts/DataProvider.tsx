@@ -70,25 +70,26 @@ export const DataProvider = ({ children }: DataProviderProps) => {
   const actionActionsList = useEditorStore((state) => state.actions);
   const { isPreviewMode } = useAppMode();
   const isLive = useEditorStore((state) => state.isLive);
-  const selectedComponentIds = useEditorTreeStore(
-    (state) => state.selectedComponentIds,
+
+  const selectedComponentId = useEditorTreeStore(
+    (state) => state.selectedComponentIds?.at(-1)!,
   );
-  const selectedComponent = useEditorTreeStore(
-    (state) => state.componentMutableAttrs[selectedComponentIds?.at(-1)!],
+  const componentMutableAttrs = useEditorTreeStore(
+    (state) => state.componentMutableAttrs,
   );
+  const selectedComponent = componentMutableAttrs[selectedComponentId];
+
   const isEditorMode = !isPreviewMode && !isLive;
-  const allInputComponents = useEditorTreeStore((state) =>
-    Object.values(state.componentMutableAttrs).filter((c) =>
-      [
-        "Input",
-        "Select",
-        "Checkbox",
-        "RadioGroup",
-        "Switch",
-        "Textarea",
-        "Autocomplete",
-      ].includes(c?.name!),
-    ),
+  const allInputComponents = Object.values(componentMutableAttrs).filter((c) =>
+    [
+      "Input",
+      "Select",
+      "Checkbox",
+      "RadioGroup",
+      "Switch",
+      "Textarea",
+      "Autocomplete",
+    ].includes(c?.name!),
   );
 
   const setApiAuthConfig = useDataSourceStore(
