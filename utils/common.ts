@@ -85,31 +85,6 @@ export const getProjectType = (href: string): UrlType => {
   }
 };
 
-// where 7eacfa0cbb8b406cbc2b40085b9c37a4 is the project id and can be any string that contains only letters and numbers,
-// but always has 32 characters and a mix of letters and numbers
-export function isAppUrl(baseUrl: string): boolean {
-  const pattern = new RegExp(
-    "^[a-zA-Z0-9]{32}\\.dexla\\.(io|ai|localhost:3000)$",
-  );
-  return pattern.test(baseUrl) || baseUrl?.endsWith(".localhost:3000");
-}
-
-export function isLiveUrl(baseUrl: string, router: NextRouter): boolean;
-export function isLiveUrl(baseUrl: string, pathName: string): boolean;
-
-export function isLiveUrl(
-  baseUrl: string,
-  secondParam: NextRouter | string,
-): boolean {
-  const appUrl = isAppUrl(baseUrl);
-
-  if (typeof secondParam === "string") {
-    return secondParam === "/[page]" || appUrl;
-  } else {
-    return secondParam?.pathname === "/[page]" || appUrl;
-  }
-}
-
 export function remToPixelUnit(rem: string) {
   const remValue = parseFloat(rem);
   const rootFontSize = parseFloat(

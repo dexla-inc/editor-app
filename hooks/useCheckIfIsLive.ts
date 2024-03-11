@@ -18,6 +18,7 @@ export const useCheckIfIsLive = () => {
   useEffect(() => {
     const hrefUrl = typeof window !== "undefined" ? window.location.href : "";
     const currentUrlType = getProjectType(hrefUrl);
+    console.log("currentUrlType", currentUrlType);
     if (urlType !== currentUrlType) {
       setUrlType(currentUrlType);
     }
