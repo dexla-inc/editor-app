@@ -1182,11 +1182,15 @@ export const removeComponentFromParent = (
 export const removeComponent = (treeRoot: ComponentStructure, id: string) => {
   let shouldRecalculate = false;
   let targetComponent = null;
+  let isNavbar = false;
 
   crawl(
     treeRoot,
     (node, context) => {
       if (node.id === id) {
+        if (node.name === "Navbar") {
+          isNavbar = true;
+        }
         context.parent?.children?.splice(context.index, 1);
         shouldRecalculate = node.name === "GridColumn" || node.name === "Grid";
         targetComponent = context.parent;
@@ -1196,6 +1200,18 @@ export const removeComponent = (treeRoot: ComponentStructure, id: string) => {
     },
     { order: "bfs" },
   );
+
+  if (isNavbar) {
+    const contentWrapper = treeRoot.children?.find(
+      (child) => child.id === "content-wrapper",
+    );
+    if (contentWrapper) {
+      contentWrapper.props = {
+        ...contentWrapper.props,
+        navbarWidth: undefined,
+      };
+    }
+  }
 
   if (shouldRecalculate && targetComponent) {
     calculateGridSizes(targetComponent);
