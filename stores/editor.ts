@@ -86,8 +86,6 @@ export type EditorState = {
   nonEditorActions: Record<string, any>;
 };
 
-export const debouncedUpdatePageState = debounce(updatePageState, 1000);
-
 // creates a store with undo/redo capability
 export const useEditorStore = create<EditorState>()(
   // @ts-ignore

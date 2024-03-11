@@ -8,7 +8,7 @@ const errorMessage = "Abort route change. Please ignore this error.";
 
 export const usePreventNavigationOnSaving = () => {
   const router = useRouter();
-  const isSaving = useEditorStore((state) => state.isSaving);
+  const isSaving = useEditorTreeStore((state) => state.isSaving);
   const isSavingRef = useRef(isSaving);
   const resetTree = useEditorTreeStore((state) => state.resetTree);
 

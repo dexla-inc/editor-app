@@ -1,4 +1,5 @@
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import {
   DARK_MODE,
   LIGHT_MODE,
@@ -20,7 +21,7 @@ const isSavingDisplay = {
 };
 
 export const SavingDisplay = forwardRef<HTMLDivElement>(({ ...props }, ref) => {
-  const isSaving = useEditorStore((state) => state.isSaving);
+  const isSaving = useEditorTreeStore((state) => state.isSaving);
 
   const saving = isSaving ? "saving" : "saved";
 

@@ -1,12 +1,11 @@
 import { upsertCustomComponent } from "@/requests/components/mutations";
-import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { structureMapper } from "@/utils/componentMapper";
 import { encodeSchema } from "@/utils/compression";
 import { ICON_SIZE } from "@/utils/config";
-import { getComponentTreeById, replaceIdsDeeply } from "@/utils/editor";
+import { getComponentTreeById, replaceIdShallowly } from "@/utils/editor";
 import { Button, Modal, Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { showNotification } from "@mantine/notifications";
@@ -26,9 +25,7 @@ export const CustomComponentModal = ({
 }: Props) => {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const selectedComponentId = useEditorTreeStore(
-    (state) => state.selectedComponentIds?.at(-1),
-  );
+
   const activeCompany = usePropelAuthStore((state) => state.activeCompany);
 
   const { mutate } = useMutation(upsertCustomComponent, {
@@ -66,6 +63,10 @@ export const CustomComponentModal = ({
   const handleSubmitCustomComponent = (values: any) => {
     const editorTree = useEditorTreeStore.getState().tree;
     customComponentModal.close();
+    const selectedComponentId = useEditorTreeStore
+      .getState()
+      .selectedComponentIds?.at(-1);
+
     const componentTree = getComponentTreeById(
       editorTree.root,
       selectedComponentId as string,
@@ -74,7 +75,8 @@ export const CustomComponentModal = ({
       useEditorTreeStore.getState().componentMutableAttrs[selectedComponentId!];
 
     const copy = merge({}, component, componentTree);
-    replaceIdsDeeply(copy);
+    replaceIdShallowly(copy);
+    //replaceIdsDeeply(copy);
 
     mutate({
       values: {

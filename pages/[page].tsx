@@ -3,18 +3,26 @@ import { withPageOnLoad } from "@/hoc/withPageOnLoad";
 import { DeploymentPage } from "@/requests/deployments/types";
 import { getProject } from "@/requests/projects/queries-noauth";
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { getPageProps } from "@/utils/serverside";
 import { GetServerSidePropsContext } from "next";
 import Head from "next/head";
 import { useEffect } from "react";
-import { useEditorTreeStore } from "@/stores/editorTree";
 
 export const getServerSideProps = async ({
   req,
   query,
 }: GetServerSidePropsContext) => {
   const url = req.headers.host as string;
+  console.log("url", url);
+  console.log(
+    "NEXT_PUBLIC_APPS_BASE_URL",
+    process.env.NEXT_PUBLIC_APPS_BASE_URL,
+  );
+
   const project = await getProject(url, true);
+
+  console.log("[page]", project);
 
   return getPageProps(
     project.id,
