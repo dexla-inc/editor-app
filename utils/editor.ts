@@ -618,11 +618,10 @@ export const addComponent = (
   componentToAdd: ComponentStructure,
   dropTarget: DropTarget,
   dropIndex?: number,
-  isPaste?: boolean,
+  isPasteAction?: boolean,
 ): string => {
-  if (isPaste) {
+  if (isPasteAction) {
     replaceIdShallowly(componentToAdd);
-    //replaceIdsDeeply(componentToAdd);
   }
 
   const directChildren = ["Modal", "Drawer", "Toast"];

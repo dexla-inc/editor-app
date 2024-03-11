@@ -19,11 +19,7 @@ type Props = {
 
 const EditorCanvasComponent = ({ projectId }: Props) => {
   const editorTree = useEditorTreeStore((state) => state.tree);
-
-  const setSelectedComponentIds = useEditorTreeStore(
-    (state) => state.setSelectedComponentIds,
-  );
-  useEditorHotkeys(editorTree, setSelectedComponentIds);
+  useEditorHotkeys();
   const [canvasRef] = useAutoAnimate();
   const [isCustomComponentModalOpen, customComponentModal] =
     useDisclosure(false);

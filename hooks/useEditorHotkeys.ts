@@ -6,7 +6,6 @@ import { copyToClipboard, pasteFromClipboard } from "@/utils/clipboard";
 import { structureMapper } from "@/utils/componentMapper";
 import {
   ComponentStructure,
-  EditorTree,
   EditorTreeCopy,
   addComponent,
   getComponentIndex,
@@ -17,10 +16,12 @@ import {
 import { useHotkeys } from "@mantine/hooks";
 import { useCallback } from "react";
 
-export const useEditorHotkeys = (
-  editorTree: EditorTree,
-  setSelectedComponentIds: (cb: (ids: string[]) => string[]) => void,
-) => {
+export const useEditorHotkeys = () => {
+  const editorTree = useEditorTreeStore((state) => state.tree);
+
+  const setSelectedComponentIds = useEditorTreeStore(
+    (state) => state.setSelectedComponentIds,
+  );
   const { isPreviewMode } = useAppMode();
 
   const copiedComponent = useEditorStore((state) => state.copiedComponent);
