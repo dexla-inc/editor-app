@@ -1,4 +1,5 @@
 import { updatePageState } from "@/requests/pages/mutations";
+import { PageStateParams } from "@/requests/pages/types";
 import { encodeSchema } from "@/utils/compression";
 import { GRID_SIZE } from "@/utils/config";
 import {
@@ -132,9 +133,26 @@ export type EditorTreeState = {
     componentId: string,
     currentState: string,
   ) => void;
+  isSaving: boolean;
+  setIsSaving: (value: boolean) => void;
+  saveTree: () => void;
 };
 
-export const debouncedUpdatePageState = debounce(updatePageState, 1000);
+const updatePageStateFunc = async (
+  state: PageStateParams["state"],
+  projectId: string,
+  pageId: string,
+  setIsSaving: (value: boolean) => void,
+) => {
+  try {
+    setIsSaving(true);
+    await updatePageState(state, projectId, pageId);
+  } finally {
+    setIsSaving(false);
+  }
+};
+
+export const debouncedUpdatePageState = debounce(updatePageStateFunc, 1000);
 
 // creates a store with undo/redo capability
 export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
@@ -143,6 +161,20 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
     devtools(
       temporal(
         (set) => ({
+          isSaving: false,
+          saveTree: () => {
+            set((state: EditorTreeState) => {
+              if (!state.isPreviewMode) {
+                debouncedUpdatePageState(
+                  encodeSchema(JSON.stringify(state.tree)),
+                  state.currentProjectId ?? "",
+                  state.currentPageId ?? "",
+                  state.setIsSaving,
+                );
+              }
+              return state;
+            });
+          },
           setTree: (tree, options) => {
             set(
               (state: EditorTreeState) => {
@@ -151,6 +183,7 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                     encodeSchema(JSON.stringify(tree)),
                     state.currentProjectId ?? "",
                     state.currentPageId ?? "",
+                    state.setIsSaving,
                   );
                 }
 
@@ -221,6 +254,7 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                     ),
                     state.currentProjectId ?? "",
                     state.currentPageId ?? "",
+                    state.setIsSaving,
                   );
                 }
 
@@ -273,6 +307,7 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                     ),
                     state.currentProjectId ?? "",
                     state.currentPageId ?? "",
+                    state.setIsSaving,
                   );
                 }
 
@@ -286,7 +321,6 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
           },
           tree: emptyEditorTree,
           componentMutableAttrs: emptyEditorComponentMutableAttrs,
-          isSaving: false,
           setCurrentUser: (currentUser) =>
             set({ currentUser }, false, "editorTree/setCurrentUser"),
           setCursor: (cursor) => set({ cursor }, false, "editorTree/setCursor"),
@@ -309,7 +343,7 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                 return { selectedComponentIds };
               },
               false,
-              "editor/setSelectedComponentIds",
+              "editorTree/setSelectedComponentIds",
             );
           },
           setTreeComponentCurrentState: (
@@ -326,22 +360,24 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                 };
               },
               false,
-              "editor/setTreeComponentCurrentState",
+              "editorTree/setTreeComponentCurrentState",
             );
           },
           setCurrentPageAndProjectIds: (currentProjectId, currentPageId) => {
             set(
               { currentProjectId, currentPageId },
               false,
-              "editor/setCurrentPageAndProjectIds",
+              "editorTree/setCurrentPageAndProjectIds",
             );
           },
           setPreviewMode: (value) =>
             set(
               { isPreviewMode: value, currentTreeComponentsStates: {} },
               false,
-              "editor/setPreviewMode",
+              "editorTree/setPreviewMode",
             ),
+          setIsSaving: (value) =>
+            set({ isSaving: value }, false, "editorTree/setIsSaving"),
         }),
         {
           partialize: (state) => {
