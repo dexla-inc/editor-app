@@ -67,7 +67,7 @@ export const DeployButton = () => {
       ? `${domain}:3000`
       : customDomain
       ? customDomain
-      : "dexla.io";
+      : process.env.NEXT_PUBLIC_DEPLOYED_DOMAIN;
 
     const prefix = isLocalhost || !customDomain ? `${projectId}.` : "";
 

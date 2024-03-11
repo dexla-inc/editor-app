@@ -35,6 +35,7 @@ const Modifier = withModifier(({ selectedComponent }) => {
         color: selectedComponent.props?.color,
       }),
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedComponent]);
 
   const addStepperStep = (stepper: Component, length: number) => {
