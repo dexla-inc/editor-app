@@ -1,4 +1,3 @@
-import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { Action } from "@/utils/actions";
 import { GRAY_OUTLINE } from "@/utils/branding";
@@ -93,8 +92,14 @@ export function arrayMove<T>(array: T[], from: number, to: number): T[] {
   return newArray;
 }
 
+export const replaceIdShallowly = (component: Component) => {
+  const newId = nanoid();
+  component.id = newId;
+  return newId;
+};
+
+// This doesn't replace ids deeply now as Component does not have children
 export const replaceIdsDeeply = (treeRoot: Component) => {
-  console.log("replaceIdsDeeply");
   const updateTreeComponentAttrs =
     useEditorTreeStore.getState().updateTreeComponentAttrs;
   const componentMutableAttrs =
@@ -105,7 +110,7 @@ export const replaceIdsDeeply = (treeRoot: Component) => {
       const newId = nanoid();
       const nodeAttrs = componentMutableAttrs[node.id!];
       nodeAttrs.id = newId;
-      await updateTreeComponentAttrs({
+      updateTreeComponentAttrs({
         componentIds: [newId],
         attrs: nodeAttrs,
         save: false,
@@ -613,10 +618,10 @@ export const addComponent = (
   componentToAdd: ComponentStructure,
   dropTarget: DropTarget,
   dropIndex?: number,
-  isPaste?: boolean,
+  isPasteAction?: boolean,
 ): string => {
-  if (isPaste) {
-    replaceIdsDeeply(componentToAdd);
+  if (isPasteAction) {
+    replaceIdShallowly(componentToAdd);
   }
 
   const directChildren = ["Modal", "Drawer", "Toast"];
