@@ -15,6 +15,7 @@ import { pick } from "next/dist/lib/pick";
 import { useRouter } from "next/router";
 import { createContext, useContext, useEffect } from "react";
 import { useNodes } from "reactflow";
+import { useShallow } from "zustand/react/shallow";
 
 type DataProviderProps = {
   children: React.ReactNode;
@@ -80,16 +81,20 @@ export const DataProvider = ({ children }: DataProviderProps) => {
   const selectedComponent = componentMutableAttrs[selectedComponentId];
 
   const isEditorMode = !isPreviewMode && !isLive;
-  const allInputComponents = Object.values(componentMutableAttrs).filter((c) =>
-    [
-      "Input",
-      "Select",
-      "Checkbox",
-      "RadioGroup",
-      "Switch",
-      "Textarea",
-      "Autocomplete",
-    ].includes(c?.name!),
+  const allInputComponents = useEditorTreeStore(
+    useShallow((state) =>
+      Object.values(state.componentMutableAttrs).filter((c) =>
+        [
+          "Input",
+          "Select",
+          "Checkbox",
+          "RadioGroup",
+          "Switch",
+          "Textarea",
+          "Autocomplete",
+        ].includes(c?.name!),
+      ),
+    ),
   );
 
   const setApiAuthConfig = useDataSourceStore(

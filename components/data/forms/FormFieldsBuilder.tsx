@@ -126,11 +126,7 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
                 field={f}
               />
             ) : (
-              <StaticFormFieldsBuilder
-                field={f}
-                form={form}
-                component={component}
-              />
+              <StaticFormFieldsBuilder field={f} form={form} />
             )}
             {hasParentComponentData && (
               <ActionIcon

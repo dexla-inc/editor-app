@@ -5,7 +5,6 @@ import { useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { componentMapper } from "@/utils/componentMapper";
 import { dataMapper } from "@/utils/dataMapper";
-import { Component } from "@/utils/editor";
 import {
   Box,
   Center,
@@ -15,19 +14,15 @@ import {
   Text,
 } from "@mantine/core";
 import intersection from "lodash.intersection";
-import { useDeferredValue, useState } from "react";
+import { useState } from "react";
 import { useEditorTreeStore } from "../../stores/editorTree";
 import { ActionsTab, Data, modifierSectionMapper } from "./dynamicModifiers";
+import { useShallow } from "zustand/react/shallow";
 
 type Tab = "design" | "data" | "actions";
 
 const EditorAsideSections = () => {
-  const _selectedComponentId = useEditorTreeStore(
-    (state) => state.selectedComponentIds?.at(-1),
-  );
-
   const setOpenAction = useEditorStore((state) => state.setOpenAction);
-  const selectedComponentId = useDeferredValue(_selectedComponentId);
   const initiallyOpenedModifiersByComponent = useUserConfigStore(
     (state) => state.initiallyOpenedModifiersByComponent,
   );
@@ -38,31 +33,25 @@ const EditorAsideSections = () => {
   const [tab, setTab] = useState<Tab>("design");
 
   const componentName = useEditorTreeStore(
-    (state) =>
-      state.componentMutableAttrs[selectedComponentId!]?.name ??
-      "content-wrapper",
+    useShallow(
+      (state) =>
+        state.componentMutableAttrs[state.selectedComponentIds?.at(-1)!]?.name,
+    ),
   );
 
-  const mappedModifiers = useEditorTreeStore((state) =>
-    intersection(
-      ...(state.selectedComponentIds ?? [])?.map(
-        (id) =>
-          componentMapper[state.componentMutableAttrs[id].name]?.modifiers ??
-          [],
+  const mappedModifiers = useEditorTreeStore(
+    useShallow((state) =>
+      intersection(
+        ...(state.selectedComponentIds ?? [])?.map(
+          (id) =>
+            componentMapper[state.componentMutableAttrs[id].name]?.modifiers ??
+            [],
+        ),
       ),
     ),
   );
 
-  // useEffect(() => {
-  //   selectedComponentId !== openAction?.componentId &&
-  //     setOpenAction({ actionIds: undefined, componentId: undefined });
-  //   setTab("design");
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [selectedComponentId]);
-
-  const isContentWrapperSelected = selectedComponentId === "content-wrapper";
-
-  if (isContentWrapperSelected) {
+  if (!componentName) {
     return (
       <Box p="xl">
         <Center>
@@ -130,9 +119,7 @@ const EditorAsideSections = () => {
       </Flex>
       {tab === "design" && (
         <Stack spacing="xs">
-          {selectedComponentId && (
-            <StateSelector componentName={componentName} />
-          )}
+          {componentName && <StateSelector componentName={componentName} />}
           {designSections}
         </Stack>
       )}

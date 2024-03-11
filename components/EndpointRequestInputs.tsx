@@ -2,7 +2,6 @@ import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput"
 import { Endpoint } from "@/requests/datasources/types";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
-import { useEditorTreeStore } from "@/stores/editorTree";
 import { ApiType } from "@/utils/dashboardTypes";
 import { Stack, Title } from "@mantine/core";
 import React from "react";
@@ -26,9 +25,6 @@ export const EndpointRequestInputs = ({
   );
   const setComponentToBind = useEditorStore(
     (state) => state.setComponentToBind,
-  );
-  const selectedComponentId = useEditorTreeStore(
-    (state) => state.selectedComponentIds?.at(-1),
   );
 
   return (
@@ -74,7 +70,6 @@ export const EndpointRequestInputs = ({
                   <ComponentToBindFromInput
                     size="xs"
                     label={param.name}
-                    componentId={selectedComponentId}
                     description={`${
                       // @ts-ignore
                       param.location ? `${param.location} - ` : ""

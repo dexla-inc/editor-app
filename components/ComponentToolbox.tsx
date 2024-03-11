@@ -54,12 +54,11 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
     (state) => state.componentMutableAttrs[selectedComponentId!],
   );
 
-  const id = component?.id;
   const componentData = componentMapper[component?.name || ""];
   let toolboxActions = componentData?.toolboxActions || [];
 
-  const isBody = component?.id === "content-wrapper";
-  const isMainContent = component?.id === "main-content";
+  const isBody = selectedComponentId === "content-wrapper";
+  const isMainContent = selectedComponentId === "main-content";
 
   if (isMainContent) {
     toolboxActions = toolboxActions.filter(
@@ -73,24 +72,27 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
   const blockedToolboxActions = componentData?.blockedToolboxActions || [];
 
   const parentTree = useMemo(
-    () => (id ? getComponentParent(editorTree.root, id) : null),
-    [editorTree.root, id],
+    () =>
+      selectedComponentId
+        ? getComponentParent(editorTree.root, selectedComponentId)
+        : null,
+    [editorTree.root, selectedComponentId],
   );
 
   const onDragStart = useOnDragStart();
 
   const draggable = useDraggable({
-    id: id || "",
+    id: selectedComponentId || "",
     onDragStart,
     currentWindow: iframeWindow,
     ghostImagePosition: isTabPinned ? NAVBAR_WIDTH : 0,
   });
 
   const calculatePosition = useCallback(() => {
-    if (component?.id && !isPreviewMode) {
+    if (selectedComponentId && !isPreviewMode) {
       const canvas = document.getElementById("iframe-canvas");
       const toolbox = document.getElementById("toolbox");
-      const comp = iframeWindow?.document.getElementById(component.id);
+      const comp = iframeWindow?.document.getElementById(selectedComponentId);
 
       if (toolbox && comp && canvas) {
         const canvasRect = canvas.getBoundingClientRect();
@@ -105,7 +107,7 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    component?.id,
+    selectedComponentId,
     iframeWindow?.document,
     isPreviewMode,
     editorTree.timestamp,
@@ -123,7 +125,7 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
     return () => el?.removeEventListener("scroll", calculatePosition);
   }, [calculatePosition, iframeWindow]);
 
-  if (!component || isPreviewMode || !id || isResizing) {
+  if (!component || isPreviewMode || !selectedComponentId || isResizing) {
     return null;
   }
 
@@ -225,7 +227,7 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
                 id: parentTree?.id!,
                 edge: "left",
               },
-              getComponentIndex(parentTree!, id),
+              getComponentIndex(parentTree!, selectedComponentId),
             );
 
             removeComponentFromParent(
@@ -257,7 +259,7 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
             iconName={ICON_DELETE}
             tooltip="Delete"
             onClick={() => {
-              removeComponent(editorTree.root, component?.id!);
+              removeComponent(editorTree.root, selectedComponentId!);
               setEditorTree(editorTree, {
                 action: `Removed ${component?.name}`,
               });

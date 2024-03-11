@@ -251,8 +251,8 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
               (state: EditorTreeState) => {
                 const lastComponentId = componentIds.at(-1)!;
                 const currentState =
-                  // forceState ??
-                  // state.currentTreeComponentsStates?.[lastComponentId] ??
+                  forceState ??
+                  state.currentTreeComponentsStates?.[lastComponentId] ??
                   "default";
 
                 componentIds.forEach((id) => {
@@ -308,7 +308,8 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
               (state) => {
                 const selectedComponentIds = cb(
                   state.selectedComponentIds ?? [],
-                );
+                ).filter((id) => id !== "content-wrapper");
+
                 return { selectedComponentIds };
               },
               false,

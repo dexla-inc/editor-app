@@ -5,7 +5,6 @@ import { ApiType } from "@/utils/dashboardTypes";
 import { Stack } from "@mantine/core";
 import React from "react";
 import { ThemeColorSelector } from "../ThemeColorSelector";
-import { useEditorTreeStore } from "@/stores/editorTree";
 
 type Props = ActionFormProps<Omit<ShowNotificationAction, "name">>;
 
@@ -15,9 +14,6 @@ export const ShowNotificationActionForm = ({ form }: Props) => {
   );
   const setComponentToBind = useEditorStore(
     (state) => state.setComponentToBind,
-  );
-  const selectedComponentId = useEditorTreeStore(
-    (state) => state.selectedComponentIds?.at(-1),
   );
 
   return (
@@ -36,7 +32,6 @@ export const ShowNotificationActionForm = ({ form }: Props) => {
           <React.Fragment key={title}>
             <ComponentToBindFromInput
               label={title}
-              componentId={selectedComponentId}
               onPickComponent={() => {
                 setPickingComponentToBindTo(undefined);
                 setComponentToBind(undefined);
