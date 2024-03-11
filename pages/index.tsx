@@ -16,6 +16,8 @@ export const getServerSideProps = async ({
   const project = await getProject(url, true);
   const id = project.id as string;
 
+  console.log("index", project);
+
   if (!id) {
     return {
       redirect: {

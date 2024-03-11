@@ -16,6 +16,8 @@ export const getServerSideProps = async ({
   const url = req.headers.host as string;
   const project = await getProject(url, true);
 
+  console.log("[page]", project);
+
   return getPageProps(
     project.id,
     query.page as string,
