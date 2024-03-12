@@ -147,6 +147,7 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
           setTree: (tree, options) => {
             set(
               (state: EditorTreeState) => {
+                console.log("setting tree", tree);
                 if (!options?.onLoad && !state.isPreviewMode) {
                   debouncedUpdatePageState(
                     encodeSchema(JSON.stringify(tree)),
