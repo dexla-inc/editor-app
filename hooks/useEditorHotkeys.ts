@@ -14,6 +14,7 @@ import {
   removeComponent,
 } from "@/utils/editor";
 import { useHotkeys } from "@mantine/hooks";
+import cloneDeep from "lodash.clonedeep";
 import { useCallback } from "react";
 
 export const useEditorHotkeys = () => {
@@ -29,7 +30,6 @@ export const useEditorHotkeys = () => {
     (state) => state.setCopiedComponent,
   );
   const setEditorTree = useEditorTreeStore((state) => state.setTree);
-  const saveTree = useEditorTreeStore((state) => state.saveTree);
 
   const undo = useTemporalStore((state) => state.undo);
   const redo = useTemporalStore((state) => state.redo);
@@ -119,76 +119,61 @@ export const useEditorHotkeys = () => {
   }, [editorTree.root, isPreviewMode, setCopiedComponent]);
 
   const pasteCopiedComponent = useCallback(async () => {
-    const clipboardContent = pasteFromClipboard();
-    let componentToPasteTree =
-      (clipboardContent as typeof copiedComponent) || copiedComponent;
-    if (!componentToPasteTree || isPreviewMode) {
+    const clipboardContent = pasteFromClipboard() as ComponentStructure;
+    if (isPreviewMode) {
       return;
     }
-    const componentToPaste =
-      useEditorTreeStore.getState().componentMutableAttrs[
-        componentToPasteTree.id!
-      ];
 
-    console.log("componentToPaste", componentToPaste);
-
-    const selectedComponentId = useEditorTreeStore
-      .getState()
-      .selectedComponentIds?.at(-1);
-
-    if (!selectedComponentId || selectedComponentId === "root")
-      return "content-wrapper";
-    const component =
-      useEditorTreeStore.getState().componentMutableAttrs[selectedComponentId];
-    const componentTree = getComponentTreeById(
-      editorTree.root,
-      selectedComponentId,
-    );
-    let targetId = selectedComponentId;
+    let targetId = clipboardContent.id;
     let componentIndex = 0;
 
     const isSpecialComponents = ["GridColumn", "Alert", "Accordion"].includes(
-      componentToPaste.name,
+      clipboardContent.name,
     );
-    const isGridItems = ["Grid", "GridColumn"].includes(componentToPaste.name);
-    const isTargetGridItems = ["Grid", "GridColumn"].includes(component?.name!);
+    const isGridItems = ["Grid", "GridColumn"].includes(clipboardContent.name);
+    const isTargetGridItems = ["Grid", "GridColumn"].includes(
+      clipboardContent?.name!,
+    );
     const isLayoutCategory =
-      structureMapper[componentToPaste.name!].category === "Layout";
+      structureMapper[clipboardContent.name!].category === "Layout";
     const isAllowedGridMatch =
       isGridItems === isTargetGridItems &&
-      component?.name === componentToPaste.name;
+      clipboardContent?.name === clipboardContent.name;
     const isAllowedSibling = isLayoutCategory && !isTargetGridItems;
 
     const addAsSiblingFlag =
-      component?.blockDroppingChildrenInside ||
+      clipboardContent?.blockDroppingChildrenInside ||
       isSpecialComponents ||
       isAllowedSibling ||
       isAllowedGridMatch;
+
+    const editorTreeCopy = cloneDeep(editorTree) as EditorTreeCopy;
+
     if (addAsSiblingFlag) {
       const parentComponentTree = getComponentParent(
-        editorTree.root as ComponentStructure,
-        selectedComponentId,
+        editorTreeCopy.root as ComponentStructure,
+        clipboardContent.id!,
       );
       targetId = parentComponentTree?.id as string;
       componentIndex =
-        getComponentIndex(parentComponentTree!, selectedComponentId!) + 1;
+        getComponentIndex(parentComponentTree!, clipboardContent.id!) + 1;
     } else {
-      componentIndex = componentTree?.children?.length ?? 0;
+      componentIndex = clipboardContent?.children?.length ?? 0;
     }
 
     const newSelectedId = addComponent(
-      editorTree.root as ComponentStructure,
-      componentToPaste,
+      editorTreeCopy.root as ComponentStructure,
+      clipboardContent,
       {
-        id: targetId,
+        id: targetId!,
         edge: isGridItems ? "center" : "top",
       },
       componentIndex,
       true,
     );
 
-    setEditorTree(editorTree as EditorTreeCopy, {
-      action: `Pasted ${componentToPaste.name}`,
+    setEditorTree(editorTreeCopy, {
+      action: `Pasted ${clipboardContent.name}`,
     });
     setSelectedComponentIds(() => [newSelectedId]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
