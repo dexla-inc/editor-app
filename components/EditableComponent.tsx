@@ -65,7 +65,7 @@ export const EditableComponent = ({
 
   const { isPicking, droppable, tealOutline } = useEditorShadows({
     componentId: id,
-    isSelected,
+    isSelected: false,
     selectedByOther,
   });
 
