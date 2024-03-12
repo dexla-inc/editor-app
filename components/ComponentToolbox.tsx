@@ -12,10 +12,12 @@ import {
 } from "@/utils/componentMapper";
 import { ICON_DELETE, ICON_SIZE, NAVBAR_WIDTH } from "@/utils/config";
 import {
+  ComponentStructure,
   EditorTreeCopy,
   addComponent,
   getComponentIndex,
   getComponentParent,
+  getComponentTreeById,
   removeComponent,
   removeComponentFromParent,
 } from "@/utils/editor";
@@ -196,7 +198,16 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
           onClick={() => {
             const container = structureMapper["Container"].structure({
               theme: editorTheme,
-            });
+            }) as ComponentStructure;
+
+            const selectedComponentId = useEditorTreeStore
+              .getState()
+              .selectedComponentIds?.at(-1);
+
+            const componentToBeWrapped = getComponentTreeById(
+              editorTree.root,
+              selectedComponentId!,
+            )! as ComponentStructure;
 
             if (container.props && container.props.style) {
               container.props.style = {
@@ -204,9 +215,10 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
                 width: "fit-content",
                 padding: "0px",
               };
+              container.children = [componentToBeWrapped];
             }
 
-            const containerId = addComponent(
+            addComponent(
               editorTree.root,
               container,
               {
@@ -215,11 +227,6 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
               },
               getComponentIndex(parentTree!, id),
             );
-
-            addComponent(editorTree.root, component, {
-              id: containerId,
-              edge: "left",
-            });
 
             removeComponentFromParent(
               editorTree.root,
