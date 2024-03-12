@@ -63,19 +63,13 @@ const FormComponent = forwardRef(
         getInputValue(component?.id!) === undefined,
     );
 
-    if (!invalidComponents.length) {
-      submitButtonComponents.map((component) => {
-        setState(component.id!, "default");
-      });
-    }
-
     const onSubmitCustom = async (e: FormEvent<any>) => {
       e.preventDefault();
 
       if (!isPreviewMode) {
         return;
       }
-      console.log("Form");
+
       const updateTreeComponentAttrs =
         useEditorTreeStore.getState().updateTreeComponentAttrs;
 
