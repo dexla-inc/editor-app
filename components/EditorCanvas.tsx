@@ -1,5 +1,3 @@
-import { ComponentToolbox } from "@/components/ComponentToolbox";
-import { CustomComponentModal } from "@/components/CustomComponentModal";
 import { Droppable } from "@/components/Droppable";
 import { EditableComponentContainer } from "@/components/EditableComponentContainer";
 import { IFrame } from "@/components/IFrame";
@@ -10,8 +8,9 @@ import { HEADER_HEIGHT } from "@/utils/config";
 import { ComponentTree } from "@/utils/editor";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Box, Paper } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
 import { memo } from "react";
+import { CustomComponentModal } from "@/components/CustomComponentModal";
+import { useUserConfigStore } from "@/stores/userConfig";
 
 type Props = {
   projectId: string;
@@ -21,8 +20,9 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
   const editorTree = useEditorTreeStore((state) => state.tree);
   useEditorHotkeys();
   const [canvasRef] = useAutoAnimate();
-  const [isCustomComponentModalOpen, customComponentModal] =
-    useDisclosure(false);
+  const isCustomComponentModalOpen = useUserConfigStore(
+    (state) => state.isCustomComponentModalOpen,
+  );
 
   const renderTree = (componentTree: ComponentTree, shareableContent = {}) => {
     if (componentTree.id === "root") {
@@ -99,14 +99,12 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
         // onPointerLeave={() => setCursor(undefined)}
       >
         <IFrame projectId={projectId}>{renderTree(editorTree.root)}</IFrame>
+        {isCustomComponentModalOpen && (
+          <CustomComponentModal
+            isCustomComponentModalOpen={isCustomComponentModalOpen}
+          />
+        )}
       </Box>
-      {isCustomComponentModalOpen && (
-        <CustomComponentModal
-          customComponentModal={customComponentModal}
-          isCustomComponentModalOpen={isCustomComponentModalOpen}
-        />
-      )}
-      <ComponentToolbox customComponentModal={customComponentModal} />
     </>
   );
 };

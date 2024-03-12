@@ -15,7 +15,6 @@ import { FieldType } from "./data/forms/StaticFormFieldsBuilder";
 // Need to extend input props depending on fieldType
 type BaseProps = {
   fieldType?: FieldType;
-  componentId?: string;
   onPickComponent?: () => void;
   isLogicFlow?: boolean;
   value: ValueProps;
@@ -40,7 +39,6 @@ type ComponentToBindFromInputProps<T extends FieldType | undefined> =
   BaseProps & ExtendedPropsByFieldType<T>;
 
 export const ComponentToBindFromInput = <T extends FieldType | undefined>({
-  componentId,
   onPickComponent,
   placeholder = "",
   label = "Component to bind",

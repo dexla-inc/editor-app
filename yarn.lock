@@ -4338,6 +4338,18 @@ prosemirror-view@^1.0.0, prosemirror-view@^1.1.0, prosemirror-view@^1.13.3, pros
     prosemirror-state "^1.0.0"
     prosemirror-transform "^1.1.0"
 
+proxy-compare@2.6.0:
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/proxy-compare/-/proxy-compare-2.6.0.tgz#5e8c8b5c3af7e7f17e839bf6cf1435bcc4d315b0"
+  integrity sha512-8xuCeM3l8yqdmbPoYeLbrAXCBWu19XEYc5/F28f5qOaoAIMyfmBUkl5axiK+x9olUvRlcekvnm98AP9RDngOIw==
+
+proxy-memoize@^2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/proxy-memoize/-/proxy-memoize-2.0.5.tgz#9ecdbf032e95599c09ffcc275a099c314fcd756c"
+  integrity sha512-EeD3Fn6s7qVHCWPlbWFf0P2OcXww2MCWkFpnWMVYl8uF02zR0WvXqkoOUVb1z5QVAI3ptq40U0xlqGVzy/Iomg==
+  dependencies:
+    proxy-compare "2.6.0"
+
 punycode.js@^2.3.1:
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/punycode.js/-/punycode.js-2.3.1.tgz#6b53e56ad75588234e79f4affa90972c7dd8cdb7"

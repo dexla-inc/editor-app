@@ -409,7 +409,7 @@ const pickStyleFields = (value: string, key: string) => {
   return value !== "" && styleFieldsKeys.includes(key);
 };
 
-export const updateTreeComponentAttrs2 = (
+export const updateTreeComponentAttrs = (
   component: Component,
   attrs: Partial<Component>,
   state: string = "default",
@@ -778,7 +778,7 @@ export const debouncedTreeRootChildrenUpdate = debounce(
 );
 
 export const debouncedTreeComponentAttrsUpdate = debounce(
-  ({
+  async ({
     componentIds = [],
     attrs,
     forceState,
@@ -789,7 +789,6 @@ export const debouncedTreeComponentAttrsUpdate = debounce(
     forceState?: string;
     save?: boolean;
   }) => {
-    console.log("debouncedTreeComponentAttrsUpdate");
     const updateTreeComponentAttrs =
       useEditorTreeStore.getState().updateTreeComponentAttrs;
     const selectedComponentIds =
@@ -799,7 +798,7 @@ export const debouncedTreeComponentAttrsUpdate = debounce(
       componentIds = selectedComponentIds;
     }
 
-    updateTreeComponentAttrs({
+    await updateTreeComponentAttrs({
       componentIds,
       attrs,
       forceState,

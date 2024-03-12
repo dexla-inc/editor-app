@@ -5,7 +5,6 @@ import {
   updateActionInTree,
   useActionData,
 } from "@/components/actions/_BaseActionFunctions";
-import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { Action, ChangeLanguageAction } from "@/utils/actions";
 import { Button, Divider, Stack } from "@mantine/core";
@@ -27,41 +26,35 @@ export const ActionSettingsForm = ({
   const [addSequentialForm, { open: openSequential, close: closeSequential }] =
     useDisclosure(false);
 
-  const editorTree = useEditorTreeStore((state) => state.tree);
-  const selectedComponentId = useEditorTreeStore(
-    (state) => state.selectedComponentIds?.at(-1),
-  );
-  const updateTreeComponentAttrs = useEditorTreeStore(
-    (state) => state.updateTreeComponentAttrs,
-  );
   const form = useForm({
     initialValues: { ...defaultValues, ...action.action },
   });
 
-  const { componentActions } = useActionData<ChangeLanguageAction>({
-    actionId: action.id,
-    editorTree,
-    selectedComponentId,
-  });
+  const { componentActions } = useActionData<ChangeLanguageAction>();
 
   useEffect(() => {
     let timeout: string | number | NodeJS.Timeout = "";
     if (form.isTouched() && form.isDirty()) {
-      timeout = setTimeout(() => onSubmit(form.values), 200);
+      timeout = setTimeout(async () => {
+        await onSubmit(form.values);
+      }, 200);
     }
 
     return () => clearTimeout(timeout);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.values]);
 
-  const onSubmit = (updateValues: any) => {
+  const onSubmit = async (updatedValues: any) => {
+    const selectedComponentId = useEditorTreeStore
+      .getState()
+      .selectedComponentIds?.at(-1);
+
     try {
-      updateActionInTree<ChangeLanguageAction>({
+      await updateActionInTree<ChangeLanguageAction>({
         selectedComponentId: selectedComponentId!,
         componentActions,
         id: action.id,
-        updateValues,
-        updateTreeComponentAttrs,
+        updatedValues,
       });
     } catch (error) {
       console.error(error);

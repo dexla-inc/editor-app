@@ -15,9 +15,6 @@ const PopOverComponent = ({
   onClose: propOnClose,
   ...props
 }: Props) => {
-  const selectedComponentId = useEditorTreeStore(
-    (state) => state.selectedComponentIds?.at(-1),
-  );
   const { isPreviewMode } = useAppMode();
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const isLive = useEditorStore((state) => state.isLive);
@@ -27,6 +24,7 @@ const PopOverComponent = ({
     opened: propOpened,
     targetId,
     loading,
+    forceHide,
     ...componentProps
   } = component.props as any;
 
@@ -46,7 +44,6 @@ const PopOverComponent = ({
   const handleClose = () => {
     close();
     propOnClose?.();
-    console.log("PopOver");
     const updateTreeComponentAttrs =
       useEditorTreeStore.getState().updateTreeComponentAttrs;
 
@@ -62,13 +59,6 @@ const PopOverComponent = ({
     if (!propOpened) close();
   }, [close, open, propOpened]);
 
-  const isOpened = isPreviewMode
-    ? opened
-    : selectedComponentId === component.id ||
-      !!useEditorTreeStore.getState().componentMutableAttrs[
-        selectedComponentId!
-      ];
-
   const target = (isLive ? window : iframeWindow)?.document.getElementById(
     "iframe-content",
   );
@@ -77,7 +67,7 @@ const PopOverComponent = ({
     <MantinePopOver
       withinPortal
       trapFocus={false}
-      opened={isOpened}
+      opened={isPreviewMode ? opened : !forceHide}
       width="auto"
       portalProps={{
         target: target,

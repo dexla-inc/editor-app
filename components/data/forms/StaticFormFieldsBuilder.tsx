@@ -1,5 +1,4 @@
 import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
-import { Component } from "@/utils/editor";
 
 export type FieldType =
   | "text"
@@ -22,12 +21,10 @@ type StaticFormFieldsBuilderProps = {
     defaultValue?: any;
     decimalPlaces?: number;
   };
-  component: Component;
   form: any;
 };
 
 export const StaticFormFieldsBuilder = ({
-  component,
   field,
   form,
 }: StaticFormFieldsBuilderProps) => {
@@ -36,7 +33,6 @@ export const StaticFormFieldsBuilder = ({
       size="xs"
       key={field.name}
       label={field.label}
-      componentId={component?.id!}
       placeholder={field.placeholder}
       fieldType={field.type}
       defaultValue={field.defaultValue}

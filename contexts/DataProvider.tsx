@@ -15,6 +15,9 @@ import { pick } from "next/dist/lib/pick";
 import { useRouter } from "next/router";
 import { createContext, useContext, useEffect } from "react";
 import { useNodes } from "reactflow";
+import { useShallow } from "zustand/react/shallow";
+import { Component } from "@/utils/editor";
+import { memoize } from "proxy-memoize";
 
 type DataProviderProps = {
   children: React.ReactNode;
@@ -71,25 +74,34 @@ export const DataProvider = ({ children }: DataProviderProps) => {
   const { isPreviewMode } = useAppMode();
   const isLive = useEditorStore((state) => state.isLive);
 
-  const selectedComponentId = useEditorTreeStore(
-    (state) => state.selectedComponentIds?.at(-1)!,
-  );
-  const componentMutableAttrs = useEditorTreeStore(
-    (state) => state.componentMutableAttrs,
-  );
-  const selectedComponent = componentMutableAttrs[selectedComponentId];
+  // TODO: think on a better solution for listing actions
+  // const selectedComponentId = useEditorTreeStore(
+  //   (state) => state.selectedComponentIds?.at(-1)!,
+  // );
+  // const componentMutableAttrs = useEditorTreeStore(
+  //   (state) => state.componentMutableAttrs,
+  // );
+  // const selectedComponent = componentMutableAttrs[selectedComponentId];
 
   const isEditorMode = !isPreviewMode && !isLive;
-  const allInputComponents = Object.values(componentMutableAttrs).filter((c) =>
-    [
-      "Input",
-      "Select",
-      "Checkbox",
-      "RadioGroup",
-      "Switch",
-      "Textarea",
-      "Autocomplete",
-    ].includes(c?.name!),
+  const allInputComponents = useEditorTreeStore(
+    memoize((state) =>
+      Object.values(state.componentMutableAttrs).reduce((acc, c) => {
+        const isInput = [
+          "Input",
+          "Select",
+          "Checkbox",
+          "RadioGroup",
+          "Switch",
+          "Textarea",
+          "Autocomplete",
+        ].includes(c?.name!);
+        if (isInput) {
+          acc.push({ id: c.id, description: c.name });
+        }
+        return acc;
+      }, [] as Partial<Component>[]),
+    ),
   );
 
   const setApiAuthConfig = useDataSourceStore(
@@ -106,9 +118,7 @@ export const DataProvider = ({ children }: DataProviderProps) => {
   const nodes = logicFlowsEditorNodes.length
     ? logicFlowsEditorNodes
     : logicFlowsActionNodes;
-  const actionsList = isEditorMode
-    ? selectedComponent?.actions
-    : actionActionsList;
+  const actionsList = actionActionsList;
   const isLogicFlow = nodes.length > 0;
 
   const actions = isLogicFlow

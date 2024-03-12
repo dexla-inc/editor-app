@@ -9,7 +9,7 @@ import {
   EditorTreeCopy,
   getTreeComponentMutableProps,
   recoverTreeComponentAttrs,
-  updateTreeComponentAttrs2,
+  updateTreeComponentAttrs,
   updateTreeComponentChildren,
 } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
@@ -23,6 +23,7 @@ import merge from "lodash.merge";
 import { TemporalState, temporal } from "zundo";
 import { create, useStore } from "zustand";
 import { devtools } from "zustand/middleware";
+import cloneDeep from "lodash.clonedeep";
 
 const client = createClient({
   publicApiKey: process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY ?? "",
@@ -89,7 +90,7 @@ export type EditorTreeState = {
     attrs: Partial<Component>;
     forceState?: string;
     save?: boolean;
-  }) => void;
+  }) => Promise<void>;
   currentUser?: User;
   setCurrentUser: (user?: User) => void;
   cursor?: {
@@ -252,15 +253,17 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
               (state: EditorTreeState) => {
                 const lastComponentId = componentIds.at(-1)!;
                 const currentState =
-                  // forceState ??
-                  // state.currentTreeComponentsStates?.[lastComponentId] ??
+                  forceState ??
+                  state.currentTreeComponentsStates?.[lastComponentId] ??
                   "default";
 
                 componentIds.forEach((id) => {
-                  state.componentMutableAttrs[id] = updateTreeComponentAttrs2(
-                    state.componentMutableAttrs[id] ?? {},
-                    attrs,
-                    currentState,
+                  state.componentMutableAttrs[id] = cloneDeep(
+                    updateTreeComponentAttrs(
+                      state.componentMutableAttrs[id] ?? {},
+                      attrs,
+                      currentState,
+                    ),
                   );
                 });
 
@@ -309,7 +312,8 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
               (state) => {
                 const selectedComponentIds = cb(
                   state.selectedComponentIds ?? [],
-                );
+                ).filter((id) => id !== "content-wrapper");
+
                 return { selectedComponentIds };
               },
               false,
