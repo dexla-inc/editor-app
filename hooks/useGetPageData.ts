@@ -1,7 +1,8 @@
 import { getPageState } from "@/requests/pages/queries-noauth";
 import { useAppStore } from "@/stores/app";
-import { emptyEditorTree, useEditorTreeStore } from "@/stores/editorTree";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { useUserConfigStore } from "@/stores/userConfig";
+import { emptyEditorTree } from "@/utils/common";
 import { decodeSchema } from "@/utils/compression";
 import { useQuery } from "@tanstack/react-query";
 

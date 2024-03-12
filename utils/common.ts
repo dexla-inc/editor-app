@@ -1,5 +1,6 @@
 import { FileWithPath } from "@mantine/dropzone";
-import { NextRouter } from "next/router";
+import { requiredModifiers } from "./modifiers";
+import { GRID_SIZE } from "./config";
 
 export const convertToBase64 = (file: FileWithPath): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -192,4 +193,69 @@ export const findPathForKeyValue = (
 const isArrayIndex = (prop: string): boolean => {
   // Check if prop is a non-negative integer (array index).
   return /^\d+$/.test(prop);
+};
+
+export const emptyEditorTree = {
+  name: "Initial State",
+  timestamp: Date.now(),
+  root: {
+    id: "root",
+    children: [
+      {
+        id: "content-wrapper",
+        children: [
+          {
+            id: "main-content",
+          },
+        ],
+      },
+    ],
+  },
+};
+
+const initialGridValues = requiredModifiers.grid;
+const initialGridColumnValues = requiredModifiers.gridColumn;
+
+export const emptyEditorAttrsTree = {
+  root: {
+    id: "root",
+    name: "Container",
+    description: "Root component",
+    children: [
+      {
+        id: "content-wrapper",
+        name: "Grid",
+        description: "Body",
+        props: {
+          gridSize: GRID_SIZE,
+          ...initialGridValues,
+          style: {
+            ...initialGridValues.style,
+            gap: "0",
+            minHeight: "20px",
+          },
+        },
+        children: [
+          {
+            id: "main-content",
+            name: "GridColumn",
+            description: "Main Content",
+            props: {
+              span: GRID_SIZE,
+              ...initialGridColumnValues,
+              style: {
+                ...initialGridColumnValues.style,
+                height: "100vh",
+                paddingLeft: "0px",
+                paddingTop: "0px",
+                paddingRight: "0px",
+                paddingBottom: "0px",
+                backgroundSize: "contain",
+              },
+            },
+          },
+        ],
+      },
+    ],
+  },
 };

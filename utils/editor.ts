@@ -4,6 +4,7 @@ import { GRAY_OUTLINE } from "@/utils/branding";
 import { GRID_SIZE } from "@/utils/config";
 import { calculateGridSizes } from "@/utils/grid";
 import { CSSObject } from "@mantine/core";
+import cloneDeep from "lodash.clonedeep";
 import debounce from "lodash.debounce";
 import every from "lodash.every";
 import get from "lodash.get";
@@ -15,7 +16,6 @@ import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { CSSProperties } from "react";
 import crawl from "tree-crawl";
 import { MantineThemeExtended } from "./types";
-import cloneDeep from "lodash.clonedeep";
 
 export type ComponentStructure = {
   children?: ComponentStructure[];
@@ -32,6 +32,7 @@ export type EditableComponentMapper = {
 
 type ComponentBase = {
   id?: string;
+  //name: string;
 };
 
 export type Component = {
