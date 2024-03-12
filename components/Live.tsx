@@ -54,6 +54,7 @@ export const Live = ({ projectId, pageId }: Props) => {
     if (page?.pageState) {
       const decodedSchema = decodeSchema(page.pageState);
       const state = JSON.parse(decodedSchema);
+      console.log("Live.state", page?.pageState, state);
       setEditorTree(state, {
         onLoad: true,
         action: "Initial State",

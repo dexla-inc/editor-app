@@ -22,15 +22,19 @@ export const getServerSideProps = async ({
 
   const project = await getProject(url, true);
 
-  console.log("[page]", project);
+  console.log("[page].project", project);
 
-  return getPageProps(
+  const page = getPageProps(
     project.id,
     query.page as string,
     project.redirectSlug,
     req.cookies["refreshToken"],
     project.faviconUrl ?? "",
   );
+
+  console.log("[page].getPageProps", page);
+
+  return page;
 };
 
 type Props = {
@@ -40,6 +44,7 @@ type Props = {
 };
 
 function LivePage({ id, page, faviconUrl }: Props) {
+  console.log("[page].LivePage", id, page, faviconUrl);
   const setCurrentPageAndProjectIds =
     useEditorTreeStore.getState().setCurrentPageAndProjectIds;
   const setPreviewMode = useEditorTreeStore.getState().setPreviewMode;
