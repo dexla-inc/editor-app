@@ -30,25 +30,32 @@ export const ActionSettingsForm = ({
     initialValues: { ...defaultValues, ...action.action },
   });
 
+  useEffect(() => {
+    form.setValues(action.action);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [action.action]);
+
   const { componentActions } = useActionData<ChangeLanguageAction>();
 
   useEffect(() => {
     let timeout: string | number | NodeJS.Timeout = "";
     if (form.isTouched() && form.isDirty()) {
-      timeout = setTimeout(() => onSubmit(form.values), 200);
+      timeout = setTimeout(async () => {
+        await onSubmit(form.values);
+      }, 200);
     }
 
     return () => clearTimeout(timeout);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.values]);
 
-  const onSubmit = (updatedValues: any) => {
+  const onSubmit = async (updatedValues: any) => {
     const selectedComponentId = useEditorTreeStore
       .getState()
       .selectedComponentIds?.at(-1);
 
     try {
-      updateActionInTree<ChangeLanguageAction>({
+      await updateActionInTree<ChangeLanguageAction>({
         selectedComponentId: selectedComponentId!,
         componentActions,
         id: action.id,

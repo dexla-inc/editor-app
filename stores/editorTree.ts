@@ -9,7 +9,7 @@ import {
   EditorTreeCopy,
   getTreeComponentMutableProps,
   recoverTreeComponentAttrs,
-  updateTreeComponentAttrs2,
+  updateTreeComponentAttrs,
   updateTreeComponentChildren,
 } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
@@ -89,7 +89,7 @@ export type EditorTreeState = {
     attrs: Partial<Component>;
     forceState?: string;
     save?: boolean;
-  }) => void;
+  }) => Promise<void>;
   currentUser?: User;
   setCurrentUser: (user?: User) => void;
   cursor?: {
@@ -256,7 +256,7 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                   "default";
 
                 componentIds.forEach((id) => {
-                  state.componentMutableAttrs[id] = updateTreeComponentAttrs2(
+                  state.componentMutableAttrs[id] = updateTreeComponentAttrs(
                     state.componentMutableAttrs[id] ?? {},
                     attrs,
                     currentState,

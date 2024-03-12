@@ -409,7 +409,7 @@ const pickStyleFields = (value: string, key: string) => {
   return value !== "" && styleFieldsKeys.includes(key);
 };
 
-export const updateTreeComponentAttrs2 = (
+export const updateTreeComponentAttrs = (
   component: Component,
   attrs: Partial<Component>,
   state: string = "default",

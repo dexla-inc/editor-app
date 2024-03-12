@@ -24,7 +24,7 @@ type UpdateActionProps<T extends BaseAction> = {
   updatedValues: Omit<T, "name">;
 };
 
-export const updateActionInTree = <T extends BaseAction>({
+export const updateActionInTree = async <T extends BaseAction>({
   id,
   selectedComponentId,
   componentActions,
@@ -33,7 +33,7 @@ export const updateActionInTree = <T extends BaseAction>({
   const updateTreeComponentAttrs =
     useEditorTreeStore.getState().updateTreeComponentAttrs;
 
-  updateTreeComponentAttrs({
+  await updateTreeComponentAttrs({
     componentIds: [selectedComponentId],
     attrs: {
       actions: componentActions.map((action: Action) => {
