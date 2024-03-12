@@ -20,10 +20,7 @@ export const ChangeStateActionForm = ({ form }: Props) => {
   );
   const { getComponentsStates } = useComponentStates();
 
-  const { computeValue } = useDataContext()!;
-
-  const pickedId = computeValue({ value: form.values.componentId });
-  const componentStatesList = getComponentsStates([pickedId]);
+  const componentStatesList = getComponentsStates();
 
   return (
     <Stack spacing="xs">

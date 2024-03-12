@@ -72,13 +72,14 @@ export const DataProvider = ({ children }: DataProviderProps) => {
   const { isPreviewMode } = useAppMode();
   const isLive = useEditorStore((state) => state.isLive);
 
-  const selectedComponentId = useEditorTreeStore(
-    (state) => state.selectedComponentIds?.at(-1)!,
-  );
-  const componentMutableAttrs = useEditorTreeStore(
-    (state) => state.componentMutableAttrs,
-  );
-  const selectedComponent = componentMutableAttrs[selectedComponentId];
+  // TODO: think on a better solution for listing actions
+  // const selectedComponentId = useEditorTreeStore(
+  //   (state) => state.selectedComponentIds?.at(-1)!,
+  // );
+  // const componentMutableAttrs = useEditorTreeStore(
+  //   (state) => state.componentMutableAttrs,
+  // );
+  // const selectedComponent = componentMutableAttrs[selectedComponentId];
 
   const isEditorMode = !isPreviewMode && !isLive;
   const allInputComponents = useEditorTreeStore(
@@ -111,9 +112,7 @@ export const DataProvider = ({ children }: DataProviderProps) => {
   const nodes = logicFlowsEditorNodes.length
     ? logicFlowsEditorNodes
     : logicFlowsActionNodes;
-  const actionsList = isEditorMode
-    ? selectedComponent?.actions
-    : actionActionsList;
+  const actionsList = actionActionsList;
   const isLogicFlow = nodes.length > 0;
 
   const actions = isLogicFlow
