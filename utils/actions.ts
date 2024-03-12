@@ -534,6 +534,7 @@ export async function performFetch(
   endpoint?: Endpoint,
   body?: any,
   authHeaderKey?: string,
+  includeExampleResponse = false,
 ) {
   const isGetMethodType = endpoint?.methodType === "GET";
 
@@ -549,6 +550,9 @@ export async function performFetch(
   const unhandledError = responseString.startsWith("5");
 
   if (handledError) {
+    if (includeExampleResponse) {
+      return safeJsonParse(endpoint?.exampleResponse || "");
+    }
     const error = await readDataFromStream(response.body);
     throw new Error(error);
   } else if (unhandledError) {

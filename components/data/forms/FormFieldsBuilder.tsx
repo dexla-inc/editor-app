@@ -15,7 +15,7 @@ import {
   debouncedTreeComponentAttrsUpdate,
   getParentComponentData,
 } from "@/utils/editor";
-import { ActionIcon, Group } from "@mantine/core";
+import { ActionIcon, Group, Tooltip } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconPlug, IconPlugOff } from "@tabler/icons-react";
 import merge from "lodash.merge";
@@ -133,12 +133,14 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
               />
             )}
             {hasParentComponentData && (
-              <ActionIcon
-                onClick={() => onClickToggleDataType(f.name)}
-                variant="default"
-              >
-                <DataTypeIcon size={ICON_SIZE} />
-              </ActionIcon>
+              <Tooltip label="Bind">
+                <ActionIcon
+                  onClick={() => onClickToggleDataType(f.name)}
+                  variant="default"
+                >
+                  <DataTypeIcon size={ICON_SIZE} />
+                </ActionIcon>
+              </Tooltip>
             )}
           </Group>
         );

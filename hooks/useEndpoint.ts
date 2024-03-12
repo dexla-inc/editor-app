@@ -1,7 +1,6 @@
 import { useDataContext } from "@/contexts/DataProvider";
 import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
 import { useDataSourceStore } from "@/stores/datasource";
-import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { performFetch, prepareRequestData } from "@/utils/actions";
 import { DEFAULT_STALE_TIME } from "@/utils/config";
@@ -13,12 +12,14 @@ type UseEndpointProps = {
   component: Component;
   forceEnabled?: boolean;
   enabled?: boolean;
+  includeExampleResponse?: boolean;
 };
 
 export const useEndpoint = ({
   component,
   forceEnabled,
   enabled = true,
+  includeExampleResponse = false,
 }: UseEndpointProps) => {
   const accessToken = useDataSourceStore(
     (state) => state.authState.accessToken,
@@ -52,11 +53,15 @@ export const useEndpoint = ({
   const apiCall = async () => {
     const authHeaderKey = accessToken ? "Bearer " + accessToken : "";
 
-    return performFetch(fetchUrl, endpoint, body, authHeaderKey).then(
-      (response) => {
-        return response;
-      },
-    );
+    return performFetch(
+      fetchUrl,
+      endpoint,
+      body,
+      authHeaderKey,
+      includeExampleResponse,
+    ).then((response) => {
+      return response;
+    });
   };
 
   const isEnabled =
