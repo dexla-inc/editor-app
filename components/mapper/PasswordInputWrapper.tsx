@@ -135,21 +135,9 @@ export const PasswordInputWrapper = ({
     );
 
   return (
-    <Wrapper w={width}>
+    <Wrapper {...(isPreviewMode ? { w: width } : {})}>
       {children}
       {dropdownContent}
     </Wrapper>
   );
-};
-
-const dropdownStyles = {
-  position: "absolute",
-  left: "0",
-  top: "100%",
-  zIndex: 1,
-  width: "100%",
-  background: "#fff",
-  borderRadius: "10px",
-  boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
-  padding: "10px",
 };
