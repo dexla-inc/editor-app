@@ -127,14 +127,21 @@ export const useEditorHotkeys = () => {
       return;
     }
 
-    let targetId = clipboardContent.id;
+    const selectedComponentId = useEditorTreeStore
+      .getState()
+      .selectedComponentIds?.at(-1);
+
+    if (!selectedComponentId || selectedComponentId === "root")
+      return "content-wrapper";
+
+    const selectedComponent = getComponentTreeById(
+      editorTree.root,
+      selectedComponentId,
+    ) as ComponentStructure;
+
+    let targetId = selectedComponentId;
 
     if (!targetId || targetId === "root") return "content-wrapper";
-
-    const component = getComponentTreeById(
-      editorTree.root,
-      targetId,
-    ) as ComponentStructure;
 
     let componentIndex = 0;
 
@@ -142,16 +149,18 @@ export const useEditorHotkeys = () => {
       clipboardContent.name,
     );
     const isGridItems = ["Grid", "GridColumn"].includes(componentToPaste.name);
-    const isTargetGridItems = ["Grid", "GridColumn"].includes(component?.name!);
+    const isTargetGridItems = ["Grid", "GridColumn"].includes(
+      selectedComponent?.name!,
+    );
     const isLayoutCategory =
       structureMapper[componentToPaste.name!].category === "Layout";
     const isAllowedGridMatch =
       isGridItems === isTargetGridItems &&
-      component?.name === componentToPaste.name;
+      selectedComponent?.name === componentToPaste.name;
     const isAllowedSibling = isLayoutCategory && !isTargetGridItems;
 
     const addAsSiblingFlag =
-      component?.blockDroppingChildrenInside ||
+      selectedComponent?.blockDroppingChildrenInside ||
       isSpecialComponents ||
       isAllowedSibling ||
       isAllowedGridMatch;
@@ -161,11 +170,11 @@ export const useEditorHotkeys = () => {
     if (addAsSiblingFlag) {
       const parentComponentTree = getComponentParent(
         editorTreeCopy.root as ComponentStructure,
-        clipboardContent.id!,
+        selectedComponentId,
       );
       targetId = parentComponentTree?.id as string;
       componentIndex =
-        getComponentIndex(parentComponentTree!, clipboardContent.id!) + 1;
+        getComponentIndex(parentComponentTree!, selectedComponentId!) + 1;
     } else {
       componentIndex = clipboardContent?.children?.length ?? 0;
     }
