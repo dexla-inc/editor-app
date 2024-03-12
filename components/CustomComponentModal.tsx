@@ -17,23 +17,23 @@ import { IconNewSection } from "@tabler/icons-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import merge from "lodash.merge";
 import { useRouter } from "next/router";
+import { useUserConfigStore } from "@/stores/userConfig";
 
 type Props = {
-  customComponentModal: any;
   isCustomComponentModalOpen: boolean;
 };
 
-export const CustomComponentModal = ({
-  customComponentModal,
-  isCustomComponentModalOpen,
-}: Props) => {
+export const CustomComponentModal = ({ isCustomComponentModalOpen }: Props) => {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const setIsCustomComponentModalOpen = useUserConfigStore(
+    (state) => state.setIsCustomComponentModalOpen,
+  );
 
   const activeCompany = usePropelAuthStore((state) => state.activeCompany);
 
   const { mutate } = useMutation(upsertCustomComponent, {
-    onSettled(_, err) {
+    onSettled: async (_, err) => {
       if (err) {
         console.error(err);
         showNotification({
@@ -53,6 +53,8 @@ export const CustomComponentModal = ({
         });
         queryClient.invalidateQueries(["components"]);
       }
+
+      await setIsCustomComponentModalOpen(false);
     },
   });
 
@@ -64,9 +66,8 @@ export const CustomComponentModal = ({
     },
   });
 
-  const handleSubmitCustomComponent = (values: any) => {
+  const handleSubmitCustomComponent = async (values: any) => {
     const editorTree = useEditorTreeStore.getState().tree;
-    customComponentModal.close();
     const selectedComponentId = useEditorTreeStore
       .getState()
       .selectedComponentIds?.at(-1);
@@ -97,7 +98,7 @@ export const CustomComponentModal = ({
     <Modal
       centered
       title="New Custom Component"
-      onClose={customComponentModal.close}
+      onClose={() => setIsCustomComponentModalOpen(false)}
       opened={isCustomComponentModalOpen}
       zIndex={300}
     >

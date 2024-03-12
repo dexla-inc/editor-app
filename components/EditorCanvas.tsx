@@ -9,6 +9,8 @@ import { ComponentTree } from "@/utils/editor";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Box, Paper } from "@mantine/core";
 import { memo } from "react";
+import { CustomComponentModal } from "@/components/CustomComponentModal";
+import { useUserConfigStore } from "@/stores/userConfig";
 
 type Props = {
   projectId: string;
@@ -18,6 +20,9 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
   const editorTree = useEditorTreeStore((state) => state.tree);
   useEditorHotkeys();
   const [canvasRef] = useAutoAnimate();
+  const isCustomComponentModalOpen = useUserConfigStore(
+    (state) => state.isCustomComponentModalOpen,
+  );
 
   const renderTree = (componentTree: ComponentTree, shareableContent = {}) => {
     if (componentTree.id === "root") {
@@ -94,6 +99,11 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
         // onPointerLeave={() => setCursor(undefined)}
       >
         <IFrame projectId={projectId}>{renderTree(editorTree.root)}</IFrame>
+        {isCustomComponentModalOpen && (
+          <CustomComponentModal
+            isCustomComponentModalOpen={isCustomComponentModalOpen}
+          />
+        )}
       </Box>
     </>
   );

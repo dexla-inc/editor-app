@@ -26,7 +26,6 @@ import { Group, Text, Tooltip, UnstyledButton } from "@mantine/core";
 import { IconGripVertical } from "@tabler/icons-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { CustomComponentModal } from "@/components/CustomComponentModal";
 import { useDisclosure } from "@mantine/hooks";
 
 type Props = {
@@ -37,8 +36,6 @@ export const ComponentToolbox = ({ component }: Props) => {
   const isResizing = useEditorStore((state) => state.isResizing);
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const editorTheme = useThemeStore((state) => state.theme);
-  const [isCustomComponentModalOpen, customComponentModal] =
-    useDisclosure(false);
 
   // Move to functions
   const editorTree = useEditorTreeStore(
@@ -53,6 +50,9 @@ export const ComponentToolbox = ({ component }: Props) => {
     left: "0px",
   });
   const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
+  const setIsCustomComponentModalOpen = useUserConfigStore(
+    (state) => state.setIsCustomComponentModalOpen,
+  );
 
   const componentData = componentMapper[component?.name || ""];
   let toolboxActions = componentData?.toolboxActions || [];
@@ -241,27 +241,17 @@ export const ComponentToolbox = ({ component }: Props) => {
                 });
               }}
             />
-            {customComponentModal && (
-              <ActionIconTransparent
-                iconName="IconDeviceFloppy"
-                tooltip="Save as custom component"
-                onClick={() => {
-                  customComponentModal.open();
-                }}
-              />
-            )}
+            <ActionIconTransparent
+              iconName="IconDeviceFloppy"
+              tooltip="Save as custom component"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsCustomComponentModalOpen(true);
+              }}
+            />
           </>
         )}
       </Group>
-      {customComponentModal && (
-        <ActionIconTransparent
-          iconName="IconDeviceFloppy"
-          tooltip="Save as custom component"
-          onClick={() => {
-            customComponentModal.open();
-          }}
-        />
-      )}
     </>
   );
 };
