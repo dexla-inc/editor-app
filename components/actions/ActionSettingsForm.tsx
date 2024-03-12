@@ -30,11 +30,6 @@ export const ActionSettingsForm = ({
     initialValues: { ...defaultValues, ...action.action },
   });
 
-  useEffect(() => {
-    form.setValues(action.action);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [action.action]);
-
   const { componentActions } = useActionData<ChangeLanguageAction>();
 
   useEffect(() => {
