@@ -125,12 +125,20 @@ export default function BindingPopover({
       <Popover.Target>
         {style === "iconButton" ? (
           <Tooltip label="Bind Logic" withArrow position="top-end">
-            <ActionIcon onClick={onChangeDataTypeAsBoundCode} variant="default">
+            <ActionIcon
+              onClick={onChangeDataTypeAsBoundCode}
+              variant="default"
+              tabIndex={-1}
+            >
               <IconPlugConnected size={ICON_SIZE} />
             </ActionIcon>
           </Tooltip>
         ) : (
-          <ActionIcon onClick={onChangeDataTypeAsBoundCode} size="xs">
+          <ActionIcon
+            onClick={onChangeDataTypeAsBoundCode}
+            size="xs"
+            tabIndex={-1}
+          >
             <IconExternalLink size={ICON_SIZE} />
           </ActionIcon>
         )}
