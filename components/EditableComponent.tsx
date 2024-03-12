@@ -17,6 +17,8 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 import { ComponentTree } from "@/utils/editor";
 import { BoxProps } from "@mantine/core";
 import { PropsWithChildren, cloneElement } from "react";
+import { useDisclosure } from "@mantine/hooks";
+import { ComponentToolbox } from "@/components/ComponentToolbox";
 
 type Props = {
   id: string;
@@ -40,6 +42,8 @@ export const EditableComponent = ({
   const component = useEditorTreeStore(
     (state) => state.componentMutableAttrs[id] ?? {},
   );
+  const [isCustomComponentModalOpen, customComponentModal] =
+    useDisclosure(false);
 
   let currentState = useComputeCurrentState(component);
 
@@ -114,6 +118,12 @@ export const EditableComponent = ({
           }),
           shareableContent,
         },
+      )}
+      {isSelected && isEditorMode && (
+        <ComponentToolbox
+          customComponentModal={customComponentModal}
+          component={component}
+        />
       )}
     </>
   );

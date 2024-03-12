@@ -20,19 +20,23 @@ import {
   getComponentTreeById,
   removeComponent,
   removeComponentFromParent,
+  Component,
 } from "@/utils/editor";
 import { Group, Text, Tooltip, UnstyledButton } from "@mantine/core";
 import { IconGripVertical } from "@tabler/icons-react";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
 
 type Props = {
   customComponentModal: any;
+  component: Component;
 };
 
-export const ComponentToolbox = ({ customComponentModal }: Props) => {
+export const ComponentToolbox = ({
+  customComponentModal,
+  component,
+}: Props) => {
   const isResizing = useEditorStore((state) => state.isResizing);
-  const isPreviewMode = useUserConfigStore((state) => state.isPreviewMode);
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const editorTheme = useThemeStore((state) => state.theme);
 
@@ -44,74 +48,56 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
   const setSelectedComponentIds = useEditorTreeStore(
     (state) => state.setSelectedComponentIds,
   );
-  const selectedComponentId = useEditorTreeStore(
-    (state) => state.selectedComponentIds?.at(-1),
-  );
-
+  const [toolboxStyle, setToolboxStyle] = useState({
+    top: "-24px",
+    left: "0px",
+  });
   const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
-
-  const component = useEditorTreeStore(
-    (state) => state.componentMutableAttrs[selectedComponentId!],
-  );
 
   const componentData = componentMapper[component?.name || ""];
   let toolboxActions = componentData?.toolboxActions || [];
 
-  const isBody = selectedComponentId === "content-wrapper";
-  const isMainContent = selectedComponentId === "main-content";
+  const isMainContent = component.id === "main-content";
 
   if (isMainContent) {
     toolboxActions = toolboxActions.filter(
       (action) =>
         action.id !== "add-column-to-parent" && action.id !== "insert-row",
     );
-  } else if (isBody) {
-    toolboxActions = [];
   }
 
   const blockedToolboxActions = componentData?.blockedToolboxActions || [];
 
   const parentTree = useMemo(
     () =>
-      selectedComponentId
-        ? getComponentParent(editorTree.root, selectedComponentId)
-        : null,
-    [editorTree.root, selectedComponentId],
+      component.id ? getComponentParent(editorTree.root, component.id) : null,
+    [editorTree.root, component.id],
   );
 
   const onDragStart = useOnDragStart();
 
   const draggable = useDraggable({
-    id: selectedComponentId || "",
+    id: component.id || "",
     onDragStart,
     currentWindow: iframeWindow,
     ghostImagePosition: isTabPinned ? NAVBAR_WIDTH : 0,
   });
 
   const calculatePosition = useCallback(() => {
-    if (selectedComponentId && !isPreviewMode) {
-      const canvas = document.getElementById("iframe-canvas");
-      const toolbox = document.getElementById("toolbox");
-      const comp = iframeWindow?.document.getElementById(selectedComponentId);
+    if (component.id) {
+      const comp = iframeWindow?.document.getElementById(component.id);
 
-      if (toolbox && comp && canvas) {
-        const canvasRect = canvas.getBoundingClientRect();
-        const toolboxRect = toolbox.getBoundingClientRect();
+      if (comp) {
         const compRect = comp.getBoundingClientRect();
 
-        toolbox.style.top = `${
-          canvasRect.top + compRect.top - toolboxRect.height
-        }px`;
-        toolbox.style.left = `${canvasRect.left + compRect.left}px`;
+        setToolboxStyle({
+          top: `${compRect.top - 34}px`,
+          left: `${compRect.left - 12}px`,
+        });
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    selectedComponentId,
-    iframeWindow?.document,
-    isPreviewMode,
-    editorTree.timestamp,
-  ]);
+  }, [component.id, iframeWindow?.document, editorTree.timestamp]);
 
   useEffect(() => {
     calculatePosition();
@@ -125,22 +111,17 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
     return () => el?.removeEventListener("scroll", calculatePosition);
   }, [calculatePosition, iframeWindow]);
 
-  if (!component || isPreviewMode || !selectedComponentId || isResizing) {
+  if (!component || !component.id || isResizing) {
     return null;
   }
 
   const haveNonRootParent = parentTree && parentTree.id !== "root";
-
-  if (!selectedComponentId || !component) {
-    return null;
-  }
 
   const canMove =
     !component.fixedPosition && !blockedToolboxActions.includes("move");
   const canWrapWithContainer = !blockedToolboxActions.includes(
     "wrap-with-container",
   );
-
   return (
     <Group
       id="toolbox"
@@ -148,8 +129,8 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
       h={24}
       noWrap
       spacing={2}
-      top={-24}
-      left={0}
+      top={toolboxStyle.top}
+      left={toolboxStyle.left}
       pos="absolute"
       style={{ zIndex: 200 }}
       bg={theme.colors.teal[6]}
@@ -176,7 +157,6 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
           )}
         </UnstyledButton>
       </Tooltip>
-
       <Text color="white" size="xs" pr={haveNonRootParent ? 8 : "xs"}>
         {(component.description || "").length > 20
           ? `${component.description?.substring(0, 20)}...`
@@ -227,7 +207,7 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
                 id: parentTree?.id!,
                 edge: "left",
               },
-              getComponentIndex(parentTree!, selectedComponentId),
+              getComponentIndex(parentTree!, component.id!),
             );
 
             removeComponentFromParent(
@@ -253,13 +233,13 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
           />
         );
       })}
-      {!isMainContent && !isBody && (
+      {!isMainContent && (
         <>
           <ActionIconTransparent
             iconName={ICON_DELETE}
             tooltip="Delete"
             onClick={() => {
-              removeComponent(editorTree.root, selectedComponentId!);
+              removeComponent(editorTree.root, component.id!);
               setEditorTree(editorTree, {
                 action: `Removed ${component?.name}`,
               });

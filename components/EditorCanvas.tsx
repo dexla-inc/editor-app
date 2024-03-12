@@ -106,7 +106,6 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
           isCustomComponentModalOpen={isCustomComponentModalOpen}
         />
       )}
-      <ComponentToolbox customComponentModal={customComponentModal} />
     </>
   );
 };
