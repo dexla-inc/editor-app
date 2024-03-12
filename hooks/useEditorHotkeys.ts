@@ -120,29 +120,38 @@ export const useEditorHotkeys = () => {
 
   const pasteCopiedComponent = useCallback(async () => {
     const clipboardContent = pasteFromClipboard() as ComponentStructure;
-    if (isPreviewMode) {
+    const componentToPaste =
+      (clipboardContent as typeof copiedComponent as ComponentStructure) ||
+      (copiedComponent as ComponentStructure);
+    if (!componentToPaste || isPreviewMode) {
       return;
     }
 
     let targetId = clipboardContent.id;
+
+    if (!targetId || targetId === "root") return "content-wrapper";
+
+    const component = getComponentTreeById(
+      editorTree.root,
+      targetId,
+    ) as ComponentStructure;
+
     let componentIndex = 0;
 
     const isSpecialComponents = ["GridColumn", "Alert", "Accordion"].includes(
       clipboardContent.name,
     );
-    const isGridItems = ["Grid", "GridColumn"].includes(clipboardContent.name);
-    const isTargetGridItems = ["Grid", "GridColumn"].includes(
-      clipboardContent?.name!,
-    );
+    const isGridItems = ["Grid", "GridColumn"].includes(componentToPaste.name);
+    const isTargetGridItems = ["Grid", "GridColumn"].includes(component?.name!);
     const isLayoutCategory =
-      structureMapper[clipboardContent.name!].category === "Layout";
+      structureMapper[componentToPaste.name!].category === "Layout";
     const isAllowedGridMatch =
       isGridItems === isTargetGridItems &&
-      clipboardContent?.name === clipboardContent.name;
+      component?.name === componentToPaste.name;
     const isAllowedSibling = isLayoutCategory && !isTargetGridItems;
 
     const addAsSiblingFlag =
-      clipboardContent?.blockDroppingChildrenInside ||
+      component?.blockDroppingChildrenInside ||
       isSpecialComponents ||
       isAllowedSibling ||
       isAllowedGridMatch;
