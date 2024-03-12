@@ -14,7 +14,7 @@ import {
   Text,
 } from "@mantine/core";
 import intersection from "lodash.intersection";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useEditorTreeStore } from "../../stores/editorTree";
 import { ActionsTab, Data, modifierSectionMapper } from "./dynamicModifiers";
 import { useShallow } from "zustand/react/shallow";
@@ -29,6 +29,10 @@ const EditorAsideSections = () => {
   const setInitiallyOpenedModifiersByComponent = useUserConfigStore(
     (state) => state.setInitiallyOpenedModifiersByComponent,
   );
+  const selectedComponentId = useEditorTreeStore(
+    (state) => state.selectedComponentIds?.at(-1),
+  );
+  const openAction = useEditorStore((state) => state.openAction);
 
   const [tab, setTab] = useState<Tab>("design");
 
@@ -50,6 +54,13 @@ const EditorAsideSections = () => {
       ),
     ),
   );
+
+  useEffect(() => {
+    selectedComponentId !== openAction?.componentId &&
+      setOpenAction({ actionIds: undefined, componentId: undefined });
+    setTab("design");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedComponentId]);
 
   if (!componentName) {
     return (
