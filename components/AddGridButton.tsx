@@ -1,6 +1,8 @@
 import { ActionIconDefault } from "@/components/ActionIconDefault";
-import { emptyEditorTree, useEditorTreeStore } from "@/stores/editorTree";
+import { useEditorTreeStore } from "@/stores/editorTree";
+import { emptyEditorAttrsTree, emptyEditorTree } from "@/utils/common";
 import { EditorTreeCopy } from "@/utils/editor";
+import cloneDeep from "lodash.clonedeep";
 import { nanoid } from "nanoid";
 
 export const AddGridButton = () => {
@@ -8,9 +10,12 @@ export const AddGridButton = () => {
 
   const addGrid = () => {
     const editorTree = useEditorTreeStore.getState().tree;
-    editorTree.root.children = (editorTree.root.children ?? [])
+    const copy = cloneDeep(editorTree);
+    copy.root.children = (copy.root.children ?? [])
       .map((child) => {
         if (child.id !== "content-wrapper") return child;
+
+        child.children![0].id = "old-main-content";
 
         return {
           ...child,
@@ -18,10 +23,10 @@ export const AddGridButton = () => {
           description: "Old Body",
         };
       })
-      .concat(emptyEditorTree.root.children[0]);
+      .concat(emptyEditorAttrsTree.root.children[0]);
 
-    editorTree.root.children.reverse();
-    setEditorTree(editorTree as EditorTreeCopy);
+    copy.root.children.reverse();
+    setEditorTree(copy as EditorTreeCopy);
   };
 
   return (

@@ -1,5 +1,6 @@
 import { updatePageState } from "@/requests/pages/mutations";
 import { PageStateParams } from "@/requests/pages/types";
+import { emptyEditorTree } from "@/utils/common";
 import { encodeSchema } from "@/utils/compression";
 import { GRID_SIZE } from "@/utils/config";
 import {
@@ -29,24 +30,6 @@ const client = createClient({
 
 const initialGridValues = requiredModifiers.grid;
 const initialGridColumnValues = requiredModifiers.gridColumn;
-
-export const emptyEditorTree = {
-  name: "Initial State",
-  timestamp: Date.now(),
-  root: {
-    id: "root",
-    children: [
-      {
-        id: "content-wrapper",
-        children: [
-          {
-            id: "main-content",
-          },
-        ],
-      },
-    ],
-  },
-};
 
 const emptyEditorComponentMutableAttrs = {
   root: {
