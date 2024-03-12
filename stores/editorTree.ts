@@ -23,6 +23,7 @@ import merge from "lodash.merge";
 import { TemporalState, temporal } from "zundo";
 import { create, useStore } from "zustand";
 import { devtools } from "zustand/middleware";
+import cloneDeep from "lodash.clonedeep";
 
 const client = createClient({
   publicApiKey: process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY ?? "",
@@ -256,10 +257,12 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                   "default";
 
                 componentIds.forEach((id) => {
-                  state.componentMutableAttrs[id] = updateTreeComponentAttrs(
-                    state.componentMutableAttrs[id] ?? {},
-                    attrs,
-                    currentState,
+                  state.componentMutableAttrs[id] = cloneDeep(
+                    updateTreeComponentAttrs(
+                      state.componentMutableAttrs[id] ?? {},
+                      attrs,
+                      currentState,
+                    ),
                   );
                 });
 

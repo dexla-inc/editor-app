@@ -28,7 +28,7 @@ const InputComponent = forwardRef(
     ref,
   ) => {
     const iframeWindow = useEditorStore((state) => state.iframeWindow);
-    console.log(component);
+
     const {
       children,
       icon,

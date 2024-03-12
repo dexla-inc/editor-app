@@ -18,6 +18,7 @@ import { ComponentTree } from "@/utils/editor";
 import { BoxProps } from "@mantine/core";
 import { PropsWithChildren, cloneElement } from "react";
 import { ComponentToolbox } from "@/components/ComponentToolbox";
+import { memoize } from "proxy-memoize";
 
 type Props = {
   id: string;
@@ -39,7 +40,7 @@ export const EditableComponent = ({
   const isLive = useEditorStore((state) => state.isLive);
   const isEditorMode = !isPreviewMode && !isLive;
   const component = useEditorTreeStore(
-    (state) => state.componentMutableAttrs[id] ?? {},
+    memoize((state) => state.componentMutableAttrs[id] ?? {}),
   );
 
   let currentState = useComputeCurrentState(component);

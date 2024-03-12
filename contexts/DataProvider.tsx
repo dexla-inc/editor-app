@@ -16,6 +16,8 @@ import { useRouter } from "next/router";
 import { createContext, useContext, useEffect } from "react";
 import { useNodes } from "reactflow";
 import { useShallow } from "zustand/react/shallow";
+import { Component } from "@/utils/editor";
+import { memoize } from "proxy-memoize";
 
 type DataProviderProps = {
   children: React.ReactNode;
@@ -83,9 +85,9 @@ export const DataProvider = ({ children }: DataProviderProps) => {
 
   const isEditorMode = !isPreviewMode && !isLive;
   const allInputComponents = useEditorTreeStore(
-    useShallow((state) =>
-      Object.values(state.componentMutableAttrs).filter((c) =>
-        [
+    memoize((state) =>
+      Object.values(state.componentMutableAttrs).reduce((acc, c) => {
+        const isInput = [
           "Input",
           "Select",
           "Checkbox",
@@ -93,8 +95,12 @@ export const DataProvider = ({ children }: DataProviderProps) => {
           "Switch",
           "Textarea",
           "Autocomplete",
-        ].includes(c?.name!),
-      ),
+        ].includes(c?.name!);
+        if (isInput) {
+          acc.push({ id: c.id, description: c.name });
+        }
+        return acc;
+      }, [] as Partial<Component>[]),
     ),
   );
 
