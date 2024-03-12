@@ -121,7 +121,7 @@ export const useEditorHotkeys = () => {
   const pasteCopiedComponent = useCallback(async () => {
     const clipboardContent = pasteFromClipboard() as ComponentStructure;
     const componentToPaste =
-      (clipboardContent as typeof copiedComponent) ||
+      (clipboardContent as typeof copiedComponent as ComponentStructure) ||
       (copiedComponent as ComponentStructure);
     if (!componentToPaste || isPreviewMode) {
       return;
