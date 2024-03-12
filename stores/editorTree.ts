@@ -135,7 +135,6 @@ export type EditorTreeState = {
   ) => void;
   isSaving: boolean;
   setIsSaving: (value: boolean) => void;
-  saveTree: () => void;
 };
 
 const updatePageStateFunc = async (
@@ -162,19 +161,6 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
       temporal(
         (set) => ({
           isSaving: false,
-          saveTree: () => {
-            set((state: EditorTreeState) => {
-              if (!state.isPreviewMode) {
-                debouncedUpdatePageState(
-                  encodeSchema(JSON.stringify(state.tree)),
-                  state.currentProjectId ?? "",
-                  state.currentPageId ?? "",
-                  state.setIsSaving,
-                );
-              }
-              return state;
-            });
-          },
           setTree: (tree, options) => {
             set(
               (state: EditorTreeState) => {

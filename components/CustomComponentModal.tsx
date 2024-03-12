@@ -5,7 +5,11 @@ import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { structureMapper } from "@/utils/componentMapper";
 import { encodeSchema } from "@/utils/compression";
 import { ICON_SIZE } from "@/utils/config";
-import { getComponentTreeById, replaceIdShallowly } from "@/utils/editor";
+import {
+  EditorTreeCopy,
+  getComponentTreeById,
+  replaceIdsDeeply,
+} from "@/utils/editor";
 import { Button, Modal, Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { showNotification } from "@mantine/notifications";
@@ -75,8 +79,7 @@ export const CustomComponentModal = ({
       useEditorTreeStore.getState().componentMutableAttrs[selectedComponentId!];
 
     const copy = merge({}, component, componentTree);
-    replaceIdShallowly(copy);
-    //replaceIdsDeeply(copy);
+    replaceIdsDeeply(copy as EditorTreeCopy);
 
     mutate({
       values: {
