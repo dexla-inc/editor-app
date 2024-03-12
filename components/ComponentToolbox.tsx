@@ -26,19 +26,19 @@ import { Group, Text, Tooltip, UnstyledButton } from "@mantine/core";
 import { IconGripVertical } from "@tabler/icons-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
+import { CustomComponentModal } from "@/components/CustomComponentModal";
+import { useDisclosure } from "@mantine/hooks";
 
 type Props = {
-  customComponentModal: any;
   component: Component;
 };
 
-export const ComponentToolbox = ({
-  customComponentModal,
-  component,
-}: Props) => {
+export const ComponentToolbox = ({ component }: Props) => {
   const isResizing = useEditorStore((state) => state.isResizing);
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const editorTheme = useThemeStore((state) => state.theme);
+  const [isCustomComponentModalOpen, customComponentModal] =
+    useDisclosure(false);
 
   // Move to functions
   const editorTree = useEditorTreeStore(
@@ -84,34 +84,28 @@ export const ComponentToolbox = ({
   });
 
   const calculatePosition = useCallback(() => {
-    if (component.id) {
-      const comp = iframeWindow?.document.getElementById(component.id);
+    const comp =
+      iframeWindow?.document.querySelector(`[data-id="${component.id}"]`) ??
+      iframeWindow?.document.getElementById(component.id!);
+    const parent = comp?.parentElement;
 
-      if (comp) {
-        const compRect = comp.getBoundingClientRect();
+    if (comp && parent) {
+      const compRect = comp.getBoundingClientRect();
+      const parentRect = parent.getBoundingClientRect();
 
-        setToolboxStyle({
-          top: `${compRect.top - 34}px`,
-          left: `${compRect.left - 12}px`,
-        });
-      }
+      setToolboxStyle({
+        top: `${Math.abs(parentRect.top - compRect.top) - 24}px`,
+        left: `${Math.abs(parentRect.left - compRect.left)}px`,
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [component.id, iframeWindow?.document, editorTree.timestamp]);
+  }, [component.id, editorTree.root]);
 
   useEffect(() => {
     calculatePosition();
   }, [calculatePosition]);
 
-  useEffect(() => {
-    const el = iframeWindow?.document.querySelector(
-      ".iframe-canvas-ScrollArea-viewport",
-    );
-    el?.addEventListener("scroll", calculatePosition);
-    return () => el?.removeEventListener("scroll", calculatePosition);
-  }, [calculatePosition, iframeWindow]);
-
-  if (!component || !component.id || isResizing) {
+  if (isResizing) {
     return null;
   }
 
@@ -122,140 +116,152 @@ export const ComponentToolbox = ({
   const canWrapWithContainer = !blockedToolboxActions.includes(
     "wrap-with-container",
   );
+
   return (
-    <Group
-      id="toolbox"
-      px={4}
-      h={24}
-      noWrap
-      spacing={2}
-      top={toolboxStyle.top}
-      left={toolboxStyle.left}
-      pos="absolute"
-      style={{ zIndex: 200 }}
-      bg={theme.colors.teal[6]}
-      sx={(theme) => ({
-        borderTopLeftRadius: theme.radius.sm,
-        borderTopRightRadius: theme.radius.sm,
-      })}
-    >
-      <Tooltip label="Move" fz="xs">
-        <UnstyledButton
-          sx={{
-            cursor: !canMove ? "default" : "move",
-            alignItems: "center",
-            display: "flex",
-          }}
-          {...(!canMove ? {} : draggable)}
-        >
-          {canMove && (
-            <IconGripVertical
-              size={ICON_SIZE}
-              color="white"
-              strokeWidth={1.5}
-            />
-          )}
-        </UnstyledButton>
-      </Tooltip>
-      <Text color="white" size="xs" pr={haveNonRootParent ? 8 : "xs"}>
-        {(component.description || "").length > 20
-          ? `${component.description?.substring(0, 20)}...`
-          : component.description}
-      </Text>
-      {haveNonRootParent && (
-        <ActionIconTransparent
-          iconName="IconArrowUp"
-          tooltip="Go up"
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            setSelectedComponentIds(() => [parentTree.id!]);
-          }}
-        />
-      )}
-      {canWrapWithContainer && (
-        <ActionIconTransparent
-          iconName="IconBoxMargin"
-          tooltip="Wrap container"
-          onClick={() => {
-            const container = structureMapper["Container"].structure({
-              theme: editorTheme,
-            }) as ComponentStructure;
-
-            const selectedComponentId = useEditorTreeStore
-              .getState()
-              .selectedComponentIds?.at(-1);
-
-            const componentToBeWrapped = getComponentTreeById(
-              editorTree.root,
-              selectedComponentId!,
-            )! as ComponentStructure;
-
-            if (container.props && container.props.style) {
-              container.props.style = {
-                ...container.props.style,
-                width: "fit-content",
-                padding: "0px",
-              };
-              container.children = [componentToBeWrapped];
-            }
-
-            addComponent(
-              editorTree.root,
-              container,
-              {
-                id: parentTree?.id!,
-                edge: "left",
-              },
-              getComponentIndex(parentTree!, component.id!),
-            );
-
-            removeComponentFromParent(
-              editorTree.root,
-              component,
-              parentTree?.id!,
-            );
-            setEditorTree(editorTree, {
-              action: `Wrapped ${component.name} with a Container`,
-            });
-          }}
-        />
-      )}
-      {toolboxActions.map((toolBoxAction: ToolboxAction) => {
-        return (
+    <>
+      <Group
+        id="toolbox"
+        px={4}
+        h={24}
+        noWrap
+        spacing={2}
+        top={toolboxStyle.top}
+        left={toolboxStyle.left}
+        pos="absolute"
+        style={{ zIndex: 200 }}
+        bg={theme.colors.teal[6]}
+        sx={(theme) => ({
+          borderTopLeftRadius: theme.radius.sm,
+          borderTopRightRadius: theme.radius.sm,
+        })}
+      >
+        <Tooltip label="Move" fz="xs">
+          <UnstyledButton
+            sx={{
+              cursor: !canMove ? "default" : "move",
+              alignItems: "center",
+              display: "flex",
+            }}
+            {...(!canMove ? {} : draggable)}
+          >
+            {canMove && (
+              <IconGripVertical
+                size={ICON_SIZE}
+                color="white"
+                strokeWidth={1.5}
+              />
+            )}
+          </UnstyledButton>
+        </Tooltip>
+        <Text color="white" size="xs" pr={haveNonRootParent ? 8 : "xs"}>
+          {(component.description || "").length > 20
+            ? `${component.description?.substring(0, 20)}...`
+            : component.description}
+        </Text>
+        {haveNonRootParent && (
           <ActionIconTransparent
-            key={toolBoxAction.id}
-            iconName={toolBoxAction.icon}
-            tooltip={toolBoxAction.name}
-            onClick={() => {
-              toolBoxAction.onClick({ component, parent });
+            iconName="IconArrowUp"
+            tooltip="Go up"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setSelectedComponentIds(() => [parentTree.id!]);
             }}
           />
-        );
-      })}
-      {!isMainContent && (
-        <>
+        )}
+        {canWrapWithContainer && (
           <ActionIconTransparent
-            iconName={ICON_DELETE}
-            tooltip="Delete"
+            iconName="IconBoxMargin"
+            tooltip="Wrap container"
             onClick={() => {
-              removeComponent(editorTree.root, component.id!);
+              const container = structureMapper["Container"].structure({
+                theme: editorTheme,
+              }) as ComponentStructure;
+
+              const selectedComponentId = useEditorTreeStore
+                .getState()
+                .selectedComponentIds?.at(-1);
+
+              const componentToBeWrapped = getComponentTreeById(
+                editorTree.root,
+                selectedComponentId!,
+              )! as ComponentStructure;
+
+              if (container.props && container.props.style) {
+                container.props.style = {
+                  ...container.props.style,
+                  width: "fit-content",
+                  padding: "0px",
+                };
+                container.children = [componentToBeWrapped];
+              }
+
+              addComponent(
+                editorTree.root,
+                container,
+                {
+                  id: parentTree?.id!,
+                  edge: "left",
+                },
+                getComponentIndex(parentTree!, component.id!),
+              );
+
+              removeComponentFromParent(
+                editorTree.root,
+                component,
+                parentTree?.id!,
+              );
               setEditorTree(editorTree, {
-                action: `Removed ${component?.name}`,
+                action: `Wrapped ${component.name} with a Container`,
               });
             }}
           />
-          {customComponentModal && (
+        )}
+        {toolboxActions.map((toolBoxAction: ToolboxAction) => {
+          return (
             <ActionIconTransparent
-              iconName="IconDeviceFloppy"
-              tooltip="Save as custom component"
+              key={toolBoxAction.id}
+              iconName={toolBoxAction.icon}
+              tooltip={toolBoxAction.name}
               onClick={() => {
-                customComponentModal.open();
+                toolBoxAction.onClick({ component, parent });
               }}
             />
-          )}
-        </>
+          );
+        })}
+        {!isMainContent && (
+          <>
+            <ActionIconTransparent
+              iconName={ICON_DELETE}
+              tooltip="Delete"
+              onClick={() => {
+                removeComponent(editorTree.root, component.id!);
+                setEditorTree(editorTree, {
+                  action: `Removed ${component?.name}`,
+                });
+              }}
+            />
+            {customComponentModal && (
+              <ActionIconTransparent
+                iconName="IconDeviceFloppy"
+                tooltip="Save as custom component"
+                onClick={() => {
+                  customComponentModal.open();
+                }}
+              />
+            )}
+          </>
+        )}
+      </Group>
+      {customComponentModal && (
+        <ActionIconTransparent
+          iconName="IconDeviceFloppy"
+          tooltip="Save as custom component"
+          onClick={() => {
+            customComponentModal.open();
+          }}
+        />
       )}
-    </Group>
+    </>
   );
 };

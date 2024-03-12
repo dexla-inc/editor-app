@@ -1,5 +1,3 @@
-import { ComponentToolbox } from "@/components/ComponentToolbox";
-import { CustomComponentModal } from "@/components/CustomComponentModal";
 import { Droppable } from "@/components/Droppable";
 import { EditableComponentContainer } from "@/components/EditableComponentContainer";
 import { IFrame } from "@/components/IFrame";
@@ -10,7 +8,6 @@ import { HEADER_HEIGHT } from "@/utils/config";
 import { ComponentTree } from "@/utils/editor";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Box, Paper } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
 import { memo } from "react";
 
 type Props = {
@@ -21,8 +18,6 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
   const editorTree = useEditorTreeStore((state) => state.tree);
   useEditorHotkeys();
   const [canvasRef] = useAutoAnimate();
-  const [isCustomComponentModalOpen, customComponentModal] =
-    useDisclosure(false);
 
   const renderTree = (componentTree: ComponentTree, shareableContent = {}) => {
     if (componentTree.id === "root") {
@@ -100,12 +95,6 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
       >
         <IFrame projectId={projectId}>{renderTree(editorTree.root)}</IFrame>
       </Box>
-      {isCustomComponentModalOpen && (
-        <CustomComponentModal
-          customComponentModal={customComponentModal}
-          isCustomComponentModalOpen={isCustomComponentModalOpen}
-        />
-      )}
     </>
   );
 };

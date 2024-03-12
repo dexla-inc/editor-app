@@ -23,7 +23,10 @@ import { forwardRef, memo, useEffect } from "react";
 type Props = EditableComponentMapper & NumberInputProps & TextInputProps;
 
 const InputComponent = forwardRef(
-  ({ component, isPreviewMode, ...props }: Props, ref) => {
+  (
+    { component, isPreviewMode, id, shareableContent, ...props }: Props,
+    ref,
+  ) => {
     const iframeWindow = useEditorStore((state) => state.iframeWindow);
 
     const {
@@ -155,6 +158,7 @@ const InputComponent = forwardRef(
                 {...restTriggers}
                 onChange={handleChange}
                 label={undefined}
+                wrapperProps={{ "data-id": component.id }}
               />
 
               <ActionIcon
@@ -195,6 +199,7 @@ const InputComponent = forwardRef(
             onChange={handleChange}
             rightSection={loading ? <InputLoader /> : null}
             label={undefined}
+            wrapperProps={{ "data-id": component.id }}
           />
         ) : type === "password" ? (
           <PasswordInput
@@ -224,7 +229,6 @@ const InputComponent = forwardRef(
             {...props}
             {...componentProps}
             ref={ref}
-            id={component.id}
             icon={iconName ? <Icon name={iconName} /> : null}
             style={{}}
             styles={{
@@ -251,6 +255,7 @@ const InputComponent = forwardRef(
               ) : null
             }
             label={undefined}
+            wrapperProps={{ "data-id": component.id }}
           />
         )}
       </>
