@@ -15,6 +15,7 @@ import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { CSSProperties } from "react";
 import crawl from "tree-crawl";
 import { MantineThemeExtended } from "./types";
+import cloneDeep from "lodash.clonedeep";
 
 export type ComponentStructure = {
   children?: ComponentStructure[];
@@ -92,14 +93,7 @@ export function arrayMove<T>(array: T[], from: number, to: number): T[] {
   return newArray;
 }
 
-export const replaceIdShallowly = (component: Component) => {
-  const newId = nanoid();
-  component.id = newId;
-  return newId;
-};
-
-// This doesn't replace ids deeply now as Component does not have children
-export const replaceIdsDeeply = (treeRoot: Component) => {
+export const replaceIdsDeeply = (treeRoot: ComponentStructure) => {
   const updateTreeComponentAttrs =
     useEditorTreeStore.getState().updateTreeComponentAttrs;
   const componentMutableAttrs =
@@ -620,14 +614,15 @@ export const addComponent = (
   dropIndex?: number,
   isPasteAction?: boolean,
 ): string => {
+  const copyComponentToAdd = cloneDeep(componentToAdd);
   if (isPasteAction) {
-    replaceIdShallowly(componentToAdd);
+    replaceIdsDeeply(copyComponentToAdd);
   }
 
   const directChildren = ["Modal", "Drawer", "Toast"];
-  const isGrid = componentToAdd.name === "Grid";
-  const isColumn = componentToAdd.name === "GridColumn";
-  const isNavbar = componentToAdd.name === "Navbar";
+  const isGrid = copyComponentToAdd.name === "Grid";
+  const isColumn = copyComponentToAdd.name === "GridColumn";
+  const isNavbar = copyComponentToAdd.name === "Navbar";
   let targetComponent = null;
 
   crawl(
@@ -640,7 +635,7 @@ export const addComponent = (
         if (contentWrapper) {
           contentWrapper.props = {
             ...contentWrapper.props,
-            navbarWidth: componentToAdd.props?.style.width,
+            navbarWidth: copyComponentToAdd.props?.style.width,
           };
         }
       }
@@ -648,7 +643,7 @@ export const addComponent = (
         targetComponent = addNodeToTarget(
           treeRoot,
           node,
-          componentToAdd,
+          copyComponentToAdd,
           context,
           dropTarget,
           false,
@@ -658,53 +653,53 @@ export const addComponent = (
 
         context.break();
       } else {
-        if (componentToAdd.fixedPosition) {
-          if (node.id === componentToAdd.fixedPosition.target) {
+        if (copyComponentToAdd.fixedPosition) {
+          if (node.id === copyComponentToAdd.fixedPosition.target) {
             if (
-              componentToAdd.fixedPosition.position === "left" ||
-              componentToAdd.fixedPosition.position === "top"
+              copyComponentToAdd.fixedPosition.position === "left" ||
+              copyComponentToAdd.fixedPosition.position === "top"
             ) {
-              node.children = [componentToAdd, ...(node.children || [])];
+              node.children = [copyComponentToAdd, ...(node.children || [])];
             } else if (
-              componentToAdd.fixedPosition.position === "right" ||
-              componentToAdd.fixedPosition.position === "bottom"
+              copyComponentToAdd.fixedPosition.position === "right" ||
+              copyComponentToAdd.fixedPosition.position === "bottom"
             ) {
-              node.children = [...(node.children || []), componentToAdd];
+              node.children = [...(node.children || []), copyComponentToAdd];
             }
 
             context.break();
           }
         } else {
           if (
-            directChildren.includes(componentToAdd.name) &&
+            directChildren.includes(copyComponentToAdd.name) &&
             node.id === "content-wrapper"
           ) {
-            node.children = [...(node.children || []), componentToAdd];
+            node.children = [...(node.children || []), copyComponentToAdd];
             context.break();
           } else if (node.id === dropTarget.id) {
-            const isPopOver = componentToAdd.name === "PopOver";
+            const isPopOver = copyComponentToAdd.name === "PopOver";
             if (isPopOver) {
-              componentToAdd.props!.targetId = node.id;
-              componentToAdd.children = [
-                ...(componentToAdd.children || []),
+              //copyComponentToAdd.props!.targetId = node.id;
+              copyComponentToAdd.children = [
+                ...(copyComponentToAdd.children || []),
                 node,
               ];
               context.parent?.children?.splice(
                 context.index,
                 1,
-                componentToAdd,
+                copyComponentToAdd,
               );
             } else {
               node.children = node.children ?? [];
 
               if (dropTarget.edge === "left" || dropTarget.edge === "top") {
                 const index = dropIndex ?? context.index - 1;
-                node.children.splice(index, 0, componentToAdd);
+                node.children.splice(index, 0, copyComponentToAdd);
               } else if (["right", "bottom"].includes(dropTarget.edge)) {
                 const index = dropIndex ?? context.index + 1;
-                node.children.splice(index, 0, componentToAdd);
+                node.children.splice(index, 0, copyComponentToAdd);
               } else if (dropTarget.edge === "center") {
-                node.children = [...(node.children || []), componentToAdd];
+                node.children = [...(node.children || []), copyComponentToAdd];
               }
             }
 
@@ -720,7 +715,7 @@ export const addComponent = (
     calculateGridSizes(targetComponent);
   }
 
-  return componentToAdd.id as string;
+  return copyComponentToAdd.id as string;
 };
 
 export type Edge = "left" | "right" | "top" | "bottom" | "center";
