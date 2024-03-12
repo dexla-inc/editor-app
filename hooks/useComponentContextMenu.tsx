@@ -125,6 +125,7 @@ export const useComponentContextMenu = () => {
         },
         getComponentIndex(parentComponent!, componentId) + 1,
         true,
+        true,
       );
 
       setEditorTree(editorTree, { action: `Pasted ${componentName}` });
@@ -177,6 +178,7 @@ export const useComponentContextMenu = () => {
   return {
     forceDestroyContextMenu: destroy,
     componentContextMenu: (
+      // TODO: Duplicate doesn't copy children
       component: Component,
       clickX?: number,
       clickY?: number,

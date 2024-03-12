@@ -614,10 +614,13 @@ export const addComponent = (
   dropTarget: DropTarget,
   dropIndex?: number,
   isPasteAction?: boolean,
+  isDuplicateAction?: boolean,
 ): string => {
   const copyComponentToAdd = cloneDeep(componentToAdd);
+  let copyComponentToAddId = copyComponentToAdd.id;
   if (isPasteAction) {
     replaceIdsDeeply(copyComponentToAdd);
+    copyComponentToAddId = copyComponentToAdd.id as string;
   }
 
   const directChildren = ["Modal", "Drawer", "Toast"];
@@ -680,7 +683,7 @@ export const addComponent = (
           } else if (node.id === dropTarget.id) {
             const isPopOver = copyComponentToAdd.name === "PopOver";
             if (isPopOver) {
-              //copyComponentToAdd.props!.targetId = node.id;
+              copyComponentToAdd.props!.targetId = node.id;
               copyComponentToAdd.children = [
                 ...(copyComponentToAdd.children || []),
                 node,
@@ -693,14 +696,25 @@ export const addComponent = (
             } else {
               node.children = node.children ?? [];
 
+              if (isDuplicateAction) copyComponentToAddId = nanoid();
+
               if (dropTarget.edge === "left" || dropTarget.edge === "top") {
                 const index = dropIndex ?? context.index - 1;
-                node.children.splice(index, 0, copyComponentToAdd);
+                node.children.splice(index, 0, {
+                  ...copyComponentToAdd,
+                  id: copyComponentToAddId,
+                });
               } else if (["right", "bottom"].includes(dropTarget.edge)) {
                 const index = dropIndex ?? context.index + 1;
-                node.children.splice(index, 0, copyComponentToAdd);
+                node.children.splice(index, 0, {
+                  ...copyComponentToAdd,
+                  id: copyComponentToAddId,
+                });
               } else if (dropTarget.edge === "center") {
-                node.children = [...(node.children || []), copyComponentToAdd];
+                node.children = [
+                  ...(node.children || []),
+                  { ...copyComponentToAdd, id: copyComponentToAddId },
+                ];
               }
             }
 
@@ -716,7 +730,7 @@ export const addComponent = (
     calculateGridSizes(targetComponent);
   }
 
-  return copyComponentToAdd.id as string;
+  return copyComponentToAddId as string;
 };
 
 export type Edge = "left" | "right" | "top" | "bottom" | "center";
