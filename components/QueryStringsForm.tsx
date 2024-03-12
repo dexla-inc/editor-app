@@ -1,10 +1,8 @@
 import { ActionIconDefault } from "@/components/ActionIconDefault";
-import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 import { Icon } from "@/components/Icon";
 import { QueryStringListItem } from "@/requests/pages/types";
 import { TemplateTypesOptions } from "@/requests/templates/types";
 import { useEditorStore } from "@/stores/editor";
-import { useEditorTreeStore } from "@/stores/editorTree";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
 import { Button, Flex, Group, Select, Text, TextInput } from "@mantine/core";
@@ -28,9 +26,6 @@ export const QueryStringsForm = ({
 
   const setComponentToBind = useEditorStore(
     (state) => state.setComponentToBind,
-  );
-  const selectedComponentId = useEditorTreeStore(
-    (state) => state.selectedComponentIds?.at(-1),
   );
   const setPickingComponentToBindTo = useEditorStore(
     (state) => state.setPickingComponentToBindTo,
@@ -90,7 +85,6 @@ export const QueryStringsForm = ({
               //   value={value}
               //   placeholder="value"
               //   label=""
-              //   componentId={selectedComponentId}
               //   onPickComponent={(componentToBindId: string) => {
               //     setQueryStrings((prev: QueryStringListItem[]) => {
               //       const nPrev = [...prev];

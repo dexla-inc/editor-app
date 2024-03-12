@@ -2,7 +2,7 @@ import { TopLabel } from "@/components/TopLabel";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { SegmentedControl, Stack, Textarea } from "@mantine/core";
+import { Checkbox, SegmentedControl, Stack, Textarea } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
 import { useEffect } from "react";
@@ -15,6 +15,7 @@ const Modifier = withModifier(({ selectedComponent }) => {
       merge({}, requiredModifiers.drawer, {
         title: selectedComponent.props?.title,
         position: selectedComponent.props?.position,
+        forceHide: selectedComponent.props?.forceHide,
       }),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -54,6 +55,18 @@ const Modifier = withModifier(({ selectedComponent }) => {
             }}
           />
         </Stack>
+
+        <Checkbox
+          size="xs"
+          label="Force Hide"
+          {...form.getInputProps("forceHide", { type: "checkbox" })}
+          onChange={(e) => {
+            form.setFieldValue("forceHide", e.target.checked);
+            debouncedTreeComponentAttrsUpdate({
+              attrs: { props: { forceHide: e.target.checked } },
+            });
+          }}
+        />
       </Stack>
     </form>
   );

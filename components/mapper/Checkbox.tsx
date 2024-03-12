@@ -10,10 +10,15 @@ import { ChangeEvent, memo, useCallback, useState } from "react";
 
 type Props = EditableComponentMapper & CheckboxProps;
 
-const CheckboxComponent = ({ component, isPreviewMode, ...props }: Props) => {
+const CheckboxComponent = ({
+  component,
+  isPreviewMode,
+  children,
+  shareableContent,
+  ...props
+}: Props) => {
   const { label, value, triggers, bg, textColor, ...componentProps } =
     component.props as any;
-  const { children, ...rest } = props;
   const inputValue = useInputsStore((state) => state.getValue(component.id!));
   const setStoreInputValue = useInputsStore((state) => state.setInputValue);
   const [checked, setChecked] = useState(inputValue ?? false);
@@ -45,7 +50,7 @@ const CheckboxComponent = ({ component, isPreviewMode, ...props }: Props) => {
 
   return (
     <MantineCheckbox
-      {...rest}
+      {...props}
       {...componentProps}
       style={{}}
       styles={{
@@ -69,6 +74,7 @@ const CheckboxComponent = ({ component, isPreviewMode, ...props }: Props) => {
       checked={checked}
       {...triggers}
       onChange={handleInputChange}
+      wrapperProps={{ "data-id": component.id }}
     />
   );
 };

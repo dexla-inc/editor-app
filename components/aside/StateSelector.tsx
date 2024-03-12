@@ -1,6 +1,5 @@
 import { ActionIconDefault } from "@/components/ActionIconDefault";
 import { useComponentStates } from "@/hooks/useComponentStates";
-import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import {
@@ -24,25 +23,26 @@ export const StateSelector = ({ componentName }: Props) => {
   const [createState, setCreateState] = useState<undefined | string>(undefined);
   const excludeComponentsForState = ["Text", "Title"];
 
-  const setTreeComponentCurrentState = useEditorTreeStore(
-    (state) => state.setTreeComponentCurrentState,
-  );
-  const selectedComponentId = useEditorTreeStore(
-    (state) => state.selectedComponentIds?.at(-1),
-  ) as string;
-  const component = useEditorTreeStore(
-    (state) => state.componentMutableAttrs[selectedComponentId!],
-  );
-
   const currentState = useEditorTreeStore(
     (state) =>
-      state.currentTreeComponentsStates?.[selectedComponentId!] ?? "default",
+      state.currentTreeComponentsStates?.[
+        state.selectedComponentIds?.at(-1)!
+      ] ?? "default",
+  );
+  const setTreeComponentCurrentState = useEditorTreeStore(
+    (state) => state.setTreeComponentCurrentState,
   );
   const updateTreeComponentAttrs = useEditorTreeStore(
     (state) => state.updateTreeComponentAttrs,
   );
 
   const onClickResetToDefault = () => {
+    const selectedComponentId = useEditorTreeStore
+      .getState()
+      .selectedComponentIds?.at(-1);
+    const component =
+      useEditorTreeStore.getState().componentMutableAttrs[selectedComponentId!];
+
     updateTreeComponentAttrs({
       componentIds: [selectedComponentId!],
       attrs: { props: component?.props },
@@ -50,6 +50,15 @@ export const StateSelector = ({ componentName }: Props) => {
     });
   };
   const { getComponentsStates } = useComponentStates();
+
+  const onClickSaveNewState = () => {
+    const selectedComponentId = useEditorTreeStore
+      .getState()
+      .selectedComponentIds?.at(-1)!;
+
+    setTreeComponentCurrentState(selectedComponentId, createState!);
+    setCreateState(undefined);
+  };
 
   return (
     !excludeComponentsForState.includes(componentName) && (
@@ -76,6 +85,9 @@ export const StateSelector = ({ componentName }: Props) => {
                 nothingFound="Nothing found"
                 searchable
                 onChange={(value: string) => {
+                  const selectedComponentId = useEditorTreeStore
+                    .getState()
+                    .selectedComponentIds?.at(-1)!;
                   setTreeComponentCurrentState(selectedComponentId, value);
                 }}
                 {...AUTOCOMPLETE_OFF_PROPS}
@@ -116,18 +128,7 @@ export const StateSelector = ({ componentName }: Props) => {
                 color="teal"
                 variant="filled"
                 size="1.875rem"
-                onClick={() => {
-                  setTreeComponentCurrentState(
-                    selectedComponentId,
-                    createState,
-                  );
-                  updateTreeComponentAttrs({
-                    componentIds: [selectedComponentId],
-                    attrs: { props: {} },
-                    save: true,
-                  });
-                  setCreateState(undefined);
-                }}
+                onClick={onClickSaveNewState}
               >
                 <IconCheck size="1rem" />
               </ActionIcon>

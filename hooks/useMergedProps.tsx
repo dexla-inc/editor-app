@@ -20,8 +20,9 @@ export const usePropsWithOverwrites = (
     useComponentStates();
 
   const isDisabledState = checkIfIsDisabledState(component.name, currentState);
-  const setTreeComponentCurrentState =
-    useEditorTreeStore.getState().setTreeComponentCurrentState;
+  const setTreeComponentCurrentState = useEditorTreeStore(
+    (state) => state.setTreeComponentCurrentState,
+  );
 
   const hoverStateFunc = (e: React.MouseEvent<HTMLElement>) => {
     if (currentState === "default" && component.states?.hover) {

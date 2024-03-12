@@ -12,6 +12,7 @@ export const ActionsTab = () => {
   const component = useEditorTreeStore(
     (state) => state.componentMutableAttrs[state.selectedComponentIds?.at(-1)!],
   );
+
   const openAction = useEditorStore((state) => state.openAction);
   const setOpenAction = useEditorStore((state) => state.setOpenAction);
   const setCopiedAction = useEditorStore((state) => state.setCopiedAction);

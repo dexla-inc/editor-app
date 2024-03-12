@@ -15,9 +15,6 @@ export const Drawer = ({
   onClose: propOnClose,
   ...props
 }: Props) => {
-  const selectedComponentId = useEditorTreeStore(
-    (state) => state.selectedComponentIds?.at(-1),
-  );
   const theme = useThemeStore((state) => state.theme);
   const isPreviewMode = useUserConfigStore((state) => state.isPreviewMode);
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
@@ -26,6 +23,7 @@ export const Drawer = ({
     children,
     title,
     opened: propOpened,
+    forceHide,
     ...componentProps
   } = component.props as any;
 
@@ -34,7 +32,6 @@ export const Drawer = ({
   const handleClose = () => {
     close();
     propOnClose && propOnClose();
-    console.log("Drawer");
     const updateTreeComponentAttrs =
       useEditorTreeStore.getState().updateTreeComponentAttrs;
 
@@ -56,14 +53,7 @@ export const Drawer = ({
       trapFocus={false}
       lockScroll={false}
       target={iframeWindow?.document.getElementById("iframe-content")}
-      opened={
-        isPreviewMode
-          ? opened
-          : selectedComponentId === component.id ||
-            !!useEditorTreeStore.getState().componentMutableAttrs[
-              selectedComponentId!
-            ]
-      }
+      opened={isPreviewMode ? opened : !forceHide}
       onClose={isPreviewMode ? handleClose : () => {}}
       title={title}
       {...props}

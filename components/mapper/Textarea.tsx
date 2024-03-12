@@ -27,7 +27,6 @@ const TextareaComponent = forwardRef(
       textColor,
       ...componentProps
     } = component.props as any;
-    const theme = useThemeStore((state) => state.theme);
     const inputValue = useInputsStore((state) => state.getValue(component.id!));
     const setStoreInputValue = useInputsStore((state) => state.setInputValue);
     const { color, backgroundColor } = useChangeState({ bg, textColor });

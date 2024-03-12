@@ -6,6 +6,7 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 import { CURSOR_COLORS } from "@/utils/config";
 import { ComponentTree } from "@/utils/editor";
 import { ReactNode } from "react";
+import { useShallow } from "zustand/react/shallow";
 
 type EditableComponentContainerProps = {
   children: ReactNode;
@@ -22,15 +23,17 @@ export const EditableComponentContainer = ({
     (state) => state.selectedComponentIds?.includes(componentTree.id!),
   );
 
-  const selectedByOther = useEditorTreeStore((state) => {
-    const other = state.liveblocks?.others?.find(({ presence }: any) => {
-      return presence.selectedComponentIds?.includes(componentTree.id);
-    });
+  const selectedByOther = useEditorTreeStore(
+    useShallow((state) => {
+      const other = state.liveblocks?.others?.find(({ presence }: any) => {
+        return presence.selectedComponentIds?.includes(componentTree.id);
+      });
 
-    if (!other) return null;
+      if (!other) return null;
 
-    return CURSOR_COLORS[other.connectionId % CURSOR_COLORS.length];
-  });
+      return CURSOR_COLORS[other.connectionId % CURSOR_COLORS.length];
+    }),
+  );
 
   return (
     <EditableComponent

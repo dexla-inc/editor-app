@@ -4,13 +4,12 @@ import { ActionFormProps, TogglePropsAction } from "@/utils/actions";
 import { Stack } from "@mantine/core";
 import { useEditorTreeStore } from "../../stores/editorTree";
 import { VisibilityModifier } from "../data/VisibilityModifier";
+import { useShallow } from "zustand/react/shallow";
+import { pick } from "next/dist/lib/pick";
 
 type Props = ActionFormProps<Omit<TogglePropsAction, "name">>;
 
 export const ChangeVisibilityActionForm = ({ form }: Props) => {
-  const selectedComponentId = useEditorTreeStore(
-    (state) => state.selectedComponentIds?.at(-1),
-  );
   const setComponentToBind = useEditorStore(
     (state) => state.setComponentToBind,
   );
@@ -19,13 +18,17 @@ export const ChangeVisibilityActionForm = ({ form }: Props) => {
   );
 
   const component = useEditorTreeStore(
-    (state) => state.componentMutableAttrs[selectedComponentId!],
+    useShallow((state) =>
+      pick(
+        state.componentMutableAttrs[state.selectedComponentIds?.at(-1)!] ?? {},
+        ["id", "name"],
+      ),
+    ),
   );
 
   return (
     <Stack spacing="xs">
       <ComponentToBindFromInput
-        componentId={selectedComponentId}
         label="Component to change"
         onPickComponent={() => {
           setPickingComponentToBindTo(undefined);

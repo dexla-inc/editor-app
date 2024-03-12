@@ -12,9 +12,6 @@ type Props = EditableComponentMapper & Omit<ModalProps, "opened">;
 
 export const ModalComponent = forwardRef(
   ({ renderTree, component, ...props }: Props, ref) => {
-    const selectedComponentId = useEditorTreeStore(
-      (state) => state.selectedComponentIds?.at(-1),
-    );
     const theme = useThemeStore((state) => state.theme);
     const { isPreviewMode } = useAppMode();
     const iframeWindow = useEditorStore((state) => state.iframeWindow);
@@ -42,7 +39,6 @@ export const ModalComponent = forwardRef(
 
     const handleClose = () => {
       onclose && onclose();
-      console.log("Modal");
       const updateTreeComponentAttrs =
         useEditorTreeStore.getState().updateTreeComponentAttrs;
 
@@ -63,15 +59,7 @@ export const ModalComponent = forwardRef(
         withCloseButton={false}
         target={target}
         {...sizeProps}
-        opened={
-          isPreviewMode
-            ? opened
-            : (selectedComponentId === component.id ||
-                !!useEditorTreeStore.getState().componentMutableAttrs[
-                  selectedComponentId!
-                ]) &&
-              !forceHide
-        }
+        opened={isPreviewMode ? opened : !forceHide}
         {...props}
         {...componentProps}
         onClose={handleClose}

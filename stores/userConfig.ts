@@ -20,6 +20,10 @@ type UserConfigState = {
   setPreviewMode: (isPreviewMode: boolean) => void;
   navbarWidth: number;
   setNavbarWidth: (navbarWidth: number) => void;
+  isCustomComponentModalOpen: boolean;
+  setIsCustomComponentModalOpen: (
+    isCustomComponentModalOpen: boolean,
+  ) => Promise<void>;
 };
 
 export const useUserConfigStore = create<UserConfigState>()(
@@ -32,6 +36,7 @@ export const useUserConfigStore = create<UserConfigState>()(
         isDarkTheme: false,
         isPreviewMode: false,
         navbarWidth: 50,
+        isCustomComponentModalOpen: false,
         setIsDarkTheme: (isDarkTheme: boolean) => {
           set({ isDarkTheme }, false, "userConfig/setIsDarkTheme");
         },
@@ -84,6 +89,15 @@ export const useUserConfigStore = create<UserConfigState>()(
         },
         setNavbarWidth: (navbarWidth: number) => {
           set({ navbarWidth }, false, "userConfig/setNavbarWidth");
+        },
+        setIsCustomComponentModalOpen: async (
+          isCustomComponentModalOpen: boolean,
+        ) => {
+          set(
+            { isCustomComponentModalOpen },
+            false,
+            "userConfig/setIsCustomComponentModalOpen",
+          );
         },
       }),
       {

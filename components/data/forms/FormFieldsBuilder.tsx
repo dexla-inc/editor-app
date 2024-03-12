@@ -82,7 +82,7 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
   });
 
   useEffect(() => {
-    if (form.isTouched()) {
+    if (form.isTouched() && form.isDirty()) {
       debouncedTreeComponentAttrsUpdate({ attrs: form.values });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -126,11 +126,7 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
                 field={f}
               />
             ) : (
-              <StaticFormFieldsBuilder
-                field={f}
-                form={form}
-                component={component}
-              />
+              <StaticFormFieldsBuilder field={f} form={form} />
             )}
             {hasParentComponentData && (
               <Tooltip label="Bind">

@@ -23,7 +23,6 @@ type Props = {
 export const IFrame = ({ children, projectId, ...props }: Props) => {
   const [contentRef, setContentRef] = useState<HTMLIFrameElement>();
   const setIframeWindow = useEditorStore((state) => state.setIframeWindow);
-  const setActiveTab = useEditorStore((state) => state.setActiveTab);
   const navbarWidth = useUserConfigStore((state) => state.navbarWidth);
   const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
   const [isLoading, setIsLoading] = useState(true);
@@ -36,7 +35,7 @@ export const IFrame = ({ children, projectId, ...props }: Props) => {
   useEffect(() => {
     mountNode?.setAttribute(
       "style",
-      `overflow: visible; margin: 10px 0px 10px 10px;`,
+      `overflow: visible; margin: 24px 0px 24px 10px;`,
     );
 
     const styleTag = document.createElement("style");
@@ -125,10 +124,12 @@ export const IFrame = ({ children, projectId, ...props }: Props) => {
             })}
           >
             <Box
-              // @ts-ignore
               component={ScrollArea}
               offsetScrollbars
               id="iframe-content"
+              styles={{
+                root: { overflow: "visible" },
+              }}
             >
               {children}
             </Box>

@@ -1,14 +1,6 @@
 import { useEditorTreeStore } from "@/stores/editorTree";
 
 export const useComponentStates = () => {
-  const selectedComponentIds = useEditorTreeStore(
-    (state) => state.selectedComponentIds,
-  );
-  const components = useEditorTreeStore(
-    (state) =>
-      selectedComponentIds?.map((id) => state.componentMutableAttrs[id]),
-  );
-
   type ComponentAppearence = {
     label: string;
     value: string;
@@ -87,7 +79,13 @@ export const useComponentStates = () => {
     ],
   };
 
-  const getComponentsStates = (componentsIds?: string[]) => {
+  const getComponentsStates = () => {
+    const components = useEditorTreeStore
+      .getState()
+      .selectedComponentIds?.map(
+        (id) => useEditorTreeStore.getState().componentMutableAttrs[id],
+      );
+
     const componentNames = [
       ...new Set(components?.map((component) => component?.name)),
     ];
