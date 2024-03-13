@@ -12,6 +12,7 @@ import { EditableComponentMapper } from "@/utils/editor";
 import { NavLink as MantineNavLink, NavLinkProps } from "@mantine/core";
 import merge from "lodash.merge";
 import { forwardRef, memo } from "react";
+import { memoize } from "proxy-memoize";
 type Props = EditableComponentMapper & NavLinkProps;
 
 const NavLinkComponent = forwardRef(
@@ -51,9 +52,12 @@ const NavLinkComponent = forwardRef(
     } = merge({}, component.props, activeProps) as any;
 
     const { computeValue } = useDataContext()!;
+    const onLoad = useEditorTreeStore(
+      memoize((state) => state.componentMutableAttrs[component?.id!].onLoad),
+    );
     const labelValue =
       computeValue({
-        value: component.onLoad?.label,
+        value: onLoad?.label,
         shareableContent,
       }) ?? component.props?.label;
 

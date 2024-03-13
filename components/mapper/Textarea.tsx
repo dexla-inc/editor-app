@@ -58,7 +58,6 @@ const TextareaComponent = forwardRef(
     return (
       <MantineTextarea
         ref={ref}
-        id={component.id}
         {...props}
         {...componentProps}
         style={{}}

@@ -7,6 +7,8 @@ import { EditableComponentMapper } from "@/utils/editor";
 import { Text as MantineText, TextProps } from "@mantine/core";
 import merge from "lodash.merge";
 import { forwardRef, memo, useMemo } from "react";
+import { useEditorTreeStore } from "@/stores/editorTree";
+import { memoize } from "proxy-memoize";
 
 type Props = EditableComponentMapper & TextProps;
 
@@ -33,20 +35,15 @@ const TextComponent = forwardRef(
     const customStyle = merge({}, textStyle, style);
 
     const { computeValue } = useDataContext()!;
-
-    const childrenValue = useMemo(
-      () =>
-        computeValue({
-          value: component.onLoad?.children,
-          shareableContent,
-        }) ?? component.props?.children,
-      [
-        computeValue,
-        component.onLoad?.children,
-        component.props?.children,
-        shareableContent,
-      ],
+    const onLoad = useEditorTreeStore(
+      memoize((state) => state.componentMutableAttrs[component?.id!].onLoad),
     );
+
+    const childrenValue =
+      computeValue({
+        value: onLoad?.children,
+        shareableContent,
+      }) ?? component.props?.children;
 
     return (
       <MantineText

@@ -18,6 +18,8 @@ import {
   useRef,
   useState,
 } from "react";
+import { useEditorTreeStore } from "@/stores/editorTree";
+import { memoize } from "proxy-memoize";
 
 type Props = EditableComponentMapper & ButtonProps & ReactElement<"Button">;
 
@@ -54,8 +56,11 @@ const CountdownButtonComponent = forwardRef(
     );
 
     const { computeValue } = useDataContext()!;
+    const onLoad = useEditorTreeStore(
+      memoize((state) => state.componentMutableAttrs[component?.id!].onLoad),
+    );
     const childrenValue = computeValue({
-      value: component.onLoad?.children,
+      value: onLoad?.children,
       shareableContent,
       staticFallback: component.props?.children,
     });

@@ -5,6 +5,7 @@ import { FlexProps, LoadingOverlay, Flex as MantineFlex } from "@mantine/core";
 import { memo } from "react";
 import { isSame } from "@/utils/componentComparison";
 import { useEditorTreeStore } from "@/stores/editorTree";
+import { memoize } from "proxy-memoize";
 
 type Props = EditableComponentMapper & FlexProps;
 
@@ -19,7 +20,10 @@ const CardAndContainerWrapperInner = ({
   const gapPx = convertSizeToPx(gap, "gap");
   const isPreviewMode = useEditorTreeStore((state) => state.isPreviewMode);
 
-  const { endpointId } = component.onLoad ?? {};
+  const onLoad = useEditorTreeStore(
+    memoize((state) => state.componentMutableAttrs[component?.id!].onLoad),
+  );
+  const { endpointId } = onLoad ?? {};
 
   const { data } = useEndpoint({
     component,
