@@ -129,6 +129,7 @@ export const IFrame = ({ children, projectId, ...props }: Props) => {
               id="iframe-content"
               styles={{
                 root: { overflow: "visible" },
+                viewport: { overflow: "visible!important" },
               }}
             >
               {children}
