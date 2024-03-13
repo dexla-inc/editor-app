@@ -121,7 +121,7 @@ export const getAllAncestors = (
 };
 
 export function buildTree(flattenedItems: FlattenedItem[]): TreeItems {
-  const root: TreeItem = { id: "root", children: [] };
+  const root: TreeItem = { id: "root", children: [], name: "Container" };
   const nodes: Record<string, TreeItem> = { [root.id as string]: root };
   const items = flattenedItems.map((item) => ({ ...item, children: [] }));
 
@@ -133,6 +133,7 @@ export function buildTree(flattenedItems: FlattenedItem[]): TreeItems {
     const parentId = item.parentId ?? root.id ?? "content-wrapper";
     const parent = nodes[parentId] ?? findItem(items, parentId);
 
+    // @ts-ignore
     nodes[id] = { id, children };
     parent.children?.push(item);
   }

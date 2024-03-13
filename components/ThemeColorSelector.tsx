@@ -12,12 +12,12 @@ import {
   Stack,
 } from "@mantine/core";
 import { forwardRef } from "react";
-import { TopLabel } from "./TopLabel";
+import { TopLabel } from "@/components/TopLabel";
 
 type ColorsArray = Array<{ label: string; value: string | null | undefined }>;
 
 // eslint-disable-next-line react/display-name
-const SelectItem = forwardRef<HTMLDivElement, any>(
+const SelectItemComponent = forwardRef<HTMLDivElement, any>(
   ({ value, label, ...other }: any, ref) => {
     const theme = useThemeStore((state) => state.theme);
 
@@ -133,7 +133,7 @@ export const ThemeColorSelector = ({ isGradient, ...props }: Props) => {
                     value: "transparent",
                   })) as SelectItem[]
             }
-            itemComponent={SelectItem}
+            itemComponent={SelectItemComponent}
             searchable
             icon={bgColor}
           />
@@ -144,7 +144,7 @@ export const ThemeColorSelector = ({ isGradient, ...props }: Props) => {
                 size="xs"
                 {...selectProps}
                 data={_dataWithShades}
-                itemComponent={SelectItem}
+                itemComponent={SelectItemComponent}
                 searchable
               />
             </Group>

@@ -12,7 +12,6 @@ export type DataProps = {
 };
 
 export const ChartData = ({ component, endpoints, dataType }: DataProps) => {
-  console.log("ChartData");
   const updateTreeComponentAttrs = useEditorTreeStore(
     (state) => state.updateTreeComponentAttrs,
   );

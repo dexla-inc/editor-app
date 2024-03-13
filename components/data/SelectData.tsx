@@ -13,7 +13,6 @@ export type DataProps = {
 };
 
 export const SelectData = ({ component, endpoints, dataType }: DataProps) => {
-  console.log("SelectData");
   const updateTreeComponentAttrs = useEditorTreeStore(
     (state) => state.updateTreeComponentAttrs,
   );

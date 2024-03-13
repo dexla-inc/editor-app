@@ -71,7 +71,8 @@ export const calculateGridSizes = (tree?: ComponentStructure) => {
             );
           }
 
-          node.props!.span = siblingsSpan;
+          if (node.props?.span) node.props.span = siblingsSpan;
+
           setColumnSpan(node.id!, siblingsSpan);
         }
       }

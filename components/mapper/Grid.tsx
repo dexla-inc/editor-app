@@ -1,13 +1,15 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { isSame } from "@/utils/componentComparison";
+import { structureMapper } from "@/utils/componentMapper";
 import { GRID_SIZE } from "@/utils/config";
 import { convertSizeToPx } from "@/utils/defaultSizes";
-import { EditableComponentMapper } from "@/utils/editor";
+import { EditableComponentMapper, checkNavbarExists } from "@/utils/editor";
 import { calculateGridSizes } from "@/utils/grid";
 import { Box, BoxProps, MantineSize, useMantineTheme } from "@mantine/core";
 import { usePrevious } from "@mantine/hooks";
 import { forwardRef, memo, useEffect } from "react";
+import { getAllComponentsByName } from "../../utils/editor";
 
 export type GridProps = EditableComponentMapper & BoxProps;
 
@@ -27,10 +29,12 @@ const GridComponent = forwardRef(
     const isColumns = gridDirection === "column";
     const defaultGridTemplate = `repeat(${gridSize ?? GRID_SIZE}, 1fr)`;
 
-    const gridTemplate =
-      navbarWidth !== undefined && component.id === "content-wrapper"
-        ? `${navbarWidth} ${defaultGridTemplate}`
-        : defaultGridTemplate;
+    let gridTemplate = defaultGridTemplate;
+    if (navbarWidth !== undefined && component.id === "content-wrapper") {
+      const navbarExists = checkNavbarExists();
+
+      if (navbarExists) gridTemplate = `${navbarWidth} ${defaultGridTemplate}`;
+    }
 
     const gapValue = convertSizeToPx(
       gap ?? (theme.spacing.xs as MantineSize),
