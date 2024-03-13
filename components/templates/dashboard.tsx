@@ -567,7 +567,6 @@ export const template = async (
                               props: {
                                 fit: "cover",
                                 alt: "Notification",
-                                src: "https://dexlastatesdev.blob.core.windows.net/temp/notifications.svg",
                                 style: {
                                   width: "25px",
                                   height: "25px",
@@ -622,7 +621,6 @@ export const template = async (
                               props: {
                                 fit: "cover",
                                 alt: "Settings",
-                                src: "https://dexlastatesdev.blob.core.windows.net/temp/settings.svg",
                                 style: {
                                   width: "25px",
                                   height: "25px",
@@ -682,7 +680,6 @@ export const template = async (
                                 fit: "contain",
                                 radius: "md",
                                 alt: "Profile Image",
-                                src: "https://dexlastatesdev.blob.core.windows.net/temp/avatar_25.jpg",
                                 style: {
                                   width: "100%",
                                   height: "100%",
