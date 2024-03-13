@@ -7,6 +7,8 @@ import { EditableComponentMapper } from "@/utils/editor";
 import { AnchorProps, Anchor as MantineAnchor } from "@mantine/core";
 import merge from "lodash.merge";
 import { forwardRef, memo } from "react";
+import { useEditorTreeStore } from "@/stores/editorTree";
+import { memoize } from "proxy-memoize";
 
 type Props = EditableComponentMapper & AnchorProps;
 
@@ -21,9 +23,12 @@ const LinkComponent = forwardRef(
     );
 
     const { computeValue } = useDataContext()!;
+    const onLoad = useEditorTreeStore(
+      memoize((state) => state.componentMutableAttrs[component?.id!].onLoad),
+    );
     const childrenValue =
       computeValue({
-        value: component.onLoad?.children,
+        value: onLoad?.children,
         shareableContent,
       }) ?? component.props?.children;
 

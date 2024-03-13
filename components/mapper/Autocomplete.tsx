@@ -16,6 +16,8 @@ import {
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { forwardRef, memo, useEffect, useState } from "react";
+import { useEditorTreeStore } from "@/stores/editorTree";
+import { memoize } from "proxy-memoize";
 
 type Props = EditableComponentMapper & AutocompleteProps;
 
@@ -33,7 +35,10 @@ const AutocompleteComponent = forwardRef(
     } = component.props as any;
 
     const componentId = component.id as string;
-    const { dataLabelKey, dataValueKey, resultsKey } = component.onLoad ?? {};
+    const onLoad = useEditorTreeStore(
+      memoize((state) => state.componentMutableAttrs[component?.id!].onLoad),
+    );
+    const { dataLabelKey, dataValueKey, resultsKey } = onLoad ?? {};
     const { onChange, onItemSubmit, ...restTriggers } = triggers || {};
 
     const { color, backgroundColor } = useChangeState({ bg, textColor });
