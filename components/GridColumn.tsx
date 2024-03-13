@@ -53,11 +53,11 @@ export const GridColumn = forwardRef(
     const isOnlyChild = siblings.length === 1;
     const isDirectionHorizontal = style?.gridAutoFlow === "column";
 
-    useEffect(() => {
-      if (columnSpans[props.id] === undefined) {
-        setColumnSpan(props.id, span);
-      }
-    }, [columnSpans, props.id, setColumnSpan, span]);
+    // useEffect(() => {
+    //   if (columnSpans[props.id] === undefined) {
+    //     setColumnSpan(props.id, span);
+    //   }
+    // }, [columnSpans, props.id, setColumnSpan, span]);
 
     const handleOffset = px(
       Object.keys(theme.spacing).includes(parent?.props?.gap)

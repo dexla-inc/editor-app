@@ -37,7 +37,6 @@ export const jsonStructure = (props?: any): ComponentStructure => {
   const logoUrl =
     darkLogo?.url ||
     lightLogo?.url ||
-    "https://dexlastatesdev.blob.core.windows.net/editor/1e176c4b3b784ddd98e161a9b4d0a48c_fakeLogo.svg" ||
     "https://www.kadencewp.com/wp-content/uploads/2020/10/alogo-4.svg";
 
   const isDarkTheme = lightLogo ? true : false;
@@ -325,7 +324,6 @@ export const jsonStructure = (props?: any): ComponentStructure => {
                 description: "Avatar",
                 props: {
                   radius: "xl",
-                  src: "https://dexlastatesdev.blob.core.windows.net/editor/1e176c4b3b784ddd98e161a9b4d0a48c_profile.png",
                   style: { width: "40px", height: "40px" },
                 },
                 children: [],

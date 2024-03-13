@@ -15,7 +15,6 @@ import { pick } from "next/dist/lib/pick";
 import { useRouter } from "next/router";
 import { createContext, useContext, useEffect } from "react";
 import { useNodes } from "reactflow";
-import { useShallow } from "zustand/react/shallow";
 import { Component } from "@/utils/editor";
 import { memoize } from "proxy-memoize";
 
@@ -60,7 +59,7 @@ const processValue = (value: any, type: string) => {
 export const DataContext = createContext<DataContextProps | null>(null);
 
 export const DataProvider = ({ children }: DataProviderProps) => {
-  const variablesList = useVariableStore((state) => state.variableList); // Is this persisted store required any longer?
+  const variablesList = useVariableStore((state) => state.variableList);
   const inputsStore = useInputsStore((state) => state.inputValues);
   const browser = useRouter();
   const auth = useDataSourceStore((state) => state.getAuthState());

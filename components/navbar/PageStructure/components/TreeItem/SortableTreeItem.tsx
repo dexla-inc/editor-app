@@ -16,6 +16,7 @@ const animateLayoutChanges: AnimateLayoutChanges = ({
 }) => (isSorting || wasDragging ? false : true);
 
 export function SortableTreeItem({ id, depth, ...props }: Props) {
+  //console.log("SortableTreeItem", id, depth);
   const component = useEditorTreeStore((state) => ({
     name: state.componentMutableAttrs[id].name,
     value: state.componentMutableAttrs[id].description?.toString(),
