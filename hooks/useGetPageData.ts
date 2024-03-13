@@ -54,6 +54,7 @@ export const useGetPageData = ({
         title: "Page Loaded",
         message: "Your page has successfully loaded",
       });
+      return defaultPageState;
     } else if (page.state) {
       const decodedSchema = decodeSchema(page.state);
       setEditorTree(JSON.parse(decodedSchema), {
@@ -67,8 +68,11 @@ export const useGetPageData = ({
         title: "Page Loaded",
         message: "Your page has successfully loaded",
       });
+      return JSON.parse(decodedSchema);
     } else {
       setIsLoading(false);
+      return defaultPageState;
+
       // Commenting out AI page generation for now
       // setIsLoading(true);
       // startLoading({

@@ -14,7 +14,7 @@ import {
 } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { removeKeysRecursive } from "@/utils/removeKeys";
-import { createClient } from "@liveblocks/client";
+import { createClient, shallow } from "@liveblocks/client";
 import { WithLiveblocks, liveblocks } from "@liveblocks/zustand";
 import { User } from "@propelauth/react";
 import debounce from "lodash.debounce";
@@ -148,8 +148,8 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
           setTree: (tree, options) => {
             set(
               (state: EditorTreeState) => {
-                // TODO: Look into why Removed Container appears when refreshing page
-                //console.log("setting tree", tree);
+                // TODO: Look into why the previous history appears when refreshing page
+                console.log("setting tree", tree);
                 if (!options?.onLoad && !state.isPreviewMode) {
                   debouncedUpdatePageState(
                     encodeSchema(JSON.stringify(tree)),
@@ -163,7 +163,8 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                   tree.root,
                 );
 
-                return {
+                const newState = {
+                  ...state,
                   tree: {
                     ...tree,
                     name: options?.action || "Generic move",
@@ -175,6 +176,8 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                     newComponentMutableAttrs,
                   ),
                 };
+
+                return newState;
               },
               false,
               "editorTree/setTree",
@@ -258,19 +261,21 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                   state.currentTreeComponentsStates?.[lastComponentId] ??
                   "default";
 
+                let newComponentMutableAttrs = cloneDeep(
+                  state.componentMutableAttrs,
+                );
+
                 componentIds.forEach((id) => {
-                  state.componentMutableAttrs[id] = cloneDeep(
-                    updateTreeComponentAttrs(
-                      state.componentMutableAttrs[id] ?? {},
-                      attrs,
-                      currentState,
-                    ),
+                  newComponentMutableAttrs[id] = updateTreeComponentAttrs(
+                    newComponentMutableAttrs[id] ?? {},
+                    attrs,
+                    currentState,
                   );
                 });
 
                 const treeWithRecoveredAttrs = recoverTreeComponentAttrs(
                   state.tree,
-                  state.componentMutableAttrs,
+                  newComponentMutableAttrs,
                 );
                 if (save && !state.isPreviewMode) {
                   debouncedUpdatePageState(
@@ -285,8 +290,10 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                   );
                 }
 
+                // Return the new state with the updated componentMutableAttrs
                 return {
-                  componentMutableAttrs: state.componentMutableAttrs,
+                  ...state,
+                  componentMutableAttrs: newComponentMutableAttrs,
                 };
               },
               false,
@@ -356,12 +363,24 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
         }),
         {
           partialize: (state) => {
-            const { tree, columnSpans } = state;
-            return { tree, columnSpans };
+            const { tree, columnSpans, componentMutableAttrs } = state;
+            return { tree, columnSpans, componentMutableAttrs };
           },
           limit: 500,
           equality(currentState, pastState) {
-            return isEqual(currentState.tree, pastState.tree);
+            const treeEqual = isEqual(currentState.tree, pastState.tree);
+            const columnSpansEqual = isEqual(
+              currentState.columnSpans,
+              pastState.columnSpans,
+            );
+            const componentMutableAttrsEqual = shallow(
+              currentState.componentMutableAttrs,
+              pastState.componentMutableAttrs,
+            );
+
+            //console.log("treeEqual", treeEqual);
+
+            return treeEqual && columnSpansEqual && componentMutableAttrsEqual;
           },
         },
       ),

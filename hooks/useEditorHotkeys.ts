@@ -15,7 +15,7 @@ import {
 } from "@/utils/editor";
 import { useHotkeys } from "@mantine/hooks";
 import cloneDeep from "lodash.clonedeep";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 
 export const useEditorHotkeys = () => {
   const editorTree = useEditorTreeStore((state) => state.tree);
@@ -34,6 +34,11 @@ export const useEditorHotkeys = () => {
   const undo = useTemporalStore((state) => state.undo);
   const redo = useTemporalStore((state) => state.redo);
   const pastStates = useTemporalStore((state) => state.pastStates);
+
+  // Add this page to fix undo for delete component
+  // useEffect(() => {
+  //   console.log("pastStates", pastStates);
+  // }, [pastStates]);
 
   const deleteComponent = useCallback(() => {
     const selectedComponentIds =
@@ -97,7 +102,8 @@ export const useEditorHotkeys = () => {
         } else {
           setSelectedComponentIds(() => []);
         }
-        setEditorTree(editorTree as EditorTreeCopy, {
+        const editorTreeCopy = cloneDeep(editorTree);
+        setEditorTree(editorTreeCopy, {
           action: `Removed ${comp?.name}`,
         });
       });

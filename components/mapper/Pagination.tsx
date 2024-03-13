@@ -17,7 +17,6 @@ const PaginationComponent = forwardRef(
     const { onChange, ...allTriggers } = triggers || {};
 
     const customOnChange = (value: any) => {
-      console.log("Pagination");
       const updateTreeComponentAttrs =
         useEditorTreeStore.getState().updateTreeComponentAttrs;
       updateTreeComponentAttrs({
