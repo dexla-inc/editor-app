@@ -12,7 +12,6 @@ export const CountdownButtonData = ({ component, endpoints }: DataProps) => {
       label: "Value",
     },
   ];
-  console.log("CountdownButtonData");
   const updateTreeComponentAttrs = useEditorTreeStore(
     (state) => state.updateTreeComponentAttrs,
   );

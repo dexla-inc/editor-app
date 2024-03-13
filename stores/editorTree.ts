@@ -148,7 +148,8 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
           setTree: (tree, options) => {
             set(
               (state: EditorTreeState) => {
-                console.log("setting tree", tree);
+                // TODO: Look into why Removed Container appears when refreshing page
+                //console.log("setting tree", tree);
                 if (!options?.onLoad && !state.isPreviewMode) {
                   debouncedUpdatePageState(
                     encodeSchema(JSON.stringify(tree)),

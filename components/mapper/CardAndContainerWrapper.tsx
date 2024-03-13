@@ -27,11 +27,6 @@ const CardAndContainerWrapperInner = ({
     includeExampleResponse: !isPreviewMode,
   });
 
-  console.log("data", data);
-  console.log("props.shareableContent", props.shareableContent);
-  console.log("component", component);
-  console.log("children", children);
-
   return (
     <MantineFlex
       ref={ref}

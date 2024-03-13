@@ -32,11 +32,10 @@ export type EditableComponentMapper = {
 
 type ComponentBase = {
   id?: string;
-  //name: string;
+  name: string;
 };
 
 export type Component = {
-  name: string;
   description?: string;
   title?: string;
   props?: { [key: string]: any };
@@ -57,7 +56,6 @@ export type Component = {
 } & ComponentBase;
 
 export type ComponentTree = {
-  // TODO: this needs to be a ComponentTree[]
   children?: ComponentTree[];
 } & ComponentBase;
 
@@ -560,8 +558,29 @@ function objectsIntersect(
   return every(criteriaObject, (value, key) => get(obj, key) === value);
 }
 
+export const checkNavbarExists = (): boolean => {
+  const state = useEditorTreeStore.getState();
+
+  if (!state.tree || !state.tree.root) {
+    return false;
+  }
+
+  const rootChildren = state.tree.root.children;
+  if (
+    !rootChildren ||
+    rootChildren.length === 0 ||
+    !rootChildren[0].children ||
+    rootChildren[0].children.length === 0
+  ) {
+    return false;
+  }
+
+  const navbarName = rootChildren[0].children[0].name;
+  return navbarName === "Navbar";
+};
+
 export const getAllComponentsByName = (
-  treeRoot: Component,
+  treeRoot: ComponentStructure,
   componentName: string | string[],
   propCriterias = {},
 ): Component[] => {
@@ -633,6 +652,7 @@ export const addComponent = (
     treeRoot,
     (node, context) => {
       if (isNavbar) {
+        console.log(isNavbar);
         const contentWrapper = treeRoot.children?.find(
           (child) => child.id === "content-wrapper",
         );

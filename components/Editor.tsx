@@ -8,7 +8,7 @@ import { EditorNavbarSections } from "@/components/navbar/EditorNavbarSections";
 import { useAppMode } from "@/hooks/useAppMode";
 import { useGetPageData } from "@/hooks/useGetPageData";
 import { useEditorStore } from "@/stores/editor";
-import { useEditorTreeStore } from "@/stores/editorTree";
+import { useEditorTreeStore, useTemporalStore } from "@/stores/editorTree";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { globalStyles } from "@/utils/branding";
@@ -37,12 +37,14 @@ const Editor = ({ projectId, pageId }: Props) => {
   const setCurrentUser = useEditorTreeStore((state) => state.setCurrentUser);
   const isDarkTheme = useUserConfigStore((state) => state.isDarkTheme);
   const user = usePropelAuthStore((state) => state.user);
+  const clear = useTemporalStore((state) => state.clear);
 
   useGetPageData({ projectId, pageId });
   const [roomEntered, setRoomEntered] = useState(false);
 
   useEffect(() => {
     setCurrentPageAndProjectIds(projectId, pageId);
+    clear();
 
     if (pageId && !roomEntered) {
       liveblocks.enterRoom(pageId);

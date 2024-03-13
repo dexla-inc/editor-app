@@ -200,12 +200,15 @@ export const emptyEditorTree = {
   timestamp: Date.now(),
   root: {
     id: "root",
+    name: "Container",
     children: [
       {
         id: "content-wrapper",
+        name: "Grid",
         children: [
           {
             id: "main-content",
+            name: "GridColumn",
           },
         ],
       },
