@@ -21,14 +21,8 @@ const TextComponent = forwardRef(
       component.id as string,
       ref,
     );
-    const {
-      triggers,
-      hideIfDataIsEmpty,
-      variable,
-      text,
-
-      ...componentProps
-    } = component.props as any;
+    const { triggers, hideIfDataIsEmpty, variable, text, ...componentProps } =
+      component.props as any;
     const { style, ...restProps } = props as any;
 
     const { textStyle } = useBrandingStyles();
