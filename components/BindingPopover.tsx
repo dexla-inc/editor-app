@@ -110,7 +110,7 @@ export default function BindingPopover({
     },
     {
       entity: "actions",
-      dataItems: Object.values(actions.list),
+      dataItems: actions?.list ? Object.values(actions?.list) : [],
     },
   ];
 
