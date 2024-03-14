@@ -152,7 +152,11 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
               set(
                 (state: EditorTreeState) => {
                   // TODO: Look into why the previous history appears when refreshing page
-                  if (!options?.onLoad && !state.isPreviewMode) {
+                  if (
+                    !options?.onLoad &&
+                    !state.isPreviewMode &&
+                    !state.isLive
+                  ) {
                     debouncedUpdatePageState(
                       encodeSchema(JSON.stringify(tree)),
                       state.currentProjectId ?? "",
@@ -216,7 +220,7 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                     state.componentMutableAttrs,
                   );
 
-                  if (save && !state.isPreviewMode) {
+                  if (save && !state.isPreviewMode && !state.isLive) {
                     debouncedUpdatePageState(
                       encodeSchema(
                         JSON.stringify(
@@ -275,7 +279,7 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                     state.tree,
                     state.componentMutableAttrs,
                   );
-                  if (save && !state.isPreviewMode) {
+                  if (save && !state.isPreviewMode && !state.isLive) {
                     debouncedUpdatePageState(
                       encodeSchema(
                         JSON.stringify(
