@@ -11,6 +11,7 @@ import {
 import { DROP_INDICATOR_WIDTH } from "@/utils/config";
 import { useMemo } from "react";
 import { useAppMode } from "./useAppMode";
+import { useEditorTreeStore } from "@/stores/editorTree";
 
 type Props = {
   componentId: string;
@@ -24,7 +25,7 @@ export const useEditorShadows = ({
   selectedByOther,
 }: Props) => {
   const { isPreviewMode } = useAppMode();
-  const isEditorMode = useEditorStore(
+  const isEditorMode = useEditorTreeStore(
     (state) => !isPreviewMode && !state.isLive,
   );
   const isPicking = useEditorStore(

@@ -29,7 +29,7 @@ export type EditorState = {
   iframeWindow?: Window;
   currentTargetId?: string;
   isSaving: boolean;
-  isLive: boolean;
+  // isLive: boolean;
   isNavBarVisible: boolean;
   activeTab?: SectionId;
   isStructureCollapsed: boolean;
@@ -58,7 +58,7 @@ export type EditorState = {
   setCurrentTargetId: (currentTargetId?: string) => void;
   setComponentToAdd: (componentToAdd?: ComponentStructure) => void;
   setIsSaving: (isSaving: boolean) => void;
-  setIsLive: (value: boolean) => void;
+  // setIsLive: (value: boolean) => void;
   setIsNavBarVisible: () => void;
   setActiveTab: (activeTab?: SectionId) => void;
   setIsStructureCollapsed: (value: boolean) => void;
@@ -153,13 +153,13 @@ export const useEditorStore = create<EditorState>()(
       setComponentToAdd: (componentToAdd) =>
         set({ componentToAdd }, false, "editor/setComponentToAdd"),
       setIsSaving: (isSaving) => set({ isSaving }, false, "editor/setIsSaving"),
-      isLive: false,
+      // isLive: false,
       isNavBarVisible: true,
       isStructureCollapsed: false,
       setActiveTab: (activeTab) =>
         set({ activeTab }, false, "editor/setActiveTab"),
 
-      setIsLive: (value) => set({ isLive: value }, false, "editor/setIsLive"),
+      // setIsLive: (value) => set({ isLive: value }, false, "editor/setIsLive"),
       setIsStructureCollapsed: (value) =>
         set(
           { isStructureCollapsed: value },

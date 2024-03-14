@@ -17,7 +17,7 @@ const PopOverComponent = ({
 }: Props) => {
   const { isPreviewMode } = useAppMode();
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
-  const isLive = useEditorStore((state) => state.isLive);
+  const isLive = useEditorTreeStore((state) => state.isLive);
 
   const {
     children,

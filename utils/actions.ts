@@ -246,7 +246,7 @@ export const useNavigationAction = ({
   action,
   router,
 }: NavigationActionParams) => {
-  const editorState = useEditorStore.getState();
+  const editorState = useEditorTreeStore.getState();
   const isLive = editorState.isLive;
   const projectId = useEditorTreeStore.getState().currentProjectId;
 

@@ -41,13 +41,10 @@ function findIntersectedKeyValues(objects: Component[]) {
 
 export const withModifier = (Modifier: ComponentType<WithModifier>) => {
   const Config = ({ initiallyOpened }: any) => {
-    const selectedComponentIds = useEditorTreeStore(
-      (state) => state.selectedComponentIds,
-    );
     const selectedComponents = useEditorTreeStore((state) =>
       Object.entries(state.componentMutableAttrs).reduce(
         (acc, [id, component]) => {
-          if (selectedComponentIds?.includes(id)) {
+          if (state.selectedComponentIds?.includes(id)) {
             acc.push(component);
           }
           return acc;
@@ -56,30 +53,28 @@ export const withModifier = (Modifier: ComponentType<WithModifier>) => {
       ),
     );
     const language = "en";
-    const currentTreeComponentsStates = useEditorTreeStore(
-      (state) => state.currentTreeComponentsStates,
+    const currentState = useEditorTreeStore(
+      (state) =>
+        state.currentTreeComponentsStates?.[
+          state.selectedComponentIds?.at(-1)!
+        ] ?? "default",
     );
-
-    const currentState =
-      currentTreeComponentsStates?.[selectedComponentIds?.[0] || ""] ??
-      "default";
 
     const mergedCustomData = useMemo(() => {
       return selectedComponents?.map((selectedComponent) => {
-        merge(
+        const mergedComponent = merge(
           {},
-          selectedComponent?.props,
-          selectedComponent?.languages?.[language],
-          selectedComponent?.states?.[currentState],
+          selectedComponent,
+          { props: selectedComponent?.languages?.[language] },
+          { props: selectedComponent?.states?.[currentState] },
         );
-        return selectedComponent;
+        return mergedComponent;
       });
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedComponents, currentState, language]);
 
     const component = findIntersectedKeyValues(mergedCustomData as Component[]);
-
-    if (!initiallyOpened || !selectedComponentIds?.length) {
+    // console.log({ currentState, mergedCustomData });
+    if (!initiallyOpened || !selectedComponents?.length) {
       return null;
     }
 

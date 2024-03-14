@@ -2,7 +2,6 @@ import { Live } from "@/components/Live";
 import { withPageOnLoad } from "@/hoc/withPageOnLoad";
 import { DeploymentPage } from "@/requests/deployments/types";
 import { getProject } from "@/requests/projects/queries-noauth";
-import { useEditorStore } from "@/stores/editor";
 import { getPageProps } from "@/utils/serverside";
 import { GetServerSidePropsContext } from "next";
 import Head from "next/head";
@@ -46,7 +45,7 @@ const HomePage = ({ id, page, faviconUrl }: Props) => {
   const setCurrentPageAndProjectIds =
     useEditorTreeStore.getState().setCurrentPageAndProjectIds;
   const setPreviewMode = useEditorTreeStore.getState().setPreviewMode;
-  const setIsLive = useEditorStore.getState().setIsLive;
+  const setIsLive = useEditorTreeStore.getState().setIsLive;
 
   useEffect(() => {
     if (id && page.id) {
