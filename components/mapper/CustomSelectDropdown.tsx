@@ -46,7 +46,7 @@ export const CustomDropdown = ({ children, ...props }: any) => {
     component?.props?.customText || component?.props?.customLinkText;
   return (
     <MantineBox component={ScrollArea} {...props}>
-      {children?.toString()}
+      {children}
       {isComponent && (
         <FixedLink
           text={component?.props?.customText}

@@ -47,11 +47,12 @@ export const DeployButton = () => {
         title: "Deployed",
         message: "You app was successfully deployed!",
       });
-    } catch (error) {
+    } catch (error: any) {
       stopLoading({
         id: "deploy",
         title: "Oops",
-        message: "Something went wrong",
+        message: error,
+        isError: true,
       });
     }
   };
