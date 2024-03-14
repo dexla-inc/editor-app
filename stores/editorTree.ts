@@ -380,8 +380,6 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                 pastState.componentMutableAttrs,
               );
 
-              //console.log("treeEqual", treeEqual);
-
               return (
                 treeEqual && columnSpansEqual && componentMutableAttrsEqual
               );
@@ -389,7 +387,7 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
           },
         ),
         {
-          name: "user-config",
+          name: "editor-tree-config",
           partialize: (state) => {
             return {
               isPreviewMode: state.isPreviewMode,

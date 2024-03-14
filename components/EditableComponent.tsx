@@ -43,10 +43,6 @@ export const EditableComponent = ({
 
   let currentState = useComputeCurrentState(component);
 
-  if (component.description === "ButtonTest") {
-    console.log("ButtonTest--->", currentState);
-  }
-
   if (shareableContent?.parentState)
     currentState = shareableContent.parentState;
 
