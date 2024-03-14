@@ -3,12 +3,13 @@ import { useThemeStore } from "@/stores/theme";
 import { defaultTheme } from "@/utils/branding";
 import { useEffect, useState } from "react";
 import { useProjectQuery } from "./reactQuery/useProjectQuery";
+import { useEditorTreeStore } from "@/stores/editorTree";
 
 export const useUserTheme = (projectId: string) => {
   const setTheme = useThemeStore((state) => state.setTheme);
   const [internalTheme, setInternalTheme] = useState<any>(null);
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
-  const isLive = useEditorStore((state) => state.isLive);
+  const isLive = useEditorTreeStore((state) => state.isLive);
   const project = useProjectQuery(projectId);
 
   useEffect(() => {

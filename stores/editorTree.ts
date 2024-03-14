@@ -22,7 +22,7 @@ import isEqual from "lodash.isequal";
 import merge from "lodash.merge";
 import { TemporalState, temporal } from "zundo";
 import { create, useStore } from "zustand";
-import { devtools } from "zustand/middleware";
+import { devtools, persist } from "zustand/middleware";
 import cloneDeep from "lodash.clonedeep";
 
 const client = createClient({
@@ -109,7 +109,9 @@ export type EditorTreeState = {
   currentProjectId?: string;
   currentPageId?: string;
   isPreviewMode?: boolean;
+  isLive: boolean;
   setPreviewMode: (isPreviewMode: boolean) => void;
+  setIsLive: (value: boolean) => void;
   currentTreeComponentsStates?: {
     [key: string]: string;
   };
@@ -142,245 +144,258 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
   // @ts-ignore
   liveblocks(
     devtools(
-      temporal(
-        (set) => ({
-          isSaving: false,
-          setTree: (tree, options) => {
-            set(
-              (state: EditorTreeState) => {
-                // TODO: Look into why the previous history appears when refreshing page
-                console.log("setting tree", tree);
-                if (!options?.onLoad && !state.isPreviewMode) {
-                  debouncedUpdatePageState(
-                    encodeSchema(JSON.stringify(tree)),
-                    state.currentProjectId ?? "",
-                    state.currentPageId ?? "",
-                    state.setIsSaving,
+      persist(
+        temporal(
+          (set) => ({
+            isSaving: false,
+            setTree: (tree, options) => {
+              set(
+                (state: EditorTreeState) => {
+                  // TODO: Look into why the previous history appears when refreshing page
+                  if (
+                    !options?.onLoad &&
+                    !state.isPreviewMode &&
+                    !state.isLive
+                  ) {
+                    debouncedUpdatePageState(
+                      encodeSchema(JSON.stringify(tree)),
+                      state.currentProjectId ?? "",
+                      state.currentPageId ?? "",
+                      state.setIsSaving,
+                    );
+                  }
+
+                  const newComponentMutableAttrs = getTreeComponentMutableProps(
+                    tree.root,
                   );
-                }
 
-                const newComponentMutableAttrs = getTreeComponentMutableProps(
-                  tree.root,
-                );
-
-                const newState = {
-                  ...state,
-                  tree: {
-                    ...tree,
-                    name: options?.action || "Generic move",
-                    timestamp: Date.now(),
-                  },
-                  componentMutableAttrs: merge(
-                    {},
-                    state.componentMutableAttrs,
-                    newComponentMutableAttrs,
-                  ),
-                };
-
-                return newState;
-              },
-              false,
-              "editorTree/setTree",
-            );
-          },
-          resetTree: () => {
-            const timestamp = Date.now();
-            set(
-              {
-                tree: { ...emptyEditorTree, timestamp },
-              },
-              false,
-              "editorTree/resetTree",
-            );
-          },
-          updateTreeComponentChildren: (componentId, children, save = true) =>
-            set(
-              (state: EditorTreeState) => {
-                updateTreeComponentChildren(
-                  state.tree.root,
-                  componentId,
-                  children,
-                );
-
-                children.forEach((child) => {
-                  state.componentMutableAttrs = {
-                    ...state.componentMutableAttrs,
-                    ...getTreeComponentMutableProps(child),
+                  const newState = {
+                    ...state,
+                    tree: {
+                      ...tree,
+                      name: options?.action || "Generic move",
+                      timestamp: Date.now(),
+                    },
+                    componentMutableAttrs: merge(
+                      {},
+                      state.componentMutableAttrs,
+                      newComponentMutableAttrs,
+                    ),
                   };
-                });
 
-                const treeWithRecoveredAttrs = recoverTreeComponentAttrs(
-                  state.tree,
-                  state.componentMutableAttrs,
-                );
+                  return newState;
+                },
+                false,
+                "editorTree/setTree",
+              );
+            },
+            resetTree: () => {
+              const timestamp = Date.now();
+              set(
+                {
+                  tree: { ...emptyEditorTree, timestamp },
+                },
+                false,
+                "editorTree/resetTree",
+              );
+            },
+            updateTreeComponentChildren: (componentId, children, save = true) =>
+              set(
+                (state: EditorTreeState) => {
+                  updateTreeComponentChildren(
+                    state.tree.root,
+                    componentId,
+                    children,
+                  );
 
-                if (save && !state.isPreviewMode) {
-                  debouncedUpdatePageState(
-                    encodeSchema(
-                      JSON.stringify(
-                        removeKeysRecursive(treeWithRecoveredAttrs, [
-                          "error",
-                          "collapsed",
-                          "depth",
-                          "index",
-                          "parentId",
-                        ]),
+                  children.forEach((child) => {
+                    state.componentMutableAttrs = {
+                      ...state.componentMutableAttrs,
+                      ...getTreeComponentMutableProps(child),
+                    };
+                  });
+
+                  const treeWithRecoveredAttrs = recoverTreeComponentAttrs(
+                    state.tree,
+                    state.componentMutableAttrs,
+                  );
+
+                  if (save && !state.isPreviewMode && !state.isLive) {
+                    debouncedUpdatePageState(
+                      encodeSchema(
+                        JSON.stringify(
+                          removeKeysRecursive(treeWithRecoveredAttrs, [
+                            "error",
+                            "collapsed",
+                            "depth",
+                            "index",
+                            "parentId",
+                          ]),
+                        ),
                       ),
-                    ),
-                    state.currentProjectId ?? "",
-                    state.currentPageId ?? "",
-                    state.setIsSaving,
+                      state.currentProjectId ?? "",
+                      state.currentPageId ?? "",
+                      state.setIsSaving,
+                    );
+                  }
+
+                  const component = state.componentMutableAttrs[componentId];
+
+                  return {
+                    tree: {
+                      ...state.tree,
+                      name: `Edited ${component?.name}`,
+                      timestamp: Date.now(),
+                    },
+                    componentMutableAttrs: state.componentMutableAttrs,
+                  };
+                },
+                false,
+                "editorTree/updateTreeComponentChildren",
+              ),
+            updateTreeComponentAttrs: async ({
+              componentIds,
+              attrs,
+              forceState,
+              save = true,
+            }) => {
+              set(
+                (state: EditorTreeState) => {
+                  const lastComponentId = componentIds.at(-1)!;
+                  const currentState =
+                    forceState ??
+                    state.currentTreeComponentsStates?.[lastComponentId] ??
+                    "default";
+
+                  componentIds.forEach((id) => {
+                    state.componentMutableAttrs[id] = updateTreeComponentAttrs(
+                      cloneDeep(state.componentMutableAttrs[id] ?? {}),
+                      attrs,
+                      currentState,
+                    );
+                  });
+
+                  const treeWithRecoveredAttrs = recoverTreeComponentAttrs(
+                    state.tree,
+                    state.componentMutableAttrs,
                   );
-                }
-
-                const component = state.componentMutableAttrs[componentId];
-
-                return {
-                  tree: {
-                    ...state.tree,
-                    name: `Edited ${component?.name}`,
-                    timestamp: Date.now(),
-                  },
-                  componentMutableAttrs: state.componentMutableAttrs,
-                };
-              },
-              false,
-              "editorTree/updateTreeComponentChildren",
-            ),
-          updateTreeComponentAttrs: async ({
-            componentIds,
-            attrs,
-            forceState,
-            save = true,
-          }) => {
-            set(
-              (state: EditorTreeState) => {
-                const lastComponentId = componentIds.at(-1)!;
-                const currentState =
-                  forceState ??
-                  state.currentTreeComponentsStates?.[lastComponentId] ??
-                  "default";
-
-                let newComponentMutableAttrs = cloneDeep(
-                  state.componentMutableAttrs,
-                );
-
-                componentIds.forEach((id) => {
-                  newComponentMutableAttrs[id] = updateTreeComponentAttrs(
-                    newComponentMutableAttrs[id] ?? {},
-                    attrs,
-                    currentState,
-                  );
-                });
-
-                const treeWithRecoveredAttrs = recoverTreeComponentAttrs(
-                  state.tree,
-                  newComponentMutableAttrs,
-                );
-                if (save && !state.isPreviewMode) {
-                  debouncedUpdatePageState(
-                    encodeSchema(
-                      JSON.stringify(
-                        removeKeysRecursive(treeWithRecoveredAttrs, ["error"]),
+                  if (save && !state.isPreviewMode && !state.isLive) {
+                    debouncedUpdatePageState(
+                      encodeSchema(
+                        JSON.stringify(
+                          removeKeysRecursive(treeWithRecoveredAttrs, [
+                            "error",
+                          ]),
+                        ),
                       ),
-                    ),
-                    state.currentProjectId ?? "",
-                    state.currentPageId ?? "",
-                    state.setIsSaving,
-                  );
-                }
+                      state.currentProjectId ?? "",
+                      state.currentPageId ?? "",
+                      state.setIsSaving,
+                    );
+                  }
 
-                // Return the new state with the updated componentMutableAttrs
-                return {
-                  ...state,
-                  componentMutableAttrs: newComponentMutableAttrs,
-                };
-              },
-              false,
-              "editorTree/updateTreeComponentAttrs",
-            );
-          },
-          tree: emptyEditorTree,
-          componentMutableAttrs: emptyEditorComponentMutableAttrs,
-          setCurrentUser: (currentUser) =>
-            set({ currentUser }, false, "editorTree/setCurrentUser"),
-          setCursor: (cursor) => set({ cursor }, false, "editorTree/setCursor"),
-          setColumnSpan: (id, span) =>
-            set(
-              (state) => ({
-                columnSpans: { ...(state.columnSpans ?? {}), [id]: span },
-              }),
-              false,
-              "editorTree/setColumnSpan",
-            ),
-          columnSpans: {},
-          selectedComponentIds: ["content-wrapper"],
-          setSelectedComponentIds: (cb) => {
-            return set(
-              (state) => {
-                const selectedComponentIds = cb(
-                  state.selectedComponentIds ?? [],
-                ).filter((id) => id !== "content-wrapper");
+                  // Return the new state with the updated componentMutableAttrs
+                  return {
+                    componentMutableAttrs: state.componentMutableAttrs,
+                  };
+                },
+                false,
+                "editorTree/updateTreeComponentAttrs",
+              );
+            },
+            tree: emptyEditorTree,
+            componentMutableAttrs: emptyEditorComponentMutableAttrs,
+            setCurrentUser: (currentUser) =>
+              set({ currentUser }, false, "editorTree/setCurrentUser"),
+            setCursor: (cursor) =>
+              set({ cursor }, false, "editorTree/setCursor"),
+            setColumnSpan: (id, span) =>
+              set(
+                (state) => ({
+                  columnSpans: { ...(state.columnSpans ?? {}), [id]: span },
+                }),
+                false,
+                "editorTree/setColumnSpan",
+              ),
+            columnSpans: {},
+            selectedComponentIds: ["content-wrapper"],
+            isLive: false,
+            setSelectedComponentIds: (cb) => {
+              return set(
+                (state) => {
+                  const selectedComponentIds = cb(
+                    state.selectedComponentIds ?? [],
+                  ).filter((id) => id !== "content-wrapper");
 
-                return { selectedComponentIds };
-              },
-              false,
-              "editorTree/setSelectedComponentIds",
-            );
+                  return { selectedComponentIds };
+                },
+                false,
+                "editorTree/setSelectedComponentIds",
+              );
+            },
+            setTreeComponentCurrentState: (
+              componentId,
+              currentState = "default",
+            ) => {
+              set(
+                (prev) => {
+                  return {
+                    currentTreeComponentsStates: {
+                      ...prev.currentTreeComponentsStates,
+                      [componentId]: currentState,
+                    },
+                  };
+                },
+                false,
+                "editorTree/setTreeComponentCurrentState",
+              );
+            },
+            setCurrentPageAndProjectIds: (currentProjectId, currentPageId) => {
+              set(
+                { currentProjectId, currentPageId },
+                false,
+                "editorTree/setCurrentPageAndProjectIds",
+              );
+            },
+            setPreviewMode: (value) =>
+              set(
+                { isPreviewMode: value, currentTreeComponentsStates: {} },
+                false,
+                "editorTree/setPreviewMode",
+              ),
+            setIsLive: (isLive) => set({ isLive }, false, "editor/setIsLive"),
+            setIsSaving: (value) =>
+              set({ isSaving: value }, false, "editorTree/setIsSaving"),
+          }),
+          {
+            partialize: (state) => {
+              const { tree, columnSpans, componentMutableAttrs } = state;
+              return { tree, columnSpans, componentMutableAttrs };
+            },
+            limit: 500,
+            equality(currentState, pastState) {
+              const treeEqual = isEqual(currentState.tree, pastState.tree);
+              const columnSpansEqual = isEqual(
+                currentState.columnSpans,
+                pastState.columnSpans,
+              );
+              const componentMutableAttrsEqual = shallow(
+                currentState.componentMutableAttrs,
+                pastState.componentMutableAttrs,
+              );
+
+              return (
+                treeEqual && columnSpansEqual && componentMutableAttrsEqual
+              );
+            },
           },
-          setTreeComponentCurrentState: (
-            componentId,
-            currentState = "default",
-          ) => {
-            set(
-              (prev) => {
-                return {
-                  currentTreeComponentsStates: {
-                    ...prev.currentTreeComponentsStates,
-                    [componentId]: currentState,
-                  },
-                };
-              },
-              false,
-              "editorTree/setTreeComponentCurrentState",
-            );
-          },
-          setCurrentPageAndProjectIds: (currentProjectId, currentPageId) => {
-            set(
-              { currentProjectId, currentPageId },
-              false,
-              "editorTree/setCurrentPageAndProjectIds",
-            );
-          },
-          setPreviewMode: (value) =>
-            set(
-              { isPreviewMode: value, currentTreeComponentsStates: {} },
-              false,
-              "editorTree/setPreviewMode",
-            ),
-          setIsSaving: (value) =>
-            set({ isSaving: value }, false, "editorTree/setIsSaving"),
-        }),
+        ),
         {
+          name: "editor-tree-config",
           partialize: (state) => {
-            const { tree, columnSpans, componentMutableAttrs } = state;
-            return { tree, columnSpans, componentMutableAttrs };
-          },
-          limit: 500,
-          equality(currentState, pastState) {
-            const treeEqual = isEqual(currentState.tree, pastState.tree);
-            const columnSpansEqual = isEqual(
-              currentState.columnSpans,
-              pastState.columnSpans,
-            );
-            const componentMutableAttrsEqual = shallow(
-              currentState.componentMutableAttrs,
-              pastState.componentMutableAttrs,
-            );
-
-            //console.log("treeEqual", treeEqual);
-
-            return treeEqual && columnSpansEqual && componentMutableAttrsEqual;
+            return {
+              isPreviewMode: state.isPreviewMode,
+            };
           },
         },
       ),

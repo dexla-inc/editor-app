@@ -1,14 +1,14 @@
-import { useUserConfigStore } from "@/stores/userConfig";
 import { useEffect, useRef } from "react";
+import { useEditorTreeStore } from "@/stores/editorTree";
 
 // TODO: Get the mode of editor, preview or live instead of lots of booleans
 export const useAppMode = () => {
   // Initialize ref with the current value of isPreviewMode
-  const isPreviewModeRef = useRef(useUserConfigStore.getState().isPreviewMode);
+  const isPreviewModeRef = useRef(useEditorTreeStore.getState().isPreviewMode);
 
   useEffect(() => {
     // Subscribe to isPreviewMode changes
-    const unsubscribe = useUserConfigStore.subscribe((state, prevState) => {
+    const unsubscribe = useEditorTreeStore.subscribe((state, prevState) => {
       // Check if isPreviewMode has changed
       if (state.isPreviewMode !== prevState.isPreviewMode) {
         // Update ref if there is a change

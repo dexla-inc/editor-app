@@ -35,7 +35,7 @@ export const EditableComponent = ({
   shareableContent,
 }: PropsWithChildren<Props>) => {
   const { isPreviewMode } = useAppMode();
-  const isLive = useEditorStore((state) => state.isLive);
+  const isLive = useEditorTreeStore((state) => state.isLive);
   const isEditorMode = !isPreviewMode && !isLive;
   const component = useEditorTreeStore(
     memoize((state) => state.componentMutableAttrs[id] ?? {}),

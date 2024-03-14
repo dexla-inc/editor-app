@@ -8,9 +8,6 @@ import { IconBrush, IconEye } from "@tabler/icons-react";
 export const EditorPreviewModeToggle = () => {
   const theme = useMantineTheme();
   const { isPreviewMode } = useAppMode();
-  const setPreviewModeConfig = useUserConfigStore(
-    (state) => state.setPreviewMode,
-  );
   const setPreviewModeEditor = useEditorTreeStore(
     (state) => state.setPreviewMode,
   );
@@ -28,7 +25,6 @@ export const EditorPreviewModeToggle = () => {
           checked={isPreviewMode}
           onChange={(event) => {
             const isPreviewMode = event.currentTarget.checked;
-            setPreviewModeConfig(isPreviewMode);
             setPreviewModeEditor(isPreviewMode);
             setNavbarWidth(
               isTabPinned && isPreviewMode

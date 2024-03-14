@@ -138,10 +138,6 @@ export const DataProvider = ({ children }: DataProviderProps) => {
         return get(shareableContent, `data.${value?.dynamic}`, value?.dynamic);
       },
       static: () => {
-        // Attempt to parse the static value if it looks like a JSON string
-        if (value && jsonInString(value)) {
-          return safeJsonParse(value.static);
-        }
         return get(value, "static", staticFallback);
       },
       boundCode: () => {
