@@ -49,6 +49,10 @@ const ButtonComponent = forwardRef(
       staticFallback: component.props?.children,
     });
 
+    if (component.description === "ButtonTest") {
+      console.log({ childrenValue });
+    }
+
     const defaultTriggers = isPreviewMode
       ? {}
       : {

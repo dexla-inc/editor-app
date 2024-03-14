@@ -437,7 +437,8 @@ export const updateTreeComponentAttrs = (
   }
 
   merge(component, { props: alwaysDefaultProps });
-  Object.entries(omit(attrs, ["props"])).forEach(([key, value]) => {
+  merge(component, { onLoad: attrs.onLoad });
+  Object.entries(omit(attrs, ["props", "onLoad"])).forEach(([key, value]) => {
     component[key as keyof Component] = value;
   });
 
