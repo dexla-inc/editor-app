@@ -5,12 +5,10 @@ import {
   useComponentContextMenu,
 } from "@/hooks/useComponentContextMenu";
 import { useEditorShadows } from "@/hooks/useEditorShadows";
-import {
-  handleBackground,
-  useComputeChildStyles,
-  useEditorClickHandler,
-  usePropsWithOverwrites,
-} from "@/hooks/useMergedProps";
+import { handleBackground } from "@/hooks/handleBackground";
+import { useEditorClickHandler } from "@/hooks/useEditorClickHandler";
+import { useComputeChildStyles } from "@/hooks/useComputeChildStyles";
+import { usePropsWithOverwrites } from "@/hooks/usePropsWithOverwrites";
 import { useTriggers } from "@/hooks/useTriggers";
 import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
