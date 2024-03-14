@@ -24,7 +24,7 @@ const LinkComponent = forwardRef(
 
     const { computeValue } = useDataContext()!;
     const onLoad = useEditorTreeStore(
-      memoize((state) => state.componentMutableAttrs[component?.id!].onLoad),
+      memoize((state) => state.componentMutableAttrs[component?.id!]?.onLoad),
     );
     const childrenValue =
       computeValue({
@@ -45,7 +45,7 @@ const LinkComponent = forwardRef(
         ref={ref}
         style={customStyle}
       >
-        {childrenValue}
+        {childrenValue?.toString()}
       </MantineAnchor>
     );
   },

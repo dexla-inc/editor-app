@@ -36,7 +36,7 @@ const AutocompleteComponent = forwardRef(
 
     const componentId = component.id as string;
     const onLoad = useEditorTreeStore(
-      memoize((state) => state.componentMutableAttrs[component?.id!].onLoad),
+      memoize((state) => state.componentMutableAttrs[component?.id!]?.onLoad),
     );
     const { dataLabelKey, dataValueKey, resultsKey } = onLoad ?? {};
     const { onChange, onItemSubmit, ...restTriggers } = triggers || {};

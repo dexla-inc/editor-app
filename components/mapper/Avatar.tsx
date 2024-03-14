@@ -17,7 +17,7 @@ const AvatarComponent = forwardRef(
 
     const { computeValue } = useDataContext()!;
     const onLoad = useEditorTreeStore(
-      memoize((state) => state.componentMutableAttrs[component?.id!].onLoad),
+      memoize((state) => state.componentMutableAttrs[component?.id!]?.onLoad),
     );
     const srcValue =
       computeValue({
@@ -44,7 +44,7 @@ const AvatarComponent = forwardRef(
       >
         {component.children && component.children.length > 0
           ? component.children?.map((child) => renderTree(child))
-          : childrenValue}
+          : childrenValue?.toString()}
       </MantineAvatar>
     );
   },
