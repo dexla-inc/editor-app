@@ -21,7 +21,7 @@ const CardAndContainerWrapperInner = ({
   const isPreviewMode = useEditorTreeStore((state) => state.isPreviewMode);
 
   const onLoad = useEditorTreeStore(
-    memoize((state) => state.componentMutableAttrs[component?.id!].onLoad),
+    memoize((state) => state.componentMutableAttrs[component?.id!]?.onLoad),
   );
   const { endpointId } = onLoad ?? {};
 

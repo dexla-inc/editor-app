@@ -51,7 +51,7 @@ export const GoogleMapPlugin = ({
 
   const { computeValues } = useDataContext()!;
   const onLoad = useEditorTreeStore(
-    memoize((state) => state.componentMutableAttrs[component?.id!].onLoad),
+    memoize((state) => state.componentMutableAttrs[component?.id!]?.onLoad),
   );
   const { apiKey, zoom, center, markers } = computeValues({
     value: onLoad,

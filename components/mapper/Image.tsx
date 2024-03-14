@@ -16,7 +16,7 @@ const ImageComponent = forwardRef(
 
     const { computeValue } = useDataContext()!;
     const onLoad = useEditorTreeStore(
-      memoize((state) => state.componentMutableAttrs[component?.id!].onLoad),
+      memoize((state) => state.componentMutableAttrs[component?.id!]?.onLoad),
     );
     const srcValue =
       computeValue({
