@@ -2,6 +2,7 @@ import { IconModal } from "@/components/IconModal";
 import { GRAY_COLOR } from "@/utils/branding";
 import { ActionIcon, Box, Flex, Text, Tooltip } from "@mantine/core";
 import { Icon } from "./Icon";
+import { toSpaced } from "@/utils/dashboardTypes";
 
 type Props = {
   topLabel: string;
@@ -30,10 +31,12 @@ export const IconSelector = ({
       <Flex gap="md" align="center" justify="space-between">
         <>
           <IconModal onIconSelect={onIconSelect} />
-          <Icon name={selectedIcon} />
+          <Tooltip label={toSpaced(selectedIcon)}>
+            <Icon name={selectedIcon} />
+          </Tooltip>
         </>
         {selectedIcon && (
-          <Tooltip label="Delete" withArrow fz="xs">
+          <Tooltip label="Delete">
             <ActionIcon onClick={onIconDelete}>
               <Icon name="IconX" />
             </ActionIcon>

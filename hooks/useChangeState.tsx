@@ -52,6 +52,8 @@ export const useChangeState = ({
       "default",
   );
 
+  console.log("currentState", currentState);
+
   const componentsWithBackgroundModifier = Object.entries(
     componentMapper,
   ).reduce((acc, [componentName, { modifiers }]) => {
