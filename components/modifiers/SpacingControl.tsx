@@ -4,18 +4,23 @@ import { UnitInput } from "@/components/UnitInput";
 import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { Flex, Group, SegmentedControl, Stack } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
+import { useEffect, useState } from "react";
 
 type Props = {
   type: "Padding" | "Margin";
   form: UseFormReturnType<any>;
+  mode: "all" | "sides";
 };
 
-export const SpacingControl = ({ type, form }: Props) => {
+export const SpacingControl = ({ type, form, mode }: Props) => {
+  const [currentMode, setCurrentMode] = useState(mode);
+
+  useEffect(() => {
+    setCurrentMode(mode);
+  }, [mode]);
+
   const sideTypes = type === "Padding" ? "padding-sides" : "margin-sides";
   const allTypes = type === "Padding" ? "padding-all" : "margin-all";
-
-  const showType = form.values[`show${type}`];
-  const setTypeValue = form.setFieldValue;
 
   const handleUnifiedChange = (value: string) => {
     const newValues = {
@@ -36,10 +41,16 @@ export const SpacingControl = ({ type, form }: Props) => {
     side: "Top" | "Bottom" | "Left" | "Right",
     value: string,
   ) => {
-    setTypeValue(`${type.toLowerCase()}${side}`, value);
+    const key = `${type.toLowerCase()}${side}`;
+    form.setFieldValue(key, value);
     debouncedTreeComponentAttrsUpdate({
-      attrs: { props: { style: { [`${type.toLowerCase()}${side}`]: value } } },
+      attrs: { props: { style: { [key]: value } } },
     });
+  };
+
+  const handleModeChange = (newValue: string) => {
+    setCurrentMode(newValue === allTypes ? "all" : "sides");
+    // Add logic here if you need to perform any additional operations when mode changes
   };
 
   return (
@@ -60,37 +71,17 @@ export const SpacingControl = ({ type, form }: Props) => {
               value: sideTypes,
             },
           ]}
-          value={showType}
-          onChange={(newValue) => {
-            const commonKey = `${type.toLowerCase()}`;
-            const topKey = `${commonKey}Top`;
-            if (newValue === allTypes && showType === sideTypes) {
-              // Changing from sideTypes to allTypes
-              const newUnifiedValue = form.values[topKey];
-              handleUnifiedChange(newUnifiedValue);
-            }
-            if (newValue === sideTypes && showType === allTypes) {
-              // Changing from allTypes to sideTypes
-              const newSideValue = form.values[commonKey];
-              ["Top", "Bottom", "Left", "Right"].forEach((side) => {
-                handleSideChange(
-                  side as "Top" | "Bottom" | "Left" | "Right",
-                  newSideValue,
-                );
-              });
-            }
-            // Update showType value
-            setTypeValue(`show${type}`, newValue);
-          }}
+          value={currentMode === "all" ? allTypes : sideTypes}
+          onChange={handleModeChange}
         />
-        {showType === allTypes && (
+        {currentMode === "all" && (
           <UnitInput
-            {...form.getInputProps(type.toLowerCase())}
+            {...form.getInputProps(`${type.toLowerCase()}`)}
             onChange={handleUnifiedChange}
           />
         )}
       </Flex>
-      {showType === sideTypes && (
+      {currentMode === "sides" && (
         <>
           <Group noWrap>
             <UnitInput
