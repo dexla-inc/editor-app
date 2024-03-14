@@ -5,6 +5,8 @@ import { EditableComponentMapper } from "@/utils/editor";
 import { ImageProps, Image as MantineImage } from "@mantine/core";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { forwardRef, memo } from "react";
+import { useEditorTreeStore } from "@/stores/editorTree";
+import { memoize } from "proxy-memoize";
 
 type Props = EditableComponentMapper & ImageProps;
 
@@ -13,14 +15,17 @@ const ImageComponent = forwardRef(
     const { triggers, loading, ...componentProps } = component.props as any;
 
     const { computeValue } = useDataContext()!;
+    const onLoad = useEditorTreeStore(
+      memoize((state) => state.componentMutableAttrs[component?.id!].onLoad),
+    );
     const srcValue =
       computeValue({
-        value: component.onLoad?.src,
+        value: onLoad?.src,
         shareableContent,
       }) ?? component.props?.src;
     const altValue =
       computeValue({
-        value: component.onLoad?.alt,
+        value: onLoad?.alt,
         shareableContent,
       }) ?? component.props?.alt;
 
@@ -39,7 +44,6 @@ const ImageComponent = forwardRef(
     return (
       <MantineImage
         ref={ref}
-        id={component.id}
         alt={altValue}
         imageProps={{ src: srcValue }}
         {...props}

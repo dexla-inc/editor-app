@@ -6,6 +6,8 @@ import { EditableComponentMapper } from "@/utils/editor";
 import { AvatarProps, Avatar as MantineAvatar } from "@mantine/core";
 import merge from "lodash.merge";
 import { forwardRef, memo } from "react";
+import { useEditorTreeStore } from "@/stores/editorTree";
+import { memoize } from "proxy-memoize";
 
 type Props = EditableComponentMapper & AvatarProps;
 
@@ -14,14 +16,17 @@ const AvatarComponent = forwardRef(
     const { triggers, data, size, ...componentProps } = component.props as any;
 
     const { computeValue } = useDataContext()!;
+    const onLoad = useEditorTreeStore(
+      memoize((state) => state.componentMutableAttrs[component?.id!].onLoad),
+    );
     const srcValue =
       computeValue({
-        value: component.onLoad?.src,
+        value: onLoad?.src,
         shareableContent,
       }) ?? component.props?.src;
     const childrenValue =
       computeValue({
-        value: component.onLoad?.children,
+        value: onLoad?.children,
         shareableContent,
       }) ?? component.props?.children;
 

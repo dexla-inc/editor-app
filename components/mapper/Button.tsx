@@ -10,7 +10,9 @@ import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper, getColorFromTheme } from "@/utils/editor";
 import { ButtonProps, Button as MantineButton } from "@mantine/core";
 import merge from "lodash.merge";
-import { ReactElement, forwardRef, memo, useMemo } from "react";
+import { ReactElement, forwardRef, memo } from "react";
+import { useEditorTreeStore } from "@/stores/editorTree";
+import { memoize } from "proxy-memoize";
 
 type Props = EditableComponentMapper & ButtonProps & ReactElement<"Button">;
 
@@ -38,20 +40,14 @@ const ButtonComponent = forwardRef(
     );
 
     const { computeValue } = useDataContext()!;
-    const childrenValue = useMemo(
-      () =>
-        computeValue({
-          value: component.onLoad?.children,
-          shareableContent,
-          staticFallback: component.props?.children,
-        }),
-      [
-        component.onLoad?.children,
-        component.props?.children,
-        computeValue,
-        shareableContent,
-      ],
+    const onLoad = useEditorTreeStore(
+      memoize((state) => state.componentMutableAttrs[component?.id!].onLoad),
     );
+    const childrenValue = computeValue({
+      value: onLoad?.children,
+      shareableContent,
+      staticFallback: component.props?.children,
+    });
 
     const defaultTriggers = isPreviewMode
       ? {}

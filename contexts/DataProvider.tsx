@@ -37,7 +37,6 @@ export type GetValuesProps = {
 type DataContextProps = {
   variables: { list: Record<string, any> };
   components: { list: Record<string, any> };
-  actions: { list: Record<string, any> };
   browserList: any[];
   auth: AuthState & { refreshToken?: string };
   computeValue: (props: GetValueProps) => any;
@@ -63,26 +62,9 @@ export const DataProvider = ({ children }: DataProviderProps) => {
   const inputsStore = useInputsStore((state) => state.inputValues);
   const browser = useRouter();
   const auth = useDataSourceStore((state) => state.getAuthState());
-  const logicFlowsEditorNodes = useNodes<NodeData>();
   const projectId = useEditorTreeStore((state) => state.currentProjectId ?? "");
   const { data: endpoints } = useDataSourceEndpoints(projectId);
 
-  const nonEditorActions = useEditorStore((state) => state.nonEditorActions);
-  const logicFlowsActionNodes = useEditorStore((state) => state.lf);
-  const actionActionsList = useEditorStore((state) => state.actions);
-  const { isPreviewMode } = useAppMode();
-  const isLive = useEditorStore((state) => state.isLive);
-
-  // TODO: think on a better solution for listing actions
-  // const selectedComponentId = useEditorTreeStore(
-  //   (state) => state.selectedComponentIds?.at(-1)!,
-  // );
-  // const componentMutableAttrs = useEditorTreeStore(
-  //   (state) => state.componentMutableAttrs,
-  // );
-  // const selectedComponent = componentMutableAttrs[selectedComponentId];
-
-  const isEditorMode = !isPreviewMode && !isLive;
   const allInputComponents = useEditorTreeStore(
     memoize((state) =>
       Object.values(state.componentMutableAttrs).reduce((acc, c) => {
@@ -113,91 +95,6 @@ export const DataProvider = ({ children }: DataProviderProps) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [endpoints?.results]);
-
-  const nodes = logicFlowsEditorNodes.length
-    ? logicFlowsEditorNodes
-    : logicFlowsActionNodes;
-  const actionsList = actionActionsList;
-  const isLogicFlow = nodes.length > 0;
-
-  const actions = isLogicFlow
-    ? nodes.reduce(
-        (acc, node) => {
-          const { action, endpoint: endpointId } = node.data.form ?? {};
-          if (action === "apiCall" && endpointId) {
-            const endpoint = endpoints?.results.find(
-              (e) => e.id === endpointId,
-            );
-
-            const successExampleResponse = safeJsonParse(
-              endpoint?.exampleResponse ?? "",
-            );
-            const errorExampleResponse = safeJsonParse(
-              endpoint?.errorExampleResponse ?? "",
-            );
-
-            const success = isEditorMode
-              ? successExampleResponse
-              : nonEditorActions[action.id]?.success;
-
-            const error = isEditorMode
-              ? errorExampleResponse
-              : nonEditorActions[action.id]?.error;
-
-            acc.list[action.id] = merge({}, endpoint, {
-              id: action.id,
-              name: node.data.label,
-              success,
-              error,
-            });
-            acc[action.id] = {
-              success,
-              error,
-            };
-          }
-
-          return acc;
-        },
-        { list: {} } as any,
-      )
-    : actionsList?.reduce(
-        (acc: any, action: any) => {
-          const { endpoint: endpointId } = action.action as APICallAction;
-          if (action.action.name === "apiCall" && endpointId) {
-            const endpoint = endpoints?.results.find(
-              (e) => e.id === endpointId,
-            );
-
-            const successExampleResponse = safeJsonParse(
-              endpoint?.exampleResponse ?? "",
-            );
-            const errorExampleResponse = safeJsonParse(
-              endpoint?.errorExampleResponse ?? "",
-            );
-
-            const success = isEditorMode
-              ? successExampleResponse
-              : nonEditorActions[action.id]?.success;
-            const error = isEditorMode
-              ? errorExampleResponse
-              : nonEditorActions[action.id]?.error;
-
-            acc.list[action.id] = merge({}, endpoint, {
-              id: action.id,
-              name: action.action.name,
-              success,
-              error,
-            });
-            acc[action.id] = {
-              success,
-              error,
-            };
-          }
-
-          return acc;
-        },
-        { list: {} } as any,
-      ) ?? { list: {} };
 
   const variables = variablesList.reduce(
     (acc, variable) => {
@@ -334,7 +231,6 @@ export const DataProvider = ({ children }: DataProviderProps) => {
         components,
         browserList,
         auth,
-        actions,
         computeValue,
         computeValues,
       }}

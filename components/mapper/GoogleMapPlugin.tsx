@@ -11,6 +11,8 @@ import {
 import merge from "lodash.merge";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { useCallback, useEffect, useState } from "react";
+import { useEditorTreeStore } from "@/stores/editorTree";
+import { memoize } from "proxy-memoize";
 
 type Props = EditableComponentMapper & {
   onClick?: (e: any) => void;
@@ -48,8 +50,11 @@ export const GoogleMapPlugin = ({
   const { onClick, ...customProps } = props;
 
   const { computeValues } = useDataContext()!;
+  const onLoad = useEditorTreeStore(
+    memoize((state) => state.componentMutableAttrs[component?.id!].onLoad),
+  );
   const { apiKey, zoom, center, markers } = computeValues({
-    value: component.onLoad,
+    value: onLoad,
     shareableContent,
   });
 
@@ -100,7 +105,7 @@ export const GoogleMapPlugin = ({
     setActiveMarkerId(null);
   };
 
-  const onLoad = useCallback(
+  const gmOnLoad = useCallback(
     (map: google.maps.Map) => {
       setMap(map);
 
@@ -152,7 +157,7 @@ export const GoogleMapPlugin = ({
       <GoogleMap
         key={apiKey}
         options={customOptions}
-        onLoad={onLoad}
+        onLoad={gmOnLoad}
         onUnmount={unMount}
         onClick={handleClick}
         mapContainerStyle={containerStyle}

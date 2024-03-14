@@ -232,9 +232,9 @@ export const emptyEditorAttrsTree = {
         props: {
           gridSize: GRID_SIZE,
           ...initialGridValues,
+          gap: "0",
           style: {
             ...initialGridValues.style,
-            gap: "0",
             minHeight: "20px",
           },
         },

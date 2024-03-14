@@ -52,11 +52,11 @@ export default function BindingPopover({
 }: Props) {
   const [tab, setTab] = useState<BindingTab>("components");
   const [filterKeyword, setFilterKeyword] = useState<string>("");
-  const { variables, components, browserList, auth, actions, computeValue } =
+  const { variables, components, browserList, auth, computeValue } =
     useDataContext()!;
   const [selectedItem, setSelectedItem] = useState<string>();
 
-  const { getEntityEditorValue } = useBindingPopover();
+  const { actions, getEntityEditorValue } = useBindingPopover();
 
   const onChangeDataTypeAsBoundCode = () => {
     onChange({

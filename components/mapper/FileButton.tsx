@@ -11,6 +11,8 @@ import merge from "lodash.merge";
 import { forwardRef, memo } from "react";
 import { isSame } from "@/utils/componentComparison";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { useEditorTreeStore } from "@/stores/editorTree";
+import { memoize } from "proxy-memoize";
 
 type Props = EditableComponentMapper & FileButtonProps;
 
@@ -27,9 +29,12 @@ export const FileButtonComponent = forwardRef(
     );
 
     const { computeValue } = useDataContext()!;
+    const onLoad = useEditorTreeStore(
+      memoize((state) => state.componentMutableAttrs[component?.id!].onLoad),
+    );
     const nameValue =
       computeValue({
-        value: component.onLoad?.name,
+        value: onLoad?.name,
         shareableContent,
       }) ?? component.props?.name;
 
