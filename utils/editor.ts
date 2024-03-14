@@ -438,6 +438,7 @@ export const updateTreeComponentAttrs = (
 
   merge(component, { props: alwaysDefaultProps });
   merge(component, { onLoad: attrs.onLoad });
+  // iterate attributes that we want to replace instead of merging
   Object.entries(omit(attrs, ["props", "onLoad"])).forEach(([key, value]) => {
     component[key as keyof Component] = value;
   });
