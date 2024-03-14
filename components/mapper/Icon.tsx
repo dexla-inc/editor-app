@@ -30,7 +30,7 @@ const IconComponent = forwardRef(
       >
         {component.children && component.children.length > 0
           ? component.children?.map((child) => renderTree(child))
-          : children}
+          : children?.toString()}
       </BaseIconComponent>
     );
   },

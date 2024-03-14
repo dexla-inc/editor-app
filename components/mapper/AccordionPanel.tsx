@@ -17,7 +17,7 @@ const AccordionPanelComponent = forwardRef(
       <MantineAccordion.Panel ref={ref} {...props} {...componentProps}>
         {component.children && component.children.length > 0
           ? component.children?.map((child) => renderTree(child))
-          : children}
+          : children?.toString()}
       </MantineAccordion.Panel>
     );
   },

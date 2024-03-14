@@ -45,7 +45,7 @@ const LinkComponent = forwardRef(
         ref={ref}
         style={customStyle}
       >
-        {childrenValue}
+        {childrenValue?.toString()}
       </MantineAnchor>
     );
   },

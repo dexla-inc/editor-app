@@ -71,7 +71,7 @@ const CardAndContainerWrapperInner = ({
         ? component.children?.map((child) =>
             renderTree(child, props.shareableContent),
           )
-        : children}
+        : children?.toString()}
     </MantineFlex>
   );
 };

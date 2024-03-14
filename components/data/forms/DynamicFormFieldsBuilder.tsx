@@ -48,6 +48,7 @@ export const DynamicFormFieldsBuilder = ({
       label={field.label}
       data={selectableObjectKeys}
       {...form.getInputProps(`onLoad.${field.name}.dynamic`)}
+      searchable
     />
   );
 };
