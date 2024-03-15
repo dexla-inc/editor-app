@@ -223,10 +223,9 @@ export type Action = {
 export type ActionParams = {
   actionId: string;
   router: Router;
-  setNonEditorActions: (
-    cb: (param: Record<string, any>) => Record<string, any>,
-  ) => Promise<void>;
-  computeValue: (value: GetValueProps) => any;
+  setActionsResponses: any;
+  actionResponses?: any;
+  computeValue: (value: GetValueProps, ctx?: any) => any;
   onSuccess?: Action;
   onError?: Action;
   event?: any;
@@ -378,10 +377,15 @@ export const useChangeVisibilityAction = ({
 export const useShowNotificationAction = async ({
   action,
   computeValue,
+  actionResponses,
 }: ShowNotificationActionParams) => {
+  console.log({ actionResponses });
   return showNotification({
-    title: computeValue({ value: action.title }),
-    message: computeValue({ value: action.message }),
+    title: computeValue({ value: action.title }, { actions: actionResponses }),
+    message: computeValue(
+      { value: action.message },
+      { actions: actionResponses },
+    ),
     color: action.color,
   });
 };
@@ -479,6 +483,7 @@ const handleError = async (
   onError: Action,
   router: Router,
   computeValue: (val: GetValueProps) => any,
+  actionResponses: any,
 ) => {
   const errorMessage = safeJsonParse(error.message);
   const onErrorActionMapped = actionMapper[onError.action.name];
@@ -488,6 +493,7 @@ const handleError = async (
     action: onError?.action,
     router,
     computeValue,
+    actionResponses,
   });
 
   throw new Error(errorMessage);
@@ -498,6 +504,7 @@ const handleSuccess = async (
   router: Router,
   action: APICallAction,
   computeValue: (val: GetValueProps) => any,
+  actionResponses: any,
 ) => {
   const onSuccessActionMapped = actionMapper[onSuccess.action.name];
 
@@ -507,6 +514,7 @@ const handleSuccess = async (
     binds: action.binds,
     router,
     computeValue,
+    actionResponses,
   });
 };
 
@@ -588,7 +596,8 @@ export const useApiCallAction = async ({
   onError,
   entity,
   endpointResults,
-  setNonEditorActions,
+  setActionsResponses,
+  actionResponses,
 }: APICallActionParams): Promise<any> => {
   console.log("useApiCallAction");
   const updateTreeComponentAttrs =
@@ -650,28 +659,44 @@ export const useApiCallAction = async ({
           authHeaderKey,
         );
     }
+    setActionsResponses(actionId, { success: responseJson });
+    console.log("->", { actionResponses });
+    onSuccess &&
+      (await handleSuccess(
+        onSuccess,
+        router,
+        action,
+        computeValue,
+        actionResponses,
+      ));
 
-    onSuccess && (await handleSuccess(onSuccess, router, action, computeValue));
-
-    await setNonEditorActions((prev) => {
-      prev[actionId] = {
-        ...prev[actionId],
-        success: responseJson,
-      };
-      return prev;
-    });
+    // await setNonEditorActions((prev) => {
+    //   prev[actionId] = {
+    //     ...prev[actionId],
+    //     success: responseJson,
+    //   };
+    //   return prev;
+    // });
 
     return responseJson;
   } catch (error) {
-    onError && (await handleError(error, onError, router, computeValue));
-
-    await setNonEditorActions((prev) => {
-      prev[actionId] = {
-        ...prev[actionId],
+    setActionsResponses(actionId, { error });
+    onError &&
+      (await handleError(
         error,
-      };
-      return prev;
-    });
+        onError,
+        router,
+        computeValue,
+        actionResponses,
+      ));
+
+    // await setNonEditorActions((prev) => {
+    //   prev[actionId] = {
+    //     ...prev[actionId],
+    //     error,
+    //   };
+    //   return prev;
+    // });
   } finally {
     if (entity.props && action.showLoader) {
       setLoadingState(entity.id!, false, updateTreeComponentAttrs);
