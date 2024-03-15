@@ -72,7 +72,7 @@ export const updatePageState = async (
   pageId: string,
 ) => {
   const url = `/projects/${projectId}/pages/${pageId}/state`;
-  const response = (await post<any>(url, { state })) as any;
+  const response = (await put<any>(url, { state })) as any;
   return response;
 };
 
