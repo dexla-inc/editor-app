@@ -273,9 +273,10 @@ export const useNavigationAction = ({
 export const useGoToUrlAction = async ({
   action,
   computeValue,
+  actionResponses,
 }: GoToUrlParams) => {
   const { url, openInNewTab } = action;
-  const value = computeValue({ value: url });
+  const value = computeValue({ value: url }, { actions: actionResponses });
 
   if (openInNewTab) {
     window.open(value, "_blank");
@@ -335,11 +336,15 @@ const getComponentDisplayUpdate = (
 export const useChangeVisibilityAction = ({
   action,
   computeValue,
+  actionResponses,
 }: TogglePropsActionParams) => {
   const updateTreeComponentAttrs = useEditorTreeStore(
     (state) => state.updateTreeComponentAttrs,
   );
-  const componentId = computeValue({ value: action.componentId });
+  const componentId = computeValue(
+    { value: action.componentId },
+    { actions: actionResponses },
+  );
   const component = useEditorTreeStore(
     (state) => state.componentMutableAttrs[componentId],
   );
@@ -348,10 +353,13 @@ export const useChangeVisibilityAction = ({
 
   // Determine the current display state of the component
   const currentDisplay = component?.props?.style?.display;
-  const parsedCurrentDisplay = computeValue({
-    value: currentDisplay,
-    staticFallback: defaultDisplayValue,
-  });
+  const parsedCurrentDisplay = computeValue(
+    {
+      value: currentDisplay,
+      staticFallback: defaultDisplayValue,
+    },
+    { actions: actionResponses },
+  );
 
   // Get value to update the display to
   const newDisplay = getComponentDisplayUpdate(
@@ -397,8 +405,12 @@ export const useTriggerLogicFlowAction = async (
 export const useChangeStateAction = ({
   action,
   computeValue,
+  actionResponses,
 }: ChangeStateActionParams) => {
-  const componentId = computeValue({ value: action.componentId });
+  const componentId = computeValue(
+    { value: action.componentId },
+    { actions: actionResponses },
+  );
   const updateTreeComponentAttrs =
     useEditorTreeStore.getState().updateTreeComponentAttrs;
 
@@ -477,13 +489,11 @@ export const prepareRequestData = (
 };
 
 const handleError = async (
-  error: any,
   onError: Action,
   router: Router,
   computeValue: (val: GetValueProps) => any,
   actionResponses: any,
 ) => {
-  const errorMessage = safeJsonParse(error.message);
   const onErrorActionMapped = actionMapper[onError.action.name];
 
   await onErrorActionMapped.action({
@@ -493,8 +503,6 @@ const handleError = async (
     computeValue,
     actionResponses,
   });
-
-  throw new Error(errorMessage);
 };
 
 const handleSuccess = async (
@@ -672,13 +680,7 @@ export const useApiCallAction = async ({
     // @ts-expect-error
     setActionsResponses(actionId, { error: safeJsonParse(error?.message) });
     onError &&
-      (await handleError(
-        error,
-        onError,
-        router,
-        computeValue,
-        actionResponses,
-      ));
+      (await handleError(onError, router, computeValue, actionResponses));
   } finally {
     if (entity.props && action.showLoader) {
       setLoadingState(entity.id!, false, updateTreeComponentAttrs);
@@ -706,9 +708,13 @@ export type ChangeVariableActionParams = ActionParams & {
 export const useChangeVariableAction = async ({
   action,
   computeValue,
+  actionResponses,
 }: ChangeVariableActionParams) => {
   const setVariable = useVariableStore.getState().setVariable;
-  const value = computeValue({ value: action.value });
+  const value = computeValue(
+    { value: action.value },
+    { actions: actionResponses },
+  );
   setVariable({
     id: action.variableId,
     value: value,

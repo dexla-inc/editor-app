@@ -129,6 +129,7 @@ export const DataProvider = ({ children }: DataProviderProps) => {
     { value, shareableContent, staticFallback }: GetValueProps,
     ctx?: any,
   ) => {
+    console.log("ctx", ctx);
     if (value === undefined) return staticFallback || undefined;
     let dataType = value?.dataType ?? "static";
 
@@ -164,6 +165,7 @@ export const DataProvider = ({ children }: DataProviderProps) => {
 
   const autoRunJavascriptCode = (boundCode: string, ctx: any) => {
     const { actions } = ctx ?? {};
+    console.log("autoRun", actions);
     try {
       const result = eval(`(function () { ${boundCode} })`)();
       return result;
