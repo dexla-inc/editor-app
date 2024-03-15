@@ -24,9 +24,6 @@ export const useTriggers = ({ entity }: UseTriggersProps) => {
   const projectId = useEditorTreeStore((state) => state.currentProjectId);
   const router = useRouter();
   const { computeValue } = useDataContext()!;
-  const setNonEditorActions = useEditorStore(
-    (state) => state.setNonEditorActions,
-  );
   const { data: endpoints } = useDataSourceEndpoints(projectId);
   const setTriggeredLogicFlow = useEditorStore(
     (state) => state.setTriggeredLogicFlow,

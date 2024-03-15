@@ -267,7 +267,6 @@ export const useNavigationAction = ({
     url += `?${queryStrings.join("&")}`;
   }
 
-  console.log("useNavigationAction", url);
   router.push(url);
 };
 
@@ -379,7 +378,6 @@ export const useShowNotificationAction = async ({
   computeValue,
   actionResponses,
 }: ShowNotificationActionParams) => {
-  console.log({ actionResponses });
   return showNotification({
     title: computeValue({ value: action.title }, { actions: actionResponses }),
     message: computeValue(
@@ -599,7 +597,6 @@ export const useApiCallAction = async ({
   setActionsResponses,
   actionResponses,
 }: APICallActionParams): Promise<any> => {
-  console.log("useApiCallAction");
   const updateTreeComponentAttrs =
     useEditorTreeStore.getState().updateTreeComponentAttrs;
   if (entity.props && action.showLoader) {
@@ -659,8 +656,8 @@ export const useApiCallAction = async ({
           authHeaderKey,
         );
     }
+
     setActionsResponses(actionId, { success: responseJson });
-    console.log("->", { actionResponses });
     onSuccess &&
       (await handleSuccess(
         onSuccess,
@@ -670,17 +667,10 @@ export const useApiCallAction = async ({
         actionResponses,
       ));
 
-    // await setNonEditorActions((prev) => {
-    //   prev[actionId] = {
-    //     ...prev[actionId],
-    //     success: responseJson,
-    //   };
-    //   return prev;
-    // });
-
     return responseJson;
   } catch (error) {
-    setActionsResponses(actionId, { error });
+    // @ts-expect-error
+    setActionsResponses(actionId, { error: safeJsonParse(error?.message) });
     onError &&
       (await handleError(
         error,
@@ -689,14 +679,6 @@ export const useApiCallAction = async ({
         computeValue,
         actionResponses,
       ));
-
-    // await setNonEditorActions((prev) => {
-    //   prev[actionId] = {
-    //     ...prev[actionId],
-    //     error,
-    //   };
-    //   return prev;
-    // });
   } finally {
     if (entity.props && action.showLoader) {
       setLoadingState(entity.id!, false, updateTreeComponentAttrs);
