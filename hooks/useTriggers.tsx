@@ -24,9 +24,6 @@ export const useTriggers = ({ entity }: UseTriggersProps) => {
   const projectId = useEditorTreeStore((state) => state.currentProjectId);
   const router = useRouter();
   const { computeValue } = useDataContext()!;
-  const setNonEditorActions = useEditorStore(
-    (state) => state.setNonEditorActions,
-  );
   const { data: endpoints } = useDataSourceEndpoints(projectId);
   const setTriggeredLogicFlow = useEditorStore(
     (state) => state.setTriggeredLogicFlow,
@@ -34,6 +31,11 @@ export const useTriggers = ({ entity }: UseTriggersProps) => {
   const setTriggeredAction = useEditorStore(
     (state) => state.setTriggeredAction,
   );
+
+  const actionResponses: Record<string, any> = {};
+  const setActionsResponses = (actionId: string, response: any) => {
+    actionResponses[actionId] = response;
+  };
 
   const triggers = () => {
     const actions: Action[] = entity?.actions ?? [];
@@ -70,7 +72,8 @@ export const useTriggers = ({ entity }: UseTriggersProps) => {
               actionId: action.id,
               router: router as Router,
               computeValue,
-              setNonEditorActions,
+              actionResponses,
+              setActionsResponses,
               event: e,
               endpointResults: endpoints?.results ?? [],
               onSuccess: onSuccessActions.find(

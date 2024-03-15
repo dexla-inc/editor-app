@@ -76,10 +76,6 @@ export type EditorState = {
   lf: Node<NodeData>[];
   setTriggeredAction: (actions: Action[]) => Promise<void>;
   actions: Action[];
-  setNonEditorActions: (
-    cb: (actions: Record<string, any>) => Record<string, any>,
-  ) => Promise<void>;
-  nonEditorActions: Record<string, any>;
 };
 
 // creates a store with undo/redo capability
@@ -93,17 +89,6 @@ export const useEditorStore = create<EditorState>()(
       setTriggeredAction: async (actions) =>
         set({ actions }, false, "editor/setTriggeredAction"),
       actions: [],
-      setNonEditorActions: async (cb) => {
-        return set(
-          (state) => {
-            const nonEditorActions = cb(state.nonEditorActions);
-            return { nonEditorActions };
-          },
-          false,
-          "editor/setNonEditorActions",
-        );
-      },
-      nonEditorActions: {},
       collapsedItemsCount: 0,
       pages: [],
       selectedComponentId: "content-wrapper",
