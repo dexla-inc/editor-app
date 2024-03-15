@@ -1,18 +1,18 @@
 import { GridColumn as GridColumnBase } from "@/components/GridColumn";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useAppMode } from "@/hooks/useAppMode";
-import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
 import { convertSizeToPx } from "@/utils/defaultSizes";
 import { EditableComponentMapper } from "@/utils/editor";
 import { BoxProps, MantineSize } from "@mantine/core";
 import { forwardRef, memo } from "react";
+import { useEditorTreeStore } from "@/stores/editorTree";
 
 type Props = EditableComponentMapper & BoxProps;
 
 const GridColumnComponent = forwardRef(
   ({ renderTree, component, ...props }: Props, ref) => {
-    const isLive = useEditorStore((state) => state.isLive);
+    const isLive = useEditorTreeStore((state) => state.isLive);
     const { isPreviewMode } = useAppMode();
     // @ts-ignore
     const { style = {}, gap, ...componentProps } = component.props;

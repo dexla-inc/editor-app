@@ -1,7 +1,6 @@
 import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useThemeStore } from "@/stores/theme";
-import { useUserConfigStore } from "@/stores/userConfig";
 import { EditableComponentMapper } from "@/utils/editor";
 import { DrawerProps, Drawer as MantineDrawer } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
@@ -16,7 +15,7 @@ export const Drawer = ({
   ...props
 }: Props) => {
   const theme = useThemeStore((state) => state.theme);
-  const isPreviewMode = useUserConfigStore((state) => state.isPreviewMode);
+  const isPreviewMode = useEditorTreeStore((state) => state.isPreviewMode);
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
 
   const {

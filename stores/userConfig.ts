@@ -16,8 +16,6 @@ type UserConfigState = {
   setPageCancelled: (pageCancelled: boolean) => void;
   isDarkTheme: boolean;
   setIsDarkTheme: (isDarkTheme: boolean) => void;
-  isPreviewMode: boolean;
-  setPreviewMode: (isPreviewMode: boolean) => void;
   navbarWidth: number;
   setNavbarWidth: (navbarWidth: number) => void;
   isCustomComponentModalOpen: boolean;
@@ -34,7 +32,6 @@ export const useUserConfigStore = create<UserConfigState>()(
         isShadesActive: false,
         pageCancelled: false,
         isDarkTheme: false,
-        isPreviewMode: false,
         navbarWidth: 50,
         isCustomComponentModalOpen: false,
         setIsDarkTheme: (isDarkTheme: boolean) => {
@@ -84,9 +81,6 @@ export const useUserConfigStore = create<UserConfigState>()(
         setPageCancelled: (pageCancelled: boolean) => {
           set({ pageCancelled }, false, "userConfig/setPageCancelled");
         },
-        setPreviewMode: (isPreviewMode: boolean) => {
-          set({ isPreviewMode }, false, "userConfig/setPreviewMode");
-        },
         setNavbarWidth: (navbarWidth: number) => {
           set({ navbarWidth }, false, "userConfig/setNavbarWidth");
         },
@@ -109,7 +103,6 @@ export const useUserConfigStore = create<UserConfigState>()(
           initiallyOpenedModifiersByComponent:
             state.initiallyOpenedModifiersByComponent,
           pageCancelled: state.pageCancelled,
-          isPreviewMode: state.isPreviewMode,
           navbarWidth: state.navbarWidth,
         }),
       },

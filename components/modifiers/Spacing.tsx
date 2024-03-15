@@ -26,14 +26,16 @@ const Modifier = withModifier(({ selectedComponent }) => {
   const style = selectedComponent?.props?.style;
 
   const isPaddingAllSame =
-    style?.paddingTop === style?.paddingBottom &&
-    style?.paddingTop === style?.paddingLeft &&
-    style?.paddingTop === style?.paddingRight;
+    (style?.paddingTop === style?.paddingBottom &&
+      style?.paddingLeft &&
+      style?.paddingRight) ??
+    true;
 
   const isMarginAllSame =
-    style?.marginTop === style?.marginBottom &&
-    style?.marginTop === style?.marginLeft &&
-    style?.marginTop === style?.marginRight;
+    (style?.marginTop === style?.marginBottom &&
+      style?.marginLeft &&
+      style?.marginRight) ??
+    true;
 
   const form = useForm<SpacingeModifierProps>();
 
@@ -77,9 +79,17 @@ const Modifier = withModifier(({ selectedComponent }) => {
   return (
     <form key={selectedComponent?.id}>
       <Stack spacing="xs">
-        <SpacingControl type="Padding" form={form} />
+        <SpacingControl
+          type="Padding"
+          form={form}
+          mode={isPaddingAllSame ? "all" : "sides"}
+        />
         {selectedComponent?.name !== "GridColumn" && (
-          <SpacingControl type="Margin" form={form} />
+          <SpacingControl
+            type="Margin"
+            form={form}
+            mode={isMarginAllSame ? "all" : "sides"}
+          />
         )}
       </Stack>
     </form>
