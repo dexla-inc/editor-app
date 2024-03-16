@@ -1,7 +1,7 @@
 import { useAppMode } from "@/hooks/useAppMode";
 import { useHotkeysOnIframe } from "@/hooks/useHotkeysOnIframe";
 import { useEditorStore } from "@/stores/editor";
-import { useEditorTreeStore, useTemporalStore } from "@/stores/editorTree";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { copyToClipboard, pasteFromClipboard } from "@/utils/clipboard";
 import { structureMapper } from "@/utils/componentMapper";
 import {
@@ -15,7 +15,7 @@ import {
 } from "@/utils/editor";
 import { useHotkeys } from "@mantine/hooks";
 import cloneDeep from "lodash.clonedeep";
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 
 export const useEditorHotkeys = () => {
   const editorTree = useEditorTreeStore((state) => state.tree);
@@ -30,15 +30,6 @@ export const useEditorHotkeys = () => {
     (state) => state.setCopiedComponent,
   );
   const setEditorTree = useEditorTreeStore((state) => state.setTree);
-
-  const undo = useTemporalStore((state) => state.undo);
-  const redo = useTemporalStore((state) => state.redo);
-  const pastStates = useTemporalStore((state) => state.pastStates);
-
-  // Add this page to fix undo for delete component
-  // useEffect(() => {
-  //   console.log("pastStates", pastStates);
-  // }, [pastStates]);
 
   const deleteComponent = useCallback(() => {
     const selectedComponentIds =
@@ -214,43 +205,12 @@ export const useEditorHotkeys = () => {
     }
   }, [copySelectedComponent, deleteComponent, isPreviewMode]);
 
-  const handlePageStateChange = (
-    operation: (steps?: number | undefined) => void,
-  ) => {
-    operation();
-  };
-
   useHotkeys([
     ["backspace", deleteComponent],
     ["delete", deleteComponent],
     ["mod+C", copySelectedComponent],
     ["mod+V", pasteCopiedComponent],
     ["mod+X", cutSelectedComponent],
-    [
-      "mod+Z",
-      () => {
-        if (!isPreviewMode) {
-          if (pastStates.length <= 1) return; // to avoid rendering a blank page
-          handlePageStateChange(undo);
-        }
-      },
-    ],
-    [
-      "mod+shift+Z",
-      () => {
-        if (!isPreviewMode) {
-          redo();
-        }
-      },
-    ],
-    [
-      "mod+Y",
-      () => {
-        if (!isPreviewMode) {
-          redo();
-        }
-      },
-    ],
   ]);
 
   const isMac = window.navigator.userAgent.includes("Mac");
@@ -277,31 +237,6 @@ export const useEditorHotkeys = () => {
         }
       },
       { preventDefault: false },
-    ],
-    [
-      "mod+Z",
-      () => {
-        if (!isPreviewMode) {
-          if (pastStates.length <= 1) return; // to avoid rendering a blank page
-          handlePageStateChange(undo);
-        }
-      },
-    ],
-    [
-      "mod+shift+Z",
-      () => {
-        if (!isPreviewMode) {
-          handlePageStateChange(redo);
-        }
-      },
-    ],
-    [
-      "mod+Y",
-      () => {
-        if (!isPreviewMode) {
-          handlePageStateChange(redo);
-        }
-      },
     ],
   ]);
 };

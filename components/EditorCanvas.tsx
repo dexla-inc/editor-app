@@ -11,6 +11,7 @@ import { Box, Paper } from "@mantine/core";
 import { memo } from "react";
 import { CustomComponentModal } from "@/components/CustomComponentModal";
 import { useUserConfigStore } from "@/stores/userConfig";
+import useEditorHotkeysUndoRedo from "@/hooks/useEditorHotkeysUndoRedo";
 
 type Props = {
   projectId: string;
@@ -19,6 +20,7 @@ type Props = {
 const EditorCanvasComponent = ({ projectId }: Props) => {
   const editorTree = useEditorTreeStore((state) => state.tree);
   useEditorHotkeys();
+  useEditorHotkeysUndoRedo();
   const [canvasRef] = useAutoAnimate();
   const isCustomComponentModalOpen = useUserConfigStore(
     (state) => state.isCustomComponentModalOpen,

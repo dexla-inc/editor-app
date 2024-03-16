@@ -1,6 +1,5 @@
 import { ActionIconDefault } from "@/components/ActionIconDefault";
 import { PageResponse } from "@/requests/pages/types";
-import { useTemporalStore } from "@/stores/editorTree";
 import {
   DARK_COLOR,
   GRAY_COLOR,
@@ -28,7 +27,6 @@ type Props = {
 };
 
 export const PageItem = ({ projectId, page, currentPage, setPage }: Props) => {
-  const clear = useTemporalStore((state) => state.clear);
   const [isLoading, setLoading] = useState(false);
   const theme = useMantineTheme();
   const { color, background, hoveredBackground, hoveredColor, whiteColor } = {
@@ -50,7 +48,6 @@ export const PageItem = ({ projectId, page, currentPage, setPage }: Props) => {
       onClick={() => {
         if (!isCurrentPage) {
           setLoading(true);
-          clear();
         }
       }}
     >
