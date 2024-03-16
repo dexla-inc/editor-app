@@ -70,8 +70,9 @@ export const updatePageState = async (
   state: PageStateParams["state"],
   projectId: string,
   pageId: string,
+  history: number | null,
 ) => {
-  const url = `/projects/${projectId}/pages/${pageId}/state`;
+  const url = `/projects/${projectId}/pages/${pageId}/state?history=${history}`;
   const response = (await put<any>(url, { state })) as any;
   return response;
 };

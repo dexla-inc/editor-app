@@ -1,7 +1,7 @@
 import { useAppMode } from "@/hooks/useAppMode";
 import { useHotkeysOnIframe } from "@/hooks/useHotkeysOnIframe";
 import { useEditorStore } from "@/stores/editor";
-import { useEditorTreeStore, useTemporalStore } from "@/stores/editorTree";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { copyToClipboard, pasteFromClipboard } from "@/utils/clipboard";
 import { structureMapper } from "@/utils/componentMapper";
 import {
@@ -15,7 +15,9 @@ import {
 } from "@/utils/editor";
 import { useHotkeys } from "@mantine/hooks";
 import cloneDeep from "lodash.clonedeep";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useGetPageState } from "./reactQuery/useGetPageState";
+import { decodeSchema } from "@/utils/compression";
 
 export const useEditorHotkeys = () => {
   const editorTree = useEditorTreeStore((state) => state.tree);
@@ -31,9 +33,42 @@ export const useEditorHotkeys = () => {
   );
   const setEditorTree = useEditorTreeStore((state) => state.setTree);
 
-  const undo = useTemporalStore((state) => state.undo);
-  const redo = useTemporalStore((state) => state.redo);
-  const pastStates = useTemporalStore((state) => state.pastStates);
+  // START: Move undo redo into a separate hook
+  const projectId = useEditorTreeStore(
+    (state) => state.currentProjectId,
+  ) as string;
+
+  const currentPageId = useEditorTreeStore(
+    (state) => state.currentPageId,
+  ) as string;
+
+  const historyCount = useEditorTreeStore((state) => state.historyCount);
+  const setHistoryCount = useEditorTreeStore((state) => state.setHistoryCount);
+
+  const { data: pageState } = useGetPageState(
+    projectId,
+    currentPageId,
+    historyCount,
+  );
+
+  const undo = () => {
+    setHistoryCount((historyCount ?? 0) + 1);
+  };
+
+  const redo = () => {
+    if (historyCount) setHistoryCount(Math.max(0, historyCount - 1));
+  };
+
+  useEffect(() => {
+    if (historyCount !== null && pageState?.state) {
+      const decodedSchema = decodeSchema(pageState?.state);
+      setEditorTree(JSON.parse(decodedSchema), {
+        action: "Undo/Redo",
+        skipSave: true,
+      });
+    }
+  }, [pageState?.state]);
+  // END: Move undo redo into a separate hook
 
   // Add this page to fix undo for delete component
   // useEffect(() => {
@@ -230,7 +265,7 @@ export const useEditorHotkeys = () => {
       "mod+Z",
       () => {
         if (!isPreviewMode) {
-          if (pastStates.length <= 1) return; // to avoid rendering a blank page
+          //if (pastStates.length <= 1) return; // to avoid rendering a blank page
           handlePageStateChange(undo);
         }
       },
@@ -282,7 +317,7 @@ export const useEditorHotkeys = () => {
       "mod+Z",
       () => {
         if (!isPreviewMode) {
-          if (pastStates.length <= 1) return; // to avoid rendering a blank page
+          //if (pastStates.length <= 1) return; // to avoid rendering a blank page
           handlePageStateChange(undo);
         }
       },

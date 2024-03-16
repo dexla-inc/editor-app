@@ -37,7 +37,7 @@ export const useGetPageData = ({
   }));
 
   const getPageData = async ({ signal }: getPageDataParams) => {
-    const page = await getPageState(projectId, pageId, { signal });
+    const page = await getPageState(projectId, pageId, null, { signal });
 
     setIsLoading(true);
 
@@ -113,7 +113,7 @@ export const useGetPageData = ({
   };
 
   useQuery({
-    queryKey: ["page", projectId, pageId],
+    queryKey: ["page-state", projectId, pageId, history],
     queryFn: async ({ signal }) => await getPageData({ signal }),
     enabled: !!projectId && !!pageId,
   });
