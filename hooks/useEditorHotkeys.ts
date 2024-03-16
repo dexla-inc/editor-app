@@ -15,9 +15,7 @@ import {
 } from "@/utils/editor";
 import { useHotkeys } from "@mantine/hooks";
 import cloneDeep from "lodash.clonedeep";
-import { useCallback, useEffect, useState } from "react";
-import { useGetPageState } from "./reactQuery/useGetPageState";
-import { decodeSchema } from "@/utils/compression";
+import { useCallback } from "react";
 
 export const useEditorHotkeys = () => {
   const editorTree = useEditorTreeStore((state) => state.tree);
@@ -32,48 +30,6 @@ export const useEditorHotkeys = () => {
     (state) => state.setCopiedComponent,
   );
   const setEditorTree = useEditorTreeStore((state) => state.setTree);
-
-  // START: Move undo redo into a separate hook
-  const projectId = useEditorTreeStore(
-    (state) => state.currentProjectId,
-  ) as string;
-
-  const currentPageId = useEditorTreeStore(
-    (state) => state.currentPageId,
-  ) as string;
-
-  const historyCount = useEditorTreeStore((state) => state.historyCount);
-  const setHistoryCount = useEditorTreeStore((state) => state.setHistoryCount);
-
-  const { data: pageState } = useGetPageState(
-    projectId,
-    currentPageId,
-    historyCount,
-  );
-
-  const undo = () => {
-    setHistoryCount((historyCount ?? 0) + 1);
-  };
-
-  const redo = () => {
-    if (historyCount) setHistoryCount(Math.max(0, historyCount - 1));
-  };
-
-  useEffect(() => {
-    if (historyCount !== null && pageState?.state) {
-      const decodedSchema = decodeSchema(pageState?.state);
-      setEditorTree(JSON.parse(decodedSchema), {
-        action: "Undo/Redo",
-        skipSave: true,
-      });
-    }
-  }, [pageState?.state]);
-  // END: Move undo redo into a separate hook
-
-  // Add this page to fix undo for delete component
-  // useEffect(() => {
-  //   console.log("pastStates", pastStates);
-  // }, [pastStates]);
 
   const deleteComponent = useCallback(() => {
     const selectedComponentIds =
@@ -249,43 +205,12 @@ export const useEditorHotkeys = () => {
     }
   }, [copySelectedComponent, deleteComponent, isPreviewMode]);
 
-  const handlePageStateChange = (
-    operation: (steps?: number | undefined) => void,
-  ) => {
-    operation();
-  };
-
   useHotkeys([
     ["backspace", deleteComponent],
     ["delete", deleteComponent],
     ["mod+C", copySelectedComponent],
     ["mod+V", pasteCopiedComponent],
     ["mod+X", cutSelectedComponent],
-    [
-      "mod+Z",
-      () => {
-        if (!isPreviewMode) {
-          //if (pastStates.length <= 1) return; // to avoid rendering a blank page
-          handlePageStateChange(undo);
-        }
-      },
-    ],
-    [
-      "mod+shift+Z",
-      () => {
-        if (!isPreviewMode) {
-          redo();
-        }
-      },
-    ],
-    [
-      "mod+Y",
-      () => {
-        if (!isPreviewMode) {
-          redo();
-        }
-      },
-    ],
   ]);
 
   const isMac = window.navigator.userAgent.includes("Mac");
@@ -312,31 +237,6 @@ export const useEditorHotkeys = () => {
         }
       },
       { preventDefault: false },
-    ],
-    [
-      "mod+Z",
-      () => {
-        if (!isPreviewMode) {
-          //if (pastStates.length <= 1) return; // to avoid rendering a blank page
-          handlePageStateChange(undo);
-        }
-      },
-    ],
-    [
-      "mod+shift+Z",
-      () => {
-        if (!isPreviewMode) {
-          handlePageStateChange(redo);
-        }
-      },
-    ],
-    [
-      "mod+Y",
-      () => {
-        if (!isPreviewMode) {
-          handlePageStateChange(redo);
-        }
-      },
     ],
   ]);
 };
