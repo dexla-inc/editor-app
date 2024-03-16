@@ -125,11 +125,10 @@ export const DataProvider = ({ children }: DataProviderProps) => {
     pick(browser, ["asPath", "basePath", "pathname", "query", "route"]),
   );
 
-  const computeValue = ({
-    value,
-    shareableContent,
-    staticFallback,
-  }: GetValueProps) => {
+  const computeValue = (
+    { value, shareableContent, staticFallback }: GetValueProps,
+    ctx?: any,
+  ) => {
     if (value === undefined) return staticFallback || undefined;
     let dataType = value?.dataType ?? "static";
 
@@ -155,6 +154,7 @@ export const DataProvider = ({ children }: DataProviderProps) => {
 
         return autoRunJavascriptCode(
           hasReturn ? `return ${boundCode}` : boundCode,
+          ctx,
         );
       },
     };
@@ -162,7 +162,9 @@ export const DataProvider = ({ children }: DataProviderProps) => {
     return valueHandlers[dataType]();
   };
 
-  const autoRunJavascriptCode = (boundCode: string) => {
+  const autoRunJavascriptCode = (boundCode: string, ctx: any) => {
+    const { actions } = ctx ?? {};
+    console.log("autoRun", actions);
     try {
       const result = eval(`(function () { ${boundCode} })`)();
       return result;

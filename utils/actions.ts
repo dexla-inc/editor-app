@@ -223,10 +223,9 @@ export type Action = {
 export type ActionParams = {
   actionId: string;
   router: Router;
-  setNonEditorActions: (
-    cb: (param: Record<string, any>) => Record<string, any>,
-  ) => Promise<void>;
-  computeValue: (value: GetValueProps) => any;
+  setActionsResponses: any;
+  actionResponses?: any;
+  computeValue: (value: GetValueProps, ctx?: any) => any;
   onSuccess?: Action;
   onError?: Action;
   event?: any;
@@ -268,16 +267,16 @@ export const useNavigationAction = ({
     url += `?${queryStrings.join("&")}`;
   }
 
-  console.log("useNavigationAction", url);
   router.push(url);
 };
 
 export const useGoToUrlAction = async ({
   action,
   computeValue,
+  actionResponses,
 }: GoToUrlParams) => {
   const { url, openInNewTab } = action;
-  const value = computeValue({ value: url });
+  const value = computeValue({ value: url }, { actions: actionResponses });
 
   if (openInNewTab) {
     window.open(value, "_blank");
@@ -337,11 +336,15 @@ const getComponentDisplayUpdate = (
 export const useChangeVisibilityAction = ({
   action,
   computeValue,
+  actionResponses,
 }: TogglePropsActionParams) => {
   const updateTreeComponentAttrs = useEditorTreeStore(
     (state) => state.updateTreeComponentAttrs,
   );
-  const componentId = computeValue({ value: action.componentId });
+  const componentId = computeValue(
+    { value: action.componentId },
+    { actions: actionResponses },
+  );
   const component = useEditorTreeStore(
     (state) => state.componentMutableAttrs[componentId],
   );
@@ -350,10 +353,13 @@ export const useChangeVisibilityAction = ({
 
   // Determine the current display state of the component
   const currentDisplay = component?.props?.style?.display;
-  const parsedCurrentDisplay = computeValue({
-    value: currentDisplay,
-    staticFallback: defaultDisplayValue,
-  });
+  const parsedCurrentDisplay = computeValue(
+    {
+      value: currentDisplay,
+      staticFallback: defaultDisplayValue,
+    },
+    { actions: actionResponses },
+  );
 
   // Get value to update the display to
   const newDisplay = getComponentDisplayUpdate(
@@ -378,10 +384,14 @@ export const useChangeVisibilityAction = ({
 export const useShowNotificationAction = async ({
   action,
   computeValue,
+  actionResponses,
 }: ShowNotificationActionParams) => {
   return showNotification({
-    title: computeValue({ value: action.title }),
-    message: computeValue({ value: action.message }),
+    title: computeValue({ value: action.title }, { actions: actionResponses }),
+    message: computeValue(
+      { value: action.message },
+      { actions: actionResponses },
+    ),
     color: action.color,
   });
 };
@@ -395,8 +405,12 @@ export const useTriggerLogicFlowAction = async (
 export const useChangeStateAction = ({
   action,
   computeValue,
+  actionResponses,
 }: ChangeStateActionParams) => {
-  const componentId = computeValue({ value: action.componentId });
+  const componentId = computeValue(
+    { value: action.componentId },
+    { actions: actionResponses },
+  );
   const updateTreeComponentAttrs =
     useEditorTreeStore.getState().updateTreeComponentAttrs;
 
@@ -475,12 +489,11 @@ export const prepareRequestData = (
 };
 
 const handleError = async (
-  error: any,
   onError: Action,
   router: Router,
   computeValue: (val: GetValueProps) => any,
+  actionResponses: any,
 ) => {
-  const errorMessage = safeJsonParse(error.message);
   const onErrorActionMapped = actionMapper[onError.action.name];
 
   await onErrorActionMapped.action({
@@ -488,9 +501,8 @@ const handleError = async (
     action: onError?.action,
     router,
     computeValue,
+    actionResponses,
   });
-
-  throw new Error(errorMessage);
 };
 
 const handleSuccess = async (
@@ -498,6 +510,7 @@ const handleSuccess = async (
   router: Router,
   action: APICallAction,
   computeValue: (val: GetValueProps) => any,
+  actionResponses: any,
 ) => {
   const onSuccessActionMapped = actionMapper[onSuccess.action.name];
 
@@ -507,6 +520,7 @@ const handleSuccess = async (
     binds: action.binds,
     router,
     computeValue,
+    actionResponses,
   });
 };
 
@@ -588,9 +602,9 @@ export const useApiCallAction = async ({
   onError,
   entity,
   endpointResults,
-  setNonEditorActions,
+  setActionsResponses,
+  actionResponses,
 }: APICallActionParams): Promise<any> => {
-  console.log("useApiCallAction");
   const updateTreeComponentAttrs =
     useEditorTreeStore.getState().updateTreeComponentAttrs;
   if (entity.props && action.showLoader) {
@@ -651,27 +665,22 @@ export const useApiCallAction = async ({
         );
     }
 
-    onSuccess && (await handleSuccess(onSuccess, router, action, computeValue));
-
-    await setNonEditorActions((prev) => {
-      prev[actionId] = {
-        ...prev[actionId],
-        success: responseJson,
-      };
-      return prev;
-    });
+    setActionsResponses(actionId, { success: responseJson });
+    onSuccess &&
+      (await handleSuccess(
+        onSuccess,
+        router,
+        action,
+        computeValue,
+        actionResponses,
+      ));
 
     return responseJson;
   } catch (error) {
-    onError && (await handleError(error, onError, router, computeValue));
-
-    await setNonEditorActions((prev) => {
-      prev[actionId] = {
-        ...prev[actionId],
-        error,
-      };
-      return prev;
-    });
+    // @ts-expect-error
+    setActionsResponses(actionId, { error: safeJsonParse(error?.message) });
+    onError &&
+      (await handleError(onError, router, computeValue, actionResponses));
   } finally {
     if (entity.props && action.showLoader) {
       setLoadingState(entity.id!, false, updateTreeComponentAttrs);
@@ -699,9 +708,13 @@ export type ChangeVariableActionParams = ActionParams & {
 export const useChangeVariableAction = async ({
   action,
   computeValue,
+  actionResponses,
 }: ChangeVariableActionParams) => {
   const setVariable = useVariableStore.getState().setVariable;
-  const value = computeValue({ value: action.value });
+  const value = computeValue(
+    { value: action.value },
+    { actions: actionResponses },
+  );
   setVariable({
     id: action.variableId,
     value: value,
