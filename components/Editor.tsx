@@ -35,6 +35,7 @@ const Editor = ({ projectId, pageId }: Props) => {
   const setCurrentUser = useEditorTreeStore((state) => state.setCurrentUser);
   const isDarkTheme = useUserConfigStore((state) => state.isDarkTheme);
   const user = usePropelAuthStore((state) => state.user);
+  const setHistoryCount = useEditorTreeStore((state) => state.setHistoryCount);
 
   useGetPageData({ projectId, pageId });
   const [roomEntered, setRoomEntered] = useState(false);
@@ -45,6 +46,7 @@ const Editor = ({ projectId, pageId }: Props) => {
     if (pageId && !roomEntered) {
       liveblocks.enterRoom(pageId);
       setRoomEntered(true);
+      setHistoryCount(null);
     }
 
     return () => {

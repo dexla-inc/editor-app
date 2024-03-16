@@ -42,7 +42,7 @@ export const useEditorHotkeysUndoRedo = () => {
       handlePageState();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [historyCount, pageId, projectId]);
+  }, [historyCount]);
 
   // Add this page to fix undo for delete component
   // useEffect(() => {
