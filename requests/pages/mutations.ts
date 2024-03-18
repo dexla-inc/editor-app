@@ -66,14 +66,19 @@ export const createPageList = async (
   return Array.isArray(json) ? json : [json];
 };
 
+// Page is empty in dev
 export const updatePageState = async (
   state: PageStateParams["state"],
   projectId: string,
   pageId: string,
+  pageLoadTimestamp: number | undefined,
   history: number | null,
+  //description: PageStateParams["description"],
 ) => {
-  const url = `/projects/${projectId}/pages/${pageId}/state?history=${history}`;
-  const response = (await put<any>(url, { state })) as any;
+  const url = `/projects/${projectId}/pages/${pageId}/state?pageLoadTimestamp=${pageLoadTimestamp}&history=${history}`;
+  const response = (await put<any>(url, {
+    state,
+  })) as any;
   return response;
 };
 

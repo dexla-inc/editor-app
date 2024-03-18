@@ -18,6 +18,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { ProjectItemMenu } from "./ProjectItemMenu";
+import { useEditorTreeStore } from "@/stores/editorTree";
 
 type ProjectItemProps = {
   project: ProjectResponse;
@@ -36,6 +37,9 @@ export function ProjectItem({
   const company = usePropelAuthStore((state) => state.activeCompany);
   const queryClient = useQueryClient();
   const startLoading = useAppStore((state) => state.startLoading);
+  const setCurrentPageAndProjectIds = useEditorTreeStore(
+    (state) => state.setCurrentPageAndProjectIds,
+  );
 
   const goToEditorHomePage = async () => {
     startLoading({
@@ -50,6 +54,9 @@ export function ProjectItem({
 
     const homePage = data.results.find((page) => page.isHome);
     let pageId = homePage?.id ?? data.results[0].id;
+
+    // Adding this as pageId is null in dev but not localhost
+    setCurrentPageAndProjectIds(project.id, pageId);
 
     if (pageId !== undefined) {
       goToEditor(project.id, pageId);
