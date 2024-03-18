@@ -18,6 +18,8 @@ export type PageListResponse = {
 
 export type PageStateParams = {
   state: string;
+  description: string;
+  pageLoadTimestamp: number;
 };
 
 export type PageStateResponse = PageStateParams & {

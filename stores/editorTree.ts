@@ -91,6 +91,8 @@ export type EditorTreeState = {
   }) => Promise<void>;
   historyCount: number | null;
   setHistoryCount: (count: number | null) => void;
+  pageLoadTimestamp?: number;
+  setPageLoadTimestamp: (value: number) => void;
   currentUser?: User;
   setCurrentUser: (user?: User) => void;
   cursor?: {
@@ -149,10 +151,6 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
     devtools(
       persist(
         (set) => ({
-          historyCount: null,
-          setHistoryCount: (count) =>
-            set({ historyCount: count }, false, "editorTree/setHistoryCount"),
-          isSaving: false,
           setTree: (tree, options) => {
             set(
               (state: EditorTreeState) => {
@@ -371,6 +369,16 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
           setIsLive: (isLive) => set({ isLive }, false, "editor/setIsLive"),
           setIsSaving: (value) =>
             set({ isSaving: value }, false, "editorTree/setIsSaving"),
+          historyCount: null,
+          setHistoryCount: (count) =>
+            set({ historyCount: count }, false, "editorTree/setHistoryCount"),
+          isSaving: false,
+          setPageLoadTimestamp: (value) =>
+            set(
+              { pageLoadTimestamp: value },
+              false,
+              "editorTree/setPageLoadTimestamp",
+            ),
         }),
         {
           name: "editor-tree-config",
