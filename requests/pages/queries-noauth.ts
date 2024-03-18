@@ -37,11 +37,12 @@ export const getPage = async (
 export const getPageState = async (
   projectId: string,
   pageId: string,
+  pageLoadTimestamp: number | null,
   history: number | null,
   init = {},
 ) => {
   const response = (await getWithoutAuth<PageStateResponse>(
-    `/projects/${projectId}/pages/${pageId}/state?history=${history}`,
+    `/projects/${projectId}/pages/${pageId}/state?pageLoadTimestamp=${pageLoadTimestamp}&history=${history}`,
     init,
   )) as PageStateResponse;
 

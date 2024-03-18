@@ -36,12 +36,16 @@ const Editor = ({ projectId, pageId }: Props) => {
   const isDarkTheme = useUserConfigStore((state) => state.isDarkTheme);
   const user = usePropelAuthStore((state) => state.user);
   const setHistoryCount = useEditorTreeStore((state) => state.setHistoryCount);
+  const setPageLoadTimestamp = useEditorTreeStore(
+    (state) => state.setPageLoadTimestamp,
+  );
 
   useGetPageData({ projectId, pageId });
   const [roomEntered, setRoomEntered] = useState(false);
 
   useEffect(() => {
     setCurrentPageAndProjectIds(projectId, pageId);
+    setPageLoadTimestamp(Date.now());
 
     if (pageId && !roomEntered) {
       liveblocks.enterRoom(pageId);
