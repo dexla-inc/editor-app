@@ -74,8 +74,6 @@ export type EditorState = {
   setCollapsedItemsCount: (collapsedItemsCount: number) => void;
   setActivePage: (activePage?: PageResponse | null) => void;
   activePage?: PageResponse | null;
-  setTriggeredAction: (actions: Action[]) => Promise<void>;
-  actions: Action[];
 };
 
 // creates a store with undo/redo capability
@@ -85,9 +83,6 @@ export const useEditorStore = create<EditorState>()(
     (set, get) => ({
       setActivePage: async (activePage) =>
         set({ activePage }, false, "editor/setActivePage"),
-      setTriggeredAction: async (actions) =>
-        set({ actions }, false, "editor/setTriggeredAction"),
-      actions: [],
       collapsedItemsCount: 0,
       pages: [],
       selectedComponentId: "content-wrapper",

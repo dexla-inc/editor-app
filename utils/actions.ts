@@ -295,7 +295,6 @@ export const useDebugAction = async ({ action }: DebugActionParams) => {
 
 export type TriggerLogicFlowActionParams = ActionParams & {
   action: TriggerLogicFlowAction;
-  setTriggeredLogicFlow: any;
 };
 
 export type ShowNotificationActionParams = ActionParams & {
