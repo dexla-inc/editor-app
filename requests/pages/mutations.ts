@@ -78,7 +78,6 @@ export const updatePageState = async (
   const url = `/projects/${projectId}/pages/${pageId}/state?pageLoadTimestamp=${pageLoadTimestamp}&history=${history}`;
   const response = (await put<any>(url, {
     state,
-    pageLoadTimestamp,
   })) as any;
   return response;
 };

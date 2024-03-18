@@ -33,17 +33,21 @@ export const useEditorHotkeysUndoRedo = () => {
 
   useEffect(() => {
     const handlePageState = async () => {
-      const pageState = await getPageState(
-        projectId,
-        pageId,
-        pageLoadTimestamp,
-        historyCount,
-      );
-      const decodedSchema = decodeSchema(pageState?.state);
-      setEditorTree(JSON.parse(decodedSchema), {
-        action: "Undo/Redo",
-        skipSave: true,
-      });
+      try {
+        const pageState = await getPageState(
+          projectId,
+          pageId,
+          pageLoadTimestamp,
+          historyCount,
+        );
+        const decodedSchema = decodeSchema(pageState?.state);
+        setEditorTree(JSON.parse(decodedSchema), {
+          action: "Undo/Redo",
+          skipSave: true,
+        });
+      } catch (e: any) {
+        // Need to set the history count back to the previous value if you can't go back any longer
+      }
     };
 
     if (historyCount !== null) {
