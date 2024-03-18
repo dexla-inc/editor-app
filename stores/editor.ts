@@ -72,8 +72,8 @@ export type EditorState = {
   setIsWindowError: (isWindowError: boolean) => void;
   collapsedItemsCount: number;
   setCollapsedItemsCount: (collapsedItemsCount: number) => void;
-  setTriggeredLogicFlow: (lf: Node<NodeData>[]) => Promise<void>;
-  lf: Node<NodeData>[];
+  setActivePage: (activePage?: PageResponse | null) => void;
+  activePage?: PageResponse | null;
   setTriggeredAction: (actions: Action[]) => Promise<void>;
   actions: Action[];
 };
@@ -83,9 +83,8 @@ export const useEditorStore = create<EditorState>()(
   // @ts-ignore
   devtools(
     (set, get) => ({
-      setTriggeredLogicFlow: async (lf) =>
-        set({ lf }, false, "editor/setTriggeredLogicFlow"),
-      lf: [],
+      setActivePage: async (activePage) =>
+        set({ activePage }, false, "editor/setActivePage"),
       setTriggeredAction: async (actions) =>
         set({ actions }, false, "editor/setTriggeredAction"),
       actions: [],

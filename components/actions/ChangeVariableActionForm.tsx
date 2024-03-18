@@ -6,13 +6,14 @@ import { ComponentToBindFromInput } from "../ComponentToBindFromInput";
 
 type Props = ActionFormProps<Omit<ChangeVariableAction, "name">>;
 
-export const ChangeVariableActionForm = ({ form }: Props) => {
+export const ChangeVariableActionForm = ({ form, isPageAction }: Props) => {
   return (
     <Stack spacing="xs">
       <VariableSelect required {...form.getInputProps("variableId")} />
       <ComponentToBindFromInput
         required
         label="Value"
+        isPageAction={isPageAction}
         {...form.getInputProps("value")}
       />
     </Stack>

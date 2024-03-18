@@ -7,12 +7,14 @@ type Props = {
   value: ValueProps;
   onChange: (value: ValueProps) => void;
   children?: React.ReactNode;
+  isPageAction?: boolean;
 };
 
 export const ComponentToBindWrapper = ({
   value,
   onChange,
   children,
+  isPageAction,
 }: Props) => {
   const [
     isBindingPopOverOpen,
@@ -37,6 +39,7 @@ export const ComponentToBindWrapper = ({
       )}
       {children}
       <BindingPopover
+        isPageAction={isPageAction}
         value={value}
         onChange={onChange}
         controls={{

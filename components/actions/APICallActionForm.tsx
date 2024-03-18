@@ -14,7 +14,7 @@ import { SegmentedControlYesNo } from "../SegmentedControlYesNo";
 
 type Props = ActionFormProps<Omit<APICallAction, "name" | "datasource">>;
 
-export const APICallActionForm = ({ form }: Props) => {
+export const APICallActionForm = ({ form, isPageAction }: Props) => {
   const router = useRouter();
   const projectId = router.query.id as string;
 
@@ -61,6 +61,7 @@ export const APICallActionForm = ({ form }: Props) => {
             <EndpointRequestInputs
               selectedEndpoint={selectedEndpoint}
               form={form}
+              isPageAction={isPageAction}
             />
           </>
         )}

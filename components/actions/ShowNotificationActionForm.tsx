@@ -8,7 +8,7 @@ import { ThemeColorSelector } from "../ThemeColorSelector";
 
 type Props = ActionFormProps<Omit<ShowNotificationAction, "name">>;
 
-export const ShowNotificationActionForm = ({ form }: Props) => {
+export const ShowNotificationActionForm = ({ form, isPageAction }: Props) => {
   const setPickingComponentToBindTo = useEditorStore(
     (state) => state.setPickingComponentToBindTo,
   );
@@ -36,6 +36,7 @@ export const ShowNotificationActionForm = ({ form }: Props) => {
                 setPickingComponentToBindTo(undefined);
                 setComponentToBind(undefined);
               }}
+              isPageAction={isPageAction}
               {...form.getInputProps(name)}
             />
           </React.Fragment>

@@ -73,7 +73,11 @@ export default function PageActions({ page, onUpdatePage }: Props) {
                 onUpdatePage={onUpdatePage}
               >
                 {({ form }) => (
-                  <ActionForm form={form} actionId={sequentialAction.id} />
+                  <ActionForm
+                    form={form}
+                    actionId={sequentialAction.id}
+                    isPageAction
+                  />
                 )}
               </ActionSettingsForm>
             </SidebarSection>
@@ -129,7 +133,7 @@ export default function PageActions({ page, onUpdatePage }: Props) {
               >
                 {({ form }) => {
                   const ActionForm = actionMapped.form;
-                  return <ActionForm form={form} />;
+                  return <ActionForm form={form} isPageAction />;
                 }}
               </ActionSettingsForm>
               {renderSequentialActions(action)}

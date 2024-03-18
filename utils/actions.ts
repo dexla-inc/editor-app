@@ -101,7 +101,7 @@ export const actions: ActionInfo[] = [
 
 export type ActionFormProps<T> = {
   form: UseFormReturnType<T>;
-  isLogicFlow?: boolean;
+  isPageAction?: boolean;
   actionId?: string;
 };
 
@@ -386,6 +386,7 @@ export const useShowNotificationAction = async ({
   computeValue,
   actionResponses,
 }: ShowNotificationActionParams) => {
+  console.log("TESETTT");
   return showNotification({
     title: computeValue({ value: action.title }, { actions: actionResponses }),
     message: computeValue(
@@ -556,7 +557,7 @@ export async function performFetch(
   const response = await fetch(url, {
     method: endpoint?.methodType,
     headers: headers,
-    ...(!!body && !isGetMethodType ? { body: JSON.stringify(body) } : {}),
+    ...(!!body && !isGetMethodType && { body: JSON.stringify(body) }),
   });
 
   const responseString = response.status.toString();
@@ -605,6 +606,7 @@ export const useApiCallAction = async ({
   setActionsResponses,
   actionResponses,
 }: APICallActionParams): Promise<any> => {
+  console.log("APICALL");
   const updateTreeComponentAttrs =
     useEditorTreeStore.getState().updateTreeComponentAttrs;
   if (entity.props && action.showLoader) {
@@ -666,6 +668,7 @@ export const useApiCallAction = async ({
     }
 
     setActionsResponses(actionId, { success: responseJson });
+
     onSuccess &&
       (await handleSuccess(
         onSuccess,
