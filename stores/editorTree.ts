@@ -177,7 +177,8 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                     state?.historyCount,
                     state?.setHistoryCount,
                   );
-                  console.log("Saving tree", state.currentPageId);
+                  console.log("state.currentProjectId", state.currentProjectId);
+                  console.log("state.currentPageId", state.currentPageId);
                 }
 
                 const newComponentMutableAttrs = getTreeComponentMutableProps(
