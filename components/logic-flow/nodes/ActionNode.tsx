@@ -2,7 +2,6 @@ import { NodeProps } from "reactflow";
 import { CustomNode, NodeData } from "@/components/logic-flow/nodes/CustomNode";
 import { IconBolt } from "@tabler/icons-react";
 import { UseFormReturnType } from "@mantine/form";
-import { useEffect } from "react";
 import { nanoid } from "nanoid";
 import { Select, Stack } from "@mantine/core";
 import { actionMapper, actions } from "@/utils/actions";

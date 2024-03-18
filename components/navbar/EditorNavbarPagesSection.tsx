@@ -6,12 +6,14 @@ import { Stack } from "@mantine/core";
 import debounce from "lodash.debounce";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
+import { useEditorStore } from "@/stores/editor";
 
 export const EditorNavbarPagesSection = () => {
   const router = useRouter();
   const projectId = router.query.id as string;
   const currentPage = router.query.page as string;
-  const [page, setPage] = useState<PageResponse | undefined | null>();
+  const page = useEditorStore((state) => state.activePage);
+  const setPage = useEditorStore((state) => state.setActivePage);
   const [search, setSearch] = useState<string>("");
   const { data: pageListQuery } = usePageListQuery(projectId);
   const [pages, setPages] = useState<PageResponse[] | undefined>();

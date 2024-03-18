@@ -12,8 +12,9 @@ export const withPageOnLoad = (WrappedComponent: any) => {
     } = useRouter();
     const { data: pageListQuery } = usePageListQuery(projectId as string);
     const page = pageListQuery?.results?.find(
-      (item) => item.id === pageId,
+      (item) => item.id === pageId || item.slug === pageId,
     ) as PageResponse;
+
     const { onPageLoad } = useTriggers({ entity: page });
     const [actionTriggeredForPath, setActionTriggeredForPath] = useState("");
 
@@ -30,7 +31,7 @@ export const withPageOnLoad = (WrappedComponent: any) => {
 
       triggerPageActions();
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [asPath, onPageLoad]);
+    }, [asPath, page?.id]);
 
     return <WrappedComponent {...props} />;
   };

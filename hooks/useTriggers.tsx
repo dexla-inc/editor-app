@@ -25,12 +25,6 @@ export const useTriggers = ({ entity }: UseTriggersProps) => {
   const router = useRouter();
   const { computeValue } = useDataContext()!;
   const { data: endpoints } = useDataSourceEndpoints(projectId);
-  const setTriggeredLogicFlow = useEditorStore(
-    (state) => state.setTriggeredLogicFlow,
-  );
-  const setTriggeredAction = useEditorStore(
-    (state) => state.setTriggeredAction,
-  );
 
   const actionResponses: Record<string, any> = {};
   const setActionsResponses = (actionId: string, response: any) => {
@@ -57,15 +51,6 @@ export const useTriggers = ({ entity }: UseTriggersProps) => {
         return {
           ...acc,
           [action.trigger]: async (e: any) => {
-            if (action.action.hasOwnProperty("logicFlow")) {
-              const { logicFlow } = action.action as TriggerLogicFlowAction;
-              const decoded = decodeSchema(logicFlow?.data);
-              const nodeData = JSON.parse(decoded).nodes;
-              await setTriggeredLogicFlow(nodeData);
-            } else {
-              await setTriggeredAction(actions);
-            }
-
             return actionMapper[action.action.name].action({
               // @ts-ignore
               action: action.action,
@@ -83,7 +68,6 @@ export const useTriggers = ({ entity }: UseTriggersProps) => {
                 (ea) => ea.sequentialTo === action.id,
               ),
               entity,
-              setTriggeredLogicFlow,
             });
           },
         };

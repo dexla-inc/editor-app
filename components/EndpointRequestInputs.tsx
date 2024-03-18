@@ -10,12 +10,14 @@ type Props = {
   selectedEndpoint?: Endpoint;
   form: any;
   formType?: "data" | "actions";
+  isPageAction?: boolean;
 };
 
 export const EndpointRequestInputs = ({
   selectedEndpoint,
   form,
   formType = "actions",
+  isPageAction,
 }: Props) => {
   const accessToken = useDataSourceStore(
     (state) => state.authState.accessToken,
@@ -84,6 +86,7 @@ export const EndpointRequestInputs = ({
                       setPickingComponentToBindTo(undefined);
                       setComponentToBind(undefined);
                     }}
+                    isPageAction={isPageAction}
                     {...form.getInputProps(field)}
                   />
                 </Stack>

@@ -23,6 +23,7 @@ type BaseProps = {
   label?: string;
   defaultValue?: any;
   decimalPlaces?: number;
+  isPageAction?: boolean;
 };
 
 // Define a helper type for the conditional props extension
@@ -47,6 +48,7 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
   onChange,
   fieldType = "text",
   decimalPlaces,
+  isPageAction,
   ...props
 }: ComponentToBindFromInputProps<T>) => {
   const setHighlightedComponentId = useEditorStore(
@@ -65,7 +67,11 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
   };
 
   return (
-    <ComponentToBindWrapper onChange={onChange} value={value}>
+    <ComponentToBindWrapper
+      onChange={onChange}
+      value={value}
+      isPageAction={isPageAction}
+    >
       {fieldType === "text" ? (
         <TextInput
           {...commonProps}

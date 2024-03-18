@@ -42,6 +42,7 @@ type Props = {
     onClose: () => void;
   };
   style?: "input" | "iconButton";
+  isPageAction?: boolean;
 };
 
 export default function BindingPopover({
@@ -49,6 +50,7 @@ export default function BindingPopover({
   onChange,
   controls: { isOpen, onOpen, onClose },
   style = "iconButton",
+  isPageAction,
 }: Props) {
   const [tab, setTab] = useState<BindingTab>("components");
   const [filterKeyword, setFilterKeyword] = useState<string>("");
@@ -56,7 +58,7 @@ export default function BindingPopover({
     useDataContext()!;
   const [selectedItem, setSelectedItem] = useState<string>();
 
-  const { actions, getEntityEditorValue } = useBindingPopover();
+  const { actions, getEntityEditorValue } = useBindingPopover({ isPageAction });
 
   const onChangeDataTypeAsBoundCode = () => {
     onChange({

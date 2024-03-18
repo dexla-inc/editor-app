@@ -4,13 +4,14 @@ import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput"
 
 type Props = ActionFormProps<Omit<GoToUrlAction, "name">>;
 
-export const GoToUrlForm = ({ form }: Props) => {
+export const GoToUrlForm = ({ form, isPageAction }: Props) => {
   return (
     <Stack>
       <ComponentToBindFromInput
         size="xs"
         placeholder="Enter a URL"
         label="URL"
+        isPageAction={isPageAction}
         {...form.getInputProps("url")}
       />
 
