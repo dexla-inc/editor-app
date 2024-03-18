@@ -130,12 +130,19 @@ const updatePageStateFunc = async (
   projectId: string,
   pageId: string,
   setIsSaving: (value: boolean) => void,
+  pageLoadTimestamp?: number | undefined,
   history?: number | null,
   setHistoryCount?: (count: number | null) => void,
 ) => {
   try {
     setIsSaving(true);
-    await updatePageState(state, projectId, pageId, history ?? null);
+    await updatePageState(
+      state,
+      projectId,
+      pageId,
+      pageLoadTimestamp,
+      history ?? null,
+    );
     setHistoryCount?.(null);
   } finally {
     setIsSaving(false);
@@ -166,9 +173,11 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                     state.currentProjectId ?? "",
                     state.currentPageId ?? "",
                     state.setIsSaving,
+                    state?.pageLoadTimestamp,
                     state?.historyCount,
                     state?.setHistoryCount,
                   );
+                  console.log("Saving tree", state.currentPageId);
                 }
 
                 const newComponentMutableAttrs = getTreeComponentMutableProps(
@@ -243,6 +252,10 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                     state.currentPageId ?? "",
                     state.setIsSaving,
                   );
+                  console.log(
+                    "Update Tree component children",
+                    state.currentPageId,
+                  );
                 }
 
                 const component = state.componentMutableAttrs[componentId];
@@ -295,6 +308,10 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                     state.currentProjectId ?? "",
                     state.currentPageId ?? "",
                     state.setIsSaving,
+                  );
+                  console.log(
+                    "Updating tree component attrs",
+                    state.currentPageId,
                   );
                 }
 
