@@ -4,6 +4,7 @@ import { PagingResponse } from "@/requests/types";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { Component } from "@/utils/editor";
 import { SegmentedControl, Stack } from "@mantine/core";
+import { ChartForm } from "@/components/data/forms/static/ChartForm";
 
 export type DataProps = {
   component: Component;
@@ -35,7 +36,7 @@ export const ChartData = ({ component, endpoints, dataType }: DataProps) => {
           })
         }
       />
-      {dataType === "static" && <></>}
+      {dataType === "static" && <ChartForm component={component} />}
       {dataType === "dynamic" && (
         <DynamicSettings component={component} endpoints={endpoints!} />
       )}

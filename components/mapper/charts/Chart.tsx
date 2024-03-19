@@ -1,19 +1,17 @@
 import { useThemeStore } from "@/stores/theme";
-import { Component, getColorFromTheme } from "@/utils/editor";
+import { EditableComponentMapper, getColorFromTheme } from "@/utils/editor";
 import { MantineThemeExtended } from "@/utils/types";
-import { BoxProps } from "@mantine/core";
 import { ApexOptions } from "apexcharts";
 import get from "lodash.get";
 import merge from "lodash.merge";
 import dynamic from "next/dynamic";
+import { useEndpoint } from "@/hooks/useEndpoint";
+
 const ReactApexChart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
 });
 
-type Props = {
-  component: Component;
-  isPreviewMode?: boolean;
-} & BoxProps;
+type Props = EditableComponentMapper;
 
 export const getChartColor = (
   theme: MantineThemeExtended,
@@ -34,12 +32,14 @@ export const Chart = ({ component, ...props }: Props) => {
     labelColor,
     foreColor,
     triggers,
+    dataType,
+
     ...componentProps
   } = component.props as any;
 
   const theme = useThemeStore((state) => state.theme);
   const isPieOrRadial =
-    type === "pie" || type === "donut" || type === "radialBar";
+    component?.name === "PieChart" || component?.name === "RadialChart";
 
   const colors = chartColors?.map((color: any) =>
     getColorFromTheme(theme, color),
@@ -104,7 +104,7 @@ export const Chart = ({ component, ...props }: Props) => {
         strokeColors: theme.colors.gray[0],
       },
       legend: {
-        show: type !== "radialBar" && series.length > 0,
+        show: type !== "radialBar" && series?.length > 0,
         fontSize: 13,
         position: "top",
         horizontalAlign: "right",
@@ -129,7 +129,7 @@ export const Chart = ({ component, ...props }: Props) => {
           show: true,
         },
         marker: {
-          show: series.length > 1,
+          show: series?.length > 1,
         },
       },
       dataLabels: {
@@ -139,27 +139,17 @@ export const Chart = ({ component, ...props }: Props) => {
     options,
   );
 
-  let dataSeries = series;
-  let dataLabels = isPieOrRadial ? options?.labels : options?.xaxis?.categories;
+  const { data: response } = useEndpoint({
+    component,
+  });
 
-  if (props.isPreviewMode) {
-    dataSeries = data?.series?.value ?? series;
-    dataLabels = data?.labels?.value ?? dataLabels;
+  let dataSeries = [],
+    dataLabels = [];
 
-    if (typeof repeatedIndex !== "undefined") {
-      if (data?.series?.path) {
-        const path = data?.series?.path.replace("[0]", `[${repeatedIndex}]`);
-        dataSeries = get(data?.series?.base, path, series);
-      }
-
-      if (data?.labels?.path) {
-        const path = data?.dataLabels?.path.replace(
-          "[0]",
-          `[${repeatedIndex}]`,
-        );
-        dataLabels = get(data?.dataLabels?.base, path, dataLabels);
-      }
-    }
+  if (dataType === "static") {
+    dataSeries = series;
+    dataLabels = isPieOrRadial ? options?.labels : options?.xaxis?.categories;
+  } else if (dataType === "dynamic") {
   }
 
   const opts = {
@@ -170,29 +160,27 @@ export const Chart = ({ component, ...props }: Props) => {
           xaxis: {
             categories: dataLabels,
             labels: {
-              style: { colors: dataLabels.map((_: any) => _foreColor) },
+              style: { colors: dataLabels?.map((_: any) => _foreColor) },
             },
           },
         }),
   };
 
   return (
-    <div>
-      <ReactApexChart
-        {...props}
-        {...componentProps}
-        {...triggers}
-        series={dataSeries}
-        style={{
-          ...(props.style ?? {}),
-          textAlign: "center",
-          padding: 0,
-          color: theme.colors.gray[8],
-        }}
-        width="100%"
-        type={type}
-        options={opts}
-      />
-    </div>
+    <ReactApexChart
+      {...props}
+      {...componentProps}
+      {...triggers}
+      series={dataSeries}
+      style={{
+        ...(props.style ?? {}),
+        textAlign: "center",
+        padding: 0,
+        color: theme.colors.gray[8],
+      }}
+      width="100%"
+      type={type}
+      options={opts}
+    />
   );
 };

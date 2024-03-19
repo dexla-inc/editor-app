@@ -1,10 +1,8 @@
 import { Chart } from "@/components/mapper/charts/Chart";
-import { Component } from "@/utils/editor";
+import { EditableComponentMapper } from "@/utils/editor";
 import merge from "lodash.merge";
 
-type Props = {
-  component: Component;
-};
+type Props = EditableComponentMapper;
 
 export const PieChart = (props: Props) => {
   const customProps = merge({}, props, {
