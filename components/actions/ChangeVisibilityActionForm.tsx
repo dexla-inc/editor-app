@@ -9,7 +9,7 @@ import { pick } from "next/dist/lib/pick";
 
 type Props = ActionFormProps<Omit<TogglePropsAction, "name">>;
 
-export const ChangeVisibilityActionForm = ({ form }: Props) => {
+export const ChangeVisibilityActionForm = ({ form, isPageAction }: Props) => {
   const setComponentToBind = useEditorStore(
     (state) => state.setComponentToBind,
   );
@@ -34,6 +34,7 @@ export const ChangeVisibilityActionForm = ({ form }: Props) => {
           setPickingComponentToBindTo(undefined);
           setComponentToBind(undefined);
         }}
+        isPageAction={isPageAction}
         {...form.getInputProps("componentId")}
       />
       <VisibilityModifier

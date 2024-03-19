@@ -50,9 +50,9 @@ const run = async (state: FlowData, params: any) => {
 
     while (nextNodes.length) {
       const nextNode = nextNodes[0];
-      const compute = computeNodeMapper[nextNode?.type!];
+      const computeNode = computeNodeMapper[nextNode?.type!];
 
-      await compute?.(nextNode, params);
+      await computeNode?.(nextNode, params);
 
       nextNodes = getOutgoers(nextNode, state.nodes, state.edges);
     }

@@ -6,10 +6,16 @@ import { safeJsonParse } from "@/utils/common";
 import merge from "lodash.merge";
 import { Action, APICallAction } from "@/utils/actions";
 import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
+import { usePageListQuery } from "@/hooks/reactQuery/usePageListQuery";
+import { useEditorStore } from "@/stores/editor";
 
 type BindType = {
   selectedEntityId: string;
   entity: "auth" | "components" | "browser" | "variables" | "actions";
+};
+
+type Props = {
+  isPageAction?: boolean;
 };
 
 const setEntityString = ({ selectedEntityId, entity }: BindType) => {
@@ -18,21 +24,24 @@ const setEntityString = ({ selectedEntityId, entity }: BindType) => {
   return `${entity}['${entityKey}']${path}`;
 };
 
-export const useBindingPopover = () => {
+export const useBindingPopover = ({ isPageAction }: Props) => {
   const { variables, components } = useDataContext()!;
 
-  const selectedComponentId = useEditorTreeStore(
-    (state) => state.selectedComponentIds?.at(-1)!,
+  const activePage = useEditorStore((state) => state.activePage);
+  const selectedComponentActions = useEditorTreeStore(
+    (state) =>
+      state.componentMutableAttrs[state.selectedComponentIds?.at(-1)!]?.actions,
   );
-  const componentMutableAttrs = useEditorTreeStore(
-    (state) => state.componentMutableAttrs,
-  );
-  const selectedComponent = componentMutableAttrs[selectedComponentId];
   const nodes = useNodes<NodeData>();
   const projectId = useEditorTreeStore((state) => state.currentProjectId ?? "");
   const { data: endpoints } = useDataSourceEndpoints(projectId);
+  const { data: pageListQuery } = usePageListQuery(projectId);
+  const pageActions = pageListQuery?.results?.find(
+    (p) => p.id === activePage?.id,
+  )?.actions;
 
-  const actionsList = selectedComponent?.actions;
+  const actionsList = isPageAction ? pageActions : selectedComponentActions;
+
   const isLogicFlow = nodes.length > 0;
 
   function isNodeData(item: any): item is Node<NodeData> {

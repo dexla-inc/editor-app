@@ -9,9 +9,10 @@ import { UseFormReturnType } from "@mantine/form";
 
 type Props = {
   form: UseFormReturnType<Omit<ChangeStateAction, "name">>;
+  isPageAction?: boolean;
 };
 
-export const ChangeStateActionForm = ({ form }: Props) => {
+export const ChangeStateActionForm = ({ form, isPageAction }: Props) => {
   const setPickingComponentToBindTo = useEditorStore(
     (state) => state.setPickingComponentToBindTo,
   );
@@ -30,6 +31,7 @@ export const ChangeStateActionForm = ({ form }: Props) => {
           setPickingComponentToBindTo(undefined);
           setComponentToBind(undefined);
         }}
+        isPageAction={isPageAction}
         {...form.getInputProps("componentId")}
       />
 

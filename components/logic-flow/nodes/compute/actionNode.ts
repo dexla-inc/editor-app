@@ -31,8 +31,10 @@ export const compute = async (node: Node, params: any) => {
 
     const actionData = {
       ...params,
+      actionId: node.id,
       action: { name: action, ...formDataTransformed },
     };
+
     // @ts-ignore
     const result = await actionMapper[action].action(actionData);
 
