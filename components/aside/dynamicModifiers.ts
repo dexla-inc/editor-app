@@ -91,9 +91,7 @@ const TextModifier = dynamic(() => import("@/components/modifiers/Text"));
 const TextareaModifier = dynamic(
   () => import("@/components/modifiers/Textarea"),
 );
-const ChartModifier = dynamic(
-  () => import("@/components/modifiers/chart/Chart"),
-);
+const ChartModifier = dynamic(() => import("@/components/modifiers/Chart"));
 
 type SectionsMapper = {
   [key in Modifiers]: any;

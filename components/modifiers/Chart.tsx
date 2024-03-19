@@ -1,19 +1,15 @@
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { withModifier } from "@/hoc/withModifier";
-import { scrollbarStyles } from "@/utils/branding";
 import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { Divider, Stack, Text, Textarea } from "@mantine/core";
+import { Divider, Stack, Text } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
-import { useEffect, useState } from "react";
 
 const initialValues = requiredModifiers.chart;
 
 const Modifier = withModifier(({ selectedComponent }) => {
-  const [length, setLength] = useState(0);
-
   const isPieOrRadial =
     selectedComponent?.name === "PieChart" ||
     selectedComponent?.name === "RadialChart";
@@ -37,11 +33,6 @@ const Modifier = withModifier(({ selectedComponent }) => {
   });
 
   const isRadialOnly = selectedComponent?.name === "RadialChart";
-
-  useEffect(() => {
-    setLength(series?.length ?? 0);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [series?.length]);
 
   return (
     <form>
@@ -68,55 +59,6 @@ const Modifier = withModifier(({ selectedComponent }) => {
             }}
           />
         )}
-        <Textarea
-          autosize
-          maxRows={10}
-          label={isPieOrRadial ? "Data" : "Data (y-axis)"}
-          size="xs"
-          styles={{ input: scrollbarStyles }}
-          {...form.getInputProps("data")}
-          onChange={(e) => {
-            form.setFieldValue("data", e.currentTarget.value);
-            try {
-              debouncedTreeComponentAttrsUpdate({
-                attrs: {
-                  props: { series: JSON.parse(e.currentTarget.value ?? "") },
-                },
-              });
-            } catch (error) {
-              console.error(error);
-            }
-          }}
-        />
-        <Textarea
-          autosize
-          maxRows={10}
-          label={isPieOrRadial ? "Data Labels" : "Data (x-axis)"}
-          size="xs"
-          styles={{ input: scrollbarStyles }}
-          {...form.getInputProps("dataLabels")}
-          onChange={(e) => {
-            form.setFieldValue("dataLabels", e.currentTarget.value);
-            try {
-              const options = isPieOrRadial
-                ? {
-                    labels: JSON.parse(e.currentTarget.value ?? ""),
-                  }
-                : {
-                    xaxis: {
-                      categories: JSON.parse(e.currentTarget.value ?? ""),
-                    },
-                  };
-              debouncedTreeComponentAttrsUpdate({
-                attrs: {
-                  props: { options },
-                },
-              });
-            } catch (error) {
-              console.error(error);
-            }
-          }}
-        />
         <Divider variant="dotted" />
         <Stack>
           <Text fw={500} size="xs">
@@ -124,7 +66,7 @@ const Modifier = withModifier(({ selectedComponent }) => {
           </Text>
           <Stack spacing="xs">
             {form.values.colors
-              .slice(0, length)
+              .slice(0, series?.length ?? 0)
               .map((color: string, index: number) => (
                 <ThemeColorSelector
                   key={index}

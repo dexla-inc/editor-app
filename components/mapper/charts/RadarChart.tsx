@@ -1,10 +1,9 @@
 import { Chart } from "@/components/mapper/charts/Chart";
 import { useThemeStore } from "@/stores/theme";
-import { Component } from "@/utils/editor";
+import { EditableComponentMapper } from "@/utils/editor";
 import merge from "lodash.merge";
-type Props = {
-  component: Component;
-};
+
+type Props = EditableComponentMapper;
 
 export const RadarChart = (props: Props) => {
   const theme = useThemeStore((state) => state.theme);

@@ -27,7 +27,6 @@ const CardAndContainerWrapperInner = ({
 
   const { data } = useEndpoint({
     component,
-    forceEnabled: !!endpointId,
     includeExampleResponse: !isPreviewMode,
   });
 
