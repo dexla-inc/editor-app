@@ -35,7 +35,7 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
   const nodes = useNodes<NodeData>();
   const projectId = useEditorTreeStore((state) => state.currentProjectId ?? "");
   const { data: endpoints } = useDataSourceEndpoints(projectId);
-  const { data: pageListQuery } = usePageListQuery(projectId);
+  const { data: pageListQuery } = usePageListQuery(projectId, null);
   const pageActions = pageListQuery?.results?.find(
     (p) => p.id === activePage?.id,
   )?.actions;
@@ -56,7 +56,8 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
 
   const actions = itemsToProcess?.reduce(
     (acc, item) => {
-      let actionId, endpointId, actionName, actionType;
+      let actionId, actionName, actionType;
+      let endpointId = "";
 
       if (isNodeData(item)) {
         const { action, endpoint } = item.data.form ?? {};

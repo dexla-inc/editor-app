@@ -61,7 +61,7 @@ export function ProjectItemMenu({
     isLoading,
     isError,
     invalidate,
-  } = usePageListQuery(projectId, undefined, menuOpened);
+  } = usePageListQuery(projectId, null, menuOpened);
 
   useEffect(() => {
     if (!isLoading && !isError && pageListQuery) {

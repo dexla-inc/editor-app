@@ -1,17 +1,15 @@
 import React from "react";
 import { Global, useMantineTheme } from "@mantine/core";
 import { useUserConfigStore } from "@/stores/userConfig";
-import { useCheckIfIsLive } from "@/hooks/useCheckIfIsLive";
 
 // Assuming DARK_MODE, LIGHT_MODE, and GREEN_COLOR are constants defined elsewhere
 const DARK_MODE = "dark mode background color"; // Example placeholder
 const LIGHT_MODE = "light mode background color"; // Example placeholder
 const GREEN_COLOR = "green color for text"; // Example placeholder
 
-export const MantineGlobal = () => {
+export const MantineGlobal = ({ isLive }: { isLive: boolean }) => {
   const theme = useMantineTheme();
   const isDarkTheme = useUserConfigStore((state) => state.isDarkTheme);
-  const isLive = useCheckIfIsLive();
 
   return (
     <Global

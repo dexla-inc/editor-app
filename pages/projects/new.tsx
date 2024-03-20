@@ -49,6 +49,7 @@ export default function New() {
   const stepFromQuery = router.query.step;
   const { data: pageListQuery } = usePageListQuery(
     projectIdFromQuery as string,
+    null,
   );
 
   useEffect(() => {

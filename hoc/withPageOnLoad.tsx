@@ -10,7 +10,7 @@ export const withPageOnLoad = (WrappedComponent: any) => {
       asPath,
       query: { id: projectId, page: pageId },
     } = useRouter();
-    const { data: pageListQuery } = usePageListQuery(projectId as string);
+    const { data: pageListQuery } = usePageListQuery(projectId as string, null);
     const page = pageListQuery?.results?.find(
       (item) => item.id === pageId || item.slug === pageId,
     ) as PageResponse;

@@ -1,14 +1,12 @@
+import { getProject } from "@/requests/projects/queries-noauth";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { getProjectType } from "@/utils/common";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { useProjectQuery } from "./reactQuery/useProjectQuery";
 
 export const useCheckIfIsLive = () => {
   const router = useRouter();
   const projectId = router.query.id as string | undefined;
-  const [projectIdOrUrl, setProjectIdOrUrl] = useState(projectId);
-  const { data: project } = useProjectQuery(projectIdOrUrl);
 
   const setCurrentPageAndProjectIds = useEditorTreeStore(
     (state) => state.setCurrentPageAndProjectIds,
@@ -34,8 +32,8 @@ export const useCheckIfIsLive = () => {
         if (!projectId && urlType === "live") {
           const hostUrl =
             typeof window !== "undefined" ? window.location.host : "";
-          setProjectIdOrUrl(hostUrl);
-          _projectId = project?.id ?? projectId;
+          const project = await getProject(hostUrl, true);
+          _projectId = project.id ?? projectId;
         }
 
         setCurrentPageAndProjectIds(_projectId as string, "");

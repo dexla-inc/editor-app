@@ -43,7 +43,6 @@ export const Live = ({ projectId, pageId }: Props) => {
   const setEditorTree = useEditorTreeStore((state) => state.setTree);
   const setIsLoading = useAppStore((state) => state.setIsLoading);
   const isLoading = useAppStore((state) => state.isLoading);
-  console.log("editorTree", editorTree);
   const { data: deployment } = useDeploymentsRecentQuery(projectId);
 
   const page = useMemo(
