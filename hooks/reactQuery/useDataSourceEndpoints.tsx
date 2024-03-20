@@ -13,8 +13,7 @@ export const useDataSourceEndpoints = (
 
   const queryResult = useQuery<PagingResponse<Endpoint>, Error>({
     queryKey: queryKey,
-    queryFn: () =>
-      getDataSourceEndpoints(projectId as string, { dataSourceId }),
+    queryFn: () => getDataSourceEndpoints(projectId as string), // , { dataSourceId }
     staleTime: cacheTime,
     enabled: !!projectId,
   });
