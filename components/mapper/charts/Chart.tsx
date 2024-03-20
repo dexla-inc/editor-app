@@ -44,7 +44,7 @@ export const Chart = ({ component, ...props }: Props) => {
   );
   const { dataLabelKey, dataSeriesKey, dataLegendKey, resultsKey } =
     onLoad ?? {};
-  console.log({ onLoad });
+
   const theme = useThemeStore((state) => state.theme);
   const isPieOrRadial =
     component?.name === "PieChart" || component?.name === "RadialChart";

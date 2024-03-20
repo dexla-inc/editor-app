@@ -16,7 +16,7 @@ export const jsonStructure = (props?: any): ComponentStructure => {
         width: "fit-content",
         height: "fit-content",
       },
-      chartColors: [...requiredModifiers.chart.colors],
+      chartColors: [requiredModifiers.chart.colors[0]],
       series: [
         {
           name: "Desktops",
