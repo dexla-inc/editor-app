@@ -1,120 +1,59 @@
-import { getPageState } from "@/requests/pages/queries-noauth";
 import { useAppStore } from "@/stores/app";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { useUserConfigStore } from "@/stores/userConfig";
 import { emptyEditorTree } from "@/utils/common";
 import { decodeSchema } from "@/utils/compression";
-import { useQuery } from "@tanstack/react-query";
-
-type getPageDataParams = {
-  signal: AbortSignal | undefined;
-};
+import { usePageState } from "@/hooks/reactQuery/usePageState";
 
 export const defaultPageState = {
   name: "Initial State",
   timestamp: Date.now(),
   root: emptyEditorTree.root,
 };
-
-export const useGetPageData = ({
-  projectId,
-  pageId,
-}: {
+type Props = {
   projectId: string;
   pageId: string;
-}) => {
-  const { stopLoading, setIsLoading } = useAppStore((state) => ({
-    startLoading: state.startLoading,
-    stopLoading: state.stopLoading,
-    setIsLoading: state.setIsLoading,
-  }));
+};
+
+export const useGetPageData = ({ projectId, pageId }: Props) => {
+  const stopLoading = useAppStore((state) => state.stopLoading);
+  const setIsLoading = useAppStore((state) => state.setIsLoading);
 
   const setEditorTree = useEditorTreeStore((state) => state.setTree);
+  const pageLoadTimestamp = useEditorTreeStore(
+    (state) => state.pageLoadTimestamp,
+  );
 
-  const { pageCancelled, setPageCancelled } = useUserConfigStore((state) => ({
-    pageCancelled: state.pageCancelled,
-    setPageCancelled: state.setPageCancelled,
-  }));
+  const { data: page } = usePageState(
+    projectId,
+    pageId,
+    pageLoadTimestamp ?? 0,
+    null,
+  );
 
-  const getPageData = async ({ signal }: getPageDataParams) => {
-    const page = await getPageState(projectId, pageId, null, null, { signal });
+  // if (!isFetched) {
+  //   return;
+  // }
 
-    setIsLoading(true);
+  if (page?.state) {
+    const decodedSchema = decodeSchema(page.state);
+    setEditorTree(JSON.parse(decodedSchema), {
+      onLoad: true,
+      action: "Initial State",
+    });
 
-    if (pageCancelled) {
-      // TODO: get this back - we might not need this
-      // setEditorTree(defaultPageState, {
-      //   onLoad: false,
-      //   action: "Initial State",
-      // });
-      setPageCancelled(false);
-      setIsLoading(false);
-      stopLoading({
-        id: "go-to-editor",
-        title: "Page Loaded",
-        message: "Your page has successfully loaded",
-      });
-      return defaultPageState;
-    } else if (page.state) {
-      const decodedSchema = decodeSchema(page.state);
-      setEditorTree(JSON.parse(decodedSchema), {
-        onLoad: true,
-        action: "Initial State",
-      });
-
-      setIsLoading(false);
-      stopLoading({
-        id: "go-to-editor",
-        title: "Page Loaded",
-        message: "Your page has successfully loaded",
-      });
-      return JSON.parse(decodedSchema);
-    } else {
-      setIsLoading(false);
-      return defaultPageState;
-
-      // Commenting out AI page generation for now
-      // setIsLoading(true);
-      // startLoading({
-      //   id: "page-generation",
-      //   title: "Generating Page",
-      //   message: "AI is generating your page",
-      // });
-      // const templateToUse = await analyseTemplateToUse(
-      //   page.name,
-      //   page.description ?? "",
-      //   undefined,
-      //   undefined,
-      //   { signal },
-      // );
-      // const template = await getTemplate(templateToUse.name, true);
-      // // TODO: Replace tiles from template state with tiles from aiPageTemplate
-      // const templateTreeState = JSON.parse(decodeSchema(template.state));
-      // // const _project = await fetch(`/api/project/${projectId}`, {
-      // //   method: "GET",
-      // //   headers: {
-      // //     "Content-Type": "application/json",
-      // //   },
-      // //   signal,
-      // // }).then((projectResponse) => projectResponse.json());
-      // // TODO: Add tiles into AI response /api/ai/page
-      // // const treeState = replaceTilesData(
-      // //   templateTreeState,
-      // //   template.tiles ?? [],
-      // //   _project?.data,
-      // // );
-      // setEditorTree(templateTreeState);
-      // stopLoading({
-      //   id: "page-generation",
-      //   title: "Page Generated",
-      //   message: "Here's your page. We hope you like it",
-      // });
-    }
-  };
-
-  useQuery({
-    queryKey: ["page-state", projectId, pageId, history],
-    queryFn: async ({ signal }) => await getPageData({ signal }),
-    enabled: !!projectId && !!pageId,
-  });
+    setIsLoading(false);
+    stopLoading({
+      id: "go-to-editor",
+      title: "Page Loaded",
+      message: "Your page has successfully loaded",
+    });
+    return JSON.parse(decodedSchema);
+  } else if (page) {
+    setIsLoading(false);
+    setEditorTree(defaultPageState, {
+      onLoad: true,
+      action: "Initial State",
+    });
+    return defaultPageState;
+  }
 };

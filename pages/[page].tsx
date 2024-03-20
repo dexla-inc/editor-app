@@ -1,5 +1,6 @@
 import { Live } from "@/components/Live";
 import { withPageOnLoad } from "@/hoc/withPageOnLoad";
+import { getMostRecentDeployment } from "@/requests/deployments/queries-noauth";
 import { DeploymentPage } from "@/requests/deployments/types";
 import { getProject } from "@/requests/projects/queries-noauth";
 import { useEditorTreeStore } from "@/stores/editorTree";
@@ -13,14 +14,16 @@ export const getServerSideProps = async ({
   req,
   query,
 }: GetServerSidePropsContext) => {
+  const url = req.headers.host as string;
   const queryClient = new QueryClient();
 
-  const project = await getProject(query.id as string, true);
-  await queryClient.prefetchQuery(["project", query.id], () =>
+  const project = await getProject(url, true);
+  await queryClient.prefetchQuery(["project", project.id], () =>
     Promise.resolve(project),
   );
-
-  dehydrate(queryClient);
+  await queryClient.prefetchQuery(["deployments", project.id], () =>
+    getMostRecentDeployment(project.id),
+  );
 
   const page = getPageProps(
     project.id,
@@ -30,7 +33,10 @@ export const getServerSideProps = async ({
     project.faviconUrl ?? "",
   );
 
-  return page;
+  return {
+    dehydratedState: dehydrate(queryClient),
+    ...page,
+  };
 };
 
 type Props = {

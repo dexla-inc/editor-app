@@ -37,7 +37,7 @@ export const getPage = async (
 export const getPageState = async (
   projectId: string,
   pageId: string,
-  pageLoadTimestamp: number | null,
+  pageLoadTimestamp: number,
   history: number | null,
   init = {},
 ) => {

@@ -2,12 +2,13 @@ import { Live } from "@/components/Live";
 import { withPageOnLoad } from "@/hoc/withPageOnLoad";
 import { DeploymentPage } from "@/requests/deployments/types";
 import { getProject } from "@/requests/projects/queries-noauth";
-import { getPageProps } from "@/utils/serverside";
+import { checkRefreshTokenExists } from "@/utils/serverside";
 import { GetServerSidePropsContext } from "next";
 import Head from "next/head";
 import { useEffect } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { QueryClient, dehydrate } from "@tanstack/react-query";
+import { getMostRecentDeployment } from "@/requests/deployments/queries-noauth";
 
 export const getServerSideProps = async ({
   req,
@@ -21,8 +22,6 @@ export const getServerSideProps = async ({
     Promise.resolve(project),
   );
 
-  dehydrate(queryClient);
-
   if (!project.id) {
     return {
       redirect: {
@@ -32,13 +31,43 @@ export const getServerSideProps = async ({
     };
   }
 
-  return getPageProps(
-    project.id,
-    "/",
-    project.redirectSlug,
-    req.cookies["refreshToken"],
-    project.faviconUrl ?? "",
+  const deployment = await getMostRecentDeployment(project.id);
+  await queryClient.prefetchQuery(["deployments", project.id], () =>
+    Promise.resolve(deployment),
   );
+
+  const isLoggedIn = checkRefreshTokenExists(req.cookies["refreshToken"]);
+  const currentSlug = "/";
+  const page = deployment.pages.find((page) => page.slug === currentSlug);
+
+  if (
+    !isLoggedIn &&
+    page?.authenticatedOnly &&
+    project.redirectSlug &&
+    currentSlug !== project.redirectSlug
+  ) {
+    return {
+      redirect: {
+        destination: `/${project.redirectSlug}`.replace("//", "/"),
+        permanent: false,
+      },
+      props: {
+        dehydratedState: dehydrate(queryClient),
+        id: project.id,
+        page,
+        faviconUrl: project.faviconUrl,
+      },
+    };
+  }
+
+  return {
+    props: {
+      dehydratedState: dehydrate(queryClient),
+      id: project.id,
+      page,
+      faviconUrl: project.faviconUrl,
+    },
+  };
 };
 
 type Props = {

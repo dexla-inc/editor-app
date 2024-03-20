@@ -23,9 +23,10 @@ import { useEffect, useState } from "react";
 type Props = {
   projectId: string;
   pageId: string;
+  pageLoadTimestamp: number;
 };
 
-const Editor = ({ projectId, pageId }: Props) => {
+const Editor = ({ projectId, pageId, pageLoadTimestamp }: Props) => {
   const setCurrentPageAndProjectIds = useEditorTreeStore(
     (state) => state.setCurrentPageAndProjectIds,
   );
@@ -35,7 +36,6 @@ const Editor = ({ projectId, pageId }: Props) => {
   const setCurrentUser = useEditorTreeStore((state) => state.setCurrentUser);
   const isDarkTheme = useUserConfigStore((state) => state.isDarkTheme);
   const user = usePropelAuthStore((state) => state.user);
-  const setHistoryCount = useEditorTreeStore((state) => state.setHistoryCount);
   const setPageLoadTimestamp = useEditorTreeStore(
     (state) => state.setPageLoadTimestamp,
   );
@@ -45,18 +45,18 @@ const Editor = ({ projectId, pageId }: Props) => {
 
   useEffect(() => {
     setCurrentPageAndProjectIds(projectId, pageId);
-    setPageLoadTimestamp(Date.now());
+    if (!pageLoadTimestamp) setPageLoadTimestamp(Date.now());
 
     if (pageId && !roomEntered) {
       liveblocks.enterRoom(pageId);
       setRoomEntered(true);
-      setHistoryCount(null);
     }
 
     return () => {
       if (liveblocks.status === "connected") {
         liveblocks.leaveRoom();
         setRoomEntered(false);
+        setPageLoadTimestamp(null);
       }
     };
 

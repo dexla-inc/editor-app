@@ -6,7 +6,7 @@ const cacheTime = 30 * 60 * 1000; // 30 minutes
 
 export const usePageListQuery = (
   projectId: string,
-  search?: string,
+  search: string | null,
   isEnabled = true,
 ) => {
   const queryClient = useQueryClient();
@@ -15,7 +15,7 @@ export const usePageListQuery = (
 
   const queryResult = useQuery<PageListResponse, Error>({
     queryKey: queryKey,
-    queryFn: () => getPageList(projectId, { search }),
+    queryFn: () => getPageList(projectId, { search: search ?? "" }),
     staleTime: cacheTime,
     enabled: !!projectId && isEnabled,
   });

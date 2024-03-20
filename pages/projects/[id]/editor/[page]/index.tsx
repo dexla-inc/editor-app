@@ -7,12 +7,15 @@ import { useVariableStore } from "@/stores/variables";
 import { getDataSourceEndpoints } from "@/requests/datasources/queries-noauth";
 import { dehydrate, QueryClient } from "@tanstack/react-query";
 import { getProject } from "@/requests/projects/queries-noauth";
+import { getPageList, getPageState } from "@/requests/pages/queries-noauth";
+import { useEditorTreeStore } from "@/stores/editorTree";
 
 export const getServerSideProps = async ({
   query,
 }: GetServerSidePropsContext) => {
   const queryClient = new QueryClient();
-  const projectId = query.id as string;
+  const { id: projectId, page: pageId } = query as { id: string; page: string };
+  const pageLoadTimestamp = Date.now();
 
   const variables = await listVariables(projectId);
   await queryClient.prefetchQuery(["endpoints", projectId], () =>
@@ -22,14 +25,24 @@ export const getServerSideProps = async ({
     getProject(projectId, true),
   );
 
+  await queryClient.prefetchQuery(
+    ["page-state", projectId, pageId, pageLoadTimestamp, null],
+    () => getPageState(projectId, pageId, pageLoadTimestamp, null),
+  );
+
+  await queryClient.prefetchQuery(["pages", projectId, null], () =>
+    getPageList(projectId),
+  );
+
   // await fetch("http://localhost:3000/api/proxyTest");
 
   return {
     props: {
       dehydratedState: dehydrate(queryClient),
       id: projectId,
-      page: query.page,
+      page: pageId,
       variables: variables.results,
+      pageLoadTimestamp,
     },
   };
 };
@@ -38,12 +51,21 @@ type Props = {
   id: string;
   page: string;
   variables: any[];
+  pageLoadTimestamp: number;
 };
 
-const PageEditor = ({ id, page, variables }: Props) => {
+const PageEditor = ({ id, page, variables, pageLoadTimestamp }: Props) => {
   useVariableStore.getState().initializeVariableList(variables);
+  useEditorTreeStore.getState().setPageLoadTimestamp(pageLoadTimestamp);
 
-  return <Editor key={page} pageId={page} projectId={id} />;
+  return (
+    <Editor
+      key={page}
+      pageId={page}
+      projectId={id}
+      pageLoadTimestamp={pageLoadTimestamp}
+    />
+  );
 };
 
 export default withPageOnLoad(memo(PageEditor));

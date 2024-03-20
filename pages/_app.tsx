@@ -57,7 +57,7 @@ export default function App(props: AppProps) {
   // const [loadTagManager, setLoadTagManager] = useState(false);
 
   // useEffect(() => {
-  //   setLoadTagManager(!isLive && process.env.NODE_ENV !== "development");
+  //   setLoadTagManager(!isLive && NODE_ENV !== "development");
 
   //   if (loadTagManager) {
   //     const tagManagerArgs = {
