@@ -21,11 +21,12 @@ export const getServerSideProps = async ({
   await queryClient.prefetchQuery(["project", projectId], () =>
     getProject(projectId, true),
   );
-  dehydrate(queryClient);
+
   // await fetch("http://localhost:3000/api/proxyTest");
 
   return {
     props: {
+      dehydratedState: dehydrate(queryClient),
       id: projectId,
       page: query.page,
       variables: variables.results,
