@@ -19,7 +19,7 @@ export const useEditorHotkeysUndoRedo = () => {
 
   const pageLoadTimestamp = useEditorTreeStore(
     (state) => state.pageLoadTimestamp,
-  ) as number;
+  );
   const historyCount = useEditorTreeStore((state) => state.historyCount);
   const setHistoryCount = useEditorTreeStore((state) => state.setHistoryCount);
 
@@ -34,10 +34,17 @@ export const useEditorHotkeysUndoRedo = () => {
   useEffect(() => {
     const handlePageState = async () => {
       try {
-        const pageState = await getPageState(
+        console.log(
+          "handlePageState",
           projectId,
           pageId,
           pageLoadTimestamp,
+          historyCount,
+        );
+        const pageState = await getPageState(
+          projectId,
+          pageId,
+          pageLoadTimestamp as number,
           historyCount,
         );
         const decodedSchema = decodeSchema(pageState?.state);

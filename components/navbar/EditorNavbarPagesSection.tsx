@@ -15,7 +15,7 @@ export const EditorNavbarPagesSection = () => {
   const page = useEditorStore((state) => state.activePage);
   const setPage = useEditorStore((state) => state.setActivePage);
   const [search, setSearch] = useState<string>("");
-  const { data: pageListQuery } = usePageListQuery(projectId);
+  const { data: pageListQuery } = usePageListQuery(projectId, null);
   const [pages, setPages] = useState<PageResponse[] | undefined>();
 
   // eslint-disable-next-line react-hooks/exhaustive-deps

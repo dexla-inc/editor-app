@@ -42,6 +42,7 @@ export function ProjectItem({
   );
 
   const goToEditorHomePage = async () => {
+    console.log("goToEditorHomePage");
     startLoading({
       id: "go-to-editor",
       title: "Loading App",

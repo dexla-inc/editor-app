@@ -180,9 +180,3 @@ export const useDataSourceStore = create<DataSourceState>()(
     { name: "Data Source store" },
   ),
 );
-
-const findEndpointByType = (
-  endpoints: Endpoint[],
-  type: "ACCESS" | "REFRESH" | "USER",
-) =>
-  endpoints?.find((endpoint) => endpoint.authentication.endpointType === type);

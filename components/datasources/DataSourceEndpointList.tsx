@@ -14,24 +14,26 @@ export const DataSourceEndpointList = ({
   dataSourceId,
   baseUrl,
 }: DataSourceEndpointListProps) => {
-  const { data: endpoints } = useDataSourceEndpoints(projectId, dataSourceId);
+  const { data: endpoints } = useDataSourceEndpoints(projectId);
 
   return (
     <>
       <Title order={5}>API Endpoints</Title>
       <AddNewDataSourceEndpoint baseUrl={baseUrl} dataSourceId={dataSourceId} />
-      {endpoints?.results.map((endpoint) => {
-        return (
-          <DataSourceEndpoint
-            baseUrl={baseUrl}
-            key={endpoint.id}
-            projectId={projectId}
-            endpoint={endpoint}
-            location="datasource"
-            dataSourceId={dataSourceId}
-          ></DataSourceEndpoint>
-        );
-      })}
+      {endpoints?.results
+        .filter((e) => e.dataSourceId == dataSourceId)
+        .map((endpoint) => {
+          return (
+            <DataSourceEndpoint
+              baseUrl={baseUrl}
+              key={endpoint.id}
+              projectId={projectId}
+              endpoint={endpoint}
+              location="datasource"
+              dataSourceId={dataSourceId}
+            ></DataSourceEndpoint>
+          );
+        })}
     </>
   );
 };

@@ -85,8 +85,8 @@ export const useVariableStore = create<VariablesState>()(
         name: "variables-storage",
         partialize: (state) => ({
           variableList: state.variableList
-            .filter((v) => v.isGlobal)
-            .map(({ id, value, isGlobal }) => ({ id, value, isGlobal })),
+            ?.filter((v) => v.isGlobal)
+            ?.map(({ id, value, isGlobal }) => ({ id, value, isGlobal })),
         }),
       },
     ),

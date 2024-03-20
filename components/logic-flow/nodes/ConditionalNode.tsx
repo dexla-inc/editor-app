@@ -1,9 +1,7 @@
 import { OutputForm } from "@/components/logic-flow/OutputForm";
 import { CustomNode, NodeData } from "@/components/logic-flow/nodes/CustomNode";
-import { useVariableListQuery } from "@/hooks/reactQuery/useVariableListQuery";
-import { useEditorStore } from "@/stores/editor";
-import { useEditorTreeStore } from "@/stores/editorTree";
 import { useFlowStore } from "@/stores/flow";
+import { useVariableStore } from "@/stores/variables";
 import { Button, Select, Stack } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { IconArrowFork } from "@tabler/icons-react";
@@ -39,11 +37,7 @@ type NodeFormType = {
 export const NodeForm = ({ form }: NodeFormType) => {
   const selectedNode = useFlowStore((state) => state.selectedNode);
   const isUpdating = useFlowStore((state) => state.isUpdating);
-  const projectId = useEditorTreeStore(
-    (state) => state.currentProjectId,
-  ) as string;
-
-  const { data: variables } = useVariableListQuery(projectId);
+  const variableList = useVariableStore((state) => state.variableList);
 
   return (
     <Stack>
@@ -51,7 +45,7 @@ export const NodeForm = ({ form }: NodeFormType) => {
         size="xs"
         label="Variable"
         placeholder="Pick one"
-        data={(variables?.results ?? []).map((variable) => {
+        data={(variableList ?? []).map((variable) => {
           return {
             value: variable.id,
             label: variable.name,
@@ -60,7 +54,7 @@ export const NodeForm = ({ form }: NodeFormType) => {
         {...form.getInputProps("variable")}
         onChange={(value) => {
           const variable = JSON.stringify(
-            (variables?.results ?? []).find((v) => v.id === value),
+            variableList.find((v) => v.id === value),
           );
           form.setFieldValue("variable", variable);
         }}

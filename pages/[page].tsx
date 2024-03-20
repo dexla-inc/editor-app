@@ -1,9 +1,11 @@
 import { Live } from "@/components/Live";
 import { withPageOnLoad } from "@/hoc/withPageOnLoad";
+import { getMostRecentDeployment } from "@/requests/deployments/queries-noauth";
 import { DeploymentPage } from "@/requests/deployments/types";
 import { getProject } from "@/requests/projects/queries-noauth";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { getPageProps } from "@/utils/serverside";
+import { checkRefreshTokenExists, getPageProps } from "@/utils/serverside";
+import { QueryClient, dehydrate } from "@tanstack/react-query";
 import { GetServerSidePropsContext } from "next";
 import Head from "next/head";
 import { useEffect } from "react";
@@ -13,23 +15,50 @@ export const getServerSideProps = async ({
   query,
 }: GetServerSidePropsContext) => {
   const url = req.headers.host as string;
-  console.log("url", url);
-  console.log(
-    "NEXT_PUBLIC_APPS_BASE_URL",
-    process.env.NEXT_PUBLIC_APPS_BASE_URL,
-  );
+  const queryClient = new QueryClient();
 
   const project = await getProject(url, true);
-
-  const page = getPageProps(
-    project.id,
-    query.page as string,
-    project.redirectSlug,
-    req.cookies["refreshToken"],
-    project.faviconUrl ?? "",
+  await queryClient.prefetchQuery(["project", project.id], () =>
+    Promise.resolve(project),
   );
 
-  return page;
+  const deployment = await getMostRecentDeployment(project.id);
+  await queryClient.prefetchQuery(["deployments", project.id], () =>
+    Promise.resolve(deployment),
+  );
+
+  const isLoggedIn = checkRefreshTokenExists(req.cookies["refreshToken"]);
+  const currentSlug = query.page;
+  const page = deployment.pages.find((page) => page.slug === currentSlug);
+
+  if (
+    !isLoggedIn &&
+    page?.authenticatedOnly &&
+    project.redirectSlug &&
+    currentSlug !== project.redirectSlug
+  ) {
+    return {
+      redirect: {
+        destination: `/${project.redirectSlug}`.replace("//", "/"),
+        permanent: false,
+      },
+      props: {
+        dehydratedState: dehydrate(queryClient),
+        id: project.id,
+        page,
+        faviconUrl: project.faviconUrl,
+      },
+    };
+  }
+
+  return {
+    props: {
+      dehydratedState: dehydrate(queryClient),
+      id: project.id,
+      page,
+      faviconUrl: project.faviconUrl,
+    },
+  };
 };
 
 type Props = {

@@ -1,5 +1,4 @@
 import { VariableForm } from "@/components/variables/VariableForm";
-import { useVariableListQuery } from "@/hooks/reactQuery/useVariableListQuery";
 import { deleteVariable } from "@/requests/variables/mutations";
 import { useVariableStore } from "@/stores/variables";
 import { isObjectOrArray } from "@/utils/common";
@@ -26,12 +25,10 @@ export const VariableList = ({ projectId }: Props) => {
   const [opened, modal] = useDisclosure(false);
   const [filter, setFilter] = useDebouncedState("", 250);
   const [variableToEdit, setVariableToEdit] = useState(undefined);
-  const { invalidate } = useVariableListQuery(projectId);
   const variableList = useVariableStore((state) => state.variableList);
 
   const deleteVar = async (variableId: string) => {
     await deleteVariable(projectId, variableId);
-    invalidate();
   };
 
   const rows = (

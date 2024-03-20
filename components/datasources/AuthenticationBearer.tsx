@@ -88,10 +88,8 @@ export default function AuthenticationBearer({
   const clearApiAuthConfig = useDataSourceStore(
     (state) => state.clearApiAuthConfig,
   );
-  const { data: endpoints, invalidate } = useDataSourceEndpoints(
-    projectId,
-    dataSource?.id,
-  );
+  const { data: endpoints, invalidate } = useDataSourceEndpoints(projectId);
+  // May need to filter by dataSourceId
 
   const form = useForm<AuthenticationBearerTokenParams>({
     validateInputOnBlur: true,

@@ -1,6 +1,5 @@
 import { ActionIconDefault } from "@/components/ActionIconDefault";
 import { Icon } from "@/components/Icon";
-import { useDeploymentsPageQuery } from "@/hooks/reactQuery/useDeploymentsPageQuery";
 import { usePageListQuery } from "@/hooks/reactQuery/usePageListQuery";
 import { useProjectQuery } from "@/hooks/reactQuery/useProjectQuery";
 import { createDeployment } from "@/requests/deployments/mutations";
@@ -14,7 +13,7 @@ export const DeployButton = () => {
   const router = useRouter();
   const { id: projectId, page } = router.query as { id: string; page: string };
 
-  const { data: pageListQuery, isFetched } = usePageListQuery(projectId);
+  const { data: pageListQuery, isFetched } = usePageListQuery(projectId, null);
   const setPages = useEditorStore((state) => state.setPages);
 
   const { startLoading, stopLoading, isLoading } = useAppStore((state) => ({
@@ -24,11 +23,6 @@ export const DeployButton = () => {
   }));
 
   const [customDomain, setCustomDomain] = useState("");
-  const [hasDeployed, setHasDeployed] = useState(false);
-
-  const homePageSlug = "/";
-  const { data: recentDeployment, invalidate: invalidatePage } =
-    useDeploymentsPageQuery(projectId, homePageSlug);
 
   const { data: project } = useProjectQuery(projectId);
 
@@ -40,8 +34,6 @@ export const DeployButton = () => {
         message: "Deploying your app...",
       });
       await createDeployment(projectId, { forceProduction: forceProduction });
-      invalidatePage();
-      setHasDeployed(true);
       stopLoading({
         id: "deploy",
         title: "Deployed",
@@ -103,12 +95,6 @@ export const DeployButton = () => {
     }
   }, [project]);
 
-  useEffect(() => {
-    if (recentDeployment?.id) {
-      setHasDeployed(true);
-    }
-  }, [recentDeployment]);
-
   // Don't think we need this. We should just fetch the pages on server side and pass down
   useEffect(() => {
     if (isFetched) {
@@ -135,7 +121,6 @@ export const DeployButton = () => {
           onClick={openDeployLink}
           tooltip="Preview your app"
           loading={isLoading}
-          disabled={!hasDeployed || isLoading}
           sx={{ borderRadius: "0px 4px 4px 0px" }}
         />
       </Tooltip>
