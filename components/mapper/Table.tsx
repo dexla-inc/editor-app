@@ -9,6 +9,8 @@ import {
 import { forwardRef, memo } from "react";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useEndpoint } from "@/hooks/useEndpoint";
+import { useEditorTreeStore } from "@/stores/editorTree";
+import { memoize } from "proxy-memoize";
 
 type Props = EditableComponentMapper & TableProps;
 
@@ -16,6 +18,12 @@ export const TableComponent = forwardRef(
   ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
     const { children, triggers, dataType, ...componentProps } =
       component.props as any;
+
+    const onLoad = useEditorTreeStore(
+      memoize((state) => state.componentMutableAttrs[component?.id!]?.onLoad),
+    );
+
+    component.onLoad = onLoad;
     const { data } = useEndpoint({
       component,
     });
@@ -27,9 +35,9 @@ export const TableComponent = forwardRef(
       >
         <MantineTable ref={ref} {...props} {...componentProps} {...triggers}>
           <thead>
-            {(Array.isArray(component?.onLoad?.columns)
-              ? component?.onLoad?.columns
-              : (component?.onLoad?.columns ?? "")?.split(",")
+            {(Array.isArray(onLoad?.columns)
+              ? onLoad?.columns
+              : (onLoad?.columns ?? "")?.split(",")
             ).map((c: string) => (
               <td key={c}>{c}</td>
             ))}
