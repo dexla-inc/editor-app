@@ -385,7 +385,6 @@ export const useShowNotificationAction = async ({
   computeValue,
   actionResponses,
 }: ShowNotificationActionParams) => {
-  console.log("TESETTT");
   return showNotification({
     title: computeValue({ value: action.title }, { actions: actionResponses }),
     message: computeValue(

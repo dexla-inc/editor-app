@@ -54,6 +54,7 @@ const AutocompleteComponent = forwardRef(
       dataType === "static" ? component.props?.data : [],
     );
 
+    component.onLoad = onLoad;
     const { data: response, isLoading } = useEndpoint({
       component,
       enabled: !!inputValue,

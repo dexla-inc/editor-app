@@ -64,7 +64,7 @@ export const useEndpoint = ({
   };
 
   const isEnabled = !!endpoint && dataType === "dynamic" && enabled;
-
+  console.log("-->", fetchUrl, JSON.stringify(body));
   const { data, isLoading } = useQuery(
     [fetchUrl, JSON.stringify(body), accessToken],
     apiCall,
