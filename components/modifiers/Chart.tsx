@@ -37,8 +37,10 @@ const Modifier = withModifier(({ selectedComponent }) => {
     form.setValues(
       merge({
         chartColors: selectedComponent.props?.chartColors as string[],
-        labelColor: selectedComponent.props?.labelColor,
-        foreColor: selectedComponent.props?.foreColor,
+        labelColor:
+          selectedComponent.props?.labelColor ?? initialValues.labelColor,
+        foreColor:
+          selectedComponent.props?.foreColor ?? initialValues.foreColor,
       }),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
