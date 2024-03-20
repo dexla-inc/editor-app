@@ -77,26 +77,28 @@ export default function App(props: AppProps) {
     >
       <ContextMenuProvider>
         <QueryClientProvider client={queryClient}>
-          <AuthProvider>
-            <EditorAppHead />
-            <Head>
-              <title>Editor</title>
-              <meta name="description" content="Dexla Editor" />
-              <meta
-                name="viewport"
-                content="width=device-width, initial-scale=1, maximum-scale=1"
-              />
+          <ReactQueryDevtools initialIsOpen={false} />
+          <Hydrate state={pageProps.dehydratedState}>
+            <AuthProvider>
+              <EditorAppHead />
+              <Head>
+                <title>Editor</title>
+                <meta name="description" content="Dexla Editor" />
+                <meta
+                  name="viewport"
+                  content="width=device-width, initial-scale=1, maximum-scale=1"
+                />
 
-              <link
-                rel="icon"
-                type="image/x-icon"
-                // TODO: Fix this without using isLive
-                //href={isLive ? "" : "/favicon.ico"}
-              />
-            </Head>
+                <link
+                  rel="icon"
+                  type="image/x-icon"
+                  // TODO: Fix this without using isLive
+                  //href={isLive ? "" : "/favicon.ico"}
+                />
+              </Head>
 
-            {/* Google Tag Manager */}
-            {/* {loadTagManager && (
+              {/* Google Tag Manager */}
+              {/* {loadTagManager && (
             <Script id="google-analytics" strategy="afterInteractive">
               {`
             (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -107,8 +109,8 @@ export default function App(props: AppProps) {
         `}
             </Script>
           )} */}
-            {/* End Google Tag Manager */}
-            {/* {loadTagManager && (
+              {/* End Google Tag Manager */}
+              {/* {loadTagManager && (
             <noscript>
               <iframe
                 src={`https://www.googletagmanager.com/ns.html?id='${GTM_ID}'`}
@@ -118,10 +120,7 @@ export default function App(props: AppProps) {
               ></iframe>
             </noscript>
           )} */}
-            <main className={inter.variable}>
-              <ReactQueryDevtools initialIsOpen={false} />
-              {/*<InitializeVariables pageProps={pageProps} />*/}
-              <Hydrate state={pageProps.dehydratedState}>
+              <main className={inter.variable}>
                 <Notifications />
                 <MantineGlobal />
                 <ReactFlowProvider>
@@ -133,10 +132,10 @@ export default function App(props: AppProps) {
                     </ModalsProvider>
                   </DataProvider>
                 </ReactFlowProvider>
-              </Hydrate>
-              <SpeedInsights />
-            </main>
-          </AuthProvider>
+                <SpeedInsights />
+              </main>
+            </AuthProvider>
+          </Hydrate>
         </QueryClientProvider>
       </ContextMenuProvider>
     </MantineProvider>
