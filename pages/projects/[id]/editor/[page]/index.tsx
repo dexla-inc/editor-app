@@ -6,6 +6,7 @@ import { listVariables } from "@/requests/variables/queries-noauth";
 import { useVariableStore } from "@/stores/variables";
 import { getDataSourceEndpoints } from "@/requests/datasources/queries-noauth";
 import { dehydrate, QueryClient } from "@tanstack/react-query";
+import { getProject } from "@/requests/projects/queries-noauth";
 
 export const getServerSideProps = async ({
   query,
@@ -13,8 +14,11 @@ export const getServerSideProps = async ({
   const queryClient = new QueryClient();
 
   const variables = await listVariables(query.id as string);
-  await queryClient.prefetchQuery(["endpoints", query.id], () =>
+  await queryClient.prefetchQuery(["endpoints", query.id, undefined], () =>
     getDataSourceEndpoints(query.id as string),
+  );
+  await queryClient.prefetchQuery(["project", query.id], () =>
+    getProject(query.id as string, true),
   );
   dehydrate(queryClient);
   // await fetch("http://localhost:3000/api/proxyTest");

@@ -7,17 +7,23 @@ import { GetServerSidePropsContext } from "next";
 import Head from "next/head";
 import { useEffect } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
+import { QueryClient, dehydrate } from "@tanstack/react-query";
 
 export const getServerSideProps = async ({
   req,
 }: GetServerSidePropsContext) => {
   const url = req.headers.host as string;
   const project = await getProject(url, true);
-  const id = project.id as string;
 
-  console.log("index", project);
+  const queryClient = new QueryClient();
 
-  if (!id) {
+  await queryClient.prefetchQuery(["project", project.id], () =>
+    Promise.resolve(project),
+  );
+
+  dehydrate(queryClient);
+
+  if (!project.id) {
     return {
       redirect: {
         destination: "/projects",
@@ -27,7 +33,7 @@ export const getServerSideProps = async ({
   }
 
   return getPageProps(
-    id,
+    project.id,
     "/",
     project.redirectSlug,
     req.cookies["refreshToken"],

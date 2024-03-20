@@ -2,7 +2,7 @@ import { createVariable, updateVariable } from "@/requests/variables/mutations";
 import { useAppStore } from "@/stores/app";
 import { useMutation } from "@tanstack/react-query";
 
-export const useVariable = (projectId: string) => {
+export const useVariableMutation = (projectId: string) => {
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
 

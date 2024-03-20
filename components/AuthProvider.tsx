@@ -1,10 +1,9 @@
 import { Fragment, PropsWithChildren, useEffect, useState } from "react";
-import InitialisePropelAuth from "./InitialisePropelAuth";
+import InitialisePropelAuth from "@/components/InitialisePropelAuth";
+import { useCheckIfIsLive } from "@/hooks/useCheckIfIsLive";
 
-export default function AuthProvider({
-  children,
-  isLive,
-}: PropsWithChildren & { isLive: boolean }) {
+export default function AuthProvider({ children }: PropsWithChildren) {
+  const isLive = useCheckIfIsLive();
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {

@@ -4,6 +4,7 @@ import { DeploymentPage } from "@/requests/deployments/types";
 import { getProject } from "@/requests/projects/queries-noauth";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { getPageProps } from "@/utils/serverside";
+import { QueryClient, dehydrate } from "@tanstack/react-query";
 import { GetServerSidePropsContext } from "next";
 import Head from "next/head";
 import { useEffect } from "react";
@@ -12,14 +13,14 @@ export const getServerSideProps = async ({
   req,
   query,
 }: GetServerSidePropsContext) => {
-  const url = req.headers.host as string;
-  console.log("url", url);
-  console.log(
-    "NEXT_PUBLIC_APPS_BASE_URL",
-    process.env.NEXT_PUBLIC_APPS_BASE_URL,
+  const queryClient = new QueryClient();
+
+  const project = await getProject(query.id as string, true);
+  await queryClient.prefetchQuery(["project", query.id], () =>
+    Promise.resolve(project),
   );
 
-  const project = await getProject(url, true);
+  dehydrate(queryClient);
 
   const page = getPageProps(
     project.id,
