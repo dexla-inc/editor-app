@@ -12,20 +12,21 @@ export const getServerSideProps = async ({
   query,
 }: GetServerSidePropsContext) => {
   const queryClient = new QueryClient();
+  const projectId = query.id as string;
 
-  const variables = await listVariables(query.id as string);
-  await queryClient.prefetchQuery(["endpoints", query.id, undefined], () =>
-    getDataSourceEndpoints(query.id as string),
+  const variables = await listVariables(projectId);
+  await queryClient.prefetchQuery(["endpoints", projectId], () =>
+    getDataSourceEndpoints(projectId),
   );
-  await queryClient.prefetchQuery(["project", query.id], () =>
-    getProject(query.id as string, true),
+  await queryClient.prefetchQuery(["project", projectId], () =>
+    getProject(projectId, true),
   );
   dehydrate(queryClient);
   // await fetch("http://localhost:3000/api/proxyTest");
 
   return {
     props: {
-      id: query.id,
+      id: projectId,
       page: query.page,
       variables: variables.results,
     },

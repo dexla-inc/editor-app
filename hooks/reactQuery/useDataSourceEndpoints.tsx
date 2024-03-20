@@ -5,15 +5,12 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 const cacheTime = 30 * 60 * 1000; // 30 minutes
 
-export const useDataSourceEndpoints = (
-  projectId?: string,
-  dataSourceId?: string,
-) => {
-  const queryKey = ["endpoints", projectId, dataSourceId];
+export const useDataSourceEndpoints = (projectId?: string) => {
+  const queryKey = ["endpoints", projectId];
 
   const queryResult = useQuery<PagingResponse<Endpoint>, Error>({
     queryKey: queryKey,
-    queryFn: () => getDataSourceEndpoints(projectId as string), // , { dataSourceId }
+    queryFn: () => getDataSourceEndpoints(projectId as string),
     staleTime: cacheTime,
     enabled: !!projectId,
   });
