@@ -34,8 +34,6 @@ export const getServerSideProps = async ({
     getPageList(projectId),
   );
 
-  // await fetch("http://localhost:3000/api/proxyTest");
-
   return {
     props: {
       dehydratedState: dehydrate(queryClient),

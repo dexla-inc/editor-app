@@ -129,7 +129,6 @@ export default function App(props: AppProps) {
           <main className={inter.variable}>
             <QueryClientProvider client={queryClient}>
               <ReactQueryDevtools initialIsOpen={false} />
-              {/* <InitializeVariables pageProps={pageProps} /> */}
               <Hydrate state={pageProps.dehydratedState}>
                 <Notifications />
                 <MantineGlobal isLive={isLive} />
