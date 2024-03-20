@@ -5,16 +5,9 @@ import { useCheckIfIsLive } from "@/hooks/useCheckIfIsLive";
 import AuthProvider from "@/components/AuthProvider";
 import InstantiatePropelAuthStore from "@/components/InstantiatePropelAuthStore";
 import { useUserConfigStore } from "@/stores/userConfig";
-
-import {
-  DARK_MODE,
-  GREEN_COLOR,
-  LIGHT_MODE,
-  darkTheme,
-  theme,
-} from "@/utils/branding";
+import { darkTheme, theme } from "@/utils/branding";
 import { cache } from "@/utils/emotionCache";
-import { Global, MantineProvider } from "@mantine/core";
+import { MantineProvider } from "@mantine/core";
 import { ModalsProvider } from "@mantine/modals";
 import { Notifications } from "@mantine/notifications";
 import {
