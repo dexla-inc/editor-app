@@ -1,15 +1,15 @@
 import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
+import { FrontEndTypes } from "@/requests/variables/types";
 
 export type FieldType =
-  | "text"
-  | "number"
   | "yesno"
   | "password"
   | "email"
   | "tel"
   | "url"
   | "date"
-  | "unit";
+  | "unit"
+  | Lowercase<FrontEndTypes>;
 
 type StaticFormFieldsBuilderProps = {
   field: {

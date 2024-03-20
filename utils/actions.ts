@@ -20,6 +20,7 @@ import { ShowNotificationActionForm } from "@/components/actions/ShowNotificatio
 import { GetValueProps } from "@/contexts/DataProvider";
 import { LogicFlowResponse } from "@/requests/logicflows/types";
 import { PageResponse } from "@/requests/pages/types";
+import { FrontEndTypes } from "@/requests/variables/types";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
@@ -27,6 +28,7 @@ import { useVariableStore } from "@/stores/variables";
 import { readDataFromStream } from "@/utils/api";
 import { Component } from "@/utils/editor";
 import { executeFlow } from "@/utils/logicFlows";
+import { ArrayMethods, ValueProps } from "@/utils/types";
 import { UseFormReturnType } from "@mantine/form";
 import { showNotification } from "@mantine/notifications";
 import isEmpty from "lodash.isempty";
@@ -34,7 +36,6 @@ import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { Router } from "next/router";
 import { getComponentInitialDisplayValue, safeJsonParse } from "./common";
-import { ValueProps } from "./types";
 
 const triggers = [
   "onClick",
@@ -198,6 +199,9 @@ export interface CustomJavascriptAction extends BaseAction {
 export interface ChangeVariableAction extends BaseAction {
   name: "changeVariable";
   variableId: string;
+  variableType: FrontEndTypes;
+  method?: ArrayMethods;
+  index?: ValueProps;
   value: ValueProps;
 }
 
@@ -705,16 +709,75 @@ export type ChangeVariableActionParams = ActionParams & {
   action: ChangeVariableAction;
 };
 
+const updateVariableArray = (
+  action: ChangeVariableAction,
+  index: number | undefined = 0,
+  newValue: any,
+) => {
+  const variable = useVariableStore
+    .getState()
+    .variableList.find((v) => v.id === action.variableId);
+
+  if (!variable) {
+    return;
+  }
+
+  const value = JSON.parse(variable.value ?? variable.defaultValue) ?? [];
+
+  switch (action.method) {
+    case "REPLACE_ALL_ITEMS":
+      return newValue;
+
+    case "UPDATE_ONE_ITEM":
+      value[index] = newValue;
+      break;
+
+    case "INSERT_AT_END":
+      value.push(newValue);
+      break;
+
+    case "INSERT_AT_START":
+      value.unshift(newValue);
+      break;
+
+    case "INSERT_AT_INDEX":
+      value.splice(index, 0, newValue);
+      break;
+
+    case "REMOVE_AT_INDEX":
+      value.splice(index, 1);
+      break;
+
+    case "REMOVE_AT_START":
+      value.shift();
+      break;
+
+    case "REMOVE_AT_LAST":
+      value.pop();
+      break;
+
+    default:
+      return;
+  }
+
+  return `${value}`;
+};
+
 export const useChangeVariableAction = async ({
   action,
   computeValue,
   actionResponses,
 }: ChangeVariableActionParams) => {
   const setVariable = useVariableStore.getState().setVariable;
-  const value = computeValue(
+  const index = computeValue({ value: action.index });
+  let value = computeValue(
     { value: action.value },
     { actions: actionResponses },
   );
+
+  if (action.variableType === "ARRAY") {
+    value = updateVariableArray(action, index, value);
+  }
   setVariable({
     id: action.variableId,
     value: value,

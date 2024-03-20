@@ -52,3 +52,13 @@ interface CustomColors {
 }
 
 type ExtendedMantineThemeColors = CustomColors & MantineTheme["colors"];
+
+export type ArrayMethods =
+  | "REPLACE_ALL_ITEMS"
+  | "UPDATE_ONE_ITEM"
+  | "INSERT_AT_END"
+  | "INSERT_AT_START"
+  | "INSERT_AT_INDEX"
+  | "REMOVE_AT_INDEX"
+  | "REMOVE_AT_START"
+  | "REMOVE_AT_LAST";
