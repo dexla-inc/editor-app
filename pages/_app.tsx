@@ -27,6 +27,9 @@ import { DataProvider } from "@/contexts/DataProvider";
 import { MantineGlobal } from "@/components/MantineGlobal";
 import { queryClient } from "@/utils/reactQuery";
 import { useInitialiseLive } from "@/hooks/useInitialiseLive";
+import { LoadingOverlay } from "@mantine/core";
+import { RedirectToLogin, RequiredAuthProvider } from "@propelauth/react";
+import { PropsWithChildren } from "react";
 
 // If loading a variable font, you don't need to specify the font weight
 const inter = Inter({
@@ -45,11 +48,12 @@ const GTM_ID = "GTM-P3DVFXMS";
 const nodeEnv = process.env.NODE_ENV;
 
 export default function App(props: AppProps) {
+  console.log("App -> props", props);
   const { Component, pageProps } = props;
-  const isLive = props.pageProps.isLive;
+  const isLive = pageProps.isLive;
   useInitialiseLive({
-    projectId: props.pageProps.id,
-    pageId: props.pageProps.page?.id,
+    projectId: pageProps.id,
+    pageId: pageProps.page?.id,
   });
 
   const isDarkTheme = useUserConfigStore((state) => state.isDarkTheme);
@@ -106,7 +110,7 @@ export default function App(props: AppProps) {
             new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
             j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-            })(window,document,'script','dataLayer','${GTM_ID}');
+          })(window,document,'script','dataLayer','${GTM_ID}');
         `}
             </Script>
           )}

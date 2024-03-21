@@ -63,6 +63,9 @@ function getMaxDepth({
 }: {
   previousItem: FlattenedItem;
 }) {
+  if (!previousItemTree) {
+    return 0;
+  }
   const previousItem =
     useEditorTreeStore.getState().componentMutableAttrs[previousItemTree.id!];
   if (previousItem?.blockDroppingChildrenInside) {

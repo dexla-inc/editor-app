@@ -31,14 +31,23 @@ const Modifier = withModifier(({ selectedComponent }) => {
       (child) => child.id === "content-wrapper",
     );
 
+    const componentMutableAttrs =
+      useEditorTreeStore.getState().componentMutableAttrs;
+    const updateTreeComponentAttrs =
+      useEditorTreeStore.getState().updateTreeComponentAttrs;
+
     // TODO: get this back - update content-wrapper width on componentMutableProps
-    // if (contentWrapper) {
-    //   contentWrapper.props = {
-    //     ...contentWrapper.props,
-    //     navbarWidth: value,
-    //   };
-    // }
-    // setTree(editorTree);
+    if (contentWrapper) {
+      const contentWrapperAttrs = componentMutableAttrs["content-wrapper"];
+      contentWrapperAttrs.props = {
+        ...contentWrapperAttrs.props,
+        navbarWidth: value,
+      };
+      updateTreeComponentAttrs({
+        componentIds: [contentWrapperAttrs.id!],
+        attrs: { ...contentWrapperAttrs },
+      });
+    }
   };
 
   return (
