@@ -24,16 +24,33 @@ type UserConfigState = {
   ) => Promise<void>;
 };
 
+const preloadState = () => {
+  try {
+    const persistedState = localStorage.getItem("user-config");
+    if (persistedState) {
+      return JSON.parse(persistedState).state;
+    }
+  } catch (error) {
+    console.error("Error loading user-config from localStorage", error);
+  }
+
+  return {};
+};
+const initialState = preloadState();
+
 export const useUserConfigStore = create<UserConfigState>()(
   devtools(
     persist(
       (set) => ({
-        isTabPinned: false,
-        isShadesActive: false,
-        pageCancelled: false,
-        isDarkTheme: false,
-        navbarWidth: 50,
-        isCustomComponentModalOpen: false,
+        isTabPinned: initialState.isTabPinned ?? false,
+        isShadesActive: initialState.isShadesActive ?? false,
+        pageCancelled: initialState.pageCancelled ?? false,
+        isDarkTheme: initialState.isDarkTheme ?? false,
+        navbarWidth: initialState.navbarWidth ?? 50,
+        isCustomComponentModalOpen:
+          initialState.isCustomComponentModalOpen ?? false,
+        initiallyOpenedModifiersByComponent:
+          initialState.initiallyOpenedModifiersByComponent ?? {},
         setIsDarkTheme: (isDarkTheme: boolean) => {
           set({ isDarkTheme }, false, "userConfig/setIsDarkTheme");
         },
@@ -77,7 +94,6 @@ export const useUserConfigStore = create<UserConfigState>()(
             "userConfig/setInitiallyOpenedModifiersByComponent",
           );
         },
-        initiallyOpenedModifiersByComponent: {},
         setPageCancelled: (pageCancelled: boolean) => {
           set({ pageCancelled }, false, "userConfig/setPageCancelled");
         },

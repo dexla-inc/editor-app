@@ -3,7 +3,6 @@ import { LogicFlowShell } from "@/components/logic-flow/LogicFlowShell";
 import { LogicFlowsPage } from "@/components/logic-flow/LogicFlowsPage";
 import { useFlowsQuery } from "@/hooks/reactQuery/useFlowsQuery";
 import { LogicFlowResponse } from "@/requests/logicflows/types";
-import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useFlowStore } from "@/stores/flow";
 import { LOGICFLOW_BACKGROUND } from "@/utils/branding";
