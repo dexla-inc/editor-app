@@ -9,6 +9,7 @@ import { useEffect } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { QueryClient, dehydrate } from "@tanstack/react-query";
 import { getMostRecentDeployment } from "@/requests/deployments/queries-noauth";
+import { getDataSourceEndpoints } from "@/requests/datasources/queries-noauth";
 
 export const getServerSideProps = async ({
   req,
@@ -17,7 +18,6 @@ export const getServerSideProps = async ({
   const project = await getProject(url, true);
 
   const queryClient = new QueryClient();
-
   await queryClient.prefetchQuery(["project", project.id], () =>
     Promise.resolve(project),
   );
@@ -31,10 +31,23 @@ export const getServerSideProps = async ({
     };
   }
 
-  const deployment = await getMostRecentDeployment(project.id);
-  await queryClient.prefetchQuery(["deployments", project.id], () =>
-    Promise.resolve(deployment),
+  const prefetchEndpoints = queryClient.prefetchQuery(
+    ["endpoints", project.id],
+    () => getDataSourceEndpoints(project.id),
   );
+  const prefetchProject = queryClient.prefetchQuery(
+    ["project", project.id],
+    () => Promise.resolve(project),
+  );
+  const deploymentPromise = getMostRecentDeployment(project.id);
+  const prefetchDeployments = deploymentPromise.then((deployment) =>
+    queryClient.prefetchQuery(["deployments", project.id], () =>
+      Promise.resolve(deployment),
+    ),
+  );
+
+  await Promise.all([prefetchEndpoints, prefetchProject, prefetchDeployments]);
+  const deployment = await deploymentPromise;
 
   const isLoggedIn = checkRefreshTokenExists(req.cookies["refreshToken"]);
   const currentSlug = "/";

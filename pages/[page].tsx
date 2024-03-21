@@ -1,5 +1,6 @@
 import { Live } from "@/components/Live";
 import { withPageOnLoad } from "@/hoc/withPageOnLoad";
+import { getDataSourceEndpoints } from "@/requests/datasources/queries-noauth";
 import { getMostRecentDeployment } from "@/requests/deployments/queries-noauth";
 import { DeploymentPage } from "@/requests/deployments/types";
 import { getProject } from "@/requests/projects/queries-noauth";
@@ -18,14 +19,23 @@ export const getServerSideProps = async ({
   const queryClient = new QueryClient();
 
   const project = await getProject(url, true);
-  await queryClient.prefetchQuery(["project", project.id], () =>
-    Promise.resolve(project),
-  );
+  const deploymentPromise = getMostRecentDeployment(project.id);
 
-  const deployment = await getMostRecentDeployment(project.id);
-  await queryClient.prefetchQuery(["deployments", project.id], () =>
-    Promise.resolve(deployment),
-  );
+  await Promise.all([
+    queryClient.prefetchQuery(["project", project.id], () =>
+      Promise.resolve(project),
+    ),
+    queryClient.prefetchQuery(["endpoints", project.id], () =>
+      getDataSourceEndpoints(project.id),
+    ),
+    deploymentPromise.then((deployment) =>
+      queryClient.prefetchQuery(["deployments", project.id], () =>
+        Promise.resolve(deployment),
+      ),
+    ),
+  ]);
+
+  const deployment = await deploymentPromise;
 
   const isLoggedIn = checkRefreshTokenExists(req.cookies["refreshToken"]);
   const currentSlug = query.page;
