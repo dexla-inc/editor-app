@@ -65,8 +65,6 @@ export default async function handler(
       "" as any,
     );
 
-    console.log("templatesData", templatesData);
-
     const prompt = getPageGenerationPrompt({
       entities: JSON.stringify(project?.entities ?? []),
       pageName: page.name ?? "",
@@ -78,8 +76,6 @@ export default async function handler(
       type Template = ${templates.results.map((t) => t.name).join(" | ")}
       `,
     });
-
-    console.log("pagePrompt", prompt);
 
     const response = await openai.chat.completions.create({
       model: GPT4_PREVIEW_MODEL,
@@ -97,7 +93,6 @@ export default async function handler(
 
     const message = response.choices[0].message;
     const content = JSON.parse(message.content ?? "{}");
-    console.log("PAGE", content);
 
     return res.status(200).json(content);
   } catch (error) {

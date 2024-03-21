@@ -604,7 +604,6 @@ export const useApiCallAction = async ({
   setActionsResponses,
   actionResponses,
 }: APICallActionParams): Promise<any> => {
-  console.log("APICALL");
   const updateTreeComponentAttrs =
     useEditorTreeStore.getState().updateTreeComponentAttrs;
   if (entity.props && action.showLoader) {

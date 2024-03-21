@@ -28,11 +28,9 @@ export default async function handler(
   //       : null,
   // });
   // useVariableStore.getState().initializeVariableList(response?.results);
-  // console.log("response", response);
 
   // if (response.ok) {
   //   const data = await response.json();
-  //   console.log("data", data);
   res.status(200).json("done");
   // } else {
   //   res.status(400).json({ error: "Failed to fetch data from API" });

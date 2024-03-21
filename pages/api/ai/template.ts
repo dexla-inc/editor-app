@@ -32,8 +32,6 @@ export default async function handler(
       })),
     });
 
-    console.log("templatePrompt", prompt);
-
     const response = await openai.chat.completions.create({
       model: GPT4_PREVIEW_MODEL,
       response_format: {
@@ -51,11 +49,9 @@ export default async function handler(
     const message = response.choices[0].message;
     const cleanedJson = cleanJson(message.content);
     const content = JSON.parse(cleanedJson ?? "{}");
-    console.log("TEMPLATE", content);
 
     return res.status(200).json(content);
   } catch (error) {
-    console.log(error);
     return res.status(500).json({ error });
   }
 }

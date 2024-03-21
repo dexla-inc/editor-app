@@ -14,8 +14,6 @@ export default async function handler(
 
     const { model, prompt, image } = req.body;
 
-    console.log("prompt", prompt);
-
     const contentMessages = [
       {
         type: "text",
@@ -57,7 +55,6 @@ export default async function handler(
     // const stream = OpenAIStream(response);
 
     // const streamResponse = streamToResponse(stream, res);
-    // console.log("any-prompt", streamResponse);
     // return streamResponse;
   } catch (error) {
     console.error(error);
