@@ -5,15 +5,15 @@ import { memo } from "react";
 import { listVariables } from "@/requests/variables/queries-noauth";
 import { useVariableStore } from "@/stores/variables";
 import { getDataSourceEndpoints } from "@/requests/datasources/queries-noauth";
-import { dehydrate, QueryClient } from "@tanstack/react-query";
+import { dehydrate } from "@tanstack/react-query";
 import { getProject } from "@/requests/projects/queries-noauth";
 import { getPageList, getPageState } from "@/requests/pages/queries-noauth";
 import { useEditorTreeStore } from "@/stores/editorTree";
+import { queryClient } from "@/utils/reactQuery";
 
 export const getServerSideProps = async ({
   query,
 }: GetServerSidePropsContext) => {
-  const queryClient = new QueryClient();
   const { id: projectId, page: pageId } = query as { id: string; page: string };
   const pageLoadTimestamp = Date.now();
 

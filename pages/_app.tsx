@@ -25,6 +25,7 @@ import { ReactFlowProvider } from "reactflow";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { DataProvider } from "@/contexts/DataProvider";
 import { MantineGlobal } from "@/components/MantineGlobal";
+import { queryClient } from "@/utils/reactQuery";
 
 // If loading a variable font, you don't need to specify the font weight
 const inter = Inter({
@@ -44,9 +45,8 @@ const nodeEnv = process.env.NODE_ENV;
 
 export default function App(props: AppProps) {
   const { Component, pageProps } = props;
-  const isDarkTheme = useUserConfigStore((state) => state.isDarkTheme);
   const isLive = props.pageProps.isLive;
-  console.log("pageProps", props.pageProps);
+  const isDarkTheme = useUserConfigStore((state) => state.isDarkTheme);
   const [loadTagManager, setLoadTagManager] = useState(false);
 
   useEffect(() => {
@@ -59,18 +59,8 @@ export default function App(props: AppProps) {
 
       TagManager.initialize(tagManagerArgs);
     }
-  }, [loadTagManager, isLive]);
-
-  const [queryClient] = useState(
-    () =>
-      new QueryClient({
-        defaultOptions: {
-          queries: {
-            refetchOnWindowFocus: false,
-          },
-        },
-      }),
-  );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <MantineProvider

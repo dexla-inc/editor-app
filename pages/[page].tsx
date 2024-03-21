@@ -8,8 +8,9 @@ import {
 } from "@/requests/deployments/types";
 import { getProject } from "@/requests/projects/queries-noauth";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { checkRefreshTokenExists, getPageProps } from "@/utils/serverside";
-import { QueryClient, dehydrate } from "@tanstack/react-query";
+import { queryClient } from "@/utils/reactQuery";
+import { checkRefreshTokenExists } from "@/utils/serverside";
+import { dehydrate } from "@tanstack/react-query";
 import { GetServerSidePropsContext } from "next";
 import Head from "next/head";
 import { useEffect } from "react";
@@ -19,7 +20,6 @@ export const getServerSideProps = async ({
   query,
 }: GetServerSidePropsContext) => {
   const url = req.headers.host as string;
-  const queryClient = new QueryClient();
 
   const project = await getProject(url, true);
   const deploymentPromise = getMostRecentDeployment(project.id);
