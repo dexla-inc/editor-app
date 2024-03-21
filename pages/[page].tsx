@@ -22,6 +22,16 @@ export const getServerSideProps = async ({
   const url = req.headers.host as string;
   const project = await getProject(url, true);
 
+  if (!project.id) {
+    return {
+      redirect: {
+        destination: "/projects",
+        permanent: false,
+        isLive: false,
+      },
+    };
+  }
+
   const deployment = await getMostRecentDeployment(project.id);
 
   await Promise.all([
