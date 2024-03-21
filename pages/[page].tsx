@@ -22,9 +22,7 @@ export const getServerSideProps = async ({
   const deploymentPromise = getMostRecentDeployment(project.id);
 
   await Promise.all([
-    queryClient.prefetchQuery(["project", project.id], () =>
-      Promise.resolve(project),
-    ),
+    queryClient.prefetchQuery(["project", url], () => Promise.resolve(project)),
     queryClient.prefetchQuery(["endpoints", project.id], () =>
       getDataSourceEndpoints(project.id),
     ),
