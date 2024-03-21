@@ -76,22 +76,7 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
       value={value}
       isPageAction={isPageAction}
     >
-      {fieldType === "text" || fieldType === "url" ? (
-        <TextInput
-          {...commonProps}
-          placeholder={placeholder}
-          value={value?.static}
-          type={fieldType}
-          onChange={(e) =>
-            onChange({
-              ...value,
-              dataType: "static",
-              static: e.currentTarget.value,
-            })
-          }
-          {...props}
-        />
-      ) : fieldType === "number" ? (
+      {fieldType === "number" ? (
         <NumberInput
           {...commonProps}
           placeholder={placeholder}
@@ -126,7 +111,7 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
           <TopLabel text={label} required />
           <MonacoEditorJson
             {...commonProps}
-            value={value?.static || (props.defaultValue as string)}
+            value={value?.static.toString() || (props.defaultValue as string)}
             onChange={(val: any) => {
               onChange({
                 ...value,
@@ -142,6 +127,7 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
           {...commonProps}
           placeholder={placeholder}
           value={value?.static}
+          type={fieldType}
           onChange={(e) =>
             onChange({
               ...value,
