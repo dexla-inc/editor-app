@@ -41,6 +41,7 @@ export const getServerSideProps = async ({
       page: pageId,
       variables: variables.results,
       pageLoadTimestamp,
+      isLive: false,
     },
   };
 };
