@@ -23,6 +23,8 @@ export const getServerSideProps = async ({
   console.log("url", url);
 
   const project = await getProject(url, true);
+  console.log("project", project);
+
   const deploymentPromise = getMostRecentDeployment(project.id);
 
   await Promise.all([
