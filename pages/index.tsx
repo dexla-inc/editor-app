@@ -1,6 +1,9 @@
 import { Live } from "@/components/Live";
 import { withPageOnLoad } from "@/hoc/withPageOnLoad";
-import { DeploymentPage } from "@/requests/deployments/types";
+import {
+  DeploymentPage,
+  DeploymentResponse,
+} from "@/requests/deployments/types";
 import { getProject } from "@/requests/projects/queries-noauth";
 import { checkRefreshTokenExists } from "@/utils/serverside";
 import { GetServerSidePropsContext } from "next";
@@ -69,6 +72,7 @@ export const getServerSideProps = async ({
         dehydratedState: dehydrate(queryClient),
         id: project.id,
         page,
+        deployment,
         faviconUrl: project.faviconUrl,
         isLive: true,
       },
@@ -90,9 +94,10 @@ type Props = {
   id: string;
   page: DeploymentPage;
   faviconUrl?: string;
+  deployment: DeploymentResponse;
 };
 
-const HomePage = ({ id, page, faviconUrl }: Props) => {
+const HomePage = ({ id, page, faviconUrl, deployment }: Props) => {
   const setCurrentPageAndProjectIds =
     useEditorTreeStore.getState().setCurrentPageAndProjectIds;
   const setPreviewMode = useEditorTreeStore.getState().setPreviewMode;
@@ -118,7 +123,7 @@ const HomePage = ({ id, page, faviconUrl }: Props) => {
           href={faviconUrl ?? "/favicon.ico"}
         />
       </Head>
-      <Live pageId={page.id} projectId={id} />
+      <Live pageId={page.id} projectId={id} deployment={deployment} />
     </>
   );
 };
