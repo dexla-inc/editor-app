@@ -2,7 +2,7 @@
 // @refresh reset
 import { EditableComponent } from "@/components/EditableComponent";
 import { LiveWrapper } from "@/components/LiveWrapper";
-import { useDeploymentsRecentQuery } from "@/hooks/reactQuery/useDeploymentsRecentQuery";
+import { DeploymentResponse } from "@/requests/deployments/types";
 import { useAppStore } from "@/stores/app";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { componentMapper } from "@/utils/componentMapper";
@@ -14,6 +14,7 @@ import { ReactNode, useCallback, useEffect, useMemo } from "react";
 type Props = {
   projectId: string;
   pageId: string;
+  deployment: DeploymentResponse;
 };
 
 type EditableComponentContainerProps = {
@@ -38,12 +39,11 @@ const EditableComponentContainer = ({
   );
 };
 
-export const Live = ({ projectId, pageId }: Props) => {
+export const Live = ({ projectId, pageId, deployment }: Props) => {
   const editorTree = useEditorTreeStore((state) => state.tree);
   const setEditorTree = useEditorTreeStore((state) => state.setTree);
   const setIsLoading = useAppStore((state) => state.setIsLoading);
   const isLoading = useAppStore((state) => state.isLoading);
-  const { data: deployment } = useDeploymentsRecentQuery(projectId);
 
   const page = useMemo(
     () => deployment?.pages?.find((p) => p.id === pageId),
