@@ -26,6 +26,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { DataProvider } from "@/contexts/DataProvider";
 import { MantineGlobal } from "@/components/MantineGlobal";
 import { queryClient } from "@/utils/reactQuery";
+import { useInitialiseLive } from "@/hooks/useInitialiseLive";
 
 // If loading a variable font, you don't need to specify the font weight
 const inter = Inter({
@@ -46,6 +47,12 @@ const nodeEnv = process.env.NODE_ENV;
 export default function App(props: AppProps) {
   const { Component, pageProps } = props;
   const isLive = props.pageProps.isLive;
+
+  useInitialiseLive({
+    projectId: props.pageProps.id,
+    pageId: props.pageProps.page?.id,
+  });
+
   const isDarkTheme = useUserConfigStore((state) => state.isDarkTheme);
   const [loadTagManager, setLoadTagManager] = useState(false);
 

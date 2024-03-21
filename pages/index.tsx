@@ -21,7 +21,7 @@ export const getServerSideProps = async ({
   const url = req.headers.host as string;
   const project = await getProject(url, true);
 
-  await queryClient.prefetchQuery(["project", url], () =>
+  await queryClient.prefetchQuery(["project", project.id], () =>
     Promise.resolve(project),
   );
 
