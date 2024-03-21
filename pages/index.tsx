@@ -20,9 +20,6 @@ export const getServerSideProps = async ({
 }: GetServerSidePropsContext) => {
   const url = req.headers.host as string;
   const project = await getProject(url, true);
-  await queryClient.prefetchQuery(["project", project.id], () =>
-    Promise.resolve(project),
-  );
 
   if (!project.id) {
     return {
@@ -34,6 +31,9 @@ export const getServerSideProps = async ({
     };
   }
 
+  await queryClient.prefetchQuery(["project", project.id], () =>
+    Promise.resolve(project),
+  );
   const prefetchEndpoints = queryClient.prefetchQuery(
     ["endpoints", project.id],
     () => getDataSourceEndpoints(project.id),

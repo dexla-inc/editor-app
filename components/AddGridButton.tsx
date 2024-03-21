@@ -15,7 +15,9 @@ export const AddGridButton = () => {
       .map((child) => {
         if (child.id !== "content-wrapper") return child;
 
-        child.children![0].id = "old-main-content";
+        const mainContentIndex = child.children![0].name == "Navbar" ? 1 : 0;
+
+        child.children![mainContentIndex].id = "old-main-content" + nanoid();
 
         return {
           ...child,
