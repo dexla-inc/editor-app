@@ -10,9 +10,10 @@ import { GetServerSidePropsContext } from "next";
 import Head from "next/head";
 import { useEffect } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { QueryClient, dehydrate } from "@tanstack/react-query";
+import { dehydrate } from "@tanstack/react-query";
 import { getMostRecentDeployment } from "@/requests/deployments/queries-noauth";
 import { getDataSourceEndpoints } from "@/requests/datasources/queries-noauth";
+import { queryClient } from "@/utils/reactQuery";
 
 export const getServerSideProps = async ({
   req,
@@ -20,7 +21,6 @@ export const getServerSideProps = async ({
   const url = req.headers.host as string;
   const project = await getProject(url, true);
 
-  const queryClient = new QueryClient();
   await queryClient.prefetchQuery(["project", project.id], () =>
     Promise.resolve(project),
   );
