@@ -19,8 +19,9 @@ export const getServerSideProps = async ({
   req,
 }: GetServerSidePropsContext) => {
   const url = req.headers.host as string;
+  console.log("url", url);
   const project = await getProject(url, true);
-
+  console.log("project", project);
   await queryClient.prefetchQuery(["project", project.id], () =>
     Promise.resolve(project),
   );
@@ -43,15 +44,9 @@ export const getServerSideProps = async ({
     ["project", project.id],
     () => Promise.resolve(project),
   );
-  const deploymentPromise = getMostRecentDeployment(project.id);
-  const prefetchDeployments = deploymentPromise.then((deployment) =>
-    queryClient.prefetchQuery(["deployments", project.id], () =>
-      Promise.resolve(deployment),
-    ),
-  );
+  const deployment = await getMostRecentDeployment(project.id);
 
-  await Promise.all([prefetchEndpoints, prefetchProject, prefetchDeployments]);
-  const deployment = await deploymentPromise;
+  await Promise.all([prefetchEndpoints, prefetchProject]);
 
   const isLoggedIn = checkRefreshTokenExists(req.cookies["refreshToken"]);
   const currentSlug = "/";
