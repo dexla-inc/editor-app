@@ -7,7 +7,7 @@ import { IconBrush, IconEye } from "@tabler/icons-react";
 
 export const EditorPreviewModeToggle = () => {
   const theme = useMantineTheme();
-  const { isPreviewMode } = useAppMode();
+  const isPreviewMode = useEditorTreeStore((state) => state.isPreviewMode);
   const setPreviewModeEditor = useEditorTreeStore(
     (state) => state.setPreviewMode,
   );

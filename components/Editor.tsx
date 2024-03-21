@@ -31,7 +31,7 @@ const Editor = ({ projectId, pageId, pageLoadTimestamp }: Props) => {
     (state) => state.setCurrentPageAndProjectIds,
   );
   const liveblocks = useEditorTreeStore((state) => state.liveblocks);
-  const { isPreviewMode } = useAppMode();
+  const isPreviewMode = useEditorTreeStore((state) => state.isPreviewMode);
   const isNavBarVisible = useEditorStore((state) => state.isNavBarVisible);
   const setCurrentUser = useEditorTreeStore((state) => state.setCurrentUser);
   const isDarkTheme = useUserConfigStore((state) => state.isDarkTheme);
