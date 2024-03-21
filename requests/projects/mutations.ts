@@ -1,6 +1,7 @@
 import { ProjectParams, ProjectResponse } from "@/requests/projects/types";
 import { PatchParams } from "@/requests/types";
-import { del, getAuthToken, patch, post } from "@/utils/api";
+import { usePropelAuthStore } from "@/stores/propelAuth";
+import { del, patch, post } from "@/utils/api";
 import { buildQueryString } from "@/utils/dashboardTypes";
 
 export const createProject = async (
@@ -20,7 +21,7 @@ export const createProject = async (
 };
 
 export const createEntities = async (params: ProjectParams, init = {}) => {
-  const accessToken = await getAuthToken();
+  const accessToken = usePropelAuthStore.getState().accessToken;
   const response = await fetch("/api/ai/entities", {
     ...init,
     method: "POST",

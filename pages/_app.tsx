@@ -1,7 +1,6 @@
 import { ProgressBar } from "@/components/ProgressBar";
 import LogicFlowInitialModal from "@/components/logic-flow/LogicFlowInitialModal";
 import { ContextMenuProvider } from "@/contexts/ContextMenuProvider";
-import { useCheckIfIsLive } from "@/hooks/useCheckIfIsLive";
 import AuthProvider from "@/components/AuthProvider";
 import InstantiatePropelAuthStore from "@/components/InstantiatePropelAuthStore";
 import { useUserConfigStore } from "@/stores/userConfig";
@@ -46,8 +45,8 @@ const nodeEnv = process.env.NODE_ENV;
 export default function App(props: AppProps) {
   const { Component, pageProps } = props;
   const isDarkTheme = useUserConfigStore((state) => state.isDarkTheme);
-  const isLive = useCheckIfIsLive();
-
+  const isLive = props.pageProps.isLive;
+  console.log("pageProps", props.pageProps);
   const [loadTagManager, setLoadTagManager] = useState(false);
 
   useEffect(() => {

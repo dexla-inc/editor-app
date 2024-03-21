@@ -5,7 +5,8 @@ import {
 } from "@/requests/ai/types";
 import { BrandingAITheme } from "@/requests/projects/types";
 import { PagingResponse } from "@/requests/types";
-import { baseURL, get, getAuthToken } from "@/utils/api";
+import { usePropelAuthStore } from "@/stores/propelAuth";
+import { baseURL, get } from "@/utils/api";
 import { MantineThemeExtended } from "@/utils/types";
 import {
   EventSourceMessage,
@@ -69,7 +70,7 @@ export const postPageEventSource = async (
   type?: AIRequestTypes | undefined,
   description?: string | undefined,
 ) => {
-  const token = await getAuthToken();
+  const token = usePropelAuthStore.getState().accessToken;
   let url = `${baseURL}/projects/${projectId}/automations/content`;
 
   await fetchEventSource(url, {
@@ -99,7 +100,7 @@ export const postEventSource = async (
   onopen?: (response: Response) => Promise<void>,
   onclose?: () => void,
 ) => {
-  const token = await getAuthToken();
+  const token = usePropelAuthStore.getState().accessToken;
   let url = `${baseURL}/projects/${projectId}/automations/content`;
 
   await fetchEventSource(url, {

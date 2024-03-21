@@ -57,6 +57,7 @@ export const getServerSideProps = async ({
         id: project.id,
         page,
         faviconUrl: project.faviconUrl,
+        isLive: true,
       },
     };
   }
@@ -67,6 +68,7 @@ export const getServerSideProps = async ({
       id: project.id,
       page,
       faviconUrl: project.faviconUrl,
+      isLive: true,
     },
   };
 };

@@ -27,6 +27,7 @@ export const getServerSideProps = async ({
       redirect: {
         destination: "/projects",
         permanent: false,
+        isLive: false,
       },
     };
   }
@@ -69,6 +70,7 @@ export const getServerSideProps = async ({
         id: project.id,
         page,
         faviconUrl: project.faviconUrl,
+        isLive: true,
       },
     };
   }
@@ -79,6 +81,7 @@ export const getServerSideProps = async ({
       id: project.id,
       page,
       faviconUrl: project.faviconUrl,
+      isLive: true,
     },
   };
 };
