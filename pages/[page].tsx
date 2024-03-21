@@ -20,6 +20,7 @@ export const getServerSideProps = async ({
   query,
 }: GetServerSidePropsContext) => {
   const url = req.headers.host as string;
+  console.log("url", url);
 
   const project = await getProject(url, true);
   const deploymentPromise = getMostRecentDeployment(project.id);
@@ -85,6 +86,7 @@ type Props = {
 };
 
 function LivePage({ id, page, faviconUrl, deployment }: Props) {
+  console.log("Live", id, page, faviconUrl, deployment);
   const setCurrentPageAndProjectIds =
     useEditorTreeStore.getState().setCurrentPageAndProjectIds;
   const setPreviewMode = useEditorTreeStore.getState().setPreviewMode;
