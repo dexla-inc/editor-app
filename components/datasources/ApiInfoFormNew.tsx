@@ -16,7 +16,6 @@ export default function ApiInfoFormNew() {
 
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
-  const { data: endpoints } = useDataSourceEndpoints(projectId);
 
   const form = useForm<DataSourceParams>({
     initialValues: {

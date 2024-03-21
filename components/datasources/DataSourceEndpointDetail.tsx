@@ -154,9 +154,7 @@ export const DataSourceEndpointDetail = ({
   const [warningMessage, setWarningMessage] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<string | null>("example");
   const [activeBodyType, setActiveBodyType] = useState<"raw" | "fields">("raw");
-  const { invalidate } = useDataSourceEndpoints(projectId, dataSourceId);
-
-  const theme = useMantineTheme();
+  const { invalidate } = useDataSourceEndpoints(projectId);
 
   useEffect(() => {
     // Reset the state by dispatching an action or directly setting it

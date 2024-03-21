@@ -25,9 +25,9 @@ const CardAndContainerWrapperInner = ({
   );
   const { endpointId } = onLoad ?? {};
 
+  component.onLoad = onLoad;
   const { data } = useEndpoint({
     component,
-    forceEnabled: !!endpointId,
     includeExampleResponse: !isPreviewMode,
   });
 

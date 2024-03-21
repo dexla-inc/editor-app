@@ -32,7 +32,7 @@ export default function PageConfig({ page, setPage }: Props) {
   const projectId = router.query.id as string;
   const [slug, setSlug] = useState("");
   const resetTree = useEditorTreeStore((state) => state.resetTree);
-  const { invalidate } = usePageListQuery(projectId);
+  const { invalidate } = usePageListQuery(projectId, null);
   const queryStringState = useState(
     page?.queryStrings
       ? Object.entries(page?.queryStrings || {}).map(([key, value]) => ({

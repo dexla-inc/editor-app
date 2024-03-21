@@ -1,6 +1,6 @@
 import { getMostRecentDeploymentByPage } from "@/requests/deployments/queries-noauth";
 
-function checkRefreshTokenExists(refreshToken: string | undefined) {
+export function checkRefreshTokenExists(refreshToken: string | undefined) {
   if (!refreshToken || refreshToken.toString() === "undefined") {
     return false;
   }

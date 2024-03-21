@@ -3,7 +3,8 @@ import { Endpoint } from "@/requests/datasources/types";
 import { PagingResponse } from "@/requests/types";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { Component } from "@/utils/editor";
-import { SegmentedControl, Stack } from "@mantine/core";
+import { SegmentedControl, Select, Stack, Text, Title } from "@mantine/core";
+import { ChartForm } from "@/components/data/forms/static/ChartForm";
 
 export type DataProps = {
   component: Component;
@@ -35,9 +36,45 @@ export const ChartData = ({ component, endpoints, dataType }: DataProps) => {
           })
         }
       />
-      {dataType === "static" && <></>}
+      {dataType === "static" && <ChartForm component={component} />}
       {dataType === "dynamic" && (
-        <DynamicSettings component={component} endpoints={endpoints!} />
+        <DynamicSettings
+          component={component}
+          endpoints={endpoints!}
+          customProps={{
+            dataLabelKey: "name",
+            dataValueKey: "id",
+          }}
+        >
+          {({ form, selectableObjectKeys }) => {
+            return (
+              <Stack spacing="xs" my="xs">
+                <Title order={6} mt="xs">
+                  Options
+                </Title>
+                <Text size="xs" color="dimmed">
+                  Set up the data structure
+                </Text>
+
+                <Select
+                  label="Label"
+                  data={selectableObjectKeys}
+                  {...form.getInputProps("onLoad.dataLabelKey")}
+                />
+                <Select
+                  label="Series"
+                  data={selectableObjectKeys}
+                  {...form.getInputProps("onLoad.dataSeriesKey")}
+                />
+                <Select
+                  label="Legend"
+                  data={selectableObjectKeys}
+                  {...form.getInputProps("onLoad.dataLegendKey")}
+                />
+              </Stack>
+            );
+          }}
+        </DynamicSettings>
       )}
     </Stack>
   );

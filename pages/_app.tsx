@@ -2,20 +2,12 @@ import { ProgressBar } from "@/components/ProgressBar";
 import LogicFlowInitialModal from "@/components/logic-flow/LogicFlowInitialModal";
 import { ContextMenuProvider } from "@/contexts/ContextMenuProvider";
 import { useCheckIfIsLive } from "@/hooks/useCheckIfIsLive";
-import AuthProvider from "@/pages/AuthProvider";
-import InitializeVariables from "@/pages/InitializeVariables";
-import InstantiatePropelAuthStore from "@/pages/InstantiatePropelAuthStore";
+import AuthProvider from "@/components/AuthProvider";
+import InstantiatePropelAuthStore from "@/components/InstantiatePropelAuthStore";
 import { useUserConfigStore } from "@/stores/userConfig";
-
-import {
-  DARK_MODE,
-  GREEN_COLOR,
-  LIGHT_MODE,
-  darkTheme,
-  theme,
-} from "@/utils/branding";
+import { darkTheme, theme } from "@/utils/branding";
 import { cache } from "@/utils/emotionCache";
-import { Global, MantineProvider } from "@mantine/core";
+import { MantineProvider } from "@mantine/core";
 import { ModalsProvider } from "@mantine/modals";
 import { Notifications } from "@mantine/notifications";
 import {
@@ -33,6 +25,7 @@ import TagManager from "react-gtm-module";
 import { ReactFlowProvider } from "reactflow";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { DataProvider } from "@/contexts/DataProvider";
+import { MantineGlobal } from "@/components/MantineGlobal";
 
 // If loading a variable font, you don't need to specify the font weight
 const inter = Inter({
@@ -48,6 +41,7 @@ declare global {
 }
 
 const GTM_ID = "GTM-P3DVFXMS";
+const nodeEnv = process.env.NODE_ENV;
 
 export default function App(props: AppProps) {
   const { Component, pageProps } = props;
@@ -57,7 +51,7 @@ export default function App(props: AppProps) {
   const [loadTagManager, setLoadTagManager] = useState(false);
 
   useEffect(() => {
-    setLoadTagManager(!isLive && process.env.NODE_ENV !== "development");
+    setLoadTagManager(!isLive && nodeEnv !== "development");
 
     if (loadTagManager) {
       const tagManagerArgs = {
@@ -135,49 +129,9 @@ export default function App(props: AppProps) {
           <main className={inter.variable}>
             <QueryClientProvider client={queryClient}>
               <ReactQueryDevtools initialIsOpen={false} />
-              <InitializeVariables pageProps={pageProps} />
               <Hydrate state={pageProps.dehydratedState}>
                 <Notifications />
-                <Global
-                  styles={{
-                    "*, *::before, *::after": {
-                      boxSizing: "border-box",
-                    },
-                    body: {
-                      margin: 0,
-                      padding: 0,
-                      ...theme.fn.fontStyles(),
-                      lineHeight: theme.lineHeight,
-                      maxHeight: "100vh",
-                      minHeight: "100vh",
-                      background:
-                        !isLive && isDarkTheme ? DARK_MODE : LIGHT_MODE,
-                      color: !isLive && isDarkTheme ? GREEN_COLOR : theme.black,
-                      // For WebKit browsers (e.g., Chrome, Safari)
-                      "::-webkit-scrollbar": {
-                        width: isLive ? "0px" : "8px",
-                        height: isLive && "0px",
-                      },
-                      "::-webkit-scrollbar-thumb": {
-                        backgroundColor: !isLive && "#888",
-                        borderRadius: !isLive && "10px",
-                      },
-
-                      // For Firefox
-                      scrollbarWidth: isLive ? "none" : "thin",
-                      scrollbarColor: !isLive && "#888 transparent",
-
-                      // For IE and Edge
-                      msOverflowStyle: isLive
-                        ? "none"
-                        : "-ms-autohiding-scrollbar",
-                    },
-
-                    html: {
-                      maxHeight: "-webkit-fill-available",
-                    },
-                  }}
-                />
+                <MantineGlobal isLive={isLive} />
                 <ReactFlowProvider>
                   <DataProvider>
                     <ModalsProvider

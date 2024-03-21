@@ -1,7 +1,7 @@
 import { MonacoEditorJson } from "@/components/MonacoEditorJson";
 import { SegmentedControlInput } from "@/components/SegmentedControlInput";
 import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
-import { useVariable } from "@/hooks/reactQuery/useVariable";
+import { useVariableMutation } from "@/hooks/reactQuery/useVariable";
 import {
   FrontEndTypes,
   VariableTypesOptions,
@@ -41,7 +41,7 @@ export const VariableForm = ({ variableId }: Props) => {
   const router = useRouter();
   const projectId = router.query.id as string;
   const { createVariablesMutation, updateVariablesMutation } =
-    useVariable(projectId);
+    useVariableMutation(projectId);
 
   const form = useForm<VariablesFormValues>({
     initialValues: {

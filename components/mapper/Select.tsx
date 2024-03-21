@@ -19,6 +19,8 @@ import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { Fragment, forwardRef, memo, useEffect, useState } from "react";
+import { useEditorTreeStore } from "@/stores/editorTree";
+import { memoize } from "proxy-memoize";
 
 type Props = EditableComponentMapper & SelectProps & MultiSelectProps;
 
@@ -42,7 +44,11 @@ const SelectComponent = forwardRef(
       multiSelect && !isPreviewMode ? Box : Fragment;
 
     const componentId = component.id as string;
-    const { dataLabelKey, dataValueKey, resultsKey } = component.onLoad ?? {};
+    const onLoad = useEditorTreeStore(
+      memoize((state) => state.componentMutableAttrs[component?.id!]?.onLoad),
+    );
+
+    const { dataLabelKey, dataValueKey, resultsKey } = onLoad ?? {};
     const { onChange, onSearchChange, ...restTriggers } = triggers || {};
     const { color, backgroundColor } = useChangeState({ bg, textColor });
     const { borderStyle, inputStyle } = useBrandingStyles();
@@ -57,6 +63,7 @@ const SelectComponent = forwardRef(
       dataType === "static" ? component.props?.data : [],
     );
 
+    component.onLoad = onLoad;
     const { data: response } = useEndpoint({
       component,
     });

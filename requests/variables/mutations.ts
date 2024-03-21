@@ -4,7 +4,7 @@ import { useVariableStore } from "@/stores/variables";
 import { del, post, put } from "@/utils/api";
 
 const setVariable = useVariableStore.getState().setVariable;
-const onDeleteVariable = useVariableStore.getState().deleteVariable;
+const deleteVariableFromStore = useVariableStore.getState().deleteVariable;
 
 export const createVariable = async (
   projectId: string,
@@ -39,7 +39,7 @@ export const updateVariable = async (
 
 export const deleteVariable = async (projectId: string, id: string) => {
   let url = `/projects/${projectId}/variables/${id}`;
-  onDeleteVariable(id);
+  deleteVariableFromStore(id);
   const response = (await del<SuccessResponse>(url)) as SuccessResponse;
 
   return response;

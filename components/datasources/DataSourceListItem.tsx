@@ -1,4 +1,5 @@
 import { DataSourceEndpoint } from "@/components/datasources/DataSourceEndpoint";
+import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
 import { getDataSourceEndpoints } from "@/requests/datasources/queries-noauth";
 import { Endpoint } from "@/requests/datasources/types";
 import { PagingResponse } from "@/requests/types";
@@ -18,26 +19,12 @@ export const DataSourceListItem = ({
   id,
   baseUrl,
 }: DataSourceItemProps) => {
-  let initialBody = {
-    results: [],
-    paging: {
-      totalRecords: 0,
-      recordsPerPage: 0,
-      page: 0,
-    },
-    trackingId: "",
-  };
-
-  const [endpoints, setEndpoints] =
-    useState<PagingResponse<Endpoint>>(initialBody);
-  const [showEndpoints, setShowEndpoints] = useState<boolean>(false);
+  const [endpoints, setEndpoints] = useState<Endpoint[]>();
+  const { data } = useDataSourceEndpoints(projectId);
 
   const onClick = async () => {
-    const result = await getDataSourceEndpoints(projectId, {
-      dataSourceId: id,
-    });
+    const result = data?.results.filter((d) => d.id === id);
     setEndpoints(result);
-    setShowEndpoints(result.results.length > 0);
   };
 
   return (
@@ -46,7 +33,7 @@ export const DataSourceListItem = ({
         {name}
       </Button>
       <Stack>
-        {endpoints.results.map((endpoint) => {
+        {endpoints?.map((endpoint) => {
           return (
             <DataSourceEndpoint
               baseUrl={baseUrl}

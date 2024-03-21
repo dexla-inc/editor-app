@@ -4,26 +4,18 @@ import { useQuery } from "@tanstack/react-query";
 
 const cacheTime = 5 * 1000; // 5 seconds
 
-export const useGetPageState = (
+export const usePageState = (
   projectId: string,
   pageId: string,
   pageLoadTimestamp: number,
   history: number | null,
 ) => {
-  const queryKey = [
-    "page-state",
-    projectId,
-    pageId,
-    pageLoadTimestamp,
-    history,
-  ];
-
   const queryResult = useQuery<PageStateResponse, Error>({
-    queryKey: queryKey,
+    queryKey: ["page-state", projectId, pageId, pageLoadTimestamp, history],
     queryFn: () =>
       getPageState(projectId, pageId, pageLoadTimestamp, history, {}),
     staleTime: cacheTime,
-    enabled: !!projectId && !!pageId,
+    enabled: !!projectId && !!pageId && !!pageLoadTimestamp,
   });
 
   return { ...queryResult };

@@ -1,14 +1,10 @@
 import { Chart } from "@/components/mapper/charts/Chart";
-import { Component } from "@/utils/editor";
+import { EditableComponentMapper } from "@/utils/editor";
 import merge from "lodash.merge";
 
-type Props = {
-  component: Component;
-};
+type Props = EditableComponentMapper;
 
 export const BarChart = (props: Props) => {
-  const { loading } = props.component.props as any;
-
   const customProps = merge({}, props, {
     component: {
       props: {

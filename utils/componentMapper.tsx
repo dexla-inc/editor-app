@@ -1474,7 +1474,7 @@ export const componentMapper: ComponentMapper = {
   },
   BarChart: {
     Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <BarChart component={props.component} />
+      <BarChart renderTree={props.renderTree} component={props.component} />
     ),
     modifiers: ["chart", "spacing", "size", "border", "effects"],
     actionTriggers: [],
@@ -1482,7 +1482,7 @@ export const componentMapper: ComponentMapper = {
   },
   LineChart: {
     Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <LineChart component={props.component} />
+      <LineChart renderTree={props.renderTree} component={props.component} />
     ),
     modifiers: ["chart", "spacing", "size", "border", "effects"],
     actionTriggers: [],
@@ -1490,7 +1490,7 @@ export const componentMapper: ComponentMapper = {
   },
   PieChart: {
     Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <PieChart component={props.component} />
+      <PieChart renderTree={props.renderTree} component={props.component} />
     ),
     modifiers: ["chart", "spacing", "size", "border", "effects"],
     actionTriggers: [],
@@ -1498,7 +1498,7 @@ export const componentMapper: ComponentMapper = {
   },
   AreaChart: {
     Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <AreaChart component={props.component} />
+      <AreaChart renderTree={props.renderTree} component={props.component} />
     ),
     modifiers: ["chart", "spacing", "size", "border", "effects"],
     actionTriggers: [],
@@ -1506,7 +1506,7 @@ export const componentMapper: ComponentMapper = {
   },
   RadarChart: {
     Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <RadarChart component={props.component} />
+      <RadarChart renderTree={props.renderTree} component={props.component} />
     ),
     modifiers: ["chart", "spacing", "size", "border", "effects"],
     actionTriggers: [],
@@ -1514,7 +1514,7 @@ export const componentMapper: ComponentMapper = {
   },
   RadialChart: {
     Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <RadialChart component={props.component} />
+      <RadialChart renderTree={props.renderTree} component={props.component} />
     ),
     modifiers: ["chart", "spacing", "size", "border", "effects"],
     actionTriggers: [],

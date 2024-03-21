@@ -402,9 +402,7 @@ export const requiredModifiers: RequiredModifiers = {
     labelSize: "sm",
   },
   chart: {
-    data: "",
-    dataLabels: "",
-    colors: [
+    chartColors: [
       "Primary.6",
       "Secondary.6",
       "Tertiary.6",

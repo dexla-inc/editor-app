@@ -92,7 +92,7 @@ export type EditorTreeState = {
   historyCount: number | null;
   setHistoryCount: (count: number | null) => void;
   pageLoadTimestamp?: number;
-  setPageLoadTimestamp: (value: number) => void;
+  setPageLoadTimestamp: (value: number | null) => void;
   currentUser?: User;
   setCurrentUser: (user?: User) => void;
   cursor?: {
@@ -393,7 +393,7 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
           isSaving: false,
           setPageLoadTimestamp: (value) =>
             set(
-              { pageLoadTimestamp: value },
+              { pageLoadTimestamp: value as number },
               false,
               "editorTree/setPageLoadTimestamp",
             ),

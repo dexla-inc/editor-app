@@ -17,7 +17,6 @@ type UseEndpointProps = {
 
 export const useEndpoint = ({
   component,
-  forceEnabled,
   enabled = true,
   includeExampleResponse = false,
 }: UseEndpointProps) => {
@@ -64,8 +63,7 @@ export const useEndpoint = ({
     });
   };
 
-  const isEnabled =
-    forceEnabled || (!!endpoint && dataType === "dynamic" && enabled);
+  const isEnabled = !!endpoint && dataType === "dynamic" && enabled;
 
   const { data, isLoading } = useQuery(
     [fetchUrl, JSON.stringify(body), accessToken],

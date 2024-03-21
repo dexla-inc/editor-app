@@ -130,6 +130,7 @@ export type Data = {
   tiles: Tile[];
 };
 
+// TODO: This needs completely reviewing such as direct API calls.
 export const template = async (
   data: Data,
   theme: any,

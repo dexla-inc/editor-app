@@ -1,19 +1,22 @@
 import { useThemeStore } from "@/stores/theme";
-import { Component, getColorFromTheme } from "@/utils/editor";
+import { EditableComponentMapper, getColorFromTheme } from "@/utils/editor";
 import { MantineThemeExtended } from "@/utils/types";
-import { BoxProps } from "@mantine/core";
 import { ApexOptions } from "apexcharts";
 import get from "lodash.get";
 import merge from "lodash.merge";
 import dynamic from "next/dynamic";
+import { useEndpoint } from "@/hooks/useEndpoint";
+import groupBy from "lodash.groupby";
+import { Box, Skeleton } from "@mantine/core";
+import { omit } from "next/dist/shared/lib/router/utils/omit";
+import { useEditorTreeStore } from "@/stores/editorTree";
+import { memoize } from "proxy-memoize";
+
 const ReactApexChart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
 });
 
-type Props = {
-  component: Component;
-  isPreviewMode?: boolean;
-} & BoxProps;
+type Props = EditableComponentMapper;
 
 export const getChartColor = (
   theme: MantineThemeExtended,
@@ -25,8 +28,6 @@ export const getChartColor = (
 export const Chart = ({ component, ...props }: Props) => {
   const {
     children,
-    data,
-    repeatedIndex,
     series,
     type,
     options,
@@ -34,12 +35,19 @@ export const Chart = ({ component, ...props }: Props) => {
     labelColor,
     foreColor,
     triggers,
+    dataType,
     ...componentProps
   } = component.props as any;
 
+  const onLoad = useEditorTreeStore(
+    memoize((state) => state.componentMutableAttrs[component?.id!]?.onLoad),
+  );
+  const { dataLabelKey, dataSeriesKey, dataLegendKey, resultsKey } =
+    onLoad ?? {};
+
   const theme = useThemeStore((state) => state.theme);
   const isPieOrRadial =
-    type === "pie" || type === "donut" || type === "radialBar";
+    component?.name === "PieChart" || component?.name === "RadialChart";
 
   const colors = chartColors?.map((color: any) =>
     getColorFromTheme(theme, color),
@@ -57,6 +65,47 @@ export const Chart = ({ component, ...props }: Props) => {
 
   const _labelColor = getChartColor(theme, labelColor, "SecondaryText.5");
   const _foreColor = getChartColor(theme, foreColor, "Secondary.5");
+
+  component.onLoad = onLoad;
+  const { data: response, isLoading } = useEndpoint({
+    component,
+  });
+
+  let dataSeries = series,
+    dynamicOptions = {};
+
+  if (dataType === "dynamic") {
+    dataSeries = [];
+
+    if (response) {
+      // TODO: implement it back when the swagger is ready
+      // const grouped = groupBy(get(response, resultsKey, {}), dataLegendKey);
+      const grouped = groupBy(get(response, "data", []), "description");
+      if (isPieOrRadial) {
+        dataSeries = get(response, "data", []).map((i: any) => i.value);
+      } else {
+        dataSeries = Object.entries(grouped).map(([name, items]) => ({
+          name,
+          data: items.map((i) => i.value),
+        }));
+      }
+
+      const dataLabels = get(response, "data", []).map((i: any) => i.selector);
+
+      dynamicOptions = {
+        ...(isPieOrRadial
+          ? { labels: dataLabels }
+          : {
+              xaxis: {
+                categories: dataLabels,
+                labels: {
+                  style: { colors: dataLabels?.map((_: any) => _foreColor) },
+                },
+              },
+            }),
+      };
+    }
+  }
 
   const customOptions: ApexOptions = merge(
     {},
@@ -104,7 +153,7 @@ export const Chart = ({ component, ...props }: Props) => {
         strokeColors: theme.colors.gray[0],
       },
       legend: {
-        show: type !== "radialBar" && series.length > 0,
+        show: type !== "radialBar" && dataSeries?.length > 0,
         fontSize: 13,
         position: "top",
         horizontalAlign: "right",
@@ -129,7 +178,7 @@ export const Chart = ({ component, ...props }: Props) => {
           show: true,
         },
         marker: {
-          show: series.length > 1,
+          show: dataSeries?.length > 1,
         },
       },
       dataLabels: {
@@ -139,47 +188,14 @@ export const Chart = ({ component, ...props }: Props) => {
     options,
   );
 
-  let dataSeries = series;
-  let dataLabels = isPieOrRadial ? options?.labels : options?.xaxis?.categories;
-
-  if (props.isPreviewMode) {
-    dataSeries = data?.series?.value ?? series;
-    dataLabels = data?.labels?.value ?? dataLabels;
-
-    if (typeof repeatedIndex !== "undefined") {
-      if (data?.series?.path) {
-        const path = data?.series?.path.replace("[0]", `[${repeatedIndex}]`);
-        dataSeries = get(data?.series?.base, path, series);
-      }
-
-      if (data?.labels?.path) {
-        const path = data?.dataLabels?.path.replace(
-          "[0]",
-          `[${repeatedIndex}]`,
-        );
-        dataLabels = get(data?.dataLabels?.base, path, dataLabels);
-      }
-    }
-  }
-
-  const opts = {
-    ...customOptions,
-    ...(isPieOrRadial
-      ? { labels: dataLabels }
-      : {
-          xaxis: {
-            categories: dataLabels,
-            labels: {
-              style: { colors: dataLabels.map((_: any) => _foreColor) },
-            },
-          },
-        }),
-  };
+  Object.assign(customOptions, dynamicOptions);
 
   return (
-    <div>
-      <ReactApexChart
-        {...props}
+    <Skeleton visible={isLoading} id={component.id}>
+      <Box
+        component={ReactApexChart}
+        // @ts-ignore
+        {...omit(props, ["id"])}
         {...componentProps}
         {...triggers}
         series={dataSeries}
@@ -189,10 +205,9 @@ export const Chart = ({ component, ...props }: Props) => {
           padding: 0,
           color: theme.colors.gray[8],
         }}
-        width="100%"
         type={type}
-        options={opts}
+        options={customOptions}
       />
-    </div>
+    </Skeleton>
   );
 };
