@@ -2,7 +2,6 @@ import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput"
 import { FrontEndTypes } from "@/requests/variables/types";
 
 export type FieldType =
-  | "yesno"
   | "password"
   | "email"
   | "tel"

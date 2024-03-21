@@ -1,4 +1,5 @@
 import BindingPopover from "@/components/BindingPopover";
+import { TopLabel } from "@/components/TopLabel";
 import { ValueProps } from "@/utils/types";
 import {
   Flex,
@@ -8,7 +9,6 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { TopLabel } from "./TopLabel";
 
 type Props = {
   label?: string;

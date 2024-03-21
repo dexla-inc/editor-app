@@ -1,10 +1,11 @@
+import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
+import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
 import { FieldType } from "@/components/data/forms/StaticFormFieldsBuilder";
 import { VariableSelect } from "@/components/variables/VariableSelect";
 import { FrontEndTypes } from "@/requests/variables/types";
 import { ActionFormProps, ChangeVariableAction } from "@/utils/actions";
 import { ArrayMethods } from "@/utils/types";
 import { Select, Stack } from "@mantine/core";
-import { ComponentToBindFromInput } from "../ComponentToBindFromInput";
 
 type Props = ActionFormProps<Omit<ChangeVariableAction, "name">>;
 
@@ -37,19 +38,35 @@ export const ArrayVariableForm = ({ form, isPageAction }: Props) => {
           {...form.getInputProps("index")}
         />
       )}
+      {method.value === "UPDATE_ONE_ITEM" && (
+        <>
+          <SegmentedControlYesNo
+            label="Partial Update"
+            {...form.getInputProps("partialUpdate")}
+          />
+          {form.values.partialUpdate && (
+            <ComponentToBindFromInput
+              required
+              label="Path"
+              isPageAction={isPageAction}
+              {...form.getInputProps("path")}
+            />
+          )}
+        </>
+      )}
     </>
   );
 };
 
 export const ChangeVariableActionForm = ({ form, isPageAction }: Props) => {
-  const formValues = form.values;
-  const fieldType = formValues.variableType;
+  const { variableType, method } = form.values;
   const defaultValue =
-    fieldType === "ARRAY"
-      ? !formValues.method || formValues.method === "REPLACE_ALL_ITEMS"
+    variableType === "ARRAY"
+      ? method === "REPLACE_ALL_ITEMS" || !method
         ? "[]"
         : '""'
       : null;
+  const hideInputField = method?.includes("REMOVE");
 
   return (
     <Stack spacing="xs">
@@ -60,18 +77,20 @@ export const ChangeVariableActionForm = ({ form, isPageAction }: Props) => {
           form.setValues({ variableType: type, method: "REPLACE_ALL_ITEMS" })
         }
       />
-      {fieldType === "ARRAY" && (
+      {variableType === "ARRAY" && (
         <ArrayVariableForm form={form} isPageAction={isPageAction} />
       )}
 
-      <ComponentToBindFromInput
-        required
-        fieldType={fieldType?.toLowerCase() as FieldType}
-        label="Value"
-        isPageAction={isPageAction}
-        defaultValue={defaultValue}
-        {...form.getInputProps("value")}
-      />
+      {!hideInputField && (
+        <ComponentToBindFromInput
+          required
+          fieldType={variableType?.toLowerCase() as FieldType}
+          label="Value"
+          isPageAction={isPageAction}
+          defaultValue={defaultValue}
+          {...form.getInputProps("value")}
+        />
+      )}
     </Stack>
   );
 };

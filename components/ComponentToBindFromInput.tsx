@@ -34,7 +34,7 @@ type ExtendedPropsByFieldType<T> = T extends "text"
   ? Omit<TextInputProps, "onChange" | "value">
   : T extends "number"
   ? Omit<NumberInputProps, "onChange" | "value">
-  : T extends "yesno" | "boolean"
+  : T extends "boolean"
   ? Omit<SegmentedControlProps, "onChange" | "value">
   : {};
 
@@ -76,11 +76,12 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
       value={value}
       isPageAction={isPageAction}
     >
-      {fieldType === "text" ? (
+      {fieldType === "text" || fieldType === "url" ? (
         <TextInput
           {...commonProps}
           placeholder={placeholder}
           value={value?.static}
+          type={fieldType}
           onChange={(e) =>
             onChange({
               ...value,
@@ -107,7 +108,7 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
           parser={(value) => parseFloatExtension(value).toString()}
           formatter={(value) => parseFloatExtension(value).toString()}
         />
-      ) : fieldType === "yesno" || fieldType === "boolean" ? (
+      ) : fieldType === "boolean" ? (
         <SegmentedControlYesNo
           {...commonProps}
           value={value?.static}
@@ -115,25 +116,10 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
             onChange({
               ...value,
               dataType: "static",
-              static: val.toString(),
+              static: val,
             })
           }
           w="100%"
-        />
-      ) : fieldType === "url" ? (
-        <TextInput
-          {...commonProps}
-          type="url"
-          placeholder={placeholder}
-          value={value?.static}
-          onChange={(e) =>
-            onChange({
-              ...value,
-              dataType: "static",
-              static: e.currentTarget.value,
-            })
-          }
-          {...props}
         />
       ) : fieldType === "array" ? (
         <Stack w="100%">
