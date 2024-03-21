@@ -47,7 +47,7 @@ const nodeEnv = process.env.NODE_ENV;
 export default function App(props: AppProps) {
   const { Component, pageProps } = props;
   const isLive = props.pageProps.isLive;
-
+  console.log("props", props.pageProps);
   useInitialiseLive({
     projectId: props.pageProps.id,
     pageId: props.pageProps.page?.id,
