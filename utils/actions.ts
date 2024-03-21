@@ -715,12 +715,12 @@ export type ChangeVariableActionParams = ActionParams & {
   action: ChangeVariableAction;
 };
 
-type ArrayActionsType = {
-  value?: Array<any>;
-  newValue?: any;
-  index?: number;
-  path?: string;
-};
+type ArrayActionsType = Partial<{
+  value: Array<any>;
+  newValue: any;
+  index: number;
+  path: string;
+}>;
 const arrayActions = {
   REPLACE_ALL_ITEMS: ({ newValue }: ArrayActionsType) => newValue,
 
