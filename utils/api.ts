@@ -1,6 +1,5 @@
 import { PatchParams } from "@/requests/types";
-import { isEditor as isEditorUrl } from "@/utils/common";
-import { IAuthClient, createClient } from "@propelauth/javascript";
+import { usePropelAuthStore } from "@/stores/propelAuth";
 
 type FetchType = {
   url: string;
@@ -12,34 +11,9 @@ type FetchType = {
 };
 
 export const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
-let propelAuthClient: IAuthClient | null = null;
-let propelAuthInitPromise: Promise<void> | null = null;
 
-export async function getAuthToken() {
-  const hrefUrl = window.location.href;
-  const isEditor = isEditorUrl(hrefUrl);
-  if (isEditor && !propelAuthClient) {
-    if (!propelAuthInitPromise) {
-      // Check if initialization is already in progress
-      // Initialize authClient and clear the promise once done
-      propelAuthInitPromise = (async () => {
-        propelAuthClient = createClient({
-          authUrl: process.env.NEXT_PUBLIC_AUTH_URL as string,
-          enableBackgroundTokenRefresh: true,
-        });
-        await propelAuthClient.getAuthenticationInfoOrNull();
-      })();
-    }
-    await propelAuthInitPromise; // Wait for the initialization to complete if in progress
-  }
-
-  return propelAuthClient
-    ? (await propelAuthClient.getAuthenticationInfoOrNull())?.accessToken
-    : undefined;
-}
-
-async function getBearerTokenHeaderValue() {
-  const accessToken = await getAuthToken();
+function getBearerTokenHeaderValue() {
+  const accessToken = usePropelAuthStore.getState().accessToken;
   return `Bearer ${accessToken}`;
 }
 
@@ -49,12 +23,11 @@ async function doFetch<Type>({
   body,
   headers = {},
   isStream,
-  skipAuth = false,
 }: FetchType): Promise<Type | ReadableStream<Uint8Array> | null> {
   return new Promise(async (resolve, reject) => {
     let response = null;
     try {
-      let bearerToken = await getBearerTokenHeaderValue();
+      let bearerToken = getBearerTokenHeaderValue();
 
       const isFormData = body instanceof FormData;
       let contentType;
@@ -167,10 +140,10 @@ export async function readDataFromStream(stream: any) {
       const { done, value } = await reader.read();
 
       if (done) {
-        break; // End of the stream
+        break;
       }
 
-      totalData += new TextDecoder("utf-8").decode(value); // Convert binary to string
+      totalData += new TextDecoder("utf-8").decode(value);
     }
   } catch (error) {
     console.error("Error reading stream:", error);
