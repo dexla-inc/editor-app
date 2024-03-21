@@ -30,19 +30,8 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { IconPlus, IconSparkles } from "@tabler/icons-react";
-import { GetServerSidePropsContext } from "next";
 import { SetStateAction } from "react";
 import slugify from "slugify";
-
-export const getServerSideProps = async ({
-  query,
-}: GetServerSidePropsContext) => {
-  return {
-    props: {
-      id: query.id,
-    },
-  };
-};
 
 export interface PagesStepProps
   extends PreviousStepperClickEvent,
