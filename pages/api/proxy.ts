@@ -26,7 +26,6 @@ export default async function handler(
 
   if (response.ok) {
     const data = await response.json();
-    console.log("data", data);
     res.status(200).json(data);
   } else {
     res.status(400).json({ error: "Failed to fetch data from API" });

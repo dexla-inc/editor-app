@@ -36,8 +36,6 @@ export default async function handler(
             pageCount: pageCount,
           });
 
-    console.log(prompt);
-
     const response = await openai.chat.completions.create({
       model: GPT4_PREVIEW_MODEL,
       response_format: {
@@ -54,7 +52,6 @@ export default async function handler(
 
     const message = response.choices[0].message;
     const content = JSON.parse(message.content ?? "[]");
-    console.log("PAGE LIST", content);
 
     return res.status(200).json(content.pages);
   } catch (error) {

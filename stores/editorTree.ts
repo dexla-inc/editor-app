@@ -177,8 +177,6 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                     state?.historyCount,
                     state?.setHistoryCount,
                   );
-                  console.log("state.currentProjectId", state.currentProjectId);
-                  console.log("state.currentPageId", state.currentPageId);
                 }
 
                 const newComponentMutableAttrs = getTreeComponentMutableProps(
@@ -253,10 +251,6 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                     state.currentPageId ?? "",
                     state.setIsSaving,
                   );
-                  console.log(
-                    "Update Tree component children",
-                    state.currentPageId,
-                  );
                 }
 
                 const component = state.componentMutableAttrs[componentId];
@@ -309,10 +303,6 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                     state.currentProjectId ?? "",
                     state.currentPageId ?? "",
                     state.setIsSaving,
-                  );
-                  console.log(
-                    "Updating tree component attrs",
-                    state.currentPageId,
                   );
                 }
 

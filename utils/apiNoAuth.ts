@@ -18,7 +18,6 @@ async function doFetchWithoutAuth<Type>({
   return new Promise(async (resolve, reject) => {
     let response = null;
     try {
-      console.log("doFetchWithoutAuth", `${baseURL}${url}`);
       response = await fetch(`${baseURL}${url}`, {
         ...init,
         method,

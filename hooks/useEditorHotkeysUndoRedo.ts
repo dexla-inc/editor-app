@@ -34,13 +34,6 @@ export const useEditorHotkeysUndoRedo = () => {
   useEffect(() => {
     const handlePageState = async () => {
       try {
-        console.log(
-          "handlePageState",
-          projectId,
-          pageId,
-          pageLoadTimestamp,
-          historyCount,
-        );
         const pageState = await getPageState(
           projectId,
           pageId,
@@ -62,11 +55,6 @@ export const useEditorHotkeysUndoRedo = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [historyCount]);
-
-  // Add this page to fix undo for delete component
-  // useEffect(() => {
-  //   console.log("pastStates", pastStates);
-  // }, [pastStates]);
 
   const handlePageStateChange = (
     operation: (steps?: number | undefined) => void,

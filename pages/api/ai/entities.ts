@@ -30,11 +30,6 @@ export default async function handler(
     // start a timer
     const timer = Stopwatch.StartNew();
 
-    console.log(
-      "Entities API duration: " + timer.getElapsedMilliseconds(),
-      "Event Complete: Stopwatch.StartNew()",
-    );
-
     const data: {
       id: string;
       appDescription: string;
@@ -59,18 +54,11 @@ export default async function handler(
       ],
     });
 
-    console.log(
-      "Entities API duration: " + timer.getElapsedMilliseconds(),
-      "Event Complete: getEntitiesPrompt",
-    );
-
     const message = response.choices[0].message;
     const content = JSON.parse(message.content ?? "{}");
-    console.log("ENTITIES", content);
 
     const projectData = Object.keys(content.entities).reduce((acc, key) => {
       const entity = content.entities[key];
-      console.log("entity", entity);
 
       const callFakerFuncs = (obj: any): any => {
         return Object.keys(obj).reduce((acc, curr) => {
@@ -118,11 +106,6 @@ export default async function handler(
           .map(() => callFakerFuncs(entity)),
       };
     }, {});
-
-    console.log(
-      "Entities API duration: " + timer.getElapsedMilliseconds(),
-      "Event Complete: callFakerFuncs",
-    );
 
     const transformEntityReferences = (_data: any): any => {
       const getEntityValue = (val: any) => {
@@ -186,11 +169,6 @@ export default async function handler(
       }, {});
     };
 
-    console.log(
-      "Entities API duration: " + timer.getElapsedMilliseconds(),
-      "Event Complete: transformEntityReferences",
-    );
-
     const transformedData = Object.keys(projectData).reduce((acc, key) => {
       // @ts-ignore
       const entityData = projectData[key];
@@ -210,11 +188,6 @@ export default async function handler(
         data: transformedData,
       },
     });
-
-    console.log(
-      "Entities API duration: " + timer.getElapsedMilliseconds(),
-      "Entities API Finished:  Prisma Project Created " + prismaResponse,
-    );
 
     return res.status(200).json({ id: data.id });
   } catch (error) {

@@ -48,7 +48,6 @@ export default async function handler(
           const completeMessage = messageBuilder;
 
           res.write(`data: ${JSON.stringify(completeMessage)}\n\n`);
-          console.log(`data: ${JSON.stringify(completeMessage)}\n\n`);
 
           messageBuilder = "";
         }

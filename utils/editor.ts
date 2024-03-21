@@ -654,7 +654,6 @@ export const addComponent = (
     treeRoot,
     (node, context) => {
       if (isNavbar) {
-        console.log(isNavbar);
         const contentWrapper = treeRoot.children?.find(
           (child) => child.id === "content-wrapper",
         );

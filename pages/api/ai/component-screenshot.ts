@@ -58,7 +58,6 @@ export default async function handler(
       ? getComponentScreenshotPrompt({ description, theme })
       : getComponentsJsonPrompt({ description, theme });
 
-    console.log(prompt);
     const contentMessages = [
       {
         type: "text",
@@ -92,7 +91,6 @@ export default async function handler(
 
     const message = response.choices[0].message;
     const cleanedJson = cleanJson(message.content);
-    console.log("content", cleanedJson);
 
     try {
       const content = JSON.parse(cleanedJson ?? "{}");
