@@ -9,8 +9,10 @@ export const getProject = async (
   projectIdOrDomain: string,
   branding: boolean,
 ) => {
+  const url = `/projects/${projectIdOrDomain}?branding=${branding}`;
+  console.log("projectIdOrDomain", projectIdOrDomain, branding, url);
   const response = (await getWithoutAuth<ProjectResponse>(
-    `/projects/${projectIdOrDomain}?branding=${branding}`,
+    url,
     {},
   )) as ProjectResponse;
 
