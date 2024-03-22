@@ -6,7 +6,13 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 import { Component } from "@/utils/editor";
 import { pick } from "next/dist/lib/pick";
 import get from "lodash.get";
-import { GetValueProps } from "@/contexts/DataProvider";
+import { ValueProps } from "@/utils/types";
+
+export type GetValueProps = {
+  value?: ValueProps;
+  shareableContent?: any;
+  staticFallback?: string;
+};
 
 const parseVariableValue = (value: string): any => {
   try {
