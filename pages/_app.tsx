@@ -48,7 +48,6 @@ const GTM_ID = "GTM-P3DVFXMS";
 const nodeEnv = process.env.NODE_ENV;
 
 export default function App(props: AppProps) {
-  console.log("App -> props", props);
   const { Component, pageProps } = props;
   const isLive = pageProps.isLive;
   useInitialiseLive({

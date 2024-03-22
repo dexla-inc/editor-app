@@ -73,7 +73,7 @@ export const DynamicSettings = ({
         style: {
           display: component.props?.style?.display,
         },
-        dataType: component.onLoad.endpointId ? "dynamic" : "static",
+        dataType: component.onLoad?.endpointId ? "dynamic" : "static",
       },
     },
   });
