@@ -1,18 +1,12 @@
 import { useDataContext } from "@/contexts/DataProvider";
 import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
 import { PageResponse } from "@/requests/pages/types";
-import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import {
-  Action,
-  ActionTrigger,
-  TriggerLogicFlowAction,
-  actionMapper,
-} from "@/utils/actions";
-import { decodeSchema } from "@/utils/compression";
+import { Action, ActionTrigger, actionMapper } from "@/utils/actions";
 import { Component } from "@/utils/editor";
 import { Router, useRouter } from "next/router";
 import { ChangeEvent } from "react";
+import { useDataBinding } from "@/hooks/dataBinding/useDataBinding";
 
 const nonDefaultActionTriggers = ["onSuccess", "onError"];
 
@@ -23,7 +17,7 @@ type UseTriggersProps = {
 export const useTriggers = ({ entity }: UseTriggersProps) => {
   const projectId = useEditorTreeStore((state) => state.currentProjectId);
   const router = useRouter();
-  const { computeValue } = useDataContext()!;
+  const { computeValue } = useDataBinding();
   const { data: endpoints } = useDataSourceEndpoints(projectId);
 
   const actionResponses: Record<string, any> = {};

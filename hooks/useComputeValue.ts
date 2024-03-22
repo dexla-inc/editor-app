@@ -188,7 +188,7 @@ export const useComputeValue = ({
     [fieldValue, shareableContent, staticFallback, boundCodeTransformed],
   );
 
-  if (!fieldValue || !fieldValue.dataType) return staticFallback || undefined;
-
-  return valueHandlers[fieldValue.dataType]();
+  return fieldValue && fieldValue.dataType
+    ? valueHandlers[fieldValue.dataType]()
+    : staticFallback;
 };
