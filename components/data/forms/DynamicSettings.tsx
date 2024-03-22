@@ -73,6 +73,7 @@ export const DynamicSettings = ({
         style: {
           display: component.props?.style?.display,
         },
+        dataType: component.onLoad.endpointId ? "dynamic" : "static",
       },
     },
   });
@@ -87,6 +88,10 @@ export const DynamicSettings = ({
 
   useEffect(() => {
     if (form.isTouched()) {
+      form.values.props.dataType = form.values.onLoad.endpointId
+        ? "dynamic"
+        : "static";
+
       onSave?.(component, form).then(() => {
         debouncedTreeComponentAttrsUpdate({ attrs: form.values });
       });
