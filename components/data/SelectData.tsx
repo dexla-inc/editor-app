@@ -1,16 +1,8 @@
 import { DynamicSettings } from "@/components/data/forms/DynamicSettings";
 import { SelectOptionsForm } from "@/components/data/forms/static/SelectOptionsForm";
-import { Endpoint } from "@/requests/datasources/types";
-import { PagingResponse } from "@/requests/types";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { Component } from "@/utils/editor";
 import { SegmentedControl, Select, Stack, Text, Title } from "@mantine/core";
-
-export type DataProps = {
-  component: Component;
-  endpoints: PagingResponse<Endpoint> | undefined;
-  dataType: "static" | "dynamic";
-};
+import { DataProps } from "@/components/data/type";
 
 export const SelectData = ({ component, endpoints, dataType }: DataProps) => {
   const updateTreeComponentAttrs = useEditorTreeStore(

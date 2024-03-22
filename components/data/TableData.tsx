@@ -1,8 +1,5 @@
 import { DynamicSettings } from "@/components/data/forms/DynamicSettings";
-import { Endpoint } from "@/requests/datasources/types";
-import { PagingResponse } from "@/requests/types";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { Component } from "@/utils/editor";
 import {
   Box,
   NumberInput,
@@ -12,12 +9,7 @@ import {
   Title,
 } from "@mantine/core";
 import { TableForm } from "./forms/static/TableForm";
-
-export type DataProps = {
-  component: Component;
-  endpoints: PagingResponse<Endpoint> | undefined;
-  dataType: "static" | "dynamic";
-};
+import { DataProps } from "@/components/data/type";
 
 export const TableData = ({ component, endpoints, dataType }: DataProps) => {
   const updateTreeComponentAttrs = useEditorTreeStore(

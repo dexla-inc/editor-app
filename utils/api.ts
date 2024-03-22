@@ -54,7 +54,17 @@ async function doFetch<Type>({
         }
       }
 
-      const json = await response?.json?.();
+      let json;
+      try {
+        if (response.ok && response.json) {
+          json = await response.json();
+        } else {
+          throw new Error("Response was not OK or lacks a .json() method.");
+        }
+      } catch (error: any) {
+        console.error("Failed to parse JSON:", error);
+        return reject(error.message || "Error parsing JSON response.");
+      }
 
       if (!response.status.toString().startsWith("20")) {
         reject(json?.message ?? "Something went wrong");
