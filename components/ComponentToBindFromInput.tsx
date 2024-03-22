@@ -111,7 +111,7 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
           <TopLabel text={label} required />
           <MonacoEditorJson
             {...commonProps}
-            value={value?.static.toString() || (props.defaultValue as string)}
+            value={value?.static?.toString() || (props.defaultValue as string)}
             onChange={(val: any) => {
               onChange({
                 ...value,
