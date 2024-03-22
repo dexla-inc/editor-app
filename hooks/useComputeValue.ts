@@ -19,7 +19,7 @@ const authPattern = /auth\[\s*(?:\/\*[\s\S]*?\*\/\s*)?'(.*?)'\s*\]/g;
 type UseComputeValue = {
   componentId: string;
   field: string;
-  shareableContent?: any;
+  shareableContent: Record<string, unknown>;
   staticFallback?: string;
 };
 
@@ -169,23 +169,26 @@ export const useComputeValue = ({
     auth,
   ]);
 
+  const valueHandlers = useMemo(
+    () => ({
+      dynamic: () => {
+        return get(
+          shareableContent,
+          `data.${fieldValue?.dynamic}`,
+          fieldValue?.dynamic,
+        );
+      },
+      static: () => {
+        return get(fieldValue, "static", staticFallback);
+      },
+      boundCode: () => {
+        return autoRunJavascriptCode(boundCodeTransformed ?? "");
+      },
+    }),
+    [fieldValue, shareableContent, staticFallback, boundCodeTransformed],
+  );
+
   if (!fieldValue || !fieldValue.dataType) return staticFallback || undefined;
 
-  const valueHandlers = {
-    dynamic: () => {
-      return get(
-        shareableContent,
-        `data.${fieldValue?.dynamic}`,
-        fieldValue?.dynamic,
-      );
-    },
-    static: () => {
-      return get(fieldValue, "static", staticFallback);
-    },
-    boundCode: () => {
-      return autoRunJavascriptCode(boundCodeTransformed ?? "");
-    },
-  };
-
-  return valueHandlers[fieldValue.dataType!]();
+  return valueHandlers[fieldValue.dataType]();
 };
