@@ -1,9 +1,9 @@
 import { SegmentedControlInput } from "@/components/SegmentedControlInput";
-import { useDataContext } from "@/contexts/DataProvider";
 import { getComponentInitialDisplayValue } from "@/utils/common";
 import { Stack } from "@mantine/core";
 import { Fragment } from "react";
 import { ComponentToBindWrapper } from "../ComponentToBindWrapper";
+import { useDataBinding } from "@/hooks/dataBinding/useDataBinding";
 
 type Props = {
   form: any;
@@ -17,7 +17,7 @@ export const VisibilityModifier = ({
   form,
   isVisibilityActionForm,
 }: Props) => {
-  const { computeValue } = useDataContext()!;
+  const { computeValue } = useDataBinding();
   const inputKey = isVisibilityActionForm
     ? "visibilityType"
     : "props.style.display";

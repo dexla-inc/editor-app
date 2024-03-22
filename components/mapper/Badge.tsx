@@ -1,4 +1,3 @@
-import { useDataContext } from "@/contexts/DataProvider";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useContentEditable } from "@/hooks/useContentEditable";
 import { useThemeStore } from "@/stores/theme";
@@ -8,8 +7,7 @@ import { EditableComponentMapper, getColorFromTheme } from "@/utils/editor";
 import { BadgeProps, Badge as MantineBadge } from "@mantine/core";
 import merge from "lodash.merge";
 import { forwardRef, memo } from "react";
-import { useEditorTreeStore } from "@/stores/editorTree";
-import { memoize } from "proxy-memoize";
+import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
 type Props = EditableComponentMapper & BadgeProps;
 
 const BadgeComponent = forwardRef(
@@ -27,15 +25,12 @@ const BadgeComponent = forwardRef(
       textTransform: "none",
     });
 
-    const { computeValue } = useDataContext()!;
-    const onLoad = useEditorTreeStore(
-      memoize((state) => state.componentMutableAttrs[component?.id!]?.onLoad),
-    );
-    const childrenValue =
-      computeValue({
-        value: onLoad?.children,
-        shareableContent,
-      }) ?? component.props?.children;
+    const childrenValue = useComputeValue({
+      componentId: component.id!,
+      field: "children",
+      shareableContent,
+      staticFallback: component.props?.children,
+    });
 
     return (
       <MantineBadge

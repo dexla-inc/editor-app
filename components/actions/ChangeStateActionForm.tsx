@@ -1,6 +1,5 @@
 import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 import { ComponentToBindFromSelect } from "@/components/ComponentToBindFromSelect";
-import { useDataContext } from "@/contexts/DataProvider";
 import { useComponentStates } from "@/hooks/useComponentStates";
 import { useEditorStore } from "@/stores/editor";
 import { ChangeStateAction } from "@/utils/actions";

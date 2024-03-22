@@ -1,4 +1,3 @@
-import { useDataContext } from "@/contexts/DataProvider";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { Node, useNodes } from "reactflow";
 import { NodeData } from "@/components/logic-flow/nodes/CustomNode";
@@ -8,6 +7,13 @@ import { Action, APICallAction } from "@/utils/actions";
 import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
 import { usePageListQuery } from "@/hooks/reactQuery/usePageListQuery";
 import { useEditorStore } from "@/stores/editor";
+import { useVariableStore } from "@/stores/variables";
+import { useInputsStore } from "@/stores/inputs";
+import { memoize } from "proxy-memoize";
+import { Component } from "@/utils/editor";
+import { useRouter } from "next/router";
+import { useDataSourceStore } from "@/stores/datasource";
+import { pick } from "next/dist/lib/pick";
 
 type BindType = {
   selectedEntityId: string;
@@ -18,6 +24,18 @@ type Props = {
   isPageAction?: boolean;
 };
 
+const parseVariableValue = (value: string): any => {
+  try {
+    return JSON.parse(value);
+  } catch (_) {
+    return value;
+  }
+};
+
+const processValue = (value: any, type: string) => {
+  return type === "STRING" ? value.toString() : value;
+};
+
 const setEntityString = ({ selectedEntityId, entity }: BindType) => {
   const [entityKey, entityId] = selectedEntityId.split(".");
   const path = !entityId ? "" : `.${entityId}`;
@@ -25,8 +43,6 @@ const setEntityString = ({ selectedEntityId, entity }: BindType) => {
 };
 
 export const useBindingPopover = ({ isPageAction }: Props) => {
-  const { variables, components } = useDataContext()!;
-
   const activePage = useEditorStore((state) => state.activePage);
   const selectedComponentActions = useEditorTreeStore(
     (state) =>
@@ -39,6 +55,59 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
   const pageActions = pageListQuery?.results?.find(
     (p) => p.id === activePage?.id,
   )?.actions;
+  const variablesList = useVariableStore((state) => state.variableList);
+  const inputsStore = useInputsStore((state) => state.inputValues);
+  const browser = useRouter();
+  const auth = useDataSourceStore((state) => state.getAuthState());
+
+  const allInputComponents = useEditorTreeStore(
+    memoize((state) =>
+      Object.values(state.componentMutableAttrs).reduce((acc, c) => {
+        const isInput = [
+          "Input",
+          "Select",
+          "Checkbox",
+          "RadioGroup",
+          "Switch",
+          "Textarea",
+          "Autocomplete",
+        ].includes(c?.name!);
+        if (isInput) {
+          acc.push({ id: c.id, description: c.name });
+        }
+        return acc;
+      }, [] as Partial<Component>[]),
+    ),
+  );
+
+  const components = allInputComponents.reduce(
+    (acc, component) => {
+      const value = inputsStore[component?.id!];
+      component = { ...component, name: component.description! };
+      acc.list[component?.id!] = component;
+      acc[component?.id!] = value;
+      return acc;
+    },
+    { list: {} } as any,
+  );
+
+  const variables = variablesList.reduce(
+    (acc, variable) => {
+      let value = variable.value ?? variable.defaultValue ?? "";
+      const parsedValue = parseVariableValue(value);
+      const processedValue = processValue(parsedValue, variable.type);
+
+      acc.list[variable.id] = variable;
+      acc[variable.id] = processedValue;
+      acc[variable.name] = processedValue;
+      return acc;
+    },
+    { list: {} } as any,
+  );
+
+  const browserList = Array.of(
+    pick(browser, ["asPath", "basePath", "pathname", "query", "route"]),
+  );
 
   const actionsList = isPageAction ? pageActions : selectedComponentActions;
 
@@ -132,6 +201,10 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
 
   return {
     actions,
+    auth,
+    browserList,
+    components,
+    variables,
     getEntityEditorValue,
   };
 };

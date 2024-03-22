@@ -1,4 +1,3 @@
-import { useDataContext } from "@/contexts/DataProvider";
 import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorTreeStore } from "@/stores/editorTree";
@@ -7,6 +6,7 @@ import { DEFAULT_STALE_TIME } from "@/utils/config";
 import { Component } from "@/utils/editor";
 import { useQuery } from "@tanstack/react-query";
 import get from "lodash.get";
+import { useDataBinding } from "@/hooks/dataBinding/useDataBinding";
 
 type UseEndpointProps = {
   component: Component;
@@ -35,7 +35,7 @@ export const useEndpoint = ({
   const projectId = useEditorTreeStore((state) => state.currentProjectId);
   const { data: endpoints } = useDataSourceEndpoints(projectId);
   const endpoint = endpoints?.results?.find((e) => e.id === endpointId);
-  const { computeValue } = useDataContext()!;
+  const { computeValue } = useDataBinding();
 
   const requestSettings = { binds, dataType, staleTime };
 

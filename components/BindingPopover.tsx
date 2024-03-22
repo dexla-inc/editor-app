@@ -2,8 +2,7 @@ import { CustomJavaScriptTextArea } from "@/components/CustomJavaScriptTextArea"
 import { DataTree } from "@/components/DataTree";
 import { Icon } from "@/components/Icon";
 import { JSONViewer } from "@/components/JSONViewer";
-import { useDataContext } from "@/contexts/DataProvider";
-import { useBindingPopover } from "@/hooks/useBindingPopover";
+import { useBindingPopover } from "@/hooks/dataBinding/useBindingPopover";
 import {
   BG_COLOR,
   BINDER_BACKGROUND,
@@ -29,6 +28,7 @@ import {
 } from "@mantine/core";
 import { IconExternalLink, IconPlugConnected } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
+import { useDataBinding } from "@/hooks/dataBinding/useDataBinding";
 
 const TAB_TEXT_SIZE = "xs";
 const ML = 10;
@@ -54,11 +54,16 @@ export default function BindingPopover({
 }: Props) {
   const [tab, setTab] = useState<BindingTab>("components");
   const [filterKeyword, setFilterKeyword] = useState<string>("");
-  const { variables, components, browserList, auth, computeValue } =
-    useDataContext()!;
+  const { computeValue } = useDataBinding();
   const [selectedItem, setSelectedItem] = useState<string>();
-
-  const { actions, getEntityEditorValue } = useBindingPopover({ isPageAction });
+  const {
+    actions,
+    variables,
+    components,
+    browserList,
+    auth,
+    getEntityEditorValue,
+  } = useBindingPopover({ isPageAction });
 
   const onChangeDataTypeAsBoundCode = () => {
     onChange({
