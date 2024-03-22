@@ -7,7 +7,7 @@ import { decodeSchema } from "@/utils/compression";
 import { getPageState } from "@/requests/pages/queries-noauth";
 
 export const useEditorHotkeysUndoRedo = () => {
-  const { isPreviewMode } = useAppMode();
+  const isPreviewMode = useEditorTreeStore((state) => state.isPreviewMode);
 
   const setEditorTree = useEditorTreeStore((state) => state.setTree);
 

@@ -13,7 +13,7 @@ type Props = EditableComponentMapper & BoxProps;
 const GridColumnComponent = forwardRef(
   ({ renderTree, component, ...props }: Props, ref) => {
     const isLive = useEditorTreeStore((state) => state.isLive);
-    const { isPreviewMode } = useAppMode();
+    const isPreviewMode = useEditorTreeStore((state) => state.isPreviewMode);
     // @ts-ignore
     const { style = {}, gap, ...componentProps } = component.props;
     const { style: propsStyle = {}, ...propsRest } = props;

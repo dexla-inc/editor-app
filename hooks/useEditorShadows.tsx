@@ -24,7 +24,7 @@ export const useEditorShadows = ({
   isSelected,
   selectedByOther,
 }: Props) => {
-  const { isPreviewMode } = useAppMode();
+  const isPreviewMode = useEditorTreeStore((state) => state.isPreviewMode);
   const isEditorMode = useEditorTreeStore(
     (state) => !isPreviewMode && !state.isLive,
   );
