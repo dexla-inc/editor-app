@@ -1,21 +1,29 @@
 import { GRAY_COLOR } from "@/utils/branding";
-import { Text } from "@mantine/core";
+import { Flex, Text } from "@mantine/core";
 
 type Props = {
   text: string;
   size?: string;
+  required?: boolean;
 };
 
-export const TopLabel = ({ text, size = "xs" }: Props) => {
+export const TopLabel = ({ text, size = "xs", required }: Props) => {
   return (
-    <Text
-      sx={(theme) =>
-        theme.colorScheme === "dark" ? { color: GRAY_COLOR } : {}
-      }
-      size={size}
-      fw={500}
-    >
-      {text}
-    </Text>
+    <Flex gap={3}>
+      <Text
+        sx={(theme) =>
+          theme.colorScheme === "dark" ? { color: GRAY_COLOR } : {}
+        }
+        size={size}
+        fw={500}
+      >
+        {text}
+      </Text>
+      {required && (
+        <Text size="xs" color="red">
+          *
+        </Text>
+      )}
+    </Flex>
   );
 };

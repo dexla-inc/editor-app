@@ -1,9 +1,17 @@
 import BindingPopover from "@/components/BindingPopover";
+import { TopLabel } from "@/components/TopLabel";
 import { ValueProps } from "@/utils/types";
-import { Flex, MantineTheme, TextInput, useMantineTheme } from "@mantine/core";
+import {
+  Flex,
+  MantineTheme,
+  Stack,
+  TextInput,
+  useMantineTheme,
+} from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 
 type Props = {
+  label?: string;
   value: ValueProps;
   onChange: (value: ValueProps) => void;
   children?: React.ReactNode;
@@ -11,6 +19,7 @@ type Props = {
 };
 
 export const ComponentToBindWrapper = ({
+  label,
   value,
   onChange,
   children,
@@ -25,19 +34,22 @@ export const ComponentToBindWrapper = ({
   const styles = useTextInputStyles(theme);
 
   return (
-    <Flex align="end" gap="xs" pos="relative">
-      {value?.dataType === "boundCode" && (
-        <TextInput
-          pos="absolute"
-          w="100%"
-          styles={styles}
-          readOnly
-          value="< Edit Code >"
-          disabled={isBindingPopOverOpen}
-          onClick={onOpenBindingPopOver}
-        />
+    <Flex mih={50} align="end" gap="xs" pos="relative">
+      {value?.dataType === "boundCode" ? (
+        <Stack pos="absolute" spacing={0} w="100%">
+          {label && <TopLabel text={label} required />}
+          <TextInput
+            w="100%"
+            styles={styles}
+            readOnly
+            value="< Edit Code >"
+            disabled={isBindingPopOverOpen}
+            onClick={onOpenBindingPopOver}
+          />
+        </Stack>
+      ) : (
+        children
       )}
-      {children}
       <BindingPopover
         isPageAction={isPageAction}
         value={value}
