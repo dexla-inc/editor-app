@@ -45,7 +45,7 @@ const Editor = ({ projectId, pageId, pageLoadTimestamp }: Props) => {
 
   useEffect(() => {
     setCurrentPageAndProjectIds(projectId, pageId);
-    if (!pageLoadTimestamp) setPageLoadTimestamp(Date.now());
+    setPageLoadTimestamp(Date.now());
 
     if (pageId && !roomEntered) {
       liveblocks.enterRoom(pageId);

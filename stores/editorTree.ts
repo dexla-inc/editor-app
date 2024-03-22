@@ -91,7 +91,7 @@ export type EditorTreeState = {
   }) => Promise<void>;
   historyCount: number | null;
   setHistoryCount: (count: number | null) => void;
-  pageLoadTimestamp?: number;
+  pageLoadTimestamp: number;
   setPageLoadTimestamp: (value: number | null) => void;
   currentUser?: User;
   setCurrentUser: (user?: User) => void;
@@ -130,7 +130,7 @@ const updatePageStateFunc = async (
   projectId: string,
   pageId: string,
   setIsSaving: (value: boolean) => void,
-  pageLoadTimestamp?: number | undefined,
+  pageLoadTimestamp: number,
   history?: number | null,
   setHistoryCount?: (count: number | null) => void,
 ) => {
@@ -173,7 +173,7 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                     state.currentProjectId ?? "",
                     state.currentPageId ?? "",
                     state.setIsSaving,
-                    state?.pageLoadTimestamp,
+                    state.pageLoadTimestamp,
                     state?.historyCount,
                     state?.setHistoryCount,
                   );
@@ -250,6 +250,7 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                     state.currentProjectId ?? "",
                     state.currentPageId ?? "",
                     state.setIsSaving,
+                    state.pageLoadTimestamp,
                   );
                 }
 
@@ -303,6 +304,7 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                     state.currentProjectId ?? "",
                     state.currentPageId ?? "",
                     state.setIsSaving,
+                    state.pageLoadTimestamp,
                   );
                 }
 
@@ -381,6 +383,7 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
           setHistoryCount: (count) =>
             set({ historyCount: count }, false, "editorTree/setHistoryCount"),
           isSaving: false,
+          pageLoadTimestamp: Date.now(),
           setPageLoadTimestamp: (value) =>
             set(
               { pageLoadTimestamp: value as number },
