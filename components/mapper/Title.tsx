@@ -1,12 +1,10 @@
-import { useDataContext } from "@/contexts/DataProvider";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useContentEditable } from "@/hooks/useContentEditable";
 import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import { Title as MantineTitle, TitleProps } from "@mantine/core";
 import { forwardRef, memo } from "react";
-import { useEditorTreeStore } from "@/stores/editorTree";
-import { memoize } from "proxy-memoize";
+import { useComputeValue } from "@/hooks/useComputeValue";
 
 type Props = EditableComponentMapper & TitleProps;
 
@@ -23,15 +21,12 @@ const TitleComponent = forwardRef(
     const { triggers, variable, ...componentProps } = component.props as any;
     const { style, ...restProps } = props as any;
 
-    const { computeValue } = useDataContext()!;
-    const onLoad = useEditorTreeStore(
-      memoize((state) => state.componentMutableAttrs[component?.id!]?.onLoad),
-    );
-    const childrenValue =
-      computeValue({
-        value: onLoad?.children,
-        shareableContent,
-      }) ?? component.props?.children;
+    const childrenValue = useComputeValue({
+      componentId: component.id!,
+      field: "children",
+      shareableContent,
+      staticFallback: component.props?.children,
+    });
 
     return (
       <MantineTitle

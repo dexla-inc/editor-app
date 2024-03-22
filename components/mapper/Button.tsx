@@ -1,5 +1,4 @@
 import { Icon } from "@/components/Icon";
-import { useDataContext } from "@/contexts/DataProvider";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { useChangeState } from "@/hooks/useChangeState";
@@ -11,8 +10,7 @@ import { EditableComponentMapper, getColorFromTheme } from "@/utils/editor";
 import { ButtonProps, Button as MantineButton } from "@mantine/core";
 import merge from "lodash.merge";
 import { ReactElement, forwardRef, memo } from "react";
-import { useEditorTreeStore } from "@/stores/editorTree";
-import { memoize } from "proxy-memoize";
+import { useComputeValue } from "@/hooks/useComputeValue";
 
 type Props = EditableComponentMapper & ButtonProps & ReactElement<"Button">;
 
@@ -39,12 +37,9 @@ const ButtonComponent = forwardRef(
       ref,
     );
 
-    const { computeValue } = useDataContext()!;
-    const onLoad = useEditorTreeStore(
-      memoize((state) => state.componentMutableAttrs[component?.id!]?.onLoad),
-    );
-    const childrenValue = computeValue({
-      value: onLoad?.children,
+    const childrenValue = useComputeValue({
+      componentId: component.id!,
+      field: "children",
       shareableContent,
       staticFallback: component.props?.children,
     });
