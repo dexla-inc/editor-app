@@ -88,12 +88,16 @@ export const DynamicSettings = ({
 
   useEffect(() => {
     if (form.isTouched()) {
-      form.values.props.dataType = form.values.onLoad.endpointId
-        ? "dynamic"
-        : "static";
+      const updatedAttrs = {
+        ...form.values,
+        props: {
+          ...form.values.props,
+          dataType: form.values.onLoad.endpointId ? "dynamic" : "static",
+        },
+      };
 
       onSave?.(component, form).then(() => {
-        debouncedTreeComponentAttrsUpdate({ attrs: form.values });
+        debouncedTreeComponentAttrsUpdate({ attrs: updatedAttrs });
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
