@@ -25,7 +25,7 @@ type UseComputeValue = {
 
 const autoRunJavascriptCode = (boundCode: string) => {
   try {
-    const result = eval(`(function () { ${boundCode} })`)();
+    const result = new Function(boundCode)();
     return result;
   } catch (error: any) {
     console.error(error);
@@ -82,15 +82,25 @@ export const useComputeValue = ({
 
   const variables = useVariableStore(
     memoize((state) =>
-      variableKeys.reduce(
-        (acc, key) => ({
-          ...acc,
-          [key]: state.variableList.find((v) => v.id === key)?.value ?? "",
-        }),
-        {},
-      ),
+      variableKeys.reduce((acc, key) => {
+        const variable = state.variableList.find((v) => v.id === key);
+
+        if (variable) {
+          const value = ["ARRAY", "OBJECT"].includes(variable.type)
+            ? variable.value
+            : `'${variable.value}'`;
+
+          return {
+            ...acc,
+            [key]: value ?? "",
+          };
+        }
+
+        return acc;
+      }, {}),
     ),
   ) as RecordStringAny;
+
   const inputs = useInputsStore(
     memoize((state) =>
       componentKeys.reduce(
@@ -125,15 +135,15 @@ export const useComputeValue = ({
 
       variableKeys.forEach((key) => {
         const regex = new RegExp(
-          `variables\\[(\\/\\*\\s?\\S*\\s?\\S\\/)?\\s?'${key}'\\]`,
+          `variables\\[(\\/\\* [\\S\\s]* \\*\\/)?\\s?'${key}'\\]`,
           "g",
         );
-        result = result.replaceAll(regex, `'${variables[key]}'`);
+        result = result.replaceAll(regex, variables[key]);
       });
 
       componentKeys.forEach((key) => {
         const regex = new RegExp(
-          `components\\[(\\/\\*\\s?\\S*\\s?\\S\\/)?\\s?'${key}'\\]`,
+          `components\\[(\\/\\* [\\S\\s]* \\*\\/)?\\s?'${key}'\\]`,
           "g",
         );
         result = result.replaceAll(regex, `'${inputs[key]}'`);
@@ -141,7 +151,7 @@ export const useComputeValue = ({
 
       browserKeys.forEach((key: NextRouterKeys) => {
         const regex = new RegExp(
-          `browser\\[(\\/\\*\\s?\\S*\\s?\\S\\/)?\\s?'${key}'\\]`,
+          `browser\\[(\\/\\* [\\S\\s]* \\*\\/)?\\s?'${key}'\\]`,
           "g",
         );
         result = result.replaceAll(regex, `'${browserValues[key]}'`);
@@ -149,7 +159,7 @@ export const useComputeValue = ({
 
       authKeys.forEach((key) => {
         const regex = new RegExp(
-          `auth\\[(\\/\\*\\s?\\S*\\s?\\S\\/)?\\s?'${key}'\\]`,
+          `auth\\[(\\/\\* [\\S\\s]* \\*\\/)?\\s?'${key}'\\]`,
           "g",
         );
         result = result.replaceAll(regex, `'${auth[key]}'`);
