@@ -4,7 +4,7 @@ import { useAppMode } from "./useAppMode";
 
 export const useContentEditable = (componentId: string, ref: any) => {
   const [isEditable, setIsEditable] = useState(false);
-  const { isPreviewMode } = useAppMode();
+  const isPreviewMode = useEditorTreeStore((state) => state.isPreviewMode);
 
   const toggleEdit = useCallback((enable: boolean) => {
     setIsEditable(enable);

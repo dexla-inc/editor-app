@@ -23,7 +23,7 @@ export const useEditorHotkeys = () => {
   const setSelectedComponentIds = useEditorTreeStore(
     (state) => state.setSelectedComponentIds,
   );
-  const { isPreviewMode } = useAppMode();
+  const isPreviewMode = useEditorTreeStore((state) => state.isPreviewMode);
 
   const copiedComponent = useEditorStore((state) => state.copiedComponent);
   const setCopiedComponent = useEditorStore(
