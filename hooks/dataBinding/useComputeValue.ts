@@ -86,9 +86,8 @@ export const useComputeValue = ({
         const variable = state.variableList.find((v) => v.id === key);
 
         if (variable) {
-          const value = ["ARRAY", "OBJECT"].includes(variable.type)
-            ? variable.value
-            : `'${variable.value}'`;
+          const value =
+            variable.type === "TEXT" ? `'${variable.value}'` : variable.value;
 
           return {
             ...acc,
