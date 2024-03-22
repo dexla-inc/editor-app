@@ -73,7 +73,7 @@ export const DynamicSettings = ({
         style: {
           display: component.props?.style?.display,
         },
-        dataType: component.onLoad?.endpointId ? "dynamic" : "static",
+        dataType: component.onLoad.endpointId ? "dynamic" : "static",
       },
     },
   });
@@ -88,16 +88,12 @@ export const DynamicSettings = ({
 
   useEffect(() => {
     if (form.isTouched()) {
-      const updatedAttrs = {
-        ...form.values,
-        props: {
-          ...form.values.props,
-          dataType: form.values.onLoad.endpointId ? "dynamic" : "static",
-        },
-      };
+      form.values.props.dataType = form.values.onLoad.endpointId
+        ? "dynamic"
+        : "static";
 
       onSave?.(component, form).then(() => {
-        debouncedTreeComponentAttrsUpdate({ attrs: updatedAttrs });
+        debouncedTreeComponentAttrsUpdate({ attrs: form.values });
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
