@@ -1,4 +1,3 @@
-import { useDataContext } from "@/contexts/DataProvider";
 import { safeJsonParse } from "@/utils/common";
 import { EditableComponentMapper } from "@/utils/editor";
 import { Box, BoxProps, Overlay, Skeleton, Text } from "@mantine/core";
@@ -11,8 +10,7 @@ import {
 import merge from "lodash.merge";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { useCallback, useEffect, useState } from "react";
-import { useEditorTreeStore } from "@/stores/editorTree";
-import { memoize } from "proxy-memoize";
+import { useComputeValue } from "@/hooks/useComputeValue";
 
 type Props = EditableComponentMapper & {
   onClick?: (e: any) => void;
@@ -49,13 +47,25 @@ export const GoogleMapPlugin = ({
     component.props as GoogleMapProps;
   const { onClick, ...customProps } = props;
 
-  const { computeValues } = useDataContext()!;
-  const onLoad = useEditorTreeStore(
-    memoize((state) => state.componentMutableAttrs[component?.id!]?.onLoad),
-  );
-  const { apiKey, zoom, center, markers } = computeValues({
-    value: onLoad,
+  const apiKey = useComputeValue({
+    componentId: component.id!,
     shareableContent,
+    field: "apiKey",
+  });
+  const zoom = useComputeValue({
+    componentId: component.id!,
+    shareableContent,
+    field: "zoom",
+  });
+  const center = useComputeValue({
+    componentId: component.id!,
+    shareableContent,
+    field: "center",
+  });
+  const markers = useComputeValue({
+    componentId: component.id!,
+    shareableContent,
+    field: "markers",
   });
 
   const [internalZoom, setInternalZoom] = useState<number>(parseInt(zoom));

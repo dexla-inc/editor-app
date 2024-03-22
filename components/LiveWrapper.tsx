@@ -1,5 +1,4 @@
 import { ProgressBar } from "@/components/ProgressBar";
-import { DataProvider } from "@/contexts/DataProvider";
 import { useCustomCode } from "@/hooks/useCustomCode";
 import { useUserTheme } from "@/hooks/useUserTheme";
 import { Box, BoxProps, MantineProvider } from "@mantine/core";
@@ -18,18 +17,16 @@ export const LiveWrapper = ({ children, projectId, ...props }: Props) => {
 
   return (
     <MantineProvider withNormalizeCSS theme={theme} {...props}>
-      <DataProvider>
-        <Box
-          pos="relative"
-          style={{
-            minHeight: `100vh`,
-          }}
-          p={0}
-        >
-          <ProgressBar color={theme.colors.Primary[6]} />
-          <Box id="iframe-content">{children}</Box>
-        </Box>
-      </DataProvider>
+      <Box
+        pos="relative"
+        style={{
+          minHeight: `100vh`,
+        }}
+        p={0}
+      >
+        <ProgressBar color={theme.colors.Primary[6]} />
+        <Box id="iframe-content">{children}</Box>
+      </Box>
     </MantineProvider>
   );
 };

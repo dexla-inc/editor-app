@@ -11,6 +11,9 @@ import { useVariableStore } from "@/stores/variables";
 import { useInputsStore } from "@/stores/inputs";
 import { memoize } from "proxy-memoize";
 import { Component } from "@/utils/editor";
+import { useRouter } from "next/router";
+import { useDataSourceStore } from "@/stores/datasource";
+import { pick } from "next/dist/lib/pick";
 
 type BindType = {
   selectedEntityId: string;
@@ -54,6 +57,8 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
   )?.actions;
   const variablesList = useVariableStore((state) => state.variableList);
   const inputsStore = useInputsStore((state) => state.inputValues);
+  const browser = useRouter();
+  const auth = useDataSourceStore((state) => state.getAuthState());
 
   const allInputComponents = useEditorTreeStore(
     memoize((state) =>
@@ -98,6 +103,10 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
       return acc;
     },
     { list: {} } as any,
+  );
+
+  const browserList = Array.of(
+    pick(browser, ["asPath", "basePath", "pathname", "query", "route"]),
   );
 
   const actionsList = isPageAction ? pageActions : selectedComponentActions;
@@ -192,6 +201,10 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
 
   return {
     actions,
+    auth,
+    browserList,
+    components,
+    variables,
     getEntityEditorValue,
   };
 };
