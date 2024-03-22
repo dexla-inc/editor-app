@@ -54,7 +54,17 @@ async function doFetch<Type>({
         }
       }
 
-      const json = await response?.json?.();
+      let json;
+
+      try {
+        json = await response.json();
+      } catch (error) {
+        if (error instanceof SyntaxError) {
+          console.log("There was a SyntaxError", error);
+        } else {
+          console.log("There was an error", error);
+        }
+      }
 
       if (!response.status.toString().startsWith("20")) {
         reject(json?.message ?? "Something went wrong");

@@ -1,16 +1,8 @@
 import { DynamicSettings } from "@/components/data/forms/DynamicSettings";
-import { Endpoint } from "@/requests/datasources/types";
-import { PagingResponse } from "@/requests/types";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { Component } from "@/utils/editor";
 import { SegmentedControl, Select, Stack, Text, Title } from "@mantine/core";
 import { ChartForm } from "@/components/data/forms/static/ChartForm";
-
-export type DataProps = {
-  component: Component;
-  endpoints: PagingResponse<Endpoint> | undefined;
-  dataType: "static" | "dynamic";
-};
+import { DataProps } from "@/components/data/type";
 
 export const ChartData = ({ component, endpoints, dataType }: DataProps) => {
   const updateTreeComponentAttrs = useEditorTreeStore(
