@@ -4,7 +4,7 @@ import { EditableComponentMapper } from "@/utils/editor";
 import { ImageProps, Image as MantineImage } from "@mantine/core";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { forwardRef, memo } from "react";
-import { useComputeValue } from "@/hooks/useComputeValue";
+import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
 
 type Props = EditableComponentMapper & ImageProps;
 

@@ -10,7 +10,7 @@ import { EditableComponentMapper, getColorFromTheme } from "@/utils/editor";
 import { ButtonProps, Button as MantineButton } from "@mantine/core";
 import merge from "lodash.merge";
 import { ReactElement, forwardRef, memo } from "react";
-import { useComputeValue } from "@/hooks/useComputeValue";
+import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
 
 type Props = EditableComponentMapper & ButtonProps & ReactElement<"Button">;
 

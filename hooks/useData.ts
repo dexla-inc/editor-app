@@ -1,13 +1,3 @@
-import { Component } from "@/utils/editor";
-import get from "lodash.get";
-import { useVariableStore } from "@/stores/variables";
-import { useBindingPopover } from "@/hooks/useBindingPopover";
-
-type GetValueProps = {
-  component: Component;
-  shareableContent: any;
-};
-
 export const useData = () => {
   const getObjectAndArrayKeys = (obj: any, prefix = "") => {
     let keys: string[] = [];

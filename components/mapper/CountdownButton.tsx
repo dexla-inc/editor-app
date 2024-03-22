@@ -17,7 +17,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { useComputeValue } from "@/hooks/useComputeValue";
+import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
 
 type Props = EditableComponentMapper & ButtonProps & ReactElement<"Button">;
 

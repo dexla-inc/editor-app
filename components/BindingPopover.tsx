@@ -2,7 +2,7 @@ import { CustomJavaScriptTextArea } from "@/components/CustomJavaScriptTextArea"
 import { DataTree } from "@/components/DataTree";
 import { Icon } from "@/components/Icon";
 import { JSONViewer } from "@/components/JSONViewer";
-import { useBindingPopover } from "@/hooks/useBindingPopover";
+import { useBindingPopover } from "@/hooks/dataBinding/useBindingPopover";
 import {
   BG_COLOR,
   BINDER_BACKGROUND,

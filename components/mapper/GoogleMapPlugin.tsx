@@ -10,7 +10,7 @@ import {
 import merge from "lodash.merge";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { useCallback, useEffect, useState } from "react";
-import { useComputeValue } from "@/hooks/useComputeValue";
+import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
 
 type Props = EditableComponentMapper & {
   onClick?: (e: any) => void;

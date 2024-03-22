@@ -4,7 +4,7 @@ import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import { Title as MantineTitle, TitleProps } from "@mantine/core";
 import { forwardRef, memo } from "react";
-import { useComputeValue } from "@/hooks/useComputeValue";
+import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
 
 type Props = EditableComponentMapper & TitleProps;
 

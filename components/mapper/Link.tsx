@@ -6,7 +6,7 @@ import { EditableComponentMapper } from "@/utils/editor";
 import { AnchorProps, Anchor as MantineAnchor } from "@mantine/core";
 import merge from "lodash.merge";
 import { forwardRef, memo } from "react";
-import { useComputeValue } from "@/hooks/useComputeValue";
+import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
 
 type Props = EditableComponentMapper & AnchorProps;
 

@@ -11,7 +11,7 @@ import { EditableComponentMapper } from "@/utils/editor";
 import { NavLink as MantineNavLink, NavLinkProps } from "@mantine/core";
 import merge from "lodash.merge";
 import { forwardRef, memo } from "react";
-import { useComputeValue } from "@/hooks/useComputeValue";
+import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
 type Props = EditableComponentMapper & NavLinkProps;
 
 const NavLinkComponent = forwardRef(
