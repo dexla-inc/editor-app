@@ -3,7 +3,8 @@ import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { ValueProps } from "@/utils/types";
 import { Select, SelectProps } from "@mantine/core";
 
-type Props = Omit<SelectProps, "value" | "onChange"> & {
+type Props = Omit<SelectProps, "value" | "onChange" | "label"> & {
+  label?: string;
   componentId?: string;
   value: ValueProps;
   onChange: (value: ValueProps) => void;
@@ -17,7 +18,11 @@ export const ComponentToBindFromSelect = ({
   ...rest
 }: Props) => {
   return (
-    <ComponentToBindWrapper value={value} onChange={onChange}>
+    <ComponentToBindWrapper
+      label={rest?.label}
+      value={value}
+      onChange={onChange}
+    >
       <Select
         style={{ flex: "1" }}
         value={value?.static}

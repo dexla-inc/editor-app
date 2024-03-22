@@ -20,21 +20,26 @@ import { ShowNotificationActionForm } from "@/components/actions/ShowNotificatio
 import { GetValueProps } from "@/contexts/DataProvider";
 import { LogicFlowResponse } from "@/requests/logicflows/types";
 import { PageResponse } from "@/requests/pages/types";
+import { FrontEndTypes } from "@/requests/variables/types";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useVariableStore } from "@/stores/variables";
 import { readDataFromStream } from "@/utils/api";
+import {
+  getComponentInitialDisplayValue,
+  isObject,
+  safeJsonParse,
+} from "@/utils/common";
 import { Component } from "@/utils/editor";
 import { executeFlow } from "@/utils/logicFlows";
+import { ArrayMethods, ValueProps } from "@/utils/types";
 import { UseFormReturnType } from "@mantine/form";
 import { showNotification } from "@mantine/notifications";
 import isEmpty from "lodash.isempty";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { Router } from "next/router";
-import { getComponentInitialDisplayValue, safeJsonParse } from "./common";
-import { ValueProps } from "./types";
 
 const triggers = [
   "onClick",
@@ -198,7 +203,12 @@ export interface CustomJavascriptAction extends BaseAction {
 export interface ChangeVariableAction extends BaseAction {
   name: "changeVariable";
   variableId: string;
+  variableType: FrontEndTypes;
   value: ValueProps;
+  method?: ArrayMethods;
+  index?: ValueProps;
+  partialUpdate?: boolean;
+  path?: ValueProps;
 }
 
 export type ActionType =
@@ -705,16 +715,104 @@ export type ChangeVariableActionParams = ActionParams & {
   action: ChangeVariableAction;
 };
 
+type ArrayActionsType = Partial<{
+  value: Array<any>;
+  newValue: any;
+  index: number;
+  path: string;
+}>;
+const arrayActions = {
+  REPLACE_ALL_ITEMS: ({ newValue }: ArrayActionsType) => newValue,
+
+  UPDATE_ONE_ITEM: ({
+    value = [],
+    newValue,
+    index = 0,
+    path,
+  }: ArrayActionsType) => {
+    if (!path || path === "") {
+      value[index] = newValue;
+    } else {
+      const item = value[index];
+      value[index] = !isObject(item)
+        ? { [path]: newValue }
+        : { ...item, [path]: newValue };
+    }
+    return value;
+  },
+
+  INSERT_AT_END: ({ value = [], newValue }: ArrayActionsType) => {
+    value.push(newValue);
+    return value;
+  },
+
+  INSERT_AT_START: ({ value = [], newValue }: ArrayActionsType) => {
+    value.unshift(newValue);
+    return value;
+  },
+
+  INSERT_AT_INDEX: ({ value = [], newValue, index = 0 }: ArrayActionsType) => {
+    value.splice(index, 0, newValue);
+    return value;
+  },
+
+  REMOVE_AT_INDEX: ({ value = [], index = 0 }: ArrayActionsType) => {
+    value.splice(index, 1);
+    return value;
+  },
+
+  REMOVE_AT_START: ({ value = [] }: ArrayActionsType) => {
+    value.shift();
+    return value;
+  },
+
+  REMOVE_AT_LAST: ({ value = [] }: ArrayActionsType) => {
+    value.pop();
+    return value;
+  },
+};
+
+const updateVariableArray = (
+  action: ChangeVariableAction,
+  index: number | undefined = 0,
+  newValue: any,
+  path: string,
+) => {
+  const variable = useVariableStore
+    .getState()
+    .variableList.find((v) => v.id === action.variableId);
+
+  if (!variable) {
+    return;
+  }
+
+  const _value = variable.value ?? variable.defaultValue;
+  let value = typeof _value === "string" ? JSON.parse(_value ?? "[]") : _value;
+  newValue = typeof newValue === "string" ? JSON.parse(newValue) : newValue;
+
+  if (action.method) {
+    value = arrayActions[action.method]({ value, newValue, index, path });
+  }
+
+  return value;
+};
+
 export const useChangeVariableAction = async ({
   action,
   computeValue,
   actionResponses,
 }: ChangeVariableActionParams) => {
   const setVariable = useVariableStore.getState().setVariable;
-  const value = computeValue(
+  const index = computeValue({ value: action.index });
+  const path = computeValue({ value: action.path });
+  let value = computeValue(
     { value: action.value },
     { actions: actionResponses },
   );
+
+  if (action.variableType === "ARRAY") {
+    value = updateVariableArray(action, index, value, path);
+  }
   setVariable({
     id: action.variableId,
     value: value,

@@ -6,10 +6,13 @@ import {
   NumberInput,
   NumberInputProps,
   SegmentedControlProps,
+  Stack,
   TextInput,
   TextInputProps,
 } from "@mantine/core";
+import { MonacoEditorJson } from "./MonacoEditorJson";
 import { SegmentedControlYesNo } from "./SegmentedControlYesNo";
+import { TopLabel } from "./TopLabel";
 import { FieldType } from "./data/forms/StaticFormFieldsBuilder";
 
 // Need to extend input props depending on fieldType
@@ -31,7 +34,7 @@ type ExtendedPropsByFieldType<T> = T extends "text"
   ? Omit<TextInputProps, "onChange" | "value">
   : T extends "number"
   ? Omit<NumberInputProps, "onChange" | "value">
-  : T extends "yesno"
+  : T extends "boolean"
   ? Omit<SegmentedControlProps, "onChange" | "value">
   : {};
 
@@ -68,25 +71,12 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
 
   return (
     <ComponentToBindWrapper
+      label={label}
       onChange={onChange}
       value={value}
       isPageAction={isPageAction}
     >
-      {fieldType === "text" ? (
-        <TextInput
-          {...commonProps}
-          placeholder={placeholder}
-          value={value?.static}
-          onChange={(e) =>
-            onChange({
-              ...value,
-              dataType: "static",
-              static: e.currentTarget.value,
-            })
-          }
-          {...props}
-        />
-      ) : fieldType === "number" ? (
+      {fieldType === "number" ? (
         <NumberInput
           {...commonProps}
           placeholder={placeholder}
@@ -103,7 +93,7 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
           parser={(value) => parseFloatExtension(value).toString()}
           formatter={(value) => parseFloatExtension(value).toString()}
         />
-      ) : fieldType === "yesno" ? (
+      ) : fieldType === "boolean" ? (
         <SegmentedControlYesNo
           {...commonProps}
           value={value?.static}
@@ -111,31 +101,33 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
             onChange({
               ...value,
               dataType: "static",
-              static: val.toString(),
+              static: val,
             })
           }
           w="100%"
         />
-      ) : fieldType === "url" ? (
-        <TextInput
-          {...commonProps}
-          type="url"
-          placeholder={placeholder}
-          value={value?.static}
-          onChange={(e) =>
-            onChange({
-              ...value,
-              dataType: "static",
-              static: e.currentTarget.value,
-            })
-          }
-          {...props}
-        />
+      ) : fieldType === "array" ? (
+        <Stack w="100%">
+          <TopLabel text={label} required />
+          <MonacoEditorJson
+            {...commonProps}
+            value={value?.static?.toString() || (props.defaultValue as string)}
+            onChange={(val: any) => {
+              onChange({
+                ...value,
+                dataType: "static",
+                static: val,
+              });
+            }}
+            {...props}
+          />
+        </Stack>
       ) : (
         <TextInput
           {...commonProps}
           placeholder={placeholder}
           value={value?.static}
+          type={fieldType}
           onChange={(e) =>
             onChange({
               ...value,
