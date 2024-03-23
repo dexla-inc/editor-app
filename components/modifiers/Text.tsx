@@ -32,6 +32,7 @@ import {
 } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
+import { useCallback } from "react";
 
 const defaultTextValues = requiredModifiers.text;
 
@@ -115,19 +116,22 @@ const Modifier = withModifier(({ selectedComponent }) => {
             <CheckboxInput
               label="Style"
               data={textProps}
-              getInputProps={(val: string) => form.getInputProps(val)}
-              onChange={(prop, value) => {
-                form.setFieldValue(prop, value);
-                debouncedTreeComponentAttrsUpdate({
-                  attrs: {
-                    props: {
-                      style: {
-                        [prop]: value,
+              getInputProps={(val) => form.getInputProps(val)}
+              onChange={useCallback(
+                (prop: string, value: string | number) => {
+                  form.setFieldValue(prop, value);
+                  debouncedTreeComponentAttrsUpdate({
+                    attrs: {
+                      props: {
+                        style: {
+                          [prop]: value,
+                        },
                       },
                     },
-                  },
-                });
-              }}
+                  });
+                },
+                [form],
+              )}
             />
           </>
         )}

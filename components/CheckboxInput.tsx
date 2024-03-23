@@ -38,10 +38,9 @@ export const CheckboxInput = ({
                 size="md"
                 color="gray"
                 indeterminate
-                icon={(checked) => <Icon {...checked} name={item.iconName} />}
                 {...inputProps}
+                icon={(checked) => <Icon {...checked} name={item.iconName} />}
                 checked={item.value === inputProps.value}
-                {...props}
                 onChange={(e) => {
                   if (props.onChange) {
                     props.onChange(
