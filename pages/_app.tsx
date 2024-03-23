@@ -9,11 +9,7 @@ import { cache } from "@/utils/emotionCache";
 import { MantineProvider } from "@mantine/core";
 import { ModalsProvider } from "@mantine/modals";
 import { Notifications } from "@mantine/notifications";
-import {
-  Hydrate,
-  QueryClient,
-  QueryClientProvider,
-} from "@tanstack/react-query";
+import { Hydrate, QueryClientProvider } from "@tanstack/react-query";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { AppProps } from "next/app";
 import { Inter } from "next/font/google";
@@ -23,13 +19,9 @@ import { useEffect, useState } from "react";
 import TagManager from "react-gtm-module";
 import { ReactFlowProvider } from "reactflow";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { DataProvider } from "@/contexts/DataProvider";
 import { MantineGlobal } from "@/components/MantineGlobal";
 import { queryClient } from "@/utils/reactQuery";
 import { useInitialiseLive } from "@/hooks/useInitialiseLive";
-import { LoadingOverlay } from "@mantine/core";
-import { RedirectToLogin, RequiredAuthProvider } from "@propelauth/react";
-import { PropsWithChildren } from "react";
 
 // If loading a variable font, you don't need to specify the font weight
 const inter = Inter({
@@ -131,13 +123,11 @@ export default function App(props: AppProps) {
                 <Notifications />
                 <MantineGlobal isLive={isLive} />
                 <ReactFlowProvider>
-                  <DataProvider>
-                    <ModalsProvider
-                      modals={{ logicFlows: LogicFlowInitialModal }}
-                    >
-                      <Component {...pageProps} />
-                    </ModalsProvider>
-                  </DataProvider>
+                  <ModalsProvider
+                    modals={{ logicFlows: LogicFlowInitialModal }}
+                  >
+                    <Component {...pageProps} />
+                  </ModalsProvider>
                 </ReactFlowProvider>
               </Hydrate>
             </QueryClientProvider>

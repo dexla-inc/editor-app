@@ -1,4 +1,3 @@
-import { useDataContext } from "@/contexts/DataProvider";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { useContentEditable } from "@/hooks/useContentEditable";
@@ -7,8 +6,7 @@ import { EditableComponentMapper } from "@/utils/editor";
 import { AnchorProps, Anchor as MantineAnchor } from "@mantine/core";
 import merge from "lodash.merge";
 import { forwardRef, memo } from "react";
-import { useEditorTreeStore } from "@/stores/editorTree";
-import { memoize } from "proxy-memoize";
+import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
 
 type Props = EditableComponentMapper & AnchorProps;
 
@@ -22,15 +20,12 @@ const LinkComponent = forwardRef(
       ref,
     );
 
-    const { computeValue } = useDataContext()!;
-    const onLoad = useEditorTreeStore(
-      memoize((state) => state.componentMutableAttrs[component?.id!]?.onLoad),
-    );
-    const childrenValue =
-      computeValue({
-        value: onLoad?.children,
-        shareableContent,
-      }) ?? component.props?.children;
+    const childrenValue = useComputeValue({
+      componentId: component.id!,
+      field: "children",
+      shareableContent,
+      staticFallback: component.props?.children,
+    });
 
     const { textStyle } = useBrandingStyles();
 

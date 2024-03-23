@@ -1,10 +1,10 @@
-import { useDataContext } from "@/contexts/DataProvider";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { Component } from "@/utils/editor";
 import { useMemo } from "react";
+import { useDataBinding } from "@/hooks/dataBinding/useDataBinding";
 
 export const useComputeCurrentState = (component: Component): string => {
-  const { computeValue } = useDataContext()!;
+  const { computeValue } = useDataBinding();
   const isEditorMode = useEditorTreeStore(
     (state) => !state.isPreviewMode && !state.isLive,
   );

@@ -1,5 +1,4 @@
 import { Icon } from "@/components/Icon";
-import { useDataContext } from "@/contexts/DataProvider";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useChangeState } from "@/hooks/useChangeState";
 import { useContentEditable } from "@/hooks/useContentEditable";
@@ -12,7 +11,7 @@ import { EditableComponentMapper } from "@/utils/editor";
 import { NavLink as MantineNavLink, NavLinkProps } from "@mantine/core";
 import merge from "lodash.merge";
 import { forwardRef, memo } from "react";
-import { memoize } from "proxy-memoize";
+import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
 type Props = EditableComponentMapper & NavLinkProps;
 
 const NavLinkComponent = forwardRef(
@@ -51,15 +50,12 @@ const NavLinkComponent = forwardRef(
       ...componentProps
     } = merge({}, component.props, activeProps) as any;
 
-    const { computeValue } = useDataContext()!;
-    const onLoad = useEditorTreeStore(
-      memoize((state) => state.componentMutableAttrs[component?.id!]?.onLoad),
-    );
-    const labelValue =
-      computeValue({
-        value: onLoad?.label,
-        shareableContent,
-      }) ?? component.props?.label;
+    const labelValue = useComputeValue({
+      componentId: component.id!,
+      field: "label",
+      shareableContent,
+      staticFallback: component.props?.label,
+    });
 
     const { color: textColor, backgroundColor } = useChangeState({
       bg,

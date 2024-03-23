@@ -1,4 +1,3 @@
-import { useDataContext } from "@/contexts/DataProvider";
 import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { useContentEditable } from "@/hooks/useContentEditable";
 import { EditableComponentMapper } from "@/utils/editor";
@@ -11,8 +10,7 @@ import merge from "lodash.merge";
 import { forwardRef, memo } from "react";
 import { isSame } from "@/utils/componentComparison";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { useEditorTreeStore } from "@/stores/editorTree";
-import { memoize } from "proxy-memoize";
+import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
 
 type Props = EditableComponentMapper & FileButtonProps;
 
@@ -28,15 +26,12 @@ export const FileButtonComponent = forwardRef(
       ref,
     );
 
-    const { computeValue } = useDataContext()!;
-    const onLoad = useEditorTreeStore(
-      memoize((state) => state.componentMutableAttrs[component?.id!]?.onLoad),
-    );
-    const nameValue =
-      computeValue({
-        value: onLoad?.name,
-        shareableContent,
-      }) ?? component.props?.name;
+    const nameValue = useComputeValue({
+      componentId: component.id!,
+      field: "name",
+      shareableContent,
+      staticFallback: component.props?.name,
+    });
 
     const { inputStyle } = useBrandingStyles();
     const customStyle = merge(inputStyle, style);

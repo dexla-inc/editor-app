@@ -8,7 +8,6 @@ import { getDataSourceEndpoints } from "@/requests/datasources/queries-noauth";
 import { dehydrate } from "@tanstack/react-query";
 import { getProject } from "@/requests/projects/queries-noauth";
 import { getPageList, getPageState } from "@/requests/pages/queries-noauth";
-import { useEditorTreeStore } from "@/stores/editorTree";
 import { queryClient } from "@/utils/reactQuery";
 
 export const getServerSideProps = async ({
@@ -40,7 +39,6 @@ export const getServerSideProps = async ({
       id: projectId,
       page: pageId,
       variables: variables.results,
-      pageLoadTimestamp,
       isLive: false,
     },
   };
@@ -50,21 +48,12 @@ type Props = {
   id: string;
   page: string;
   variables: any[];
-  pageLoadTimestamp: number;
 };
 
-const PageEditor = ({ id, page, variables, pageLoadTimestamp }: Props) => {
+const PageEditor = ({ id, page, variables }: Props) => {
   useVariableStore.getState().initializeVariableList(variables);
-  useEditorTreeStore.getState().setPageLoadTimestamp(pageLoadTimestamp);
 
-  return (
-    <Editor
-      key={page}
-      pageId={page}
-      projectId={id}
-      pageLoadTimestamp={pageLoadTimestamp}
-    />
-  );
+  return <Editor key={page} pageId={page} projectId={id} />;
 };
 
 export default withPageOnLoad(memo(PageEditor));

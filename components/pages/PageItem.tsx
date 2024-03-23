@@ -31,7 +31,8 @@ export const PageItem = ({ projectId, page, currentPage, setPage }: Props) => {
   const theme = useMantineTheme();
   const { color, background, hoveredBackground, hoveredColor, whiteColor } = {
     color: theme.colorScheme === "dark" ? GRAY_WHITE_COLOR : theme.black,
-    background: theme.colorScheme === "dark" ? DARK_COLOR : GRAY_WHITE_COLOR,
+    background:
+      theme.colorScheme === "dark" ? theme.colors.dark[5] : GRAY_WHITE_COLOR,
     hoveredBackground: theme.colorScheme === "dark" ? DARK_COLOR : HOVERED,
     hoveredColor: theme.colorScheme === "dark" ? GRAY_WHITE_COLOR : theme.black,
     whiteColor:

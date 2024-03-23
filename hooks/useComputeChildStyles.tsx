@@ -1,8 +1,8 @@
-import { useDataContext } from "@/contexts/DataProvider";
 import { GRAY_OUTLINE } from "@/utils/branding";
+import { useDataBinding } from "@/hooks/dataBinding/useDataBinding";
 
 export const useComputeChildStyles = () => {
-  const { computeValue } = useDataContext()!;
+  const { computeValue } = useDataBinding();
   function computeChildStyles(
     propsWithOverwrites: any,
     currentState: any,

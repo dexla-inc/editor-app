@@ -22,7 +22,7 @@ export const calculateGridSizes = (tree?: ComponentStructure) => {
         const parent =
           useEditorTreeStore.getState().componentMutableAttrs[parentTree?.id!];
         if (parent?.name === "GridColumn") {
-          node.props!.gridSize = parent.props!.span;
+          node.props!.gridSize = parent.props?.span;
         }
       } else if (node.name === "GridColumn") {
         const parentTree = context.parent;
@@ -55,7 +55,7 @@ export const calculateGridSizes = (tree?: ComponentStructure) => {
             node.props!.resized = false;
           }
 
-          let siblingsSpan = parent.props!.gridSize;
+          let siblingsSpan = parent.props?.gridSize;
 
           if (!isAlone) {
             const diff =

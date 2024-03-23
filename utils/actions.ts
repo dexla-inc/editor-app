@@ -17,7 +17,6 @@ import {
 } from "@/requests/datasources/types";
 
 import { ShowNotificationActionForm } from "@/components/actions/ShowNotificationActionForm";
-import { GetValueProps } from "@/contexts/DataProvider";
 import { LogicFlowResponse } from "@/requests/logicflows/types";
 import { PageResponse } from "@/requests/pages/types";
 import { FrontEndTypes } from "@/requests/variables/types";
@@ -40,6 +39,7 @@ import isEmpty from "lodash.isempty";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { Router } from "next/router";
+import { GetValueProps } from "@/hooks/dataBinding/useDataBinding";
 
 const triggers = [
   "onClick",
