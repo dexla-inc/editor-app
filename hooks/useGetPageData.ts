@@ -16,14 +16,13 @@ export const defaultPageState = {
   root: emptyEditorTree.root,
 };
 
-export const useGetPageData = ({
-  projectId,
-  pageId,
-}: {
+type Props = {
   projectId: string;
   pageId: string;
-}) => {
-  const { stopLoading, setIsLoading } = useAppStore((state) => ({
+};
+
+export const useGetPageData = ({ projectId, pageId }: Props) => {
+  const { startLoading, stopLoading, setIsLoading } = useAppStore((state) => ({
     startLoading: state.startLoading,
     stopLoading: state.stopLoading,
     setIsLoading: state.setIsLoading,
@@ -41,47 +40,59 @@ export const useGetPageData = ({
   );
 
   const getPageData = async ({ signal }: getPageDataParams) => {
-    const page = await getPageState(
-      projectId,
-      pageId,
-      pageLoadTimestamp,
-      null,
-      { signal },
-    );
+    startLoading({
+      id: "go-to-editor",
+      title: "Loading Page",
+      message: "Wait while we load your page",
+    });
 
-    setIsLoading(true);
+    try {
+      const page = await getPageState(
+        projectId,
+        pageId,
+        pageLoadTimestamp,
+        null,
+        { signal },
+      );
 
-    if (pageCancelled) {
-      //TODO: get this back - we might not need this
-      setEditorTree(defaultPageState, {
-        onLoad: false,
-        action: "Initial State",
+      setIsLoading(true);
+
+      if (pageCancelled) {
+        //TODO: get this back - we might not need this
+        setEditorTree(defaultPageState, {
+          onLoad: false,
+          action: "Initial State",
+        });
+        setPageCancelled(false);
+        setIsLoading(false);
+
+        return defaultPageState;
+      } else if (page.state) {
+        const decodedSchema = decodeSchema(page.state);
+        setEditorTree(JSON.parse(decodedSchema), {
+          onLoad: true,
+          action: "Initial State",
+        });
+
+        setIsLoading(false);
+        return JSON.parse(decodedSchema);
+      } else {
+        setIsLoading(false);
+        return defaultPageState;
+      }
+    } catch (error: any) {
+      stopLoading({
+        id: "go-to-editor",
+        title: "Page Failed",
+        message: error,
+        isError: true,
       });
-      setPageCancelled(false);
-      setIsLoading(false);
+    } finally {
       stopLoading({
         id: "go-to-editor",
         title: "Page Loaded",
         message: "Your page has successfully loaded",
       });
-      return defaultPageState;
-    } else if (page.state) {
-      const decodedSchema = decodeSchema(page.state);
-      setEditorTree(JSON.parse(decodedSchema), {
-        onLoad: true,
-        action: "Initial State",
-      });
-
-      setIsLoading(false);
-      stopLoading({
-        id: "go-to-editor",
-        title: "Page Loaded",
-        message: "Your page has successfully loaded",
-      });
-      return JSON.parse(decodedSchema);
-    } else {
-      setIsLoading(false);
-      return defaultPageState;
     }
   };
 

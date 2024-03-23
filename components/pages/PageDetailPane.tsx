@@ -23,11 +23,6 @@ export default function PageDetailPane({ page, setPage }: PageDetailPaneProps) {
     await updatePage(values, projectId, pageId);
   };
 
-  const onDeletePage = async () => {
-    await deletePage(projectId, pageId);
-    setPage(undefined);
-  };
-
   return (
     <Box p="xs" pr={0}>
       <SegmentedControl
