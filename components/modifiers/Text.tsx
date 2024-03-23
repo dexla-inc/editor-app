@@ -1,3 +1,4 @@
+import { CheckboxInput, CheckboxInputData } from "@/components/CheckboxInput";
 import { FontSelector } from "@/components/FontSelector";
 import { SegmentedControlInput } from "@/components/SegmentedControlInput";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
@@ -31,6 +32,7 @@ import {
 } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
+
 const defaultTextValues = requiredModifiers.text;
 
 const Modifier = withModifier(({ selectedComponent }) => {
@@ -65,7 +67,11 @@ const Modifier = withModifier(({ selectedComponent }) => {
 
   const form = useForm({
     initialValues: merge({}, defaultTextValues, {
-      ...(!isTitle && { fontTag: data.fontTag ?? defaultTextValues.fontTag }),
+      ...(!isTitle && {
+        fontTag: data.fontTag ?? defaultTextValues.fontTag,
+        fontWeight: data.style.fontWeight ?? "normal",
+        fontStyle: data.style.fontStyle ?? "normal",
+      }),
       order: data.order?.toString() ?? defaultTextValues.order,
       color: data.color ?? defaultTextValues.color,
       align: data.align ?? defaultTextValues.align,
@@ -80,11 +86,50 @@ const Modifier = withModifier(({ selectedComponent }) => {
     }),
   });
 
+  const textProps: CheckboxInputData = [
+    {
+      name: "bold",
+      defaultValue: "normal",
+      value: 500,
+      propName: "fontWeight",
+      iconName: "IconBold",
+    },
+    {
+      name: "italic",
+      defaultValue: "normal",
+      value: "italic",
+      propName: "fontStyle",
+      iconName: "IconItalic",
+    },
+  ];
+
   return (
     <form>
       <Stack spacing="xs">
         {!isTitle && (
-          <FontSelector {...form.getInputProps("fontTag")} form={form as any} />
+          <>
+            <FontSelector
+              {...form.getInputProps("fontTag")}
+              form={form as any}
+            />
+            <CheckboxInput
+              label="Style"
+              data={textProps}
+              getInputProps={(val: string) => form.getInputProps(val)}
+              onChange={(prop, value) => {
+                form.setFieldValue(prop, value);
+                debouncedTreeComponentAttrsUpdate({
+                  attrs: {
+                    props: {
+                      style: {
+                        [prop]: value,
+                      },
+                    },
+                  },
+                });
+              }}
+            />
+          </>
         )}
         {isTitle && (
           <SegmentedControlInput
