@@ -3,8 +3,8 @@ import { Cursor } from "@/components/Cursor";
 import { EditorCanvas } from "@/components/EditorCanvas";
 import EditorAsideSections from "@/components/aside/EditorAsideSections";
 import { EditorNavbarSections } from "@/components/navbar/EditorNavbarSections";
-import { useAppMode } from "@/hooks/useAppMode";
 import { useGetPageData } from "@/hooks/useGetPageData";
+import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { usePropelAuthStore } from "@/stores/propelAuth";
@@ -23,10 +23,9 @@ import { useEffect, useState } from "react";
 type Props = {
   projectId: string;
   pageId: string;
-  pageLoadTimestamp: number;
 };
 
-const Editor = ({ projectId, pageId, pageLoadTimestamp }: Props) => {
+const Editor = ({ projectId, pageId }: Props) => {
   const setCurrentPageAndProjectIds = useEditorTreeStore(
     (state) => state.setCurrentPageAndProjectIds,
   );
@@ -56,7 +55,6 @@ const Editor = ({ projectId, pageId, pageLoadTimestamp }: Props) => {
       if (liveblocks.status === "connected") {
         liveblocks.leaveRoom();
         setRoomEntered(false);
-        setPageLoadTimestamp(null);
       }
     };
 
