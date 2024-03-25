@@ -6,11 +6,13 @@ import { forwardRef, memo } from "react";
 
 type Props = EditableComponentMapper & RatingProps;
 
-const RatingComponent = forwardRef(({ component, ...props }: Props, ref) => {
-  const componentProps = component.props as any;
+const RatingComponent = forwardRef(
+  ({ component, shareableContent, ...props }: Props, ref) => {
+    const componentProps = component.props as any;
 
-  return <MantineRating ref={ref} {...props} {...componentProps} />;
-});
+    return <MantineRating ref={ref} {...props} {...componentProps} />;
+  },
+);
 RatingComponent.displayName = "Rating";
 
 export const Rating = memo(

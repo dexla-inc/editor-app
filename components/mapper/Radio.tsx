@@ -8,7 +8,10 @@ import { forwardRef, memo, useState } from "react";
 type Props = EditableComponentMapper & RadioGroupProps;
 
 const RadioComponent = forwardRef(
-  ({ renderTree, component, isPreviewMode, ...props }: Props, ref) => {
+  (
+    { renderTree, component, isPreviewMode, shareableContent, ...props }: Props,
+    ref,
+  ) => {
     const { children, value, triggers, styles, ...componentProps } =
       component.props as any;
 

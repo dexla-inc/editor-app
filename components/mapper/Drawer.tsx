@@ -12,6 +12,7 @@ export const Drawer = ({
   renderTree,
   component,
   onClose: propOnClose,
+  shareableContent,
   ...props
 }: Props) => {
   const theme = useThemeStore((state) => state.theme);

@@ -14,7 +14,7 @@ import { getAllComponentsByName } from "../../utils/editor";
 export type GridProps = EditableComponentMapper & BoxProps;
 
 const GridComponent = forwardRef(
-  ({ renderTree, component, ...props }: GridProps, ref) => {
+  ({ renderTree, component, shareableContent, ...props }: GridProps, ref) => {
     const theme = useMantineTheme();
     const setEditorTree = useEditorTreeStore((state) => state.setTree);
     const {

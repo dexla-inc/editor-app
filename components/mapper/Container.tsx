@@ -10,7 +10,10 @@ import { isSame } from "@/utils/componentComparison";
 type Props = EditableComponentMapper & FlexProps;
 
 export const ContainerComponent = forwardRef(
-  ({ renderTree, component, isPreviewMode, ...props }: Props, ref) => {
+  (
+    { renderTree, shareableContent, component, isPreviewMode, ...props }: Props,
+    ref,
+  ) => {
     const defaultBorder = setComponentBorder(props.style, isPreviewMode);
     const customStyle = merge({ width: "100%" }, props.style, defaultBorder);
 
@@ -21,7 +24,7 @@ export const ContainerComponent = forwardRef(
         component={component}
         {...props}
         style={customStyle}
-        shareableContent={props.shareableContent}
+        shareableContent={shareableContent}
       />
     );
   },

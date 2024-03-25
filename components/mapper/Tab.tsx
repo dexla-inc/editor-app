@@ -9,7 +9,7 @@ import { forwardRef, memo } from "react";
 type Props = EditableComponentMapper & TabProps;
 
 const TabComponent = forwardRef(
-  ({ renderTree, component, ...props }: Props, ref) => {
+  ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
     const { children, icon, iconColor, ...componentProps } =
       component.props as any;
     const theme = useThemeStore((state) => state.theme);

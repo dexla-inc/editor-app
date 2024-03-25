@@ -12,7 +12,7 @@ import { forwardRef, memo } from "react";
 type Props = EditableComponentMapper & Omit<AlertProps, "title">;
 
 const AlertComponent = forwardRef(
-  ({ renderTree, component, ...props }: Props, ref) => {
+  ({ renderTree, shareableContent, component, ...props }: Props, ref) => {
     const { children, icon, iconColor, ...componentProps } =
       component.props as any;
     const currentProjectId = useEditorTreeStore(

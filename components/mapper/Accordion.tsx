@@ -7,7 +7,7 @@ import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 type Props = EditableComponentMapper & AccordionProps;
 
 const AccordionComponent = forwardRef(
-  ({ renderTree, component, ...props }: Props, ref) => {
+  ({ renderTree, shareableContent, component, ...props }: Props, ref) => {
     const { children, icon, ...componentProps } = component.props as any;
 
     return (

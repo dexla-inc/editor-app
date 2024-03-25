@@ -22,7 +22,7 @@ import { memoize } from "proxy-memoize";
 type Props = EditableComponentMapper & AutocompleteProps;
 
 const AutocompleteComponent = forwardRef(
-  ({ component, children: child, ...props }: Props, ref) => {
+  ({ component, shareableContent, children: child, ...props }: Props, ref) => {
     const {
       children,
       triggers,
@@ -119,6 +119,7 @@ const AutocompleteComponent = forwardRef(
       <MantineAutocomplete
         ref={ref}
         {...props}
+        wrapperProps={{ "data-id": component.id }}
         {...componentProps}
         onChange={handleChange}
         onItemSubmit={handleItemSubmit}

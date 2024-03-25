@@ -3,7 +3,12 @@ import { Stepper } from "@mantine/core";
 
 type Props = EditableComponentMapper;
 
-export const StepperStep = ({ renderTree, component, ...props }: Props) => {
+export const StepperStep = ({
+  renderTree,
+  component,
+  shareableContent,
+  ...props
+}: Props) => {
   const { label, description, children, ...componentProps } =
     component.props as any;
 

@@ -236,8 +236,6 @@ export type ActionParams = {
   setActionsResponses: any;
   actionResponses?: any;
   computeValue: (value: GetValueProps, ctx?: any) => any;
-  onSuccess?: Action;
-  onError?: Action;
   event?: any;
   entity: Component | PageResponse;
   data?: any;
@@ -497,39 +495,45 @@ export const prepareRequestData = (
   return { url, body };
 };
 
-const handleError = async (
-  onError: Action,
-  router: Router,
-  computeValue: (val: GetValueProps) => any,
-  actionResponses: any,
-) => {
-  const onErrorActionMapped = actionMapper[onError.action.name];
+const handleError = async (props: APICallActionParams) => {
+  const onErrorAction = props.entity.actions?.find(
+    (action: Action) =>
+      action.trigger === "onError" && action.sequentialTo === props.actionId,
+  );
+
+  const onErrorActionMapped =
+    onErrorAction && actionMapper[onErrorAction.action.name];
+
+  if (!onErrorActionMapped || !onErrorAction) {
+    return;
+  }
 
   await onErrorActionMapped.action({
+    ...props,
     // @ts-ignore
-    action: onError?.action,
-    router,
-    computeValue,
-    actionResponses,
+    action: onErrorAction?.action,
+    actionId: onErrorAction.id,
   });
 };
 
-const handleSuccess = async (
-  onSuccess: Action,
-  router: Router,
-  action: APICallAction,
-  computeValue: (val: GetValueProps) => any,
-  actionResponses: any,
-) => {
-  const onSuccessActionMapped = actionMapper[onSuccess.action.name];
+const handleSuccess = async (props: APICallActionParams) => {
+  const onSuccessAction = props.entity.actions?.find(
+    (action: Action) =>
+      action.trigger === "onSuccess" && action.sequentialTo === props.actionId,
+  );
+
+  const onSuccessActionMapped =
+    onSuccessAction && actionMapper[onSuccessAction.action.name];
+
+  if (!onSuccessActionMapped || !onSuccessAction) {
+    return;
+  }
 
   return onSuccessActionMapped.action({
+    ...props,
     // @ts-ignore
-    action: onSuccess?.action,
-    binds: action.binds,
-    router,
-    computeValue,
-    actionResponses,
+    action: onSuccessAction.action,
+    actionId: onSuccessAction.id,
   });
 };
 
@@ -602,21 +606,21 @@ const setLoadingState = (
   });
 };
 
-export const useApiCallAction = async ({
-  action,
-  actionId,
-  router,
-  computeValue,
-  onSuccess,
-  onError,
-  entity,
-  endpointResults,
-  setActionsResponses,
-  actionResponses,
-}: APICallActionParams): Promise<any> => {
+export const useApiCallAction = async (
+  props: APICallActionParams,
+): Promise<any> => {
+  const {
+    action,
+    actionId,
+    computeValue,
+    entity,
+    endpointResults,
+    setActionsResponses,
+  } = props;
+
   const updateTreeComponentAttrs =
     useEditorTreeStore.getState().updateTreeComponentAttrs;
-  if (entity.props && action.showLoader) {
+  if (entity?.props && action.showLoader) {
     setLoadingState(entity.id!, true, updateTreeComponentAttrs);
   }
 
@@ -676,21 +680,13 @@ export const useApiCallAction = async ({
 
     setActionsResponses(actionId, { success: responseJson });
 
-    onSuccess &&
-      (await handleSuccess(
-        onSuccess,
-        router,
-        action,
-        computeValue,
-        actionResponses,
-      ));
+    await handleSuccess(props);
 
     return responseJson;
   } catch (error) {
     // @ts-expect-error
     setActionsResponses(actionId, { error: safeJsonParse(error?.message) });
-    onError &&
-      (await handleError(onError, router, computeValue, actionResponses));
+    await handleError(props);
   } finally {
     if (entity.props && action.showLoader) {
       setLoadingState(entity.id!, false, updateTreeComponentAttrs);

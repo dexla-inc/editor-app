@@ -6,7 +6,12 @@ import merge from "lodash.merge";
 import { memo } from "react";
 type Props = EditableComponentMapper & BoxProps;
 
-const NavbarComponent = ({ renderTree, component, ...props }: Props) => {
+const NavbarComponent = ({
+  renderTree,
+  component,
+  shareableContent,
+  ...props
+}: Props) => {
   const theme = useThemeStore((state) => state.theme);
 
   const { children, bg = "", ...componentProps } = component.props as any;

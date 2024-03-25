@@ -9,7 +9,7 @@ import { forwardRef, memo } from "react";
 type Props = EditableComponentMapper;
 
 const IconComponent = forwardRef(
-  ({ renderTree, component, ...props }: Props, ref) => {
+  ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
     const { children, color, bg, triggers, size, ...componentProps } =
       component.props as any;
 
