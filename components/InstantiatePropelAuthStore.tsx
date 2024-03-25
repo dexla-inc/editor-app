@@ -8,8 +8,7 @@ function InstantiatePropelAuthStore(props: WithAuthInfoProps) {
 
   useEffect(() => {
     initializeAuth(props);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [initializeAuth, props]);
 
   return null;
 }
