@@ -107,16 +107,6 @@ export const useDataBinding = () => {
       },
       boundCode: () => {
         let boundCode = value?.boundCode?.trim() ?? "";
-        // let hasReturn = boundCode.startsWith("return");
-        //
-        // if (hasReturn) {
-        //   boundCode = boundCode.substring(6).trim();
-        //
-        //   // This is needed when the boundCode is a stringified static object with a return statement
-        //   if (jsonInString(boundCode)) {
-        //     boundCode = safeJsonParse(boundCode);
-        //   }
-        // }
 
         return autoRunJavascriptCode(boundCode, ctx);
       },
