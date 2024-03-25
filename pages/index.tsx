@@ -11,7 +11,7 @@ import Head from "next/head";
 import { useEffect } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { dehydrate } from "@tanstack/react-query";
-import { getMostRecentDeployment } from "@/requests/deployments/queries-noauth";
+import { getDeploymentPage } from "@/requests/deployments/queries-noauth";
 import { getDataSourceEndpoints } from "@/requests/datasources/queries-noauth";
 import { queryClient } from "@/utils/reactQuery";
 
@@ -42,17 +42,16 @@ export const getServerSideProps = async ({
     ["project", project.id],
     () => Promise.resolve(project),
   );
-  const deployment = await getMostRecentDeployment(project.id);
+  const currentSlug = "/";
+  const deploymentPage = await getDeploymentPage(project.id, currentSlug);
 
   await Promise.all([prefetchEndpoints, prefetchProject]);
 
   const isLoggedIn = checkRefreshTokenExists(req.cookies["refreshToken"]);
-  const currentSlug = "/";
-  const page = deployment.pages.find((page) => page.slug === currentSlug);
 
   if (
     !isLoggedIn &&
-    page?.authenticatedOnly &&
+    deploymentPage?.authenticatedOnly &&
     project.redirectSlug &&
     currentSlug !== project.redirectSlug
   ) {
@@ -64,8 +63,7 @@ export const getServerSideProps = async ({
       props: {
         dehydratedState: dehydrate(queryClient),
         id: project.id,
-        page,
-        deployment,
+        deploymentPage,
         faviconUrl: project.faviconUrl,
         isLive: true,
       },
@@ -76,7 +74,6 @@ export const getServerSideProps = async ({
     props: {
       dehydratedState: dehydrate(queryClient),
       id: project.id,
-      page,
       faviconUrl: project.faviconUrl,
       isLive: true,
     },
@@ -85,38 +82,37 @@ export const getServerSideProps = async ({
 
 type Props = {
   id: string;
-  page: DeploymentPage;
   faviconUrl?: string;
-  deployment: DeploymentResponse;
+  deploymentPage: DeploymentPage;
 };
 
-const HomePage = ({ id, page, faviconUrl, deployment }: Props) => {
+const HomePage = ({ id, faviconUrl, deploymentPage }: Props) => {
   const setCurrentPageAndProjectIds =
     useEditorTreeStore.getState().setCurrentPageAndProjectIds;
   const setPreviewMode = useEditorTreeStore.getState().setPreviewMode;
   const setIsLive = useEditorTreeStore.getState().setIsLive;
 
   useEffect(() => {
-    if (id && page.id) {
-      setCurrentPageAndProjectIds(id, page.id);
+    if (id && deploymentPage.id) {
+      setCurrentPageAndProjectIds(id, deploymentPage.id);
       setPreviewMode(true);
       setIsLive(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, page.id]);
+  }, [id, deploymentPage.id]);
 
   return (
     <>
       <Head>
-        <title>{page.title}</title>
-        <meta name="description" content={page.title} />
+        <title>{deploymentPage.title}</title>
+        <meta name="description" content={deploymentPage.title} />
         <link
           rel="icon"
           type="image/x-icon"
           href={faviconUrl ?? "/favicon.ico"}
         />
       </Head>
-      <Live pageId={page.id} projectId={id} deployment={deployment} />
+      <Live projectId={id} deploymentPage={deploymentPage} />
     </>
   );
 };

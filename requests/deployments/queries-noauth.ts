@@ -5,18 +5,26 @@ import {
 import { PagingResponse } from "@/requests/types";
 import { getWithoutAuth } from "@/utils/apiNoAuth";
 
-export const getMostRecentDeployment = async (projectId: string) => {
-  const response = (await getWithoutAuth<DeploymentResponse>(
-    `/projects/${projectId}/deployments/recent`,
-  )) as DeploymentResponse;
+export const getDeploymentPages = async (projectId: string) => {
+  const response = (await getWithoutAuth<PagingResponse<DeploymentPage>>(
+    `/projects/${projectId}/deployments/pages`,
+  )) as PagingResponse<DeploymentPage>;
+
+  return response;
+};
+
+export const getDeploymentPage = async (projectId: string, slug: string) => {
+  const response = (await getWithoutAuth<DeploymentPage>(
+    `/projects/${projectId}/deployments/page?slug=${slug}`,
+  )) as DeploymentPage;
 
   return response;
 };
 
 export const listDeployments = async (projectId: string) => {
-  const response = (await getWithoutAuth<PagingResponse<DeploymentPage>>(
+  const response = (await getWithoutAuth<PagingResponse<DeploymentResponse>>(
     `/projects/${projectId}`,
-  )) as PagingResponse<DeploymentPage>;
+  )) as PagingResponse<DeploymentResponse>;
 
   return response;
 };

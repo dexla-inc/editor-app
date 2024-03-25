@@ -1,8 +1,6 @@
-// The comment below force next to refresh the editor state every time we change something in the code
-// @refresh reset
 import { EditableComponent } from "@/components/EditableComponent";
 import { LiveWrapper } from "@/components/LiveWrapper";
-import { DeploymentResponse } from "@/requests/deployments/types";
+import { DeploymentPage } from "@/requests/deployments/types";
 import { useAppStore } from "@/stores/app";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { componentMapper } from "@/utils/componentMapper";
@@ -13,8 +11,7 @@ import { ReactNode, useCallback, useEffect, useMemo } from "react";
 
 type Props = {
   projectId: string;
-  pageId: string;
-  deployment: DeploymentResponse;
+  deploymentPage: DeploymentPage;
 };
 
 type EditableComponentContainerProps = {
@@ -39,20 +36,15 @@ const EditableComponentContainer = ({
   );
 };
 
-export const Live = ({ projectId, pageId, deployment }: Props) => {
+export const Live = ({ projectId, deploymentPage }: Props) => {
   const editorTree = useEditorTreeStore((state) => state.tree);
   const setEditorTree = useEditorTreeStore((state) => state.setTree);
   const setIsLoading = useAppStore((state) => state.setIsLoading);
   const isLoading = useAppStore((state) => state.isLoading);
 
-  const page = useMemo(
-    () => deployment?.pages?.find((p) => p.id === pageId),
-    [deployment, pageId],
-  );
-
   useEffect(() => {
-    if (page?.pageState) {
-      const decodedSchema = decodeSchema(page.pageState);
+    if (deploymentPage?.pageState) {
+      const decodedSchema = decodeSchema(deploymentPage.pageState);
       const state = JSON.parse(decodedSchema);
       setEditorTree(state, {
         onLoad: true,
@@ -61,7 +53,7 @@ export const Live = ({ projectId, pageId, deployment }: Props) => {
       setIsLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page]);
+  }, [deploymentPage]);
 
   const renderTree = useCallback(
     (componentTree: ComponentTree, shareableContent = {}) => {
