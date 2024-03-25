@@ -57,11 +57,15 @@ export const GoogleMapPlugin = ({
     shareableContent,
     field: "zoom",
   });
-  const center = useComputeValue({
-    componentId: component.id!,
-    shareableContent,
-    field: "center",
-  });
+
+  const center =
+    useComputeValue({
+      componentId: component.id!,
+      shareableContent,
+      field: "center",
+      //staticFallback: defaultCenter,
+    }) ?? defaultCenter;
+
   const markers = useComputeValue({
     componentId: component.id!,
     shareableContent,
@@ -119,9 +123,6 @@ export const GoogleMapPlugin = ({
     (map: google.maps.Map) => {
       setMap(map);
 
-      const lat = Number(center.lat);
-      const lng = Number(center.lng);
-
       const bounds = new window.google.maps.LatLngBounds({
         lat: Number(center.lat),
         lng: Number(center.lng),
@@ -175,8 +176,8 @@ export const GoogleMapPlugin = ({
         {...customProps}
         {...googleStyles}
         center={{
-          lat: Number(center.lat ?? defaultCenter.lat),
-          lng: Number(center.lng ?? defaultCenter.lng),
+          lat: Number(center.lat),
+          lng: Number(center.lng),
         }}
         zoom={internalZoom}
       >
