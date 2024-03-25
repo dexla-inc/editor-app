@@ -31,7 +31,7 @@ export const CardComponent = forwardRef(
         component={component}
         {...props}
         style={customStyle}
-        shareableContent={props.shareableContent}
+        shareableContent={shareableContent}
       />
     );
   },
