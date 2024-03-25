@@ -181,9 +181,9 @@ export const GoogleMapPlugin = ({
         }}
         zoom={internalZoom}
       >
-        {internalMarkers &&
+        {Array.isArray(internalMarkers) &&
           internalMarkers.length > 0 &&
-          (internalMarkers as MarkerItem[]).map(({ id, name, position }) => (
+          internalMarkers.map(({ id, name, position }) => (
             <Marker
               key={id}
               position={position}
