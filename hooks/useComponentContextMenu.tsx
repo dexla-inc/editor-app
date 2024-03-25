@@ -28,6 +28,8 @@ import {
 } from "@tabler/icons-react";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { MouseEventHandler, useCallback } from "react";
+import { getComponentTreeById } from "@/utils/editor";
+
 const determinePasteTarget = (selectedId: string | undefined) => {
   if (!selectedId) return "content-wrapper";
   if (selectedId === "root") return "content-wrapper";
@@ -41,6 +43,7 @@ export const useComponentContextMenu = () => {
   const editorTheme = useThemeStore((state) => state.theme);
   const copiedProperties = useEditorStore((state) => state.copiedProperties);
   const setEditorTree = useEditorTreeStore((state) => state.setTree);
+  const isPreviewMode = useEditorTreeStore((state) => state.isPreviewMode);
   const setCopiedComponent = useEditorStore(
     (state) => state.setCopiedComponent,
   );
@@ -111,14 +114,20 @@ export const useComponentContextMenu = () => {
   const duplicateComponent = useCallback(
     async (component: Component) => {
       const editorTree = useEditorTreeStore.getState().tree as EditorTreeCopy;
-      const componentId = component?.id!;
-      const componentName = component.name!;
+      const componentId = component.id as string;
+
+      const componentToCopy = getComponentTreeById(
+        editorTree.root,
+        componentId,
+      )!;
+
+      const componentName = component.name;
       const targetId = determinePasteTarget(componentId);
       const parentComponent = getComponentParent(editorTree.root, targetId);
 
       const newSelectedId = addComponent(
         editorTree.root,
-        component,
+        componentToCopy,
         {
           id: parentComponent!.id as string,
           edge: "bottom",
@@ -137,12 +146,18 @@ export const useComponentContextMenu = () => {
 
   const copyComponent = useCallback(
     (component: Component) => {
-      const copiedComponent =
-        useEditorTreeStore.getState().componentMutableAttrs[component.id!];
-      setCopiedComponent(copiedComponent);
-      copyToClipboard(copiedComponent);
+      const editorTree = useEditorTreeStore.getState().tree as EditorTreeCopy;
+
+      const componentToCopy = getComponentTreeById(
+        editorTree.root,
+        component.id!,
+      )!;
+      if (!isPreviewMode) {
+        setCopiedComponent(componentToCopy);
+        copyToClipboard(componentToCopy);
+      }
     },
-    [setCopiedComponent],
+    [isPreviewMode, setCopiedComponent],
   );
 
   const copyProperties = useCallback(
