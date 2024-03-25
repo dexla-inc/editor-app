@@ -17,7 +17,7 @@ import { ChangeEvent, forwardRef, memo, useCallback, useState } from "react";
 type Props = EditableComponentMapper & TextareaProps;
 
 const TextareaComponent = forwardRef(
-  ({ renderTree, component, ...props }: Props, ref) => {
+  ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
     const {
       children,
       triggers,

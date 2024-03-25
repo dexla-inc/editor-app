@@ -13,6 +13,7 @@ const FileUploadComponent = ({
   renderTree,
   component,
   isPreviewMode,
+  shareableContent,
   ...props
 }: Props) => {
   const { children, ...componentProps } = component.props as any;

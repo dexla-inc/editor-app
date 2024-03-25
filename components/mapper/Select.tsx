@@ -25,7 +25,16 @@ import { memoize } from "proxy-memoize";
 type Props = EditableComponentMapper & SelectProps & MultiSelectProps;
 
 const SelectComponent = forwardRef(
-  ({ component, children: child, isPreviewMode, ...props }: Props, ref) => {
+  (
+    {
+      component,
+      children: child,
+      isPreviewMode,
+      shareableContent,
+      ...props
+    }: Props,
+    ref,
+  ) => {
     const {
       children,
       triggers,

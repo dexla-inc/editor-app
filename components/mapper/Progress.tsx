@@ -7,7 +7,7 @@ import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 type Props = EditableComponentMapper & ProgressProps;
 
 const ProgressComponent = forwardRef(
-  ({ renderTree, component, ...props }: Props, ref) => {
+  ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
     const { children, ...componentProps } = component.props as any;
 
     return (
