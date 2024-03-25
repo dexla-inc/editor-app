@@ -141,7 +141,7 @@ export const useComponentContextMenu = () => {
       setSelectedComponentIds(() => [newSelectedId]);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [setEditorTree],
+    [isPreviewMode, setEditorTree],
   );
 
   const copyComponent = useCallback(
