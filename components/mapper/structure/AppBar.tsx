@@ -23,7 +23,6 @@ export const jsonStructure = (props?: any): ComponentStructure => {
         height: "auto",
       },
     },
-    // fixedPosition: { position: "top", target: "main-content" },
     children: [
       {
         id: nanoid(),
