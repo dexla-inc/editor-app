@@ -248,7 +248,7 @@ export const emptyEditorAttrsTree = {
               ...initialGridColumnValues,
               style: {
                 ...initialGridColumnValues.style,
-                height: "100vh",
+                minHeight: "100vh",
                 paddingLeft: "0px",
                 paddingTop: "0px",
                 paddingRight: "0px",

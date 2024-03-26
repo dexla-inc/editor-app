@@ -5,6 +5,7 @@ import { useUserConfigStore } from "@/stores/userConfig";
 import { emptyEditorTree } from "@/utils/common";
 import { decodeSchema } from "@/utils/compression";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 
 type getPageDataParams = {
   signal: AbortSignal | undefined;
@@ -38,6 +39,7 @@ export const useGetPageData = ({ projectId, pageId }: Props) => {
   const pageLoadTimestamp = useEditorTreeStore(
     (state) => state.pageLoadTimestamp,
   );
+  const setPageLoadTree = useEditorTreeStore((state) => state.setPageLoadTree);
 
   const getPageData = async ({ signal }: getPageDataParams) => {
     startLoading({
@@ -69,7 +71,9 @@ export const useGetPageData = ({ projectId, pageId }: Props) => {
         return defaultPageState;
       } else if (page.state) {
         const decodedSchema = decodeSchema(page.state);
-        setEditorTree(JSON.parse(decodedSchema), {
+        const parsedTree = JSON.parse(decodedSchema);
+        setPageLoadTree(parsedTree);
+        setEditorTree(parsedTree, {
           onLoad: true,
           action: "Initial State",
         });
