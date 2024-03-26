@@ -325,15 +325,10 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
           componentMutableAttrs: emptyEditorComponentMutableAttrs,
           deleteComponentMutableAttr: (id: string) =>
             set(
-              (state: EditorTreeState) => {
-                const newComponentMutableAttrs = {
-                  ...state.componentMutableAttrs,
-                };
-                delete newComponentMutableAttrs[id];
-
-                return {
-                  componentMutableAttrs: newComponentMutableAttrs,
-                };
+              (state) => {
+                const { [id]: _, ...remainingAttrs } =
+                  state.componentMutableAttrs;
+                return { componentMutableAttrs: remainingAttrs };
               },
               false,
               "editorTree/deleteComponentMutableAttr",
