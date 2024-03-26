@@ -27,14 +27,6 @@ export const useTriggers = ({ entity }: UseTriggersProps) => {
   const triggers = () => {
     const actions: Action[] = entity?.actions ?? [];
 
-    const onSuccessActions: Action[] = actions.filter(
-      (action: Action) => action.trigger === "onSuccess",
-    );
-
-    const onErrorActions: Action[] = actions.filter(
-      (action: Action) => action.trigger === "onError",
-    );
-
     return actions.reduce(
       (acc, action: Action) => {
         if (nonDefaultActionTriggers.includes(action.trigger)) {
@@ -54,12 +46,6 @@ export const useTriggers = ({ entity }: UseTriggersProps) => {
               setActionsResponses,
               event: e,
               endpointResults: endpoints?.results ?? [],
-              onSuccess: onSuccessActions.find(
-                (sa) => sa.sequentialTo === action.id,
-              ),
-              onError: onErrorActions.find(
-                (ea) => ea.sequentialTo === action.id,
-              ),
               entity,
             });
           },

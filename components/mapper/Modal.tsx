@@ -11,7 +11,7 @@ import { forwardRef, memo } from "react";
 type Props = EditableComponentMapper & Omit<ModalProps, "opened">;
 
 export const ModalComponent = forwardRef(
-  ({ renderTree, component, ...props }: Props, ref) => {
+  ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
     const theme = useThemeStore((state) => state.theme);
     const isPreviewMode = useEditorTreeStore((state) => state.isPreviewMode);
     const iframeWindow = useEditorStore((state) => state.iframeWindow);

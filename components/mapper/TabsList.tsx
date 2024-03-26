@@ -7,7 +7,7 @@ import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 type Props = EditableComponentMapper & TabsListProps;
 
 const TabsListComponent = forwardRef(
-  ({ renderTree, component, ...props }: Props, ref) => {
+  ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
     const { children, tabVariant, disableLine, ...componentProps } =
       component.props as any;
 

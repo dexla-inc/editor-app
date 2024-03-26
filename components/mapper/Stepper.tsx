@@ -13,7 +13,7 @@ import { forwardRef, memo, useEffect, useState } from "react";
 type Props = EditableComponentMapper & StepperProps;
 
 const StepperComponent = forwardRef(
-  ({ renderTree, component, ...props }: Props, ref) => {
+  ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
     const {
       activeStep,
       breakpoint,

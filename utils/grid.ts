@@ -35,7 +35,7 @@ export const calculateGridSizes = (tree?: ComponentStructure) => {
                 useEditorTreeStore.getState().componentMutableAttrs[
                   childTree?.id!
                 ];
-              return child.name === "GridColumn";
+              return child?.name === "GridColumn";
             }) ?? [];
 
           const isAlone = sibilings.length === 1;

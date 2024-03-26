@@ -10,7 +10,10 @@ import { forwardRef, memo } from "react";
 type Props = EditableComponentMapper & FlexProps;
 
 export const CardComponent = forwardRef(
-  ({ renderTree, isPreviewMode, component, ...props }: Props, ref) => {
+  (
+    { renderTree, shareableContent, isPreviewMode, component, ...props }: Props,
+    ref,
+  ) => {
     const theme = useThemeStore((state) => state.theme);
 
     const cardStylingProps = getCardStyling(
@@ -28,7 +31,7 @@ export const CardComponent = forwardRef(
         component={component}
         {...props}
         style={customStyle}
-        shareableContent={props.shareableContent}
+        shareableContent={shareableContent}
       />
     );
   },

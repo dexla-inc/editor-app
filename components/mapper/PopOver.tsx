@@ -13,6 +13,7 @@ const PopOverComponent = ({
   renderTree,
   component,
   onClose: propOnClose,
+  shareableContent,
   ...props
 }: Props) => {
   const isPreviewMode = useEditorTreeStore((state) => state.isPreviewMode);

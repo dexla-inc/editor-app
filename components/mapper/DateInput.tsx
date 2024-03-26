@@ -16,6 +16,7 @@ const DateInputComponent = ({
   renderTree,
   component,
   isPreviewMode,
+  shareableContent,
   ...props
 }: Props) => {
   const {

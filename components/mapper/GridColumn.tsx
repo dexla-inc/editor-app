@@ -11,7 +11,7 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 type Props = EditableComponentMapper & BoxProps;
 
 const GridColumnComponent = forwardRef(
-  ({ renderTree, component, ...props }: Props, ref) => {
+  ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
     const isLive = useEditorTreeStore((state) => state.isLive);
     const isPreviewMode = useEditorTreeStore((state) => state.isPreviewMode);
     // @ts-ignore

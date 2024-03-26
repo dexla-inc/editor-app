@@ -15,7 +15,7 @@ import { ReactElement, forwardRef, memo } from "react";
 type Props = EditableComponentMapper & ActionIconProps & ReactElement<"Button">;
 
 const ButtonIconComponent = forwardRef(
-  ({ component, ...props }: Props, ref) => {
+  ({ component, shareableContent, ...props }: Props, ref) => {
     const {
       children,
       triggers,

@@ -8,9 +8,7 @@ import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 type Props = EditableComponentMapper & GridProps; // Using GridProps instead of FlexProps
 
 const AppBarComponent = forwardRef(
-  ({ renderTree, component, ...props }: Props, ref) => {
-    const { children, ...componentProps } = component.props as any;
-
+  ({ renderTree, shareableContent, component, ...props }: Props, ref) => {
     return (
       <Grid
         ref={ref}

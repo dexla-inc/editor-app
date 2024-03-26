@@ -12,6 +12,7 @@ const RadioItemComponent = ({
   renderTree,
   component,
   isPreviewMode,
+  shareableContent,
   ...props
 }: Props) => {
   const {

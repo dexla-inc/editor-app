@@ -13,6 +13,7 @@ const CardAndContainerWrapperInner = ({
   renderTree,
   component,
   ref,
+  shareableContent,
   ...props
 }: Props) => {
   const { children, bg, triggers, loading, dataType, gap, ...componentProps } =
@@ -46,7 +47,7 @@ const CardAndContainerWrapperInner = ({
             return component.children && component.children.length > 0
               ? component.children?.map((child) =>
                   renderTree(child, {
-                    ...props.shareableContent,
+                    ...shareableContent,
                     data: item,
                     parentIndex,
                   }),
@@ -62,14 +63,14 @@ const CardAndContainerWrapperInner = ({
                 ...child,
               },
               {
-                ...props.shareableContent,
+                ...shareableContent,
                 data,
               },
             ),
           )}
       {!endpointId && component.children && component.children.length > 0
         ? component.children?.map((child) =>
-            renderTree(child, props.shareableContent),
+            renderTree(child, shareableContent),
           )
         : children}
     </MantineFlex>
