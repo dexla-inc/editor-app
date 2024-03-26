@@ -7,6 +7,7 @@ import { structureMapper } from "@/utils/componentMapper";
 import { NAVBAR_WIDTH } from "@/utils/config";
 import {
   Component,
+  ComponentStructure,
   EditorTreeCopy,
   addComponent,
   debouncedTreeComponentAttrsUpdate,
@@ -58,9 +59,15 @@ export const useComponentContextMenu = () => {
     (component: Component, componentName: string) => {
       const container = structureMapper[componentName].structure({
         theme: editorTheme,
-      });
+      }) as ComponentStructure;
+
       const editorTree = useEditorTreeStore.getState().tree as EditorTreeCopy;
       const parent = getComponentParent(editorTree.root, component?.id!);
+
+      const componentToBeWrapped = getComponentTreeById(
+        editorTree.root,
+        component.id!,
+      )! as ComponentStructure;
 
       if (container.props && container.props.style) {
         container.props.style = {
@@ -68,6 +75,7 @@ export const useComponentContextMenu = () => {
           width: "auto",
           padding: "0px",
         };
+        container.children = [componentToBeWrapped];
       }
       const containerId = addComponent(
         editorTree.root,
@@ -79,12 +87,8 @@ export const useComponentContextMenu = () => {
         getComponentIndex(parent!, component.id!),
       );
 
-      addComponent(editorTree.root, component, {
-        id: containerId,
-        edge: "left",
-      });
-
       removeComponentFromParent(editorTree.root, component, parent?.id!);
+
       setEditorTree(editorTree, {
         action: `Wrapped ${component.name} with a Container`,
       });
