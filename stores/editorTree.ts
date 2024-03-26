@@ -2,6 +2,7 @@ import { updatePageState } from "@/requests/pages/mutations";
 import { PageStateParams } from "@/requests/pages/types";
 import { emptyEditorTree } from "@/utils/common";
 import { encodeSchema } from "@/utils/compression";
+import { GRID_SIZE } from "@/utils/config";
 import {
   Component,
   EditorTree,
@@ -11,6 +12,7 @@ import {
   updateTreeComponentAttrs,
   updateTreeComponentChildren,
 } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import { removeKeysRecursive } from "@/utils/removeKeys";
 import { createClient } from "@liveblocks/client";
 import { WithLiveblocks, liveblocks } from "@liveblocks/zustand";
@@ -25,6 +27,9 @@ const client = createClient({
   publicApiKey: process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY ?? "",
 });
 
+const initialGridValues = requiredModifiers.grid;
+const initialGridColumnValues = requiredModifiers.gridColumn;
+
 const emptyEditorComponentMutableAttrs = {
   root: {
     id: "root",
@@ -33,19 +38,35 @@ const emptyEditorComponentMutableAttrs = {
   },
   "content-wrapper": {
     id: "content-wrapper",
-    name: "Container",
+    name: "Grid",
     description: "Body",
     props: {
+      gridSize: GRID_SIZE,
+      ...initialGridValues,
       style: {
-        minHeight: "100vh",
+        ...initialGridValues.style,
+        gap: "0",
+        minHeight: "20px",
       },
     },
   },
   "main-content": {
     id: "main-content",
-    name: "Container",
+    name: "GridColumn",
     description: "Main Content",
-    props: {},
+    props: {
+      span: GRID_SIZE,
+      ...initialGridColumnValues,
+      style: {
+        ...initialGridColumnValues.style,
+        minHeight: "100vh",
+        paddingLeft: "0px",
+        paddingTop: "0px",
+        paddingRight: "0px",
+        paddingBottom: "0px",
+        backgroundSize: "contain",
+      },
+    },
   },
 };
 

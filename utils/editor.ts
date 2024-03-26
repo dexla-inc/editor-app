@@ -13,6 +13,7 @@ import merge from "lodash.merge";
 import pickBy from "lodash.pickby";
 import { nanoid } from "nanoid";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
+import { CSSProperties } from "react";
 import crawl from "tree-crawl";
 import { MantineThemeExtended } from "./types";
 
@@ -39,6 +40,10 @@ export type Component = {
   title?: string;
   props?: { [key: string]: any };
   blockDroppingChildrenInside?: boolean;
+  fixedPosition?: {
+    position: "left" | "top";
+    target: string;
+  };
   actions?: Action[];
   onLoad?: any;
   dataType?: "static" | "dynamic";
@@ -554,6 +559,27 @@ function objectsIntersect(
   return every(criteriaObject, (value, key) => get(obj, key) === value);
 }
 
+export const checkNavbarExists = (): boolean => {
+  const state = useEditorTreeStore.getState();
+
+  if (!state.tree || !state.tree.root) {
+    return false;
+  }
+
+  const rootChildren = state.tree.root.children;
+  if (
+    !rootChildren ||
+    rootChildren.length === 0 ||
+    !rootChildren[0].children ||
+    rootChildren[0].children.length === 0
+  ) {
+    return false;
+  }
+
+  const navbarName = rootChildren[0].children[0].name;
+  return navbarName === "Navbar";
+};
+
 export const getAllComponentsByName = (
   treeRoot: ComponentStructure,
   componentName: string | string[],
@@ -626,9 +652,16 @@ export const addComponent = (
   crawl(
     treeRoot,
     (node, context) => {
-      if (isNavbar && node.id === "content-wrapper") {
-        node.children = [copyComponentToAdd, ...(node.children || [])];
-        context.break();
+      if (isNavbar) {
+        const contentWrapper = treeRoot.children?.find(
+          (child) => child.id === "content-wrapper",
+        );
+        if (contentWrapper) {
+          contentWrapper.props = {
+            ...contentWrapper.props,
+            navbarWidth: copyComponentToAdd.props?.style.width,
+          };
+        }
       }
       if ((isGrid || isColumn) && node.id === dropTarget.id) {
         targetComponent = addNodeToTarget(
@@ -644,51 +677,69 @@ export const addComponent = (
 
         context.break();
       } else {
-        if (
-          directChildren.includes(copyComponentToAdd.name) &&
-          node.id === "content-wrapper"
-        ) {
-          node.children = [...(node.children || []), copyComponentToAdd];
-          context.break();
-        } else if (node.id === dropTarget.id) {
-          const isPopOver = copyComponentToAdd.name === "PopOver";
-          if (isPopOver) {
-            copyComponentToAdd.props!.targetId = node.id;
-            copyComponentToAdd.children = [
-              ...(copyComponentToAdd.children || []),
-              node,
-            ];
-            context.parent?.children?.splice(
-              context.index,
-              1,
-              copyComponentToAdd,
-            );
-          } else {
-            node.children = node.children ?? [];
-
-            if (isDuplicateAction) copyComponentToAddId = nanoid();
-
-            if (dropTarget.edge === "left" || dropTarget.edge === "top") {
-              const index = dropIndex ?? context.index - 1;
-              node.children.splice(index, 0, {
-                ...copyComponentToAdd,
-                id: copyComponentToAddId,
-              });
-            } else if (["right", "bottom"].includes(dropTarget.edge)) {
-              const index = dropIndex ?? context.index + 1;
-              node.children.splice(index, 0, {
-                ...copyComponentToAdd,
-                id: copyComponentToAddId,
-              });
-            } else if (dropTarget.edge === "center") {
-              node.children = [
-                ...(node.children || []),
-                { ...copyComponentToAdd, id: copyComponentToAddId },
-              ];
+        if (copyComponentToAdd.fixedPosition) {
+          if (node.id === copyComponentToAdd.fixedPosition.target) {
+            if (
+              copyComponentToAdd.fixedPosition.position === "left" ||
+              copyComponentToAdd.fixedPosition.position === "top"
+            ) {
+              node.children = [copyComponentToAdd, ...(node.children || [])];
+            } else if (
+              copyComponentToAdd.fixedPosition.position === "right" ||
+              copyComponentToAdd.fixedPosition.position === "bottom"
+            ) {
+              node.children = [...(node.children || []), copyComponentToAdd];
             }
-          }
 
-          context.break();
+            context.break();
+          }
+        } else {
+          if (
+            directChildren.includes(copyComponentToAdd.name) &&
+            node.id === "content-wrapper"
+          ) {
+            node.children = [...(node.children || []), copyComponentToAdd];
+            context.break();
+          } else if (node.id === dropTarget.id) {
+            const isPopOver = copyComponentToAdd.name === "PopOver";
+            if (isPopOver) {
+              copyComponentToAdd.props!.targetId = node.id;
+              copyComponentToAdd.children = [
+                ...(copyComponentToAdd.children || []),
+                node,
+              ];
+              context.parent?.children?.splice(
+                context.index,
+                1,
+                copyComponentToAdd,
+              );
+            } else {
+              node.children = node.children ?? [];
+
+              if (isDuplicateAction) copyComponentToAddId = nanoid();
+
+              if (dropTarget.edge === "left" || dropTarget.edge === "top") {
+                const index = dropIndex ?? context.index - 1;
+                node.children.splice(index, 0, {
+                  ...copyComponentToAdd,
+                  id: copyComponentToAddId,
+                });
+              } else if (["right", "bottom"].includes(dropTarget.edge)) {
+                const index = dropIndex ?? context.index + 1;
+                node.children.splice(index, 0, {
+                  ...copyComponentToAdd,
+                  id: copyComponentToAddId,
+                });
+              } else if (dropTarget.edge === "center") {
+                node.children = [
+                  ...(node.children || []),
+                  { ...copyComponentToAdd, id: copyComponentToAddId },
+                ];
+              }
+            }
+
+            context.break();
+          }
         }
       }
     },
@@ -789,6 +840,52 @@ export const getColorFromTheme = (
   return index !== undefined && colorSection
     ? colorSection[Number(index)]
     : section;
+};
+
+export const componentStyleMapper = (
+  componentName: string,
+  { style }: { style: CSSProperties },
+) => {
+  const { background, backgroundColor, color, ...rest } = style;
+  const result = merge({}, { style: rest });
+
+  if (componentName === "Button") {
+    merge(result, {
+      color: background ?? backgroundColor,
+      textColor: color,
+    });
+  }
+
+  if (
+    ["Container", "NavLink", "Icon", "RadioItem", "Navbar", "AppBar"].includes(
+      componentName,
+    )
+  ) {
+    merge(result, {
+      bg: background ?? backgroundColor,
+    });
+  }
+
+  if ("NavLink" === componentName) {
+    merge(result, {
+      align: rest.textAlign,
+      color,
+    });
+  }
+
+  if (
+    ["Text", "Checkbox", "Divider", "Button", "Select", "Input"].includes(
+      componentName,
+    )
+  ) {
+    merge(result, {
+      color,
+      size: rest.fontSize,
+      weight: rest.fontWeight,
+    });
+  }
+
+  return result;
 };
 
 const addNodeToTarget = (
