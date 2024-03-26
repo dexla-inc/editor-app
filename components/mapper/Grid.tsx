@@ -1,13 +1,15 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { isSame } from "@/utils/componentComparison";
+import { structureMapper } from "@/utils/componentMapper";
 import { GRID_SIZE } from "@/utils/config";
 import { convertSizeToPx } from "@/utils/defaultSizes";
-import { EditableComponentMapper } from "@/utils/editor";
+import { EditableComponentMapper, checkNavbarExists } from "@/utils/editor";
 import { calculateGridSizes } from "@/utils/grid";
 import { Box, BoxProps, MantineSize, useMantineTheme } from "@mantine/core";
 import { usePrevious } from "@mantine/hooks";
 import { forwardRef, memo, useEffect } from "react";
+import { getAllComponentsByName } from "../../utils/editor";
 
 export type GridProps = EditableComponentMapper & BoxProps;
 
@@ -25,7 +27,14 @@ const GridComponent = forwardRef(
     } = component.props!;
 
     const isColumns = gridDirection === "column";
-    const gridTemplate = `repeat(${gridSize ?? GRID_SIZE}, 1fr)`;
+    const defaultGridTemplate = `repeat(${gridSize ?? GRID_SIZE}, 1fr)`;
+
+    let gridTemplate = defaultGridTemplate;
+    if (navbarWidth !== undefined && component.id === "content-wrapper") {
+      const navbarExists = checkNavbarExists();
+
+      if (navbarExists) gridTemplate = `${navbarWidth} ${defaultGridTemplate}`;
+    }
 
     const gapValue = convertSizeToPx(
       gap ?? (theme.spacing.xs as MantineSize),
@@ -42,8 +51,8 @@ const GridComponent = forwardRef(
 
     return (
       <Box
+        // @ts-ignore
         ref={ref}
-        unstyled
         display="grid"
         {...componentProps}
         {...props}
@@ -53,8 +62,8 @@ const GridComponent = forwardRef(
           ...style,
           gap: gapValue,
           ...(isColumns
-            ? { gridTemplateColumns: gridTemplate }
-            : { gridTemplateRows: gridTemplate }),
+            ? { gridTemplateColumns: gridTemplate ?? defaultGridTemplate }
+            : { gridTemplateRows: gridTemplate ?? defaultGridTemplate }),
         }}
       >
         {component.children &&

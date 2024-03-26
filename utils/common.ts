@@ -204,11 +204,11 @@ export const emptyEditorTree = {
     children: [
       {
         id: "content-wrapper",
-        name: "Container",
+        name: "Grid",
         children: [
           {
             id: "main-content",
-            name: "Container",
+            name: "GridColumn",
           },
         ],
       },
