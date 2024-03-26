@@ -30,6 +30,9 @@ export const useEditorHotkeys = () => {
     (state) => state.setCopiedComponent,
   );
   const setEditorTree = useEditorTreeStore((state) => state.setTree);
+  const deleteComponentMutableAttr = useEditorTreeStore(
+    (state) => state.deleteComponentMutableAttr,
+  );
 
   const deleteComponent = useCallback(() => {
     const selectedComponentIds =
@@ -88,6 +91,7 @@ export const useEditorHotkeys = () => {
             parentTree.id!,
           );
         }
+        deleteComponentMutableAttr(selectedComponentId);
         if (targetModal) {
           setSelectedComponentIds(() => [targetModal.id!]);
         } else {
@@ -99,7 +103,13 @@ export const useEditorHotkeys = () => {
         });
       });
     }
-  }, [isPreviewMode, editorTree, setSelectedComponentIds, setEditorTree]);
+  }, [
+    isPreviewMode,
+    editorTree,
+    deleteComponentMutableAttr,
+    setEditorTree,
+    setSelectedComponentIds,
+  ]);
 
   const copySelectedComponent = useCallback(() => {
     const selectedComponentId = useEditorTreeStore
