@@ -25,7 +25,7 @@ const FormComponent = forwardRef(
     const { onSubmit, ...otherTriggers } = triggers || {};
     const { style, ...otherProps } = props as any;
     const gapPx = convertSizeToPx(gap, "gap");
-    const setState = useEditorTreeStore(
+    const setTreeComponentCurrentState = useEditorTreeStore(
       (state) => state.setTreeComponentCurrentState,
     );
     const getInputValue = useInputsStore((state) => state.getValue);
@@ -88,7 +88,7 @@ const FormComponent = forwardRef(
 
       if (invalidComponents.length) {
         submitButtonComponents.map((component) => {
-          setState(component.id!, "disabled");
+          setTreeComponentCurrentState(component.id!, "disabled");
         });
       }
 

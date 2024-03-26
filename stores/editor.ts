@@ -1,9 +1,7 @@
-import { NodeData } from "@/components/logic-flow/nodes/CustomNode";
 import { SectionId } from "@/components/navbar/EditorNavbarSections";
 import { PageResponse } from "@/requests/pages/types";
 import { Action } from "@/utils/actions";
 import { ComponentStructure, ComponentTree } from "@/utils/editor";
-import { Node } from "reactflow";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 
@@ -80,7 +78,7 @@ export type EditorState = {
 export const useEditorStore = create<EditorState>()(
   // @ts-ignore
   devtools(
-    (set, get) => ({
+    (set) => ({
       setActivePage: async (activePage) =>
         set({ activePage }, false, "editor/setActivePage"),
       collapsedItemsCount: 0,

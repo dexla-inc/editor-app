@@ -7,6 +7,7 @@ import {
   Component,
   EditorTree,
   EditorTreeCopy,
+  getTreeAttrs,
   getTreeComponentMutableProps,
   recoverTreeComponentAttrs,
   updateTreeComponentAttrs,
@@ -161,6 +162,22 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
           setTree: (tree, options) => {
             set(
               (state: EditorTreeState) => {
+                const newTree = getTreeAttrs(tree);
+                const newComponentMutableAttrs = getTreeComponentMutableProps(
+                  tree.root,
+                );
+
+                const updatedComponentMutableAttrs = merge(
+                  {},
+                  state.componentMutableAttrs,
+                  newComponentMutableAttrs,
+                );
+
+                const treeWithRecoveredAttrs = recoverTreeComponentAttrs(
+                  cloneDeep(newTree),
+                  updatedComponentMutableAttrs,
+                );
+
                 // TODO: Look into why the previous history appears when refreshing page
                 if (
                   !options?.onLoad &&
@@ -169,7 +186,7 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                   !options?.skipSave
                 ) {
                   debouncedUpdatePageState(
-                    encodeSchema(JSON.stringify(tree)),
+                    encodeSchema(JSON.stringify(treeWithRecoveredAttrs)),
                     state.currentProjectId ?? "",
                     state.currentPageId ?? "",
                     state.setIsSaving,
@@ -179,25 +196,15 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                   );
                 }
 
-                const newComponentMutableAttrs = getTreeComponentMutableProps(
-                  tree.root,
-                );
-
-                const newState = {
+                return {
                   ...state,
                   tree: {
-                    ...tree,
+                    ...newTree,
                     name: options?.action || "Generic move",
                     timestamp: Date.now(),
                   },
-                  componentMutableAttrs: merge(
-                    {},
-                    state.componentMutableAttrs,
-                    newComponentMutableAttrs,
-                  ),
+                  componentMutableAttrs: updatedComponentMutableAttrs,
                 };
-
-                return newState;
               },
               false,
               "editorTree/setTree",

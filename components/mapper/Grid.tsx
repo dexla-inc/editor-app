@@ -1,7 +1,6 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { isSame } from "@/utils/componentComparison";
-import { structureMapper } from "@/utils/componentMapper";
 import { GRID_SIZE } from "@/utils/config";
 import { convertSizeToPx } from "@/utils/defaultSizes";
 import { EditableComponentMapper, checkNavbarExists } from "@/utils/editor";
@@ -9,14 +8,13 @@ import { calculateGridSizes } from "@/utils/grid";
 import { Box, BoxProps, MantineSize, useMantineTheme } from "@mantine/core";
 import { usePrevious } from "@mantine/hooks";
 import { forwardRef, memo, useEffect } from "react";
-import { getAllComponentsByName } from "../../utils/editor";
 
 export type GridProps = EditableComponentMapper & BoxProps;
 
 const GridComponent = forwardRef(
   ({ renderTree, component, shareableContent, ...props }: GridProps, ref) => {
     const theme = useMantineTheme();
-    const setEditorTree = useEditorTreeStore((state) => state.setTree);
+    const editorTree = useEditorTreeStore((state) => state.tree);
     const {
       style = {},
       gridSize,
@@ -44,10 +42,11 @@ const GridComponent = forwardRef(
 
     useEffect(() => {
       if (prevGapValue !== gapValue) {
-        calculateGridSizes();
+        calculateGridSizes(editorTree.root);
+        // TODO: needs setTree?
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [gapValue, prevGapValue, setEditorTree]);
+    }, [gapValue, prevGapValue]);
 
     return (
       <Box

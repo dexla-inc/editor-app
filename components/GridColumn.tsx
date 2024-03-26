@@ -4,6 +4,7 @@ import {
   EditorTreeCopy,
   getComponentIndex,
   getComponentParent,
+  getComponentTreeById,
 } from "@/utils/editor";
 import { calculateGridSizes } from "@/utils/grid";
 import { Box, Text, px, useMantineTheme } from "@mantine/core";
@@ -231,6 +232,8 @@ export const GridColumn = forwardRef(
           {...(!isPreviewMode
             ? {
                 onResizeStop: async () => {
+                  const editorTree = useEditorTreeStore.getState()
+                    .tree as EditorTreeCopy;
                   const updateTreeComponentAttrs =
                     useEditorTreeStore.getState().updateTreeComponentAttrs;
 
@@ -255,22 +258,24 @@ export const GridColumn = forwardRef(
                       },
                     });
 
-                    const nextSiblingComp =
-                      useEditorTreeStore.getState().componentMutableAttrs[
-                        nextSibling.id!
-                      ];
+                    const nextSiblingComp = getComponentTreeById(
+                      editorTree.root,
+                      nextSibling.id!,
+                    );
                     if (nextSiblingComp) {
                       calculateGridSizes(nextSiblingComp);
                     }
                   }
 
-                  const component =
-                    useEditorTreeStore.getState().componentMutableAttrs[
-                      props.id!
-                    ];
+                  const component = getComponentTreeById(
+                    editorTree.root,
+                    props.id!,
+                  );
                   if (component) {
                     calculateGridSizes(component);
                   }
+
+                  // TODO: needs setTree?
 
                   setIsResizing(false);
                 },

@@ -16,6 +16,7 @@ import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { CSSProperties } from "react";
 import crawl from "tree-crawl";
 import { MantineThemeExtended } from "./types";
+import { pick } from "next/dist/lib/pick";
 
 export type ComponentStructure = {
   children?: ComponentStructure[];
@@ -33,6 +34,7 @@ export type EditableComponentMapper = {
 type ComponentBase = {
   id?: string;
   name: string;
+  blockDroppingChildrenInside?: boolean;
 };
 
 export type Component = {
@@ -468,6 +470,30 @@ export const recoverTreeComponentAttrs = (
   return tree;
 };
 
+export const getTreeAttrs = (tree: EditorTreeCopy) => {
+  const treeCopy = cloneDeep(tree);
+  crawl(
+    treeCopy.root,
+    (node, context) => {
+      node = pick(node, [
+        "id",
+        "name",
+        "children",
+        "blockDroppingChildrenInside",
+      ]);
+
+      if (context.parent?.children) {
+        context.parent.children[context.index] = node;
+      }
+
+      context.replace(node);
+    },
+    { order: "bfs" },
+  );
+
+  return treeCopy;
+};
+
 export const getTreeComponentMutableProps = (treeRoot: Component) => {
   const newComponentMutableAttrs: Record<string, any> = {};
   crawl(
@@ -593,12 +619,13 @@ export const getAllComponentsByName = (
 
   crawl(
     treeRoot,
-    (node) => {
-      if (
-        componentName.includes(node.name) &&
-        objectsIntersect(node.props!, propCriterias)
-      ) {
-        components.push(node);
+    (nodeTree) => {
+      if (componentName.includes(nodeTree.name)) {
+        const node =
+          useEditorTreeStore.getState().componentMutableAttrs[nodeTree.id!];
+        if (objectsIntersect(node.props!, propCriterias)) {
+        }
+        components.push(nodeTree);
       }
     },
     { order: "bfs" },
@@ -651,7 +678,7 @@ export const addComponent = (
 
   crawl(
     treeRoot,
-    (node, context) => {
+    async (node, context) => {
       if (isNavbar) {
         const contentWrapper = treeRoot.children?.find(
           (child) => child.id === "content-wrapper",
@@ -664,7 +691,7 @@ export const addComponent = (
         }
       }
       if ((isGrid || isColumn) && node.id === dropTarget.id) {
-        targetComponent = addNodeToTarget(
+        targetComponent = await addNodeToTarget(
           treeRoot,
           node,
           copyComponentToAdd,
@@ -888,67 +915,76 @@ export const componentStyleMapper = (
   return result;
 };
 
-const addNodeToTarget = (
-  treeRoot: ComponentStructure,
-  targetNode: ComponentStructure,
-  copy: ComponentStructure,
-  context: crawl.Context<ComponentStructure>,
+const addNodeToTarget = async (
+  treeRoot: ComponentTree,
+  targetNodeTree: ComponentTree,
+  componentToAdd: ComponentStructure,
+  context: crawl.Context<ComponentTree>,
   dropTarget: DropTarget,
   isMoving?: boolean,
   forceTarget?: boolean,
   dropIndex?: number,
-) => {
-  const parent = context.parent as ComponentStructure;
+): Promise<ComponentTree | undefined> => {
+  const parentTree = context.parent!;
   const isAddingToXAxis =
     dropTarget.edge === "left" || dropTarget.edge === "right";
   const isAddingToYAxis =
     dropTarget.edge === "top" || dropTarget.edge === "bottom";
-  let target =
+  let targetTree =
     isAddingToXAxis || isAddingToYAxis
       ? forceTarget
-        ? targetNode
-        : parent
-      : targetNode;
+        ? targetNodeTree
+        : parentTree!
+      : targetNodeTree;
+  const updateTreeComponentAttrs =
+    useEditorTreeStore.getState().updateTreeComponentAttrs;
 
   if (dropTarget.edge === "center") {
-    targetNode.children = [...(targetNode.children || []), copy];
+    targetNodeTree.children = [
+      ...(targetNodeTree.children || []),
+      componentToAdd,
+    ];
 
-    copy.props!.resized = false;
-    copy.children = copy.children?.map((child) => {
+    componentToAdd.props!.resized = false;
+    componentToAdd.children = componentToAdd.children?.map((child) => {
       child.props!.resized = false;
       return child;
     });
 
-    if (copy.props?.resetTargetResized && !isMoving) {
-      target.props!.resized = false;
-      target.children = target.children?.map((child) => {
-        child.props!.resized = false;
-        return child;
+    if (componentToAdd.props?.resetTargetResized && !isMoving) {
+      await updateTreeComponentAttrs({
+        componentIds: [
+          targetTree?.id!,
+          ...(targetTree?.children?.map((child) => child.id!) ?? []),
+        ],
+        attrs: { props: { resized: false } },
       });
     }
 
-    return target;
+    return targetTree;
   }
-  const shouldRemoveResizing = target.name === "Grid" && isAddingToXAxis;
+  const shouldRemoveResizing = targetTree.name === "Grid" && isAddingToXAxis;
 
   if (shouldRemoveResizing) {
-    copy.props!.resized = false;
-    target.children = target.children?.map((child) => {
-      child.props!.resized = false;
-      return child;
+    await updateTreeComponentAttrs({
+      componentIds: [
+        componentToAdd?.id!,
+        ...(targetTree?.children?.map((child) => child.id!) ?? []),
+      ],
+      attrs: { props: { resized: false } },
     });
   }
 
   if (dropTarget.edge === "top") {
-    if (targetNode.name === "GridColumn" && !forceTarget) {
-      target = getComponentParent(treeRoot, parent.id!)!;
-      dropIndex = getComponentIndex(target, parent.id!);
+    if (targetNodeTree.name === "GridColumn" && !forceTarget) {
+      targetTree = getComponentParent(treeRoot, parentTree.id!)!;
+      dropIndex = getComponentIndex(targetTree, parentTree.id!);
     }
 
     if (isMoving) {
       const dropTargetParent = getComponentParent(treeRoot, dropTarget.id!);
-      const items = (target?.children?.map((c) => c.id) ?? []) as string[];
-      const oldIndex = items.indexOf(copy.id!);
+      const items = (targetTree?.children?.map((c) => c.id) ?? []) as string[];
+      const oldIndex = items.indexOf(componentToAdd.id!);
       let newIndex = items.indexOf(dropTargetParent?.id!);
 
       if (newIndex > oldIndex) {
@@ -957,7 +993,7 @@ const addNodeToTarget = (
 
       if (oldIndex !== newIndex) {
         const newPositions = arrayMove(items, oldIndex, newIndex);
-        target!.children = parent?.children?.sort((a, b) => {
+        targetTree!.children = parentTree?.children?.sort((a, b) => {
           const aIndex = newPositions.indexOf(a.id as string);
           const bIndex = newPositions.indexOf(b.id as string);
           return aIndex - bIndex;
@@ -973,19 +1009,19 @@ const addNodeToTarget = (
       target.children?.splice(i, 0, copy);
     }
 
-    return target;
+    return targetTree;
   }
 
   if (dropTarget.edge === "bottom") {
-    if (targetNode.name === "GridColumn" && !forceTarget) {
-      target = getComponentParent(treeRoot, parent.id!)!;
-      dropIndex = getComponentIndex(target, parent.id!) + 1;
+    if (targetNodeTree.name === "GridColumn" && !forceTarget) {
+      targetTree = getComponentParent(treeRoot, parentTree.id!)!;
+      dropIndex = getComponentIndex(targetTree, parentTree.id!) + 1;
     }
 
     if (isMoving) {
       const dropTargetParent = getComponentParent(treeRoot, dropTarget.id!);
-      const items = (target?.children?.map((c) => c.id) ?? []) as string[];
-      const oldIndex = items.indexOf(copy.id!);
+      const items = (targetTree?.children?.map((c) => c.id) ?? []) as string[];
+      const oldIndex = items.indexOf(componentToAdd.id!);
       let newIndex = items.indexOf(dropTargetParent?.id!);
 
       if (newIndex < oldIndex) {
@@ -994,7 +1030,7 @@ const addNodeToTarget = (
 
       if (oldIndex !== newIndex) {
         const newPositions = arrayMove(items, oldIndex, newIndex);
-        target!.children = parent?.children?.sort((a, b) => {
+        targetTree!.children = parentTree?.children?.sort((a, b) => {
           const aIndex = newPositions.indexOf(a.id as string);
           const bIndex = newPositions.indexOf(b.id as string);
           return aIndex - bIndex;
@@ -1006,10 +1042,10 @@ const addNodeToTarget = (
         i = context.index + 1;
       }
 
-      target.children?.splice(i!, 0, copy);
+      targetTree.children?.splice(i!, 0, componentToAdd);
     }
 
-    return target;
+    return targetTree;
   }
 
   const gridColumn = {
@@ -1024,7 +1060,7 @@ const addNodeToTarget = (
         outlineOffset: "-2px",
       },
     },
-    children: [copy],
+    children: [componentToAdd],
   } as Component;
 
   if (dropTarget.edge === "left") {
@@ -1052,11 +1088,11 @@ export const moveComponent = (
   let targetComponent = null;
   crawl(
     treeRoot,
-    (node, context) => {
+    async (node, context) => {
       if (node.id === componentToAdd.id) {
         const isGrid = node.name === "Grid";
         if (isGrid) {
-          targetComponent = addNodeToTarget(
+          targetComponent = await addNodeToTarget(
             treeRoot,
             context.parent!,
             node,
@@ -1115,7 +1151,7 @@ export const moveComponentToDifferentParent = (
 
   crawl(
     treeRoot,
-    (node, context) => {
+    async (node, context) => {
       if (node.id === newParentId) {
         if (isGrid) {
           const isHorizontalAxis =
@@ -1124,7 +1160,7 @@ export const moveComponentToDifferentParent = (
             (c) => c.id === dropTarget.id,
           ) as number;
 
-          targetComponent = addNodeToTarget(
+          targetComponent = await addNodeToTarget(
             treeRoot,
             node,
             componentToAdd,

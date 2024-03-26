@@ -25,6 +25,7 @@ export const jsonStructure = (props?: any): ComponentStructure => {
           span: GRID_SIZE / 2,
           ...initialGridColumnValues,
         },
+        children: [],
       },
       {
         id: nanoid(),
@@ -34,6 +35,7 @@ export const jsonStructure = (props?: any): ComponentStructure => {
           span: GRID_SIZE / 2,
           ...initialGridColumnValues,
         },
+        children: [],
       },
     ],
   };

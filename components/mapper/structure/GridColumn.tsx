@@ -15,5 +15,6 @@ export const jsonStructure = (props?: any): ComponentStructure => {
       ...initialValues,
       ...(props.props || {}),
     },
+    children: [],
   };
 };
