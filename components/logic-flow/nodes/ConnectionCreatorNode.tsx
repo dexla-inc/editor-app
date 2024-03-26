@@ -49,7 +49,7 @@ export const ConnectionCreatorNode = (
     const newActionNode = {
       id: actionId,
       type: "actionNode",
-      position: { x: node.xPos - 30, y: node.yPos },
+      position: { x: node.xPos - 52.5, y: node.yPos },
       data: {
         label: "Action",
         form: { action: actionName },
@@ -90,7 +90,7 @@ export const ConnectionCreatorNode = (
     const newConditionalNode = {
       id: conditionalId,
       type: "conditionalNode",
-      position: { x: node.xPos - 30, y: node.yPos },
+      position: { x: node.xPos - 52.5, y: node.yPos },
       data: {
         label: "Conditional",
         description: "Execute actions conditionally",
@@ -186,7 +186,7 @@ export const ConnectionCreatorNode = (
         );
       })}
       <Stack w="100%" h="100%" justify="center" align="center">
-        <Popover withinPortal withArrow>
+        <Popover withinPortal withArrow position="right">
           <Popover.Target>
             <ActionIcon>
               <IconPlus size="10px" />

@@ -5,13 +5,12 @@ import {
   LogicFlowParams,
   LogicFlowResponse,
 } from "@/requests/logicflows/types";
-import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { FlowData, useFlowStore } from "@/stores/flow";
 import { actionMapper } from "@/utils/actions";
 import { LOGICFLOW_BACKGROUND } from "@/utils/branding";
 import { decodeSchema, encodeSchema } from "@/utils/compression";
-import { ASIDE_WIDTH, HEADER_HEIGHT, NAVBAR_WIDTH } from "@/utils/config";
+import { ASIDE_WIDTH, HEADER_HEIGHT } from "@/utils/config";
 import { convertToPatchParams } from "@/utils/dashboardTypes";
 import { nodesData } from "@/utils/logicFlows";
 import { removeKeysRecursive } from "@/utils/removeKeys";
@@ -259,7 +258,7 @@ export const LogicFlowsPage = ({ flow }: Props) => {
       <Box
         ref={reactFlowWrapper}
         style={{
-          width: `calc(100vw - ${NAVBAR_WIDTH}px - ${ASIDE_WIDTH}px)`,
+          width: `calc(100vw - 200px - ${ASIDE_WIDTH}px)`,
           height: `calc(100vh - ${HEADER_HEIGHT}px)`,
           backgroundColor: LOGICFLOW_BACKGROUND,
         }}

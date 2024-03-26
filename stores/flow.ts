@@ -78,7 +78,7 @@ export type FlowState = {
 };
 
 const edgeProps: Partial<Edge> = {
-  type: "smoothstep",
+  type: "straight",
 };
 
 const addNodeId = nanoid();
@@ -103,13 +103,13 @@ export const initialNodes = [
       inputs: [{ id: nanoid() }],
       outputs: [],
     },
-    position: { x: 20, y: 100 },
+    position: { x: 17.5, y: 100 },
     deletable: false,
   },
 ] as Node[];
 
 export const initialEdges = [
-  { id: nanoid(), source: "start-node", target: addNodeId, type: "smoothstep" },
+  { id: nanoid(), source: "start-node", target: addNodeId, type: "straight" },
 ] as Edge[];
 
 export const useFlowStore = create<FlowState>()(

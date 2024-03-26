@@ -7,10 +7,10 @@ import { MutableRefObject, useCallback } from "react";
 import ReactFlow, {
   Background,
   Controls,
+  Node,
   getConnectedEdges,
   getIncomers,
   getOutgoers,
-  Node,
   useReactFlow,
 } from "reactflow";
 import "reactflow/dist/style.css";
@@ -36,64 +36,33 @@ export const LogicFlow = ({ wrapperRef }: FlowProps) => {
   const {
     nodes,
     edges,
-    flowInstance,
     onNodesChange,
     onEdgesChange,
     onConnect,
     setFlowInstance,
-    onAddNode,
-    setIsDragging,
     setSelectedNode,
   } = useFlowStore(selector);
   const { setEdges } = useReactFlow();
+  const rect = wrapperRef.current?.getBoundingClientRect();
+  const defaultViewport = { zoom: 2, x: (rect?.width ?? 1000) / 2, y: 0 };
 
-  const onDragOver = useCallback((event: any) => {
-    event.preventDefault();
-    event.dataTransfer.dropEffect = "move";
-  }, []);
+  const onNodesPositionChange = (deletedNode: Node, nodes: Node[]) => {
+    // Get all nodes that are below the deleted node
+    const nodesBelow = nodes
+      .filter((n) => n.position.y > deletedNode.position.y)
+      .sort((a, b) => a.position.y - b.position.y)
+      .map((n) => ({
+        ...n,
+        position: { ...n.position, y: n.position.y - 90 },
+      }));
 
-  const onDrop = useCallback(
-    (event: any) => {
-      event.preventDefault();
-
-      const reactFlowBounds = wrapperRef.current?.getBoundingClientRect();
-      const { type, data, id } = JSON.parse(
-        event.dataTransfer.getData("application/reactflow"),
-      );
-
-      // check if the dropped element is valid
-      if (
-        typeof type === "undefined" ||
-        !type ||
-        !reactFlowBounds ||
-        !flowInstance
-      ) {
-        return;
-      }
-
-      const position = flowInstance?.project({
-        x: event.clientX - reactFlowBounds.left,
-        y: event.clientY - reactFlowBounds.top,
-      });
-
-      const newNode = {
-        id,
-        type,
-        position,
-        data: {
-          ...data,
-          inputs: data.inputs.map((input: any) => ({ ...input, id: nanoid() })),
-          outputs: data.outputs.map((output: any) => ({
-            ...output,
-            id: nanoid(),
-          })),
-        },
-      };
-
-      onAddNode(newNode as Node);
-    },
-    [flowInstance, onAddNode, wrapperRef],
-  );
+    onNodesChange(
+      nodesBelow.map((node) => ({
+        ...node,
+        type: "position",
+      })),
+    );
+  };
 
   const onNodesDelete = useCallback(
     (deleted: Node[]) => {
@@ -101,7 +70,9 @@ export const LogicFlow = ({ wrapperRef }: FlowProps) => {
         deleted.reduce((acc, node) => {
           const incomers = getIncomers(node, nodes, edges);
           const outgoers = getOutgoers(node, nodes, edges);
+
           const connectedEdges = getConnectedEdges([node], edges);
+          onNodesPositionChange(node, nodes);
 
           const remainingEdges = acc.filter(
             (edge) => !connectedEdges.includes(edge),
@@ -112,7 +83,7 @@ export const LogicFlow = ({ wrapperRef }: FlowProps) => {
               id: nanoid(),
               source,
               target,
-              type: "smoothstep",
+              type: "straight",
             })),
           );
 
@@ -128,31 +99,24 @@ export const LogicFlow = ({ wrapperRef }: FlowProps) => {
     <ReactFlow
       nodes={nodes}
       edges={edges}
+      nodesDraggable={false}
+      zoomOnScroll={false}
       onInit={setFlowInstance}
       onConnect={onConnect}
       onNodesChange={onNodesChange}
       onNodesDelete={onNodesDelete}
-      onNodeDragStart={(e, node) => {
-        setIsDragging(true);
-        if (node.type === "connectionCreatorNode") {
-          setSelectedNode(undefined);
-        }
-      }}
       onNodeClick={(e, node) => {
         if (node.type !== "connectionCreatorNode") {
           setSelectedNode(node);
         }
       }}
-      onNodeDragStop={() => {
-        setIsDragging(false);
-      }}
       onEdgesChange={onEdgesChange}
-      onDragOver={onDragOver}
-      onDrop={onDrop}
       nodeTypes={nodeTypes}
-      fitView
       deleteKeyCode={["Backspace", "Delete"]}
       selectionOnDrag
+      panOnDrag={false}
+      panOnScroll
+      defaultViewport={defaultViewport}
     >
       <Controls showInteractive={false} />
       <Background />
