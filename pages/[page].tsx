@@ -100,7 +100,7 @@ function LivePage({ project, faviconUrl, deploymentPage }: Props) {
       setIsLive(true);
 
       const loadFonts = async () => {
-        await initializeFonts();
+        await initializeFonts(theme.fontFamily, theme.headings.fontFamily);
       };
 
       loadFonts();

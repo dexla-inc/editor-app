@@ -1,7 +1,7 @@
 import Editor from "@/components/Editor";
 import { withPageOnLoad } from "@/hoc/withPageOnLoad";
 import { GetServerSidePropsContext } from "next";
-import { memo, useEffect } from "react";
+import { memo } from "react";
 import { listVariables } from "@/requests/variables/queries-noauth";
 import { useVariableStore } from "@/stores/variables";
 import { getDataSourceEndpoints } from "@/requests/datasources/queries-noauth";
@@ -12,7 +12,6 @@ import { queryClient } from "@/utils/reactQuery";
 import { ProjectResponse } from "@/requests/projects/types";
 import { useThemeStore } from "@/stores/theme";
 import { prepareUserThemeLive } from "@/hooks/prepareUserThemeLive";
-import { initializeFonts } from "@/utils/webfontloader";
 
 export const getServerSideProps = async ({
   query,

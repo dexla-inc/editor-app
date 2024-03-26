@@ -21,7 +21,13 @@ const AlertComponent = forwardRef(
       <MantineAlert
         ref={ref}
         {...(icon && {
-          icon: <Icon name={icon} color={iconColorHex[iconColor]} />,
+          icon: (
+            <Icon
+              name={icon}
+              // @ts-ignore
+              color={iconColorHex}
+            />
+          ),
         })}
         {...props}
         {...componentProps}

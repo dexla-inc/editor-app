@@ -1,10 +1,17 @@
-export const initializeFonts = async () => {
+export const initializeFonts = async (
+  defaultFontFamily: string | undefined,
+  headingsFontFamily: string | undefined,
+) => {
   if (typeof window !== "undefined") {
-    // Dynamically import the webfontloader module
+    console.log(defaultFontFamily, headingsFontFamily);
+    const fallbackFont = "Open Sans";
     const WebFont = (await import("webfontloader")).default;
     WebFont.load({
       google: {
-        families: ["Open Sans", "Other Font Families Here"],
+        families: [
+          defaultFontFamily ?? fallbackFont,
+          headingsFontFamily ?? fallbackFont,
+        ],
       },
     });
   }
