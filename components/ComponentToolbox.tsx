@@ -26,7 +26,6 @@ import { Group, Text, Tooltip, UnstyledButton } from "@mantine/core";
 import { IconGripVertical } from "@tabler/icons-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { useDisclosure } from "@mantine/hooks";
 
 type Props = {
   component: Component;
