@@ -54,6 +54,9 @@ export const useComponentContextMenu = () => {
   const setSelectedComponentIds = useEditorTreeStore(
     (state) => state.setSelectedComponentIds,
   );
+  const deleteComponentMutableAttr = useEditorTreeStore(
+    (state) => state.deleteComponentMutableAttr,
+  );
 
   const wrapIn = useCallback(
     (component: Component, componentName: string) => {
@@ -110,9 +113,10 @@ export const useComponentContextMenu = () => {
         const editorTree = useEditorTreeStore.getState().tree as EditorTreeCopy;
         removeComponent(editorTree.root, component.id);
         setEditorTree(editorTree, { action: `Removed ${component?.name}` });
+        deleteComponentMutableAttr(component.id);
       }
     },
-    [setEditorTree],
+    [deleteComponentMutableAttr, setEditorTree],
   );
 
   const duplicateComponent = useCallback(
