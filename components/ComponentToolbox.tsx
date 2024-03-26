@@ -26,7 +26,6 @@ import { Group, Text, Tooltip, UnstyledButton } from "@mantine/core";
 import { IconGripVertical } from "@tabler/icons-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { useDisclosure } from "@mantine/hooks";
 
 type Props = {
   component: Component;
@@ -111,8 +110,7 @@ export const ComponentToolbox = ({ component }: Props) => {
 
   const haveNonRootParent = parentTree && parentTree.id !== "root";
 
-  const canMove =
-    !component.fixedPosition && !blockedToolboxActions.includes("move");
+  const canMove = !blockedToolboxActions.includes("move");
   const canWrapWithContainer = !blockedToolboxActions.includes(
     "wrap-with-container",
   );

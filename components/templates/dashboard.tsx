@@ -468,7 +468,6 @@ export const template = async (
               id: nanoid(),
               name: "AppBar",
               description: "AppBar",
-              fixedPosition: { position: "top", target: "content-wrapper" },
               props: {
                 style: {
                   ...defaultBorderValues,
