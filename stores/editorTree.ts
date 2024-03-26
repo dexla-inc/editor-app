@@ -91,6 +91,7 @@ export type EditorTreeState = {
   }) => Promise<void>;
   historyCount: number | null;
   setHistoryCount: (count: number | null) => void;
+  pageLoadTree?: EditorTree;
   pageLoadTimestamp: number;
   setPageLoadTimestamp: (value: number | null) => void;
   currentUser?: User;
@@ -185,6 +186,7 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
 
                 const newState = {
                   ...state,
+                  pageLoadTree: state.pageLoadTree || tree,
                   tree: {
                     ...tree,
                     name: options?.action || "Generic move",
