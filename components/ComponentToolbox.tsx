@@ -110,8 +110,7 @@ export const ComponentToolbox = ({ component }: Props) => {
 
   const haveNonRootParent = parentTree && parentTree.id !== "root";
 
-  const canMove =
-    !component.fixedPosition && !blockedToolboxActions.includes("move");
+  const canMove = !blockedToolboxActions.includes("move");
   const canWrapWithContainer = !blockedToolboxActions.includes(
     "wrap-with-container",
   );

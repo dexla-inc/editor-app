@@ -39,10 +39,6 @@ export type Component = {
   title?: string;
   props?: { [key: string]: any };
   blockDroppingChildrenInside?: boolean;
-  fixedPosition?: {
-    position: "left" | "top";
-    target: string;
-  };
   actions?: Action[];
   onLoad?: any;
   dataType?: "static" | "dynamic";
