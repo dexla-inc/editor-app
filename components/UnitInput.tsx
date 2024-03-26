@@ -197,7 +197,7 @@ export const UnitInput = ({
         precision={3}
         parser={(value) => parseFloat(value).toString()}
         formatter={(value) => parseFloat(value).toString()}
-        value={(value ?? splitValue) as number}
+        value={sanitizeValue(value ?? splitValue)}
         onChange={(val: number) => {
           handleChange(val.toString());
         }}
@@ -215,4 +215,12 @@ export const UnitInput = ({
       />
     );
   }
+};
+
+const sanitizeValue = (value: any) => {
+  // Attempt to convert the input value to a float
+  const numericValue = parseFloat(value);
+
+  // Check if the result is a numeric value; if not, fallback to 0 or any sensible default
+  return isNaN(numericValue) ? 0 : numericValue;
 };
