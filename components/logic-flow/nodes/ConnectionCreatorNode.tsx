@@ -90,7 +90,7 @@ export const ConnectionCreatorNode = (
     const newConditionalNode = {
       id: conditionalId,
       type: "conditionalNode",
-      position: { x: node.xPos, y: node.yPos },
+      position: { x: node.xPos - 52.5, y: node.yPos },
       data: {
         label: "Conditional",
         description: "Execute actions conditionally",
