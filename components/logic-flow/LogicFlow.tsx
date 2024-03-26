@@ -45,7 +45,6 @@ export const LogicFlow = ({ wrapperRef }: FlowProps) => {
   const { setEdges } = useReactFlow();
   const rect = wrapperRef.current?.getBoundingClientRect();
   const defaultViewport = { zoom: 2, x: (rect?.width ?? 1000) / 2, y: 0 };
-  console.log(defaultViewport);
 
   const onNodesPositionChange = (deletedNode: Node, nodes: Node[]) => {
     // Get all nodes that are below the deleted node
