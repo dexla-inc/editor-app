@@ -1,14 +1,13 @@
+import { NodeData } from "@/components/logic-flow/nodes/CustomNode";
 import { VariablesButton } from "@/components/variables/VariablesButton";
-import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { useFlowStore } from "@/stores/flow";
 import { ActionIcon, Button, Flex } from "@mantine/core";
 import { modals } from "@mantine/modals";
 import { IconArrowBack } from "@tabler/icons-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { nanoid } from "nanoid";
-import { NodeData } from "@/components/logic-flow/nodes/CustomNode";
 import { NodeProps } from "reactflow";
-import { useEditorTreeStore } from "@/stores/editorTree";
 
 export const useLogicFlows = () => {
   const setShowFormModal = useFlowStore((state) => state.setShowFormModal);
@@ -67,7 +66,7 @@ export const useLogicFlows = () => {
         item: {
           id: addId,
           type: "connectionCreatorNode",
-          position: { x: (node as any).xPos - 2, y: (node as any).yPos + 90 },
+          position: { x: (node as any).xPos, y: (node as any).yPos + 90 },
           data: {
             inputs: [{ id: nanoid() }],
           },

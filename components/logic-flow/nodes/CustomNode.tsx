@@ -1,10 +1,10 @@
+import { useFlowStore } from "@/stores/flow";
 import { NodeTriggerCondition } from "@/utils/triggerConditions";
 import { Card, CSSObject, Stack, Text, useMantineTheme } from "@mantine/core";
 import { IconBoxModel2 } from "@tabler/icons-react";
+import startCase from "lodash.startcase";
 import { nanoid } from "nanoid";
 import { Handle, NodeProps, Position } from "reactflow";
-import { useFlowStore } from "@/stores/flow";
-import startCase from "lodash.startcase";
 
 export type NodeInput = {
   id: string;
@@ -47,7 +47,7 @@ export const CustomNode = (props: CustomNodeProps) => {
             ? theme.colors.gray[3]
             : theme.colors.gray[6]
         } !important`,
-        minWidth: "70px",
+        width: "120px",
 
         "&:hover": {
           outline: "4px solid",

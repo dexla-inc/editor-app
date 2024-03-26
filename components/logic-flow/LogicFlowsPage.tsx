@@ -5,7 +5,6 @@ import {
   LogicFlowParams,
   LogicFlowResponse,
 } from "@/requests/logicflows/types";
-import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { FlowData, useFlowStore } from "@/stores/flow";
 import { actionMapper } from "@/utils/actions";

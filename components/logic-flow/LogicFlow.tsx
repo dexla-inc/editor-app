@@ -61,7 +61,7 @@ export const LogicFlow = ({ wrapperRef }: FlowProps) => {
               id: nanoid(),
               source,
               target,
-              type: "smoothstep",
+              type: "straight",
             })),
           );
 
@@ -93,6 +93,8 @@ export const LogicFlow = ({ wrapperRef }: FlowProps) => {
       fitView
       deleteKeyCode={["Backspace", "Delete"]}
       selectionOnDrag
+      panOnDrag={false}
+      panOnScroll
     >
       <Controls showInteractive={false} />
       <Background />
