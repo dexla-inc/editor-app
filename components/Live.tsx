@@ -1,16 +1,17 @@
 import { EditableComponent } from "@/components/EditableComponent";
 import { LiveWrapper } from "@/components/LiveWrapper";
 import { DeploymentPage } from "@/requests/deployments/types";
+import { ProjectResponse } from "@/requests/projects/types";
 import { useAppStore } from "@/stores/app";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { componentMapper } from "@/utils/componentMapper";
 import { decodeSchema } from "@/utils/compression";
 import { ComponentTree } from "@/utils/editor";
 import { Box } from "@mantine/core";
-import { ReactNode, useCallback, useEffect, useMemo } from "react";
+import { ReactNode, useCallback, useEffect } from "react";
 
 type Props = {
-  projectId: string;
+  project: ProjectResponse;
   deploymentPage: DeploymentPage;
 };
 
@@ -36,7 +37,7 @@ const EditableComponentContainer = ({
   );
 };
 
-export const Live = ({ projectId, deploymentPage }: Props) => {
+export const Live = ({ project, deploymentPage }: Props) => {
   const editorTree = useEditorTreeStore((state) => state.tree);
   const setEditorTree = useEditorTreeStore((state) => state.setTree);
   const setIsLoading = useAppStore((state) => state.setIsLoading);
@@ -94,8 +95,6 @@ export const Live = ({ projectId, deploymentPage }: Props) => {
   }
 
   return (
-    <LiveWrapper projectId={projectId}>
-      {renderTree(editorTree.root)}
-    </LiveWrapper>
+    <LiveWrapper project={project}>{renderTree(editorTree.root)}</LiveWrapper>
   );
 };

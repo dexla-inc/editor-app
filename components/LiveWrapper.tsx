@@ -1,15 +1,16 @@
 import { ProgressBar } from "@/components/ProgressBar";
 import { useCustomCode } from "@/hooks/useCustomCode";
-import { useUserTheme } from "@/hooks/useUserTheme";
+import { ProjectResponse } from "@/requests/projects/types";
+import { useThemeStore } from "@/stores/theme";
 import { Box, BoxProps, MantineProvider } from "@mantine/core";
 
 type Props = {
-  projectId: string;
+  project: ProjectResponse;
 } & BoxProps;
 
-export const LiveWrapper = ({ children, projectId, ...props }: Props) => {
-  const theme = useUserTheme(projectId);
-  useCustomCode(projectId);
+export const LiveWrapper = ({ children, project, ...props }: Props) => {
+  const theme = useThemeStore((state) => state.theme);
+  useCustomCode(project);
 
   if (!theme) {
     return null;

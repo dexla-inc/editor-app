@@ -1,4 +1,4 @@
-import { useProjectQuery } from "@/hooks/reactQuery/useProjectQuery";
+import { ProjectResponse } from "@/requests/projects/types";
 import { decodeSchema } from "@/utils/compression";
 import { useEffect } from "react";
 
@@ -25,9 +25,7 @@ const injectScripts = (scripts: string[], container: HTMLElement) => {
   });
 };
 
-export const useCustomCode = (projectId: string) => {
-  const { data: project } = useProjectQuery(projectId);
-
+export const useCustomCode = (project: ProjectResponse) => {
   useEffect(() => {
     if (project && project.customCode) {
       const customCode = JSON.parse(

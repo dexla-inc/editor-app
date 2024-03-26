@@ -1,12 +1,16 @@
 import { Live } from "@/components/Live";
 import { withPageOnLoad } from "@/hoc/withPageOnLoad";
+import { prepareUserThemeLive } from "@/hooks/prepareUserThemeLive";
 import { getDataSourceEndpoints } from "@/requests/datasources/queries-noauth";
 import { getDeploymentPage } from "@/requests/deployments/queries-noauth";
 import { DeploymentPage } from "@/requests/deployments/types";
 import { getProject } from "@/requests/projects/queries-noauth";
+import { ProjectResponse } from "@/requests/projects/types";
 import { useEditorTreeStore } from "@/stores/editorTree";
+import { useThemeStore } from "@/stores/theme";
 import { queryClient } from "@/utils/reactQuery";
 import { checkRefreshTokenExists } from "@/utils/serverside";
+import { initializeFonts } from "@/utils/webfontloader";
 import { dehydrate } from "@tanstack/react-query";
 import { GetServerSidePropsContext } from "next";
 import Head from "next/head";
@@ -67,6 +71,7 @@ export const getServerSideProps = async ({
     props: {
       dehydratedState: dehydrate(queryClient),
       id: project.id,
+      project,
       deploymentPage,
       faviconUrl: project.faviconUrl,
       isLive: true,
@@ -75,25 +80,33 @@ export const getServerSideProps = async ({
 };
 
 type Props = {
-  id: string;
+  project: ProjectResponse;
   faviconUrl?: string;
   deploymentPage: DeploymentPage;
 };
 
-function LivePage({ id, faviconUrl, deploymentPage }: Props) {
+function LivePage({ project, faviconUrl, deploymentPage }: Props) {
   const setCurrentPageAndProjectIds =
     useEditorTreeStore.getState().setCurrentPageAndProjectIds;
   const setPreviewMode = useEditorTreeStore.getState().setPreviewMode;
   const setIsLive = useEditorTreeStore.getState().setIsLive;
+  const theme = prepareUserThemeLive(project);
 
   useEffect(() => {
-    if (id && deploymentPage.id) {
-      setCurrentPageAndProjectIds(id, deploymentPage.id);
+    if (project && deploymentPage.id) {
+      useThemeStore.getState().setTheme(theme);
+      setCurrentPageAndProjectIds(project.id, deploymentPage.id);
       setPreviewMode(true);
       setIsLive(true);
+
+      const loadFonts = async () => {
+        await initializeFonts();
+      };
+
+      loadFonts();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, deploymentPage.id]);
+  }, [project, deploymentPage.id]);
 
   return (
     <>
@@ -106,7 +119,7 @@ function LivePage({ id, faviconUrl, deploymentPage }: Props) {
           href={faviconUrl ?? "/favicon.ico"}
         />
       </Head>
-      <Live projectId={id} deploymentPage={deploymentPage} />
+      <Live project={project} deploymentPage={deploymentPage} />
     </>
   );
 }
