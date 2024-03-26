@@ -59,7 +59,7 @@ const emptyEditorComponentMutableAttrs = {
       ...initialGridColumnValues,
       style: {
         ...initialGridColumnValues.style,
-        height: "100vh",
+        minHeight: "100vh",
         paddingLeft: "0px",
         paddingTop: "0px",
         paddingRight: "0px",
@@ -92,6 +92,7 @@ export type EditorTreeState = {
   historyCount: number | null;
   setHistoryCount: (count: number | null) => void;
   pageLoadTree?: EditorTree;
+  setPageLoadTree: (tree: EditorTree) => void;
   pageLoadTimestamp: number;
   setPageLoadTimestamp: (value: number | null) => void;
   currentUser?: User;
@@ -186,7 +187,7 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
 
                 const newState = {
                   ...state,
-                  pageLoadTree: state.pageLoadTree || tree,
+                  pageLoadTree: options?.onLoad ? tree : state.pageLoadTree,
                   tree: {
                     ...tree,
                     name: options?.action || "Generic move",
@@ -392,6 +393,8 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
               false,
               "editorTree/setPageLoadTimestamp",
             ),
+          setPageLoadTree: (pageLoadTree) =>
+            set({ pageLoadTree }, false, "editor/setPageLoadTree"),
         }),
         {
           name: "editor-tree-config",

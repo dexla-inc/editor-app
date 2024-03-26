@@ -4,7 +4,6 @@ import { EditorCanvas } from "@/components/EditorCanvas";
 import EditorAsideSections from "@/components/aside/EditorAsideSections";
 import { EditorNavbarSections } from "@/components/navbar/EditorNavbarSections";
 import { useGetPageData } from "@/hooks/useGetPageData";
-import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { usePropelAuthStore } from "@/stores/propelAuth";
