@@ -46,7 +46,17 @@ export const useEditorHotkeysUndoRedo = () => {
           skipSave: true,
         });
       } catch (e: any) {
-        // Need to set the history count back to the previous value if you can't go back any longer
+        if (e === "Nothing to undo. You're all caught up!") {
+          const pageLoadTree = useEditorTreeStore.getState().pageLoadTree;
+
+          if (pageLoadTree)
+            setEditorTree(pageLoadTree, {
+              action: "Original Tree",
+              skipSave: true,
+            });
+        } else {
+          console.error(e);
+        }
       }
     };
 
