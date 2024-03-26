@@ -1,7 +1,6 @@
 import { Icon } from "@/components/Icon";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { useUserTheme } from "@/hooks/useUserTheme";
-import { useEditorStore } from "@/stores/editor";
+import { useThemeStore } from "@/stores/theme";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
@@ -15,17 +14,20 @@ const AlertComponent = forwardRef(
   ({ renderTree, shareableContent, component, ...props }: Props, ref) => {
     const { children, icon, iconColor, ...componentProps } =
       component.props as any;
-    const currentProjectId = useEditorTreeStore(
-      (state) => state.currentProjectId,
-    );
-    const theme = useUserTheme(currentProjectId!);
-    const iconColorHex = get(theme?.colors, iconColor);
+    const theme = useThemeStore((state) => state.theme);
+    const iconColorHex = get(theme.colors, iconColor);
 
     return (
       <MantineAlert
         ref={ref}
         {...(icon && {
-          icon: <Icon name={icon} color={iconColorHex} />,
+          icon: (
+            <Icon
+              name={icon}
+              // @ts-ignore
+              color={iconColorHex}
+            />
+          ),
         })}
         {...props}
         {...componentProps}

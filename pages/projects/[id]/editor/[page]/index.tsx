@@ -9,6 +9,9 @@ import { dehydrate } from "@tanstack/react-query";
 import { getProject } from "@/requests/projects/queries-noauth";
 import { getPageList, getPageState } from "@/requests/pages/queries-noauth";
 import { queryClient } from "@/utils/reactQuery";
+import { ProjectResponse } from "@/requests/projects/types";
+import { useThemeStore } from "@/stores/theme";
+import { prepareUserThemeLive } from "@/hooks/prepareUserThemeLive";
 
 export const getServerSideProps = async ({
   query,
@@ -20,8 +23,9 @@ export const getServerSideProps = async ({
   await queryClient.prefetchQuery(["endpoints", projectId], () =>
     getDataSourceEndpoints(projectId),
   );
+  const project = await getProject(projectId, true);
   await queryClient.prefetchQuery(["project", projectId], () =>
-    getProject(projectId, true),
+    Promise.resolve(project),
   );
 
   await queryClient.prefetchQuery(
@@ -36,7 +40,7 @@ export const getServerSideProps = async ({
   return {
     props: {
       dehydratedState: dehydrate(queryClient),
-      id: projectId,
+      project,
       page: pageId,
       variables: variables.results,
       isLive: false,
@@ -45,15 +49,17 @@ export const getServerSideProps = async ({
 };
 
 type Props = {
-  id: string;
+  project: ProjectResponse;
   page: string;
   variables: any[];
 };
 
-const PageEditor = ({ id, page, variables }: Props) => {
+const PageEditor = ({ project, page, variables }: Props) => {
   useVariableStore.getState().initializeVariableList(variables);
+  const theme = prepareUserThemeLive(project);
+  useThemeStore.getState().setTheme(theme);
 
-  return <Editor key={page} pageId={page} projectId={id} />;
+  return <Editor key={page} pageId={page} projectId={project.id} />;
 };
 
 export default withPageOnLoad(memo(PageEditor));

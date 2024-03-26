@@ -1,9 +1,6 @@
 import { Live } from "@/components/Live";
 import { withPageOnLoad } from "@/hoc/withPageOnLoad";
-import {
-  DeploymentPage,
-  DeploymentResponse,
-} from "@/requests/deployments/types";
+import { DeploymentPage } from "@/requests/deployments/types";
 import { getProject } from "@/requests/projects/queries-noauth";
 import { checkRefreshTokenExists } from "@/utils/serverside";
 import { GetServerSidePropsContext } from "next";
@@ -14,6 +11,10 @@ import { dehydrate } from "@tanstack/react-query";
 import { getDeploymentPage } from "@/requests/deployments/queries-noauth";
 import { getDataSourceEndpoints } from "@/requests/datasources/queries-noauth";
 import { queryClient } from "@/utils/reactQuery";
+import { ProjectResponse } from "@/requests/projects/types";
+import { prepareUserThemeLive } from "@/hooks/prepareUserThemeLive";
+import { useThemeStore } from "@/stores/theme";
+import { initializeFonts } from "@/utils/webfontloader";
 
 export const getServerSideProps = async ({
   req,
@@ -81,25 +82,33 @@ export const getServerSideProps = async ({
 };
 
 type Props = {
-  id: string;
+  project: ProjectResponse;
   faviconUrl?: string;
   deploymentPage: DeploymentPage;
 };
 
-const HomePage = ({ id, faviconUrl, deploymentPage }: Props) => {
+const HomePage = ({ project, faviconUrl, deploymentPage }: Props) => {
   const setCurrentPageAndProjectIds =
     useEditorTreeStore.getState().setCurrentPageAndProjectIds;
   const setPreviewMode = useEditorTreeStore.getState().setPreviewMode;
   const setIsLive = useEditorTreeStore.getState().setIsLive;
+  const theme = prepareUserThemeLive(project);
 
   useEffect(() => {
-    if (id && deploymentPage.id) {
-      setCurrentPageAndProjectIds(id, deploymentPage.id);
+    if (project && deploymentPage.id) {
+      useThemeStore.getState().setTheme(theme);
+      setCurrentPageAndProjectIds(project.id, deploymentPage.id);
       setPreviewMode(true);
       setIsLive(true);
+
+      const loadFonts = async () => {
+        await initializeFonts(theme.fontFamily, theme.headings.fontFamily);
+      };
+
+      loadFonts();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, deploymentPage.id]);
+  }, [project, deploymentPage.id]);
 
   return (
     <>
@@ -112,7 +121,7 @@ const HomePage = ({ id, faviconUrl, deploymentPage }: Props) => {
           href={faviconUrl ?? "/favicon.ico"}
         />
       </Head>
-      <Live projectId={id} deploymentPage={deploymentPage} />
+      <Live project={project} deploymentPage={deploymentPage} />
     </>
   );
 };
