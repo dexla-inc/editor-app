@@ -44,13 +44,33 @@ export const LogicFlow = ({ wrapperRef }: FlowProps) => {
   } = useFlowStore(selector);
   const { setEdges } = useReactFlow();
 
+  const onNodesPositionChange = (deletedNode: Node, nodes: Node[]) => {
+    // Get all nodes that are below the deleted node
+    const nodesBelow = nodes
+      .filter((n) => n.position.y > deletedNode.position.y)
+      .sort((a, b) => a.position.y - b.position.y)
+      .map((n) => ({
+        ...n,
+        position: { ...n.position, y: n.position.y - 90 },
+      }));
+
+    onNodesChange(
+      nodesBelow.map((node) => ({
+        ...node,
+        type: "position",
+      })),
+    );
+  };
+
   const onNodesDelete = useCallback(
     (deleted: Node[]) => {
       setEdges(
         deleted.reduce((acc, node) => {
           const incomers = getIncomers(node, nodes, edges);
           const outgoers = getOutgoers(node, nodes, edges);
+
           const connectedEdges = getConnectedEdges([node], edges);
+          onNodesPositionChange(node, nodes);
 
           const remainingEdges = acc.filter(
             (edge) => !connectedEdges.includes(edge),
@@ -90,11 +110,12 @@ export const LogicFlow = ({ wrapperRef }: FlowProps) => {
       }}
       onEdgesChange={onEdgesChange}
       nodeTypes={nodeTypes}
-      fitView
+      // fitView
       deleteKeyCode={["Backspace", "Delete"]}
       selectionOnDrag
       panOnDrag={false}
       panOnScroll
+      defaultViewport={{ zoom: 2, x: 400, y: 0 }}
     >
       <Controls showInteractive={false} />
       <Background />

@@ -186,7 +186,7 @@ export const ConnectionCreatorNode = (
         );
       })}
       <Stack w="100%" h="100%" justify="center" align="center">
-        <Popover withinPortal withArrow>
+        <Popover withinPortal withArrow position="right">
           <Popover.Target>
             <ActionIcon>
               <IconPlus size="10px" />
