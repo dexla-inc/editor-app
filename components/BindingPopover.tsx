@@ -29,7 +29,7 @@ import {
 import { IconExternalLink, IconPlugConnected } from "@tabler/icons-react";
 import { useState } from "react";
 import { useDataBinding } from "@/hooks/dataBinding/useDataBinding";
-import { useEditorTreeStore } from "@/stores/editorTree";
+import { useEditorStore } from "@/stores/editor";
 
 const TAB_TEXT_SIZE = "xs";
 const ML = 10;
@@ -94,10 +94,8 @@ export default function BindingPopover({
   //   [value?.boundCode],
   // );
 
-  const actionsResponses = useEditorTreeStore.getState().actionsResponse;
+  const actionsResponses = useEditorStore.getState().actionsResponse;
   const currentValue = computeValue({ value }, { actions: actionsResponses });
-
-  console.log("currentValue", currentValue);
 
   const entitiesDataTreeList: Array<{
     entity: "auth" | "components" | "browser" | "variables" | "actions";

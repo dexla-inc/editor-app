@@ -127,8 +127,6 @@ export type EditorTreeState = {
   ) => void;
   isSaving: boolean;
   setIsSaving: (value: boolean) => void;
-  actionsResponse?: Record<string, any>;
-  setActionsResponse: (actionId: string, response: any) => void;
 };
 
 const updatePageStateFunc = async (
@@ -409,13 +407,6 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
             ),
           setPageLoadTree: (pageLoadTree) =>
             set({ pageLoadTree }, false, "editorTree/setPageLoadTree"),
-          setActionsResponse: (actionId, response) =>
-            set((state) => ({
-              actionsResponse: {
-                ...state.actionsResponse,
-                [actionId]: response,
-              },
-            })),
         }),
         {
           name: "editor-tree-config",

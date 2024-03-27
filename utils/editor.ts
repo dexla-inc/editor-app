@@ -560,13 +560,13 @@ function objectsIntersect(
 }
 
 export const checkNavbarExists = (): boolean => {
-  const state = useEditorTreeStore.getState();
+  const tree = useEditorTreeStore.getState().tree;
 
-  if (!state.tree || !state.tree.root) {
+  if (!tree || !tree.root) {
     return false;
   }
 
-  const rootChildren = state.tree.root.children;
+  const rootChildren = tree.root.children;
   if (
     !rootChildren ||
     rootChildren.length === 0 ||

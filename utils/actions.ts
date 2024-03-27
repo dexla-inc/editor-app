@@ -253,8 +253,7 @@ export const useNavigationAction = ({
   action,
   router,
 }: NavigationActionParams) => {
-  const editorState = useEditorTreeStore.getState();
-  const isLive = editorState.isLive;
+  const isLive = useEditorTreeStore.getState().isLive;
   const projectId = useEditorTreeStore.getState().currentProjectId;
 
   if (!action.pageId || !action.pageSlug) {
@@ -620,7 +619,7 @@ export const useApiCallAction = async (
 
   const updateTreeComponentAttrs =
     useEditorTreeStore.getState().updateTreeComponentAttrs;
-  const setActionsResponse = useEditorTreeStore.getState().setActionsResponse;
+  const setActionsResponse = useEditorStore.getState().setActionsResponse;
 
   if (entity?.props && action.showLoader) {
     setLoadingState(entity.id!, true, updateTreeComponentAttrs);

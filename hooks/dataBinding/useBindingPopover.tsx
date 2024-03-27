@@ -181,7 +181,7 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
     { list: {} } as any,
   );
 
-  const actionsResponse = useEditorTreeStore((state) => state.actionsResponse);
+  const actionsResponse = useEditorStore((state) => state.actionsResponse);
 
   if (actionsResponse) {
     Object.keys(actionsResponse).forEach((actionId) => {
