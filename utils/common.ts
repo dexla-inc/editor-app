@@ -43,12 +43,6 @@ export const getComponentInitialDisplayValue = (componentName: string) => {
   return defaultDisplayValues[componentName] || "block";
 };
 
-export const isEditor = (hrefUrl: string) => {
-  const urlType = getProjectType(hrefUrl);
-
-  return urlType !== "live";
-};
-
 export type UrlType = "project" | "live" | "editor";
 
 export const getProjectType = (href: string): UrlType => {
@@ -86,24 +80,7 @@ export const getProjectType = (href: string): UrlType => {
   }
 };
 
-export function remToPixelUnit(rem: string) {
-  const remValue = parseFloat(rem);
-  const rootFontSize = parseFloat(
-    getComputedStyle(document.documentElement).fontSize,
-  );
-
-  return `${remValue * rootFontSize}px`;
-}
-
 export function safeJsonParse<T>(str: string) {
-  try {
-    return JSON.parse(str);
-  } catch (e) {
-    return str;
-  }
-}
-
-export function safeJsonParseWithReturn(str: string) {
   try {
     return JSON.parse(str);
   } catch (e) {
@@ -115,15 +92,6 @@ export function jsonInString(value: any) {
   return (
     typeof value === "string" &&
     (value.startsWith("{") || value.startsWith("["))
-  );
-}
-
-export function objectInStringWithReturn(value: any) {
-  return (
-    typeof value === "string" &&
-    (value.startsWith("return {") ||
-      value.startsWith("return [") ||
-      jsonInString(value))
   );
 }
 

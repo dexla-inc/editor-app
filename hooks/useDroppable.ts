@@ -198,6 +198,10 @@ export const useDroppable = ({
 
   const handleDragEnd = useCallback(
     (event: any) => {
+      if (!event) {
+        return;
+      }
+
       if (isResizing) return;
 
       event.preventDefault();

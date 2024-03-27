@@ -22,9 +22,6 @@ type GoogleMapProps = {
   style?: { width?: string; height?: string; [key: string]: any };
   apiKey: string;
   language?: string;
-  // Managed in data tab
-  //zoom: number;
-  //center: { lat: number; lng: number };
   [i: string]: any;
 };
 export type MarkerItem = { id: string; name: string } & Position;
@@ -38,6 +35,7 @@ const defaultCenter = { lat: 25.816347481537285, lng: -80.1219500315037 };
 export const GoogleMapPlugin = ({
   component,
   shareableContent,
+  onClick,
   ...props
 }: Props) => {
   const [activeMarkerId, setActiveMarkerId] = useState<string | null>(null);
@@ -45,18 +43,19 @@ export const GoogleMapPlugin = ({
 
   const { options, language, loading, fade, ...componentProps } =
     component.props as GoogleMapProps;
-  const { onClick, ...customProps } = props;
 
   const apiKey = useComputeValue({
     componentId: component.id!,
     shareableContent,
     field: "apiKey",
   });
-  const zoom = useComputeValue({
-    componentId: component.id!,
-    shareableContent,
-    field: "zoom",
-  });
+  const zoom = parseInt(
+    useComputeValue({
+      componentId: component.id!,
+      shareableContent,
+      field: "zoom",
+    }),
+  );
 
   const center =
     useComputeValue({
@@ -66,26 +65,13 @@ export const GoogleMapPlugin = ({
       //staticFallback: defaultCenter,
     }) ?? defaultCenter;
 
-  const markers = useComputeValue({
-    componentId: component.id!,
-    shareableContent,
-    field: "markers",
-  });
-
-  console.log("markers", markers);
-
-  const [internalZoom, setInternalZoom] = useState<number>(parseInt(zoom));
-  const [internalMarkers, setInternalMarkers] = useState<MarkerItem[]>(
-    safeJsonParse<MarkerItem[]>(markers),
-  );
-
-  useEffect(() => {
-    setInternalZoom(parseInt(zoom));
-  }, [zoom]);
-
-  useEffect(() => {
-    setInternalMarkers(safeJsonParse<MarkerItem[]>(markers));
-  }, [markers]);
+  const markers = safeJsonParse(
+    useComputeValue({
+      componentId: component.id!,
+      shareableContent,
+      field: "markers",
+    }),
+  ) as MarkerItem[];
 
   const MAP_SCRIPT_DELAY_DURATION = 800;
 
@@ -101,7 +87,7 @@ export const GoogleMapPlugin = ({
   );
 
   const loadScript = useLoadScript({
-    id: "google-map-script",
+    id: `map-${component.id}`,
     googleMapsApiKey: apiKey,
     language: language,
   });
@@ -117,7 +103,7 @@ export const GoogleMapPlugin = ({
   };
 
   const handleClick = (e: any) => {
-    onClick && onClick(e);
+    onClick?.(e);
     setActiveMarkerId(null);
   };
 
@@ -130,23 +116,20 @@ export const GoogleMapPlugin = ({
         lng: Number(center.lng),
       });
 
-      Array.isArray(internalMarkers) &&
-        internalMarkers.forEach(({ position }: Position) =>
-          bounds.extend(position),
-        );
+      markers?.forEach?.(({ position }: Position) => bounds.extend(position));
       map.fitBounds(bounds);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [center, internalMarkers, internalZoom],
+    [center, markers, zoom],
   );
 
   useEffect(() => {
     setTimeout(() => {
       if (map) {
-        map.setZoom(internalZoom);
+        map.setZoom(zoom);
       }
     }, MAP_SCRIPT_DELAY_DURATION);
-  }, [internalZoom, map]);
+  }, [zoom, map]);
 
   const unMount = useCallback((map: any) => {
     setMap(null);
@@ -166,39 +149,42 @@ export const GoogleMapPlugin = ({
   });
 
   return (
-    <Box pos="relative" {...otherProps} style={containerStyle}>
+    <Box
+      pos="relative"
+      {...otherProps}
+      style={containerStyle}
+      id={component.id}
+      onClick={handleClick}
+    >
       <GoogleMap
         key={apiKey}
         options={customOptions}
         onLoad={gmOnLoad}
         onUnmount={unMount}
-        onClick={handleClick}
         mapContainerStyle={containerStyle}
         {...componentProps}
-        {...customProps}
+        {...props}
         {...googleStyles}
         center={{
           lat: Number(center.lat),
           lng: Number(center.lng),
         }}
-        zoom={internalZoom}
+        zoom={zoom}
       >
-        {Array.isArray(internalMarkers) &&
-          internalMarkers.length > 0 &&
-          internalMarkers.map(({ id, name, position }) => (
-            <Marker
-              key={id}
-              position={position}
-              onMouseOver={() => handleActiveMarker(id)}
-              onMouseOut={() => setActiveMarkerId(null)}
-            >
-              {activeMarkerId === id && (
-                <InfoWindow onCloseClick={() => setActiveMarkerId(null)}>
-                  <Text>{name}</Text>
-                </InfoWindow>
-              )}
-            </Marker>
-          ))}
+        {markers?.map?.(({ id, name, position }) => (
+          <Marker
+            key={id}
+            position={position}
+            onMouseOver={() => handleActiveMarker(id)}
+            onMouseOut={() => setActiveMarkerId(null)}
+          >
+            {activeMarkerId === id && (
+              <InfoWindow onCloseClick={() => setActiveMarkerId(null)}>
+                <Text>{name}</Text>
+              </InfoWindow>
+            )}
+          </Marker>
+        ))}
       </GoogleMap>
 
       {fade && <Overlay color="#fff" opacity={0.7} blur={0.5} zIndex={1} />}
