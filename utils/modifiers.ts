@@ -448,6 +448,7 @@ export const requiredModifiers: RequiredModifiers = {
     gridTemplateRows: "auto 1fr auto",
     height: "100vh",
     top: "0",
+    position: "sticky",
   },
   progress: {
     color: "Primary.6",

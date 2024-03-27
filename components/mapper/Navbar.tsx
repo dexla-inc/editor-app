@@ -22,9 +22,11 @@ const NavbarComponent = ({
 
   return (
     <Box display="grid" {...component.props} {...props}>
-      {component.children &&
-        component.children.length > 0 &&
-        component.children?.map((child) => renderTree(child))}
+      <ScrollArea>
+        {component.children &&
+          component.children.length > 0 &&
+          component.children?.map((child) => renderTree(child))}
+      </ScrollArea>
     </Box>
   );
 };
