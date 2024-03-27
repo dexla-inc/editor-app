@@ -11,18 +11,18 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 type Props = EditableComponentMapper & BoxProps;
 
 const GridColumnComponent = forwardRef(
-  ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
+  (
+    { renderTree, component, shareableContent, style, ...props }: Props,
+    ref,
+  ) => {
     const isLive = useEditorTreeStore((state) => state.isLive);
     const isPreviewMode = useEditorTreeStore((state) => state.isPreviewMode);
     // @ts-ignore
-    const { style = {}, gap, ...componentProps } = component.props;
-    const { style: propsStyle = {}, ...propsRest } = props;
+    const { gap, ...componentProps } = component.props;
     const gapPx = convertSizeToPx(gap as MantineSize, "gap");
 
-    const styles = { ...style, ...propsStyle };
-
     const shouldRemoveBorder = isLive || isPreviewMode;
-    const { border, ...stylesRest } = styles;
+    const { border, ...stylesRest } = style!;
 
     return (
       <GridColumnBase
@@ -34,7 +34,7 @@ const GridColumnComponent = forwardRef(
           border: shouldRemoveBorder ? "none" : border,
         }}
         {...componentProps}
-        {...propsRest}
+        {...props}
         id={component.id}
       >
         {component.children &&

@@ -21,13 +21,13 @@ const NavbarComponent = ({
   merge(componentProps, { style: { ...props.style, backgroundColor } });
 
   return (
-    <ScrollArea>
-      <Box display="grid" {...component.props} {...props}>
+    <Box display="grid" {...component.props} {...props}>
+      <ScrollArea>
         {component.children &&
           component.children.length > 0 &&
           component.children?.map((child) => renderTree(child))}
-      </Box>
-    </ScrollArea>
+      </ScrollArea>
+    </Box>
   );
 };
 
