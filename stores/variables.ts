@@ -90,5 +90,6 @@ export const useVariableStore = create<VariablesState>()(
         }),
       },
     ),
+    { name: "Variable store" },
   ),
 );

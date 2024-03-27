@@ -6,8 +6,11 @@ import { getDeploymentPage } from "@/requests/deployments/queries-noauth";
 import { DeploymentPage } from "@/requests/deployments/types";
 import { getProject } from "@/requests/projects/queries-noauth";
 import { ProjectResponse } from "@/requests/projects/types";
+import { listVariables } from "@/requests/variables/queries-noauth";
+import { VariableResponse } from "@/requests/variables/types";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useThemeStore } from "@/stores/theme";
+import { useVariableStore } from "@/stores/variables";
 import { queryClient } from "@/utils/reactQuery";
 import { checkRefreshTokenExists } from "@/utils/serverside";
 import { initializeFonts } from "@/utils/webfontloader";
@@ -34,9 +37,10 @@ export const getServerSideProps = async ({
   }
 
   const currentSlug = query.page as string;
-  const deploymentPage = await getDeploymentPage(project.id, currentSlug);
 
-  await Promise.all([
+  const [deploymentPage, variables] = await Promise.all([
+    getDeploymentPage(project.id, currentSlug),
+    listVariables(project.id),
     queryClient.prefetchQuery(["project", project.id], () =>
       Promise.resolve(project),
     ),
@@ -74,6 +78,7 @@ export const getServerSideProps = async ({
       project,
       deploymentPage,
       faviconUrl: project.faviconUrl,
+      variables: variables.results,
       isLive: true,
     },
   };
@@ -83,9 +88,11 @@ type Props = {
   project: ProjectResponse;
   faviconUrl?: string;
   deploymentPage: DeploymentPage;
+  variables: VariableResponse[];
 };
 
-function LivePage({ project, faviconUrl, deploymentPage }: Props) {
+function LivePage({ project, faviconUrl, deploymentPage, variables }: Props) {
+  useVariableStore.getState().initializeVariableList(variables);
   const setCurrentPageAndProjectIds =
     useEditorTreeStore.getState().setCurrentPageAndProjectIds;
   const setPreviewMode = useEditorTreeStore.getState().setPreviewMode;
