@@ -82,7 +82,7 @@ export type EditorState = {
 export const useEditorStore = create<EditorState>()(
   // @ts-ignore
   devtools(
-    (set, get) => ({
+    (set) => ({
       setActionsResponse: (actionId, response) =>
         set((state) => ({
           actionsResponse: {

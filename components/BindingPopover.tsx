@@ -119,7 +119,7 @@ export default function BindingPopover({
     },
     {
       entity: "actions",
-      dataItems: actions?.list ? Object.values(actions?.list) : [],
+      dataItems: Object.values(actions?.list ?? []),
     },
   ];
 
@@ -209,6 +209,7 @@ export default function BindingPopover({
               value={value?.boundCode}
               variables={variables.list}
               components={components.list}
+              actions={actions.list}
               onChange={(code: string) =>
                 onChange({ ...value, boundCode: code })
               }

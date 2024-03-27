@@ -10,6 +10,7 @@ type JsProps = {
   value?: string;
   variables?: Record<string, any>;
   components?: Record<string, any>;
+  actions?: Record<string, any>;
   onChange?: any;
   selectedItem?: string;
 };
@@ -21,6 +22,7 @@ export function CustomJavaScriptTextArea({
   value = "",
   variables = {},
   components = {},
+  actions = {},
   onChange,
   selectedItem,
 }: JsProps) {
@@ -123,6 +125,11 @@ export function CustomJavaScriptTextArea({
                     label: `components[${component.description}]`,
                     kind: monaco.languages.CompletionItemKind.Variable,
                     insertText: `components[/* ${component.description} */'${id}']`,
+                  })),
+                  ...Object.entries(actions).map(([id, action]) => ({
+                    label: `actions[${action.name}]`,
+                    kind: monaco.languages.CompletionItemKind.Variable,
+                    insertText: `actions[/* ${action.name} */'${id}']`,
                   })),
                 ],
               };

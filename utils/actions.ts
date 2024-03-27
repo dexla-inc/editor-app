@@ -686,12 +686,14 @@ export const useApiCallAction = async (
 
     return responseJson;
   } catch (error) {
-    // setActionsResponses(actionId, { error: safeJsonParse(error?.message) });
-    // // @ts-expect-error
-    // setActionsResponse(actionId, {
-    //   error: safeJsonParse(error?.message),
-    //   list: responseJson,
-    // });
+    if (error instanceof Error) {
+      setActionsResponses(actionId, { error: safeJsonParse(error.message) });
+      setActionsResponse(actionId, {
+        error: safeJsonParse(error.message),
+        list: error.message,
+      });
+    }
+
     await handleError(props);
   } finally {
     if (entity.props && action.showLoader) {

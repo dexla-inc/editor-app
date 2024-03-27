@@ -14,7 +14,6 @@ import { Component } from "@/utils/editor";
 import { useRouter } from "next/router";
 import { useDataSourceStore } from "@/stores/datasource";
 import { pick } from "next/dist/lib/pick";
-import { useEffect } from "react";
 
 type BindType = {
   selectedEntityId: string;
@@ -130,9 +129,9 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
     return item.action !== undefined;
   }
 
-  const itemsToProcess = isLogicFlow ? nodes : actionsList;
+  const actionsProcess = isLogicFlow ? nodes : actionsList;
 
-  const actions: Actions = itemsToProcess?.reduce(
+  const actions: Actions = actionsProcess?.reduce(
     (acc, item) => {
       let actionId, actionName, actionType;
       let endpointId = "";
