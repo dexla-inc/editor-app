@@ -72,6 +72,8 @@ export const GoogleMapPlugin = ({
     field: "markers",
   });
 
+  console.log("markers", markers);
+
   const [internalZoom, setInternalZoom] = useState<number>(parseInt(zoom));
   const [internalMarkers, setInternalMarkers] = useState<MarkerItem[]>(
     safeJsonParse<MarkerItem[]>(markers),

@@ -679,8 +679,8 @@ export const useApiCallAction = async (
         );
     }
 
-    setActionsResponse(actionId, { success: responseJson });
     setActionsResponses(actionId, { success: responseJson });
+    setActionsResponse(actionId, { success: responseJson, list: responseJson });
 
     await handleSuccess(props);
 
@@ -689,7 +689,10 @@ export const useApiCallAction = async (
     // @ts-expect-error
     setActionsResponses(actionId, { error: safeJsonParse(error?.message) });
     // @ts-expect-error
-    setActionsResponse(actionId, { error: safeJsonParse(error?.message) });
+    setActionsResponse(actionId, {
+      error: safeJsonParse(error?.message),
+      list: responseJson,
+    });
     await handleError(props);
   } finally {
     if (entity.props && action.showLoader) {

@@ -7,6 +7,7 @@ import { Component } from "@/utils/editor";
 import { pick } from "next/dist/lib/pick";
 import get from "lodash.get";
 import { ValueProps } from "@/utils/types";
+import { safeJsonParse } from "@/utils/common";
 
 export type GetValueProps = {
   value?: ValueProps;
@@ -43,7 +44,7 @@ export const useDataBinding = () => {
         const result = eval(`(function () { ${boundCode} })`)();
         return result;
       } catch (error: any) {
-        console.error(error);
+        //console.error(error);
         return;
       }
     };
@@ -68,7 +69,21 @@ export const useDataBinding = () => {
 
     const variables = variablesList.reduce(
       (acc, variable) => {
+        // let value =
+        //   variable.type === "TEXT"
+        //     ? `'${variable.value}'`
+        //     : variable.value
+        //     ? variable.defaultValue
+        //     : "";
+
+        // let value =
+        //   variable.type === "OBJECT" || variable.type === "ARRAY"
+        //     ? safeJsonParse(variable.value ?? variable.defaultValue)
+        //     : variable.value
+        //     ? variable.defaultValue
+        //     : "";
         let value = variable.value ?? variable.defaultValue ?? "";
+
         const parsedValue = parseVariableValue(value);
         const processedValue = processValue(parsedValue, variable.type);
 

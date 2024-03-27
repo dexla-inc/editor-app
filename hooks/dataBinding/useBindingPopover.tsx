@@ -185,7 +185,7 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
 
   if (actionsResponse) {
     Object.keys(actionsResponse).forEach((actionId) => {
-      if (actions.list[actionId]) {
+      if (actions?.list[actionId]) {
         actions.list[actionId] = {
           ...actions.list[actionId],
           ...actionsResponse[actionId],
