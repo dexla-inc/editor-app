@@ -124,7 +124,7 @@ export const ConnectionCreatorNode = (
         item: {
           id: addId,
           type: "connectionCreatorNode",
-          position: { x: node.xPos, y: node.yPos + 100 },
+          position: { x: node.xPos, y: node.yPos + 72 },
           data: {
             inputs: [{ id: nanoid() }],
           },
@@ -151,6 +151,106 @@ export const ConnectionCreatorNode = (
     ]);
 
     setSelectedNode(newConditionalNode);
+  };
+
+  const onClickAddTrueOrFalseNode = async () => {
+    const trueOrFalseId = nanoid();
+    const trueOutputId = nanoid();
+    const falseOutputId = nanoid();
+    const edge = edges.find((edge) => edge.target === node.id);
+
+    const defaultOutput = {
+      id: nanoid(),
+      name: "Output",
+    };
+    const newTrueOrFalseNode = {
+      id: trueOrFalseId,
+      type: "trueOrFalseNode",
+      position: { x: node.xPos - 52.5, y: node.yPos },
+      data: {
+        label: "True/False",
+        description: "Execute true/false actions",
+        inputs: [{ id: nanoid(), name: "Input" }],
+        outputs: [defaultOutput],
+        form: {
+          outputs: [defaultOutput],
+        },
+      },
+    };
+
+    onNodesChange([
+      {
+        item: newTrueOrFalseNode,
+        type: "add",
+      },
+    ]);
+
+    onEdgesChange([
+      {
+        item: { ...edge, id: nanoid(), target: trueOrFalseId },
+        type: "add",
+      } as EdgeAddChange,
+    ]);
+
+    onNodesChange([
+      {
+        item: {
+          id: trueOutputId,
+          type: "connectionCreatorNode",
+          position: { x: node.xPos - 100, y: node.yPos + 100 },
+          data: {
+            inputs: [{ id: nanoid() }],
+          },
+          deletable: false,
+        },
+        type: "add",
+      },
+      {
+        item: {
+          id: falseOutputId,
+          type: "connectionCreatorNode",
+          position: { x: node.xPos + 100, y: node.yPos + 100 },
+          data: {
+            inputs: [{ id: nanoid() }],
+          },
+          deletable: false,
+        },
+        type: "add",
+      },
+      {
+        id: node.id,
+        type: "remove",
+      },
+    ]);
+
+    onEdgesChange([
+      {
+        item: {
+          id: nanoid(),
+          target: trueOutputId,
+          source: trueOrFalseId,
+          sourceHandle: defaultOutput.id,
+          type: "custom-edge",
+          label: "True",
+          deletable: false,
+        },
+        type: "add",
+      },
+      {
+        item: {
+          id: nanoid(),
+          target: falseOutputId,
+          source: trueOrFalseId,
+          sourceHandle: defaultOutput.id,
+          type: "custom-edge",
+          label: "False",
+          deletable: false,
+        },
+        type: "add",
+      },
+    ]);
+
+    setSelectedNode(newTrueOrFalseNode);
   };
 
   return (
@@ -200,6 +300,9 @@ export const ConnectionCreatorNode = (
                   <Menu.Label>Conditions</Menu.Label>
                   <Menu.Item onClick={onClickAddConditional}>
                     Conditional
+                  </Menu.Item>
+                  <Menu.Item onClick={onClickAddTrueOrFalseNode}>
+                    True/False
                   </Menu.Item>
                   <Menu.Label>Actions</Menu.Label>
                   {Object.entries(groupedActions).map(([key, value]) => {

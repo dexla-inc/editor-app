@@ -66,7 +66,7 @@ export const useLogicFlows = () => {
         item: {
           id: addId,
           type: "connectionCreatorNode",
-          position: { x: (node as any).xPos, y: (node as any).yPos + 90 },
+          position: { x: (node as any).xPos, y: (node as any).yPos + 72 },
           data: {
             inputs: [{ id: nanoid() }],
           },

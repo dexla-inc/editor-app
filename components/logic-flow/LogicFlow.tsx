@@ -1,5 +1,10 @@
 // The comment below force next to refresh the editor state every time we change something in the code
 // @refresh reset
+import { edgeTypes } from "@/components/logic-flow/nodes/CustomEdge";
+import {
+  onDeleteIfTrueOrFalseNode,
+  onNodesPositionChange,
+} from "@/components/logic-flow/nodes/delete";
 import { FlowState, useFlowStore } from "@/stores/flow";
 import { nodes as nodeTypes } from "@/utils/logicFlows";
 import { nanoid } from "nanoid";
@@ -46,37 +51,33 @@ export const LogicFlow = ({ wrapperRef }: FlowProps) => {
   const rect = wrapperRef.current?.getBoundingClientRect();
   const defaultViewport = { zoom: 2, x: (rect?.width ?? 1000) / 2, y: 0 };
 
-  const onNodesPositionChange = (deletedNode: Node, nodes: Node[]) => {
-    // Get all nodes that are below the deleted node
-    const nodesBelow = nodes
-      .filter((n) => n.position.y > deletedNode.position.y)
-      .sort((a, b) => a.position.y - b.position.y)
-      .map((n) => ({
-        ...n,
-        position: { ...n.position, y: n.position.y - 90 },
-      }));
-
-    onNodesChange(
-      nodesBelow.map((node) => ({
-        ...node,
-        type: "position",
-      })),
-    );
-  };
-
   const onNodesDelete = useCallback(
     (deleted: Node[]) => {
       setEdges(
         deleted.reduce((acc, node) => {
           const incomers = getIncomers(node, nodes, edges);
-          const outgoers = getOutgoers(node, nodes, edges);
+          let outgoers = getOutgoers(node, nodes, edges);
 
           const connectedEdges = getConnectedEdges([node], edges);
-          onNodesPositionChange(node, nodes);
+          onNodesPositionChange(node, nodes, onNodesChange);
 
-          const remainingEdges = acc.filter(
+          let remainingEdges = acc.filter(
             (edge) => !connectedEdges.includes(edge),
           );
+
+          if (node.type === "trueOrFalseNode") {
+            const result = onDeleteIfTrueOrFalseNode(
+              node,
+              nodes,
+              edges,
+              onNodesChange,
+              connectedEdges,
+              remainingEdges,
+              outgoers,
+            );
+            remainingEdges = result.remainingEdges;
+            outgoers = result.outgoers;
+          }
 
           const createdEdges = incomers.flatMap(({ id: source }) =>
             outgoers.map(({ id: target }) => ({
@@ -99,6 +100,7 @@ export const LogicFlow = ({ wrapperRef }: FlowProps) => {
     <ReactFlow
       nodes={nodes}
       edges={edges}
+      edgeTypes={edgeTypes}
       nodesDraggable={false}
       zoomOnScroll={false}
       onInit={setFlowInstance}
