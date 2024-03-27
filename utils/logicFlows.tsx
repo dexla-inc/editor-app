@@ -1,9 +1,9 @@
 import * as ActionNodeExports from "@/components/logic-flow/nodes/ActionNode";
+import * as BooleanNodeExports from "@/components/logic-flow/nodes/BooleanNode";
 import { computeNodeMapper } from "@/components/logic-flow/nodes/compute";
 import * as ConditionalNodeExports from "@/components/logic-flow/nodes/ConditionalNode";
 import * as ConnectionCreatorNodeExports from "@/components/logic-flow/nodes/ConnectionCreatorNode";
 import * as StartNodeExports from "@/components/logic-flow/nodes/StartNode";
-import * as TrueOrFalseNodeExports from "@/components/logic-flow/nodes/TrueOrFalseNode";
 import { LogicFlowResponse } from "@/requests/logicflows/types";
 import { FlowData } from "@/stores/flow";
 import { decodeSchema } from "@/utils/compression";
@@ -22,10 +22,10 @@ const {
   ...conditionalNode
 } = ConditionalNodeExports;
 const {
-  TrueOrFalseNode,
-  data: trueOrFalseNodeData,
-  ...trueOrFalseNode
-} = TrueOrFalseNodeExports;
+  BooleanNode,
+  data: booleanNodeData,
+  ...booleanNode
+} = BooleanNodeExports;
 
 export const nodesData = {
   connectionCreatorNode: {
@@ -35,7 +35,7 @@ export const nodesData = {
   startNode: { data: startNodeData, ...startNode },
   actionNode: { data: actionNodeData, ...actionNode },
   conditionalNode: { data: conditionalNodeData, ...conditionalNode },
-  trueOrFalseNode: { data: trueOrFalseNodeData, ...trueOrFalseNode },
+  booleanNode: { data: booleanNodeData, ...booleanNode },
 };
 
 export type PossibleNodes = keyof typeof nodesData;
@@ -44,7 +44,7 @@ export const nodes: {
   [key in PossibleNodes]: ({ data }: NodeProps) => JSX.Element;
 } = {
   connectionCreatorNode: ConnectionCreatorNode,
-  trueOrFalseNode: TrueOrFalseNode,
+  booleanNode: BooleanNode,
   startNode: StartNode,
   actionNode: ActionNode,
   conditionalNode: ConditionalNode,
@@ -58,6 +58,21 @@ const run = async (state: FlowData, params: any) => {
 
     while (nextNodes.length) {
       const nextNode = nextNodes[0];
+      if (nextNode.type === "booleanNode") {
+        const computeValue = params.computeValue;
+        const value = computeValue({
+          value: nextNode.data.form.condition,
+          staticFallback: false,
+        });
+
+        if (value) {
+          nextNodes = getOutgoers(nextNode, state.nodes, state.edges);
+          console.log(nextNodes);
+        } else {
+          nextNodes = getOutgoers(nextNode, state.nodes, state.edges);
+          console.log(nextNodes);
+        }
+      }
       const computeNode = computeNodeMapper[nextNode?.type!];
 
       await computeNode?.(nextNode, params);

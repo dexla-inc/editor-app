@@ -11,13 +11,13 @@ type FormValues = {
   condition?: ValueProps;
 };
 
-type TrueOrFalseNodeData = NodeData & FormValues;
+type BooleanNodeData = NodeData & FormValues;
 
-export const TrueOrFalseNode = (node: NodeProps<TrueOrFalseNodeData>) => {
+export const BooleanNode = (node: NodeProps<BooleanNodeData>) => {
   return <CustomNode {...node} avatar={NodeAvatar} />;
 };
 
-export const data: TrueOrFalseNodeData = {
+export const data: BooleanNodeData = {
   label: "True/False Split",
   description: "Execute True/False Action",
   inputs: [{ id: nanoid(), name: "Input" }],
@@ -38,6 +38,7 @@ export const NodeForm = ({ form }: NodeFormType) => {
       label="Condition"
       fieldType="boolean"
       isLogicFlow
+      useTrueOrFalseStrings
       {...form.getInputProps("condition")}
     />
   );

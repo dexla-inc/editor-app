@@ -153,8 +153,8 @@ export const ConnectionCreatorNode = (
     setSelectedNode(newConditionalNode);
   };
 
-  const onClickAddTrueOrFalseNode = async () => {
-    const trueOrFalseId = nanoid();
+  const onClickAddBoolean = async () => {
+    const booleanNodeId = nanoid();
     const trueOutputId = nanoid();
     const falseOutputId = nanoid();
     const edge = edges.find((edge) => edge.target === node.id);
@@ -164,8 +164,8 @@ export const ConnectionCreatorNode = (
       name: "Output",
     };
     const newTrueOrFalseNode = {
-      id: trueOrFalseId,
-      type: "trueOrFalseNode",
+      id: booleanNodeId,
+      type: "booleanNode",
       position: { x: node.xPos - 52.5, y: node.yPos },
       data: {
         label: "True/False",
@@ -187,7 +187,7 @@ export const ConnectionCreatorNode = (
 
     onEdgesChange([
       {
-        item: { ...edge, id: nanoid(), target: trueOrFalseId },
+        item: { ...edge, id: nanoid(), target: booleanNodeId },
         type: "add",
       } as EdgeAddChange,
     ]);
@@ -228,7 +228,7 @@ export const ConnectionCreatorNode = (
         item: {
           id: nanoid(),
           target: trueOutputId,
-          source: trueOrFalseId,
+          source: booleanNodeId,
           sourceHandle: defaultOutput.id,
           type: "custom-edge",
           label: "True",
@@ -240,7 +240,7 @@ export const ConnectionCreatorNode = (
         item: {
           id: nanoid(),
           target: falseOutputId,
-          source: trueOrFalseId,
+          source: booleanNodeId,
           sourceHandle: defaultOutput.id,
           type: "custom-edge",
           label: "False",
@@ -301,9 +301,7 @@ export const ConnectionCreatorNode = (
                   <Menu.Item onClick={onClickAddConditional}>
                     Conditional
                   </Menu.Item>
-                  <Menu.Item onClick={onClickAddTrueOrFalseNode}>
-                    True/False
-                  </Menu.Item>
+                  <Menu.Item onClick={onClickAddBoolean}>True/False</Menu.Item>
                   <Menu.Label>Actions</Menu.Label>
                   {Object.entries(groupedActions).map(([key, value]) => {
                     return (

@@ -4,7 +4,7 @@ import { edgeTypes } from "@/components/logic-flow/nodes/CustomEdge";
 import {
   onDeleteIfTrueOrFalseNode,
   onNodesPositionChange,
-} from "@/components/logic-flow/nodes/delete";
+} from "@/components/logic-flow/nodes/compute";
 import { FlowState, useFlowStore } from "@/stores/flow";
 import { nodes as nodeTypes } from "@/utils/logicFlows";
 import { nanoid } from "nanoid";
@@ -59,7 +59,8 @@ export const LogicFlow = ({ wrapperRef }: FlowProps) => {
           let outgoers = getOutgoers(node, nodes, edges);
 
           const connectedEdges = getConnectedEdges([node], edges);
-          onNodesPositionChange(node, nodes, onNodesChange);
+          const edgeToConnect = connectedEdges[connectedEdges.length - 1];
+          onNodesPositionChange(node);
 
           let remainingEdges = acc.filter(
             (edge) => !connectedEdges.includes(edge),
@@ -68,9 +69,6 @@ export const LogicFlow = ({ wrapperRef }: FlowProps) => {
           if (node.type === "trueOrFalseNode") {
             const result = onDeleteIfTrueOrFalseNode(
               node,
-              nodes,
-              edges,
-              onNodesChange,
               connectedEdges,
               remainingEdges,
               outgoers,
@@ -81,10 +79,10 @@ export const LogicFlow = ({ wrapperRef }: FlowProps) => {
 
           const createdEdges = incomers.flatMap(({ id: source }) =>
             outgoers.map(({ id: target }) => ({
+              ...edgeToConnect,
               id: nanoid(),
               source,
               target,
-              type: "straight",
             })),
           );
 

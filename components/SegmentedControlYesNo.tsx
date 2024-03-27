@@ -5,6 +5,7 @@ interface Props
   extends Omit<SegmentedControlProps, "data" | "onChange" | "value"> {
   label: string;
   value?: boolean;
+  useTrueOrFalseStrings?: boolean;
   onChange?: (value: boolean) => void;
 }
 
@@ -12,6 +13,7 @@ export const SegmentedControlYesNo = ({
   label,
   value,
   onChange,
+  useTrueOrFalseStrings = false,
   ...props
 }: Props) => {
   const stringValue = value ? "true" : "false";
@@ -20,14 +22,21 @@ export const SegmentedControlYesNo = ({
     onChange?.(val === "true");
   };
 
+  const options = {
+    true: useTrueOrFalseStrings ? "True" : "Yes",
+    false: useTrueOrFalseStrings ? "False" : "No",
+  };
+
+  const data = [
+    { label: options.true, value: "true" },
+    { label: options.false, value: "false" },
+  ];
+
   return (
     <Stack spacing={2} w="100%">
       <TopLabel text={label} />
       <SegmentedControl
-        data={[
-          { label: "Yes", value: "true" },
-          { label: "No", value: "false" },
-        ]}
+        data={data}
         value={stringValue}
         onChange={handleChange}
         {...props}

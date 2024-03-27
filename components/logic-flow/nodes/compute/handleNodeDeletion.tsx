@@ -1,11 +1,10 @@
+import { useFlowStore } from "@/stores/flow";
 import { nanoid } from "nanoid";
-import { Edge, Node, NodeChange, OnNodesChange, getOutgoers } from "reactflow";
+import { Edge, Node, NodeChange, getOutgoers } from "reactflow";
 
-export const onNodesPositionChange = (
-  deletedNode: Node,
-  nodes: Node[],
-  onNodesChange: OnNodesChange,
-) => {
+export const onNodesPositionChange = (deletedNode: Node) => {
+  const onNodesChange = useFlowStore.getState().onNodesChange;
+  const nodes = useFlowStore.getState().nodes;
   // Get all nodes that are below the deleted node
   const nodesBelow = nodes
     .filter((n) => n.position.y > deletedNode.position.y)
@@ -25,13 +24,11 @@ export const onNodesPositionChange = (
 
 export const onDeleteIfTrueOrFalseNode = (
   deletedNode: Node,
-  nodes: Node[],
-  edges: Edge[],
-  onNodesChange: OnNodesChange,
   connectedEdges: Edge[],
   remainingEdges: Edge[],
   outgoers: Node<any, string | undefined>[],
 ) => {
+  const { nodes, edges, onNodesChange } = useFlowStore.getState();
   const connectorNode = {
     id: nanoid(),
     type: "connectionCreatorNode",
