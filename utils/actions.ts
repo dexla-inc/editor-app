@@ -253,8 +253,7 @@ export const useNavigationAction = ({
   action,
   router,
 }: NavigationActionParams) => {
-  const editorState = useEditorTreeStore.getState();
-  const isLive = editorState.isLive;
+  const isLive = useEditorTreeStore.getState().isLive;
   const projectId = useEditorTreeStore.getState().currentProjectId;
 
   if (!action.pageId || !action.pageSlug) {
@@ -620,6 +619,8 @@ export const useApiCallAction = async (
 
   const updateTreeComponentAttrs =
     useEditorTreeStore.getState().updateTreeComponentAttrs;
+  const setActionsResponse = useEditorStore.getState().setActionsResponse;
+
   if (entity?.props && action.showLoader) {
     setLoadingState(entity.id!, true, updateTreeComponentAttrs);
   }
@@ -678,6 +679,7 @@ export const useApiCallAction = async (
         );
     }
 
+    setActionsResponse(actionId, { success: responseJson });
     setActionsResponses(actionId, { success: responseJson });
 
     await handleSuccess(props);
@@ -686,6 +688,8 @@ export const useApiCallAction = async (
   } catch (error) {
     // @ts-expect-error
     setActionsResponses(actionId, { error: safeJsonParse(error?.message) });
+    // @ts-expect-error
+    setActionsResponse(actionId, { error: safeJsonParse(error?.message) });
     await handleError(props);
   } finally {
     if (entity.props && action.showLoader) {

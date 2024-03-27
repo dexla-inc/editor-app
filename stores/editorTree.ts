@@ -22,6 +22,7 @@ import merge from "lodash.merge";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import cloneDeep from "lodash.clonedeep";
+import { Actions } from "@/hooks/dataBinding/useBindingPopover";
 
 const client = createClient({
   publicApiKey: process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY ?? "",
@@ -405,7 +406,7 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
               "editorTree/setPageLoadTimestamp",
             ),
           setPageLoadTree: (pageLoadTree) =>
-            set({ pageLoadTree }, false, "editor/setPageLoadTree"),
+            set({ pageLoadTree }, false, "editorTree/setPageLoadTree"),
         }),
         {
           name: "editor-tree-config",

@@ -27,8 +27,9 @@ import {
   Tooltip,
 } from "@mantine/core";
 import { IconExternalLink, IconPlugConnected } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useDataBinding } from "@/hooks/dataBinding/useDataBinding";
+import { useEditorStore } from "@/stores/editor";
 
 const TAB_TEXT_SIZE = "xs";
 const ML = 10;
@@ -81,19 +82,20 @@ export default function BindingPopover({
     onClose();
   };
 
-  useEffect(
-    () => {
-      const isSingleAtSign = value?.boundCode === "@";
-      const isDoubleAtSign = value?.boundCode === "@@";
-      if (!isSingleAtSign && !isDoubleAtSign) return;
-      setTab(isSingleAtSign ? "components" : "variables");
-      onOpen();
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [value?.boundCode],
-  );
+  // useEffect(
+  //   () => {
+  //     const isSingleAtSign = value?.boundCode === "@";
+  //     const isDoubleAtSign = value?.boundCode === "@@";
+  //     if (!isSingleAtSign && !isDoubleAtSign) return;
+  //     setTab(isSingleAtSign ? "components" : "variables");
+  //     onOpen();
+  //   },
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  //   [value?.boundCode],
+  // );
 
-  const currentValue = computeValue({ value });
+  const actionsResponses = useEditorStore.getState().actionsResponse;
+  const currentValue = computeValue({ value }, { actions: actionsResponses });
 
   const entitiesDataTreeList: Array<{
     entity: "auth" | "components" | "browser" | "variables" | "actions";
