@@ -15,6 +15,9 @@ import { ProjectResponse } from "@/requests/projects/types";
 import { prepareUserThemeLive } from "@/hooks/prepareUserThemeLive";
 import { useThemeStore } from "@/stores/theme";
 import { initializeFonts } from "@/utils/webfontloader";
+import { listVariables } from "@/requests/variables/queries-noauth";
+import { VariableResponse } from "@/requests/variables/types";
+import { useVariableStore } from "@/stores/variables";
 
 export const getServerSideProps = async ({
   req,
@@ -32,21 +35,18 @@ export const getServerSideProps = async ({
     };
   }
 
-  await queryClient.prefetchQuery(["project", project.id], () =>
-    Promise.resolve(project),
-  );
-  const prefetchEndpoints = queryClient.prefetchQuery(
-    ["endpoints", project.id],
-    () => getDataSourceEndpoints(project.id),
-  );
-  const prefetchProject = queryClient.prefetchQuery(
-    ["project", project.id],
-    () => Promise.resolve(project),
-  );
   const currentSlug = "/";
-  const deploymentPage = await getDeploymentPage(project.id, currentSlug);
 
-  await Promise.all([prefetchEndpoints, prefetchProject]);
+  const [deploymentPage, variables] = await Promise.all([
+    getDeploymentPage(project.id, currentSlug),
+    listVariables(project.id),
+    queryClient.prefetchQuery(["project", project.id], () =>
+      Promise.resolve(project),
+    ),
+    queryClient.prefetchQuery(["endpoints", project.id], () =>
+      getDataSourceEndpoints(project.id),
+    ),
+  ]);
 
   const isLoggedIn = checkRefreshTokenExists(req.cookies["refreshToken"]);
 
@@ -67,6 +67,7 @@ export const getServerSideProps = async ({
         deploymentPage,
         faviconUrl: project.faviconUrl,
         isLive: true,
+        variables: variables.results,
       },
     };
   }
@@ -77,6 +78,7 @@ export const getServerSideProps = async ({
       id: project.id,
       faviconUrl: project.faviconUrl,
       isLive: true,
+      variables: variables.results,
     },
   };
 };
@@ -85,9 +87,17 @@ type Props = {
   project: ProjectResponse;
   faviconUrl?: string;
   deploymentPage: DeploymentPage;
+  variables: VariableResponse[];
 };
 
-const HomePage = ({ project, faviconUrl, deploymentPage }: Props) => {
+const HomePage = ({
+  project,
+  faviconUrl,
+  deploymentPage,
+  variables,
+}: Props) => {
+  useVariableStore.getState().initializeVariableList(variables);
+
   const setCurrentPageAndProjectIds =
     useEditorTreeStore.getState().setCurrentPageAndProjectIds;
   const setPreviewMode = useEditorTreeStore.getState().setPreviewMode;

@@ -74,6 +74,8 @@ export type EditorState = {
   setCollapsedItemsCount: (collapsedItemsCount: number) => void;
   setActivePage: (activePage?: PageResponse | null) => void;
   activePage?: PageResponse | null;
+  actionsResponse?: Record<string, any>;
+  setActionsResponse: (actionId: string, response: any) => void;
 };
 
 // creates a store with undo/redo capability
@@ -81,6 +83,13 @@ export const useEditorStore = create<EditorState>()(
   // @ts-ignore
   devtools(
     (set, get) => ({
+      setActionsResponse: (actionId, response) =>
+        set((state) => ({
+          actionsResponse: {
+            ...state.actionsResponse,
+            [actionId]: response,
+          },
+        })),
       setActivePage: async (activePage) =>
         set({ activePage }, false, "editor/setActivePage"),
       collapsedItemsCount: 0,
