@@ -620,6 +620,8 @@ export const useApiCallAction = async (
 
   const updateTreeComponentAttrs =
     useEditorTreeStore.getState().updateTreeComponentAttrs;
+  const setActionsResponse = useEditorTreeStore.getState().setActionsResponse;
+
   if (entity?.props && action.showLoader) {
     setLoadingState(entity.id!, true, updateTreeComponentAttrs);
   }
@@ -678,6 +680,7 @@ export const useApiCallAction = async (
         );
     }
 
+    setActionsResponse(actionId, { success: responseJson });
     setActionsResponses(actionId, { success: responseJson });
 
     await handleSuccess(props);
@@ -686,6 +689,8 @@ export const useApiCallAction = async (
   } catch (error) {
     // @ts-expect-error
     setActionsResponses(actionId, { error: safeJsonParse(error?.message) });
+    // @ts-expect-error
+    setActionsResponse(actionId, { error: safeJsonParse(error?.message) });
     await handleError(props);
   } finally {
     if (entity.props && action.showLoader) {

@@ -14,6 +14,7 @@ import { Component } from "@/utils/editor";
 import { useRouter } from "next/router";
 import { useDataSourceStore } from "@/stores/datasource";
 import { pick } from "next/dist/lib/pick";
+import { useEffect } from "react";
 
 type BindType = {
   selectedEntityId: string;
@@ -22,6 +23,14 @@ type BindType = {
 
 type Props = {
   isPageAction?: boolean;
+};
+
+export type Actions = {
+  list: any;
+  [key: string]: {
+    success: {} | [];
+    error: {} | [];
+  };
 };
 
 const parseVariableValue = (value: string): any => {
@@ -123,7 +132,7 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
 
   const itemsToProcess = isLogicFlow ? nodes : actionsList;
 
-  const actions = itemsToProcess?.reduce(
+  const actions: Actions = itemsToProcess?.reduce(
     (acc, item) => {
       let actionId, actionName, actionType;
       let endpointId = "";
@@ -171,6 +180,19 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
     },
     { list: {} } as any,
   );
+
+  const actionsResponse = useEditorTreeStore((state) => state.actionsResponse);
+
+  if (actionsResponse) {
+    Object.keys(actionsResponse).forEach((actionId) => {
+      if (actions.list[actionId]) {
+        actions.list[actionId] = {
+          ...actions.list[actionId],
+          ...actionsResponse[actionId],
+        };
+      }
+    });
+  }
 
   const getEntityEditorValue = ({ selectedEntityId, entity }: BindType) => {
     const entityHandlers = {

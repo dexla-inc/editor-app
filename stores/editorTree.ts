@@ -22,6 +22,7 @@ import merge from "lodash.merge";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import cloneDeep from "lodash.clonedeep";
+import { Actions } from "@/hooks/dataBinding/useBindingPopover";
 
 const client = createClient({
   publicApiKey: process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY ?? "",
@@ -126,6 +127,8 @@ export type EditorTreeState = {
   ) => void;
   isSaving: boolean;
   setIsSaving: (value: boolean) => void;
+  actionsResponse?: Record<string, any>;
+  setActionsResponse: (actionId: string, response: any) => void;
 };
 
 const updatePageStateFunc = async (
@@ -405,7 +408,14 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
               "editorTree/setPageLoadTimestamp",
             ),
           setPageLoadTree: (pageLoadTree) =>
-            set({ pageLoadTree }, false, "editor/setPageLoadTree"),
+            set({ pageLoadTree }, false, "editorTree/setPageLoadTree"),
+          setActionsResponse: (actionId, response) =>
+            set((state) => ({
+              actionsResponse: {
+                ...state.actionsResponse,
+                [actionId]: response,
+              },
+            })),
         }),
         {
           name: "editor-tree-config",
