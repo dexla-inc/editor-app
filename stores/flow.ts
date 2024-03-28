@@ -103,7 +103,7 @@ export const initialNodes = [
       inputs: [{ id: nanoid() }],
       outputs: [],
     },
-    position: { x: 17.5, y: 100 },
+    position: { x: 17.5, y: 80 },
     deletable: false,
   },
 ] as Node[];
@@ -147,15 +147,15 @@ export const useFlowStore = create<FlowState>()(
                   ...change,
                   ...(isAdd
                     ? {
-                        item: { ...change.item, ...edgeProps },
+                        item: { ...edgeProps, ...change.item },
                       }
                     : {}),
                 };
               }),
               get().edges.map((edge) => {
                 return {
-                  ...edge,
                   ...edgeProps,
+                  ...edge,
                 };
               }),
             ),
@@ -168,11 +168,11 @@ export const useFlowStore = create<FlowState>()(
         set(
           {
             edges: addEdge(
-              { ...connection, ...edgeProps },
+              { ...edgeProps, ...connection },
               get().edges.map((edge) => {
                 return {
-                  ...edge,
                   ...edgeProps,
+                  ...edge,
                 };
               }),
             ),

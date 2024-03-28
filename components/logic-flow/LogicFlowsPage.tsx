@@ -1,5 +1,6 @@
 import { LogicFlow } from "@/components/logic-flow/LogicFlow";
 import { LogicFlowShell } from "@/components/logic-flow/LogicFlowShell";
+import { useFlowsQuery } from "@/hooks/reactQuery/useFlowsQuery";
 import { patchLogicFlow } from "@/requests/logicflows/mutations";
 import {
   LogicFlowParams,
@@ -29,6 +30,7 @@ import { useMutation } from "@tanstack/react-query";
 import isEqual from "lodash.isequal";
 import startCase from "lodash.startcase";
 import { nanoid } from "nanoid";
+import { useRouter } from "next/router";
 import { useCallback, useEffect, useRef } from "react";
 import { useUpdateNodeInternals } from "reactflow";
 
@@ -37,6 +39,8 @@ type Props = {
 };
 
 export const LogicFlowsPage = ({ flow }: Props) => {
+  const router = useRouter();
+  const projectId = router.query.id as string;
   const reactFlowWrapper = useRef(null);
   const restoreFlow = useFlowStore((state) => state.restoreFlow);
   const selectedNode = useFlowStore((state) => state.selectedNode);
@@ -55,6 +59,7 @@ export const LogicFlowsPage = ({ flow }: Props) => {
   const updateNodeInternals = useUpdateNodeInternals();
   const previousSelectedNode = usePrevious(selectedNode);
   const id = useEditorTreeStore((state) => state.currentProjectId ?? "");
+  const { invalidate } = useFlowsQuery(projectId);
 
   useEffect(() => {
     if (flow?.data) {
@@ -79,6 +84,9 @@ export const LogicFlowsPage = ({ flow }: Props) => {
       setIsUpdating(false);
 
       return response;
+    },
+    onSettled: async () => {
+      invalidate();
     },
   });
 
