@@ -57,14 +57,14 @@ const getNextNode = (
   params: any,
 ) => {
   const computeValue = params.computeValue;
-  const value = computeValue({
+  const condition = computeValue({
     value: nextNode.data.form.condition,
     staticFallback: false,
   });
 
   const nextNodes = getOutgoers(nextNode, state.nodes, state.edges);
   const outgoerEdges = state.edges.find(
-    (edge) => edge.label === startCase(`${value}`),
+    (edge) => edge.label === startCase(`${condition}`),
   );
   const nodeToTrigger = nextNodes.find(
     (node) => node.id === outgoerEdges?.target,
