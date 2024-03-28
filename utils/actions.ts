@@ -40,7 +40,6 @@ import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { Router } from "next/router";
 import { GetValueProps } from "@/hooks/dataBinding/useDataBinding";
-import { ActionResponse } from "@/hooks/dataBinding/useBindingPopover";
 
 const triggers = [
   "onClick",
@@ -682,11 +681,6 @@ export const useApiCallAction = async (
 
     setActionsResponses(actionId, {
       success: responseJson,
-      list: {
-        id: actionId,
-        name: action.name,
-        success: responseJson,
-      },
     });
     setActionsResponse(actionId, {
       success: responseJson,
@@ -704,11 +698,6 @@ export const useApiCallAction = async (
     if (error instanceof Error) {
       setActionsResponses(actionId, {
         error: safeJsonParse(error.message),
-        list: {
-          id: actionId,
-          name: action.name,
-          error: error.message,
-        },
       });
       setActionsResponse(actionId, {
         error: safeJsonParse(error.message),

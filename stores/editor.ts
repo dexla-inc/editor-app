@@ -6,6 +6,7 @@ import { ComponentStructure, ComponentTree } from "@/utils/editor";
 import { Node } from "reactflow";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
+import merge from "lodash.merge";
 
 export type ComponentToBind = {
   componentId: string;
@@ -87,7 +88,7 @@ export const useEditorStore = create<EditorState>()(
         set((state) => ({
           actionsResponse: {
             ...state.actionsResponse,
-            [actionId]: response,
+            [actionId]: merge({}, state.actionsResponse?.[actionId], response),
           },
         })),
       setActivePage: async (activePage) =>
