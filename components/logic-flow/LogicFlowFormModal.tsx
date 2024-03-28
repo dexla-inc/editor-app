@@ -7,15 +7,19 @@ import { useAppStore } from "@/stores/app";
 import { initialEdges, initialNodes, useFlowStore } from "@/stores/flow";
 import { encodeSchema } from "@/utils/compression";
 import { convertToPatchParams } from "@/utils/dashboardTypes";
+import { queryClient } from "@/utils/reactQuery";
 import { Button, Modal, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
-export const LogicFlowFormModal = () => {
+type Props = {
+  data?: string;
+};
+
+export const LogicFlowFormModal = ({ data }: Props) => {
   const router = useRouter();
-  const client = useQueryClient();
   const shouldShowFormModal = useFlowStore(
     (state) => state.shouldShowFormModal,
   );
@@ -30,6 +34,7 @@ export const LogicFlowFormModal = () => {
   const form = useForm({
     initialValues: {
       name: currentFlow?.name ?? "",
+      data: data,
     },
   });
 
@@ -45,7 +50,7 @@ export const LogicFlowFormModal = () => {
       );
     },
     onSettled: async () => {
-      await client.refetchQueries(["logic-flows", projectId]);
+      await queryClient.refetchQueries(["logic-flows", projectId]);
       setShowFormModal(false);
       stopLoading({
         id: "logic-flows",
@@ -70,7 +75,7 @@ export const LogicFlowFormModal = () => {
       });
     },
     onSettled: async (data, error) => {
-      await client.refetchQueries(["logic-flows", projectId]);
+      await queryClient.refetchQueries(["logic-flows", projectId]);
 
       if (!data?.id) {
         stopLoading({
@@ -135,6 +140,7 @@ export const LogicFlowFormModal = () => {
         setShowFormModal(false);
         form.setValues({
           name: "",
+          data: undefined,
         });
       }}
       title={currentFlow?.id ? "Edit Logic Flow" : "Create Logic Flow"}
