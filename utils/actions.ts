@@ -17,7 +17,6 @@ import {
 } from "@/requests/datasources/types";
 
 import { ShowNotificationActionForm } from "@/components/actions/ShowNotificationActionForm";
-import { GetValueProps } from "@/hooks/dataBinding/useDataBinding";
 import { LogicFlowResponse } from "@/requests/logicflows/types";
 import { PageResponse } from "@/requests/pages/types";
 import { FrontEndTypes } from "@/requests/variables/types";
@@ -40,6 +39,8 @@ import isEmpty from "lodash.isempty";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { Router } from "next/router";
+import { GetValueProps } from "@/hooks/dataBinding/useDataBinding";
+import { ActionResponse } from "@/hooks/dataBinding/useBindingPopover";
 
 const triggers = [
   "onClick",
@@ -679,18 +680,43 @@ export const useApiCallAction = async (
         );
     }
 
-    setActionsResponses(actionId, { success: responseJson });
-    setActionsResponse(actionId, { success: responseJson, list: responseJson });
+    setActionsResponses(actionId, {
+      success: responseJson,
+      list: {
+        id: actionId,
+        name: action.name,
+        success: responseJson,
+      },
+    });
+    setActionsResponse(actionId, {
+      success: responseJson,
+      list: {
+        id: actionId,
+        name: action.name,
+        success: responseJson,
+      },
+    });
 
     await handleSuccess(props);
 
     return responseJson;
   } catch (error) {
     if (error instanceof Error) {
-      setActionsResponses(actionId, { error: safeJsonParse(error.message) });
+      setActionsResponses(actionId, {
+        error: safeJsonParse(error.message),
+        list: {
+          id: actionId,
+          name: action.name,
+          error: error.message,
+        },
+      });
       setActionsResponse(actionId, {
         error: safeJsonParse(error.message),
-        list: error.message,
+        list: {
+          id: actionId,
+          name: action.name,
+          error: error.message,
+        },
       });
     }
 
