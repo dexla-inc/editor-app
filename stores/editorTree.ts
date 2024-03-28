@@ -22,7 +22,6 @@ import merge from "lodash.merge";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import cloneDeep from "lodash.clonedeep";
-import { Actions } from "@/hooks/dataBinding/useBindingPopover";
 
 const client = createClient({
   publicApiKey: process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY ?? "",
