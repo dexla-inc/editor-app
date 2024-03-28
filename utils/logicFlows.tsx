@@ -7,6 +7,7 @@ import * as StartNodeExports from "@/components/logic-flow/nodes/StartNode";
 import { LogicFlowResponse } from "@/requests/logicflows/types";
 import { FlowData } from "@/stores/flow";
 import { decodeSchema } from "@/utils/compression";
+import startCase from "lodash.startcase";
 import { getOutgoers, Node, NodeProps } from "reactflow";
 
 const {
@@ -50,6 +51,28 @@ export const nodes: {
   conditionalNode: ConditionalNode,
 };
 
+const getNextNode = (
+  state: FlowData,
+  nextNode: Node<any, string | undefined>,
+  params: any,
+) => {
+  const computeValue = params.computeValue;
+  const condition = computeValue({
+    value: nextNode.data.form.condition,
+    staticFallback: false,
+  });
+
+  const nextNodes = getOutgoers(nextNode, state.nodes, state.edges);
+  const outgoerEdges = state.edges.find(
+    (edge) => edge.label === startCase(`${condition}`),
+  );
+  const nodeToTrigger = nextNodes.find(
+    (node) => node.id === outgoerEdges?.target,
+  );
+
+  return nodeToTrigger;
+};
+
 const run = async (state: FlowData, params: any) => {
   const initialNode = state.nodes.find((n) => n.id === "start-node") as Node;
 
@@ -57,20 +80,14 @@ const run = async (state: FlowData, params: any) => {
     let nextNodes = getOutgoers(initialNode!, state.nodes, state.edges);
 
     while (nextNodes.length) {
-      const nextNode = nextNodes[0];
+      let nextNode = nextNodes[0];
       if (nextNode.type === "booleanNode") {
-        const computeValue = params.computeValue;
-        const value = computeValue({
-          value: nextNode.data.form.condition,
-          staticFallback: false,
-        });
-
-        if (value) {
-          nextNodes = getOutgoers(nextNode, state.nodes, state.edges);
-        } else {
-          nextNodes = getOutgoers(nextNode, state.nodes, state.edges);
+        const nodeToTrigger = getNextNode(state, nextNode, params);
+        if (nodeToTrigger) {
+          nextNode = nodeToTrigger;
         }
       }
+
       const computeNode = computeNodeMapper[nextNode?.type!];
 
       await computeNode?.(nextNode, params);
