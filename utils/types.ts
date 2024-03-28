@@ -2,21 +2,6 @@ import { CardStyle } from "@/requests/projects/types";
 import { Font, Logo, ResponsiveBreakpoint } from "@/requests/themes/types";
 import { MantineSize, MantineTheme, Tuple } from "@mantine/core";
 
-export type BindingType = "Formula" | "JavaScript";
-export type BindingTab =
-  | "components"
-  | "variables"
-  | "actions"
-  | "auth"
-  | "browser";
-
-export type ValueProps = Partial<{
-  dataType: "static" | "dynamic" | "boundCode";
-  static: any;
-  dynamic: string;
-  boundCode: string;
-}>;
-
 // Copy the properties from ThemeMutationParams
 export interface MantineThemeExtended extends MantineTheme {
   colors: ExtendedMantineThemeColors;

@@ -6,14 +6,7 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 import { Component } from "@/utils/editor";
 import { pick } from "next/dist/lib/pick";
 import get from "lodash.get";
-import { ValueProps } from "@/utils/types";
-import { safeJsonParse } from "@/utils/common";
-
-export type GetValueProps = {
-  value?: ValueProps;
-  shareableContent?: any;
-  staticFallback?: string;
-};
+import { ComputeValuePropCtx, ComputeValueProps } from "@/types/dataBinding";
 
 const parseVariableValue = (value: string): any => {
   try {
@@ -29,15 +22,18 @@ const processValue = (value: any, type: string) => {
 
 export const useDataBinding = () => {
   const browser = useRouter();
-  const computeValue = (
-    { value, shareableContent, staticFallback }: GetValueProps,
-    ctx?: any,
+  const computeValue: ComputeValueProps = (
+    { value, shareableContent, staticFallback },
+    ctx,
   ) => {
     const variablesList = useVariableStore.getState().variableList;
     const inputsStore = useInputsStore.getState().inputValues;
     const auth = useDataSourceStore.getState().getAuthState();
 
-    const autoRunJavascriptCode = (boundCode: string, ctx: any) => {
+    const autoRunJavascriptCode = <T>(
+      boundCode: string,
+      ctx?: ComputeValuePropCtx,
+    ): T | undefined => {
       const { actions } = ctx ?? {};
 
       try {
@@ -110,7 +106,7 @@ export const useDataBinding = () => {
       pick(browser, ["asPath", "basePath", "pathname", "query", "route"]),
     );
 
-    if (value === undefined) return staticFallback || undefined;
+    if (value === undefined) return staticFallback || "";
     let dataType = value?.dataType ?? "static";
 
     const valueHandlers = {

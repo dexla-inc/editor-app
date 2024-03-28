@@ -6,7 +6,7 @@ import { useDataSourceStore } from "@/stores/datasource";
 import { memoize } from "proxy-memoize";
 import { useMemo } from "react";
 import get from "lodash.get";
-import { ValueProps } from "@/utils/types";
+import { ValueProps } from "@/types/dataBinding";
 
 type NextRouterKeys = keyof NextRouter;
 type RecordStringAny = Record<string, any>;

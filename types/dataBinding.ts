@@ -1,0 +1,38 @@
+export type BindingType = "Formula" | "JavaScript";
+export type BindingTab =
+  | "components"
+  | "variables"
+  | "actions"
+  | "auth"
+  | "browser";
+
+export type ValueProps = Partial<{
+  dataType: "static" | "dynamic" | "boundCode";
+  static: any;
+  dynamic: string;
+  boundCode: string;
+}>;
+
+export type GetValueProps = {
+  value?: ValueProps;
+  shareableContent?: Record<string, any>;
+  staticFallback?: string;
+};
+
+export type ComputeValuePropCtx = Record<
+  string,
+  { actions?: ActionsResponsesType }
+>;
+
+export type ComputeValueProps = <T>(
+  value: GetValueProps,
+  ctx?: ComputeValuePropCtx,
+) => T;
+
+export type ActionsResponsesType = Record<
+  string,
+  {
+    success: unknown;
+    error: unknown;
+  }
+>;

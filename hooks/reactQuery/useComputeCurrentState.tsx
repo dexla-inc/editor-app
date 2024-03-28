@@ -13,7 +13,7 @@ export const useComputeCurrentState = (component: Component): string => {
   );
 
   return useMemo(() => {
-    const boundState = computeValue({
+    const boundState = computeValue<string>({
       value: component.onLoad?.currentState,
       staticFallback: "default",
     });

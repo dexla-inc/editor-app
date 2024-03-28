@@ -7,6 +7,7 @@ import { Node } from "reactflow";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import merge from "lodash.merge";
+import { ActionsResponsesType } from "@/types/dataBinding";
 
 export type ComponentToBind = {
   componentId: string;
@@ -75,7 +76,7 @@ export type EditorState = {
   setCollapsedItemsCount: (collapsedItemsCount: number) => void;
   setActivePage: (activePage?: PageResponse | null) => void;
   activePage?: PageResponse | null;
-  actionsResponse?: Record<string, any>;
+  actionsResponse: ActionsResponsesType;
   setActionsResponse: (actionId: string, response: any) => void;
 };
 
@@ -98,6 +99,7 @@ export const useEditorStore = create<EditorState>()(
       selectedComponentId: "content-wrapper",
       language: "default",
       projectId: "",
+      actionsResponse: {},
       setCopiedProperties: (copiedProperties) =>
         set({ copiedProperties }, false, "editor/setCopiedProperties"),
       setOpenAction: (openAction) =>

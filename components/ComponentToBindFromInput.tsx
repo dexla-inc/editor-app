@@ -1,7 +1,7 @@
 import { ComponentToBindWrapper } from "@/components/ComponentToBindWrapper";
 import { useEditorStore } from "@/stores/editor";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
-import { ValueProps } from "@/utils/types";
+import { ValueProps } from "@/types/dataBinding";
 import {
   NumberInput,
   NumberInputProps,

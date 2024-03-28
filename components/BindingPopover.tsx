@@ -10,7 +10,11 @@ import {
 } from "@/utils/branding";
 import { isObjectOrArray } from "@/utils/common";
 import { ICON_SIZE } from "@/utils/config";
-import { BindingTab, ValueProps } from "@/utils/types";
+import {
+  ActionsResponsesType,
+  BindingTab,
+  ValueProps,
+} from "@/types/dataBinding";
 import {
   ActionIcon,
   Box,
@@ -95,7 +99,10 @@ export default function BindingPopover({
   // );
 
   const actionsResponses = useEditorStore.getState().actionsResponse;
-  const currentValue = computeValue({ value }, { actions: actionsResponses });
+  const currentValue = computeValue<string>(
+    { value },
+    { actions: actionsResponses },
+  );
 
   const entitiesDataTreeList: Array<{
     entity: "auth" | "components" | "browser" | "variables" | "actions";

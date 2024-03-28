@@ -32,14 +32,19 @@ import {
 } from "@/utils/common";
 import { Component } from "@/utils/editor";
 import { executeFlow } from "@/utils/logicFlows";
-import { ArrayMethods, ValueProps } from "@/utils/types";
+import { ArrayMethods } from "@/utils/types";
 import { UseFormReturnType } from "@mantine/form";
 import { showNotification } from "@mantine/notifications";
 import isEmpty from "lodash.isempty";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { Router } from "next/router";
-import { GetValueProps } from "@/hooks/dataBinding/useDataBinding";
+import {
+  ComputeValuePropCtx,
+  ComputeValueProps,
+  GetValueProps,
+  ValueProps,
+} from "@/types/dataBinding";
 
 const triggers = [
   "onClick",
@@ -235,7 +240,7 @@ export type ActionParams = {
   router: Router;
   setActionsResponses: any;
   actionResponses?: any;
-  computeValue: (value: GetValueProps, ctx?: any) => any;
+  computeValue: ComputeValueProps;
   event?: any;
   entity: Component | PageResponse;
   data?: any;
@@ -283,7 +288,10 @@ export const useGoToUrlAction = async ({
   actionResponses,
 }: GoToUrlParams) => {
   const { url, openInNewTab } = action;
-  const value = computeValue({ value: url }, { actions: actionResponses });
+  const value = computeValue<string>(
+    { value: url },
+    { actions: actionResponses },
+  );
 
   if (openInNewTab) {
     window.open(value, "_blank");
@@ -347,7 +355,7 @@ export const useChangeVisibilityAction = ({
   const updateTreeComponentAttrs = useEditorTreeStore(
     (state) => state.updateTreeComponentAttrs,
   );
-  const componentId = computeValue(
+  const componentId = computeValue<string>(
     { value: action.componentId },
     { actions: actionResponses },
   );
@@ -359,7 +367,7 @@ export const useChangeVisibilityAction = ({
 
   // Determine the current display state of the component
   const currentDisplay = component?.props?.style?.display;
-  const parsedCurrentDisplay = computeValue(
+  const parsedCurrentDisplay = computeValue<string>(
     {
       value: currentDisplay,
       staticFallback: defaultDisplayValue,
@@ -413,7 +421,7 @@ export const useChangeStateAction = ({
   computeValue,
   actionResponses,
 }: ChangeStateActionParams) => {
-  const componentId = computeValue(
+  const componentId = computeValue<string>(
     { value: action.componentId },
     { actions: actionResponses },
   );
@@ -822,8 +830,8 @@ export const useChangeVariableAction = async ({
   actionResponses,
 }: ChangeVariableActionParams) => {
   const setVariable = useVariableStore.getState().setVariable;
-  const index = computeValue({ value: action.index });
-  const path = computeValue({ value: action.path });
+  const index = computeValue<number>({ value: action.index });
+  const path = computeValue<string>({ value: action.path });
   let value = computeValue(
     { value: action.value },
     { actions: actionResponses },
