@@ -67,10 +67,8 @@ const run = async (state: FlowData, params: any) => {
 
         if (value) {
           nextNodes = getOutgoers(nextNode, state.nodes, state.edges);
-          console.log(nextNodes);
         } else {
           nextNodes = getOutgoers(nextNode, state.nodes, state.edges);
-          console.log(nextNodes);
         }
       }
       const computeNode = computeNodeMapper[nextNode?.type!];

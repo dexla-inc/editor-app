@@ -78,8 +78,8 @@ export const CustomNode = (props: CustomNodeProps) => {
         {Avatar ? <Avatar size={14} /> : <NodeAvatar size={14} />}
         <Text size={6} weight="bold" w="90%" ta="center">
           {node.type === "conditionalNode" && "Conditional"}
-          {node.type === "trueOrFalseNode"
-            ? `${data.label} Split`
+          {node.type === "booleanNode"
+            ? `True/False Split`
             : `${startCase(data.form?.action || "")} - ${data.label}`}
         </Text>
       </Stack>

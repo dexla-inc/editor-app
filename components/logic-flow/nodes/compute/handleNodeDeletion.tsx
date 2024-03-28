@@ -27,8 +27,13 @@ export const onDeleteIfTrueOrFalseNode = (
   connectedEdges: Edge[],
   remainingEdges: Edge[],
   outgoers: Node<any, string | undefined>[],
+  incomers: Node<any, string | undefined>[],
 ) => {
   const { nodes, edges, onNodesChange } = useFlowStore.getState();
+  const booleanNode = incomers.find((n) => n.type === "booleanNode");
+  const xValue =
+    booleanNode?.position.x! > deletedNode.position.x ? -82.5 : 117.5;
+  const xPos = booleanNode ? xValue : 17.5;
   const connectorNode = {
     id: nanoid(),
     type: "connectionCreatorNode",
@@ -36,7 +41,7 @@ export const onDeleteIfTrueOrFalseNode = (
       inputs: [{ id: nanoid() }],
       outputs: [],
     },
-    position: { x: 17.5, y: deletedNode.position.y },
+    position: { x: xPos, y: deletedNode.position.y },
     deletable: false,
   } as Node;
 
@@ -44,6 +49,7 @@ export const onDeleteIfTrueOrFalseNode = (
   const outgoerEdges = connectedEdges.filter(
     (edge) => edge.source === deletedNode.id,
   );
+
   const outgoerNodes = outgoerEdges
     .map((edge) => nodes.find((n) => n.id === edge.target))
     .filter((n) => n) as Node[];

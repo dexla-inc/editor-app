@@ -57,6 +57,7 @@ export const LogicFlow = ({ wrapperRef }: FlowProps) => {
         deleted.reduce((acc, node) => {
           const incomers = getIncomers(node, nodes, edges);
           let outgoers = getOutgoers(node, nodes, edges);
+          const booleanNode = incomers.find((n) => n.type === "booleanNode");
 
           const connectedEdges = getConnectedEdges([node], edges);
           const edgeToConnect = connectedEdges[connectedEdges.length - 1];
@@ -66,12 +67,13 @@ export const LogicFlow = ({ wrapperRef }: FlowProps) => {
             (edge) => !connectedEdges.includes(edge),
           );
 
-          if (node.type === "trueOrFalseNode") {
+          if (node.type === "booleanNode") {
             const result = onDeleteIfTrueOrFalseNode(
               node,
               connectedEdges,
               remainingEdges,
               outgoers,
+              incomers,
             );
             remainingEdges = result.remainingEdges;
             outgoers = result.outgoers;
@@ -79,7 +81,8 @@ export const LogicFlow = ({ wrapperRef }: FlowProps) => {
 
           const createdEdges = incomers.flatMap(({ id: source }) =>
             outgoers.map(({ id: target }) => ({
-              ...edgeToConnect,
+              type: "straight",
+              ...(booleanNode && edgeToConnect),
               id: nanoid(),
               source,
               target,
