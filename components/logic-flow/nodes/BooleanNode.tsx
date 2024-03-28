@@ -1,6 +1,6 @@
 import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 import { CustomNode, NodeData } from "@/components/logic-flow/nodes/CustomNode";
-import { ValueProps } from "@/utils/types";
+import { ValueProps } from "@/types/dataBinding";
 import { UseFormReturnType } from "@mantine/form";
 import { IconArrowFork } from "@tabler/icons-react";
 import { nanoid } from "nanoid";

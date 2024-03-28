@@ -6,13 +6,7 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 import { Component } from "@/utils/editor";
 import { pick } from "next/dist/lib/pick";
 import get from "lodash.get";
-import { ValueProps } from "@/utils/types";
-
-export type GetValueProps = {
-  value?: ValueProps;
-  shareableContent?: any;
-  staticFallback?: string;
-};
+import { ComputeValuePropCtx, ComputeValueProps } from "@/types/dataBinding";
 
 const parseVariableValue = (value: string): any => {
   try {
@@ -28,22 +22,25 @@ const processValue = (value: any, type: string) => {
 
 export const useDataBinding = () => {
   const browser = useRouter();
-  const computeValue = (
-    { value, shareableContent, staticFallback }: GetValueProps,
-    ctx?: any,
+  const computeValue: ComputeValueProps = (
+    { value, shareableContent, staticFallback },
+    ctx,
   ) => {
     const variablesList = useVariableStore.getState().variableList;
     const inputsStore = useInputsStore.getState().inputValues;
     const auth = useDataSourceStore.getState().getAuthState();
 
-    const autoRunJavascriptCode = (boundCode: string, ctx: any) => {
+    const autoRunJavascriptCode = <T>(
+      boundCode: string,
+      ctx?: ComputeValuePropCtx,
+    ): T | undefined => {
       const { actions } = ctx ?? {};
 
       try {
         const result = eval(`(function () { ${boundCode} })`)();
         return result;
       } catch (error: any) {
-        console.error(error);
+        //console.error(error);
         return;
       }
     };
@@ -68,7 +65,21 @@ export const useDataBinding = () => {
 
     const variables = variablesList.reduce(
       (acc, variable) => {
+        // let value =
+        //   variable.type === "TEXT"
+        //     ? `'${variable.value}'`
+        //     : variable.value
+        //     ? variable.defaultValue
+        //     : "";
+
+        // let value =
+        //   variable.type === "OBJECT" || variable.type === "ARRAY"
+        //     ? safeJsonParse(variable.value ?? variable.defaultValue)
+        //     : variable.value
+        //     ? variable.defaultValue
+        //     : "";
         let value = variable.value ?? variable.defaultValue ?? "";
+
         const parsedValue = parseVariableValue(value);
         const processedValue = processValue(parsedValue, variable.type);
 
@@ -95,7 +106,7 @@ export const useDataBinding = () => {
       pick(browser, ["asPath", "basePath", "pathname", "query", "route"]),
     );
 
-    if (value === undefined) return staticFallback || undefined;
+    if (value === undefined) return staticFallback || "";
     let dataType = value?.dataType ?? "static";
 
     const valueHandlers = {

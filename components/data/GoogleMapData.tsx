@@ -13,7 +13,7 @@ export const GoogleMapData = ({ component, endpoints }: DataProps) => {
         type: "text" as FieldType,
       },
       {
-        name: "center.lat",
+        name: "centerLat",
         label: "Latitude",
         placeholder: "25.816347481537285",
         type: "number" as FieldType,
@@ -21,7 +21,7 @@ export const GoogleMapData = ({ component, endpoints }: DataProps) => {
         decimalPlaces: 15,
       },
       {
-        name: "center.lng",
+        name: "centerLng",
         label: "Longitude",
         placeholder: "-80.1219500315037",
         type: "number" as FieldType,
