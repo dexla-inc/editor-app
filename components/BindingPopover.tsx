@@ -216,7 +216,7 @@ export default function BindingPopover({
               value={value?.boundCode}
               variables={variables.list}
               components={components.list}
-              actions={actions.list}
+              actions={actions?.list}
               onChange={(code: string) =>
                 onChange({ ...value, boundCode: code })
               }
