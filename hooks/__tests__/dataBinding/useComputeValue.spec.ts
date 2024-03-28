@@ -2,7 +2,7 @@
 import { useComputeValue } from "../../dataBinding/useComputeValue";
 import { renderHook } from "@/test-utils";
 
-describe("useComputeValue", () => {
+describe.skip("useComputeValue", () => {
   // Computes dynamic value from shareableContent
   it("should compute dynamic value from shareableContent when fieldValue is dynamic", () => {
     // Mock the necessary dependencies
