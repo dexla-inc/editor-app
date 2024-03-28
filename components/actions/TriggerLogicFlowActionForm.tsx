@@ -1,6 +1,5 @@
 import { useFlowsQuery } from "@/hooks/reactQuery/useFlowsQuery";
 import { LogicFlowResponse } from "@/requests/logicflows/types";
-import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { ActionFormProps, TriggerLogicFlowAction } from "@/utils/actions";
 import { Select, Stack } from "@mantine/core";
@@ -12,19 +11,7 @@ export const TriggerLogicFlowActionForm = ({ form }: Props) => {
   const projectId = useEditorTreeStore(
     (state) => state.currentProjectId,
   ) as string;
-  const { data: flows, isFetched } = useFlowsQuery(projectId);
-
-  useEffect(() => {
-    if (isFetched) {
-      const selectedFlow = flows?.results.find(
-        (flow: LogicFlowResponse) => flow.id === form.values.logicFlowId,
-      );
-      if (selectedFlow) {
-        form.setFieldValue("logicFlow", selectedFlow);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isFetched, form.values.logicFlowId]);
+  const { data: flows } = useFlowsQuery(projectId);
 
   return (
     <Stack spacing="xs">

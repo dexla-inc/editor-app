@@ -38,6 +38,7 @@ import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { Router } from "next/router";
 import { ComputeValueProps, ValueProps } from "@/types/dataBinding";
+import { PagingResponse } from "@/requests/types";
 
 const triggers = [
   "onClick",
@@ -237,6 +238,7 @@ export type ActionParams = {
   event?: any;
   entity: Component | PageResponse;
   data?: any;
+  flowsList?: PagingResponse<LogicFlowResponse>;
 };
 
 export type NavigationActionParams = ActionParams & {
@@ -394,8 +396,11 @@ export const useShowNotificationAction = async ({
   actionResponses,
 }: ShowNotificationActionParams) => {
   return showNotification({
-    title: computeValue({ value: action.title }, { actions: actionResponses }),
-    message: computeValue(
+    title: computeValue<string>(
+      { value: action.title },
+      { actions: actionResponses },
+    ),
+    message: computeValue<string>(
       { value: action.message },
       { actions: actionResponses },
     ),
@@ -406,7 +411,15 @@ export const useShowNotificationAction = async ({
 export const useTriggerLogicFlowAction = async (
   params: TriggerLogicFlowActionParams,
 ) => {
-  return executeFlow(params.action.logicFlow, params);
+  const selectedFlow = params.flowsList?.results.find(
+    (flow: LogicFlowResponse) => flow.id === params.action.logicFlowId,
+  );
+
+  if (selectedFlow) {
+    return executeFlow(selectedFlow, params);
+  }
+
+  return;
 };
 
 export const useChangeStateAction = ({
