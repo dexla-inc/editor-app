@@ -10,11 +10,7 @@ import {
 } from "@/utils/branding";
 import { isObjectOrArray } from "@/utils/common";
 import { ICON_SIZE } from "@/utils/config";
-import {
-  ActionsResponsesType,
-  BindingTab,
-  ValueProps,
-} from "@/types/dataBinding";
+import { BindingTab, ValueProps } from "@/types/dataBinding";
 import {
   ActionIcon,
   Box,
@@ -33,7 +29,6 @@ import {
 import { IconExternalLink, IconPlugConnected } from "@tabler/icons-react";
 import { useState } from "react";
 import { useDataBinding } from "@/hooks/dataBinding/useDataBinding";
-import { useEditorStore } from "@/stores/editor";
 
 const TAB_TEXT_SIZE = "xs";
 const ML = 10;
@@ -98,11 +93,7 @@ export default function BindingPopover({
   //   [value?.boundCode],
   // );
 
-  const actionsResponses = useEditorStore.getState().actionsResponse;
-  const currentValue = computeValue<string>(
-    { value },
-    { actions: actionsResponses },
-  );
+  const currentValue = computeValue<string>({ value }, { actions });
 
   const entitiesDataTreeList: Array<{
     entity: "auth" | "components" | "browser" | "variables" | "actions";

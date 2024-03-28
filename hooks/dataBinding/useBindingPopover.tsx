@@ -24,14 +24,6 @@ type Props = {
   isPageAction?: boolean;
 };
 
-export type Actions = {
-  list: any;
-  [key: string]: {
-    success: {} | [];
-    error: {} | [];
-  };
-};
-
 const parseVariableValue = (value: string): any => {
   try {
     return JSON.parse(value);
@@ -131,7 +123,7 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
 
   const actionsProcess = isLogicFlow ? nodes : actionsList;
 
-  const actions: Actions = actionsProcess?.reduce(
+  const actions = actionsProcess?.reduce(
     (acc, item) => {
       let actionId, actionName, actionType;
       let endpointId = "";
