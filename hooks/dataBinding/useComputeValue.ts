@@ -95,7 +95,9 @@ export const useComputeValue = ({
 
         if (variable) {
           const value =
-            variable.type === "TEXT" ? `'${variable.value}'` : variable.value;
+            variable.type === "TEXT"
+              ? `'${variable.value}'`
+              : JSON.stringify(variable.value);
 
           return {
             ...acc,
@@ -195,7 +197,7 @@ export const useComputeValue = ({
     auth,
   ]);
 
-  // console.log("boundCodeTransformed", boundCodeTransformed);
+  console.log("boundCodeTransformed", variables, boundCodeTransformed);
 
   const valueHandlers = useMemo(
     () => ({

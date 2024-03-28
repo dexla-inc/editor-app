@@ -230,3 +230,23 @@ export const emptyEditorAttrsTree = {
     ],
   },
 };
+
+function findAndProcessProperties<T>(obj: any, processFn: (prop: T) => void) {
+  const isTargetType = (value: any): value is T => {
+    // Implement your type-checking logic here
+    // For example, you might check for the presence of certain keys
+    return "dataType" in value; // This is a simplified check; adjust as needed for your use case
+  };
+
+  const processObject = (value: any) => {
+    if (value && typeof value === "object") {
+      if (isTargetType(value)) {
+        processFn(value);
+      } else {
+        Object.values(value).forEach(processObject);
+      }
+    }
+  };
+
+  processObject(obj);
+}

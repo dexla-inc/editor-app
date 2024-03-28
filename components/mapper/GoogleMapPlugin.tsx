@@ -43,6 +43,7 @@ export const GoogleMapPlugin = ({
 
   const { options, language, loading, fade, ...componentProps } =
     component.props as GoogleMapProps;
+  console.log({ component });
 
   const apiKey = useComputeValue({
     componentId: component.id!,
@@ -56,14 +57,20 @@ export const GoogleMapPlugin = ({
       field: "zoom",
     }),
   );
-
-  const center =
-    useComputeValue({
-      componentId: component.id!,
-      shareableContent,
-      field: "center",
-      //staticFallback: defaultCenter,
-    }) ?? defaultCenter;
+  const centerLat = useComputeValue({
+    componentId: component.id!,
+    shareableContent,
+    field: "centerLat",
+  });
+  const centerLng = useComputeValue({
+    componentId: component.id!,
+    shareableContent,
+    field: "centerLng",
+  });
+  const center = {
+    lat: centerLat ?? defaultCenter.lat,
+    lng: centerLng ?? defaultCenter.lng,
+  };
 
   const markers = safeJsonParse(
     useComputeValue({
@@ -72,7 +79,7 @@ export const GoogleMapPlugin = ({
       field: "markers",
     }),
   ) as MarkerItem[];
-
+  console.log(center, markers);
   const MAP_SCRIPT_DELAY_DURATION = 800;
 
   const { width, height, ...googleStyles } = props.style ?? {};
