@@ -18,6 +18,7 @@ const config: Config = {
     "^.+\\.(js|jsx|ts|tsx)$": "babel-jest",
   },
   // transformIgnorePatterns: ["/node_modules/(?!example-module).+\\.js$"],
+  preset: "ts-jest",
 };
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
