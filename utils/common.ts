@@ -43,12 +43,6 @@ export const getComponentInitialDisplayValue = (componentName: string) => {
   return defaultDisplayValues[componentName] || "block";
 };
 
-export const isEditor = (hrefUrl: string) => {
-  const urlType = getProjectType(hrefUrl);
-
-  return urlType !== "live";
-};
-
 export type UrlType = "project" | "live" | "editor";
 
 export const getProjectType = (href: string): UrlType => {
@@ -86,24 +80,7 @@ export const getProjectType = (href: string): UrlType => {
   }
 };
 
-export function remToPixelUnit(rem: string) {
-  const remValue = parseFloat(rem);
-  const rootFontSize = parseFloat(
-    getComputedStyle(document.documentElement).fontSize,
-  );
-
-  return `${remValue * rootFontSize}px`;
-}
-
 export function safeJsonParse<T>(str: string) {
-  try {
-    return JSON.parse(str);
-  } catch (e) {
-    return str;
-  }
-}
-
-export function safeJsonParseWithReturn(str: string) {
   try {
     return JSON.parse(str);
   } catch (e) {
@@ -115,15 +92,6 @@ export function jsonInString(value: any) {
   return (
     typeof value === "string" &&
     (value.startsWith("{") || value.startsWith("["))
-  );
-}
-
-export function objectInStringWithReturn(value: any) {
-  return (
-    typeof value === "string" &&
-    (value.startsWith("return {") ||
-      value.startsWith("return [") ||
-      jsonInString(value))
   );
 }
 
@@ -262,3 +230,23 @@ export const emptyEditorAttrsTree = {
     ],
   },
 };
+
+function findAndProcessProperties<T>(obj: any, processFn: (prop: T) => void) {
+  const isTargetType = (value: any): value is T => {
+    // Implement your type-checking logic here
+    // For example, you might check for the presence of certain keys
+    return "dataType" in value; // This is a simplified check; adjust as needed for your use case
+  };
+
+  const processObject = (value: any) => {
+    if (value && typeof value === "object") {
+      if (isTargetType(value)) {
+        processFn(value);
+      } else {
+        Object.values(value).forEach(processObject);
+      }
+    }
+  };
+
+  processObject(obj);
+}

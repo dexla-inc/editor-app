@@ -1,6 +1,6 @@
 import BindingPopover from "@/components/BindingPopover";
 import { TopLabel } from "@/components/TopLabel";
-import { ValueProps } from "@/utils/types";
+import { ValueProps } from "@/types/dataBinding";
 import {
   Flex,
   MantineTheme,

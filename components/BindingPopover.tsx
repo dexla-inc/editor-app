@@ -10,7 +10,7 @@ import {
 } from "@/utils/branding";
 import { isObjectOrArray } from "@/utils/common";
 import { ICON_SIZE } from "@/utils/config";
-import { BindingTab, ValueProps } from "@/utils/types";
+import { BindingTab, ValueProps } from "@/types/dataBinding";
 import {
   ActionIcon,
   Box,
@@ -29,7 +29,6 @@ import {
 import { IconExternalLink, IconPlugConnected } from "@tabler/icons-react";
 import { useState } from "react";
 import { useDataBinding } from "@/hooks/dataBinding/useDataBinding";
-import { useEditorStore } from "@/stores/editor";
 
 const TAB_TEXT_SIZE = "xs";
 const ML = 10;
@@ -94,8 +93,7 @@ export default function BindingPopover({
   //   [value?.boundCode],
   // );
 
-  const actionsResponses = useEditorStore.getState().actionsResponse;
-  const currentValue = computeValue({ value }, { actions: actionsResponses });
+  const currentValue = computeValue<string>({ value }, { actions });
 
   const entitiesDataTreeList: Array<{
     entity: "auth" | "components" | "browser" | "variables" | "actions";
@@ -119,7 +117,7 @@ export default function BindingPopover({
     },
     {
       entity: "actions",
-      dataItems: actions?.list ? Object.values(actions?.list) : [],
+      dataItems: Object.values(actions?.list ?? []),
     },
   ];
 
@@ -209,6 +207,7 @@ export default function BindingPopover({
               value={value?.boundCode}
               variables={variables.list}
               components={components.list}
+              actions={actions?.list}
               onChange={(code: string) =>
                 onChange({ ...value, boundCode: code })
               }

@@ -1,7 +1,7 @@
 import { ComponentToBindWrapper } from "@/components/ComponentToBindWrapper";
 import { useEditorStore } from "@/stores/editor";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
-import { ValueProps } from "@/utils/types";
+import { ValueProps } from "@/types/dataBinding";
 import {
   NumberInput,
   NumberInputProps,
@@ -27,6 +27,7 @@ type BaseProps = {
   defaultValue?: any;
   decimalPlaces?: number;
   isPageAction?: boolean;
+  useTrueOrFalseStrings?: boolean;
 };
 
 // Define a helper type for the conditional props extension
@@ -105,6 +106,7 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
             })
           }
           w="100%"
+          {...props}
         />
       ) : fieldType === "array" ? (
         <Stack w="100%">

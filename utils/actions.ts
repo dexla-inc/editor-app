@@ -8,14 +8,12 @@ import { GoToUrlForm } from "@/components/actions/GoToUrlForm";
 import { NavigationActionForm } from "@/components/actions/NavigationActionForm";
 import { TriggerLogicFlowActionForm } from "@/components/actions/TriggerLogicFlowActionForm";
 import { transpile } from "typescript";
-
 import { ChangeVariableActionForm } from "@/components/actions/ChangeVariableActionForm";
 import {
   DataSourceAuthResponse,
   DataSourceResponse,
   Endpoint,
 } from "@/requests/datasources/types";
-
 import { ShowNotificationActionForm } from "@/components/actions/ShowNotificationActionForm";
 import { LogicFlowResponse } from "@/requests/logicflows/types";
 import { PageResponse } from "@/requests/pages/types";
@@ -32,14 +30,15 @@ import {
 } from "@/utils/common";
 import { Component } from "@/utils/editor";
 import { executeFlow } from "@/utils/logicFlows";
-import { ArrayMethods, ValueProps } from "@/utils/types";
+import { ArrayMethods } from "@/utils/types";
 import { UseFormReturnType } from "@mantine/form";
 import { showNotification } from "@mantine/notifications";
 import isEmpty from "lodash.isempty";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { Router } from "next/router";
-import { GetValueProps } from "@/hooks/dataBinding/useDataBinding";
+import { ComputeValueProps, ValueProps } from "@/types/dataBinding";
+import { PagingResponse } from "@/requests/types";
 
 const triggers = [
   "onClick",
@@ -235,10 +234,11 @@ export type ActionParams = {
   router: Router;
   setActionsResponses: any;
   actionResponses?: any;
-  computeValue: (value: GetValueProps, ctx?: any) => any;
+  computeValue: ComputeValueProps;
   event?: any;
   entity: Component | PageResponse;
   data?: any;
+  flowsList?: PagingResponse<LogicFlowResponse>;
 };
 
 export type NavigationActionParams = ActionParams & {
@@ -283,7 +283,10 @@ export const useGoToUrlAction = async ({
   actionResponses,
 }: GoToUrlParams) => {
   const { url, openInNewTab } = action;
-  const value = computeValue({ value: url }, { actions: actionResponses });
+  const value = computeValue<string>(
+    { value: url },
+    { actions: actionResponses },
+  );
 
   if (openInNewTab) {
     window.open(value, "_blank");
@@ -347,7 +350,7 @@ export const useChangeVisibilityAction = ({
   const updateTreeComponentAttrs = useEditorTreeStore(
     (state) => state.updateTreeComponentAttrs,
   );
-  const componentId = computeValue(
+  const componentId = computeValue<string>(
     { value: action.componentId },
     { actions: actionResponses },
   );
@@ -359,7 +362,7 @@ export const useChangeVisibilityAction = ({
 
   // Determine the current display state of the component
   const currentDisplay = component?.props?.style?.display;
-  const parsedCurrentDisplay = computeValue(
+  const parsedCurrentDisplay = computeValue<string>(
     {
       value: currentDisplay,
       staticFallback: defaultDisplayValue,
@@ -393,8 +396,11 @@ export const useShowNotificationAction = async ({
   actionResponses,
 }: ShowNotificationActionParams) => {
   return showNotification({
-    title: computeValue({ value: action.title }, { actions: actionResponses }),
-    message: computeValue(
+    title: computeValue<string>(
+      { value: action.title },
+      { actions: actionResponses },
+    ),
+    message: computeValue<string>(
       { value: action.message },
       { actions: actionResponses },
     ),
@@ -405,7 +411,15 @@ export const useShowNotificationAction = async ({
 export const useTriggerLogicFlowAction = async (
   params: TriggerLogicFlowActionParams,
 ) => {
-  return executeFlow(params.action.logicFlow, params);
+  const selectedFlow = params.flowsList?.results.find(
+    (flow: LogicFlowResponse) => flow.id === params.action.logicFlowId,
+  );
+
+  if (selectedFlow) {
+    return executeFlow(selectedFlow, params);
+  }
+
+  return;
 };
 
 export const useChangeStateAction = ({
@@ -413,7 +427,7 @@ export const useChangeStateAction = ({
   computeValue,
   actionResponses,
 }: ChangeStateActionParams) => {
-  const componentId = computeValue(
+  const componentId = computeValue<string>(
     { value: action.componentId },
     { actions: actionResponses },
   );
@@ -679,17 +693,36 @@ export const useApiCallAction = async (
         );
     }
 
-    setActionsResponse(actionId, { success: responseJson });
-    setActionsResponses(actionId, { success: responseJson });
+    setActionsResponses(actionId, {
+      success: responseJson,
+    });
+    setActionsResponse(actionId, {
+      success: responseJson,
+      list: {
+        id: actionId,
+        name: action.name,
+        success: responseJson,
+      },
+    });
 
     await handleSuccess(props);
 
     return responseJson;
   } catch (error) {
-    // @ts-expect-error
-    setActionsResponses(actionId, { error: safeJsonParse(error?.message) });
-    // @ts-expect-error
-    setActionsResponse(actionId, { error: safeJsonParse(error?.message) });
+    if (error instanceof Error) {
+      setActionsResponses(actionId, {
+        error: safeJsonParse(error.message),
+      });
+      setActionsResponse(actionId, {
+        error: safeJsonParse(error.message),
+        list: {
+          id: actionId,
+          name: action.name,
+          error: error.message,
+        },
+      });
+    }
+
     await handleError(props);
   } finally {
     if (entity.props && action.showLoader) {
@@ -803,8 +836,8 @@ export const useChangeVariableAction = async ({
   actionResponses,
 }: ChangeVariableActionParams) => {
   const setVariable = useVariableStore.getState().setVariable;
-  const index = computeValue({ value: action.index });
-  const path = computeValue({ value: action.path });
+  const index = computeValue<number>({ value: action.index });
+  const path = computeValue<string>({ value: action.path });
   let value = computeValue(
     { value: action.value },
     { actions: actionResponses },

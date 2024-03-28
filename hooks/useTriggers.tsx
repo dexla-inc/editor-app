@@ -6,6 +6,7 @@ import { Component } from "@/utils/editor";
 import { Router, useRouter } from "next/router";
 import { ChangeEvent } from "react";
 import { useDataBinding } from "@/hooks/dataBinding/useDataBinding";
+import { useFlowsQuery } from "@/hooks/reactQuery/useFlowsQuery";
 
 const nonDefaultActionTriggers = ["onSuccess", "onError"];
 
@@ -18,6 +19,7 @@ export const useTriggers = ({ entity }: UseTriggersProps) => {
   const router = useRouter();
   const { computeValue } = useDataBinding();
   const { data: endpoints } = useDataSourceEndpoints(projectId);
+  const { data: flowsList } = useFlowsQuery(projectId!);
 
   const actionResponses: Record<string, any> = {};
   const setActionsResponses = (actionId: string, response: any) => {
@@ -47,6 +49,7 @@ export const useTriggers = ({ entity }: UseTriggersProps) => {
               event: e,
               endpointResults: endpoints?.results ?? [],
               entity,
+              flowsList,
             });
           },
         };

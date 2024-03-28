@@ -1,6 +1,6 @@
 import { ComponentToBindWrapper } from "@/components/ComponentToBindWrapper";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
-import { ValueProps } from "@/utils/types";
+import { ValueProps } from "@/types/dataBinding";
 import { Select, SelectProps } from "@mantine/core";
 
 type Props = Omit<SelectProps, "value" | "onChange" | "label"> & {

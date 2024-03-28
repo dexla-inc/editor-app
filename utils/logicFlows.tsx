@@ -1,4 +1,5 @@
 import * as ActionNodeExports from "@/components/logic-flow/nodes/ActionNode";
+import * as BooleanNodeExports from "@/components/logic-flow/nodes/BooleanNode";
 import { computeNodeMapper } from "@/components/logic-flow/nodes/compute";
 import * as ConditionalNodeExports from "@/components/logic-flow/nodes/ConditionalNode";
 import * as ConnectionCreatorNodeExports from "@/components/logic-flow/nodes/ConnectionCreatorNode";
@@ -6,6 +7,7 @@ import * as StartNodeExports from "@/components/logic-flow/nodes/StartNode";
 import { LogicFlowResponse } from "@/requests/logicflows/types";
 import { FlowData } from "@/stores/flow";
 import { decodeSchema } from "@/utils/compression";
+import startCase from "lodash.startcase";
 import { getOutgoers, Node, NodeProps } from "reactflow";
 
 const {
@@ -20,6 +22,11 @@ const {
   data: conditionalNodeData,
   ...conditionalNode
 } = ConditionalNodeExports;
+const {
+  BooleanNode,
+  data: booleanNodeData,
+  ...booleanNode
+} = BooleanNodeExports;
 
 export const nodesData = {
   connectionCreatorNode: {
@@ -29,6 +36,7 @@ export const nodesData = {
   startNode: { data: startNodeData, ...startNode },
   actionNode: { data: actionNodeData, ...actionNode },
   conditionalNode: { data: conditionalNodeData, ...conditionalNode },
+  booleanNode: { data: booleanNodeData, ...booleanNode },
 };
 
 export type PossibleNodes = keyof typeof nodesData;
@@ -37,9 +45,32 @@ export const nodes: {
   [key in PossibleNodes]: ({ data }: NodeProps) => JSX.Element;
 } = {
   connectionCreatorNode: ConnectionCreatorNode,
+  booleanNode: BooleanNode,
   startNode: StartNode,
   actionNode: ActionNode,
   conditionalNode: ConditionalNode,
+};
+
+const getNextNode = (
+  state: FlowData,
+  nextNode: Node<any, string | undefined>,
+  params: any,
+) => {
+  const computeValue = params.computeValue;
+  const condition = computeValue({
+    value: nextNode.data.form.condition,
+    staticFallback: false,
+  });
+
+  const nextNodes = getOutgoers(nextNode, state.nodes, state.edges);
+  const outgoerEdges = state.edges.find(
+    (edge) => edge.label === startCase(`${condition}`),
+  );
+  const nodeToTrigger = nextNodes.find(
+    (node) => node.id === outgoerEdges?.target,
+  );
+
+  return nodeToTrigger;
 };
 
 const run = async (state: FlowData, params: any) => {
@@ -49,7 +80,14 @@ const run = async (state: FlowData, params: any) => {
     let nextNodes = getOutgoers(initialNode!, state.nodes, state.edges);
 
     while (nextNodes.length) {
-      const nextNode = nextNodes[0];
+      let nextNode = nextNodes[0];
+      if (nextNode.type === "booleanNode") {
+        const nodeToTrigger = getNextNode(state, nextNode, params);
+        if (nodeToTrigger) {
+          nextNode = nodeToTrigger;
+        }
+      }
+
       const computeNode = computeNodeMapper[nextNode?.type!];
 
       await computeNode?.(nextNode, params);
