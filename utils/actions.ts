@@ -8,14 +8,12 @@ import { GoToUrlForm } from "@/components/actions/GoToUrlForm";
 import { NavigationActionForm } from "@/components/actions/NavigationActionForm";
 import { TriggerLogicFlowActionForm } from "@/components/actions/TriggerLogicFlowActionForm";
 import { transpile } from "typescript";
-
 import { ChangeVariableActionForm } from "@/components/actions/ChangeVariableActionForm";
 import {
   DataSourceAuthResponse,
   DataSourceResponse,
   Endpoint,
 } from "@/requests/datasources/types";
-
 import { ShowNotificationActionForm } from "@/components/actions/ShowNotificationActionForm";
 import { LogicFlowResponse } from "@/requests/logicflows/types";
 import { PageResponse } from "@/requests/pages/types";
@@ -39,12 +37,7 @@ import isEmpty from "lodash.isempty";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { Router } from "next/router";
-import {
-  ComputeValuePropCtx,
-  ComputeValueProps,
-  GetValueProps,
-  ValueProps,
-} from "@/types/dataBinding";
+import { ComputeValueProps, ValueProps } from "@/types/dataBinding";
 
 const triggers = [
   "onClick",
