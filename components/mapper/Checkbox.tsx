@@ -19,7 +19,9 @@ const CheckboxComponent = ({
 }: Props) => {
   const { label, value, triggers, bg, textColor, ...componentProps } =
     component.props as any;
-  const inputValue = useInputsStore((state) => state.getValue(component.id!));
+  const inputValue = useInputsStore(
+    (state) => state.inputValues[component.id!],
+  );
   const setStoreInputValue = useInputsStore((state) => state.setInputValue);
   const [checked, setChecked] = useState(inputValue ?? false);
   const { color, backgroundColor } = useChangeState({ bg, textColor });
