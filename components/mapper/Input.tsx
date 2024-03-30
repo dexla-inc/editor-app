@@ -53,7 +53,9 @@ const InputComponent = forwardRef(
     const { name: iconName } = icon && icon!.props!;
     const { color, backgroundColor } = useChangeState({ bg, textColor });
     const _defaultValue = type === "number" || type === "numberRange" ? 0 : "";
-    const inputValue = useInputsStore((state) => state.getValue(component.id!));
+    const inputValue = useInputsStore(
+      (state) => state.inputValues[component.id!],
+    );
     const setInputValue = useInputsStore((state) => state.setInputValue);
 
     const isClearable = clearable && !!inputValue;

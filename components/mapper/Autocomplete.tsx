@@ -47,7 +47,9 @@ const AutocompleteComponent = forwardRef(
       backgroundColor,
       color,
     });
-    const inputValue = useInputsStore((state) => state.getValue(componentId));
+    const inputValue = useInputsStore(
+      (state) => state.inputValues[componentId],
+    );
     const setInputValue = useInputsStore((state) => state.setInputValue);
 
     const [data, setData] = useState(
