@@ -3,7 +3,6 @@ export const initializeFonts = async (
   headingsFontFamily: string | undefined,
 ) => {
   if (typeof window !== "undefined") {
-    console.log(defaultFontFamily, headingsFontFamily);
     const fallbackFont = "Open Sans";
     const WebFont = (await import("webfontloader")).default;
     WebFont.load({
