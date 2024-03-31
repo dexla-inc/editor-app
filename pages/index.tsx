@@ -18,6 +18,8 @@ import { initializeFonts } from "@/utils/webfontloader";
 import { listVariables } from "@/requests/variables/queries-noauth";
 import { VariableResponse } from "@/requests/variables/types";
 import { useVariableStore } from "@/stores/variables";
+import { useDataSourceStore } from "@/stores/datasource";
+import { Endpoint } from "@/requests/datasources/types";
 
 export const getServerSideProps = async ({
   req,
@@ -37,14 +39,18 @@ export const getServerSideProps = async ({
 
   const currentSlug = "/";
 
-  const [deploymentPage, variables] = await Promise.all([
+  const [deploymentPage, variables, endpoints] = await Promise.all([
     getDeploymentPage(project.id, currentSlug),
     listVariables(project.id),
+    getDataSourceEndpoints(project.id),
+  ]);
+
+  await Promise.all([
     queryClient.prefetchQuery(["project", project.id], () =>
       Promise.resolve(project),
     ),
     queryClient.prefetchQuery(["endpoints", project.id], () =>
-      getDataSourceEndpoints(project.id),
+      Promise.resolve(endpoints),
     ),
   ]);
 
@@ -79,6 +85,7 @@ export const getServerSideProps = async ({
       faviconUrl: project.faviconUrl,
       isLive: true,
       variables: variables.results,
+      endpoints: endpoints.results || [],
     },
   };
 };
@@ -88,6 +95,7 @@ type Props = {
   faviconUrl?: string;
   deploymentPage: DeploymentPage;
   variables: VariableResponse[];
+  endpoints: Endpoint[];
 };
 
 const HomePage = ({
@@ -95,8 +103,10 @@ const HomePage = ({
   faviconUrl,
   deploymentPage,
   variables,
+  endpoints,
 }: Props) => {
   useVariableStore.getState().initializeVariableList(variables);
+  if (endpoints) useDataSourceStore.getState().setApiAuthConfig(endpoints);
 
   const setCurrentPageAndProjectIds =
     useEditorTreeStore.getState().setCurrentPageAndProjectIds;

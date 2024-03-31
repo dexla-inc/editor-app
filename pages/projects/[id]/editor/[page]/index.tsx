@@ -1,7 +1,7 @@
 import Editor from "@/components/Editor";
 import { withPageOnLoad } from "@/hoc/withPageOnLoad";
 import { GetServerSidePropsContext } from "next";
-import { memo } from "react";
+import { memo, useEffect } from "react";
 import { listVariables } from "@/requests/variables/queries-noauth";
 import { useVariableStore } from "@/stores/variables";
 import { getDataSourceEndpoints } from "@/requests/datasources/queries-noauth";
@@ -12,6 +12,9 @@ import { queryClient } from "@/utils/reactQuery";
 import { ProjectResponse } from "@/requests/projects/types";
 import { useThemeStore } from "@/stores/theme";
 import { prepareUserThemeLive } from "@/hooks/prepareUserThemeLive";
+import { Endpoint } from "@/requests/datasources/types";
+import { PagingResponse } from "@/requests/types";
+import { useDataSourceStore } from "@/stores/datasource";
 
 export const getServerSideProps = async ({
   query,
@@ -19,31 +22,38 @@ export const getServerSideProps = async ({
   const { id: projectId, page: pageId } = query as { id: string; page: string };
   const pageLoadTimestamp = Date.now();
 
-  const variables = await listVariables(projectId);
-  await queryClient.prefetchQuery(["endpoints", projectId], () =>
-    getDataSourceEndpoints(projectId),
-  );
-  const project = await getProject(projectId, true);
-  await queryClient.prefetchQuery(["project", projectId], () =>
-    Promise.resolve(project),
-  );
-
-  await queryClient.prefetchQuery(
-    ["page-state", projectId, pageId, pageLoadTimestamp, null],
-    () => getPageState(projectId, pageId, pageLoadTimestamp, null),
-  );
-
-  await queryClient.prefetchQuery(["pages", projectId, null], () =>
+  const [project, pages, variables, endpoints, pageState] = await Promise.all([
+    getProject(projectId, true),
     getPageList(projectId),
-  );
+    listVariables(projectId),
+    getDataSourceEndpoints(projectId),
+    getPageState(projectId, pageId, pageLoadTimestamp, null),
+  ]);
+
+  await Promise.all([
+    queryClient.prefetchQuery(["project", projectId], () =>
+      Promise.resolve(project),
+    ),
+    queryClient.prefetchQuery(["pages", projectId, null], () =>
+      Promise.resolve(pages),
+    ),
+    queryClient.prefetchQuery(["endpoints", projectId], () =>
+      Promise.resolve(endpoints),
+    ),
+    queryClient.prefetchQuery(
+      ["page-state", projectId, pageId, pageLoadTimestamp, null],
+      () => Promise.resolve(pageState),
+    ),
+  ]);
 
   return {
     props: {
       dehydratedState: dehydrate(queryClient),
       project,
       page: pageId,
-      variables: variables.results,
       isLive: false,
+      variables: variables.results,
+      endpoints: endpoints.results || [],
     },
   };
 };
@@ -52,12 +62,15 @@ type Props = {
   project: ProjectResponse;
   page: string;
   variables: any[];
+  endpoints: Endpoint[];
 };
 
-const PageEditor = ({ project, page, variables }: Props) => {
+const PageEditor = ({ project, page, variables, endpoints }: Props) => {
   useVariableStore.getState().initializeVariableList(variables);
   const theme = prepareUserThemeLive(project);
   useThemeStore.getState().setTheme(theme);
+
+  if (endpoints) useDataSourceStore.getState().setApiAuthConfig(endpoints);
 
   return <Editor key={page} pageId={page} projectId={project.id} />;
 };

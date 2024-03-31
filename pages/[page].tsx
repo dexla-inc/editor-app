@@ -2,12 +2,14 @@ import { Live } from "@/components/Live";
 import { withPageOnLoad } from "@/hoc/withPageOnLoad";
 import { prepareUserThemeLive } from "@/hooks/prepareUserThemeLive";
 import { getDataSourceEndpoints } from "@/requests/datasources/queries-noauth";
+import { Endpoint } from "@/requests/datasources/types";
 import { getDeploymentPage } from "@/requests/deployments/queries-noauth";
 import { DeploymentPage } from "@/requests/deployments/types";
 import { getProject } from "@/requests/projects/queries-noauth";
 import { ProjectResponse } from "@/requests/projects/types";
 import { listVariables } from "@/requests/variables/queries-noauth";
 import { VariableResponse } from "@/requests/variables/types";
+import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useThemeStore } from "@/stores/theme";
 import { useVariableStore } from "@/stores/variables";
@@ -38,14 +40,18 @@ export const getServerSideProps = async ({
 
   const currentSlug = query.page as string;
 
-  const [deploymentPage, variables] = await Promise.all([
+  const [deploymentPage, variables, endpoints] = await Promise.all([
     getDeploymentPage(project.id, currentSlug),
     listVariables(project.id),
+    getDataSourceEndpoints(project.id),
+  ]);
+
+  await Promise.all([
     queryClient.prefetchQuery(["project", project.id], () =>
       Promise.resolve(project),
     ),
     queryClient.prefetchQuery(["endpoints", project.id], () =>
-      getDataSourceEndpoints(project.id),
+      Promise.resolve(endpoints),
     ),
   ]);
 
@@ -75,11 +81,12 @@ export const getServerSideProps = async ({
     props: {
       dehydratedState: dehydrate(queryClient),
       id: project.id,
+      isLive: true,
       project,
       deploymentPage,
       faviconUrl: project.faviconUrl,
       variables: variables.results,
-      isLive: true,
+      endpoints: endpoints.results || [],
     },
   };
 };
@@ -89,10 +96,18 @@ type Props = {
   faviconUrl?: string;
   deploymentPage: DeploymentPage;
   variables: VariableResponse[];
+  endpoints: Endpoint[];
 };
 
-function LivePage({ project, faviconUrl, deploymentPage, variables }: Props) {
+function LivePage({
+  project,
+  faviconUrl,
+  deploymentPage,
+  variables,
+  endpoints,
+}: Props) {
   useVariableStore.getState().initializeVariableList(variables);
+  if (endpoints) useDataSourceStore.getState().setApiAuthConfig(endpoints);
   const setCurrentPageAndProjectIds =
     useEditorTreeStore.getState().setCurrentPageAndProjectIds;
   const setPreviewMode = useEditorTreeStore.getState().setPreviewMode;
