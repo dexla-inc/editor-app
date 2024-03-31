@@ -28,7 +28,6 @@ const FormComponent = forwardRef(
     const setState = useEditorTreeStore(
       (state) => state.setTreeComponentCurrentState,
     );
-    const getInputValue = useInputsStore((state) => state.getValue);
     const setInputValue = useInputsStore((state) => state.setInputValue);
 
     const onLoad = useEditorTreeStore(
@@ -41,33 +40,6 @@ const FormComponent = forwardRef(
       component,
     });
 
-    const validatableComponentsList = useMemo(
-      () =>
-        Object.entries(componentMapper).reduce((acc, [key, value]) => {
-          if (value.isValidatable) {
-            acc.push(key);
-          }
-          return acc;
-        }, [] as string[]),
-      [],
-    );
-
-    const formFieldComponents = getAllComponentsByName(
-      component,
-      validatableComponentsList,
-      { withAsterisk: true },
-    );
-
-    const submitButtonComponents = getAllComponentsByName(component, "Button", {
-      type: "submit",
-    });
-
-    const invalidComponents = formFieldComponents.filter(
-      (component) =>
-        getInputValue(component?.id!) === "" ||
-        getInputValue(component?.id!) === undefined,
-    );
-
     const onSubmitCustom = async (e: FormEvent<any>) => {
       e.preventDefault();
 
@@ -77,8 +49,48 @@ const FormComponent = forwardRef(
 
       const updateTreeComponentAttrs =
         useEditorTreeStore.getState().updateTreeComponentAttrs;
+      const inputValues = useInputsStore.getState().inputValues;
 
-      invalidComponents.map((component) => {
+      const validatableComponentsList = Object.entries(componentMapper).reduce(
+        (acc, [key, value]) => {
+          if (value.isValidatable) {
+            acc.push(key);
+          }
+          return acc;
+        },
+        [] as string[],
+      );
+
+      const formFieldComponents = getAllComponentsByName(
+        component,
+        validatableComponentsList,
+      );
+
+      const submitButtonComponents = getAllComponentsByName(
+        component,
+        "Button",
+        {
+          type: "submit",
+        },
+      );
+
+      const invalidComponents = formFieldComponents.filter(
+        (component) =>
+          (inputValues[component?.id!] === "" ||
+            inputValues[component?.id!] === undefined) &&
+          component?.props?.withAsterisk,
+      );
+
+      // re-setting error messages onSubmit
+      formFieldComponents.forEach((component) => {
+        updateTreeComponentAttrs({
+          componentIds: [component.id!],
+          attrs: { props: { error: `` } },
+          save: false,
+        });
+      });
+
+      invalidComponents.forEach((component) => {
         updateTreeComponentAttrs({
           componentIds: [component.id!],
           attrs: { props: { error: `${component?.description} is required` } },
