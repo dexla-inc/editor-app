@@ -43,7 +43,6 @@ export const GoogleMapPlugin = ({
 
   const { options, language, loading, fade, ...componentProps } =
     component.props as GoogleMapProps;
-  console.log({ component });
 
   const apiKey = useComputeValue({
     componentId: component.id!,
@@ -79,7 +78,6 @@ export const GoogleMapPlugin = ({
       field: "markers",
     }),
   ) as MarkerItem[];
-  console.log(center, markers);
   const MAP_SCRIPT_DELAY_DURATION = 800;
 
   const { width, height, ...googleStyles } = props.style ?? {};

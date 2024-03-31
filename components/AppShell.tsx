@@ -30,6 +30,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { ErrorBoundary } from "react-error-boundary";
 import { useEditorTreeStore } from "../stores/editorTree";
+import PageSelector from "./PageSelector";
 
 export const Shell = ({ children, navbar, aside }: AppShellProps) => {
   const router = useRouter();
@@ -43,9 +44,10 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
       header={
         <Header height={HEADER_HEIGHT} sx={{ zIndex: 110 }}>
           <Group h={HEADER_HEIGHT} px="xs" align="center" position="apart">
-            <DashboardRedirector />
+            <DashboardRedirector projectId={projectId} />
             <Group noWrap position="right" spacing="xs">
               {/* <LanguageSelector /> */}
+              <PageSelector />
               {isDexlaAdmin && <AddGridButton />}
               {isDexlaAdmin && <SaveTemplateButton />}
               {isDexlaAdmin && <AIChatHistoryButton projectId={projectId} />}
