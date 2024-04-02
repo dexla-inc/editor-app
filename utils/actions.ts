@@ -444,7 +444,7 @@ export const useChangeStateAction = ({
 
 const getVariablesValue = (
   objs: Record<string, ValueProps>,
-  computeValue: any,
+  computeValue: (props: { value: ValueProps }) => any,
 ) => {
   return Object.entries(objs).reduce((acc, [key, value]) => {
     const fieldValue = computeValue({ value });
@@ -644,7 +644,14 @@ export const useApiCallAction = async (
   try {
     const accessToken = useDataSourceStore.getState().authState.accessToken;
 
-    const { url, body } = prepareRequestData(action, endpoint, computeValue);
+    const customComputeValue = (args: { value: ValueProps }) =>
+      computeValue(args, { actions: props.actionResponses });
+
+    const { url, body } = prepareRequestData(
+      action,
+      endpoint,
+      customComputeValue,
+    );
 
     let responseJson: any;
 

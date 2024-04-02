@@ -35,6 +35,7 @@ export const useDataBinding = () => {
       ctx?: ComputeValuePropCtx,
     ): T | undefined => {
       const { actions } = ctx ?? {};
+      console.log({ actions });
 
       try {
         const result = eval(`(function () { ${boundCode} })`)();
