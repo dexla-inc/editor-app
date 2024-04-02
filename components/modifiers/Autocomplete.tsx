@@ -4,7 +4,6 @@ import { TopLabel } from "@/components/TopLabel";
 import { UrlOrPageSelector } from "@/components/UrlOrPageSelector";
 import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon";
 import { withModifier } from "@/hoc/withModifier";
-import { useEditorStore } from "@/stores/editor";
 import { useThemeStore } from "@/stores/theme";
 import { inputSizes } from "@/utils/defaultSizes";
 import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
@@ -40,8 +39,6 @@ const Modifier = withModifier(({ selectedComponent }) => {
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedComponent]);
-
-  const pages = useEditorStore((state) => state.pages);
 
   const setFieldValue = (key: any, value: any) => {
     form.setFieldValue(key, value);
@@ -124,20 +121,7 @@ const Modifier = withModifier(({ selectedComponent }) => {
             setFieldValue("customLinkText", e.target.value);
           }}
         />
-        <UrlOrPageSelector
-          form={form}
-          onChange={(key, value) => {
-            setFieldValue(key, value);
-          }}
-          onChangeMultiple={(values) => {
-            form.setValues(values);
-            debouncedTreeComponentAttrsUpdate({
-              attrs: {
-                props: values,
-              },
-            });
-          }}
-        />
+        <UrlOrPageSelector form={form} />
       </Stack>
     </form>
   );

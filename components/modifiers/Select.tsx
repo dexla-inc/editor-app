@@ -151,20 +151,7 @@ const Modifier = withModifier(({ selectedComponent }) => {
             setFieldValue("customLinkText", e.target.value);
           }}
         />
-        <UrlOrPageSelector
-          form={form}
-          onChange={(key, value) => {
-            setFieldValue(key, value);
-          }}
-          onChangeMultiple={(values) => {
-            form.setValues(values);
-            debouncedTreeComponentAttrsUpdate({
-              attrs: {
-                props: values,
-              },
-            });
-          }}
-        />
+        <UrlOrPageSelector form={form} />
       </Stack>
     </form>
   );

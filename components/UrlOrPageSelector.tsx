@@ -1,5 +1,6 @@
 import { SegmentedControlInput } from "@/components/SegmentedControlInput";
 import { useEditorStore } from "@/stores/editor";
+import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { Select, TextInput } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 
@@ -8,16 +9,19 @@ type Props = {
     Record<string, unknown>,
     (values: Record<string, unknown>) => Record<string, unknown>
   >;
-  onChange: (key: string, value: string | null | undefined) => void;
-  onChangeMultiple: (values: Record<string, any>) => void;
 };
 
-export const UrlOrPageSelector = ({
-  form,
-  onChange,
-  onChangeMultiple,
-}: Props) => {
+export const UrlOrPageSelector = ({ form }: Props) => {
   const pages = useEditorStore((state) => state.pages);
+
+  const setFieldValue = (value: any) => {
+    value = typeof value === "string" ? value : value.target.value;
+    form.setFieldValue("customLinkUrl", value);
+    debouncedTreeComponentAttrsUpdate({
+      attrs: { props: { customLinkUrl: value } },
+    });
+  };
+
   return (
     <>
       <SegmentedControlInput
@@ -34,28 +38,31 @@ export const UrlOrPageSelector = ({
         ]}
         {...form.getInputProps("customLinkType")}
         onChange={(value) => {
-          if (onChangeMultiple) {
-            onChangeMultiple({ customLinkType: value, customLinkUrl: "" });
-          }
+          const values = { customLinkType: value, customLinkUrl: "" };
+          form.setValues(values);
+          debouncedTreeComponentAttrsUpdate({
+            attrs: {
+              props: values,
+            },
+          });
         }}
       />
       {form.values.customLinkType === "url" ? (
         <TextInput
           label="Custom Url Link"
+          placeholder="Enter the URL"
+          type="url"
           size="xs"
           {...form.getInputProps("customLinkUrl")}
-          onChange={(e) => {
-            onChange && onChange("customLinkUrl", e.target.value);
-          }}
+          onChange={setFieldValue}
         />
       ) : (
         <Select
           label="Custom Page Link"
+          placeholder="Select Page"
           size="xs"
           {...form.getInputProps("customLinkUrl")}
-          onChange={(value) => {
-            onChange && onChange("customLinkUrl", value);
-          }}
+          onChange={setFieldValue}
           data={pages.map((page) => ({
             label: page.title,
             value: page.id,

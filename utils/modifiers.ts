@@ -237,7 +237,7 @@ export const requiredModifiers: RequiredModifiers = {
     ],
     customText: "",
     customLinkText: "",
-    customLinkType: "url",
+    customLinkType: "page",
     customLinkUrl: "",
     style: {
       width: "100%",
