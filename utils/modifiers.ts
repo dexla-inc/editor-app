@@ -237,6 +237,7 @@ export const requiredModifiers: RequiredModifiers = {
     ],
     customText: "",
     customLinkText: "",
+    customLinkType: "url",
     customLinkUrl: "",
     style: {
       width: "100%",
@@ -249,6 +250,7 @@ export const requiredModifiers: RequiredModifiers = {
     dropdownPosition: "flip",
     customText: "",
     customLinkText: "",
+    customLinkType: "page",
     customLinkUrl: "",
     style: {
       width: "100%",

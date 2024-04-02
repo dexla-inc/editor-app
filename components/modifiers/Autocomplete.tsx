@@ -1,5 +1,7 @@
+import { IconSelector } from "@/components/IconSelector";
 import { SegmentedControlSizes } from "@/components/SegmentedControlSizes";
 import { TopLabel } from "@/components/TopLabel";
+import { UrlOrPageSelector } from "@/components/UrlOrPageSelector";
 import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon";
 import { withModifier } from "@/hoc/withModifier";
 import { useEditorStore } from "@/stores/editor";
@@ -7,7 +9,7 @@ import { useThemeStore } from "@/stores/theme";
 import { inputSizes } from "@/utils/defaultSizes";
 import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { SegmentedControl, Select, Stack, TextInput } from "@mantine/core";
+import { SegmentedControl, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import {
   IconArrowBarDown,
@@ -16,7 +18,6 @@ import {
 } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
-import { IconSelector } from "../IconSelector";
 
 const Modifier = withModifier(({ selectedComponent }) => {
   const theme = useThemeStore((state) => state.theme);
@@ -32,6 +33,7 @@ const Modifier = withModifier(({ selectedComponent }) => {
         withAsterisk: selectedComponent?.props?.withAsterisk,
         customText: selectedComponent?.props?.customText,
         customLinkText: selectedComponent?.props?.customLinkText,
+        customLinkType: selectedComponent?.props?.customLinkType,
         customLinkUrl: selectedComponent?.props?.customLinkUrl,
         dropdownPosition: selectedComponent?.props?.dropdownPosition,
       }),
@@ -122,17 +124,18 @@ const Modifier = withModifier(({ selectedComponent }) => {
             setFieldValue("customLinkText", e.target.value);
           }}
         />
-        <Select
-          label="Custom Page Link"
-          size="xs"
-          {...form.getInputProps("customLinkUrl")}
-          onChange={(value) => {
-            setFieldValue("customLinkUrl", value);
+        <UrlOrPageSelector
+          form={form}
+          onChange={(key, value) => {
+            setFieldValue(key, value);
           }}
-          data={pages.map((page) => ({
-            label: page.title,
-            value: page.id,
-          }))}
+          onChangeMultiple={(values) => {
+            debouncedTreeComponentAttrsUpdate({
+              attrs: {
+                props: values,
+              },
+            });
+          }}
         />
       </Stack>
     </form>
