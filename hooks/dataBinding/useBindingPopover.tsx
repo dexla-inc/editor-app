@@ -71,9 +71,10 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
           "Switch",
           "Textarea",
           "Autocomplete",
+          "DateInput",
         ].includes(c?.name!);
         if (isInput) {
-          acc.push({ id: c.id, description: c.name });
+          acc.push({ id: c.id, name: c.name, description: c.description });
         }
         return acc;
       }, [] as Partial<Component>[]),
