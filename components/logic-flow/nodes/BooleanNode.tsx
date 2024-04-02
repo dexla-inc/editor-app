@@ -37,7 +37,6 @@ export const NodeForm = ({ form }: NodeFormType) => {
     <ComponentToBindFromInput
       label="Condition"
       fieldType="boolean"
-      isLogicFlow
       useTrueOrFalseStrings
       {...form.getInputProps("condition")}
     />

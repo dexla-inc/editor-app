@@ -64,7 +64,6 @@ export default function BindingPopover({
     auth,
     getEntityEditorValue,
   } = useBindingPopover({ isPageAction });
-
   const onChangeDataTypeAsBoundCode = () => {
     onChange({
       ...value,

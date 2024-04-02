@@ -49,8 +49,6 @@ const SelectComponent = forwardRef(
     const MantineSelectWrapper = multiSelect
       ? MantineMultiSelect
       : MantineSelect;
-    const MantineSelectParentWrapper =
-      multiSelect && !isPreviewMode ? Box : Fragment;
 
     const componentId = component.id as string;
     const onLoad = useEditorTreeStore(
@@ -114,39 +112,40 @@ const SelectComponent = forwardRef(
       onChange && onChange(inputValue);
     }, [inputValue, onChange]);
 
+    const rootStyleProps = [
+      "display",
+      "width",
+      "height",
+      "minHeight",
+      "minWidth",
+    ];
+
     return (
-      <MantineSelectParentWrapper {...omit(props, ["onChange"])}>
-        <MantineSelectWrapper
-          ref={ref}
-          {...props}
-          {...componentProps}
-          onChange={handleChange}
-          onSearchChange={debouncedHandleSearchChange}
-          {...restTriggers}
-          style={{}}
-          styles={{
-            root: {
-              position: "relative",
-              ...pick(customStyle, [
-                "display",
-                "width",
-                "height",
-                "minHeight",
-                "minWidth",
-              ]),
-            },
-            input: customStyle,
-            values: { height: "inherit" },
-          }}
-          withinPortal={false}
-          maxDropdownHeight={150}
-          data={data}
-          dropdownComponent={CustomDropdown}
-          rightSection={loading ? <InputLoader /> : null}
-          label={undefined}
-          value={inputValue}
-        />
-      </MantineSelectParentWrapper>
+      <MantineSelectWrapper
+        ref={ref}
+        {...props}
+        {...componentProps}
+        onChange={handleChange}
+        onSearchChange={debouncedHandleSearchChange}
+        {...restTriggers}
+        style={{}}
+        styles={{
+          root: {
+            position: "relative",
+            ...pick(customStyle, rootStyleProps),
+          },
+          input: omit(customStyle, rootStyleProps),
+          values: { height: "inherit" },
+        }}
+        withinPortal={false}
+        maxDropdownHeight={150}
+        data={data}
+        dropdownComponent={CustomDropdown}
+        rightSection={loading ? <InputLoader /> : null}
+        label={undefined}
+        value={inputValue}
+        wrapperProps={{ "data-id": component.id }}
+      />
     );
   },
 );

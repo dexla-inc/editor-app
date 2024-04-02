@@ -19,7 +19,6 @@ import { FieldType } from "./data/forms/StaticFormFieldsBuilder";
 type BaseProps = {
   fieldType?: FieldType;
   onPickComponent?: () => void;
-  isLogicFlow?: boolean;
   value: ValueProps;
   onChange: (value: ValueProps) => void;
   placeholder?: string;
@@ -47,7 +46,6 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
   onPickComponent,
   placeholder = "",
   label = "Component to bind",
-  isLogicFlow,
   value,
   onChange,
   fieldType = "text",

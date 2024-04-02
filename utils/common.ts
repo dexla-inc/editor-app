@@ -97,7 +97,6 @@ export function jsonInString(value: any) {
 
 export function isObject(value: any): boolean {
   return typeof value === "object" && value !== null;
-  //return Object.prototype.toString.call(value) === "[object Object]";
 }
 
 export function isObjectOrArray(value: any): boolean {

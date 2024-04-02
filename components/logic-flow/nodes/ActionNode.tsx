@@ -56,7 +56,7 @@ export const NodeForm = ({ form }: NodeFormType) => {
         })}
         {...form.getInputProps("action")}
       />
-      {ActionForm && <ActionForm form={form} isLogicFlow />}
+      {ActionForm && <ActionForm form={form} />}
     </Stack>
   );
 };

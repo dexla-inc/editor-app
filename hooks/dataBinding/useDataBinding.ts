@@ -16,10 +16,6 @@ const parseVariableValue = (value: string): any => {
   }
 };
 
-const processValue = (value: any, type: string) => {
-  return type === "STRING" ? value.toString() : value;
-};
-
 export const useDataBinding = () => {
   const browser = useRouter();
   const computeValue: ComputeValueProps = (
@@ -65,27 +61,17 @@ export const useDataBinding = () => {
 
     const variables = variablesList.reduce(
       (acc, variable) => {
-        // let value =
-        //   variable.type === "TEXT"
-        //     ? `'${variable.value}'`
-        //     : variable.value
-        //     ? variable.defaultValue
-        //     : "";
+        const value = variable.value ?? variable.defaultValue ?? "";
 
-        // let value =
-        //   variable.type === "OBJECT" || variable.type === "ARRAY"
-        //     ? safeJsonParse(variable.value ?? variable.defaultValue)
-        //     : variable.value
-        //     ? variable.defaultValue
-        //     : "";
-        let value = variable.value ?? variable.defaultValue ?? "";
-
-        const parsedValue = parseVariableValue(value);
-        const processedValue = processValue(parsedValue, variable.type);
+        const parsedValue =
+          ["ARRAY", "OBJECT"].includes(variable.type) &&
+          typeof value === "string"
+            ? parseVariableValue(value)
+            : value;
 
         acc.list[variable.id] = variable;
-        acc[variable.id] = processedValue;
-        acc[variable.name] = processedValue;
+        acc[variable.id] = parsedValue;
+        acc[variable.name] = parsedValue;
         return acc;
       },
       { list: {} } as any,
