@@ -32,10 +32,6 @@ const parseVariableValue = (value: string): any => {
   }
 };
 
-const processValue = (value: any, type: string) => {
-  return type === "STRING" ? value.toString() : value;
-};
-
 const setEntityString = ({ selectedEntityId, entity }: BindType) => {
   const [entityKey, entityId] = selectedEntityId.split(".");
   const path = !entityId ? "" : `.${entityId}`;
@@ -95,12 +91,14 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
   const variables = variablesList.reduce(
     (acc, variable) => {
       let value = variable.value ?? variable.defaultValue ?? "";
-      const parsedValue = parseVariableValue(value);
-      const processedValue = processValue(parsedValue, variable.type);
+      const parsedValue =
+        ["ARRAY", "OBJECT"].includes(variable.type) && typeof value === "string"
+          ? parseVariableValue(value)
+          : value;
 
       acc.list[variable.id] = variable;
-      acc[variable.id] = processedValue;
-      acc[variable.name] = processedValue;
+      acc[variable.id] = parsedValue;
+      acc[variable.name] = parsedValue;
       return acc;
     },
     { list: {} } as any,
