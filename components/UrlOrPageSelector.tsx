@@ -3,7 +3,6 @@ import { useEditorStore } from "@/stores/editor";
 import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { Select, TextInput } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
-import { ChangeEvent } from "react";
 
 type Props = {
   form: UseFormReturnType<
@@ -15,14 +14,10 @@ type Props = {
 export const UrlOrPageSelector = ({ form }: Props) => {
   const pages = useEditorStore((state) => state.pages);
 
-  const setFieldValue = (
-    value: ChangeEvent<HTMLInputElement> | string | null,
-  ) => {
-    const _value =
-      value && typeof value === "object" ? value.target.value : value;
-    form.setFieldValue("customLinkUrl", _value);
+  const setFieldValue = (value: string) => {
+    form.setFieldValue("customLinkUrl", value);
     debouncedTreeComponentAttrsUpdate({
-      attrs: { props: { customLinkUrl: _value } },
+      attrs: { props: { customLinkUrl: value } },
     });
   };
 
@@ -58,7 +53,7 @@ export const UrlOrPageSelector = ({ form }: Props) => {
           type="url"
           size="xs"
           {...form.getInputProps("customLinkUrl")}
-          onChange={setFieldValue}
+          onChange={(e) => setFieldValue(e.target.value)}
         />
       ) : (
         <Select
