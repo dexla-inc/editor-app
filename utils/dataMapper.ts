@@ -20,6 +20,12 @@ import {
   TextData as NavLink,
   TextData as Text,
   TextData as Title,
+  TextData as Input,
+  TextData as DateInput,
+  TextData as Switch,
+  TextData as Checkbox,
+  TextData as RadioGroup,
+  TextData as Textarea,
 } from "@/components/data/TextData";
 
 export const dataMapper = {
@@ -34,6 +40,12 @@ export const dataMapper = {
   NavLink,
   Badge,
   FileButton,
+  Input,
+  DateInput,
+  Switch,
+  Checkbox,
+  RadioGroup,
+  Textarea,
   Image,
   Container,
   Form: Container,
