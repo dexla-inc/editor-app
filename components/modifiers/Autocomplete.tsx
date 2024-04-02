@@ -130,6 +130,7 @@ const Modifier = withModifier(({ selectedComponent }) => {
             setFieldValue(key, value);
           }}
           onChangeMultiple={(values) => {
+            form.setValues(values);
             debouncedTreeComponentAttrsUpdate({
               attrs: {
                 props: values,
