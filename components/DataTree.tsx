@@ -1,5 +1,5 @@
 import { JSONSelector } from "@/components/JSONSelector";
-import { jsonInString } from "@/utils/common";
+import { jsonInString, safeJsonParse } from "@/utils/common";
 import { Button, Flex, ScrollArea, Stack } from "@mantine/core";
 import { useMemo } from "react";
 import DataItemValuePreview from "./DataItemValuePreview";
@@ -117,6 +117,6 @@ export function DataTree({
 
 function prepareVariableItem(value: any) {
   return {
-    value: jsonInString(value) ? JSON.parse(value) : value,
+    value: jsonInString(value) ? safeJsonParse(value) : value,
   };
 }
