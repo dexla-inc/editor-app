@@ -294,17 +294,7 @@ export const structureMapper: StructureMapper = {
     category: "Input",
     icon: <IconCircleDot size={ICON_SIZE} />,
   },
-  Link: {
-    structure: (props: any) => LinkStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Link"
-        icon={<IconLink size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Input",
-    icon: <IconLink size={ICON_SIZE} />,
-  },
+
   Form: {
     structure: (props: any) => FormStructure.jsonStructure(props),
     Draggable: () => (
@@ -613,6 +603,17 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Data Display",
     icon: <IconLayoutBottombarCollapse size={ICON_SIZE} />,
+  },
+  Link: {
+    structure: (props: any) => LinkStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="Link"
+        icon={<IconLink size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Navigation",
+    icon: <IconLink size={ICON_SIZE} />,
   },
   Navbar: {
     structure: (props: any) => NavbarStructure.jsonStructure(props),
