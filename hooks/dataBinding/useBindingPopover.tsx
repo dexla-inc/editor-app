@@ -123,6 +123,7 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
   }
 
   const actionsProcess = isLogicFlow ? nodes : actionsList;
+  console.log({ nodes });
 
   const actions = actionsProcess?.reduce(
     (acc, item) => {
@@ -134,7 +135,7 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
         actionId = item.id;
         endpointId = endpoint;
         actionName = item.data.label;
-        actionType = action;
+        actionType = item.type === "actionNode" && action;
       } else if (isActionData(item)) {
         const { endpoint } = item.action as APICallAction;
         actionId = item.id;
@@ -172,6 +173,8 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
     },
     { list: {} } as any,
   );
+
+  console.log({ test: actions });
 
   const actionsResponse = useEditorStore((state) => state.actionsResponse);
 
