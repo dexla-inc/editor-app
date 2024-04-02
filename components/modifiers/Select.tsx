@@ -1,6 +1,7 @@
 import { SegmentedControlSizes } from "@/components/SegmentedControlSizes";
 import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
 import { TopLabel } from "@/components/TopLabel";
+import { UrlOrPageSelector } from "@/components/UrlOrPageSelector";
 import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon";
 import { withModifier } from "@/hoc/withModifier";
 import { useThemeStore } from "@/stores/theme";
@@ -16,6 +17,7 @@ import {
 } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
+
 const Modifier = withModifier(({ selectedComponent }) => {
   const theme = useThemeStore((state) => state.theme);
   const form = useForm();
@@ -32,6 +34,7 @@ const Modifier = withModifier(({ selectedComponent }) => {
         multiSelect: selectedComponent?.props?.multiSelect,
         customText: selectedComponent?.props?.customText,
         customLinkText: selectedComponent?.props?.customLinkText,
+        customLinkType: selectedComponent?.props?.customLinkType,
         customLinkUrl: selectedComponent?.props?.customLinkUrl,
         dropdownPosition: selectedComponent?.props?.dropdownPosition,
       }),
@@ -148,14 +151,7 @@ const Modifier = withModifier(({ selectedComponent }) => {
             setFieldValue("customLinkText", e.target.value);
           }}
         />
-        <TextInput
-          label="Custom Link Url"
-          size="xs"
-          {...form.getInputProps("customLinkUrl")}
-          onChange={(e) => {
-            setFieldValue("customLinkUrl", e.target.value);
-          }}
-        />
+        <UrlOrPageSelector form={form} />
       </Stack>
     </form>
   );
