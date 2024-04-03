@@ -119,17 +119,18 @@ export default function PageConfig({ page, setPage }: Props) {
       );
 
       form.validate();
-
+      let pageId = page?.id;
       if (page?.id) {
         await updatePage(values, projectId, page.id);
       } else {
         const result = await createPage(values, projectId);
+        pageId = result.id;
         router.push(`/projects/${projectId}/editor/${result.id}`);
         resetTree();
       }
 
+      setPage({ ...values, id: pageId } as PageResponse);
       invalidate();
-      setPage(values as any);
 
       stopLoading({
         id: "mutating",
