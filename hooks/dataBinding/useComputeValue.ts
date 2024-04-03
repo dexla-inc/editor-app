@@ -204,7 +204,7 @@ export const useComputeValue = ({
     authKeys,
     auth,
   ]);
-  console.log({ boundCodeTransformed });
+
   const valueHandlers = useMemo(
     () => ({
       dynamic: () => {
