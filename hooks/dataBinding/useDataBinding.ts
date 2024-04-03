@@ -52,6 +52,7 @@ export const useDataBinding = () => {
         "Switch",
         "Textarea",
         "Autocomplete",
+        "DateInput",
       ].includes(c?.name!);
       if (isInput) {
         acc.push({ id: c.id, description: c.name });
