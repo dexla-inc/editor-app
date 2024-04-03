@@ -12,6 +12,7 @@ import {
 import { FlexProps, LoadingOverlay, Flex as MantineFlex } from "@mantine/core";
 import { FormEvent, forwardRef, memo, useMemo } from "react";
 import { memoize } from "proxy-memoize";
+import { isObject } from "@/utils/common";
 
 type Props = EditableComponentMapper & FlexProps;
 
@@ -140,9 +141,9 @@ const FormComponent = forwardRef(
                 )
               : children;
           })}
-        {!endpointId && component.children && component.children.length > 0
+        {component.children && component.children.length > 0
           ? component.children?.map((child) =>
-              renderTree(child, shareableContent),
+              renderTree(child, { ...shareableContent, data }),
             )
           : children}
         <LoadingOverlay visible={loading} zIndex={1000} radius="sm" />
