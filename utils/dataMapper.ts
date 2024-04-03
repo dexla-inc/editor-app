@@ -12,6 +12,11 @@ import {
   SelectData as Select,
 } from "@/components/data/SelectData";
 import { TableData as Table } from "@/components/data/TableData";
+import { DateInputData as DateInput } from "@/components/data/DateInput";
+import {
+  CheckboxData as Checkbox,
+  CheckboxData as Switch,
+} from "@/components/data/CheckboxData";
 import {
   TextData as Badge,
   TextData as Button,
@@ -21,9 +26,6 @@ import {
   TextData as Text,
   TextData as Title,
   TextData as Input,
-  TextData as DateInput,
-  TextData as Switch,
-  TextData as Checkbox,
   TextData as RadioGroup,
   TextData as Textarea,
 } from "@/components/data/TextData";

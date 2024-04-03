@@ -1,9 +1,8 @@
 import { IconSelector } from "@/components/IconSelector";
-import { TopLabel } from "@/components/TopLabel";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { SegmentedControl, Select, Stack, TextInput } from "@mantine/core";
+import { Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
 import { useEffect } from "react";
@@ -19,14 +18,12 @@ const Modifier = withModifier(({ selectedComponent }) => {
   useEffect(() => {
     form.setValues(
       merge({}, requiredModifiers.dateInput, {
-        type: selectedComponent?.props?.type,
         placeholder: selectedComponent?.props?.placeholder,
         description: selectedComponent?.props?.description,
         radius: selectedComponent?.props?.radius,
         size: selectedComponent?.props?.size,
         withAsterisk: selectedComponent?.props?.withAsterisk,
         clearable: selectedComponent?.props?.clearable,
-        valueFormat: selectedComponent?.props?.valueFormat,
         icon: selectedComponent?.props?.icon,
         iconPosition: selectedComponent?.props?.iconPosition,
         textColor: selectedComponent?.props?.textColor,
@@ -39,52 +36,6 @@ const Modifier = withModifier(({ selectedComponent }) => {
   return (
     <form>
       <Stack spacing="xs">
-        <Stack spacing={2}>
-          <TopLabel text="Type" />
-          <SegmentedControl
-            size="xs"
-            data={[
-              {
-                label: "Default",
-                value: "default",
-              },
-              {
-                label: "Multiple",
-                value: "multiple",
-              },
-              {
-                label: "Range",
-                value: "range",
-              },
-            ]}
-            {...form.getInputProps("type")}
-            onChange={(value) => {
-              form.setFieldValue("type", value as string);
-              debouncedTreeComponentAttrsUpdate({
-                attrs: { props: { type: value } },
-              });
-            }}
-          />
-        </Stack>
-        <Select
-          label="Format"
-          size="xs"
-          data={[
-            { label: "DD MMM YYYY", value: "DD MMM YYYY" },
-            { label: "DD MM YYYY", value: "DD MM YYYY" },
-            { label: "MM DD YYYY", value: "MM DD YYYY" },
-            { label: "DD MMM", value: "DD MMM" },
-            { label: "DD MMM YY", value: "DD MMM YY" },
-            // { label: "DD-DD MMM, YYYY", value: "DD-DD MMM, YYYY" },
-          ]}
-          {...form.getInputProps("valueFormat")}
-          onChange={(value) => {
-            form.setFieldValue("valueFormat", value as string);
-            debouncedTreeComponentAttrsUpdate({
-              attrs: { props: { valueFormat: value } },
-            });
-          }}
-        />
         <TextInput
           size="xs"
           label="Placeholder"

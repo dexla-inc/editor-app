@@ -34,7 +34,7 @@ export const StaticFormFieldsBuilder = ({
       label={field.label}
       placeholder={field.placeholder}
       fieldType={field.type}
-      defaultValue={field.defaultValue}
+      // defaultValue={field.defaultValue}
       decimalPlaces={field.decimalPlaces}
       {...form.getInputProps(`onLoad.${field.name}`)}
     />

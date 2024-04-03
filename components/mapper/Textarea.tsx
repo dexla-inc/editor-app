@@ -62,6 +62,7 @@ const TextareaComponent = forwardRef(
         ref={ref}
         {...props}
         {...componentProps}
+        wrapperProps={{ "data-id": component.id }}
         style={{}}
         styles={{
           root: {

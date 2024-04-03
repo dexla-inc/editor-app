@@ -16,6 +16,12 @@ export const jsonStructure = (props?: any): ComponentStructure => {
       },
       ...(props.props || {}),
     },
+    onLoad: {
+      checked: {
+        static: false,
+        dataType: "static",
+      },
+    },
     states: { disabled: { bg: "Neutral.7", textColor: "PrimaryText.9" } },
     blockDroppingChildrenInside: true,
   };

@@ -1,12 +1,11 @@
 import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { useChangeState } from "@/hooks/useChangeState";
-import { useInputsStore } from "@/stores/inputs";
-import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import { CheckboxProps, Checkbox as MantineCheckbox } from "@mantine/core";
-import debounce from "lodash.debounce";
 import merge from "lodash.merge";
-import { ChangeEvent, memo, useCallback, useState } from "react";
+import { ChangeEvent, memo } from "react";
+import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
+import { useEditorTreeStore } from "@/stores/editorTree";
 
 type Props = EditableComponentMapper & CheckboxProps;
 
@@ -19,11 +18,9 @@ const CheckboxComponent = ({
 }: Props) => {
   const { label, value, triggers, bg, textColor, ...componentProps } =
     component.props as any;
-  const inputValue = useInputsStore(
-    (state) => state.inputValues[component.id!],
+  const updateTreeComponentAttrs = useEditorTreeStore(
+    (state) => state.updateTreeComponentAttrs,
   );
-  const setStoreInputValue = useInputsStore((state) => state.setInputValue);
-  const [checked, setChecked] = useState(inputValue ?? false);
   const { color, backgroundColor } = useChangeState({ bg, textColor });
 
   const { borderStyle } = useBrandingStyles();
@@ -33,21 +30,25 @@ const CheckboxComponent = ({
     color,
   });
 
-  // update values in store
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const debouncedOnChange = useCallback(
-    debounce((value) => {
-      setStoreInputValue(component.id!, value);
-    }, 400),
-    [component.id],
-  );
+  const checkedValue = useComputeValue({
+    componentId: component.id!,
+    field: "checked",
+    shareableContent,
+  });
 
   // handle changes to input field
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { dataType } =
+      useEditorTreeStore.getState().componentMutableAttrs[component.id!].onLoad
+        .checked;
+
     const newValue = e.target.checked;
-    setChecked(newValue);
-    debouncedOnChange(newValue);
-    triggers?.onChange && triggers?.onChange(e);
+    updateTreeComponentAttrs({
+      componentIds: [component.id!],
+      attrs: { onLoad: { checked: { [dataType]: newValue } } },
+      save: false,
+    });
+    triggers?.onChange?.(e);
   };
 
   return (
@@ -73,7 +74,7 @@ const CheckboxComponent = ({
       }}
       label={label}
       value={value}
-      checked={checked}
+      checked={checkedValue}
       {...triggers}
       onChange={handleInputChange}
       wrapperProps={{ "data-id": component.id }}
@@ -81,4 +82,4 @@ const CheckboxComponent = ({
   );
 };
 
-export const Checkbox = memo(CheckboxComponent, isSame);
+export const Checkbox = memo(CheckboxComponent);

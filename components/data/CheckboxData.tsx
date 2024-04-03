@@ -3,16 +3,12 @@ import { Stack } from "@mantine/core";
 import { FormFieldsBuilder } from "@/components/data/forms/FormFieldsBuilder";
 import { FieldType } from "@/components/data/forms/StaticFormFieldsBuilder";
 
-export const TextData = ({ component, endpoints }: DataProps) => {
-  const isNavLink = component.name === "NavLink";
-  const isFileButton = component.name === "FileButton";
-  const isTextArea = component.name === "Textarea";
-
+export const CheckboxData = ({ component, endpoints }: DataProps) => {
   const staticFields = [
     {
-      name: isNavLink ? "label" : isFileButton ? "name" : "children",
-      label: "Value",
-      type: (isTextArea ? "text" : "text") as FieldType,
+      name: "checked",
+      label: "Checked",
+      type: "boolean" as FieldType,
     },
   ];
 
