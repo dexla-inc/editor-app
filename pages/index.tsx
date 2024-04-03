@@ -26,7 +26,7 @@ export const getServerSideProps = async ({
 }: GetServerSidePropsContext) => {
   const url = req.headers.host as string;
   const project = await getProject(url, true);
-  console.log(url, project);
+
   if (!project.id) {
     return {
       redirect: {
