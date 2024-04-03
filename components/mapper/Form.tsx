@@ -128,6 +128,7 @@ const FormComponent = forwardRef(
         pos="relative"
       >
         {endpointId &&
+          Array.isArray(data) &&
           data?.map((item: any, parentIndex: number) => {
             return component.children && component.children.length > 0
               ? component.children?.map((child) =>

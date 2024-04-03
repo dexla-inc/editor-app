@@ -468,19 +468,24 @@ const getUrl = (
   apiUrl: string,
   variableValues: Record<string, string>,
 ) => {
-  return keys.length > 0
-    ? keys.reduce((url: string, key: string) => {
-        const value = variableValues[key];
+  let updatedUrl = keys.reduce((currentUrl, key) => {
+    return currentUrl.replace(`{${key}}`, variableValues[key] || "");
+  }, apiUrl);
 
-        if (isEmpty(value)) {
-          return url;
-        }
+  const queryParams = keys.filter((key) => !apiUrl.includes(`{${key}}`));
 
-        const _url = new URL(url);
-        _url.searchParams.append(key, value);
-        return _url.toString();
-      }, apiUrl)
-    : apiUrl;
+  if (queryParams.length > 0) {
+    const urlObject = new URL(updatedUrl);
+    queryParams.forEach((key) => {
+      const value = variableValues[key];
+      if (value) {
+        urlObject.searchParams.append(key, value);
+      }
+    });
+    updatedUrl = urlObject.toString();
+  }
+
+  return updatedUrl;
 };
 
 export const prepareRequestData = (
