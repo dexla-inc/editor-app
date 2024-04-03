@@ -26,7 +26,7 @@ export const getServerSideProps = async ({
 }: GetServerSidePropsContext) => {
   const url = req.headers.host as string;
   const project = await getProject(url, true);
-
+  console.log(url, project);
   if (!project.id) {
     return {
       redirect: {
@@ -69,11 +69,12 @@ export const getServerSideProps = async ({
       },
       props: {
         dehydratedState: dehydrate(queryClient),
-        id: project.id,
-        deploymentPage,
+        project,
         faviconUrl: project.faviconUrl,
         isLive: true,
+        deploymentPage,
         variables: variables.results,
+        endpoints: endpoints.results || [],
       },
     };
   }
@@ -81,9 +82,10 @@ export const getServerSideProps = async ({
   return {
     props: {
       dehydratedState: dehydrate(queryClient),
-      id: project.id,
+      project,
       faviconUrl: project.faviconUrl,
       isLive: true,
+      deploymentPage,
       variables: variables.results,
       endpoints: endpoints.results || [],
     },
