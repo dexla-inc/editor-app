@@ -96,7 +96,7 @@ export const useComputeValue = ({
         if (variable) {
           const value =
             variable.type === "TEXT"
-              ? `'${variable.value}'`
+              ? `\`${variable.value}\``
               : JSON.stringify(variable.value);
 
           return {
