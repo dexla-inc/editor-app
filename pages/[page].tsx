@@ -70,9 +70,12 @@ export const getServerSideProps = async ({
       },
       props: {
         dehydratedState: dehydrate(queryClient),
-        id: project.id,
         faviconUrl: project.faviconUrl,
         isLive: true,
+        project,
+        deploymentPage,
+        variables: variables.results,
+        endpoints: endpoints.results || [],
       },
     };
   }
@@ -80,7 +83,6 @@ export const getServerSideProps = async ({
   return {
     props: {
       dehydratedState: dehydrate(queryClient),
-      id: project.id,
       isLive: true,
       project,
       deploymentPage,
