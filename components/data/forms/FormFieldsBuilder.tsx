@@ -29,7 +29,6 @@ type Props = {
     type?: FieldType;
     placeholder?: string;
     additionalComponent?: JSX.Element;
-    // defaultValue?: any;
     decimalPlaces?: number;
   }>;
   endpoints: PagingResponse<Endpoint>;

@@ -21,7 +21,7 @@ type UseComputeValue = {
   componentId: string;
   field: string;
   shareableContent: Record<string, unknown>;
-  staticFallback?: string;
+  staticFallback?: string | number | boolean | Record<string, unknown>;
 };
 
 const autoRunJavascriptCode = (boundCode: string) => {

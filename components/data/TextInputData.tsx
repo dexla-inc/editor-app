@@ -1,15 +1,16 @@
 import { DataProps } from "@/components/data/type";
 import { Stack } from "@mantine/core";
 import { FormFieldsBuilder } from "@/components/data/forms/FormFieldsBuilder";
+import { FieldType } from "@/components/data/forms/StaticFormFieldsBuilder";
 
-export const TextData = ({ component, endpoints }: DataProps) => {
-  const isNavLink = component.name === "NavLink";
-  const isFileButton = component.name === "FileButton";
+export const TextInputData = ({ component, endpoints }: DataProps) => {
+  const isTextArea = component.name === "Textarea";
 
   const staticFields = [
     {
-      name: isNavLink ? "label" : isFileButton ? "name" : "children",
+      name: "value",
       label: "Value",
+      type: isTextArea ? "text" : ("text" as FieldType),
     },
   ];
 

@@ -5,7 +5,6 @@ import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { useChangeState } from "@/hooks/useChangeState";
 import { useEditorStore } from "@/stores/editor";
-import { useInputsStore } from "@/stores/inputs";
 import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import {
@@ -19,6 +18,8 @@ import {
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { forwardRef, memo, useEffect } from "react";
+import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
+import { useEditorTreeStore } from "@/stores/editorTree";
 
 type Props = EditableComponentMapper & NumberInputProps & TextInputProps;
 
@@ -28,6 +29,9 @@ const InputComponent = forwardRef(
     ref,
   ) => {
     const iframeWindow = useEditorStore((state) => state.iframeWindow);
+    const updateTreeComponentAttrs = useEditorTreeStore(
+      (state) => state.updateTreeComponentAttrs,
+    );
 
     const {
       children,
@@ -53,23 +57,32 @@ const InputComponent = forwardRef(
     const { name: iconName } = icon && icon!.props!;
     const { color, backgroundColor } = useChangeState({ bg, textColor });
     const _defaultValue = type === "number" || type === "numberRange" ? 0 : "";
-    const inputValue = useInputsStore(
-      (state) => state.inputValues[component.id!],
-    );
-    const setInputValue = useInputsStore((state) => state.setInputValue);
-
-    const isClearable = clearable && !!inputValue;
 
     const { borderStyle, inputStyle } = useBrandingStyles();
 
+    const inputValue = useComputeValue({
+      componentId: component.id!,
+      field: "value",
+      shareableContent,
+      staticFallback: _defaultValue,
+    });
+
+    const isClearable = clearable && !!inputValue;
     const customStyle = merge({}, borderStyle, inputStyle, props.style, {
       backgroundColor,
       color,
     });
 
     // clear input field
-    const clearInput = () => {
-      setInputValue(component.id!, _defaultValue);
+    const clearInput = async () => {
+      // setInputValue(component.id!, _defaultValue);
+      await updateTreeComponentAttrs({
+        componentIds: [component.id!],
+        attrs: {
+          onLoad: { value: { static: _defaultValue, dataType: "static" } },
+        },
+        save: false,
+      });
       const el = iframeWindow?.document.getElementById(component.id!);
       el?.focus();
     };
@@ -95,12 +108,18 @@ const InputComponent = forwardRef(
       return isNaN(number) ? 0 : number;
     };
 
-    const handleChange = (e: any) => {
+    const handleChange = async (e: any) => {
       let newValue = e.target ? e.target.value : e;
       if (type === "number") {
         newValue = newValue ? Number(newValue) : 0;
       }
-      setInputValue(component.id!, newValue);
+      await updateTreeComponentAttrs({
+        componentIds: [component.id!],
+        attrs: {
+          onLoad: { value: { static: newValue, dataType: "static" } },
+        },
+        save: false,
+      });
     };
 
     // TODO: Move to a hook. Doing this as we need to update input immediately but not call actions etc.
@@ -266,4 +285,4 @@ const InputComponent = forwardRef(
 );
 InputComponent.displayName = "Input";
 
-export const Input = memo(withComponentWrapper<Props>(InputComponent), isSame);
+export const Input = memo(withComponentWrapper<Props>(InputComponent));

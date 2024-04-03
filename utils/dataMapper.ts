@@ -12,7 +12,11 @@ import {
   SelectData as Select,
 } from "@/components/data/SelectData";
 import { TableData as Table } from "@/components/data/TableData";
-import { DateInputData as DateInput } from "@/components/data/DateInput";
+import { DateInputData as DateInput } from "@/components/data/DateInputData";
+import {
+  TextInputData as Textarea,
+  TextInputData as Input,
+} from "@/components/data/TextInputData";
 import {
   CheckboxData as Checkbox,
   CheckboxData as Switch,
@@ -25,9 +29,7 @@ import {
   TextData as NavLink,
   TextData as Text,
   TextData as Title,
-  TextData as Input,
   TextData as RadioGroup,
-  TextData as Textarea,
 } from "@/components/data/TextData";
 
 export const dataMapper = {
