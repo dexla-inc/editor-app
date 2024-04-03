@@ -92,12 +92,20 @@ export const useComputeValue = ({
     memoize((state) =>
       variableKeys.reduce((acc, key) => {
         const variable = state.variableList.find((v) => v.id === key);
+        const variableHandler = {
+          TEXT: () => `\`${variable?.value}\``,
+          BOOLEAN: () =>
+            typeof variable?.value === "boolean"
+              ? variable?.value
+              : JSON.parse(variable?.value),
+          NUMBER: () => JSON.parse(variable?.value),
+          OBJECT: () => JSON.stringify(variable?.value),
+          ARRAY: () => JSON.stringify(variable?.value),
+        };
 
         if (variable) {
           const value =
-            variable.type === "TEXT"
-              ? `\`${variable.value}\``
-              : JSON.stringify(variable.value);
+            variableHandler[variable.type as keyof typeof variableHandler]();
 
           return {
             ...acc,
@@ -196,7 +204,7 @@ export const useComputeValue = ({
     authKeys,
     auth,
   ]);
-
+  console.log({ boundCodeTransformed });
   const valueHandlers = useMemo(
     () => ({
       dynamic: () => {

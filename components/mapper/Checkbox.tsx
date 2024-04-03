@@ -16,7 +16,7 @@ const CheckboxComponent = ({
   shareableContent,
   ...props
 }: Props) => {
-  const { label, value, triggers, bg, textColor, ...componentProps } =
+  const { label, triggers, bg, textColor, ...componentProps } =
     component.props as any;
   const updateTreeComponentAttrs = useEditorTreeStore(
     (state) => state.updateTreeComponentAttrs,
@@ -38,14 +38,10 @@ const CheckboxComponent = ({
 
   // handle changes to input field
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { dataType } =
-      useEditorTreeStore.getState().componentMutableAttrs[component.id!].onLoad
-        .checked;
-
     const newValue = e.target.checked;
     updateTreeComponentAttrs({
       componentIds: [component.id!],
-      attrs: { onLoad: { checked: { [dataType]: newValue } } },
+      attrs: { onLoad: { checked: { static: newValue, dataType: "static" } } },
       save: false,
     });
     triggers?.onChange?.(e);
@@ -73,8 +69,7 @@ const CheckboxComponent = ({
         },
       }}
       label={label}
-      value={value}
-      checked={checkedValue}
+      checked={Boolean(checkedValue)}
       {...triggers}
       onChange={handleInputChange}
       wrapperProps={{ "data-id": component.id }}

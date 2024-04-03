@@ -37,7 +37,6 @@ const InputComponent = forwardRef(
       children,
       icon,
       triggers,
-      value,
       loading,
       clearable,
       bg,
@@ -75,7 +74,6 @@ const InputComponent = forwardRef(
 
     // clear input field
     const clearInput = async () => {
-      // setInputValue(component.id!, _defaultValue);
       await updateTreeComponentAttrs({
         componentIds: [component.id!],
         attrs: {
