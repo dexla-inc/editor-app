@@ -160,7 +160,7 @@ export const useEditorHotkeys = () => {
       selectedComponent?.name!,
     );
     const isLayoutCategory =
-      structureMapper[componentToPaste.name!].category === "Layout";
+      structureMapper[componentToPaste.name!]?.category === "Layout";
     const isAllowedGridMatch =
       isGridItems === isTargetGridItems &&
       selectedComponent?.name === componentToPaste.name;
