@@ -2,7 +2,7 @@ import { Icon } from "@/components/Icon";
 import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { useThemeStore } from "@/stores/theme";
 import { isSame } from "@/utils/componentComparison";
-import { EditableComponentMapper, getColorFromTheme } from "@/utils/editor";
+import { EditableComponentMapper } from "@/utils/editor";
 import {
   DatePickerInputProps,
   DatePickerInput as MantineDatePickerInput,
@@ -10,6 +10,7 @@ import {
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { memo } from "react";
+import { useChangeState } from "@/hooks/useChangeState";
 
 type Props = EditableComponentMapper & DatePickerInputProps;
 
@@ -26,16 +27,16 @@ const DateInputComponent = ({
     iconPosition,
     triggers,
     styles,
-    color,
+    bg,
+    textColor,
     ...componentProps
   } = component.props as any;
   const { borderStyle, inputStyle } = useBrandingStyles();
-  const theme = useThemeStore((state) => state.theme);
+  const { color, backgroundColor } = useChangeState({ bg, textColor });
 
   const customStyle = merge({}, borderStyle, inputStyle, props.style);
   const isPositionLeft =
     !iconPosition || (iconPosition && iconPosition === "left");
-  const textColor = getColorFromTheme(theme, color);
 
   return (
     <>
@@ -53,9 +54,9 @@ const DateInputComponent = ({
             ...pick(customStyle, ["display", "width", "minHeight", "minWidth"]),
             height: "fit-content",
           },
-          input: { ...customStyle, color: textColor },
+          input: { ...customStyle, color: color, backgroundColor },
           icon: {
-            color: textColor,
+            color: color,
           },
         }}
       >

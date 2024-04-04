@@ -2,7 +2,6 @@ import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { useChangeState } from "@/hooks/useChangeState";
 import { useInputsStore } from "@/stores/inputs";
-import { useThemeStore } from "@/stores/theme";
 import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import {
@@ -14,6 +13,7 @@ import debounce from "lodash.debounce";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { ChangeEvent, forwardRef, memo, useCallback, useState } from "react";
+
 type Props = EditableComponentMapper & TextareaProps;
 
 const TextareaComponent = forwardRef(
@@ -66,7 +66,6 @@ const TextareaComponent = forwardRef(
         styles={{
           root: {
             position: "relative",
-
             ...pick(customStyle, [
               "display",
               "width",

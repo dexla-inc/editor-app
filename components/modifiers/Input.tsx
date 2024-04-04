@@ -12,6 +12,8 @@ import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
 import { useEffect } from "react";
 import { RangeSliderInput } from "../RangeSliderInput";
+import { ThemeColorSelector } from "../ThemeColorSelector";
+
 const Modifier = withModifier(({ selectedComponent }) => {
   const theme = useThemeStore((state) => state.theme);
   const form = useForm();
@@ -32,6 +34,7 @@ const Modifier = withModifier(({ selectedComponent }) => {
         passwordLower: selectedComponent?.props?.passwordLower,
         passwordUpper: selectedComponent?.props?.passwordUpper,
         passwordSpecial: selectedComponent?.props?.passwordSpecial,
+        bg: selectedComponent?.props?.bg,
       }),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -218,6 +221,20 @@ const Modifier = withModifier(({ selectedComponent }) => {
               attrs: {
                 props: {
                   clearable: value,
+                },
+              },
+            });
+          }}
+        />
+        <ThemeColorSelector
+          label="Background Color"
+          {...form.getInputProps("bg")}
+          onChange={(value: string) => {
+            form.setFieldValue("bg", value);
+            debouncedTreeComponentAttrsUpdate({
+              attrs: {
+                props: {
+                  bg: value,
                 },
               },
             });

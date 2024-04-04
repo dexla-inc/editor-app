@@ -6,6 +6,7 @@ import { Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
 import { useEffect } from "react";
+import { ThemeColorSelector } from "../ThemeColorSelector";
 
 const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm();
@@ -17,6 +18,7 @@ const Modifier = withModifier(({ selectedComponent }) => {
         size: selectedComponent?.props?.size,
         autosize: selectedComponent?.props?.autosize,
         withAsterisk: selectedComponent?.props?.withAsterisk,
+        bg: selectedComponent?.props?.bg,
       }),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -59,6 +61,20 @@ const Modifier = withModifier(({ selectedComponent }) => {
               attrs: {
                 props: {
                   autosize: value,
+                },
+              },
+            });
+          }}
+        />
+        <ThemeColorSelector
+          label="Background Color"
+          {...form.getInputProps("bg")}
+          onChange={(value: string) => {
+            form.setFieldValue("bg", value);
+            debouncedTreeComponentAttrsUpdate({
+              attrs: {
+                props: {
+                  bg: value,
                 },
               },
             });

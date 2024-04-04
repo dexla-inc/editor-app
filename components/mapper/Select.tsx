@@ -8,7 +8,6 @@ import { useInputsStore } from "@/stores/inputs";
 import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import {
-  Box,
   MultiSelect as MantineMultiSelect,
   Select as MantineSelect,
   MultiSelectProps,
@@ -18,7 +17,7 @@ import debounce from "lodash.debounce";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
-import { Fragment, forwardRef, memo, useEffect, useState } from "react";
+import { forwardRef, memo, useEffect, useState } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { memoize } from "proxy-memoize";
 

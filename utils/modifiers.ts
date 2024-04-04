@@ -157,6 +157,7 @@ export const requiredModifiers: RequiredModifiers = {
     passwordNumber: true,
     passwordLower: true,
     passwordUpper: true,
+    bg: "White.6",
   },
   textarea: {
     placeholder: "Textarea",
@@ -168,6 +169,7 @@ export const requiredModifiers: RequiredModifiers = {
     style: {
       height: "fit-content",
     },
+    bg: "White.6",
   },
   button: {
     type: "button",
@@ -242,6 +244,7 @@ export const requiredModifiers: RequiredModifiers = {
     style: {
       width: "100%",
     },
+    bg: "White.6",
   },
   autocomplete: {
     placeholder: "Autocomplete",
@@ -255,6 +258,7 @@ export const requiredModifiers: RequiredModifiers = {
     style: {
       width: "100%",
     },
+    bg: "White.6",
   },
   effects: {
     cursor: "auto",
@@ -403,6 +407,7 @@ export const requiredModifiers: RequiredModifiers = {
     iconPosition: "left",
     labelSize: "sm",
     color: "Neutral.6",
+    bgColor: "White.6",
   },
   chart: {
     chartColors: [

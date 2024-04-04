@@ -17,6 +17,7 @@ import {
 } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
+import { ThemeColorSelector } from "../ThemeColorSelector";
 
 const Modifier = withModifier(({ selectedComponent }) => {
   const theme = useThemeStore((state) => state.theme);
@@ -35,6 +36,7 @@ const Modifier = withModifier(({ selectedComponent }) => {
         customLinkType: selectedComponent?.props?.customLinkType,
         customLinkUrl: selectedComponent?.props?.customLinkUrl,
         dropdownPosition: selectedComponent?.props?.dropdownPosition,
+        bg: selectedComponent?.props?.bg,
       }),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -105,6 +107,20 @@ const Modifier = withModifier(({ selectedComponent }) => {
             }}
           />
         </Stack>
+        <ThemeColorSelector
+          label="Background Color"
+          {...form.getInputProps("bg")}
+          onChange={(value: string) => {
+            form.setFieldValue("bg", value);
+            debouncedTreeComponentAttrsUpdate({
+              attrs: {
+                props: {
+                  bg: value,
+                },
+              },
+            });
+          }}
+        />
         <TextInput
           label="Custom Text"
           size="xs"
