@@ -39,6 +39,7 @@ import { pick } from "next/dist/lib/pick";
 import { Router } from "next/router";
 import { ComputeValueProps, ValueProps } from "@/types/dataBinding";
 import { PagingResponse } from "@/requests/types";
+import { ResetVariableActionForm } from "@/components/actions/ResetVariableActionForm";
 
 const triggers = [
   "onClick",
@@ -86,8 +87,9 @@ type ActionInfo = {
 
 export const actions: ActionInfo[] = [
   { name: "apiCall", group: "Data & Logic", icon: "IconApi" },
-  { name: "changeVariable", group: "Data & Logic" },
   { name: "triggerLogicFlow", group: "Data & Logic", icon: "IconFlow" },
+  { name: "changeVariable", group: "Data & Logic" },
+  { name: "resetVariable", group: "Data & Logic" },
   { name: "changeState", group: "Design", icon: "IconTransform" },
   { name: "changeVisibility", group: "Design", icon: "IconEyeOff" },
   { name: "navigateToPage", group: "Navigation", icon: "IconFileInvoice" },
@@ -208,6 +210,11 @@ export interface ChangeVariableAction extends BaseAction {
   index?: ValueProps;
   partialUpdate?: boolean;
   path?: ValueProps;
+}
+
+export interface ResetVariableAction extends BaseAction {
+  name: "resetVariable";
+  variableId: string;
 }
 
 export type ActionType =
@@ -760,6 +767,10 @@ export type ChangeVariableActionParams = ActionParams & {
   action: ChangeVariableAction;
 };
 
+export type ResetVariableActionParams = ActionParams & {
+  action: ResetVariableAction;
+};
+
 type ArrayActionsType = Partial<{
   value: Array<any>;
   newValue: any;
@@ -864,6 +875,21 @@ export const useChangeVariableAction = async ({
   });
 };
 
+export const useResetVariableAction = async ({
+  action,
+}: ResetVariableActionParams) => {
+  const setVariable = useVariableStore.getState().setVariable;
+  const variableList = useVariableStore.getState().variableList;
+
+  const defaultValue = variableList.find((v) => v.id === action.variableId)
+    ?.defaultValue;
+
+  setVariable({
+    id: action.variableId,
+    value: defaultValue,
+  });
+};
+
 export const actionMapper = {
   alert: {
     action: useDebugAction,
@@ -873,6 +899,11 @@ export const actionMapper = {
   changeVariable: {
     action: useChangeVariableAction,
     form: ChangeVariableActionForm,
+    defaultValues: {},
+  },
+  resetVariable: {
+    action: useResetVariableAction,
+    form: ResetVariableActionForm,
     defaultValues: {},
   },
   navigateToPage: {
