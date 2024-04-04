@@ -43,10 +43,6 @@ export const useVariableStore = create<VariablesState>()(
             false,
             "variables/resetVariable",
           );
-          // const { variableList, setVariable } = get();
-          // const defaultValue = variableList.find((v) => v.id === variableId)
-          //   ?.defaultValue;
-          // setVariable({ id: variableId, value: defaultValue });
         },
         variableList: [] as Array<VariableStoreParams>,
         initializeVariableList: (variableList) => {
