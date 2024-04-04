@@ -88,8 +88,8 @@ type ActionInfo = {
 export const actions: ActionInfo[] = [
   { name: "apiCall", group: "Data & Logic", icon: "IconApi" },
   { name: "triggerLogicFlow", group: "Data & Logic", icon: "IconFlow" },
-  { name: "changeVariable", group: "Data & Logic" },
-  { name: "resetVariable", group: "Data & Logic" },
+  { name: "changeVariable", group: "Data & Logic", icon: "IconVariable" },
+  { name: "resetVariable", group: "Data & Logic", icon: "IconVariableOff" },
   { name: "changeState", group: "Design", icon: "IconTransform" },
   { name: "changeVisibility", group: "Design", icon: "IconEyeOff" },
   { name: "navigateToPage", group: "Navigation", icon: "IconFileInvoice" },
