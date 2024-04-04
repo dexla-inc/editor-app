@@ -449,22 +449,6 @@ export const useChangeStateAction = ({
   });
 };
 
-const getVariablesValue = (
-  objs: Record<string, ValueProps>,
-  computeValue: (props: { value: ValueProps }) => any,
-) => {
-  return Object.entries(objs).reduce((acc, [key, value]) => {
-    const fieldValue = computeValue({ value });
-
-    if (fieldValue) {
-      // @ts-ignore
-      acc[key] = fieldValue;
-    }
-
-    return acc;
-  }, {});
-};
-
 export type APICallActionParams = ActionParams & {
   action: APICallAction;
   endpointResults: Endpoint[];
@@ -507,10 +491,18 @@ export const prepareRequestData = (
   const bodyKeys = Object.keys(action.binds?.body ?? {});
   const apiUrl = `${endpoint?.baseUrl}/${endpoint?.relativeUrl}`;
 
-  const computedValues = getVariablesValue(
+  const computedValues = Object.entries(
     merge(action.binds?.body ?? {}, action.binds?.parameter ?? {}),
-    computeValue,
-  );
+  ).reduce((acc, [key, value]) => {
+    const fieldValue = computeValue({ value });
+
+    if (fieldValue) {
+      // @ts-ignore
+      acc[key] = fieldValue;
+    }
+
+    return acc;
+  }, {});
 
   const url = getUrl(queryStringKeys, apiUrl, computedValues);
   const body = bodyKeys.length
