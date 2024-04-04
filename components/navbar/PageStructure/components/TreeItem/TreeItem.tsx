@@ -127,7 +127,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
     };
 
     const handleKeyPress = (e: KeyboardEvent) => {
-      if (e.key === "Enter") closeEdit(); // || e.key === "Escape"
+      if (e.key === "Enter" || e.key === "Escape") closeEdit();
     };
 
     const icon = structureMapper[name as string]?.icon;
