@@ -9,7 +9,6 @@ import React, {
 
 import styles from "@/components/navbar/PageStructure/components/TreeItem/TreeItem.module.scss";
 import { useComponentContextMenu } from "@/hooks/useComponentContextMenu";
-import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { DARK_COLOR, GRAY_WHITE_COLOR } from "@/utils/branding";
