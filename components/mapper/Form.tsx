@@ -1,7 +1,6 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useEndpoint } from "@/hooks/useEndpoint";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { useInputsStore } from "@/stores/inputs";
 import { isSame } from "@/utils/componentComparison";
 import { componentMapper } from "@/utils/componentMapper";
 import { convertSizeToPx } from "@/utils/defaultSizes";

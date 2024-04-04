@@ -1,9 +1,7 @@
 import { useVariableStore } from "@/stores/variables";
-import { useInputsStore } from "@/stores/inputs";
 import { useRouter } from "next/router";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { Component } from "@/utils/editor";
 import { pick } from "next/dist/lib/pick";
 import get from "lodash.get";
 import { ComputeValuePropCtx, ComputeValueProps } from "@/types/dataBinding";
@@ -23,7 +21,6 @@ export const useDataBinding = () => {
     ctx,
   ) => {
     const variablesList = useVariableStore.getState().variableList;
-    const inputsStore = useInputsStore.getState().inputValues;
     const auth = useDataSourceStore.getState().getAuthState();
 
     const autoRunJavascriptCode = <T>(
@@ -41,24 +38,32 @@ export const useDataBinding = () => {
       }
     };
 
-    const allInputComponents = Object.values(
+    const components = Object.values(
       useEditorTreeStore.getState().componentMutableAttrs,
-    ).reduce((acc, c) => {
-      const isInput = [
-        "Input",
-        "Select",
-        "Checkbox",
-        "RadioGroup",
-        "Switch",
-        "Textarea",
-        "Autocomplete",
-        "DateInput",
-      ].includes(c?.name!);
-      if (isInput) {
-        acc.push({ id: c.id, description: c.name });
-      }
-      return acc;
-    }, [] as Partial<Component>[]);
+    ).reduce(
+      (acc, c) => {
+        const isInput = [
+          "Input",
+          "Select",
+          "Checkbox",
+          "RadioGroup",
+          "Switch",
+          "Textarea",
+          "Autocomplete",
+          "DateInput",
+        ].includes(c?.name!);
+        if (isInput) {
+          acc.list[c?.id!] = {
+            id: c.id,
+            name: c.description,
+            description: c.description,
+          };
+          acc[c?.id!] = c.onLoad?.value?.static;
+        }
+        return acc;
+      },
+      { list: {} } as any,
+    );
 
     const variables = variablesList.reduce(
       (acc, variable) => {
@@ -73,17 +78,6 @@ export const useDataBinding = () => {
         acc.list[variable.id] = variable;
         acc[variable.id] = parsedValue;
         acc[variable.name] = parsedValue;
-        return acc;
-      },
-      { list: {} } as any,
-    );
-
-    const components = allInputComponents.reduce(
-      (acc, component) => {
-        const value = inputsStore[component?.id!];
-        component = { ...component, name: component.description! };
-        acc.list[component?.id!] = component;
-        acc[component?.id!] = value;
         return acc;
       },
       { list: {} } as any,

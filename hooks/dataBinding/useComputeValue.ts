@@ -1,6 +1,5 @@
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useVariableStore } from "@/stores/variables";
-import { useInputsStore } from "@/stores/inputs";
 import { NextRouter, useRouter } from "next/router";
 import { useDataSourceStore } from "@/stores/datasource";
 import { memoize } from "proxy-memoize";
@@ -118,10 +117,13 @@ export const useComputeValue = ({
     ),
   ) as RecordStringAny;
 
-  const inputs = useInputsStore(
+  const inputs = useEditorTreeStore(
     memoize((state) =>
       componentKeys.reduce(
-        (acc, key) => ({ ...acc, [key]: state.inputValues[key] ?? "" }),
+        (acc, key) => ({
+          ...acc,
+          [key]: state.componentMutableAttrs[key]?.onLoad?.value.static ?? "",
+        }),
         {},
       ),
     ),
