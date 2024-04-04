@@ -878,16 +878,9 @@ export const useChangeVariableAction = async ({
 export const useResetVariableAction = async ({
   action,
 }: ResetVariableActionParams) => {
-  const setVariable = useVariableStore.getState().setVariable;
-  const variableList = useVariableStore.getState().variableList;
+  const resetVariable = useVariableStore.getState().resetVariable;
 
-  const defaultValue = variableList.find((v) => v.id === action.variableId)
-    ?.defaultValue;
-
-  setVariable({
-    id: action.variableId,
-    value: defaultValue,
-  });
+  resetVariable(action.variableId);
 };
 
 export const actionMapper = {

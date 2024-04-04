@@ -11,12 +11,19 @@ type VariablesState = {
   initializeVariableList: (variableList: Array<VariableResponse>) => void;
   setVariable: (variable: Partial<VariableStoreParams>) => void;
   deleteVariable: (variableId: string) => void;
+  resetVariable: (variableId: string) => void;
 };
 
 export const useVariableStore = create<VariablesState>()(
   devtools(
     persist(
       (set, get) => ({
+        resetVariable: (variableId) => {
+          const { variableList, setVariable } = get();
+          const defaultValue = variableList.find((v) => v.id === variableId)
+            ?.defaultValue;
+          setVariable({ id: variableId, value: defaultValue });
+        },
         variableList: [] as Array<VariableStoreParams>,
         initializeVariableList: (variableList) => {
           const newVariableList: Array<VariableStoreParams> = variableList
