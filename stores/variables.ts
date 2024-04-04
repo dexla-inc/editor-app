@@ -11,12 +11,30 @@ type VariablesState = {
   initializeVariableList: (variableList: Array<VariableResponse>) => void;
   setVariable: (variable: Partial<VariableStoreParams>) => void;
   deleteVariable: (variableId: string) => void;
+  resetVariable: (variableId: string) => void;
 };
 
 export const useVariableStore = create<VariablesState>()(
   devtools(
     persist(
       (set, get) => ({
+        resetVariable: (variableId) => {
+          set(
+            (state) => {
+              const newVariableList = state.variableList.map((variable) => {
+                if (variable.id === variableId) {
+                  return { ...variable, value: variable.defaultValue };
+                }
+                return variable;
+              });
+
+              return { variableList: newVariableList };
+            },
+            false,
+            "variables/resetVariable",
+          );
+        },
+
         variableList: [] as Array<VariableStoreParams>,
         initializeVariableList: (variableList) => {
           const newVariableList: Array<VariableStoreParams> = variableList
