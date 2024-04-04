@@ -1,7 +1,5 @@
 import { Icon } from "@/components/Icon";
 import { useBrandingStyles } from "@/hooks/useBrandingStyles";
-import { useThemeStore } from "@/stores/theme";
-import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import {
   DatePickerInputProps,
@@ -10,6 +8,8 @@ import {
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { memo } from "react";
+import { omit } from "next/dist/shared/lib/router/utils/omit";
+import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
 import { useChangeState } from "@/hooks/useChangeState";
 
 type Props = EditableComponentMapper & DatePickerInputProps;
@@ -38,6 +38,21 @@ const DateInputComponent = ({
   const isPositionLeft =
     !iconPosition || (iconPosition && iconPosition === "left");
 
+  const rootStyleProps = ["display", "width", "minHeight", "minWidth"];
+
+  const typeValue = useComputeValue({
+    componentId: component.id!,
+    field: "type",
+    shareableContent,
+    staticFallback: component.props?.type,
+  });
+  const valueFormatValue = useComputeValue({
+    componentId: component.id!,
+    field: "valueFormat",
+    shareableContent,
+    staticFallback: component.props?.valueFormat,
+  });
+
   return (
     <>
       <MantineDatePickerInput
@@ -47,16 +62,18 @@ const DateInputComponent = ({
         {...props}
         {...componentProps}
         {...triggers}
+        type={typeValue}
+        valueFormat={valueFormatValue}
         style={{}}
         styles={{
           root: {
             position: "relative",
-            ...pick(customStyle, ["display", "width", "minHeight", "minWidth"]),
+            ...pick(customStyle, rootStyleProps),
             height: "fit-content",
           },
-          input: { ...customStyle, color: color, backgroundColor },
+          input: { ...omit(customStyle, rootStyleProps), color, backgroundColor },
           icon: {
-            color: color,
+            color,
           },
         }}
       >
@@ -68,4 +85,4 @@ const DateInputComponent = ({
   );
 };
 
-export const DateInput = memo(DateInputComponent, isSame);
+export const DateInput = memo(DateInputComponent);

@@ -1,9 +1,7 @@
-import { NodeData } from "@/components/logic-flow/nodes/CustomNode";
 import { SectionId } from "@/components/navbar/EditorNavbarSections";
 import { PageResponse } from "@/requests/pages/types";
 import { Action } from "@/utils/actions";
 import { ComponentStructure, ComponentTree } from "@/utils/editor";
-import { Node } from "reactflow";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import merge from "lodash.merge";

@@ -16,6 +16,11 @@ export const jsonStructure = (props?: any): ComponentStructure => {
       ...requiredModifiers.mapSettings,
       ...(props.props || {}),
     },
+    onLoad: {
+      centerLat: { static: 25.816347481537285, dataType: "static" },
+      centerLng: { static: -80.1219500315037, dataType: "static" },
+      zoom: { static: 15, dataType: "static" },
+    },
     blockDroppingChildrenInside: true,
   };
 };

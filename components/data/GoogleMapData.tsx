@@ -17,7 +17,6 @@ export const GoogleMapData = ({ component, endpoints }: DataProps) => {
         label: "Latitude",
         placeholder: "25.816347481537285",
         type: "number" as FieldType,
-        defaultValue: 25.816347481537285,
         decimalPlaces: 15,
       },
       {
@@ -25,7 +24,6 @@ export const GoogleMapData = ({ component, endpoints }: DataProps) => {
         label: "Longitude",
         placeholder: "-80.1219500315037",
         type: "number" as FieldType,
-        defaultValue: -80.1219500315037,
         decimalPlaces: 15,
       },
       {
@@ -33,7 +31,6 @@ export const GoogleMapData = ({ component, endpoints }: DataProps) => {
         label: "Zoom",
         placeholder: "15",
         type: "number" as FieldType,
-        defaultValue: 15,
       },
       {
         name: "markers",

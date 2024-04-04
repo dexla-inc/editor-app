@@ -1,6 +1,5 @@
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useVariableStore } from "@/stores/variables";
-import { useInputsStore } from "@/stores/inputs";
 import { NextRouter, useRouter } from "next/router";
 import { useDataSourceStore } from "@/stores/datasource";
 import { memoize } from "proxy-memoize";
@@ -21,7 +20,7 @@ type UseComputeValue = {
   componentId: string;
   field: string;
   shareableContent: Record<string, unknown>;
-  staticFallback?: string;
+  staticFallback?: string | number | boolean | Record<string, unknown>;
 };
 
 const autoRunJavascriptCode = (boundCode: string) => {
@@ -92,12 +91,20 @@ export const useComputeValue = ({
     memoize((state) =>
       variableKeys.reduce((acc, key) => {
         const variable = state.variableList.find((v) => v.id === key);
+        const variableHandler = {
+          TEXT: () => `\`${variable?.value}\``,
+          BOOLEAN: () =>
+            typeof variable?.value === "boolean"
+              ? variable?.value
+              : JSON.parse(variable?.value),
+          NUMBER: () => JSON.parse(variable?.value),
+          OBJECT: () => JSON.stringify(variable?.value),
+          ARRAY: () => JSON.stringify(variable?.value),
+        };
 
         if (variable) {
           const value =
-            variable.type === "TEXT"
-              ? `\`${variable.value}\``
-              : JSON.stringify(variable.value);
+            variableHandler[variable.type as keyof typeof variableHandler]();
 
           return {
             ...acc,
@@ -110,10 +117,13 @@ export const useComputeValue = ({
     ),
   ) as RecordStringAny;
 
-  const inputs = useInputsStore(
+  const inputs = useEditorTreeStore(
     memoize((state) =>
       componentKeys.reduce(
-        (acc, key) => ({ ...acc, [key]: state.inputValues[key] ?? "" }),
+        (acc, key) => ({
+          ...acc,
+          [key]: state.componentMutableAttrs[key]?.onLoad?.value.static ?? "",
+        }),
         {},
       ),
     ),

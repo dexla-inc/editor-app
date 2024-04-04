@@ -33,6 +33,12 @@ export const jsonStructure = (props?: any): ComponentStructure => {
           },
           ...(props.props || {}),
         },
+        onLoad: {
+          value: {
+            static: false,
+            dataType: "static",
+          },
+        },
         blockDroppingChildrenInside: true,
       },
       {

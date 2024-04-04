@@ -1,7 +1,6 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useEndpoint } from "@/hooks/useEndpoint";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { useInputsStore } from "@/stores/inputs";
 import { isSame } from "@/utils/componentComparison";
 import { componentMapper } from "@/utils/componentMapper";
 import { convertSizeToPx } from "@/utils/defaultSizes";
@@ -10,8 +9,9 @@ import {
   getAllComponentsByName,
 } from "@/utils/editor";
 import { FlexProps, LoadingOverlay, Flex as MantineFlex } from "@mantine/core";
-import { FormEvent, forwardRef, memo, useMemo } from "react";
+import { FormEvent, forwardRef, memo } from "react";
 import { memoize } from "proxy-memoize";
+import { useDataBinding } from "@/hooks/dataBinding/useDataBinding";
 
 type Props = EditableComponentMapper & FlexProps;
 
@@ -28,7 +28,7 @@ const FormComponent = forwardRef(
     const setState = useEditorTreeStore(
       (state) => state.setTreeComponentCurrentState,
     );
-    const setInputValue = useInputsStore((state) => state.setInputValue);
+    const { computeValue } = useDataBinding();
 
     const onLoad = useEditorTreeStore(
       memoize((state) => state.componentMutableAttrs[component?.id!]?.onLoad),
@@ -49,7 +49,17 @@ const FormComponent = forwardRef(
 
       const updateTreeComponentAttrs =
         useEditorTreeStore.getState().updateTreeComponentAttrs;
-      const inputValues = useInputsStore.getState().inputValues;
+      const inputValues = Object.entries(
+        useEditorTreeStore.getState().componentMutableAttrs,
+      ).reduce(
+        (acc, [id, item]) => {
+          if (item.onLoad?.value)
+            acc[id] = computeValue({ value: item.onLoad?.value });
+
+          return acc;
+        },
+        {} as Record<string, unknown>,
+      );
 
       const validatableComponentsList = Object.entries(componentMapper).reduce(
         (acc, [key, value]) => {
@@ -106,9 +116,11 @@ const FormComponent = forwardRef(
 
       if (!invalidComponents.length && triggers.onSubmit) {
         triggers.onSubmit(e);
-        formFieldComponents.map((component) =>
-          setInputValue(component.id!, ""),
-        );
+        updateTreeComponentAttrs({
+          componentIds: formFieldComponents.map((c) => c.id!),
+          attrs: { onLoad: { value: { static: "", dataType: "static" } } },
+          save: false,
+        });
       }
     };
 
@@ -140,9 +152,9 @@ const FormComponent = forwardRef(
                 )
               : children;
           })}
-        {!endpointId && component.children && component.children.length > 0
+        {component.children && component.children.length > 0
           ? component.children?.map((child) =>
-              renderTree(child, shareableContent),
+              renderTree(child, { ...shareableContent, data }),
             )
           : children}
         <LoadingOverlay visible={loading} zIndex={1000} radius="sm" />

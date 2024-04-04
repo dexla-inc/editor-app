@@ -13,12 +13,21 @@ export const jsonStructure = (props?: any): ComponentStructure => {
     props: {
       ...defaultValues,
       placeholder: "DD MMM YYYY",
-      valueFormat: "DD MMM YYYY",
       size: "sm",
       style: {
         ...defaultValues.style,
       },
       ...(props.props || {}),
+    },
+    onLoad: {
+      valueFormat: {
+        static: "DD MMM YYYY",
+        dataType: "static",
+      },
+      type: {
+        static: "default",
+        dataType: "static",
+      },
     },
     blockDroppingChildrenInside: true,
   };

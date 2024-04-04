@@ -207,9 +207,12 @@ export default function BindingPopover({
               variables={variables.list}
               components={components.list}
               actions={actions?.list}
-              onChange={(code: string) =>
-                onChange({ ...value, boundCode: code })
-              }
+              onChange={(code: string) => {
+                onChange({ ...value, boundCode: code });
+                if (selectedItem) {
+                  setSelectedItem(undefined);
+                }
+              }}
               selectedItem={selectedItem}
             />
           </Box>

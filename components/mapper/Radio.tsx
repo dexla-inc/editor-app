@@ -42,6 +42,7 @@ const RadioComponent = forwardRef(
         ref={ref}
         styles={merge({ label: { width: "100%" } }, styles)}
         {...props}
+        wrapperProps={{ "data-id": component.id }}
         style={{
           ...(props.style ?? {}),
           ...defaultStyle,

@@ -8,9 +8,7 @@ import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoint
 import { usePageListQuery } from "@/hooks/reactQuery/usePageListQuery";
 import { useEditorStore } from "@/stores/editor";
 import { useVariableStore } from "@/stores/variables";
-import { useInputsStore } from "@/stores/inputs";
 import { memoize } from "proxy-memoize";
-import { Component } from "@/utils/editor";
 import { useRouter } from "next/router";
 import { useDataSourceStore } from "@/stores/datasource";
 import { pick } from "next/dist/lib/pick";
@@ -52,40 +50,36 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
     (p) => p.id === activePage?.id,
   )?.actions;
   const variablesList = useVariableStore((state) => state.variableList);
-  const inputsStore = useInputsStore((state) => state.inputValues);
   const browser = useRouter();
   const auth = useDataSourceStore((state) => state.getAuthState());
 
-  const allInputComponents = useEditorTreeStore(
+  const components = useEditorTreeStore(
     memoize((state) =>
-      Object.values(state.componentMutableAttrs).reduce((acc, c) => {
-        const isInput = [
-          "Input",
-          "Select",
-          "Checkbox",
-          "RadioGroup",
-          "Switch",
-          "Textarea",
-          "Autocomplete",
-          "DateInput",
-        ].includes(c?.name!);
-        if (isInput) {
-          acc.push({ id: c.id, name: c.name, description: c.description });
-        }
-        return acc;
-      }, [] as Partial<Component>[]),
+      Object.values(state.componentMutableAttrs).reduce(
+        (acc, c) => {
+          const isInput = [
+            "Input",
+            "Select",
+            "Checkbox",
+            "RadioGroup",
+            "Switch",
+            "Textarea",
+            "Autocomplete",
+            "DateInput",
+          ].includes(c?.name!);
+          if (isInput) {
+            acc.list[c?.id!] = {
+              id: c.id,
+              name: c.description,
+              description: c.description,
+            };
+            acc[c?.id!] = c.onLoad?.value?.static;
+          }
+          return acc;
+        },
+        { list: {} } as any,
+      ),
     ),
-  );
-
-  const components = allInputComponents.reduce(
-    (acc, component) => {
-      const value = inputsStore[component?.id!];
-      component = { ...component, name: component.description! };
-      acc.list[component?.id!] = component;
-      acc[component?.id!] = value;
-      return acc;
-    },
-    { list: {} } as any,
   );
 
   const variables = variablesList.reduce(

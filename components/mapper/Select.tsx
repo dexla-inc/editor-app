@@ -4,7 +4,6 @@ import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { useChangeState } from "@/hooks/useChangeState";
 import { useEndpoint } from "@/hooks/useEndpoint";
-import { useInputsStore } from "@/stores/inputs";
 import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import {
@@ -20,6 +19,7 @@ import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { forwardRef, memo, useEffect, useState } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { memoize } from "proxy-memoize";
+import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
 
 type Props = EditableComponentMapper & SelectProps & MultiSelectProps;
 
@@ -34,6 +34,10 @@ const SelectComponent = forwardRef(
     }: Props,
     ref,
   ) => {
+    const updateTreeComponentAttrs = useEditorTreeStore(
+      (state) => state.updateTreeComponentAttrs,
+    );
+
     const {
       children,
       triggers,
@@ -62,10 +66,11 @@ const SelectComponent = forwardRef(
       backgroundColor,
       color,
     });
-    const inputValue = useInputsStore(
-      (state) => state.inputValues[componentId],
-    );
-    const setInputValue = useInputsStore((state) => state.setInputValue);
+    const inputValue = useComputeValue({
+      componentId: component.id!,
+      field: "value",
+      shareableContent,
+    });
 
     const [data, setData] = useState(
       dataType === "static" ? component.props?.data : [],
@@ -77,7 +82,12 @@ const SelectComponent = forwardRef(
     });
 
     const handleChange = (value: any) => {
-      onChange && setInputValue(componentId, value);
+      updateTreeComponentAttrs({
+        componentIds: [componentId],
+        attrs: { onLoad: { static: value, dataType: "static" } },
+        save: false,
+      });
+      onChange?.(value);
     };
 
     const debouncedHandleSearchChange = debounce((value) => {
