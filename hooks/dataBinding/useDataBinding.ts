@@ -109,8 +109,8 @@ export const useDataBinding = () => {
         return autoRunJavascriptCode(boundCode, ctx);
       },
     };
-
-    return valueHandlers[dataType]();
+    const test = valueHandlers[dataType]();
+    return test;
   };
 
   return { computeValue };

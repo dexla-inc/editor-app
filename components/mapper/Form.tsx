@@ -10,9 +10,9 @@ import {
   getAllComponentsByName,
 } from "@/utils/editor";
 import { FlexProps, LoadingOverlay, Flex as MantineFlex } from "@mantine/core";
-import { FormEvent, forwardRef, memo, useMemo } from "react";
+import { FormEvent, forwardRef, memo } from "react";
 import { memoize } from "proxy-memoize";
-import { isObject } from "@/utils/common";
+import { useDataBinding } from "@/hooks/dataBinding/useDataBinding";
 
 type Props = EditableComponentMapper & FlexProps;
 
@@ -29,7 +29,7 @@ const FormComponent = forwardRef(
     const setState = useEditorTreeStore(
       (state) => state.setTreeComponentCurrentState,
     );
-    const setInputValue = useInputsStore((state) => state.setInputValue);
+    const { computeValue } = useDataBinding();
 
     const onLoad = useEditorTreeStore(
       memoize((state) => state.componentMutableAttrs[component?.id!]?.onLoad),
@@ -50,7 +50,17 @@ const FormComponent = forwardRef(
 
       const updateTreeComponentAttrs =
         useEditorTreeStore.getState().updateTreeComponentAttrs;
-      const inputValues = useInputsStore.getState().inputValues;
+      const inputValues = Object.entries(
+        useEditorTreeStore.getState().componentMutableAttrs,
+      ).reduce(
+        (acc, [id, item]) => {
+          if (item.onLoad?.value)
+            acc[id] = computeValue({ value: item.onLoad?.value });
+
+          return acc;
+        },
+        {} as Record<string, unknown>,
+      );
 
       const validatableComponentsList = Object.entries(componentMapper).reduce(
         (acc, [key, value]) => {
@@ -107,9 +117,11 @@ const FormComponent = forwardRef(
 
       if (!invalidComponents.length && triggers.onSubmit) {
         triggers.onSubmit(e);
-        formFieldComponents.map((component) =>
-          setInputValue(component.id!, ""),
-        );
+        updateTreeComponentAttrs({
+          componentIds: formFieldComponents.map((c) => c.id!),
+          attrs: { onLoad: { value: { static: "", dataType: "static" } } },
+          save: false,
+        });
       }
     };
 

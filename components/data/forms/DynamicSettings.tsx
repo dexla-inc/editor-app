@@ -6,7 +6,6 @@ import { VisibilityModifier } from "@/components/data/VisibilityModifier";
 import { useData } from "@/hooks/useData";
 import { Endpoint } from "@/requests/datasources/types";
 import { PagingResponse } from "@/requests/types";
-import { useInputsStore } from "@/stores/inputs";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { DEFAULT_STALE_TIME } from "@/utils/config";
 import { extractKeys } from "@/utils/data";
@@ -15,6 +14,7 @@ import { Divider, Flex, Select, Text, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import get from "lodash.get";
 import { useEffect, useState } from "react";
+import { useEditorTreeStore } from "@/stores/editorTree";
 
 type Props = {
   component: Component;
@@ -33,6 +33,9 @@ export const DynamicSettings = ({
   customProps = {},
   onSave = onSaveDefault,
 }: Props) => {
+  const updateTreeComponentAttrs = useEditorTreeStore(
+    (state) => state.updateTreeComponentAttrs,
+  );
   const [initiallyOpened, setInitiallyOpened] = useState(true);
   const [selectedEndpoint, setSelectedEndpoint] = useState<
     Endpoint | undefined
@@ -41,7 +44,6 @@ export const DynamicSettings = ({
 
   const exampleResponse = JSON.parse(selectedEndpoint?.exampleResponse ?? "{}");
 
-  const setInputValue = useInputsStore((state) => state.setInputValue);
   const resultsKeysList = getObjectAndArrayKeys(exampleResponse);
 
   const mergedInitialValues = Object.keys({
@@ -117,7 +119,7 @@ export const DynamicSettings = ({
       >
         <EndpointSelect
           {...form.getInputProps("onLoad.endpointId")}
-          onChange={(selected) => {
+          onChange={async (selected) => {
             form.setValues({
               onLoad: {
                 ...onLoadValues,
@@ -125,7 +127,10 @@ export const DynamicSettings = ({
                 resultsKey: "",
               },
             });
-            setInputValue(component.id!, "");
+            await updateTreeComponentAttrs({
+              componentIds: [component.id!],
+              attrs: { onLoad: { value: { static: "", dataType: "static" } } },
+            });
             setSelectedEndpoint(
               endpoints?.results?.find((e) => e.id === selected) as Endpoint,
             );
@@ -178,12 +183,17 @@ export const DynamicSettings = ({
                 placeholder="user.list"
                 data={resultsKeysList}
                 {...form.getInputProps("onLoad.resultsKey")}
-                onChange={(selected) => {
+                onChange={async (selected) => {
                   const newValues = {
                     ...onLoadValues,
                     resultsKey: selected,
                   };
-                  setInputValue(component.id!, "");
+                  await updateTreeComponentAttrs({
+                    componentIds: [component.id!],
+                    attrs: {
+                      onLoad: { value: { static: "", dataType: "static" } },
+                    },
+                  });
                   form.setValues({ onLoad: newValues });
                 }}
               />

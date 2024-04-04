@@ -30,9 +30,9 @@ const CheckboxComponent = ({
     color,
   });
 
-  const checkedValue = useComputeValue({
+  const inputValue = useComputeValue({
     componentId: component.id!,
-    field: "checked",
+    field: "value",
     shareableContent,
   });
 
@@ -41,7 +41,7 @@ const CheckboxComponent = ({
     const newValue = e.target.checked;
     updateTreeComponentAttrs({
       componentIds: [component.id!],
-      attrs: { onLoad: { checked: { static: newValue, dataType: "static" } } },
+      attrs: { onLoad: { value: { static: newValue, dataType: "static" } } },
       save: false,
     });
     triggers?.onChange?.(e);
@@ -69,7 +69,7 @@ const CheckboxComponent = ({
         },
       }}
       label={label}
-      checked={Boolean(checkedValue)}
+      checked={Boolean(inputValue)}
       {...triggers}
       onChange={handleInputChange}
       wrapperProps={{ "data-id": component.id }}

@@ -13,21 +13,17 @@ const SwitchComponent = forwardRef(
     const updateTreeComponentAttrs = useEditorTreeStore(
       (state) => state.updateTreeComponentAttrs,
     );
-    const checkedValue = useComputeValue({
+    const inputValue = useComputeValue({
       componentId: component.id!,
-      field: "checked",
+      field: "value",
       shareableContent,
     });
 
     const handleInputChange = async (e: ChangeEvent<HTMLInputElement>) => {
-      const { dataType } =
-        useEditorTreeStore.getState().componentMutableAttrs[component.id!]
-          .onLoad.checked;
-
       const newValue = e.currentTarget.checked;
       await updateTreeComponentAttrs({
         componentIds: [component.id!],
-        attrs: { onLoad: { checked: { [dataType]: newValue } } },
+        attrs: { onLoad: { value: { static: newValue, dataType: "static" } } },
         save: false,
       });
       triggers?.onChange?.(e);
@@ -41,7 +37,7 @@ const SwitchComponent = forwardRef(
         wrapperProps={{ "data-id": component.id }}
         label={undefined}
         onChange={handleInputChange}
-        checked={checkedValue}
+        checked={Boolean(inputValue)}
       />
     );
   },

@@ -6,7 +6,7 @@ import { FieldType } from "@/components/data/forms/StaticFormFieldsBuilder";
 export const CheckboxData = ({ component, endpoints }: DataProps) => {
   const staticFields = [
     {
-      name: "checked",
+      name: "value",
       label: "Checked",
       type: "boolean" as FieldType,
     },

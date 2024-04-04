@@ -17,7 +17,7 @@ export const jsonStructure = (props?: any): ComponentStructure => {
       ...(props.props || {}),
     },
     onLoad: {
-      checked: {
+      value: {
         static: false,
         dataType: "static",
       },
