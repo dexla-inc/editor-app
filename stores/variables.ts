@@ -21,16 +21,14 @@ export const useVariableStore = create<VariablesState>()(
         resetVariable: (variableId) => {
           set(
             (state) => {
-              const index = state.variableList.findIndex(
-                (v) => v.id === variableId,
-              );
-              if (index === -1) return {};
+              const newVariableList = state.variableList.map((variable) => {
+                if (variable.id === variableId) {
+                  return { ...variable, value: variable.defaultValue };
+                }
+                return variable;
+              });
 
-              const updatedVariableList = state.variableList.map((item, idx) =>
-                idx === index ? { ...item, value: item.defaultValue } : item,
-              );
-
-              return { variableList: updatedVariableList };
+              return { variableList: newVariableList };
             },
             false,
             "variables/resetVariable",
