@@ -22,28 +22,21 @@ export const useVariableStore = create<VariablesState>()(
           set(
             (state) => {
               const index = state.variableList.findIndex(
-                (item) => item.id === variableId,
-              );
-              const variable = state.variableList.find(
                 (v) => v.id === variableId,
               );
+              if (index === -1) return {};
 
-              let newVariableList = [...state.variableList];
+              const updatedVariableList = state.variableList.map((item, idx) =>
+                idx === index ? { ...item, value: item.defaultValue } : item,
+              );
 
-              if (index >= 0) {
-                newVariableList[index] = {
-                  ...newVariableList[index],
-                  ...variable,
-                  value: variable?.defaultValue,
-                };
-              }
-
-              return { variableList: newVariableList };
+              return { variableList: updatedVariableList };
             },
             false,
             "variables/resetVariable",
           );
         },
+
         variableList: [] as Array<VariableStoreParams>,
         initializeVariableList: (variableList) => {
           const newVariableList: Array<VariableStoreParams> = variableList
