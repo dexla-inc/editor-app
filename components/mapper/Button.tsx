@@ -1,5 +1,6 @@
 import { Icon } from "@/components/Icon";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
 import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { useChangeState } from "@/hooks/useChangeState";
 import { useContentEditable } from "@/hooks/useContentEditable";
@@ -10,7 +11,6 @@ import { EditableComponentMapper, getColorFromTheme } from "@/utils/editor";
 import { ButtonProps, Button as MantineButton } from "@mantine/core";
 import merge from "lodash.merge";
 import { ReactElement, forwardRef, memo } from "react";
-import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
 
 type Props = EditableComponentMapper & ButtonProps & ReactElement<"Button">;
 

@@ -1,5 +1,4 @@
 import { IconSelector } from "@/components/IconSelector";
-import { SizeSelector } from "@/components/SizeSelector";
 import { TopLabel } from "@/components/TopLabel";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
@@ -11,6 +10,8 @@ import { useEffect } from "react";
 import { SegmentedControlInput } from "../SegmentedControlInput";
 import { SegmentedControlYesNo } from "../SegmentedControlYesNo";
 import { ThemeColorSelector } from "../ThemeColorSelector";
+import { SegmentedControlSizes } from "../SegmentedControlSizes";
+import { inputSizes } from "@/utils/defaultSizes";
 
 const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm();
@@ -28,7 +29,8 @@ const Modifier = withModifier(({ selectedComponent }) => {
         valueFormat: selectedComponent?.props?.valueFormat,
         icon: selectedComponent?.props?.icon,
         iconPosition: selectedComponent?.props?.iconPosition,
-        color: selectedComponent?.props?.color,
+        textColor: selectedComponent?.props?.textColor,
+        bg: selectedComponent?.props?.bg,
       }),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -94,34 +96,40 @@ const Modifier = withModifier(({ selectedComponent }) => {
             });
           }}
         />
-        <SizeSelector
+        <SegmentedControlSizes
+          label="Size"
+          sizing={inputSizes}
           {...form.getInputProps("size")}
-          onChange={(e) => {
-            form.setFieldValue("size", e);
+          onChange={(value) => {
+            form.setFieldValue("size", value as string);
             debouncedTreeComponentAttrsUpdate({
-              attrs: { props: { size: e } },
+              attrs: { props: { size: value } },
             });
           }}
         />
-        <SizeSelector
-          label="Radius"
-          {...form.getInputProps("radius")}
-          onChange={(e) => {
-            form.setFieldValue("radius", e);
+        <ThemeColorSelector
+          label="Background Color"
+          {...form.getInputProps("bg")}
+          onChange={(value: string) => {
+            form.setFieldValue("bg", value);
             debouncedTreeComponentAttrsUpdate({
-              attrs: { props: { radius: e } },
+              attrs: {
+                props: {
+                  bg: value,
+                },
+              },
             });
           }}
         />
         <ThemeColorSelector
           label="Color"
-          {...form.getInputProps("color")}
+          {...form.getInputProps("textColor")}
           onChange={(value: string) => {
-            form.setFieldValue("color", value);
+            form.setFieldValue("textColor", value);
             debouncedTreeComponentAttrsUpdate({
               attrs: {
                 props: {
-                  color: value,
+                  textColor: value,
                 },
               },
             });
