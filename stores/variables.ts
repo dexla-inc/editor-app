@@ -19,10 +19,34 @@ export const useVariableStore = create<VariablesState>()(
     persist(
       (set, get) => ({
         resetVariable: (variableId) => {
-          const { variableList, setVariable } = get();
-          const defaultValue = variableList.find((v) => v.id === variableId)
-            ?.defaultValue;
-          setVariable({ id: variableId, value: defaultValue });
+          set(
+            (state) => {
+              const index = state.variableList.findIndex(
+                (item) => item.id === variableId,
+              );
+              const variable = state.variableList.find(
+                (v) => v.id === variableId,
+              );
+
+              let newVariableList = [...state.variableList];
+
+              if (index >= 0) {
+                newVariableList[index] = {
+                  ...newVariableList[index],
+                  ...variable,
+                  value: variable?.defaultValue,
+                };
+              }
+
+              return { variableList: newVariableList };
+            },
+            false,
+            "variables/resetVariable",
+          );
+          // const { variableList, setVariable } = get();
+          // const defaultValue = variableList.find((v) => v.id === variableId)
+          //   ?.defaultValue;
+          // setVariable({ id: variableId, value: defaultValue });
         },
         variableList: [] as Array<VariableStoreParams>,
         initializeVariableList: (variableList) => {
