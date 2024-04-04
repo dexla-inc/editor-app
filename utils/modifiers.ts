@@ -407,7 +407,7 @@ export const requiredModifiers: RequiredModifiers = {
     iconPosition: "left",
     labelSize: "sm",
     color: "Neutral.6",
-    bgColor: "White.6",
+    bg: "White.6",
   },
   chart: {
     chartColors: [
