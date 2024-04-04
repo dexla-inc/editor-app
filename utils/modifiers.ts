@@ -402,6 +402,7 @@ export const requiredModifiers: RequiredModifiers = {
     icon: "",
     iconPosition: "left",
     labelSize: "sm",
+    color: "Neutral.6",
   },
   chart: {
     chartColors: [

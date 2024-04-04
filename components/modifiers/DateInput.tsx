@@ -10,6 +10,7 @@ import merge from "lodash.merge";
 import { useEffect } from "react";
 import { SegmentedControlInput } from "../SegmentedControlInput";
 import { SegmentedControlYesNo } from "../SegmentedControlYesNo";
+import { ThemeColorSelector } from "../ThemeColorSelector";
 
 const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm();
@@ -27,6 +28,7 @@ const Modifier = withModifier(({ selectedComponent }) => {
         valueFormat: selectedComponent?.props?.valueFormat,
         icon: selectedComponent?.props?.icon,
         iconPosition: selectedComponent?.props?.iconPosition,
+        color: selectedComponent?.props?.color,
       }),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -69,6 +71,9 @@ const Modifier = withModifier(({ selectedComponent }) => {
             { label: "DD MMM YYYY", value: "DD MMM YYYY" },
             { label: "DD MM YYYY", value: "DD MM YYYY" },
             { label: "MM DD YYYY", value: "MM DD YYYY" },
+            { label: "DD MMM", value: "DD MMM" },
+            { label: "DD MMM YY", value: "DD MMM YY" },
+            // { label: "DD-DD MMM, YYYY", value: "DD-DD MMM, YYYY" },
           ]}
           {...form.getInputProps("valueFormat")}
           onChange={(value) => {
@@ -105,6 +110,20 @@ const Modifier = withModifier(({ selectedComponent }) => {
             form.setFieldValue("radius", e);
             debouncedTreeComponentAttrsUpdate({
               attrs: { props: { radius: e } },
+            });
+          }}
+        />
+        <ThemeColorSelector
+          label="Color"
+          {...form.getInputProps("color")}
+          onChange={(value: string) => {
+            form.setFieldValue("color", value);
+            debouncedTreeComponentAttrsUpdate({
+              attrs: {
+                props: {
+                  color: value,
+                },
+              },
             });
           }}
         />
