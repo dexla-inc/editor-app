@@ -39,9 +39,9 @@ export const useContentEditable = (componentId: string, ref: any) => {
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
-      if (!isPreviewMode && e.key === "Escape") {
-        exitEditMode();
-      }
+      // if (!isPreviewMode && e.key === "Escape") {
+      //   exitEditMode();
+      // }
     },
     [exitEditMode, isPreviewMode],
   );
