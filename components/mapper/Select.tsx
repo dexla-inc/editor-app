@@ -1,11 +1,9 @@
 import { InputLoader } from "@/components/InputLoader";
 import { CustomDropdown } from "@/components/mapper/CustomSelectDropdown";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
 import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { useChangeState } from "@/hooks/useChangeState";
 import { useEndpoint } from "@/hooks/useEndpoint";
-import { useEditorTreeStore } from "@/stores/editorTree";
 import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import {
@@ -17,8 +15,11 @@ import {
 import debounce from "lodash.debounce";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
+import { omit } from "next/dist/shared/lib/router/utils/omit";
+import { forwardRef, memo } from "react";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { memoize } from "proxy-memoize";
-import { forwardRef, memo, useEffect, useState } from "react";
+import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
 
 type Props = EditableComponentMapper & SelectProps & MultiSelectProps;
 
@@ -54,10 +55,12 @@ const SelectComponent = forwardRef(
 
     const componentId = component.id as string;
     const onLoad = useEditorTreeStore(
-      memoize((state) => state.componentMutableAttrs[component?.id!]?.onLoad),
+      memoize(
+        (state) => state.componentMutableAttrs[component?.id!]?.onLoad ?? {},
+      ),
     );
 
-    const { dataLabelKey, dataValueKey, resultsKey } = onLoad ?? {};
+    const { dataLabelKey, dataValueKey } = onLoad;
     const { onChange, onSearchChange, ...restTriggers } = triggers || {};
     const { color, backgroundColor } = useChangeState({ bg, textColor });
     const { borderStyle, inputStyle } = useBrandingStyles();
@@ -65,63 +68,45 @@ const SelectComponent = forwardRef(
       backgroundColor,
       color,
     });
-
     const inputValue = useComputeValue({
       componentId: component.id!,
       field: "value",
       shareableContent,
     });
 
-    const [data, setData] = useState(
-      dataType === "static" ? component.props?.data : [],
-    );
-
-    component.onLoad = onLoad;
     const { data: response } = useEndpoint({
-      component,
+      onLoad,
+      dataType,
     });
 
-    const handleChange = (value: any) => {
+    const handleChange = (value: string) => {
       updateTreeComponentAttrs({
         componentIds: [componentId],
-        attrs: {
-          onLoad: { value: { static: value, dataType: "static" } },
-        },
+        attrs: { onLoad: { value: { static: value, dataType: "static" } } },
         save: false,
       });
       onChange?.(value);
     };
 
     const debouncedHandleSearchChange = debounce((value) => {
-      onSearchChange && onSearchChange(value);
+      onSearchChange?.(value);
     }, 200);
 
-    useEffect(() => {
-      if (dataType === "dynamic") {
-        if (!response || !dataLabelKey || !dataValueKey) {
-          setData([]);
-        } else {
-          const list = Array.isArray(response) ? response : [response];
-          setData(
-            list.map((item: any) => ({
-              label: String(item[dataLabelKey]),
-              value: String(item[dataValueKey]),
-            })),
-          );
-        }
-      }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [resultsKey, dataLabelKey, dataValueKey, dataType, response]);
+    let data = [];
 
-    useEffect(() => {
-      if (dataType === "static") {
-        setData(component.props?.data ?? []);
+    if (dataType === "dynamic") {
+      if (response && dataLabelKey && dataValueKey) {
+        const list = Array.isArray(response) ? response : [response];
+        data = list.map((item: any) => ({
+          label: String(item[dataLabelKey]),
+          value: String(item[dataValueKey]),
+        }));
       }
-    }, [component.props?.data, dataType]);
+    }
 
-    useEffect(() => {
-      onChange && onChange(inputValue);
-    }, [inputValue, onChange]);
+    if (dataType === "static") {
+      data = component.props?.data ?? [];
+    }
 
     const rootStyleProps = [
       "display",

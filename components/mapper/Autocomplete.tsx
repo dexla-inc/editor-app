@@ -37,7 +37,7 @@ const AutocompleteComponent = forwardRef(
     const onLoad = useEditorTreeStore(
       memoize((state) => state.componentMutableAttrs[component?.id!]?.onLoad),
     );
-    const { dataLabelKey, dataValueKey, resultsKey } = onLoad ?? {};
+    const { dataLabelKey, dataValueKey } = onLoad ?? {};
     const { onChange, onItemSubmit, ...restTriggers } = triggers || {};
     const updateTreeComponentAttrs = useEditorTreeStore(
       (state) => state.updateTreeComponentAttrs,
@@ -55,38 +55,27 @@ const AutocompleteComponent = forwardRef(
       shareableContent,
     });
 
-    const [data, setData] = useState(
-      dataType === "static" ? component.props?.data : [],
-    );
-
-    component.onLoad = onLoad;
     const { data: response, isLoading } = useEndpoint({
-      component,
+      onLoad,
+      dataType,
       enabled: !!inputValue,
     });
 
-    useEffect(() => {
-      if (dataType === "dynamic") {
-        if (!response || !dataLabelKey || !dataValueKey) {
-          setData([]);
-        } else {
-          const list = Array.isArray(response) ? response : [response];
-          setData(
-            list.map((item: any) => ({
-              label: String(item[dataLabelKey]),
-              value: String(item[dataValueKey]),
-            })),
-          );
-        }
-      }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [resultsKey, dataLabelKey, dataValueKey, dataType, response]);
+    let data = [];
 
-    useEffect(() => {
-      if (dataType === "static") {
-        setData(component.props?.data ?? []);
+    if (dataType === "dynamic") {
+      if (response && dataLabelKey && dataValueKey) {
+        const list = Array.isArray(response) ? response : [response];
+        data = list.map((item: any) => ({
+          label: String(item[dataLabelKey]),
+          value: String(item[dataValueKey]),
+        }));
       }
-    }, [component.props?.data, dataType]);
+    }
+
+    if (dataType === "static") {
+      data = component.props?.data ?? [];
+    }
 
     const [timeoutId, setTimeoutId] = useState(null);
 
