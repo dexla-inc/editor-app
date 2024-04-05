@@ -313,7 +313,6 @@ export const requiredModifiers: RequiredModifiers = {
     color: "Primary.6",
   },
   drawer: {
-    title: "Drawer Title",
     position: "left",
   },
   buttonIcon: {
