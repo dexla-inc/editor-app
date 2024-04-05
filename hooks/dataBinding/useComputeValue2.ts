@@ -229,8 +229,6 @@ export const useComputeValue2 = ({
         return get(fieldValue, "static");
       },
       boundCode: (fieldValue: ValueProps) => {
-        const test = transformBoundCode(fieldValue.boundCode ?? "");
-        console.log({ test });
         return autoRunJavascriptCode(
           transformBoundCode(fieldValue.boundCode ?? ""),
         );

@@ -70,7 +70,7 @@ export const useDataBinding = () => {
         };
 
         const parsedValue =
-          variableHandler[variable.type as keyof typeof variableHandler]();
+          variableHandler[variable.type as keyof typeof variableHandler]?.();
 
         acc.list[variable.id] = variable;
         acc[variable.id] = parsedValue;
@@ -113,7 +113,6 @@ export const useDataBinding = () => {
       },
       { list: {} } as any,
     );
-    console.log({ components });
 
     if (value === undefined) return staticFallback || "";
     let dataType = value?.dataType ?? "static";
