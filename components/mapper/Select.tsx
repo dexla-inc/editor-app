@@ -1,9 +1,11 @@
 import { InputLoader } from "@/components/InputLoader";
 import { CustomDropdown } from "@/components/mapper/CustomSelectDropdown";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
 import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { useChangeState } from "@/hooks/useChangeState";
 import { useEndpoint } from "@/hooks/useEndpoint";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import {
@@ -15,11 +17,8 @@ import {
 import debounce from "lodash.debounce";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
-import { omit } from "next/dist/shared/lib/router/utils/omit";
-import { forwardRef, memo, useEffect, useState } from "react";
-import { useEditorTreeStore } from "@/stores/editorTree";
 import { memoize } from "proxy-memoize";
-import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
+import { forwardRef, memo, useEffect, useState } from "react";
 
 type Props = EditableComponentMapper & SelectProps & MultiSelectProps;
 
@@ -143,7 +142,7 @@ const SelectComponent = forwardRef(
             position: "relative",
             ...pick(customStyle, rootStyleProps),
           },
-          input: omit(customStyle, rootStyleProps),
+          input: customStyle,
           values: { height: "inherit" },
         }}
         withinPortal={false}
