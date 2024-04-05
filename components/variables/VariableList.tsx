@@ -23,7 +23,7 @@ type Props = {
 
 export const VariableList = ({ projectId }: Props) => {
   const [opened, modal] = useDisclosure(false);
-  const [filter, setFilter] = useDebouncedState("", 250);
+  const [filter, setFilter] = useDebouncedState("", 100);
   const [variableToEdit, setVariableToEdit] = useState(undefined);
   const variableList = useVariableStore((state) => state.variableList);
 
@@ -31,9 +31,18 @@ export const VariableList = ({ projectId }: Props) => {
     await deleteVariable(projectId, variableId);
   };
 
-  const rows = (
-    variableList?.sort((a, b) => a.name.localeCompare(b.name)) ?? []
-  )?.map((variable: any) => {
+  const filteredVariables =
+    variableList
+      ?.filter((variable) => {
+        const searchStr = filter.toLowerCase().replace(/_/g, " ");
+        const variableNameNormalized = variable.name
+          .toLowerCase()
+          .replace(/_/g, " ");
+        return variableNameNormalized.includes(searchStr);
+      })
+      .sort((a, b) => a.name.localeCompare(b.name)) ?? [];
+
+  const rows = filteredVariables.map((variable: any) => {
     const defaultValue = variable.defaultValue;
     const value = variable.value;
 
