@@ -2,23 +2,12 @@ import { SizeSelector } from "@/components/SizeSelector";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { Checkbox, Stack } from "@mantine/core";
+import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
 import { useEffect } from "react";
 import { SegmentedControlSizes } from "../SegmentedControlSizes";
 import { inputSizes } from "@/utils/defaultSizes";
-import { SegmentedControlYesNo } from "../SegmentedControlYesNo";
-
-export const modalAndDrawerSizingData = [
-  { label: "None", value: "0" },
-  { label: "Extra Small", value: "xs" },
-  { label: "Small", value: "sm" },
-  { label: "Medium", value: "md" },
-  { label: "Large", value: "lg" },
-  { label: "Extra Large", value: "xl" },
-  { label: "Full Screen", value: "fullScreen" },
-];
 
 const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm();
@@ -36,8 +25,9 @@ const Modifier = withModifier(({ selectedComponent }) => {
       <Stack spacing="xs">
         <SegmentedControlSizes
           label="Size"
-          data={modalAndDrawerSizingData}
           sizing={inputSizes}
+          includeZero
+          includeFull
           {...form.getInputProps("size")}
           onChange={(value) => {
             form.setFieldValue("size", value as string);

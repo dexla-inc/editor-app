@@ -7,7 +7,8 @@ import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
 import { useEffect } from "react";
 import { SizeSelector } from "../SizeSelector";
-import { modalAndDrawerSizingData } from "./Modal";
+import { SegmentedControlSizes } from "../SegmentedControlSizes";
+import { inputSizes } from "@/utils/defaultSizes";
 
 const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm();
@@ -45,9 +46,11 @@ const Modifier = withModifier(({ selectedComponent }) => {
             }}
           />
         </Stack>
-        <SizeSelector
+        <SegmentedControlSizes
           label="Size"
-          data={modalAndDrawerSizingData}
+          sizing={inputSizes}
+          includeZero
+          includeFull
           {...form.getInputProps("size")}
           onChange={(value) => {
             form.setFieldValue("size", value as string);
