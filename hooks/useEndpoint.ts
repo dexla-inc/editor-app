@@ -7,7 +7,6 @@ import { Component } from "@/utils/editor";
 import { useQuery } from "@tanstack/react-query";
 import get from "lodash.get";
 import { useDataBinding } from "@/hooks/dataBinding/useDataBinding";
-import { useComputeValue2 } from "@/hooks/dataBinding/useComputeValue2";
 
 type UseEndpointProps = {
   component: Component;
@@ -39,8 +38,6 @@ export const useEndpoint = ({
   const { computeValue } = useDataBinding();
 
   const requestSettings = { binds, dataType, staleTime };
-
-  useComputeValue2({ onLoad: { binds } });
 
   const { url, body } = prepareRequestData(
     requestSettings,
