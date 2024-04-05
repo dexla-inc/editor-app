@@ -141,7 +141,7 @@ export const useComputeValue2 = ({
       componentKeys.reduce(
         (acc, key) => ({
           ...acc,
-          [key]: state.componentMutableAttrs[key]?.onLoad?.value.static ?? "",
+          [key]: state.componentMutableAttrs[key]?.onLoad?.value?.static ?? "",
         }),
         {},
       ),
