@@ -23,6 +23,7 @@ export const jsonStructure = (props?: any): ComponentStructure => {
           backgroundColor: "white.6",
           flexDirection: "column",
           gap: "10px",
+          padding: "20px",
         },
       },
       children: [

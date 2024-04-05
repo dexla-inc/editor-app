@@ -2,7 +2,7 @@ import { TopLabel } from "@/components/TopLabel";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { Checkbox, SegmentedControl, Stack, Textarea } from "@mantine/core";
+import { Checkbox, SegmentedControl, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
 import { useEffect } from "react";
@@ -13,7 +13,6 @@ const Modifier = withModifier(({ selectedComponent }) => {
   useEffect(() => {
     form.setValues(
       merge({}, requiredModifiers.drawer, {
-        title: selectedComponent.props?.title,
         position: selectedComponent.props?.position,
         forceHide: selectedComponent.props?.forceHide,
       }),
@@ -24,18 +23,6 @@ const Modifier = withModifier(({ selectedComponent }) => {
   return (
     <form>
       <Stack spacing="xs">
-        <Textarea
-          autosize
-          label="Title"
-          size="xs"
-          {...form.getInputProps("title")}
-          onChange={(e) => {
-            form.setFieldValue("title", e.target.value);
-            debouncedTreeComponentAttrsUpdate({
-              attrs: { props: { title: e.target.value } },
-            });
-          }}
-        />
         <Stack spacing={2}>
           <TopLabel text="Position" />
           <SegmentedControl

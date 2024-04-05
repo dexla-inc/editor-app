@@ -55,12 +55,12 @@ export const Drawer = ({
       target={iframeWindow?.document.getElementById("iframe-content")}
       opened={isPreviewMode ? opened : !forceHide}
       onClose={isPreviewMode ? handleClose : () => {}}
-      title={title}
+      withCloseButton={false}
       {...props}
       {...componentProps}
       styles={{
         title: { fontFamily: theme.fontFamily },
-        body: { height: "fit-content" },
+        body: { height: "fit-content", padding: 0 },
       }}
     >
       {component.children && component.children.length > 0
