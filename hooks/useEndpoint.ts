@@ -40,9 +40,9 @@ export const useEndpoint = ({
 
   const apiUrl = `${endpoint?.baseUrl}/${endpoint?.relativeUrl}`;
 
-  const requestBody = { ...parameter, ...body };
+  const requestBody = endpoint ? { ...parameter, ...body } : {};
 
-  const url = getUrl(Object.keys(parameter), apiUrl, parameter);
+  const url = endpoint ? getUrl(Object.keys(parameter), apiUrl, parameter) : "";
 
   const fetchUrl = endpoint?.isServerRequest
     ? `/api/proxy?targetUrl=${encodeURIComponent(url)}`
