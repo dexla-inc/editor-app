@@ -29,7 +29,6 @@ const autoRunJavascriptCode = (boundCode: string) => {
     const result = new Function(boundCode)();
     return result;
   } catch (error: any) {
-    console.log(boundCode);
     console.error(error);
     return;
   }
