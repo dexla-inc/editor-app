@@ -6,6 +6,9 @@ import { memoize } from "proxy-memoize";
 import { useCallback, useMemo } from "react";
 import get from "lodash.get";
 import { ValueProps } from "@/types/dataBinding";
+import { pick } from "next/dist/lib/pick";
+import set from "lodash.set";
+import transform from "lodash.transform";
 
 type NextRouterKeys = keyof NextRouter;
 type RecordStringAny = Record<string, any>;
@@ -51,8 +54,9 @@ export const useComputeValue2 = ({
   onLoad,
 }: UseComputeValue) => {
   const browser = useRouter();
-
-  const valuePropsPaths = useMemo(() => findValuePropsPaths(onLoad), [onLoad]);
+  const valuePropsPaths = useMemo(() => {
+    return findValuePropsPaths(onLoad);
+  }, [onLoad]);
 
   const { variableKeys, componentKeys, actionKeys, browserKeys, authKeys } =
     useMemo(() => {
@@ -129,12 +133,12 @@ export const useComputeValue2 = ({
 
   const inputs = useEditorTreeStore(
     memoize((state) =>
-      componentKeys.reduce(
-        (acc, key) => ({
-          ...acc,
-          [key]: state.componentMutableAttrs[key]?.onLoad?.value?.static ?? "",
-        }),
-        {},
+      transform(
+        pick(state.componentMutableAttrs, componentKeys),
+        (acc, value) => {
+          acc[value.id!] = value?.onLoad?.value?.static ?? "";
+        },
+        {} as RecordStringAny,
       ),
     ),
   ) as RecordStringAny;
@@ -241,20 +245,14 @@ export const useComputeValue2 = ({
     (acc, fieldValuePath) => {
       const fieldValue = get(onLoad, fieldValuePath);
       const { dataType } = fieldValue;
-      const keys = fieldValuePath.split(".");
-      let currentLevel = acc; // Start at the root of the accumulator object
 
-      keys.forEach((key, index) => {
-        if (index === keys.length - 1) {
-          currentLevel[key] =
-            valueHandlers[dataType as keyof typeof valueHandlers]?.(fieldValue); // Or any other default value you'd like to assign
-        } else {
-          currentLevel[key] = currentLevel[key] || {};
-          currentLevel = currentLevel[key];
-        }
-      }, {});
+      set(
+        acc,
+        fieldValuePath,
+        valueHandlers[dataType as keyof typeof valueHandlers]?.(fieldValue),
+      );
 
-      return acc; // Return the updated accumulator
+      return acc;
     },
     {} as Record<string, any>,
   );
