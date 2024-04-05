@@ -21,6 +21,7 @@ import { useForm } from "@mantine/form";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { TopLabel } from "../TopLabel";
+import { toSnakeCase } from "@/utils/common";
 
 type VariablesFormValues = {
   name: string;
@@ -58,13 +59,14 @@ export const VariableForm = ({ variableId }: Props) => {
 
   const onSubmit = async (values: VariablesFormValues) => {
     if (variableId) {
+      const name = toSnakeCase(values.name);
       updateVariablesMutation.mutate({
         id: variableId,
-        values: values,
+        values: { ...values, name },
       });
-      setVariable({ ...values, id: variableId });
+      setVariable({ ...values, id: variableId, name });
     } else {
-      createVariablesMutation.mutate(values);
+      createVariablesMutation.mutate({ ...values });
     }
   };
 

@@ -230,22 +230,24 @@ export const emptyEditorAttrsTree = {
   },
 };
 
-function findAndProcessProperties<T>(obj: any, processFn: (prop: T) => void) {
-  const isTargetType = (value: any): value is T => {
-    // Implement your type-checking logic here
-    // For example, you might check for the presence of certain keys
-    return "dataType" in value; // This is a simplified check; adjust as needed for your use case
-  };
+export function toSnakeCase(input: string): string {
+  // Replace any existing underscores with spaces to standardize the input
+  let temp = input.replace(/_/g, " ");
 
-  const processObject = (value: any) => {
-    if (value && typeof value === "object") {
-      if (isTargetType(value)) {
-        processFn(value);
-      } else {
-        Object.values(value).forEach(processObject);
-      }
-    }
-  };
+  // Insert an underscore before:
+  // - A capital letter that follows a lowercase letter or a number
+  // - A number that follows a letter
+  temp = temp.replace(
+    /((?<=[a-z])[A-Z]|(?<=[A-Z])[A-Z](?=[a-z])|(?<=[A-Za-z])(?=[0-9])|(?<=[0-9])(?=[A-Za-z]))/g,
+    "_$1",
+  );
 
-  processObject(obj);
+  // Replace multiple spaces with a single space
+  temp = temp.replace(/\s+/g, " ");
+
+  // Trim spaces at the start and end, and replace remaining spaces with underscores
+  temp = temp.trim().replace(/ /g, "_");
+
+  // Convert to lowercase
+  return temp.toLowerCase();
 }
