@@ -8,6 +8,7 @@ import merge from "lodash.merge";
 import { useEffect } from "react";
 import { SegmentedControlSizes } from "../SegmentedControlSizes";
 import { inputSizes } from "@/utils/defaultSizes";
+import { SegmentedControlYesNo } from "../SegmentedControlYesNo";
 
 const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm();
