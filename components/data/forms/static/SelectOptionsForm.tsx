@@ -1,11 +1,12 @@
 import { Icon } from "@/components/Icon";
 import { TopLabel } from "@/components/TopLabel";
-import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
-import { Button, Flex, Group, Stack, TextInput } from "@mantine/core";
-import { useEffect } from "react";
-import { Component, debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { VisibilityModifier } from "@/components/data/VisibilityModifier";
+import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
+import { Component, debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
+import { Button, Flex, Group, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { useEffect } from "react";
+import { StaticFormFieldsBuilder } from "../StaticFormFieldsBuilder";
 
 export const SelectOptionsForm = ({ component }: { component: Component }) => {
   const form = useForm({
@@ -16,6 +17,7 @@ export const SelectOptionsForm = ({ component }: { component: Component }) => {
           display: component.props?.style?.display,
         },
       },
+      onLoad: { value: component.onLoad?.value ?? "" },
     },
   });
 
@@ -73,6 +75,10 @@ export const SelectOptionsForm = ({ component }: { component: Component }) => {
           );
         })}
       </Flex>
+      <StaticFormFieldsBuilder
+        form={form}
+        field={{ name: "value", label: "Value", type: "text" }}
+      />
       <VisibilityModifier
         componentId={component.id!}
         componentName={component.name}
