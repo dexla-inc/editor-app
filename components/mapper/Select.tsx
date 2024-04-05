@@ -65,6 +65,7 @@ const SelectComponent = forwardRef(
       backgroundColor,
       color,
     });
+
     const inputValue = useComputeValue({
       componentId: component.id!,
       field: "value",
@@ -83,7 +84,9 @@ const SelectComponent = forwardRef(
     const handleChange = (value: any) => {
       updateTreeComponentAttrs({
         componentIds: [componentId],
-        attrs: { onLoad: { static: value, dataType: "static" } },
+        attrs: {
+          onLoad: { value: { static: value, dataType: "static" } },
+        },
         save: false,
       });
       onChange?.(value);
