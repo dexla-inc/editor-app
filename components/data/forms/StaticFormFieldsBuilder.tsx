@@ -8,6 +8,7 @@ export type FieldType =
   | "url"
   | "date"
   | "unit"
+  | "yesno"
   | Lowercase<FrontEndTypes>;
 
 type StaticFormFieldsBuilderProps = {

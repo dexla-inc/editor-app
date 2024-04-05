@@ -65,6 +65,7 @@ export const useComponentStates = () => {
     AppBar: [],
     Grid: [],
     GridColumn: [],
+    Alert: [{ label: "Hover", value: "hover" }],
     Progress: [
       { label: "Loading", value: "loading" },
       { label: "Complete", value: "complete" },
