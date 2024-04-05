@@ -5,8 +5,6 @@ import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { useChangeState } from "@/hooks/useChangeState";
 import { useEndpoint } from "@/hooks/useEndpoint";
-import { useInputsStore } from "@/stores/inputs";
-import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import {
   AutocompleteItem,
@@ -18,6 +16,7 @@ import { pick } from "next/dist/lib/pick";
 import { forwardRef, memo, useEffect, useState } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { memoize } from "proxy-memoize";
+import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
 
 type Props = EditableComponentMapper & AutocompleteProps;
 
@@ -40,6 +39,9 @@ const AutocompleteComponent = forwardRef(
     );
     const { dataLabelKey, dataValueKey, resultsKey } = onLoad ?? {};
     const { onChange, onItemSubmit, ...restTriggers } = triggers || {};
+    const updateTreeComponentAttrs = useEditorTreeStore(
+      (state) => state.updateTreeComponentAttrs,
+    );
 
     const { color, backgroundColor } = useChangeState({ bg, textColor });
     const { borderStyle, inputStyle } = useBrandingStyles();
@@ -47,10 +49,11 @@ const AutocompleteComponent = forwardRef(
       backgroundColor,
       color,
     });
-    const inputValue = useInputsStore(
-      (state) => state.inputValues[componentId],
-    );
-    const setInputValue = useInputsStore((state) => state.setInputValue);
+    const inputValue = useComputeValue({
+      componentId: component.id!,
+      field: "value",
+      shareableContent,
+    });
 
     const [data, setData] = useState(
       dataType === "static" ? component.props?.data : [],
@@ -87,16 +90,25 @@ const AutocompleteComponent = forwardRef(
 
     const [timeoutId, setTimeoutId] = useState(null);
 
-    const handleChange = (value: any) => {
-      setInputValue(componentId, value);
+    const handleChange = (item: any) => {
+      updateTreeComponentAttrs({
+        componentIds: [componentId],
+        attrs: {
+          onLoad: {
+            static: { label: item.label, value: item.value },
+            dataType: "static",
+          },
+        },
+        save: false,
+      });
 
       if (timeoutId) {
         clearTimeout(timeoutId);
       }
 
       const newTimeoutId = setTimeout(() => {
-        if (onChange && value) {
-          onChange(value);
+        if (onChange && item) {
+          onChange(item);
         }
       }, 200);
 
@@ -107,7 +119,16 @@ const AutocompleteComponent = forwardRef(
 
     const handleItemSubmit = (item: AutocompleteItem) => {
       setItemSubmitted(true);
-      setInputValue(componentId, { label: item.label, value: item.value });
+      updateTreeComponentAttrs({
+        componentIds: [componentId],
+        attrs: {
+          onLoad: {
+            static: { label: item.label, value: item.value },
+            dataType: "static",
+          },
+        },
+        save: false,
+      });
     };
 
     useEffect(() => {
@@ -157,5 +178,4 @@ AutocompleteComponent.displayName = "Autocomplete";
 
 export const Autocomplete = memo(
   withComponentWrapper<Props>(AutocompleteComponent),
-  isSame,
 );

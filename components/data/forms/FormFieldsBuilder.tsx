@@ -20,6 +20,7 @@ import { useForm } from "@mantine/form";
 import { IconPlug, IconPlugOff } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
+import { ValueProps } from "@/types/dataBinding";
 
 type Props = {
   fields: Array<{
@@ -28,7 +29,6 @@ type Props = {
     type?: FieldType;
     placeholder?: string;
     additionalComponent?: JSX.Element;
-    defaultValue?: any;
     decimalPlaces?: number;
   }>;
   endpoints: PagingResponse<Endpoint>;
@@ -43,30 +43,15 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
   );
   const { getComponentsStates } = useComponentStates();
 
-  const onLoadFieldsStarter = fields.reduce((acc, f) => {
-    // Handle special case for nested properties like 'center.lat'
-    if (f.name.includes(".")) {
-      const [parentKey, childKey] = f.name.split(".");
-      // @ts-ignore
-      acc[parentKey] = acc[parentKey] || {};
-      // @ts-ignore
-      acc[parentKey][childKey] = {
-        static:
-          component.onLoad?.[f.name]?.static ||
-          component.props?.[f.name] ||
-          f.defaultValue,
-      };
-    } else {
-      // @ts-ignore
+  const onLoadFieldsStarter = fields.reduce(
+    (acc, f) => {
       acc[f.name] = {
-        static:
-          component.onLoad?.[f.name]?.static ||
-          component.props?.[f.name] ||
-          f.defaultValue,
+        static: component.onLoad?.[f.name]?.static || component.props?.[f.name],
       };
-    }
-    return acc;
-  }, {});
+      return acc;
+    },
+    {} as Record<string, ValueProps>,
+  );
 
   const onLoadValues = merge({}, onLoadFieldsStarter, component?.onLoad);
 

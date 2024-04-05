@@ -1,8 +1,5 @@
 import { isSame } from "@/utils/componentComparison";
-import {
-  EditableComponentMapper,
-  getAllChildrenComponents,
-} from "@/utils/editor";
+import { EditableComponentMapper } from "@/utils/editor";
 import { Radio as MantineRadio, RadioProps } from "@mantine/core";
 import { memo, useState } from "react";
 
@@ -50,6 +47,7 @@ const RadioItemComponent = ({
       {...componentProps}
       {...defaultTriggers}
       {...triggers}
+      wrapperProps={{ "data-id": component.id }}
       label={
         component.children && component.children.length > 0
           ? component.children?.map((child) =>

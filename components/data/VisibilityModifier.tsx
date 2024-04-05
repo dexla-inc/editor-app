@@ -62,7 +62,7 @@ export const VisibilityModifier = ({
   };
 
   return (
-    <Wrapper {...inputProps}>
+    <Wrapper {...inputProps} label="Visibility">
       <InnerWrapper w="100%">
         <SegmentedControlInput
           label="Visibility"
