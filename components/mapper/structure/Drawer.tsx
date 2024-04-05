@@ -3,14 +3,26 @@ import { structureMapper } from "@/utils/componentMapper";
 import { ComponentStructure } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { px } from "@mantine/core";
+import merge from "lodash.merge";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): ComponentStructure => {
   const theme = props.theme ?? defaultTheme;
-  const { input: defaultInputValues, drawer: defaultDrawerValues } =
-    requiredModifiers;
+  const {
+    input: defaultInputValues,
+    drawer: defaultDrawerValues,
+    layout: defaultLayoutValues,
+    icon: defaultIconValues,
+  } = requiredModifiers;
 
   const defaultButton = structureMapper["Button"].structure({});
+  const defaultTitle = structureMapper["Title"].structure({
+    props: { order: 4 },
+  });
+
+  const defaultHeaderProps = merge({}, defaultLayoutValues, {
+    style: { alignItems: "center", justifyContent: "space-between" },
+  });
 
   const defaultChildren = [
     {
@@ -18,15 +30,30 @@ export const jsonStructure = (props?: any): ComponentStructure => {
       name: "Container",
       description: "Table Container",
       props: {
+        gap: "lg",
         style: {
           width: "100%",
           backgroundColor: "white.6",
           flexDirection: "column",
-          gap: "10px",
           padding: "20px",
         },
       },
       children: [
+        {
+          id: nanoid(),
+          name: "Container",
+          description: "Drawer Header",
+          props: defaultHeaderProps,
+          children: [
+            { id: nanoid(), ...defaultTitle },
+            {
+              id: nanoid(),
+              name: "Icon",
+              description: "Close Button",
+              props: { ...defaultIconValues, name: "IconX" },
+            },
+          ],
+        },
         {
           id: nanoid(),
           name: "Container",
