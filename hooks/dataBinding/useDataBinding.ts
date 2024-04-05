@@ -9,6 +9,7 @@ import {
   ComputeValueProps,
   ValueProps,
 } from "@/types/dataBinding";
+import { safeJsonParse } from "@/utils/common";
 
 const parseVariableValue = (value: string): any => {
   try {
@@ -63,7 +64,7 @@ export const useDataBinding = () => {
           TEXT: () => (value ? `\`${value}\`` : undefined),
           BOOLEAN: () =>
             typeof value === "boolean" ? value : JSON.parse(value),
-          NUMBER: () => JSON.parse(value),
+          NUMBER: () => safeJsonParse(value),
           OBJECT: () => JSON.stringify(value),
           ARRAY: () => value,
         };
