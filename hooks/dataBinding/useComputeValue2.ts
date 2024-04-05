@@ -7,6 +7,7 @@ import { useCallback, useMemo } from "react";
 import get from "lodash.get";
 import { ValueProps } from "@/types/dataBinding";
 import { pick } from "next/dist/lib/pick";
+import set from "lodash.set";
 
 type NextRouterKeys = keyof NextRouter;
 type RecordStringAny = Record<string, any>;
@@ -238,20 +239,14 @@ export const useComputeValue2 = ({
     (acc, fieldValuePath) => {
       const fieldValue = get(onLoad, fieldValuePath);
       const { dataType } = fieldValue;
-      const keys = fieldValuePath.split(".");
-      let currentLevel = acc; // Start at the root of the accumulator object
 
-      keys.forEach((key, index) => {
-        if (index === keys.length - 1) {
-          currentLevel[key] =
-            valueHandlers[dataType as keyof typeof valueHandlers]?.(fieldValue); // Or any other default value you'd like to assign
-        } else {
-          currentLevel[key] = currentLevel[key] || {};
-          currentLevel = currentLevel[key];
-        }
-      }, {});
+      set(
+        acc,
+        fieldValuePath,
+        valueHandlers[dataType as keyof typeof valueHandlers]?.(fieldValue),
+      );
 
-      return acc; // Return the updated accumulator
+      return acc;
     },
     {} as Record<string, any>,
   );
