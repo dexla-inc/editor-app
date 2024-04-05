@@ -470,7 +470,7 @@ export type APICallActionParams = ActionParams & {
   endpointResults: Endpoint[];
 };
 
-const getUrl = (
+export const getUrl = (
   keys: string[],
   apiUrl: string,
   variableValues: Record<string, string>,

@@ -59,12 +59,17 @@ export const useDataBinding = () => {
     const variables = variablesList.reduce(
       (acc, variable) => {
         const value = variable.value ?? variable.defaultValue ?? "";
+        const variableHandler = {
+          TEXT: () => (value ? `\`${value}\`` : undefined),
+          BOOLEAN: () =>
+            typeof value === "boolean" ? value : JSON.parse(value),
+          NUMBER: () => JSON.parse(value),
+          OBJECT: () => JSON.stringify(value),
+          ARRAY: () => value,
+        };
 
         const parsedValue =
-          ["ARRAY", "OBJECT"].includes(variable.type) &&
-          typeof value === "string"
-            ? parseVariableValue(value)
-            : value;
+          variableHandler[variable.type as keyof typeof variableHandler]();
 
         acc.list[variable.id] = variable;
         acc[variable.id] = parsedValue;

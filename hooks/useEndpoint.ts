@@ -1,22 +1,23 @@
 import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { performFetch, prepareRequestData } from "@/utils/actions";
+import { getUrl, performFetch } from "@/utils/actions";
 import { DEFAULT_STALE_TIME } from "@/utils/config";
-import { Component } from "@/utils/editor";
 import { useQuery } from "@tanstack/react-query";
 import get from "lodash.get";
-import { useDataBinding } from "@/hooks/dataBinding/useDataBinding";
+import { useComputeValue2 } from "@/hooks/dataBinding/useComputeValue2";
 
 type UseEndpointProps = {
-  component: Component;
+  dataType: "static" | "dynamic";
+  onLoad?: any;
   forceEnabled?: boolean;
   enabled?: boolean;
   includeExampleResponse?: boolean;
 };
 
 export const useEndpoint = ({
-  component,
+  dataType,
+  onLoad,
   enabled = true,
   includeExampleResponse = false,
 }: UseEndpointProps) => {
@@ -24,26 +25,24 @@ export const useEndpoint = ({
     (state) => state.authState.accessToken,
   );
 
-  const { dataType } = component.props as any;
   const {
     endpointId,
     resultsKey,
-    binds,
     staleTime = DEFAULT_STALE_TIME,
-  } = component.onLoad ?? {};
+  } = onLoad ?? {};
 
   const projectId = useEditorTreeStore((state) => state.currentProjectId);
   const { data: endpoints } = useDataSourceEndpoints(projectId);
   const endpoint = endpoints?.results?.find((e) => e.id === endpointId);
-  const { computeValue } = useDataBinding();
+  const { binds: { parameter = {}, body = {} } = {} } = useComputeValue2({
+    onLoad: { binds: onLoad?.binds },
+  });
 
-  const requestSettings = { binds, dataType, staleTime };
+  const apiUrl = `${endpoint?.baseUrl}/${endpoint?.relativeUrl}`;
 
-  const { url, body } = prepareRequestData(
-    requestSettings,
-    endpoint!,
-    computeValue,
-  );
+  const requestBody = endpoint ? { ...parameter, ...body } : {};
+
+  const url = endpoint ? getUrl(Object.keys(parameter), apiUrl, parameter) : "";
 
   const fetchUrl = endpoint?.isServerRequest
     ? `/api/proxy?targetUrl=${encodeURIComponent(url)}`
@@ -66,13 +65,13 @@ export const useEndpoint = ({
   const isEnabled = !!endpoint && dataType === "dynamic" && enabled;
 
   const { data, isLoading } = useQuery(
-    [fetchUrl, JSON.stringify(body), accessToken],
+    [fetchUrl, JSON.stringify(requestBody), accessToken],
     apiCall,
     {
       select: (response) => {
         return get(response, resultsKey, response);
       },
-      staleTime: requestSettings.staleTime * 1000 * 60,
+      staleTime: staleTime * 1000 * 60,
       enabled: isEnabled,
     },
   );

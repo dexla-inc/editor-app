@@ -42,8 +42,6 @@ export const Chart = ({ component, ...props }: Props) => {
   const onLoad = useEditorTreeStore(
     memoize((state) => state.componentMutableAttrs[component?.id!]?.onLoad),
   );
-  const { dataLabelKey, dataSeriesKey, dataLegendKey, resultsKey } =
-    onLoad ?? {};
 
   const theme = useThemeStore((state) => state.theme);
   const isPieOrRadial =
@@ -66,9 +64,9 @@ export const Chart = ({ component, ...props }: Props) => {
   const _labelColor = getChartColor(theme, labelColor, "SecondaryText.5");
   const _foreColor = getChartColor(theme, foreColor, "Secondary.5");
 
-  component.onLoad = onLoad;
   const { data: response, isLoading } = useEndpoint({
-    component,
+    onLoad,
+    dataType,
   });
 
   let dataSeries = series,

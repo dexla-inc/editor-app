@@ -35,9 +35,9 @@ const FormComponent = forwardRef(
     );
 
     const { endpointId } = onLoad ?? {};
-    component.onLoad = onLoad;
     const { data } = useEndpoint({
-      component,
+      onLoad,
+      dataType,
     });
 
     const onSubmitCustom = async (e: FormEvent<any>) => {

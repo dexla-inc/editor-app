@@ -23,9 +23,9 @@ export const TableComponent = forwardRef(
       memoize((state) => state.componentMutableAttrs[component?.id!]?.onLoad),
     );
 
-    component.onLoad = onLoad;
     const { data } = useEndpoint({
-      component,
+      onLoad,
+      dataType,
     });
 
     return (
