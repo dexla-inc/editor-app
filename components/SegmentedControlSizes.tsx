@@ -37,7 +37,7 @@ export const SegmentedControlSizes = ({
     if (includeZero) {
       data.unshift({ label: "-", value: "0", tooltip: "0px" });
       data.push({
-        label: "Full Screen",
+        label: "FS",
         value: "fullScreen",
         tooltip: "Full Screen",
       });

@@ -24,11 +24,9 @@ const Modifier = withModifier(({ selectedComponent }) => {
   return (
     <form>
       <Stack spacing="xs">
-        <SegmentedControlSizes
+        <SizeSelector
           label="Size"
-          sizing={inputSizes}
-          includeZero
-          includeFull
+          showFullscreen
           {...form.getInputProps("size")}
           onChange={(value) => {
             form.setFieldValue("size", value as string);
