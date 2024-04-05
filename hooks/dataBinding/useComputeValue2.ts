@@ -106,7 +106,8 @@ export const useComputeValue2 = ({
       variableKeys.reduce((acc, key) => {
         const variable = state.variableList.find((v) => v.id === key);
         const variableHandler = {
-          TEXT: () => (variable?.value ? `\`${variable?.value}\`` : undefined),
+          TEXT: () =>
+            variable?.value ? `\`${variable?.value}\`` : `undefined`,
           BOOLEAN: () =>
             typeof variable?.value === "boolean"
               ? variable?.value
