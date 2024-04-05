@@ -6,6 +6,8 @@ import { Checkbox, SegmentedControl, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
 import { useEffect } from "react";
+import { SizeSelector } from "../SizeSelector";
+import { modalAndDrawerSizingData } from "./Modal";
 
 const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm();
@@ -14,6 +16,7 @@ const Modifier = withModifier(({ selectedComponent }) => {
     form.setValues(
       merge({}, requiredModifiers.drawer, {
         position: selectedComponent.props?.position,
+        size: selectedComponent.props?.size,
         forceHide: selectedComponent.props?.forceHide,
       }),
     );
@@ -42,7 +45,17 @@ const Modifier = withModifier(({ selectedComponent }) => {
             }}
           />
         </Stack>
-
+        <SizeSelector
+          label="Size"
+          data={modalAndDrawerSizingData}
+          {...form.getInputProps("size")}
+          onChange={(value) => {
+            form.setFieldValue("size", value as string);
+            debouncedTreeComponentAttrsUpdate({
+              attrs: { props: { size: value } },
+            });
+          }}
+        />
         <Checkbox
           size="xs"
           label="Force Hide"

@@ -314,6 +314,7 @@ export const requiredModifiers: RequiredModifiers = {
   },
   drawer: {
     position: "left",
+    size: "md",
   },
   buttonIcon: {
     style: {
