@@ -6,6 +6,7 @@ import { memoize } from "proxy-memoize";
 import { useCallback, useMemo } from "react";
 import get from "lodash.get";
 import { ValueProps } from "@/types/dataBinding";
+import { pick } from "next/dist/lib/pick";
 
 type NextRouterKeys = keyof NextRouter;
 type RecordStringAny = Record<string, any>;
@@ -51,8 +52,9 @@ export const useComputeValue2 = ({
   onLoad,
 }: UseComputeValue) => {
   const browser = useRouter();
-
-  const valuePropsPaths = useMemo(() => findValuePropsPaths(onLoad), [onLoad]);
+  const valuePropsPaths = useMemo(() => {
+    return findValuePropsPaths(onLoad);
+  }, [onLoad]);
 
   const { variableKeys, componentKeys, actionKeys, browserKeys, authKeys } =
     useMemo(() => {
@@ -128,15 +130,7 @@ export const useComputeValue2 = ({
   ) as RecordStringAny;
 
   const inputs = useEditorTreeStore(
-    memoize((state) =>
-      componentKeys.reduce(
-        (acc, key) => ({
-          ...acc,
-          [key]: state.componentMutableAttrs[key]?.onLoad?.value?.static ?? "",
-        }),
-        {},
-      ),
-    ),
+    memoize((state) => pick(state.componentMutableAttrs, componentKeys)),
   ) as RecordStringAny;
 
   const auth = useDataSourceStore(
@@ -174,7 +168,10 @@ export const useComputeValue2 = ({
           `components\\[(\\/\\* [\\S\\s]* \\*\\/)?\\s?'${key}'\\]`,
           "g",
         );
-        result = result.replaceAll(regex, `'${inputs[key]}'`);
+        result = result.replaceAll(
+          regex,
+          `'${inputs[key]?.onLoad?.value?.static ?? ""}'`,
+        );
       });
 
       actionKeys.forEach((key) => {
