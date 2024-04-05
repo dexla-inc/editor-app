@@ -6,6 +6,7 @@ import { DEFAULT_STALE_TIME } from "@/utils/config";
 import { useQuery } from "@tanstack/react-query";
 import get from "lodash.get";
 import { useComputeValue2 } from "@/hooks/dataBinding/useComputeValue2";
+import { useMemo } from "react";
 
 type UseEndpointProps = {
   dataType: "static" | "dynamic";
@@ -31,11 +32,13 @@ export const useEndpoint = ({
     staleTime = DEFAULT_STALE_TIME,
   } = onLoad ?? {};
 
+  const binds = useMemo(() => ({ binds: onLoad?.binds }), [onLoad?.binds]);
+
   const projectId = useEditorTreeStore((state) => state.currentProjectId);
   const { data: endpoints } = useDataSourceEndpoints(projectId);
   const endpoint = endpoints?.results?.find((e) => e.id === endpointId);
   const { binds: { parameter = {}, body = {} } = {} } = useComputeValue2({
-    onLoad: { binds: onLoad?.binds },
+    onLoad: binds,
   });
 
   const apiUrl = `${endpoint?.baseUrl}/${endpoint?.relativeUrl}`;

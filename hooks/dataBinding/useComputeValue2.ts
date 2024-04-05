@@ -8,6 +8,7 @@ import get from "lodash.get";
 import { ValueProps } from "@/types/dataBinding";
 import { pick } from "next/dist/lib/pick";
 import set from "lodash.set";
+import transform from "lodash.transform";
 
 type NextRouterKeys = keyof NextRouter;
 type RecordStringAny = Record<string, any>;
@@ -131,7 +132,15 @@ export const useComputeValue2 = ({
   ) as RecordStringAny;
 
   const inputs = useEditorTreeStore(
-    memoize((state) => pick(state.componentMutableAttrs, componentKeys)),
+    memoize((state) =>
+      transform(
+        pick(state.componentMutableAttrs, componentKeys),
+        (acc, value) => {
+          acc[value.id!] = value?.onLoad?.value?.static ?? "";
+        },
+        {} as RecordStringAny,
+      ),
+    ),
   ) as RecordStringAny;
 
   const auth = useDataSourceStore(
@@ -169,10 +178,7 @@ export const useComputeValue2 = ({
           `components\\[(\\/\\* [\\S\\s]* \\*\\/)?\\s?'${key}'\\]`,
           "g",
         );
-        result = result.replaceAll(
-          regex,
-          `'${inputs[key]?.onLoad?.value?.static ?? ""}'`,
-        );
+        result = result.replaceAll(regex, `'${inputs[key]}'`);
       });
 
       actionKeys.forEach((key) => {
