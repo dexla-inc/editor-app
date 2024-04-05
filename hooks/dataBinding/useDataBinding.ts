@@ -107,6 +107,7 @@ export const useDataBinding = () => {
       },
       { list: {} } as any,
     );
+    console.log({ components });
 
     if (value === undefined) return staticFallback || "";
     let dataType = value?.dataType ?? "static";
