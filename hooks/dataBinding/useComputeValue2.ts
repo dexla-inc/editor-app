@@ -105,21 +105,22 @@ export const useComputeValue2 = ({
     memoize((state) =>
       variableKeys.reduce((acc, key) => {
         const variable = state.variableList.find((v) => v.id === key);
+        const variableValue = variable?.value ?? variable?.defaultValue;
         const variableHandler = {
-          TEXT: () =>
-            variable?.value ? `\`${variable?.value}\`` : `undefined`,
+          TEXT: () => `\`${variableValue}\``,
           BOOLEAN: () =>
-            typeof variable?.value === "boolean"
-              ? variable?.value
-              : JSON.parse(variable?.value),
-          NUMBER: () => JSON.parse(variable?.value),
-          OBJECT: () => JSON.stringify(variable?.value),
-          ARRAY: () => variable?.value,
+            typeof variableValue === "boolean"
+              ? variableValue
+              : JSON.parse(variableValue),
+          NUMBER: () => JSON.parse(variableValue),
+          OBJECT: () => JSON.stringify(variableValue),
+          ARRAY: () => variableValue,
         };
 
         if (variable) {
           const value =
-            variableHandler[variable.type as keyof typeof variableHandler]();
+            variableHandler[variable.type as keyof typeof variableHandler]() ??
+            `undefined`;
 
           return {
             ...acc,
@@ -137,7 +138,7 @@ export const useComputeValue2 = ({
       transform(
         pick(state.componentMutableAttrs, componentKeys),
         (acc, value) => {
-          acc[value.id!] = value?.onLoad?.value?.static ?? "";
+          acc[value?.id!] = value?.onLoad?.value?.static ?? "";
         },
         {} as RecordStringAny,
       ),
@@ -234,9 +235,8 @@ export const useComputeValue2 = ({
         return get(fieldValue, "static");
       },
       boundCode: (fieldValue: ValueProps) => {
-        return autoRunJavascriptCode(
-          transformBoundCode(fieldValue.boundCode ?? ""),
-        );
+        const boundCode = transformBoundCode(fieldValue.boundCode ?? "");
+        return autoRunJavascriptCode(boundCode);
       },
     }),
     [shareableContent, transformBoundCode],
