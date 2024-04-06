@@ -120,7 +120,12 @@ const SelectComponent = forwardRef(
       <MantineSelectWrapper
         ref={ref}
         {...props}
-        {...componentProps}
+        {...omit(componentProps, [
+          "customText",
+          "customLinkText",
+          "customLinkUrl",
+          "labelAlign",
+        ])}
         onChange={handleChange}
         onSearchChange={debouncedHandleSearchChange}
         {...restTriggers}
