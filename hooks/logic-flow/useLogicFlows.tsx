@@ -2,6 +2,7 @@ import { NodeData } from "@/components/logic-flow/nodes/CustomNode";
 import { VariablesButton } from "@/components/variables/VariablesButton";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useFlowStore } from "@/stores/flow";
+import { queryClient } from "@/utils/reactQuery";
 import { ActionIcon, Button, Flex } from "@mantine/core";
 import { modals } from "@mantine/modals";
 import { IconArrowBack } from "@tabler/icons-react";
@@ -11,13 +12,11 @@ import { NodeProps } from "reactflow";
 
 export const useLogicFlows = () => {
   const setShowFormModal = useFlowStore((state) => state.setShowFormModal);
-  const pageId = useEditorTreeStore((state) => state.currentPageId);
   const projectId = useEditorTreeStore((state) => state.currentProjectId);
   const setSelectedTabView = useFlowStore((state) => state.setSelectedTabView);
   const selectedTabView = useFlowStore((state) => state.selectedTabView);
   const onNodesChange = useFlowStore((state) => state.onNodesChange);
   const onEdgesChange = useFlowStore((state) => state.onEdgesChange);
-  const client = useQueryClient();
 
   const openLogicFlowsModal = () =>
     modals.openContextModal({
@@ -32,7 +31,7 @@ export const useLogicFlows = () => {
             <ActionIcon
               onClick={async () => {
                 setSelectedTabView("list");
-                await client.refetchQueries(["logic-flows", projectId]);
+                await queryClient.refetchQueries(["logic-flows", projectId]);
               }}
             >
               <IconArrowBack />

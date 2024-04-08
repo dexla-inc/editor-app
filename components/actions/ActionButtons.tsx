@@ -4,6 +4,7 @@ import { Action } from "@/utils/actions";
 import { Button } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useEffect } from "react";
+import { ActionIconDefault } from "../ActionIconDefault";
 
 type Props = {
   actionId: string;
@@ -34,27 +35,17 @@ export const ActionButtons = ({
 
   return (
     <>
-      <Button
-        size="xs"
-        type="button"
-        variant="light"
-        color="yellow"
+      <ActionIconDefault
         onClick={copyAction}
-        leftIcon={<Icon name="IconCopy"></Icon>}
-      >
-        {copied ? "Copied" : "Copy"}
-      </Button>
+        iconName="IconCopy"
+        tooltip={copied ? "Copied" : "Copy"}
+      />
       {removeAction && (
-        <Button
-          size="xs"
-          type="button"
-          variant="light"
-          color="red"
+        <ActionIconDefault
           onClick={removeAction}
-          leftIcon={<Icon name="IconTrash"></Icon>}
-        >
-          Remove
-        </Button>
+          iconName="IconTrash"
+          tooltip="Remove"
+        />
       )}
     </>
   );

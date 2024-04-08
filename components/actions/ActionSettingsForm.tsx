@@ -1,4 +1,3 @@
-import { Icon } from "@/components/Icon";
 import { ActionButtons } from "@/components/actions/ActionButtons";
 import { ActionsForm } from "@/components/actions/ActionsForm";
 import {
@@ -6,11 +5,15 @@ import {
   useActionData,
 } from "@/components/actions/_BaseActionFunctions";
 import { useEditorTreeStore } from "@/stores/editorTree";
+import { useFlowStore } from "@/stores/flow";
 import { Action, ChangeLanguageAction } from "@/utils/actions";
-import { Button, Divider, Stack } from "@mantine/core";
+import { Card, Divider, Flex, Stack, Text } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { useEffect } from "react";
+import { ActionIconDefault } from "../ActionIconDefault";
+import { LogicFlowFormModal } from "../logic-flow/LogicFlowFormModal";
+import { encodeSchema } from "@/utils/compression";
 
 type Props = {
   action: Action;
@@ -25,6 +28,7 @@ export const ActionSettingsForm = ({
 }: Props) => {
   const [addSequentialForm, { open: openSequential, close: closeSequential }] =
     useDisclosure(false);
+  const setShowFormModal = useFlowStore((state) => state.setShowFormModal);
 
   const form = useForm({
     initialValues: { ...defaultValues, ...action.action },
@@ -61,31 +65,55 @@ export const ActionSettingsForm = ({
     }
   };
 
+  const convertToLogicFlow = async () => {
+    // Open Logic Flow Modal to create then pass in encoded componentActions
+    // Then delete the current action on a successful save
+    setShowFormModal(true);
+  };
+
   return (
     <Stack spacing="xs">
       {children && children({ form })}
-      {action.action.name === "apiCall" && (
-        <Button
-          size="xs"
-          type="button"
-          onClick={openSequential}
-          variant="light"
-          mt="xs"
-          leftIcon={<Icon name="IconPlus"></Icon>}
-        >
-          Add Sequential Action
-        </Button>
-      )}
-      {addSequentialForm && (
-        <>
-          <Divider my="lg" label="Sequential Action" labelPosition="center" />
-          <ActionsForm close={closeSequential} sequentialTo={action.id} />
-        </>
-      )}
-      <ActionButtons
-        actionId={action.id}
-        componentActions={componentActions}
-      ></ActionButtons>
+      <Card p="xs">
+        <Text size="xs" color="dimmed" pb="xs">
+          Actions
+        </Text>
+        <Flex gap="xs">
+          {action.action.name === "apiCall" && (
+            <ActionIconDefault
+              onClick={openSequential}
+              iconName="IconPlus"
+              tooltip="Add Sequential Action"
+            />
+          )}
+          {addSequentialForm && (
+            <>
+              <Divider
+                my="lg"
+                label="Sequential Action"
+                labelPosition="center"
+              />
+              <ActionsForm close={closeSequential} sequentialTo={action.id} />
+            </>
+          )}
+          <ActionButtons
+            actionId={action.id}
+            componentActions={componentActions}
+          ></ActionButtons>
+          {!addSequentialForm && (
+            <>
+              <ActionIconDefault
+                onClick={convertToLogicFlow}
+                iconName="IconGitBranch"
+                tooltip="Convert to Logic Flow"
+              />
+              <LogicFlowFormModal
+                data={encodeSchema(JSON.stringify(componentActions))}
+              />
+            </>
+          )}
+        </Flex>
+      </Card>
     </Stack>
   );
 };
