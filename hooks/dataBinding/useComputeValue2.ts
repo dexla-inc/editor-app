@@ -159,6 +159,7 @@ export const useComputeValue2 = ({
       ),
     ),
   ) as RecordStringAny;
+
   const browserValues: any = useMemo(() => {
     return browserKeys.reduce(
       (acc, key) => ({ ...acc, [key]: browser[key] }),
@@ -261,6 +262,6 @@ export const useComputeValue2 = ({
 
       return acc;
     },
-    {} as Record<string, any>,
+    onLoad as Record<string, any>,
   );
 };

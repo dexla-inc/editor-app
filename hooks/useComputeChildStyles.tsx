@@ -1,36 +1,41 @@
 import { GRAY_OUTLINE } from "@/utils/branding";
-import { useDataBinding } from "@/hooks/dataBinding/useDataBinding";
+import { useComputeValue2 } from "@/hooks/dataBinding/useComputeValue2";
+import { CSSObject } from "@mantine/core";
+import { handleBackground } from "@/hooks/handleBackground";
+import { Component } from "@/utils/editor";
 
-export const useComputeChildStyles = () => {
-  const { computeValue } = useDataBinding();
-  function computeChildStyles(
-    propsWithOverwrites: any,
-    currentState: any,
-    isEditorMode: boolean,
-  ) {
-    const computedInitialStyles = Object.entries(
-      propsWithOverwrites.style ?? {},
-    ).reduce((acc, [key, value]) => {
-      const isObject = typeof value === "object";
-      acc[key] = isObject ? computeValue({ value: value as any }) : value;
-      return acc;
-    }, {} as any);
+type UseComputeChildStylesProps = {
+  component: Component;
+  propsWithOverwrites: any;
+  currentState: any;
+  isEditorMode: boolean;
+};
 
-    const childStyles = {
-      position: "relative",
-      ...computedInitialStyles,
-      ...(currentState === "hidden" && { display: "none" }),
-      ...(currentState === "disabled" &&
-        !isEditorMode && { pointerEvents: "none" }),
+export const useComputeChildStyles = ({
+  component,
+  propsWithOverwrites,
+  currentState,
+  isEditorMode,
+}: UseComputeChildStylesProps): CSSObject => {
+  const computedStyle =
+    useComputeValue2({ onLoad: propsWithOverwrites.style }) ?? {};
 
-      outline:
-        !isEditorMode && propsWithOverwrites.style?.outline === GRAY_OUTLINE
-          ? "none"
-          : propsWithOverwrites.style?.outline,
-    };
+  delete propsWithOverwrites.style;
 
-    return childStyles;
-  }
+  const childStyles: CSSObject = {
+    position: "relative",
+    ...computedStyle,
+    ...(currentState === "hidden" && { display: "none" }),
+    ...(currentState === "disabled" &&
+      !isEditorMode && { pointerEvents: "none" }),
 
-  return { computeChildStyles };
+    outline:
+      !isEditorMode && computedStyle?.outline === GRAY_OUTLINE
+        ? "none"
+        : computedStyle?.outline,
+  };
+
+  handleBackground(component, childStyles);
+
+  return childStyles;
 };
