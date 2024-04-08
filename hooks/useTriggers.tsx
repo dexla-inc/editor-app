@@ -15,7 +15,7 @@ const nonDefaultActionTriggers = ["onSuccess", "onError"];
 type UseTriggersProps = {
   entity: Component | PageResponse;
   endpoints?: Endpoint[];
-  logicFlows: LogicFlowResponse[];
+  logicFlows?: LogicFlowResponse[];
 };
 
 export const useTriggers = ({
