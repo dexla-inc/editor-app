@@ -2,10 +2,11 @@ import { useTriggers } from "@/hooks/useTriggers";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { DeploymentPage } from "@/requests/deployments/types";
+import { PageResponse } from "@/requests/pages/types";
 
 // Props from server side
 type Props = {
-  deploymentPage: DeploymentPage;
+  deploymentPage: PageResponse;
 };
 
 export const withPageOnLoad = (WrappedComponent: any) => {
