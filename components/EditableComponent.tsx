@@ -4,7 +4,6 @@ import {
   useComponentContextMenu,
 } from "@/hooks/useComponentContextMenu";
 import { useEditorShadows } from "@/hooks/useEditorShadows";
-import { handleBackground } from "@/hooks/handleBackground";
 import { useEditorClickHandler } from "@/hooks/useEditorClickHandler";
 import { useComputeChildStyles } from "@/hooks/useComputeChildStyles";
 import { usePropsWithOverwrites } from "@/hooks/usePropsWithOverwrites";
@@ -46,7 +45,6 @@ export const EditableComponent = ({
     currentState = shareableContent.parentState;
 
   const isResizing = useEditorStore((state) => state.isResizing);
-  const { computeChildStyles } = useComputeChildStyles();
 
   const { componentContextMenu, forceDestroyContextMenu } =
     useComponentContextMenu();
@@ -73,15 +71,12 @@ export const EditableComponent = ({
     triggers,
   );
 
-  const childStyles = computeChildStyles(
+  const childStyles = useComputeChildStyles({
+    component,
     propsWithOverwrites,
     currentState,
     isEditorMode,
-  );
-
-  handleBackground(component, childStyles);
-
-  delete propsWithOverwrites.style;
+  });
 
   const handleClick = useEditorClickHandler(
     id,
