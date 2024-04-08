@@ -268,6 +268,10 @@ export const requiredModifiers: RequiredModifiers = {
   modal: {
     forceHide: false,
     size: "md",
+    style: {
+      padding: "0px",
+      display: "block",
+    },
   },
   boxShadow: {
     inset: "",

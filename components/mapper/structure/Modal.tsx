@@ -220,9 +220,6 @@ export const jsonStructure = (props?: any): ComponentStructure => {
     props: {
       ...(props.props || {}),
       ...defaultModalValues,
-      style: {
-        padding: "0px",
-      },
     },
     children: [
       {

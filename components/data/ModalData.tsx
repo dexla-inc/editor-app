@@ -1,16 +1,17 @@
 import { VisibilityModifier } from "@/components/data/VisibilityModifier";
 import { DataProps } from "@/components/data/type";
-import { useComponentStates } from "@/hooks/useComponentStates";
 import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useEffect } from "react";
-import { ComponentToBindFromSelect } from "../ComponentToBindFromSelect";
+import { SegmentedControlYesNo } from "../SegmentedControlYesNo";
 
-export const AlertData = ({ component }: DataProps) => {
+export const ModalData = ({ component }: DataProps) => {
   const form = useForm({
     initialValues: {
-      onLoad: component?.onLoad,
+      onLoad: {
+        forceHide: false,
+      },
       props: {
         style: {
           display: component.props?.style?.display,
@@ -18,8 +19,6 @@ export const AlertData = ({ component }: DataProps) => {
       },
     },
   });
-
-  const { getComponentsStates } = useComponentStates();
 
   useEffect(() => {
     if (form.isTouched()) {
@@ -35,11 +34,12 @@ export const AlertData = ({ component }: DataProps) => {
         componentName={component.name}
         form={form}
       />
-      <ComponentToBindFromSelect
-        size="xs"
-        label="State"
-        {...form.getInputProps(`onLoad.currentState`)}
-        data={getComponentsStates()}
+      <SegmentedControlYesNo
+        label="Force Hide in Editor"
+        {...form.getInputProps("onLoad.forceHide")}
+        onChange={(value) => {
+          form.setFieldValue("onLoad.forceHide", value);
+        }}
       />
     </Stack>
   );

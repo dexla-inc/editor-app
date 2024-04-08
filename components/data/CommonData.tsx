@@ -7,10 +7,12 @@ import { useForm } from "@mantine/form";
 import { useEffect } from "react";
 import { ComponentToBindFromSelect } from "../ComponentToBindFromSelect";
 
-export const AlertData = ({ component }: DataProps) => {
+export const CommonData = ({ component }: DataProps) => {
   const form = useForm({
     initialValues: {
-      onLoad: component?.onLoad,
+      onLoad: {
+        currentState: component?.onLoad?.currentState || "default",
+      },
       props: {
         style: {
           display: component.props?.style?.display,

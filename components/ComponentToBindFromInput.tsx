@@ -14,6 +14,7 @@ import { MonacoEditorJson } from "./MonacoEditorJson";
 import { SegmentedControlYesNo } from "./SegmentedControlYesNo";
 import { TopLabel } from "./TopLabel";
 import { FieldType } from "./data/forms/StaticFormFieldsBuilder";
+import { SegmentedControlInput } from "./SegmentedControlInput";
 
 // Need to extend input props depending on fieldType
 type BaseProps = {
@@ -93,6 +94,25 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
           formatter={(value) => parseFloatExtension(value).toString()}
         />
       ) : fieldType === "boolean" ? (
+        <Stack w="100%">
+          <SegmentedControlInput
+            {...commonProps}
+            value={value?.static ?? "false"}
+            onChange={(val) =>
+              onChange({
+                ...value,
+                dataType: "static",
+                static: val,
+              })
+            }
+            data={[
+              { label: "True", value: "true" },
+              { label: "False", value: "false" },
+            ]}
+            {...props}
+          />
+        </Stack>
+      ) : fieldType === "yesno" ? (
         <SegmentedControlYesNo
           {...commonProps}
           value={value?.static}

@@ -48,7 +48,7 @@ const EditorAsideSections = () => {
       intersection(
         ...(state.selectedComponentIds ?? [])?.map(
           (id) =>
-            componentMapper[state.componentMutableAttrs[id].name]?.modifiers ??
+            componentMapper[state.componentMutableAttrs[id]?.name]?.modifiers ??
             [],
         ),
       ),
