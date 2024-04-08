@@ -229,9 +229,6 @@ export const requiredModifiers: RequiredModifiers = {
     withAsterisk: "false",
     clearable: false,
     searchable: false,
-    labelSize: "sm",
-    labelWeight: "normal",
-    labelAlign: "left",
     dataType: "static",
     data: [
       { label: "Option 1", value: "option-1" },
@@ -405,7 +402,6 @@ export const requiredModifiers: RequiredModifiers = {
     clearable: "false",
     icon: "",
     iconPosition: "left",
-    labelSize: "sm",
     color: "Neutral.6",
     bg: "White.6",
   },

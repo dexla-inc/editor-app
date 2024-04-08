@@ -1,5 +1,4 @@
 import { useComputeCurrentState } from "@/hooks/reactQuery/useComputeCurrentState";
-import { useAppMode } from "@/hooks/useAppMode";
 import {
   useComponentContextEventHandler,
   useComponentContextMenu,
