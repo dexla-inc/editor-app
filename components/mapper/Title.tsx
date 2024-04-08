@@ -41,7 +41,7 @@ const TitleComponent = forwardRef(
           ...(style?.fontSize ? { fontSize: style.fontSize + "px" } : {}),
         }}
       >
-        {childrenValue}
+        {String(childrenValue)}
       </MantineTitle>
     );
   },

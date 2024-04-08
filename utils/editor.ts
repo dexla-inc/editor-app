@@ -16,6 +16,7 @@ import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { CSSProperties } from "react";
 import crawl from "tree-crawl";
 import { MantineThemeExtended } from "./types";
+import { ValueProps } from "@/types/dataBinding";
 
 export type ComponentStructure = {
   children?: ComponentStructure[];
@@ -26,7 +27,7 @@ export type EditableComponentMapper = {
   component: ComponentTree & Component;
   shareableContent?: any;
   isPreviewMode?: boolean;
-  style?: CSSObject;
+  style?: CSSObject & { display?: string | ValueProps };
   ref?: any;
 };
 

@@ -40,7 +40,7 @@ const ImageComponent = forwardRef(
     return (
       <MantineImage
         ref={ref}
-        alt={altValue}
+        alt={String(altValue)}
         imageProps={{ src: srcValue }}
         {...props}
         {...componentProps}
