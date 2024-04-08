@@ -61,7 +61,7 @@ export const useDataBinding = () => {
       (acc, variable) => {
         const value = variable.value ?? variable.defaultValue ?? "";
         const variableHandler = {
-          TEXT: () => (value ? `\`${value}\`` : undefined),
+          TEXT: () => (value ? value : undefined),
           BOOLEAN: () =>
             typeof value === "boolean" ? value : JSON.parse(value),
           NUMBER: () => safeJsonParse(value),
