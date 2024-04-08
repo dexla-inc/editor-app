@@ -243,7 +243,7 @@ export type ActionParams = {
   actionResponses?: any;
   computeValue: ComputeValueProps;
   event?: any;
-  entity: Component | PageResponse;
+  entity: Component | PageResponse | DeploymentPage;
   data?: any;
   flowsList?: PagingResponse<LogicFlowResponse>;
 };
