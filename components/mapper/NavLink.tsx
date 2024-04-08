@@ -91,7 +91,7 @@ const NavLinkComponent = forwardRef(
         {...props}
         {...componentProps}
         {...triggers}
-        label={labelValue}
+        label={String(labelValue)}
         styles={{
           ...(!icon && {
             icon: { marginRight: 0 },

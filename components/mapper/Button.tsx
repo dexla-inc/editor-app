@@ -85,7 +85,7 @@ const ButtonComponent = forwardRef(
         styles={{ root: DISABLED_HOVER }}
         ref={ref}
       >
-        {childrenValue}
+        {String(childrenValue)}
       </MantineButton>
     );
   },

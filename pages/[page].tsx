@@ -20,6 +20,7 @@ import { dehydrate } from "@tanstack/react-query";
 import { GetServerSidePropsContext } from "next";
 import Head from "next/head";
 import { useEffect } from "react";
+import { listLogicFlows } from "@/requests/logicflows/queries-noauth";
 
 export const getServerSideProps = async ({
   req,
@@ -40,10 +41,11 @@ export const getServerSideProps = async ({
 
   const currentSlug = query.page as string;
 
-  const [deploymentPage, variables, endpoints] = await Promise.all([
+  const [deploymentPage, variables, endpoints, logicFlows] = await Promise.all([
     getDeploymentPage(project.id, currentSlug),
     listVariables(project.id),
     getDataSourceEndpoints(project.id),
+    listLogicFlows(project.id),
   ]);
 
   await Promise.all([
@@ -52,6 +54,9 @@ export const getServerSideProps = async ({
     ),
     queryClient.prefetchQuery(["endpoints", project.id], () =>
       Promise.resolve(endpoints),
+    ),
+    queryClient.prefetchQuery(["logic-flows", project.id], () =>
+      Promise.resolve(logicFlows),
     ),
   ]);
 

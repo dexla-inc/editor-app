@@ -1,4 +1,5 @@
 import { EnvironmentTypes } from "@/requests/datasources/types";
+import { Action } from "@/utils/actions";
 
 export type DeploymentParams = {
   commitMessage?: string;
@@ -23,6 +24,7 @@ export type DeploymentPage = {
   authenticatedOnly: boolean;
   authenticatedUserRole?: string;
   pageState: string;
+  actions?: Action[];
 };
 
 export type DeploymentPageParams = {

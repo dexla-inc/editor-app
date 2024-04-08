@@ -9,6 +9,7 @@ import { ValueProps } from "@/types/dataBinding";
 import { pick } from "next/dist/lib/pick";
 import set from "lodash.set";
 import transform from "lodash.transform";
+import { safeJsonParse } from "@/utils/common";
 
 type NextRouterKeys = keyof NextRouter;
 type RecordStringAny = Record<string, any>;
@@ -105,15 +106,16 @@ export const useComputeValue2 = ({
     memoize((state) =>
       variableKeys.reduce((acc, key) => {
         const variable = state.variableList.find((v) => v.id === key);
-        const variableValue = variable?.value ?? variable?.defaultValue;
+        const variableValue =
+          variable?.value ?? variable?.defaultValue ?? undefined;
         const variableHandler = {
           TEXT: () => `\`${variableValue}\``,
           BOOLEAN: () =>
             typeof variableValue === "boolean"
               ? variableValue
-              : JSON.parse(variableValue),
-          NUMBER: () => JSON.parse(variableValue),
-          OBJECT: () => JSON.stringify(variableValue),
+              : safeJsonParse(variableValue),
+          NUMBER: () => safeJsonParse(variableValue),
+          OBJECT: () => variableValue,
           ARRAY: () => variableValue,
         };
 
@@ -124,7 +126,7 @@ export const useComputeValue2 = ({
 
           return {
             ...acc,
-            [key]: value ?? "",
+            [key]: value,
           };
         }
 
@@ -157,6 +159,7 @@ export const useComputeValue2 = ({
       ),
     ),
   ) as RecordStringAny;
+
   const browserValues: any = useMemo(() => {
     return browserKeys.reduce(
       (acc, key) => ({ ...acc, [key]: browser[key] }),
@@ -235,8 +238,12 @@ export const useComputeValue2 = ({
         return get(fieldValue, "static");
       },
       boundCode: (fieldValue: ValueProps) => {
-        const boundCode = transformBoundCode(fieldValue.boundCode ?? "");
-        return autoRunJavascriptCode(boundCode);
+        try {
+          const boundCode = transformBoundCode(fieldValue.boundCode ?? "");
+          return autoRunJavascriptCode(boundCode);
+        } catch {
+          return;
+        }
       },
     }),
     [shareableContent, transformBoundCode],
@@ -255,6 +262,6 @@ export const useComputeValue2 = ({
 
       return acc;
     },
-    {} as Record<string, any>,
+    onLoad as Record<string, any>,
   );
 };

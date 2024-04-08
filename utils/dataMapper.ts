@@ -1,4 +1,5 @@
-import { AlertData as Alert } from "@/components/data/AlertData";
+import { CommonData as Alert } from "@/components/data/CommonData";
+import { ModalData as Modal } from "@/components/data/ModalData";
 import {
   AvatarData as Avatar,
   AvatarData as Image,
@@ -42,6 +43,7 @@ export const dataMapper = {
   CountdownButton,
   Avatar,
   NavLink,
+  Modal,
   Badge,
   FileButton,
   Input,

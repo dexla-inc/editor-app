@@ -42,7 +42,7 @@ const TextComponent = forwardRef(
         ref={ref}
         style={customStyle}
       >
-        {!hideIfDataIsEmpty && childrenValue?.toString()}
+        {!hideIfDataIsEmpty && String(childrenValue)}
       </MantineText>
     );
   },

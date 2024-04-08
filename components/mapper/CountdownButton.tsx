@@ -116,7 +116,8 @@ const CountdownButtonComponent = forwardRef(
         styles={{ root: DISABLED_HOVER }}
         ref={ref}
       >
-        {childrenValue} {count > 0 ? ` in ${count} ${durationUnit}` : ""}
+        {String(childrenValue)}{" "}
+        {count > 0 ? ` in ${count} ${durationUnit}` : ""}
       </MantineButton>
     );
   },

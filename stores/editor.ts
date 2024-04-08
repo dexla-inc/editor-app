@@ -36,7 +36,6 @@ export type EditorState = {
   pickingComponentToBindTo?: ComponentToBind;
   pickingComponentToBindFrom?: ComponentToBind;
   componentToBind?: string;
-
   copiedAction?: Action[];
   sequentialTo?: string;
   openAction?: OpenAction;
@@ -53,6 +52,7 @@ export type EditorState = {
   setComponentToBind: (componentToBind?: string) => void;
   setCopiedComponent: (copiedComponent?: ComponentTree) => void;
   setPages: (pages: PageResponse[]) => void;
+  updatePageResponse: (page: PageResponse) => void;
   setIframeWindow: (iframeWindow: Window) => void;
   setCurrentTargetId: (currentTargetId?: string) => void;
   setComponentToAdd: (componentToAdd?: ComponentStructure) => void;
@@ -103,6 +103,17 @@ export const useEditorStore = create<EditorState>()(
       setOpenAction: (openAction) =>
         set({ openAction }, false, "editor/setOpenAction"),
       setPages: (pages) => set({ pages }, false, "editor/setPages"),
+      updatePageResponse: (pageUpdate: PageResponse) =>
+        set(
+          (state) => {
+            const updatedPages = state.pages.map((page) =>
+              page.id === pageUpdate.id ? { ...page, ...pageUpdate } : page,
+            );
+            return { pages: updatedPages };
+          },
+          false,
+          "editor/updatePageResponse",
+        ),
       setPickingComponentToBindFrom: (pickingComponentToBindFrom) =>
         set(
           { pickingComponentToBindFrom },

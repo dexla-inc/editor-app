@@ -2,20 +2,13 @@ import { SizeSelector } from "@/components/SizeSelector";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { Checkbox, Stack } from "@mantine/core";
+import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
 import { useEffect } from "react";
-
-export const modalAndDrawerSizingData = [
-  { label: "None", value: "0" },
-  { label: "Extra Small", value: "xs" },
-  { label: "Small", value: "sm" },
-  { label: "Medium", value: "md" },
-  { label: "Large", value: "lg" },
-  { label: "Extra Large", value: "xl" },
-  { label: "Full Screen", value: "fullScreen" },
-];
+import { SegmentedControlSizes } from "../SegmentedControlSizes";
+import { inputSizes } from "@/utils/defaultSizes";
+import { SegmentedControlYesNo } from "../SegmentedControlYesNo";
 
 const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm();
@@ -23,7 +16,6 @@ const Modifier = withModifier(({ selectedComponent }) => {
     form.setValues(
       merge({}, requiredModifiers.modal, {
         size: selectedComponent?.props?.size,
-        forceHide: selectedComponent?.props?.forceHide,
       }),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -34,24 +26,12 @@ const Modifier = withModifier(({ selectedComponent }) => {
       <Stack spacing="xs">
         <SizeSelector
           label="Size"
-          data={modalAndDrawerSizingData}
+          showFullscreen
           {...form.getInputProps("size")}
           onChange={(value) => {
             form.setFieldValue("size", value as string);
             debouncedTreeComponentAttrsUpdate({
               attrs: { props: { size: value } },
-            });
-          }}
-        />
-
-        <Checkbox
-          size="xs"
-          label="Force Hide"
-          {...form.getInputProps("forceHide", { type: "checkbox" })}
-          onChange={(e) => {
-            form.setFieldValue("forceHide", e.target.checked);
-            debouncedTreeComponentAttrsUpdate({
-              attrs: { props: { forceHide: e.target.checked } },
             });
           }}
         />

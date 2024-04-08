@@ -6,6 +6,7 @@ import { memoize } from "proxy-memoize";
 import { useMemo } from "react";
 import get from "lodash.get";
 import { ValueProps } from "@/types/dataBinding";
+import { safeJsonParse } from "@/utils/common";
 
 type NextRouterKeys = keyof NextRouter;
 type RecordStringAny = Record<string, any>;
@@ -91,15 +92,14 @@ export const useComputeValue = ({
     memoize((state) =>
       variableKeys.reduce((acc, key) => {
         const variable = state.variableList.find((v) => v.id === key);
+        const value = variable?.value ?? variable?.defaultValue ?? undefined;
         const variableHandler = {
-          TEXT: () => `\`${variable?.value}\``,
+          TEXT: () => `\`${value}\``,
           BOOLEAN: () =>
-            typeof variable?.value === "boolean"
-              ? variable?.value
-              : JSON.parse(variable?.value),
-          NUMBER: () => JSON.parse(variable?.value),
-          OBJECT: () => JSON.stringify(variable?.value),
-          ARRAY: () => JSON.stringify(variable?.value),
+            typeof value === "boolean" ? value : JSON.parse(value),
+          NUMBER: () => safeJsonParse(value),
+          OBJECT: () => value,
+          ARRAY: () => value,
         };
 
         if (variable) {
@@ -108,7 +108,7 @@ export const useComputeValue = ({
 
           return {
             ...acc,
-            [key]: value ?? "",
+            [key]: value,
           };
         }
 
@@ -220,7 +220,11 @@ export const useComputeValue = ({
         return get(fieldValue, "static", staticFallback);
       },
       boundCode: () => {
-        return autoRunJavascriptCode(boundCodeTransformed ?? "");
+        try {
+          return autoRunJavascriptCode(boundCodeTransformed ?? "");
+        } catch {
+          return;
+        }
       },
     }),
     [fieldValue, shareableContent, staticFallback, boundCodeTransformed],

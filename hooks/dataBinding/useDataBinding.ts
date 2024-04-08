@@ -59,14 +59,14 @@ export const useDataBinding = () => {
 
     const variables = variablesList.reduce(
       (acc, variable) => {
-        const value = variable.value ?? variable.defaultValue ?? "";
+        const value = variable.value ?? variable.defaultValue ?? undefined;
         const variableHandler = {
-          TEXT: () => (value ? value : undefined),
+          TEXT: () => value,
           BOOLEAN: () =>
-            typeof value === "boolean" ? value : JSON.parse(value),
+            typeof value === "boolean" ? value : safeJsonParse(value),
           NUMBER: () => safeJsonParse(value),
-          OBJECT: () => JSON.stringify(value),
-          ARRAY: () => value,
+          OBJECT: () => safeJsonParse(value),
+          ARRAY: () => safeJsonParse(value),
         };
 
         const parsedValue =

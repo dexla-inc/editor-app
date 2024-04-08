@@ -70,24 +70,6 @@ const Modifier = withModifier(({ selectedComponent }) => {
             });
           }}
         />
-        {/* <Select
-            label="Variant"
-            size="xs"
-            data={[
-              { label: "Filled", value: "filled" },
-              { label: "Light", value: "light" },
-              { label: "Outline", value: "outline" },
-              { label: "Default", value: "default" },
-              { label: "Subtle", value: "subtle" },
-            ]}
-            {...form.getInputProps("variant")}
-            onChange={(value) => {
-              form.setFieldValue("variant", value as string);
-              debouncedTreeUpdate(selectedComponentIds, {
-                variant: value,
-              });
-            }}
-          /> */}
         <SegmentedControlInput
           label="Type"
           data={[
