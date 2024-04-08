@@ -48,7 +48,7 @@ export const getServerSideProps = async ({
       () => Promise.resolve(pageState),
     ),
     queryClient.prefetchQuery(["logic-flows", project.id], () =>
-      Promise.resolve(endpoints),
+      Promise.resolve(logicFlows),
     ),
   ]);
 
