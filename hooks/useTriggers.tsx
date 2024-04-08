@@ -7,11 +7,12 @@ import { Router, useRouter } from "next/router";
 import { ChangeEvent } from "react";
 import { useDataBinding } from "@/hooks/dataBinding/useDataBinding";
 import { useFlowsQuery } from "@/hooks/reactQuery/useFlowsQuery";
+import { DeploymentPage } from "@/requests/deployments/types";
 
 const nonDefaultActionTriggers = ["onSuccess", "onError"];
 
 type UseTriggersProps = {
-  entity: Component | PageResponse;
+  entity: Component | PageResponse | DeploymentPage;
 };
 
 export const useTriggers = ({ entity }: UseTriggersProps) => {
