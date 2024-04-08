@@ -15,6 +15,7 @@ import { prepareUserThemeLive } from "@/hooks/prepareUserThemeLive";
 import { Endpoint } from "@/requests/datasources/types";
 import { PagingResponse } from "@/requests/types";
 import { useDataSourceStore } from "@/stores/datasource";
+import { listLogicFlows } from "@/requests/logicflows/queries-noauth";
 
 export const getServerSideProps = async ({
   query,
@@ -22,13 +23,15 @@ export const getServerSideProps = async ({
   const { id: projectId, page: pageId } = query as { id: string; page: string };
   const pageLoadTimestamp = Date.now();
 
-  const [project, pages, variables, endpoints, pageState] = await Promise.all([
-    getProject(projectId, true),
-    getPageList(projectId),
-    listVariables(projectId),
-    getDataSourceEndpoints(projectId),
-    getPageState(projectId, pageId, pageLoadTimestamp, null),
-  ]);
+  const [project, pages, variables, endpoints, pageState, logicFlows] =
+    await Promise.all([
+      getProject(projectId, true),
+      getPageList(projectId),
+      listVariables(projectId),
+      getDataSourceEndpoints(projectId),
+      getPageState(projectId, pageId, pageLoadTimestamp, null),
+      listLogicFlows(projectId),
+    ]);
 
   await Promise.all([
     queryClient.prefetchQuery(["project", projectId], () =>
@@ -43,6 +46,9 @@ export const getServerSideProps = async ({
     queryClient.prefetchQuery(
       ["page-state", projectId, pageId, pageLoadTimestamp, null],
       () => Promise.resolve(pageState),
+    ),
+    queryClient.prefetchQuery(["logic-flows", project.id], () =>
+      Promise.resolve(endpoints),
     ),
   ]);
 

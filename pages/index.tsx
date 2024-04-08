@@ -20,6 +20,7 @@ import { VariableResponse } from "@/requests/variables/types";
 import { useVariableStore } from "@/stores/variables";
 import { useDataSourceStore } from "@/stores/datasource";
 import { Endpoint } from "@/requests/datasources/types";
+import { listLogicFlows } from "@/requests/logicflows/queries-noauth";
 
 export const getServerSideProps = async ({
   req,
@@ -39,10 +40,11 @@ export const getServerSideProps = async ({
 
   const currentSlug = "/";
 
-  const [deploymentPage, variables, endpoints] = await Promise.all([
+  const [deploymentPage, variables, endpoints, logicFlows] = await Promise.all([
     getDeploymentPage(project.id, currentSlug),
     listVariables(project.id),
     getDataSourceEndpoints(project.id),
+    listLogicFlows(project.id),
   ]);
 
   await Promise.all([
@@ -50,6 +52,9 @@ export const getServerSideProps = async ({
       Promise.resolve(project),
     ),
     queryClient.prefetchQuery(["endpoints", project.id], () =>
+      Promise.resolve(endpoints),
+    ),
+    queryClient.prefetchQuery(["logic-flows", project.id], () =>
       Promise.resolve(endpoints),
     ),
   ]);
