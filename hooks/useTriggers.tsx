@@ -8,15 +8,21 @@ import { ChangeEvent } from "react";
 import { useDataBinding } from "@/hooks/dataBinding/useDataBinding";
 import { useFlowsQuery } from "@/hooks/reactQuery/useFlowsQuery";
 import { Endpoint } from "@/requests/datasources/types";
+import { LogicFlowResponse } from "@/requests/logicflows/types";
 
 const nonDefaultActionTriggers = ["onSuccess", "onError"];
 
 type UseTriggersProps = {
   entity: Component | PageResponse;
   endpoints?: Endpoint[];
+  logicFlows: LogicFlowResponse[];
 };
 
-export const useTriggers = ({ entity, endpoints }: UseTriggersProps) => {
+export const useTriggers = ({
+  entity,
+  endpoints,
+  logicFlows,
+}: UseTriggersProps) => {
   const projectId = useEditorTreeStore((state) => state.currentProjectId);
   const router = useRouter();
   const { computeValue } = useDataBinding();
@@ -51,7 +57,7 @@ export const useTriggers = ({ entity, endpoints }: UseTriggersProps) => {
               event: e,
               endpointResults: endpointsResponse?.results ?? endpoints ?? [],
               entity,
-              flowsList,
+              flowsList: flowsList?.results ?? logicFlows,
             });
           },
         };

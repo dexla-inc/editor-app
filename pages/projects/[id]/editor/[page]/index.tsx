@@ -1,7 +1,7 @@
 import Editor from "@/components/Editor";
 import { withPageOnLoad } from "@/hoc/withPageOnLoad";
 import { GetServerSidePropsContext } from "next";
-import { memo, useEffect } from "react";
+import { memo } from "react";
 import { listVariables } from "@/requests/variables/queries-noauth";
 import { useVariableStore } from "@/stores/variables";
 import { getDataSourceEndpoints } from "@/requests/datasources/queries-noauth";
@@ -13,10 +13,10 @@ import { ProjectResponse } from "@/requests/projects/types";
 import { useThemeStore } from "@/stores/theme";
 import { prepareUserThemeLive } from "@/hooks/prepareUserThemeLive";
 import { Endpoint } from "@/requests/datasources/types";
-import { PagingResponse } from "@/requests/types";
 import { useDataSourceStore } from "@/stores/datasource";
 import { listLogicFlows } from "@/requests/logicflows/queries-noauth";
 import { PageResponse } from "@/requests/pages/types";
+import { LogicFlowResponse } from "@/requests/logicflows/types";
 
 export const getServerSideProps = async ({
   query,
@@ -41,14 +41,14 @@ export const getServerSideProps = async ({
     queryClient.prefetchQuery(["pages", projectId, null], () =>
       Promise.resolve(pages),
     ),
-    queryClient.prefetchQuery(["endpoints", projectId], () =>
+    queryClient.fetchQuery(["endpoints", projectId], () =>
       Promise.resolve(endpoints),
     ),
     queryClient.prefetchQuery(
       ["page-state", projectId, pageId, pageLoadTimestamp, null],
       () => Promise.resolve(pageState),
     ),
-    queryClient.prefetchQuery(["logic-flows", project.id], () =>
+    queryClient.fetchQuery(["logic-flows", project.id], () =>
       Promise.resolve(logicFlows),
     ),
   ]);
@@ -62,6 +62,7 @@ export const getServerSideProps = async ({
       isLive: false,
       variables: variables.results,
       endpoints: endpoints.results || [],
+      logicFlows: logicFlows.results,
     },
   };
 };
@@ -72,6 +73,7 @@ type Props = {
   variables: any[];
   endpoints: Endpoint[];
   deploymentPage: PageResponse;
+  logicFlows: LogicFlowResponse[];
 };
 
 const PageEditor = ({ project, page, variables, endpoints }: Props) => {

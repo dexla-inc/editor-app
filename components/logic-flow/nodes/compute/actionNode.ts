@@ -35,6 +35,8 @@ export const compute = async (node: Node, params: any) => {
       action: { name: action, ...formDataTransformed },
     };
 
+    console.log("actionData", actionData);
+
     // @ts-ignore
     const result = await actionMapper[action].action(actionData);
 

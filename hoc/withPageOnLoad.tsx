@@ -3,12 +3,14 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { PageResponse } from "@/requests/pages/types";
 import { Endpoint } from "@/requests/datasources/types";
+import { LogicFlowResponse } from "@/requests/logicflows/types";
 
 // Props from server side
 type Props = {
   isLive: boolean;
   deploymentPage: PageResponse;
   endpoints: Endpoint[];
+  logicFlows: LogicFlowResponse[];
 };
 
 export const withPageOnLoad = (WrappedComponent: any) => {
@@ -19,6 +21,7 @@ export const withPageOnLoad = (WrappedComponent: any) => {
     const { onPageLoad } = useTriggers({
       entity: page,
       endpoints: props.endpoints,
+      logicFlows: props.logicFlows,
     });
     const [actionTriggeredForPath, setActionTriggeredForPath] = useState("");
 
