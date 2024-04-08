@@ -1,10 +1,12 @@
 import { updatePage } from "@/requests/pages/mutations";
-import { PageResponse } from "@/requests/pages/types";
+import { PageListResponse, PageResponse } from "@/requests/pages/types";
 import { Box, SegmentedControl } from "@mantine/core";
 import { useState } from "react";
 import PageActions from "./PageActions";
 import PageConfig from "./PageConfig";
 import { useEditorTreeStore } from "@/stores/editorTree";
+import { useEditorStore } from "@/stores/editor";
+import { queryClient } from "@/utils/reactQuery";
 
 type PageDetailPaneProps = {
   page?: PageResponse | null | undefined;
@@ -15,10 +17,30 @@ type Tab = "config" | "actions";
 export default function PageDetailPane({ page, setPage }: PageDetailPaneProps) {
   const [tab, setTab] = useState<Tab>("config");
   const projectId = useEditorTreeStore((state) => state.currentProjectId!);
+  const updatePageResponse = useEditorStore(
+    (state) => state.updatePageResponse,
+  );
+
+  const queryKey = ["pages", projectId, null];
 
   const onUpdatePage = async (values: any) => {
     setPage(values);
-    await updatePage(values, projectId, page?.id as string);
+    const result = await updatePage(values, projectId, page?.id as string);
+
+    queryClient.setQueryData(queryKey, (oldData?: PageListResponse) => {
+      if (!oldData || !oldData.results) {
+        return { results: [result] };
+      }
+
+      return {
+        ...oldData,
+        results: oldData.results.map((p) =>
+          p.id === page?.id ? { ...p, ...result } : p,
+        ),
+      };
+    });
+
+    updatePageResponse(result);
   };
 
   return (
