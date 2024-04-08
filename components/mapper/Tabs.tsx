@@ -11,7 +11,7 @@ const TabsComponent = forwardRef(
     const { children, ...componentProps } = component.props as any;
 
     return (
-      <MantineTabs ref={ref} {...props} {...componentProps} keepMounted={false}>
+      <MantineTabs ref={ref} {...props} {...componentProps}>
         {component.children && component.children.length > 0
           ? component.children?.map((child) =>
               renderTree({
