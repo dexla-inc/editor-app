@@ -33,6 +33,7 @@ export const EditableComponent = ({
   selectedByOther,
   shareableContent,
 }: PropsWithChildren<Props>) => {
+  console.log("EditableComponent");
   const isPreviewMode = useEditorTreeStore((state) => state.isPreviewMode);
   const isLive = useEditorTreeStore((state) => state.isLive);
   const isEditorMode = !isPreviewMode && !isLive;
