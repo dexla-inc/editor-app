@@ -40,6 +40,7 @@ import { Router } from "next/router";
 import { ComputeValueProps, ValueProps } from "@/types/dataBinding";
 import { PagingResponse } from "@/requests/types";
 import { ResetVariableActionForm } from "@/components/actions/ResetVariableActionForm";
+import { DeploymentPage } from "@/requests/deployments/types";
 
 const triggers = [
   "onClick",
@@ -647,7 +648,7 @@ export const useApiCallAction = async (
     useEditorTreeStore.getState().updateTreeComponentAttrs;
   const setActionsResponse = useEditorStore.getState().setActionsResponse;
 
-  if (entity?.props && action.showLoader) {
+  if (action.showLoader) {
     setLoadingState(entity.id!, true, updateTreeComponentAttrs);
   }
 
@@ -744,7 +745,7 @@ export const useApiCallAction = async (
 
     await handleError(props);
   } finally {
-    if (entity.props && action.showLoader) {
+    if (action.showLoader) {
       setLoadingState(entity.id!, false, updateTreeComponentAttrs);
     }
   }
