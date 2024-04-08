@@ -7,18 +7,20 @@ import { Router, useRouter } from "next/router";
 import { ChangeEvent } from "react";
 import { useDataBinding } from "@/hooks/dataBinding/useDataBinding";
 import { useFlowsQuery } from "@/hooks/reactQuery/useFlowsQuery";
+import { Endpoint } from "@/requests/datasources/types";
 
 const nonDefaultActionTriggers = ["onSuccess", "onError"];
 
 type UseTriggersProps = {
   entity: Component | PageResponse;
+  endpoints?: Endpoint[];
 };
 
-export const useTriggers = ({ entity }: UseTriggersProps) => {
+export const useTriggers = ({ entity, endpoints }: UseTriggersProps) => {
   const projectId = useEditorTreeStore((state) => state.currentProjectId);
   const router = useRouter();
   const { computeValue } = useDataBinding();
-  const { data: endpoints } = useDataSourceEndpoints(projectId);
+  const { data: endpointsResponse } = useDataSourceEndpoints(projectId);
   const { data: flowsList } = useFlowsQuery(projectId!);
 
   const actionResponses: Record<string, any> = {};
@@ -47,7 +49,7 @@ export const useTriggers = ({ entity }: UseTriggersProps) => {
               actionResponses,
               setActionsResponses,
               event: e,
-              endpointResults: endpoints?.results ?? [],
+              endpointResults: endpointsResponse?.results ?? endpoints ?? [],
               entity,
               flowsList,
             });
