@@ -40,7 +40,7 @@ const AvatarComponent = forwardRef(
       >
         {component.children && component.children.length > 0
           ? component.children?.map((child) => renderTree(child))
-          : childrenValue?.toString()}
+          : String(childrenValue)}
       </MantineAvatar>
     );
   },
