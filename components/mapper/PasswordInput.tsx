@@ -54,8 +54,8 @@ export const PasswordInput = ({
         style={{}}
         styles={{
           root: {
-            position: "relative",
             ...pick(customStyle, rootStyleProps),
+            position: "relative",
             height: "fit-content",
           },
           input: { ...customStyle, minHeight: "auto" },
