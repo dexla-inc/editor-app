@@ -17,10 +17,6 @@ type Props = EditableComponentMapper & TextareaProps;
 
 const TextareaComponent = forwardRef(
   ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
-    const updateTreeComponentAttrs = useEditorTreeStore(
-      (state) => state.updateTreeComponentAttrs,
-    );
-
     const { children, triggers, loading, bg, textColor, ...componentProps } =
       component.props as any;
     const { color, backgroundColor } = useChangeState({ bg, textColor });
@@ -41,7 +37,6 @@ const TextareaComponent = forwardRef(
     // handle changes to input field
     const handleInputChange = async (e: ChangeEvent<HTMLTextAreaElement>) => {
       const newValue = e.target.value;
-      // setLocalInputValue(newValue);
       setValue(newValue);
       triggers?.onChange && triggers?.onChange(e);
     };
