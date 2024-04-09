@@ -27,6 +27,7 @@ export const TriggerLogicFlowActionForm = ({ form }: Props) => {
             };
           }) ?? []
         }
+        searchable
         {...form.getInputProps("logicFlowId")}
       />
     </Stack>
