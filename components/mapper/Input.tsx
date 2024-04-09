@@ -75,6 +75,7 @@ const InputComponent = forwardRef(
       backgroundColor,
       color,
     });
+    const rootStyleProps = ["display", "width", "minHeight", "minWidth"];
 
     // clear input field
     const clearInput = async () => {
@@ -140,11 +141,12 @@ const InputComponent = forwardRef(
               {...props}
               style={{
                 ...customStyle,
+                overflow: "hidden",
                 position: "relative",
               }}
             >
               <ActionIcon
-                size={props.size}
+                size={customStyle.height}
                 variant="transparent"
                 style={{ border: "none" }}
                 onClick={decreaseNumber}
@@ -158,17 +160,23 @@ const InputComponent = forwardRef(
                 autoComplete="off"
                 id={component.id}
                 {...restComponentProps}
+                style={{}}
                 styles={{
                   root: {
                     display: "inline",
                     flex: "1 !important",
                     width: "min-content",
+                    height: customStyle.height,
                   },
+                  wrapper: { height: "inherit" },
                   input: {
                     border: "none",
                     textAlign: "center",
                     backgroundColor,
                     color,
+                    padding: "0px",
+                    minHeight: "auto",
+                    height: "inherit",
                   },
                 }}
                 value={parseToNumber(value)}
@@ -179,7 +187,7 @@ const InputComponent = forwardRef(
               />
 
               <ActionIcon
-                size={props.size}
+                size={customStyle.height}
                 variant="transparent"
                 style={{ border: "none" }}
                 onClick={increaseNumber}
@@ -200,15 +208,10 @@ const InputComponent = forwardRef(
             styles={{
               root: {
                 position: "relative",
-                ...pick(customStyle, [
-                  "display",
-                  "width",
-                  "minHeight",
-                  "minWidth",
-                ]),
+                ...pick(customStyle, rootStyleProps),
                 height: "fit-content",
               },
-              input: customStyle,
+              input: { ...customStyle, minHeight: "auto" },
             }}
             min={0}
             value={parseToNumber(value)}
@@ -240,6 +243,7 @@ const InputComponent = forwardRef(
             customStyle={customStyle}
             props={props}
             restComponentProps={restComponentProps}
+            rootStyleProps={rootStyleProps}
           />
         ) : (
           <MantineInput
@@ -251,15 +255,10 @@ const InputComponent = forwardRef(
             styles={{
               root: {
                 position: "relative",
-                ...pick(customStyle, [
-                  "display",
-                  "width",
-                  "minHeight",
-                  "minWidth",
-                ]),
+                ...pick(customStyle, rootStyleProps),
                 height: "fit-content",
               },
-              input: customStyle,
+              input: { ...customStyle, minHeight: "auto" },
             }}
             value={value}
             {...restTriggers}

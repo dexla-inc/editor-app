@@ -4,6 +4,7 @@ import {
 } from "@mantine/core";
 import { pick } from "next/dist/lib/pick";
 import { PasswordInputWrapper } from "./PasswordInputWrapper";
+import { CSSProperties } from "react";
 
 type Props = Omit<PasswordInputProps, "value"> & {
   componentId: string;
@@ -17,6 +18,7 @@ type Props = Omit<PasswordInputProps, "value"> & {
   testParameters: Record<string, any>;
   props: any;
   restComponentProps: any;
+  rootStyleProps: Array<keyof CSSProperties>;
 };
 
 export const PasswordInput = ({
@@ -33,6 +35,7 @@ export const PasswordInput = ({
   onChange,
   props,
   restComponentProps,
+  rootStyleProps,
 }: Props) => {
   return (
     <PasswordInputWrapper
@@ -51,11 +54,11 @@ export const PasswordInput = ({
         style={{}}
         styles={{
           root: {
+            ...pick(customStyle, rootStyleProps),
             position: "relative",
-            ...pick(customStyle, ["display", "width", "minHeight", "minWidth"]),
             height: "fit-content",
           },
-          input: customStyle,
+          input: { ...customStyle, minHeight: "auto" },
           innerInput: { ...pick(customStyle, ["height"]), color },
         }}
         value={value}

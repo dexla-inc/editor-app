@@ -45,6 +45,7 @@ const SelectComponent = forwardRef(
       loading,
       dataType,
       bg,
+      size,
       textColor,
       multiSelect,
       ...componentProps
@@ -106,13 +107,7 @@ const SelectComponent = forwardRef(
       data = component.props?.data ?? [];
     }
 
-    const rootStyleProps = [
-      "display",
-      "width",
-      "height",
-      "minHeight",
-      "minWidth",
-    ];
+    const rootStyleProps = ["display", "width", "minHeight", "minWidth"];
 
     return (
       <MantineSelectWrapper
@@ -133,7 +128,7 @@ const SelectComponent = forwardRef(
             position: "relative",
             ...pick(customStyle, rootStyleProps),
           },
-          input: customStyle,
+          input: { ...customStyle, minHeight: "auto" },
           values: { height: "inherit" },
         }}
         withinPortal={false}
