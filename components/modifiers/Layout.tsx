@@ -1,8 +1,7 @@
-import { SegmentedControlSizes } from "@/components/SegmentedControlSizes";
+import { SizeSelector } from "@/components/SizeSelector";
 import { TopLabel } from "@/components/TopLabel";
 import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon";
 import { withModifier } from "@/hoc/withModifier";
-import { gapSizes } from "@/utils/defaultSizes";
 import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { SegmentedControl, Stack } from "@mantine/core";
@@ -178,18 +177,14 @@ const Modifier = withModifier(({ selectedComponent }) => {
             }}
           />
         </Stack>
-        <SegmentedControlSizes
+        <SizeSelector
           label="Gap"
-          sizing={gapSizes}
-          includeZero
           {...form.getInputProps("gap")}
           onChange={(value) => {
             form.setFieldValue("gap", value as string);
             debouncedTreeComponentAttrsUpdate({
               attrs: {
-                props: {
-                  gap: value,
-                },
+                props: { gap: value },
               },
             });
           }}
