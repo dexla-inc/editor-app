@@ -17,6 +17,7 @@ type Props = Omit<PasswordInputProps, "value"> & {
   testParameters: Record<string, any>;
   props: any;
   restComponentProps: any;
+  rootStyleProps: string[];
 };
 
 export const PasswordInput = ({
@@ -33,6 +34,7 @@ export const PasswordInput = ({
   onChange,
   props,
   restComponentProps,
+  rootStyleProps,
 }: Props) => {
   return (
     <PasswordInputWrapper
@@ -52,10 +54,10 @@ export const PasswordInput = ({
         styles={{
           root: {
             position: "relative",
-            ...pick(customStyle, ["display", "width", "minHeight", "minWidth"]),
+            ...pick(customStyle, rootStyleProps),
             height: "fit-content",
           },
-          input: customStyle,
+          input: { ...customStyle, minHeight: "auto" },
           innerInput: { ...pick(customStyle, ["height"]), color },
         }}
         value={value}
