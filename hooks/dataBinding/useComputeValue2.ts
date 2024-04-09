@@ -1,4 +1,3 @@
-import { useEditorTreeStore } from "@/stores/editorTree";
 import { useVariableStore } from "@/stores/variables";
 import { NextRouter, useRouter } from "next/router";
 import { useDataSourceStore } from "@/stores/datasource";
@@ -6,10 +5,10 @@ import { memoize } from "proxy-memoize";
 import { useCallback, useMemo } from "react";
 import get from "lodash.get";
 import { ValueProps } from "@/types/dataBinding";
-import { pick } from "next/dist/lib/pick";
 import set from "lodash.set";
-import transform from "lodash.transform";
 import { safeJsonParse } from "@/utils/common";
+import cloneDeep from "lodash.clonedeep";
+import { useInputsStore } from "@/stores/inputs";
 
 type NextRouterKeys = keyof NextRouter;
 type RecordStringAny = Record<string, any>;
@@ -36,10 +35,6 @@ const autoRunJavascriptCode = (boundCode: string) => {
 };
 
 const findValuePropsPaths = (obj: any, prefix = ""): string[] => {
-  if (typeof obj !== "object" || obj === null) {
-    return [];
-  }
-
   let paths: string[] = [];
   Object.keys(obj).forEach((key) => {
     const fullPath = prefix ? `${prefix}.${key}` : key;
@@ -58,6 +53,8 @@ export const useComputeValue2 = ({
   shareableContent,
   onLoad = {},
 }: UseComputeValue) => {
+  onLoad = cloneDeep(onLoad);
+
   const browser = useRouter();
   const valuePropsPaths = useMemo(() => {
     return findValuePropsPaths(onLoad);
@@ -124,14 +121,11 @@ export const useComputeValue2 = ({
     ),
   ) as RecordStringAny;
 
-  const inputs = useEditorTreeStore(
+  const inputs = useInputsStore(
     memoize((state) =>
-      transform(
-        pick(state.componentMutableAttrs, componentKeys),
-        (acc, value) => {
-          acc[value?.id!] = value?.onLoad?.value?.static ?? "";
-        },
-        {} as RecordStringAny,
+      componentKeys.reduce(
+        (acc, key) => ({ ...acc, [key]: state.inputValues[key] ?? "" }),
+        {},
       ),
     ),
   ) as RecordStringAny;
@@ -238,22 +232,26 @@ export const useComputeValue2 = ({
     [shareableContent, transformBoundCode],
   );
 
-  return valuePropsPaths.reduce(
-    (acc, fieldValuePath) => {
-      const fieldValue = get(onLoad, fieldValuePath);
-      const { dataType } = fieldValue ?? {};
+  return useMemo(
+    () =>
+      valuePropsPaths.reduce(
+        (acc, fieldValuePath) => {
+          const fieldValue = get(onLoad, fieldValuePath);
+          const { dataType } = fieldValue ?? {};
 
-      if (!dataType) return acc;
+          if (!dataType) return acc;
 
-      set(
-        acc,
-        fieldValuePath,
-        valueHandlers[dataType as keyof typeof valueHandlers]?.(fieldValue),
-      );
+          set(
+            acc,
+            fieldValuePath,
+            valueHandlers[dataType as keyof typeof valueHandlers]?.(fieldValue),
+          );
 
-      return acc;
-    },
-    onLoad as Record<string, any>,
+          return acc;
+        },
+        onLoad as Record<string, any>,
+      ),
+    [onLoad, valueHandlers, valuePropsPaths],
   );
 };
 

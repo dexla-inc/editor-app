@@ -12,6 +12,8 @@ import { pick } from "next/dist/lib/pick";
 import { ChangeEvent, forwardRef, memo } from "react";
 import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
 import { useEditorTreeStore } from "@/stores/editorTree";
+import { useInputValue } from "@/hooks/useInputValue";
+import { memoize } from "proxy-memoize";
 type Props = EditableComponentMapper & TextareaProps;
 
 const TextareaComponent = forwardRef(
@@ -30,23 +32,24 @@ const TextareaComponent = forwardRef(
       color,
     });
 
-    const inputValue = useComputeValue({
-      componentId: component.id!,
-      field: "value",
-      shareableContent,
-    });
+    const onLoad = useEditorTreeStore(
+      memoize(
+        (state) => state.componentMutableAttrs[component?.id!]?.onLoad ?? {},
+      ),
+    );
+
+    const [value, setValue] = useInputValue(
+      {
+        value: onLoad?.value ?? "",
+      },
+      component.id!,
+    );
 
     // handle changes to input field
     const handleInputChange = async (e: ChangeEvent<HTMLTextAreaElement>) => {
       const newValue = e.target.value;
       // setLocalInputValue(newValue);
-      await updateTreeComponentAttrs({
-        componentIds: [component.id!],
-        attrs: {
-          onLoad: { value: { static: newValue, dataType: "static" } },
-        },
-        save: false,
-      });
+      setValue(newValue);
       triggers?.onChange && triggers?.onChange(e);
     };
 
@@ -70,7 +73,7 @@ const TextareaComponent = forwardRef(
           },
           input: customStyle,
         }}
-        value={inputValue}
+        value={value}
         onChange={handleInputChange}
         rightSection={loading ? <Loader size="xs" /> : null}
         label={undefined}

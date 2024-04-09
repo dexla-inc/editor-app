@@ -5,7 +5,6 @@ import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { useChangeState } from "@/hooks/useChangeState";
 import { useEditorStore } from "@/stores/editor";
-import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import {
   ActionIcon,
@@ -18,8 +17,9 @@ import {
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { forwardRef, memo, useEffect } from "react";
-import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
 import { useEditorTreeStore } from "@/stores/editorTree";
+import { useInputValue } from "@/hooks/useInputValue";
+import { memoize } from "proxy-memoize";
 
 type Props = EditableComponentMapper & NumberInputProps & TextInputProps;
 
@@ -59,14 +59,18 @@ const InputComponent = forwardRef(
 
     const { borderStyle, inputStyle } = useBrandingStyles();
 
-    const inputValue = useComputeValue({
-      componentId: component.id!,
-      field: "value",
-      shareableContent,
-      staticFallback: _defaultValue,
-    });
+    const onLoad = useEditorTreeStore(
+      memoize((state) => state.componentMutableAttrs[component?.id!]?.onLoad),
+    );
 
-    const isClearable = clearable && !!inputValue;
+    const [value, setValue] = useInputValue(
+      {
+        value: onLoad?.value ?? "",
+      },
+      component.id!,
+    );
+
+    const isClearable = clearable && !!value;
     const customStyle = merge({}, borderStyle, inputStyle, props.style, {
       backgroundColor,
       color,
@@ -87,7 +91,7 @@ const InputComponent = forwardRef(
 
     // handle increase number range
     const increaseNumber = () => {
-      let val = inputValue;
+      let val = value;
       if (val === undefined) val = 1;
       else val += 1;
       handleChange(val);
@@ -95,7 +99,7 @@ const InputComponent = forwardRef(
 
     // handle decrease number range
     const decreaseNumber = () => {
-      let val = inputValue;
+      let val = value;
       if (val === undefined) val = -1;
       else val -= 1;
       handleChange(val);
@@ -111,13 +115,7 @@ const InputComponent = forwardRef(
       if (type === "number") {
         newValue = newValue ? Number(newValue) : 0;
       }
-      await updateTreeComponentAttrs({
-        componentIds: [component.id!],
-        attrs: {
-          onLoad: { value: { static: newValue, dataType: "static" } },
-        },
-        save: false,
-      });
+      setValue(newValue);
     };
 
     // TODO: Move to a hook. Doing this as we need to update input immediately but not call actions etc.
@@ -129,9 +127,9 @@ const InputComponent = forwardRef(
         }
       }, 200);
 
-      // Cleanup function to clear the timeout if the component unmounts or if inputValue changes
+      // Cleanup function to clear the timeout if the component unmounts or if value changes
       return () => clearTimeout(timer);
-    }, [inputValue, onChange]);
+    }, [value, onChange]);
 
     return (
       <>
@@ -173,7 +171,7 @@ const InputComponent = forwardRef(
                     color,
                   },
                 }}
-                value={parseToNumber(inputValue)}
+                value={parseToNumber(value)}
                 {...restTriggers}
                 onChange={handleChange}
                 label={undefined}
@@ -213,7 +211,7 @@ const InputComponent = forwardRef(
               input: customStyle,
             }}
             min={0}
-            value={parseToNumber(inputValue)}
+            value={parseToNumber(value)}
             {...restTriggers}
             onChange={handleChange}
             rightSection={loading ? <InputLoader /> : null}
@@ -224,7 +222,7 @@ const InputComponent = forwardRef(
           <PasswordInput
             componentId={component?.id!}
             ref={ref}
-            value={inputValue}
+            value={value}
             isPreviewMode={isPreviewMode}
             {...restTriggers}
             onChange={handleChange}
@@ -263,7 +261,7 @@ const InputComponent = forwardRef(
               },
               input: customStyle,
             }}
-            value={inputValue}
+            value={value}
             {...restTriggers}
             onChange={handleChange}
             rightSection={

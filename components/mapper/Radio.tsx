@@ -4,6 +4,9 @@ import { EditableComponentMapper } from "@/utils/editor";
 import { Group, Radio as MantineRadio, RadioGroupProps } from "@mantine/core";
 import merge from "lodash.merge";
 import { forwardRef, memo, useState } from "react";
+import { useEditorTreeStore } from "@/stores/editorTree";
+import { memoize } from "proxy-memoize";
+import { useInputValue } from "@/hooks/useInputValue";
 
 type Props = EditableComponentMapper & RadioGroupProps;
 
@@ -12,15 +15,27 @@ const RadioComponent = forwardRef(
     { renderTree, component, isPreviewMode, shareableContent, ...props }: Props,
     ref,
   ) => {
-    const { children, value, triggers, styles, ...componentProps } =
+    const { children, triggers, styles, ...componentProps } =
       component.props as any;
 
-    const [_value, setValue] = useState(value);
     const defaultStyle = {
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
     };
+
+    const onLoad = useEditorTreeStore(
+      memoize(
+        (state) => state.componentMutableAttrs[component?.id!]?.onLoad ?? {},
+      ),
+    );
+
+    const [value, setValue] = useInputValue(
+      {
+        value: onLoad?.value ?? "",
+      },
+      component.id!,
+    );
 
     const { onChange, ...otherTriggers } = triggers || {};
 

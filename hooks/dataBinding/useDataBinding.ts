@@ -10,6 +10,8 @@ import {
   ValueProps,
 } from "@/types/dataBinding";
 import { safeJsonParse } from "@/utils/common";
+import { useInputsStore } from "@/stores/inputs";
+import { Component } from "@/utils/editor";
 
 const parseVariableValue = (value: string): any => {
   try {
@@ -40,7 +42,27 @@ export const useDataBinding = () => {
     };
 
     const variablesList = useVariableStore.getState().variableList;
+    const inputsStore = useInputsStore.getState().inputValues;
     const auth = useDataSourceStore.getState().getAuthState();
+
+    const allInputComponents = Object.values(
+      useEditorTreeStore.getState().componentMutableAttrs,
+    ).reduce((acc, c) => {
+      const isInput = [
+        "Input",
+        "Select",
+        "Checkbox",
+        "RadioGroup",
+        "Switch",
+        "Textarea",
+        "Autocomplete",
+        "DateInput",
+      ].includes(c?.name!);
+      if (isInput) {
+        acc.push({ id: c.id, description: c.name });
+      }
+      return acc;
+    }, [] as Partial<Component>[]);
 
     const autoRunJavascriptCode = <T>(
       boundCode: string,
@@ -84,31 +106,12 @@ export const useDataBinding = () => {
       pick(browser, ["asPath", "basePath", "pathname", "query", "route"]),
     );
 
-    const components = Object.values(
-      useEditorTreeStore.getState().componentMutableAttrs,
-    ).reduce(
-      (acc, c) => {
-        const isInput = [
-          "Input",
-          "Select",
-          "Checkbox",
-          "RadioGroup",
-          "Switch",
-          "Textarea",
-          "Autocomplete",
-          "DateInput",
-        ].includes(c?.name!);
-        if (isInput) {
-          acc.list[c?.id!] = {
-            id: c.id,
-            name: c.description,
-            description: c.description,
-          };
-          const { dataType = "static" } = c.onLoad?.value ?? {};
-          acc[c?.id!] = valueHandlers[dataType as keyof typeof valueHandlers](
-            c.onLoad?.value,
-          );
-        }
+    const components = allInputComponents.reduce(
+      (acc, component) => {
+        const value = inputsStore[component?.id!];
+        component = { ...component, name: component.description! };
+        acc.list[component?.id!] = component;
+        acc[component?.id!] = value;
         return acc;
       },
       { list: {} } as any,

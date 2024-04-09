@@ -12,6 +12,8 @@ import { memoize } from "proxy-memoize";
 import { useRouter } from "next/router";
 import { useDataSourceStore } from "@/stores/datasource";
 import { pick } from "next/dist/lib/pick";
+import { useInputsStore } from "@/stores/inputs";
+import { Component } from "@/utils/editor";
 
 type BindType = {
   selectedEntityId: string;
@@ -52,34 +54,38 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
   const variablesList = useVariableStore((state) => state.variableList);
   const browser = useRouter();
   const auth = useDataSourceStore((state) => state.getAuthState());
+  const inputsStore = useInputsStore((state) => state.inputValues);
 
-  const components = useEditorTreeStore(
+  const allInputComponents = useEditorTreeStore(
     memoize((state) =>
-      Object.values(state.componentMutableAttrs).reduce(
-        (acc, c) => {
-          const isInput = [
-            "Input",
-            "Select",
-            "Checkbox",
-            "RadioGroup",
-            "Switch",
-            "Textarea",
-            "Autocomplete",
-            "DateInput",
-          ].includes(c?.name!);
-          if (isInput) {
-            acc.list[c?.id!] = {
-              id: c.id,
-              name: c.description,
-              description: c.description,
-            };
-            acc[c?.id!] = c.onLoad?.value?.static;
-          }
-          return acc;
-        },
-        { list: {} } as any,
-      ),
+      Object.values(state.componentMutableAttrs).reduce((acc, c) => {
+        const isInput = [
+          "Input",
+          "Select",
+          "Checkbox",
+          "RadioGroup",
+          "Switch",
+          "Textarea",
+          "Autocomplete",
+          "DateInput",
+        ].includes(c?.name!);
+        if (isInput) {
+          acc.push({ id: c.id, name: c.name, description: c.description });
+        }
+        return acc;
+      }, [] as Partial<Component>[]),
     ),
+  );
+
+  const components = allInputComponents.reduce(
+    (acc, component) => {
+      const value = inputsStore[component?.id!];
+      component = { ...component, name: component.description! };
+      acc.list[component?.id!] = component;
+      acc[component?.id!] = value;
+      return acc;
+    },
+    { list: {} } as any,
   );
 
   const variables = variablesList.reduce(
