@@ -3,7 +3,6 @@ import { useComputeValue2 } from "@/hooks/dataBinding/useComputeValue2";
 import { useInputsStore } from "@/stores/inputs";
 import { memoize } from "proxy-memoize";
 
-// TODO: Use property onLoad type
 export const useInputValue = (onLoad: any, componentId: string) => {
   const { value = "" } = useComputeValue2({ onLoad: onLoad ?? {} });
   const setInputValue = useInputsStore((state) => state.setInputValue);
