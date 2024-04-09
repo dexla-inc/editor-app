@@ -1,12 +1,11 @@
+import { SizeSelector } from "@/components/SizeSelector";
 import { withModifier } from "@/hoc/withModifier";
-import { gapSizes } from "@/utils/defaultSizes";
 import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
 import { useEffect } from "react";
-import { SegmentedControlSizes } from "../SegmentedControlSizes";
 
 const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm();
@@ -24,15 +23,15 @@ const Modifier = withModifier(({ selectedComponent }) => {
   return (
     <form>
       <Stack spacing="xs">
-        <SegmentedControlSizes
+        <SizeSelector
           label="Gap"
-          sizing={gapSizes}
-          includeZero
           {...form.getInputProps("gap")}
           onChange={(value) => {
-            form.setFieldValue("gap", value);
+            form.setFieldValue("gap", value as string);
             debouncedTreeComponentAttrsUpdate({
-              attrs: { props: { gap: value } },
+              attrs: {
+                props: { gap: value },
+              },
             });
           }}
         />
