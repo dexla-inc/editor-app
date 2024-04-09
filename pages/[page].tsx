@@ -21,7 +21,6 @@ import { GetServerSidePropsContext } from "next";
 import Head from "next/head";
 import { useEffect } from "react";
 import { listLogicFlows } from "@/requests/logicflows/queries-noauth";
-import { LogicFlowResponse } from "@/requests/logicflows/types";
 
 export const getServerSideProps = async ({
   req,
@@ -82,7 +81,6 @@ export const getServerSideProps = async ({
         deploymentPage,
         variables: variables.results,
         endpoints: endpoints.results || [],
-        logicFlows: logicFlows.results,
       },
     };
   }
@@ -96,7 +94,6 @@ export const getServerSideProps = async ({
       faviconUrl: project.faviconUrl,
       variables: variables.results,
       endpoints: endpoints.results || [],
-      logicFlows: logicFlows.results,
     },
   };
 };
@@ -107,7 +104,6 @@ type Props = {
   deploymentPage: DeploymentPage;
   variables: VariableResponse[];
   endpoints: Endpoint[];
-  logicFlows: LogicFlowResponse[];
 };
 
 function LivePage({
@@ -116,7 +112,6 @@ function LivePage({
   deploymentPage,
   variables,
   endpoints,
-  logicFlows,
 }: Props) {
   useVariableStore.getState().initializeVariableList(variables);
   if (endpoints) useDataSourceStore.getState().setApiAuthConfig(endpoints);

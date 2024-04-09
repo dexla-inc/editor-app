@@ -21,8 +21,6 @@ import { useVariableStore } from "@/stores/variables";
 import { useDataSourceStore } from "@/stores/datasource";
 import { Endpoint } from "@/requests/datasources/types";
 import { listLogicFlows } from "@/requests/logicflows/queries-noauth";
-import { LogicFlowResponse } from "@/requests/logicflows/types";
-import { PagingResponse } from "@/requests/types";
 
 export const getServerSideProps = async ({
   req,
@@ -82,7 +80,6 @@ export const getServerSideProps = async ({
         deploymentPage,
         variables: variables.results,
         endpoints: endpoints.results || [],
-        logicFlows: logicFlows.results,
       },
     };
   }
@@ -96,7 +93,6 @@ export const getServerSideProps = async ({
       deploymentPage,
       variables: variables.results,
       endpoints: endpoints.results || [],
-      logicFlows: logicFlows.results,
     },
   };
 };
@@ -107,7 +103,6 @@ type Props = {
   deploymentPage: DeploymentPage;
   variables: VariableResponse[];
   endpoints: Endpoint[];
-  logicFlows: LogicFlowResponse[];
 };
 
 const HomePage = ({
@@ -116,7 +111,6 @@ const HomePage = ({
   deploymentPage,
   variables,
   endpoints,
-  logicFlows,
 }: Props) => {
   useVariableStore.getState().initializeVariableList(variables);
   if (endpoints) useDataSourceStore.getState().setApiAuthConfig(endpoints);

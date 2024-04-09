@@ -16,7 +16,6 @@ import { Endpoint } from "@/requests/datasources/types";
 import { useDataSourceStore } from "@/stores/datasource";
 import { listLogicFlows } from "@/requests/logicflows/queries-noauth";
 import { PageResponse } from "@/requests/pages/types";
-import { LogicFlowResponse } from "@/requests/logicflows/types";
 
 export const getServerSideProps = async ({
   query,
@@ -62,7 +61,6 @@ export const getServerSideProps = async ({
       isLive: false,
       variables: variables.results,
       endpoints: endpoints.results || [],
-      logicFlows: logicFlows.results,
     },
   };
 };
@@ -73,7 +71,6 @@ type Props = {
   variables: any[];
   endpoints: Endpoint[];
   deploymentPage: PageResponse;
-  logicFlows: LogicFlowResponse[];
 };
 
 const PageEditor = ({ project, page, variables, endpoints }: Props) => {

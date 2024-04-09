@@ -22,8 +22,8 @@ export const useTriggers = ({ entity, projectId }: UseTriggersProps) => {
     useEditorTreeStore((state) => state.currentProjectId) ?? projectId;
   const router = useRouter();
   const { computeValue } = useDataBinding();
-  const { data: endpointsResponse } = useDataSourceEndpoints(currentProjectId);
-  const { data: flowsList } = useFlowsQuery(currentProjectId);
+  const { data: endpoints } = useDataSourceEndpoints(currentProjectId);
+  const { data: logicFlows } = useFlowsQuery(currentProjectId);
 
   const actionResponses: Record<string, any> = {};
   const setActionsResponses = (actionId: string, response: any) => {
@@ -51,9 +51,9 @@ export const useTriggers = ({ entity, projectId }: UseTriggersProps) => {
               actionResponses,
               setActionsResponses,
               event: e,
-              endpointResults: endpointsResponse?.results ?? [],
+              endpointResults: endpoints?.results ?? [],
               entity,
-              flowsList: flowsList?.results ?? [],
+              flowsList: logicFlows?.results ?? [],
             });
           },
         };
