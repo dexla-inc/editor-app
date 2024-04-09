@@ -56,7 +56,7 @@ const findValuePropsPaths = (obj: any, prefix = ""): string[] => {
 
 export const useComputeValue2 = ({
   shareableContent,
-  onLoad,
+  onLoad = {},
 }: UseComputeValue) => {
   const browser = useRouter();
   const valuePropsPaths = useMemo(() => {
