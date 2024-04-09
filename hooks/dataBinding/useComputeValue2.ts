@@ -36,6 +36,10 @@ const autoRunJavascriptCode = (boundCode: string) => {
 };
 
 const findValuePropsPaths = (obj: any, prefix = ""): string[] => {
+  if (typeof obj !== "object" || obj === null) {
+    return [];
+  }
+
   let paths: string[] = [];
   Object.keys(obj).forEach((key) => {
     const fullPath = prefix ? `${prefix}.${key}` : key;
