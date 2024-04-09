@@ -13,9 +13,6 @@ export const SelectOptionsForm = ({ component }: { component: Component }) => {
     initialValues: {
       props: {
         data: component.props?.data ?? [],
-        style: {
-          display: component.props?.style?.display,
-        },
       },
       onLoad: { value: component.onLoad?.value ?? "" },
     },
@@ -79,11 +76,7 @@ export const SelectOptionsForm = ({ component }: { component: Component }) => {
         form={form}
         field={{ name: "value", label: "Value", type: "text" }}
       />
-      <VisibilityModifier
-        componentId={component.id!}
-        componentName={component.name}
-        form={form}
-      />
+      <VisibilityModifier form={form} />
     </Stack>
   );
 };

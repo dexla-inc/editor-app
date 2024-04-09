@@ -1,13 +1,13 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { useAppMode } from "@/hooks/useAppMode";
 import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useThemeStore } from "@/stores/theme";
 import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import { Modal as MantineModal, ModalProps } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import { forwardRef, memo, useEffect, useState } from "react";
+import { forwardRef, memo } from "react";
+import { memoize } from "proxy-memoize";
+import { useComputeValue2 } from "@/hooks/dataBinding/useComputeValue2";
 
 type Props = EditableComponentMapper & Omit<ModalProps, "opened">;
 
@@ -20,9 +20,16 @@ export const ModalComponent = forwardRef(
     const isPreviewMode = useEditorTreeStore((state) => state.isPreviewMode);
     const iframeWindow = useEditorStore((state) => state.iframeWindow);
 
-    const { forceHide, size, ...componentProps } = component.props as any;
+    const { size, ...componentProps } = component.props as any;
 
-    console.log("ModalComponent", component, forceHide);
+    const onLoad = useEditorTreeStore(
+      memoize((state) => state.componentMutableAttrs[component?.id!]?.onLoad),
+    );
+    const { forceHide } = useComputeValue2({
+      onLoad,
+      shareableContent,
+    });
+
     const target = iframeWindow?.document.getElementById("iframe-content");
 
     const isSizeFullScreen = size === "fullScreen";
@@ -35,23 +42,15 @@ export const ModalComponent = forwardRef(
         };
 
     const handleClose = () => {
-      const updateTreeComponentAttrs =
-        useEditorTreeStore.getState().updateTreeComponentAttrs;
-
-      updateTreeComponentAttrs({
-        componentIds: [component.id!],
-        attrs: { props: { opened: false, style: { display: "none" } } },
-        save: false,
-      });
-      setIsVisible(false);
+      // const updateTreeComponentAttrs =
+      //   useEditorTreeStore.getState().updateTreeComponentAttrs;
+      // updateTreeComponentAttrs({
+      //   componentIds: [component.id!],
+      //   attrs: { props: { opened: false, style: { display: "none" } } },
+      //   save: false,
+      // });
+      // setIsVisible(false);
     };
-
-    const visibleStyle = style && style.display !== "none";
-    const [isVisible, setIsVisible] = useState(visibleStyle);
-
-    useEffect(() => {
-      setIsVisible(visibleStyle);
-    }, [visibleStyle]);
 
     return (
       <MantineModal
@@ -63,10 +62,9 @@ export const ModalComponent = forwardRef(
         withCloseButton={false}
         target={target}
         {...sizeProps}
-        //opened={isVisible}
-        opened={isPreviewMode ? isVisible : !forceHide}
         {...props}
         {...componentProps}
+        opened={isPreviewMode ? true : !forceHide}
         onClose={handleClose}
         styles={{
           content: style ?? {},

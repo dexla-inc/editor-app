@@ -15,6 +15,7 @@ import { BoxProps } from "@mantine/core";
 import { PropsWithChildren, cloneElement } from "react";
 import { ComponentToolbox } from "@/components/ComponentToolbox";
 import { memoize } from "proxy-memoize";
+import { useComputeValue2 } from "@/hooks/dataBinding/useComputeValue2";
 
 type Props = {
   id: string;
@@ -32,7 +33,6 @@ export const EditableComponent = ({
   selectedByOther,
   shareableContent,
 }: PropsWithChildren<Props>) => {
-  console.log("EditableComponent");
   const isPreviewMode = useEditorTreeStore((state) => state.isPreviewMode);
   const isLive = useEditorTreeStore((state) => state.isLive);
   const isEditorMode = !isPreviewMode && !isLive;
@@ -57,6 +57,11 @@ export const EditableComponent = ({
 
   const triggers = useTriggers({
     entity: component,
+  });
+
+  const { isVisible = true } = useComputeValue2({
+    onLoad: component.onLoad,
+    shareableContent,
   });
 
   const { isPicking, droppable, tealOutline } = useEditorShadows({
@@ -86,6 +91,8 @@ export const EditableComponent = ({
     propsWithOverwrites,
     isPicking,
   );
+
+  if (!isVisible) return null;
 
   return (
     <>

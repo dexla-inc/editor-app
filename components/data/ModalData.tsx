@@ -9,14 +9,7 @@ import { SegmentedControlYesNo } from "../SegmentedControlYesNo";
 export const ModalData = ({ component }: DataProps) => {
   const form = useForm({
     initialValues: {
-      onLoad: {
-        forceHide: false,
-      },
-      props: {
-        style: {
-          display: component.props?.style?.display,
-        },
-      },
+      onLoad: component?.onLoad,
     },
   });
 
@@ -29,11 +22,7 @@ export const ModalData = ({ component }: DataProps) => {
 
   return (
     <Stack spacing="xs">
-      <VisibilityModifier
-        componentId={component.id!}
-        componentName={component.name}
-        form={form}
-      />
+      <VisibilityModifier form={form} />
       <SegmentedControlYesNo
         label="Force Hide in Editor"
         {...form.getInputProps("onLoad.forceHide")}

@@ -33,16 +33,6 @@ export const allEqual = <T>(array: T[]): boolean => {
   return array.every((element) => element === array[0]);
 };
 
-export const getComponentInitialDisplayValue = (componentName: string) => {
-  const defaultDisplayValues: { [key: string]: string } = {
-    Grid: "grid",
-    GridColumn: "grid",
-    Container: "flex",
-  };
-
-  return defaultDisplayValues[componentName] || "block";
-};
-
 export type UrlType = "project" | "live" | "editor";
 
 export const getProjectType = (href: string): UrlType => {
