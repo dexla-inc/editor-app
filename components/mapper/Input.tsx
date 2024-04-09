@@ -63,9 +63,12 @@ const InputComponent = forwardRef(
       memoize((state) => state.componentMutableAttrs[component?.id!]?.onLoad),
     );
 
-    const [value, setValue] = useInputValue({
-      value: onLoad?.value ?? "",
-    });
+    const [value, setValue] = useInputValue(
+      {
+        value: onLoad?.value ?? "",
+      },
+      component.id!,
+    );
 
     const isClearable = clearable && !!value;
     const customStyle = merge({}, borderStyle, inputStyle, props.style, {
