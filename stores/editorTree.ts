@@ -65,6 +65,7 @@ const emptyEditorComponentMutableAttrs = {
         paddingRight: "0px",
         paddingBottom: "0px",
         backgroundSize: "contain",
+        overflow: "auto",
       },
     },
   },
