@@ -256,7 +256,9 @@ export const useComputeValue2 = ({
   return valuePropsPaths.reduce(
     (acc, fieldValuePath) => {
       const fieldValue = get(onLoad, fieldValuePath);
-      const { dataType } = fieldValue;
+      const { dataType } = fieldValue ?? {};
+
+      if (!dataType) return acc;
 
       set(
         acc,
