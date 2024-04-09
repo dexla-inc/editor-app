@@ -71,35 +71,20 @@ export const useComputeValue2 = ({
       const browserKeys: NextRouterKeys[] = [];
       const authKeys: any[] = [];
 
+      const patterns = [
+        { pattern: variablePattern, keys: variableKeys },
+        { pattern: componentPattern, keys: componentKeys },
+        { pattern: actionPattern, keys: actionKeys },
+        { pattern: browserPattern, keys: browserKeys },
+        { pattern: authPattern, keys: authKeys },
+      ];
+
       valuePropsPaths.forEach((fieldValuePath) => {
         const fieldValue = get(onLoad, fieldValuePath);
         if (fieldValue.dataType === "boundCode" && fieldValue.boundCode) {
-          variableKeys.push(
-            ...[...fieldValue.boundCode.matchAll(variablePattern)].map(
-              (match) => match[1],
-            ),
-          );
-          componentKeys.push(
-            ...[...fieldValue.boundCode.matchAll(componentPattern)].map(
-              (match) => match[1],
-            ),
-          );
-          actionKeys.push(
-            ...[...fieldValue.boundCode.matchAll(actionPattern)].map(
-              (match) => match[1],
-            ),
-          );
-          browserKeys.push(
-            // @ts-ignore
-            ...[...fieldValue.boundCode.matchAll(browserPattern)].map(
-              (match) => match[1],
-            ),
-          );
-          authKeys.push(
-            ...[...fieldValue.boundCode.matchAll(authPattern)].map(
-              (match) => match[1],
-            ),
-          );
+          patterns.forEach(({ pattern, keys }) => {
+            keys.push(...extractKeysFromPattern(pattern, fieldValue.boundCode));
+          });
         }
       });
 
@@ -271,3 +256,7 @@ export const useComputeValue2 = ({
     onLoad as Record<string, any>,
   );
 };
+
+function extractKeysFromPattern(pattern: RegExp, boundCode: any) {
+  return [...boundCode.matchAll(pattern)].map((match) => match[1]);
+}
