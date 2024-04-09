@@ -14,7 +14,7 @@ const nonDefaultActionTriggers = ["onSuccess", "onError"];
 
 type UseTriggersProps = {
   entity: Component | PageResponse;
-  projectId: string;
+  projectId?: string;
 };
 
 export const useTriggers = ({ entity, projectId }: UseTriggersProps) => {
@@ -23,7 +23,7 @@ export const useTriggers = ({ entity, projectId }: UseTriggersProps) => {
   const router = useRouter();
   const { computeValue } = useDataBinding();
   const { data: endpoints } = useDataSourceEndpoints(currentProjectId);
-  const { data: logicFlows } = useFlowsQuery(currentProjectId);
+  const { data: logicFlows } = useFlowsQuery(currentProjectId ?? "");
 
   const actionResponses: Record<string, any> = {};
   const setActionsResponses = (actionId: string, response: any) => {

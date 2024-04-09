@@ -32,9 +32,8 @@ export const EditableComponent = ({
   selectedByOther,
   shareableContent,
 }: PropsWithChildren<Props>) => {
+  console.log("EditableComponent");
   const isPreviewMode = useEditorTreeStore((state) => state.isPreviewMode);
-  const currentProjectId =
-    useEditorTreeStore((state) => state.currentProjectId) ?? "";
   const isLive = useEditorTreeStore((state) => state.isLive);
   const isEditorMode = !isPreviewMode && !isLive;
   const component = useEditorTreeStore(
@@ -58,7 +57,6 @@ export const EditableComponent = ({
 
   const triggers = useTriggers({
     entity: component,
-    projectId: currentProjectId,
   });
 
   const { isPicking, droppable, tealOutline } = useEditorShadows({
