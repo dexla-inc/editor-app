@@ -14,20 +14,16 @@ const nonDefaultActionTriggers = ["onSuccess", "onError"];
 
 type UseTriggersProps = {
   entity: Component | PageResponse;
-  endpoints?: Endpoint[];
-  logicFlows?: LogicFlowResponse[];
+  projectId: string;
 };
 
-export const useTriggers = ({
-  entity,
-  endpoints,
-  logicFlows,
-}: UseTriggersProps) => {
-  const projectId = useEditorTreeStore((state) => state.currentProjectId);
+export const useTriggers = ({ entity, projectId }: UseTriggersProps) => {
+  const currentProjectId =
+    useEditorTreeStore((state) => state.currentProjectId) ?? projectId;
   const router = useRouter();
   const { computeValue } = useDataBinding();
-  const { data: endpointsResponse } = useDataSourceEndpoints(projectId);
-  const { data: flowsList } = useFlowsQuery(projectId!);
+  const { data: endpointsResponse } = useDataSourceEndpoints(currentProjectId);
+  const { data: flowsList } = useFlowsQuery(currentProjectId);
 
   const actionResponses: Record<string, any> = {};
   const setActionsResponses = (actionId: string, response: any) => {
@@ -55,9 +51,9 @@ export const useTriggers = ({
               actionResponses,
               setActionsResponses,
               event: e,
-              endpointResults: endpointsResponse?.results ?? endpoints ?? [],
+              endpointResults: endpointsResponse?.results ?? [],
               entity,
-              flowsList: flowsList?.results ?? logicFlows,
+              flowsList: flowsList?.results ?? [],
             });
           },
         };
