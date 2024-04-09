@@ -245,7 +245,7 @@ export type ActionParams = {
   event?: any;
   entity: Component | PageResponse;
   data?: any;
-  flowsList?: PagingResponse<LogicFlowResponse>;
+  flowsList?: LogicFlowResponse[];
 };
 
 export type NavigationActionParams = ActionParams & {
@@ -418,7 +418,7 @@ export const useShowNotificationAction = async ({
 export const useTriggerLogicFlowAction = async (
   params: TriggerLogicFlowActionParams,
 ) => {
-  const selectedFlow = params.flowsList?.results.find(
+  const selectedFlow = params.flowsList?.find(
     (flow: LogicFlowResponse) => flow.id === params.action.logicFlowId,
   );
 

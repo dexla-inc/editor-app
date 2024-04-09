@@ -1,7 +1,7 @@
 import Editor from "@/components/Editor";
 import { withPageOnLoad } from "@/hoc/withPageOnLoad";
 import { GetServerSidePropsContext } from "next";
-import { memo, useEffect } from "react";
+import { memo } from "react";
 import { listVariables } from "@/requests/variables/queries-noauth";
 import { useVariableStore } from "@/stores/variables";
 import { getDataSourceEndpoints } from "@/requests/datasources/queries-noauth";
@@ -13,9 +13,9 @@ import { ProjectResponse } from "@/requests/projects/types";
 import { useThemeStore } from "@/stores/theme";
 import { prepareUserThemeLive } from "@/hooks/prepareUserThemeLive";
 import { Endpoint } from "@/requests/datasources/types";
-import { PagingResponse } from "@/requests/types";
 import { useDataSourceStore } from "@/stores/datasource";
 import { listLogicFlows } from "@/requests/logicflows/queries-noauth";
+import { PageResponse } from "@/requests/pages/types";
 
 export const getServerSideProps = async ({
   query,
@@ -57,6 +57,7 @@ export const getServerSideProps = async ({
       dehydratedState: dehydrate(queryClient),
       project,
       page: pageId,
+      deploymentPage: pages.results.find((page) => page.id === pageId),
       isLive: false,
       variables: variables.results,
       endpoints: endpoints.results || [],
@@ -69,6 +70,7 @@ type Props = {
   page: string;
   variables: any[];
   endpoints: Endpoint[];
+  deploymentPage: PageResponse;
 };
 
 const PageEditor = ({ project, page, variables, endpoints }: Props) => {
