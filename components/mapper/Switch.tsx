@@ -29,8 +29,7 @@ const SwitchComponent = forwardRef(
     const handleInputChange = async (e: ChangeEvent<HTMLInputElement>) => {
       if (!isPreviewMode) {
         e.preventDefault(); // Prevent the checkbox state from changing
-        // Optionally, you can trigger any alert/notification here
-        return; // Exit the function early
+        return;
       }
 
       const newValue = e.currentTarget.checked;
