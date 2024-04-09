@@ -69,9 +69,17 @@ const InputComponent = forwardRef(
     const onLoad = useEditorTreeStore(
       memoize((state) => state.componentMutableAttrs[component?.id!]?.onLoad),
     );
-    const [{ value }, setValue] =
-      useInputValue({ value: onLoad.value }) ?? _defaultValue;
 
+    const [{ value = _defaultValue }, setValue] = useInputValue({
+      value: onLoad?.value ?? {},
+    });
+
+    // useEffect(() => {
+    //   console.log("-->", value);
+    // }, [value]);
+
+    // const value = "";
+    // console.log({ value });
     const isClearable = clearable && !!value;
     const customStyle = merge({}, borderStyle, inputStyle, props.style, {
       backgroundColor,
@@ -117,7 +125,8 @@ const InputComponent = forwardRef(
       if (type === "number") {
         newValue = newValue ? Number(newValue) : 0;
       }
-      setValue(newValue);
+      console.log("handleChange", e);
+      // setValue({ value: newValue });
       // await updateTreeComponentAttrs({
       //   componentIds: [component.id!],
       //   attrs: {

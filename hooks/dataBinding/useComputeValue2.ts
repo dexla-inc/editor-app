@@ -10,6 +10,7 @@ import { pick } from "next/dist/lib/pick";
 import set from "lodash.set";
 import transform from "lodash.transform";
 import { safeJsonParse } from "@/utils/common";
+import cloneDeep from "lodash.clonedeep";
 
 type NextRouterKeys = keyof NextRouter;
 type RecordStringAny = Record<string, any>;
@@ -54,6 +55,8 @@ export const useComputeValue2 = ({
   shareableContent,
   onLoad = {},
 }: UseComputeValue) => {
+  onLoad = cloneDeep(onLoad);
+
   const browser = useRouter();
   const valuePropsPaths = useMemo(() => {
     return findValuePropsPaths(onLoad);
@@ -234,22 +237,26 @@ export const useComputeValue2 = ({
     [shareableContent, transformBoundCode],
   );
 
-  return valuePropsPaths.reduce(
-    (acc, fieldValuePath) => {
-      const fieldValue = get(onLoad, fieldValuePath);
-      const { dataType } = fieldValue ?? {};
+  return useMemo(
+    () =>
+      valuePropsPaths.reduce(
+        (acc, fieldValuePath) => {
+          const fieldValue = get(onLoad, fieldValuePath);
+          const { dataType } = fieldValue ?? {};
 
-      if (!dataType) return acc;
+          if (!dataType) return acc;
 
-      set(
-        acc,
-        fieldValuePath,
-        valueHandlers[dataType as keyof typeof valueHandlers]?.(fieldValue),
-      );
+          set(
+            acc,
+            fieldValuePath,
+            valueHandlers[dataType as keyof typeof valueHandlers]?.(fieldValue),
+          );
 
-      return acc;
-    },
-    onLoad as Record<string, any>,
+          return acc;
+        },
+        onLoad as Record<string, any>,
+      ),
+    [onLoad, valueHandlers, valuePropsPaths],
   );
 };
 
