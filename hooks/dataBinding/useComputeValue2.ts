@@ -1,4 +1,3 @@
-import { useEditorTreeStore } from "@/stores/editorTree";
 import { useVariableStore } from "@/stores/variables";
 import { NextRouter, useRouter } from "next/router";
 import { useDataSourceStore } from "@/stores/datasource";
@@ -6,11 +5,10 @@ import { memoize } from "proxy-memoize";
 import { useCallback, useMemo } from "react";
 import get from "lodash.get";
 import { ValueProps } from "@/types/dataBinding";
-import { pick } from "next/dist/lib/pick";
 import set from "lodash.set";
-import transform from "lodash.transform";
 import { safeJsonParse } from "@/utils/common";
 import cloneDeep from "lodash.clonedeep";
+import { useInputsStore } from "@/stores/inputs";
 
 type NextRouterKeys = keyof NextRouter;
 type RecordStringAny = Record<string, any>;
@@ -123,14 +121,11 @@ export const useComputeValue2 = ({
     ),
   ) as RecordStringAny;
 
-  const inputs = useEditorTreeStore(
+  const inputs = useInputsStore(
     memoize((state) =>
-      transform(
-        pick(state.componentMutableAttrs, componentKeys),
-        (acc, value) => {
-          acc[value?.id!] = value?.onLoad?.value?.static ?? "";
-        },
-        {} as RecordStringAny,
+      componentKeys.reduce(
+        (acc, key) => ({ ...acc, [key]: state.inputValues[key] ?? "" }),
+        {},
       ),
     ),
   ) as RecordStringAny;
