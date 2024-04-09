@@ -16,7 +16,7 @@ import {
 } from "@mantine/core";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
-import { forwardRef, memo, useEffect, useState } from "react";
+import { forwardRef, memo, useEffect } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useInputValue } from "@/hooks/useInputValue";
 import { memoize } from "proxy-memoize";
@@ -59,27 +59,14 @@ const InputComponent = forwardRef(
 
     const { borderStyle, inputStyle } = useBrandingStyles();
 
-    // const computeValue = useComputeValue({
-    //   componentId: component.id!,
-    //   field: "value",
-    //   shareableContent,
-    //   staticFallback: _defaultValue,
-    // });
-
     const onLoad = useEditorTreeStore(
       memoize((state) => state.componentMutableAttrs[component?.id!]?.onLoad),
     );
 
-    const [{ value = _defaultValue }, setValue] = useInputValue({
-      value: onLoad?.value ?? {},
+    const [value, setValue] = useInputValue({
+      value: onLoad?.value ?? "",
     });
 
-    // useEffect(() => {
-    //   console.log("-->", value);
-    // }, [value]);
-
-    // const value = "";
-    // console.log({ value });
     const isClearable = clearable && !!value;
     const customStyle = merge({}, borderStyle, inputStyle, props.style, {
       backgroundColor,
@@ -125,15 +112,7 @@ const InputComponent = forwardRef(
       if (type === "number") {
         newValue = newValue ? Number(newValue) : 0;
       }
-      console.log("handleChange", e);
-      // setValue({ value: newValue });
-      // await updateTreeComponentAttrs({
-      //   componentIds: [component.id!],
-      //   attrs: {
-      //     onLoad: { value: { static: newValue, dataType: "static" } },
-      //   },
-      //   save: false,
-      // });
+      setValue(newValue);
     };
 
     // TODO: Move to a hook. Doing this as we need to update input immediately but not call actions etc.
