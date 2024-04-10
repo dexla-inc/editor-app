@@ -9,6 +9,8 @@ import set from "lodash.set";
 import { safeJsonParse } from "@/utils/common";
 import cloneDeep from "lodash.clonedeep";
 import { useInputsStore } from "@/stores/inputs";
+import { useShallow } from "zustand/react/shallow";
+import { pick } from "next/dist/lib/pick";
 
 type NextRouterKeys = keyof NextRouter;
 type RecordStringAny = Record<string, any>;
@@ -122,12 +124,7 @@ export const useComputeValue2 = ({
   ) as RecordStringAny;
 
   const inputs = useInputsStore(
-    memoize((state) =>
-      componentKeys.reduce(
-        (acc, key) => ({ ...acc, [key]: state.inputValues[key] ?? "" }),
-        {},
-      ),
-    ),
+    useShallow((state) => pick(state.inputValues, componentKeys)),
   ) as RecordStringAny;
 
   const auth = useDataSourceStore(

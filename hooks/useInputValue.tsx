@@ -14,6 +14,7 @@ export const useInputValue = (onLoad: any, componentId: string) => {
     (value: string) => {
       setInputValue(componentId, value);
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [componentId],
   );
 
