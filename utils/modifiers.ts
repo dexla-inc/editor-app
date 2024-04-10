@@ -266,12 +266,15 @@ export const requiredModifiers: RequiredModifiers = {
     tooltipPosition: "top",
   },
   modal: {
-    forceHide: false,
+    showInEditor: true,
     size: "md",
     style: {
       padding: "0px",
       display: "block",
     },
+    title: "Heading",
+    titleTag: "H4",
+    withCloseButton: true,
   },
   boxShadow: {
     inset: "",

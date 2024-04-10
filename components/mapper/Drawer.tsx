@@ -23,7 +23,7 @@ export const Drawer = ({
     children,
     title,
     opened: propOpened,
-    forceHide,
+    showInEditor,
     ...componentProps
   } = component.props as any;
 
@@ -53,7 +53,7 @@ export const Drawer = ({
       trapFocus={false}
       lockScroll={false}
       target={iframeWindow?.document.getElementById("iframe-content")}
-      opened={isPreviewMode ? opened : !forceHide}
+      opened={isPreviewMode ? opened : showInEditor}
       onClose={isPreviewMode ? handleClose : () => {}}
       withCloseButton={false}
       {...props}
