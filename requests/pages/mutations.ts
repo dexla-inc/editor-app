@@ -3,6 +3,7 @@ import {
   PageBody,
   PageResponse,
   PageStateParams,
+  PageStateResponse,
   PagesResponse,
 } from "@/requests/pages/types";
 import { del, post, put } from "@/utils/api";
@@ -85,5 +86,15 @@ export const updatePageState = async (
 export const deletePage = async (id: string, pageId: string) => {
   const response = (await del<any>(`/projects/${id}/pages/${pageId}`)) as any;
 
+  return response;
+};
+
+export const rollbackPageState = async (
+  projectId: string,
+  pageId: string,
+  pageHistoryId: string,
+) => {
+  const url = `/projects/${projectId}/pages/${pageId}/state/history/${pageHistoryId}`;
+  const response = (await post<any>(url, {})) as PageStateResponse;
   return response;
 };

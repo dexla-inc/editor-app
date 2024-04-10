@@ -14,10 +14,12 @@ import {
   IconComponents,
   IconDatabase,
   IconFileInvoice,
+  IconHistory,
   IconLayoutDashboard,
   IconPhoto,
   IconSettings,
 } from "@tabler/icons-react";
+import { EditorHistorySection } from "./EditorHistorySection";
 
 export type SectionId =
   | "pages"
@@ -26,6 +28,7 @@ export type SectionId =
   | "theme"
   | "datasources"
   | "customCode"
+  | "history"
   | "settings"
   | "assets";
 
@@ -62,6 +65,11 @@ const sections = [
     icon: IconPhoto,
   },
   {
+    id: "history" as SectionId,
+    label: "History",
+    icon: IconHistory,
+  },
+  {
     id: "customCode" as SectionId,
     label: "Custom Code",
     icon: IconCode,
@@ -85,6 +93,7 @@ export const sectionMapper: SectionsMapper = {
   components: (props: any) => <EditorNavbarComponentsSection {...props} />,
   theme: (props: any) => <EditorNavbarThemesSection {...props} />,
   datasources: (props: any) => <EditorNavbarDataSourcesSection {...props} />,
+  history: (props: any) => <EditorHistorySection {...props} />,
   assets: (props: any) => <EditorAssetsSection {...props} />,
   customCode: (props: any) => <EditorNavbarCustomCodeSection {...props} />,
   settings: (props: any) => <EditorNavbarSettingsSection {...props} />,
