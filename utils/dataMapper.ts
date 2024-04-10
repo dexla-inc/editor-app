@@ -30,7 +30,6 @@ import {
   TextData as NavLink,
   TextData as Text,
   TextData as Title,
-  TextData as RadioGroup,
 } from "@/components/data/TextData";
 
 export const dataMapper = {
@@ -50,7 +49,8 @@ export const dataMapper = {
   DateInput,
   Switch,
   Checkbox,
-  RadioGroup,
+  Radio: Input,
+  RadioItem: Input,
   Textarea,
   Image,
   Container,

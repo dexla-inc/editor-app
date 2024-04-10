@@ -71,9 +71,6 @@ const ProgressModifier = dynamic(
   () => import("@/components/modifiers/Progress"),
 );
 const RadioModifier = dynamic(() => import("@/components/modifiers/Radio"));
-const RadioItemModifier = dynamic(
-  () => import("@/components/modifiers/RadioItem"),
-);
 const SelectModifier = dynamic(() => import("@/components/modifiers/Select"));
 const SizeModifier = dynamic(() => import("@/components/modifiers/Size"));
 const SpacingModifier = dynamic(() => import("@/components/modifiers/Spacing"));
@@ -122,7 +119,6 @@ export const modifierSectionMapper: SectionsMapper = {
   checkbox: { Modifier: CheckboxModifier, icon: "IconCheckbox" },
   table: { Modifier: TableModifier, icon: "IconTable" },
   radio: { Modifier: RadioModifier, icon: "IconRadio" },
-  radioItem: { Modifier: RadioItemModifier, icon: "IconRadio" },
   drawer: { Modifier: DrawerModifier, icon: "IconLayoutSidebarLeftCollapse" },
   buttonIcon: { Modifier: ButtonIconModifier, icon: "IconCircleDot" },
   mapSettings: { Modifier: GoogleMapModifier, icon: "IconMapPin" },

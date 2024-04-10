@@ -46,11 +46,7 @@ const RadioComponent = forwardRef(
             onChange && onChange(val);
           },
         }
-      : {
-          onChange: () => {
-            setValue(undefined);
-          },
-        };
+      : {};
 
     return (
       <MantineRadio.Group
@@ -68,24 +64,12 @@ const RadioComponent = forwardRef(
         value={value}
         label={undefined}
       >
-        <Group mt="xs">
+        <Group>
           {component.children && component.children.length > 0
             ? component.children?.map((child) =>
-                renderTree({
-                  ...child,
-                  // TODO: find a way of getting this back
-                  // props: {
-                  //   ...child.props,
-                  //   isInsideGroup: isPreviewMode,
-                  //   checked: isPreviewMode
-                  //     ? child?.props?.value?.toString() === _value?.toString()
-                  //     : false,
-                  //   triggers: {
-                  //     onChange: (val: string) => {
-                  //       setValue(val);
-                  //     },
-                  //   },
-                  // },
+                renderTree(child, {
+                  isInsideGroup: isPreviewMode,
+                  value,
                 }),
               )
             : children}

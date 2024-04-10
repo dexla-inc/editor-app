@@ -2,6 +2,7 @@ import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import { Radio as MantineRadio, RadioProps } from "@mantine/core";
 import { memo, useState } from "react";
+import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
 
 type Props = EditableComponentMapper & RadioProps;
 
@@ -13,17 +14,22 @@ const RadioItemComponent = ({
   ...props
 }: Props) => {
   const {
-    value,
-    triggers,
-    checked,
-    isInsideGroup = false,
+    value: defaultValue,
     children,
     ...componentProps
   } = component.props as any;
 
-  const [_checked, setChecked] = useState<boolean>(
-    isPreviewMode ? checked : false,
-  );
+  const value = useComputeValue({
+    componentId: component.id!,
+    field: "value",
+    shareableContent,
+    staticFallback: defaultValue,
+  });
+
+  const { value: parentValue, isInsideGroup = false } = shareableContent;
+  const checked = parentValue === value;
+
+  const [_checked, setChecked] = useState<boolean>(checked);
 
   const defaultTriggers = isPreviewMode
     ? isInsideGroup
@@ -46,7 +52,6 @@ const RadioItemComponent = ({
       {...props}
       {...componentProps}
       {...defaultTriggers}
-      {...triggers}
       wrapperProps={{ "data-id": component.id }}
       label={
         component.children && component.children.length > 0
@@ -60,7 +65,7 @@ const RadioItemComponent = ({
           : children
       }
       value={value}
-      checked={isPreviewMode ? _checked : false}
+      checked={_checked}
       styles={{
         inner: { display: "none" },
         label: {
