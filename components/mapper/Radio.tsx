@@ -46,11 +46,7 @@ const RadioComponent = forwardRef(
             onChange && onChange(val);
           },
         }
-      : {
-          onChange: () => {
-            setValue(undefined);
-          },
-        };
+      : {};
 
     return (
       <MantineRadio.Group

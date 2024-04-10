@@ -27,7 +27,7 @@ const RadioItemComponent = ({
   });
 
   const { value: parentValue, isInsideGroup = false } = shareableContent;
-  const checked = isPreviewMode ? parentValue === value : false;
+  const checked = parentValue === value;
 
   const [_checked, setChecked] = useState<boolean>(checked);
 
