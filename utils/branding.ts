@@ -417,8 +417,12 @@ const getHoverColor = (value: string) => {
   return `${color}.${opacity}`;
 };
 
-const isBorderWidthNotZero = (style: any) => {
-  const borderTypes = [
+type StyleProp = CSSObject & {
+  display?: string | ValueProps;
+} & CSSProperties;
+
+const isBorderWidthNotZero = (style: StyleProp) => {
+  const borderTypes: Array<keyof StyleProp> = [
     "borderWidth",
     "borderTopWidth",
     "borderBottomWidth",
@@ -426,13 +430,16 @@ const isBorderWidthNotZero = (style: any) => {
     "borderRightWidth",
   ];
   return borderTypes.some((borderType) => {
-    const [size, _] = splitValueAndUnit(style[borderType]) || [0, "px"];
+    const [size, _] = splitValueAndUnit(style[borderType] as string) || [
+      0,
+      "px",
+    ];
     return size > 0;
   });
 };
 
-const isBorderStyleNotNone = (style: any) => {
-  const borderTypes = [
+const isBorderStyleNotNone = (style: StyleProp) => {
+  const borderTypes: Array<keyof StyleProp> = [
     "borderStyle",
     "borderTopStyle",
     "borderBottomStyle",
@@ -442,9 +449,6 @@ const isBorderStyleNotNone = (style: any) => {
   return borderTypes.some((borderType) => style[borderType] !== "none");
 };
 
-type StyleProp = CSSObject & {
-  display?: string | ValueProps;
-} & CSSProperties;
 const setComponentBorder = (style: StyleProp = {}, isPreviewMode?: boolean) => {
   const hasBorder = isBorderWidthNotZero(style) && isBorderStyleNotNone(style);
   return hasBorder || isPreviewMode ? {} : IDENTIFIER;
