@@ -1,4 +1,5 @@
 import { useUserConfigStore } from "@/stores/userConfig";
+import { ValueProps } from "@/types/dataBinding";
 import { splitValueAndUnit } from "@/utils/splitValueAndUnit";
 import { MantineThemeExtended } from "@/utils/types";
 import {
@@ -7,6 +8,7 @@ import {
   MantineSize,
   MantineTheme,
 } from "@mantine/core";
+import { CSSProperties } from "react";
 
 const isDarkTheme = useUserConfigStore.getState().isDarkTheme;
 
@@ -415,9 +417,40 @@ const getHoverColor = (value: string) => {
   return `${color}.${opacity}`;
 };
 
-const setComponentBorder = (style: any, isPreviewMode?: boolean) => {
-  const [borderSize, _] = splitValueAndUnit(style?.borderWidth) || [0, "px"];
-  const hasBorder = borderSize > 0 && style.borderStyle !== "none";
+type StyleProp = CSSObject & {
+  display?: string | ValueProps;
+} & CSSProperties;
+
+const isBorderWidthNotZero = (style: StyleProp) => {
+  const borderTypes: Array<keyof StyleProp> = [
+    "borderWidth",
+    "borderTopWidth",
+    "borderBottomWidth",
+    "borderLeftWidth",
+    "borderRightWidth",
+  ];
+  return borderTypes.some((borderType) => {
+    const [size, _] = splitValueAndUnit(style[borderType] as string) || [
+      0,
+      "px",
+    ];
+    return size > 0;
+  });
+};
+
+const isBorderStyleNotNone = (style: StyleProp) => {
+  const borderTypes: Array<keyof StyleProp> = [
+    "borderStyle",
+    "borderTopStyle",
+    "borderBottomStyle",
+    "borderLeftStyle",
+    "borderRightStyle",
+  ];
+  return borderTypes.some((borderType) => style[borderType] !== "none");
+};
+
+const setComponentBorder = (style: StyleProp = {}, isPreviewMode?: boolean) => {
+  const hasBorder = isBorderWidthNotZero(style) && isBorderStyleNotNone(style);
   return hasBorder || isPreviewMode ? {} : IDENTIFIER;
 };
 
