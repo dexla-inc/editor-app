@@ -159,12 +159,16 @@ export const useEditorHotkeys = () => {
     const isTargetGridItems = ["Grid", "GridColumn"].includes(
       selectedComponent?.name!,
     );
+    const isTargetModalsOrDrawers = ["Modal", "Drawer"].includes(
+      selectedComponent?.name!,
+    );
     const isLayoutCategory =
       structureMapper[componentToPaste.name!]?.category === "Layout";
     const isAllowedGridMatch =
       isGridItems === isTargetGridItems &&
       selectedComponent?.name === componentToPaste.name;
-    const isAllowedSibling = isLayoutCategory && !isTargetGridItems;
+    const isAllowedSibling =
+      isLayoutCategory && !isTargetGridItems && !isTargetModalsOrDrawers;
 
     const addAsSiblingFlag =
       selectedComponent?.blockDroppingChildrenInside ||
