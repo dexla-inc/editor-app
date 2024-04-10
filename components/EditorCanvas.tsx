@@ -1,11 +1,9 @@
 import { Droppable } from "@/components/Droppable";
-import { EditableComponentContainer } from "@/components/EditableComponentContainer";
 import { IFrame } from "@/components/IFrame";
 import useEditorHotkeys from "@/hooks/useEditorHotkeys";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { componentMapper } from "@/utils/componentMapper";
 import { HEADER_HEIGHT } from "@/utils/config";
-import { ComponentTree } from "@/utils/editor";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Box, Paper } from "@mantine/core";
 import { memo } from "react";
@@ -52,9 +50,7 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
       );
     }
 
-    const component =
-      useEditorTreeStore.getState().componentMutableAttrs[componentTree.id!];
-    const componentToRender = componentMapper[component.name];
+    const componentToRender = componentMapper[componentTree.name];
 
     if (!componentToRender) {
       return componentTree.children?.map((child) =>
