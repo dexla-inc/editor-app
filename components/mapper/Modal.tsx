@@ -9,6 +9,7 @@ import { forwardRef, memo } from "react";
 import { memoize } from "proxy-memoize";
 import { useComputeValue2 } from "@/hooks/dataBinding/useComputeValue2";
 import { useVariableStore } from "@/stores/variables";
+import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 
 type Props = EditableComponentMapper & Omit<ModalProps, "opened">;
 const variablePattern = /variables\[\s*(?:\/\*[\s\S]*?\*\/\s*)?'(.*?)'\s*\]/g;
@@ -18,16 +19,18 @@ export const ModalComponent = forwardRef(
     { renderTree, component, style, shareableContent, ...props }: Props,
     ref,
   ) => {
-    const theme = useThemeStore((state) => state.theme);
     const isPreviewMode = useEditorTreeStore((state) => state.isPreviewMode);
     const iframeWindow = useEditorStore((state) => state.iframeWindow);
 
-    const { size, ...componentProps } = component.props as any;
+    const { size, titleTag: tag, ...componentProps } = component.props as any;
+    const { titleStyle } = useBrandingStyles({ tag });
 
     const onLoad = useEditorTreeStore(
       memoize((state) => state.componentMutableAttrs[component?.id!]?.onLoad),
     );
-    const { forceHide } = useComputeValue2({
+
+    // This is not forceHide this is showInEditor
+    const { showInEditor } = useComputeValue2({
       onLoad,
       shareableContent,
     });
@@ -64,17 +67,17 @@ export const ModalComponent = forwardRef(
         withinPortal
         trapFocus={false}
         lockScroll={false}
-        withCloseButton={false}
         target={target}
         {...sizeProps}
         {...props}
         {...componentProps}
-        opened={isPreviewMode ? true : !forceHide}
+        opened={isPreviewMode ? true : showInEditor}
         onClose={handleClose}
         styles={{
           content: style ?? {},
           body: { height: "fit-content" },
-          title: { fontFamily: theme.fontFamily },
+          title: { ...titleStyle },
+          //title: { fontFamily: theme.fontFamily, fontSize: 50 },
           ...(isSizeFullScreen && { inner: { left: 0 } }),
         }}
       >

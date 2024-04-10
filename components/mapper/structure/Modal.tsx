@@ -8,59 +8,14 @@ import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): ComponentStructure => {
   const theme = props.theme ?? defaultTheme;
-  const { order = 1 } = props.props || {};
   const { input: defaultInputValues, modal: defaultModalValues } =
     requiredModifiers;
-  const size = theme.headings.sizes[`h5`];
+
   const modalId = nanoid();
 
   const containerItem = structureMapper["Container"].structure({ theme });
-  const defaultButtonIcon = structureMapper["ButtonIcon"].structure({});
-  const buttonIconProps = merge({}, defaultButtonIcon.props, {
-    iconName: "IconX",
-  });
 
   const defaultChildren = [
-    {
-      id: nanoid(),
-      name: "Container",
-      description: "Modal Header Container",
-      props: {
-        style: {
-          width: "100%",
-          backgroundColor: "white.6",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        },
-      },
-      children: [
-        {
-          id: nanoid(),
-          name: "Title",
-          description: "Title",
-          props: {
-            children: "Modal Title",
-            order,
-            color: "Black.6",
-            style: {
-              fontWeight: "bold",
-              fontSize: size.fontSize,
-              lineHeight: size.lineHeight,
-              width: "auto",
-              height: "auto",
-            },
-          },
-          blockDroppingChildrenInside: true,
-        },
-        {
-          id: nanoid(),
-          ...defaultButtonIcon,
-          props: buttonIconProps,
-          blockDroppingChildrenInside: true,
-        },
-      ],
-    },
     {
       id: nanoid(),
       name: "Container",
@@ -223,6 +178,10 @@ export const jsonStructure = (props?: any): ComponentStructure => {
     },
     onLoad: {
       isVisible: {
+        dataType: "static",
+        static: true,
+      },
+      showInEditor: {
         dataType: "static",
         static: true,
       },

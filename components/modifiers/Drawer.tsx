@@ -16,7 +16,7 @@ const Modifier = withModifier(({ selectedComponent }) => {
       merge({}, requiredModifiers.drawer, {
         position: selectedComponent.props?.position,
         size: selectedComponent.props?.size,
-        forceHide: selectedComponent.props?.forceHide,
+        showInEditor: selectedComponent.props?.showInEditor,
       }),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -59,11 +59,11 @@ const Modifier = withModifier(({ selectedComponent }) => {
         <Checkbox
           size="xs"
           label="Force Hide"
-          {...form.getInputProps("forceHide", { type: "checkbox" })}
+          {...form.getInputProps("showInEditor", { type: "checkbox" })}
           onChange={(e) => {
-            form.setFieldValue("forceHide", e.target.checked);
+            form.setFieldValue("showInEditor", e.target.checked);
             debouncedTreeComponentAttrsUpdate({
-              attrs: { props: { forceHide: e.target.checked } },
+              attrs: { props: { showInEditor: e.target.checked } },
             });
           }}
         />

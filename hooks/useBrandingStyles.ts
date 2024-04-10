@@ -1,12 +1,17 @@
 import { useThemeStore } from "@/stores/theme";
 import { inputSizes, radiusSizes } from "@/utils/defaultSizes";
 import { getColorFromTheme } from "@/utils/editor";
-export const useBrandingStyles = () => {
+
+type Props = {
+  tag?: string;
+};
+
+export const useBrandingStyles = ({ tag = "P" }: Props = {}) => {
   const theme = useThemeStore((state) => state.theme);
   const borderColor = getColorFromTheme(theme, "Border.6");
   // TODO: Need to be able to support multiple texts
-  const textFont = theme.fonts?.find((font) => font.tag === "P");
-  const pTagFontSize = textFont?.fontSize + "px";
+  const textFont = theme.fonts?.find((font) => font.tag === tag);
+  const fontSize = textFont?.fontSize + "px";
   const buttonFont = theme.fonts.find((font) => font.tag === "Button");
   const inputSize = inputSizes[theme.inputSize];
   const radiusSize = radiusSizes[theme.defaultRadius];
@@ -29,13 +34,13 @@ export const useBrandingStyles = () => {
   };
 
   const inputStyle = {
-    fontSize: pTagFontSize,
+    fontSize: fontSize,
     height: inputSize,
     borderRadius: radiusSize,
   };
 
   const fontSizeStyle = {
-    fontSize: pTagFontSize,
+    fontSize: fontSize,
   };
 
   const buttonIconStyle = {
@@ -56,12 +61,20 @@ export const useBrandingStyles = () => {
   };
 
   const textStyle = {
-    ...(textFont && {
-      fontSize: pTagFontSize,
+    ...(fontSize && {
+      fontSize: fontSize,
       fontWeight: textFont?.fontWeight,
       lineHeight: textFont?.lineHeight,
       letterSpacing: textFont?.letterSpacing,
     }),
+  };
+
+  const titleStyle = {
+    fontSize: textFont?.fontSize,
+    fontWeight: textFont?.fontWeight,
+    lineHeight: textFont?.lineHeight,
+    letterSpacing: textFont?.letterSpacing,
+    fontFamily: textFont?.fontFamily,
   };
 
   const avatarStyle = {
@@ -79,6 +92,7 @@ export const useBrandingStyles = () => {
     buttonIconStyle,
     buttonStyle,
     textStyle,
+    titleStyle,
     avatarStyle,
     dashedBorderStyle,
   };
