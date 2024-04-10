@@ -8,8 +8,10 @@ import { Modal as MantineModal, ModalProps } from "@mantine/core";
 import { forwardRef, memo } from "react";
 import { memoize } from "proxy-memoize";
 import { useComputeValue2 } from "@/hooks/dataBinding/useComputeValue2";
+import { useVariableStore } from "@/stores/variables";
 
 type Props = EditableComponentMapper & Omit<ModalProps, "opened">;
+const variablePattern = /variables\[\s*(?:\/\*[\s\S]*?\*\/\s*)?'(.*?)'\s*\]/g;
 
 export const ModalComponent = forwardRef(
   (
@@ -42,14 +44,17 @@ export const ModalComponent = forwardRef(
         };
 
     const handleClose = () => {
-      // const updateTreeComponentAttrs =
-      //   useEditorTreeStore.getState().updateTreeComponentAttrs;
-      // updateTreeComponentAttrs({
-      //   componentIds: [component.id!],
-      //   attrs: { props: { opened: false, style: { display: "none" } } },
-      //   save: false,
-      // });
-      // setIsVisible(false);
+      const isVisibleBound = onLoad.isVisible.dataType === "boundCode";
+      const resetVariable = useVariableStore.getState().resetVariable;
+      if (isVisibleBound) {
+        const boundVariables = extractKeysFromPattern(
+          variablePattern,
+          onLoad.isVisible.boundCode,
+        );
+        boundVariables.forEach((variable) => {
+          resetVariable(variable);
+        });
+      }
     };
 
     return (
@@ -81,3 +86,7 @@ export const ModalComponent = forwardRef(
 ModalComponent.displayName = "Modal";
 
 export const Modal = memo(withComponentWrapper<Props>(ModalComponent), isSame);
+
+function extractKeysFromPattern(pattern: RegExp, boundCode: any) {
+  return [...boundCode.matchAll(pattern)].map((match) => match[1]);
+}
