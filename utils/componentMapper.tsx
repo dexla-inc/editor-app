@@ -880,7 +880,7 @@ export type ToolboxAction = {
 };
 
 export type ComponentDefinition = {
-  Component: any;
+  Component: (props: any) => any;
   modifiers: Modifiers[];
   actionTriggers: ActionTrigger[];
   sequentialTriggers: SequentialTrigger[];
@@ -896,52 +896,31 @@ export type ComponentMapper = {
 
 export const componentMapper: ComponentMapper = {
   Avatar: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <Avatar component={props.component} renderTree={props.renderTree} />
-    ),
+    Component: (props) => <Avatar {...props} />,
     modifiers: ["avatar", "spacing", "size", "border", "effects"],
     actionTriggers: ["onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Badge: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <Badge component={props.component} renderTree={props.renderTree} />
-    ),
+    Component: (props) => <Badge {...props} />,
     modifiers: ["badge", "spacing", "size", "border", "effects"],
     actionTriggers: ["onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Breadcrumb: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <Breadcrumb
-        component={props.component}
-        renderTree={props.renderTree}
-        // eslint-disable-next-line react/no-children-prop
-        children={props.component.children as any}
-      />
-    ),
+    Component: (props) => <Breadcrumb {...props} />,
     modifiers: ["breadcrumb", "spacing", "size", "border", "effects"],
     actionTriggers: [],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Stepper: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <Stepper
-        component={props.component}
-        renderTree={props.renderTree}
-        // eslint-disable-next-line react/no-children-prop
-        children={props.component.children as any}
-        active={1}
-      />
-    ),
+    Component: (props) => <Stepper {...props} />,
     modifiers: ["stepper", "spacing", "size", "border", "effects"],
     actionTriggers: ["onChange"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Grid: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <Grid component={props.component} renderTree={props.renderTree} />
-    ),
+    Component: (props) => <Grid {...props} />,
     modifiers: ["grid", "spacing", "size", "background", "border", "effects"],
     actionTriggers: ["onClick", "onHover"],
     sequentialTriggers: ["onSuccess", "onError"],
@@ -963,9 +942,7 @@ export const componentMapper: ComponentMapper = {
     blockedToolboxActions: ["wrap-with-container"],
   },
   GridColumn: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <GridColumn component={props.component} renderTree={props.renderTree} />
-    ),
+    Component: (props) => <GridColumn {...props} />,
     modifiers: ["gridColumn", "size", "spacing", "background", "effects"],
     actionTriggers: ["onClick", "onHover"],
     sequentialTriggers: ["onSuccess", "onError"],
@@ -986,9 +963,7 @@ export const componentMapper: ComponentMapper = {
     blockedToolboxActions: ["wrap-with-container"],
   },
   Container: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <Container component={props.component} renderTree={props.renderTree} />
-    ),
+    Component: (props) => <Container {...props} />,
     modifiers: [
       "layout",
       "background",
@@ -1004,9 +979,7 @@ export const componentMapper: ComponentMapper = {
   },
 
   Card: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <Card component={props.component} renderTree={props.renderTree} />
-    ),
+    Component: (props) => <Card {...props} />,
     modifiers: [
       "layout",
       "background",
@@ -1021,113 +994,76 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Select: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <Select
-        component={props.component}
-        renderTree={props.renderTree}
-        data={["Option 1", "Option 2"]}
-        onClick={(e: any) => {
-          e.preventDefault();
-        }}
-      />
-    ),
+    Component: (props) => <Select {...props} />,
     modifiers: ["select", "spacing", "size", "border", "effects"],
     actionTriggers: ["onChange", "onSearchChange"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Input: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <Input component={props.component} renderTree={props.renderTree} />
-    ),
+    Component: (props) => <Input {...props} />,
     modifiers: ["input", "spacing", "size", "border", "effects"],
     actionTriggers: ["onChange", "onFocus", "onBlur"],
     sequentialTriggers: ["onSuccess", "onError"],
     isValidatable: true,
   },
   DateInput: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <DateInput
-        component={props.component}
-        renderTree={props.renderTree}
-        onClick={(e) => {
-          e.preventDefault();
-        }}
-      />
-    ),
+    Component: (props) => <DateInput {...props} />,
     modifiers: ["dateInput", "spacing", "size", "border", "effects"],
     actionTriggers: ["onChange", "onFocus", "onBlur"],
     sequentialTriggers: ["onSuccess", "onError"],
     isValidatable: true,
   },
   Text: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <Text component={props.component} renderTree={props.renderTree} />
-    ),
+    Component: (props) => <Text {...props} />,
     modifiers: ["text", "background", "spacing", "size", "border", "effects"],
     actionTriggers: [],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Title: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <Title component={props.component} renderTree={props.renderTree} />
-    ),
+    Component: (props) => <Title {...props} />,
     modifiers: ["text", "spacing", "size", "border", "effects"],
     actionTriggers: [],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Textarea: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <Textarea component={props.component} renderTree={props.renderTree} />
-    ),
+    Component: (props) => <Textarea {...props} />,
     modifiers: ["textarea", "spacing", "size", "border", "effects"],
     actionTriggers: ["onChange", "onFocus", "onBlur"],
     sequentialTriggers: ["onSuccess", "onError"],
     isValidatable: true,
   },
   Link: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <Link component={props.component} renderTree={props.renderTree} />
-    ),
+    Component: (props) => <Link {...props} />,
     modifiers: ["link", "spacing", "size", "border", "effects"],
     actionTriggers: ["onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   NavLink: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <NavLink component={props.component} renderTree={props.renderTree} />
-    ),
+    Component: (props) => <NavLink {...props} />,
     modifiers: ["navLink", "spacing", "size", "border", "effects"],
     actionTriggers: ["onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Icon: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <Icon component={props.component} renderTree={props.renderTree} />
-    ),
+    Component: (props) => <Icon {...props} />,
     modifiers: ["icon", "spacing", "border", "effects"],
     actionTriggers: [],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Autocomplete: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <Autocomplete component={props.component} renderTree={props.renderTree} />
-    ),
+    Component: (props) => <Autocomplete {...props} />,
     modifiers: ["autocomplete", "spacing", "size", "border", "effects"],
     actionTriggers: ["onItemSubmit", "onChange"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Progress: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <Progress component={props.component} renderTree={props.renderTree} />
-    ),
+    Component: (props) => <Progress {...props} />,
     modifiers: ["progress"],
     actionTriggers: ["onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Table: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <Table component={props.component} renderTree={props.renderTree} />
-    ),
+    Component: (props) => <Table {...props} />,
     modifiers: ["table", "spacing", "size", "border", "effects"],
     actionTriggers: [
       "onRowClick",
@@ -1140,59 +1076,43 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   TableHead: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <TableHead component={props.component} renderTree={props.renderTree} />
-    ),
+    Component: (props) => <TableHead {...props} />,
     modifiers: [],
     actionTriggers: [],
     sequentialTriggers: [],
   },
   TableBody: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <TableBody component={props.component} renderTree={props.renderTree} />
-    ),
+    Component: (props) => <TableBody {...props} />,
     modifiers: [],
     actionTriggers: [],
     sequentialTriggers: [],
   },
   TableRow: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <TableRow component={props.component} renderTree={props.renderTree} />
-    ),
+    Component: (props) => <TableRow {...props} />,
     modifiers: ["size"],
     actionTriggers: [],
     sequentialTriggers: [],
   },
   TableCell: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <TableCell component={props.component} renderTree={props.renderTree} />
-    ),
+    Component: (props) => <TableCell {...props} />,
     modifiers: [],
     actionTriggers: [],
     sequentialTriggers: [],
   },
   TableHeaderCell: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <TableHeaderCell
-        component={props.component}
-        renderTree={props.renderTree}
-      />
-    ),
+    Component: (props) => <TableHeaderCell {...props} />,
     modifiers: [],
     actionTriggers: [],
     sequentialTriggers: [],
   },
   FileUpload: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => {
+    Component: (props) => {
       return (
         <FileUpload
-          component={props.component}
-          renderTree={props.renderTree}
-          // eslint-disable-next-line react/no-children-prop
-          children={props.component.children as any}
-          onDrop={(files): void => {
-            saveFile(props.component, files);
-          }}
+          {...props}
+          // onDrop={(files): void => {
+          //   saveFile(props.component, files);
+          // }}
         />
       );
     },
@@ -1201,14 +1121,12 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   FileButton: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      // @ts-ignore
+    Component: (props) => (
       <FileButton
-        onChange={(files: any) => {
-          saveFile(props.component, files);
-        }}
-        component={props.component}
-        renderTree={props.renderTree}
+        {...props}
+        // onChange={(files: any) => {
+        //   saveFile(props.component, files);
+        // }}
       />
     ),
     modifiers: [
@@ -1223,114 +1141,61 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Checkbox: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <Checkbox component={props.component} renderTree={props.renderTree} />
-    ),
+    Component: (props) => <Checkbox {...props} />,
     modifiers: ["checkbox", "spacing", "size", "border", "effects"],
     actionTriggers: ["onChange", "onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Switch: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <Switch
-        component={props.component}
-        renderTree={props.renderTree}
-        onClick={(e: any) => {
-          e.preventDefault();
-        }}
-      />
-    ),
+    Component: (props) => <Switch {...props} />,
     modifiers: ["spacing", "size", "border", "effects"],
     actionTriggers: ["onChange", "onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   RadioItem: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      // @ts-ignore
-      <RadioItem component={props.component} renderTree={props.renderTree} />
-    ),
-    modifiers: ["background", "spacing", "size", "border", "position"],
+    Component: (props) => <RadioItem {...props} />,
+      modifiers: ["background", "spacing", "size", "border", "position"],
     actionTriggers: [],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Radio: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <Radio
-        component={props.component}
-        renderTree={props.renderTree}
-        // eslint-disable-next-line react/no-children-prop
-        children={props.component.children as any}
-      />
-    ),
+    Component: (props) => <Radio {...props} />,
     modifiers: ["radio", "spacing", "size", "border", "effects"],
     actionTriggers: ["onChange", "onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Rating: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <Rating
-        component={props.component}
-        renderTree={props.renderTree}
-        onClick={(e: any) => {
-          e.preventDefault();
-        }}
-      />
-    ),
+    Component: (props) => <Rating {...props} />,
     modifiers: ["spacing", "size", "border", "effects"],
     actionTriggers: ["onChange"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Image: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      // eslint-disable-next-line jsx-a11y/alt-text
-      <Image component={props.component} renderTree={props.renderTree} />
-    ),
+    Component: (props) => <Image {...props} />,
     modifiers: ["image", "spacing", "size", "border", "effects", "position"],
     actionTriggers: ["onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Divider: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <Divider component={props.component} renderTree={props.renderTree} />
-    ),
+    Component: (props) => <Divider {...props} />,
     modifiers: ["divider", "spacing", "size", "border", "effects"],
     actionTriggers: [],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Pagination: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <Pagination
-        component={props.component}
-        renderTree={props.renderTree}
-        total={10}
-      />
-    ),
+    Component: (props) => <Pagination {...props} />,
     modifiers: ["spacing", "size", "border", "effects"],
     actionTriggers: ["onChange"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Alert: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <Alert
-        component={props.component}
-        renderTree={props.renderTree}
-        // eslint-disable-next-line react/no-children-prop
-        children={props.component.children as any}
-      />
-    ),
+    Component: (props) => <Alert {...props} />,
     modifiers: ["alert", "spacing", "size", "border", "effects"],
     actionTriggers: ["onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Tabs: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <Tabs
-        component={props.component}
-        renderTree={props.renderTree}
-        // eslint-disable-next-line react/no-children-prop
-        children={props.component.children as any}
-      />
-    ),
+    Component: (props) => <Tabs {...props} />,
     modifiers: ["tabs", "spacing", "size", "border", "effects"],
     actionTriggers: ["onChange"],
     sequentialTriggers: ["onSuccess", "onError"],
@@ -1344,56 +1209,25 @@ export const componentMapper: ComponentMapper = {
     ],
   },
   Tab: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <Tab
-        component={props.component}
-        renderTree={props.renderTree}
-        // eslint-disable-next-line react/no-children-prop
-        children={props.component.children as any}
-        value="first"
-      />
-    ),
+    Component: (props) => <Tab {...props} />,
     modifiers: ["tab", "spacing", "size", "border", "effects"],
     actionTriggers: ["onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   TabsList: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <TabsList
-        component={props.component}
-        renderTree={props.renderTree}
-        // eslint-disable-next-line react/no-children-prop
-        children={props.component.children as any}
-      />
-    ),
+    Component: (props) => <TabsList {...props} />,
     modifiers: ["tabsList", "spacing", "size", "border", "effects"],
     actionTriggers: ["onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   TabsPanel: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <TabsPanel
-        component={props.component}
-        renderTree={props.renderTree}
-        // eslint-disable-next-line react/no-children-prop
-        children={props.component.children as any}
-        value={props.component.props?.value as any}
-      />
-    ),
+    Component: (props) => <TabsPanel {...props} />,
     modifiers: ["tabsPanel", "spacing", "size", "border", "effects"],
     actionTriggers: ["onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Accordion: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <Accordion
-        component={props.component}
-        renderTree={props.renderTree}
-        // eslint-disable-next-line react/no-children-prop
-        children={props.component.children as any}
-        defaultValue="first"
-      />
-    ),
+    Component: (props) => <Accordion {...props} />,
     modifiers: ["accordion", "spacing", "size", "border", "effects"],
     actionTriggers: ["onOpen", "onClose"],
     sequentialTriggers: ["onSuccess", "onError"],
@@ -1407,119 +1241,74 @@ export const componentMapper: ComponentMapper = {
     ],
   },
   AccordionItem: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <AccordionItem
-        component={props.component}
-        renderTree={props.renderTree}
-        // eslint-disable-next-line react/no-children-prop
-        children={props.component.children as any}
-        value="first"
-      />
-    ),
+    Component: (props) => <AccordionItem {...props} />,
     modifiers: ["accordionItem", "spacing", "size", "border", "effects"],
     actionTriggers: [],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   AccordionControl: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <AccordionControl
-        component={props.component}
-        renderTree={props.renderTree}
-        // eslint-disable-next-line react/no-children-prop
-        children={props.component.children as any}
-      />
-    ),
+    Component: (props) => <AccordionControl {...props} />,
     modifiers: ["spacing", "size", "border", "effects"],
     actionTriggers: [],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   AccordionPanel: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <AccordionPanel
-        component={props.component}
-        renderTree={props.renderTree}
-        // eslint-disable-next-line react/no-children-prop
-        children={props.component.children as any}
-      />
-    ),
+    Component: (props) => <AccordionPanel {...props} />,
     modifiers: ["spacing", "size", "border", "effects"],
     actionTriggers: [],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Navbar: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <Navbar
-        component={props.component}
-        renderTree={props.renderTree}
-        // eslint-disable-next-line react/no-children-prop
-        children={props.component.children as any}
-      />
-    ),
+    Component: (props) => <Navbar {...props} />,
     modifiers: ["navbar", "spacing", "border", "effects"],
     actionTriggers: [],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   AppBar: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <AppBar component={props.component} renderTree={props.renderTree} />
-    ),
+    Component: (props) => <AppBar {...props} />,
     modifiers: ["layout", "background", "spacing", "size", "border", "effects"],
     actionTriggers: [],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   BarChart: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <BarChart renderTree={props.renderTree} component={props.component} />
-    ),
+    Component: (props) => <BarChart {...props} />,
     modifiers: ["chart", "spacing", "size", "border", "effects"],
     actionTriggers: [],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   LineChart: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <LineChart renderTree={props.renderTree} component={props.component} />
-    ),
+    Component: (props) => <LineChart {...props} />,
     modifiers: ["chart", "spacing", "size", "border", "effects"],
     actionTriggers: [],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   PieChart: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <PieChart renderTree={props.renderTree} component={props.component} />
-    ),
+    Component: (props) => <PieChart {...props} />,
     modifiers: ["chart", "spacing", "size", "border", "effects"],
     actionTriggers: [],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   AreaChart: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <AreaChart renderTree={props.renderTree} component={props.component} />
-    ),
+    Component: (props) => <AreaChart {...props} />,
     modifiers: ["chart", "spacing", "size", "border", "effects"],
     actionTriggers: [],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   RadarChart: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <RadarChart renderTree={props.renderTree} component={props.component} />
-    ),
+    Component: (props) => <RadarChart {...props} />,
     modifiers: ["chart", "spacing", "size", "border", "effects"],
     actionTriggers: [],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   RadialChart: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <RadialChart renderTree={props.renderTree} component={props.component} />
-    ),
+    Component: (props) => <RadialChart {...props} />,
     modifiers: ["chart", "spacing", "size", "border", "effects"],
     actionTriggers: [],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Button: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => {
-      return (
-        <Button component={props.component} renderTree={props.renderTree} />
-      );
+    Component: (props) => {
+      return <Button {...props} />;
     },
     modifiers: [
       "button",
@@ -1553,16 +1342,7 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   ButtonIcon: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <ButtonIcon
-        component={props.component}
-        renderTree={props.renderTree}
-        // @ts-ignore
-        onClick={(e) => {
-          e.preventDefault();
-        }}
-      />
-    ),
+    Component: (props) => <ButtonIcon {...props} />,
     modifiers: [
       "buttonIcon",
       "spacing",
@@ -1575,47 +1355,31 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Form: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <Form component={props.component} renderTree={props.renderTree} />
-    ),
+    Component: (props) => <Form {...props} />,
     modifiers: ["layout", "spacing", "size", "border", "effects"],
     actionTriggers: ["onSubmit", "onReset", "onInvalid", "onBlur"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Modal: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      // @ts-ignore
-      <Modal component={props.component} renderTree={props.renderTree} />
-    ),
+    Component: (props) => <Modal {...props} />,
     modifiers: ["modal", "spacing", "border", "effects"],
     actionTriggers: ["onClose"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Drawer: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      // @ts-ignore
-      <Drawer component={props.component} renderTree={props.renderTree} />
-    ),
+    Component: (props) => <Drawer {...props} />,
     modifiers: ["drawer", "border", "effects"],
     actionTriggers: ["onClose"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   PopOver: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      // @ts-ignore
-      <PopOver component={props.component} renderTree={props.renderTree} />
-    ),
+    Component: (props) => <PopOver {...props} />,
     modifiers: ["popOver", "border", "effects"],
     actionTriggers: ["onClose"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   GoogleMap: {
-    Component: (props: { component: ComponentStructure; renderTree: any }) => (
-      <GoogleMapPlugin
-        component={props.component}
-        renderTree={props.renderTree}
-      />
-    ),
+    Component: (props) => <GoogleMapPlugin {...props} />,
     modifiers: ["mapSettings", "size", "border", "effects"],
     actionTriggers: ["onClick"],
     sequentialTriggers: ["onSuccess", "onError"],

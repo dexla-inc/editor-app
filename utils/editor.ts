@@ -17,18 +17,18 @@ import { CSSProperties } from "react";
 import crawl from "tree-crawl";
 import { MantineThemeExtended } from "./types";
 import { ValueProps } from "@/types/dataBinding";
+import { RenderTreeFunc } from "@/types/component";
 
 export type ComponentStructure = {
   children?: ComponentStructure[];
 } & Component;
 
 export type EditableComponentMapper = {
-  renderTree: (component: ComponentTree, shareableContent?: any) => any;
+  renderTree: RenderTreeFunc;
   component: ComponentTree & Component;
   shareableContent?: any;
   isPreviewMode?: boolean;
   style?: CSSObject & { display?: string | ValueProps };
-  ref?: any;
 };
 
 type ComponentBase = {

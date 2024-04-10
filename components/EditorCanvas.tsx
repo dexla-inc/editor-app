@@ -12,6 +12,7 @@ import { memo } from "react";
 import { CustomComponentModal } from "@/components/CustomComponentModal";
 import { useUserConfigStore } from "@/stores/userConfig";
 import useEditorHotkeysUndoRedo from "@/hooks/useEditorHotkeysUndoRedo";
+import { RenderTreeFunc } from "@/types/component";
 
 type Props = {
   projectId: string;
@@ -26,7 +27,7 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
     (state) => state.isCustomComponentModalOpen,
   );
 
-  const renderTree = (componentTree: ComponentTree, shareableContent = {}) => {
+  const renderTree: RenderTreeFunc = (componentTree, shareableContent) => {
     if (componentTree.id === "root") {
       return (
         <Droppable
@@ -43,7 +44,9 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
             display="flex"
             sx={{ flexDirection: "column" }}
           >
-            {componentTree.children?.map((child) => renderTree(child))}
+            {componentTree.children?.map((child) =>
+              renderTree(child, shareableContent),
+            )}
           </Paper>
         </Droppable>
       );
@@ -54,26 +57,16 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
     const componentToRender = componentMapper[component.name];
 
     if (!componentToRender) {
-      return (
-        <EditableComponentContainer
-          key={`${component.id}`}
-          componentTree={componentTree}
-          shareableContent={shareableContent}
-        >
-          {componentTree.children?.map((child) => renderTree(child))}
-        </EditableComponentContainer>
+      return componentTree.children?.map((child) =>
+        renderTree(child, shareableContent),
       );
     }
 
-    return (
-      <EditableComponentContainer
-        key={`${component.id}`}
-        componentTree={componentTree}
-        shareableContent={shareableContent}
-      >
-        {componentToRender?.Component({ component, renderTree })}
-      </EditableComponentContainer>
-    );
+    return componentToRender?.Component({
+      component: componentTree,
+      renderTree,
+      shareableContent,
+    });
   };
 
   if ((editorTree?.root?.children ?? [])?.length === 0) {
