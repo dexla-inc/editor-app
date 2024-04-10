@@ -28,6 +28,7 @@ export type SectionId =
   | "theme"
   | "datasources"
   | "customCode"
+  | "history"
   | "settings"
   | "assets";
 

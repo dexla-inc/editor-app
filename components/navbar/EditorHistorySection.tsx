@@ -1,31 +1,15 @@
-import { ActionIconDefault } from "@/components/ActionIconDefault";
-import { AssetImages } from "@/components/storage/AssetImages";
 import { usePageStateHistory } from "@/hooks/reactQuery/usePageStateHistory";
-import { useStorageQuery } from "@/hooks/reactQuery/useStorageQuery";
-import { uploadFile } from "@/requests/storage/mutations";
-import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
-import {
-  Card,
-  FileButton,
-  Flex,
-  Group,
-  LoadingOverlay,
-  Pagination,
-  Paper,
-  Stack,
-  Text,
-  TextInput,
-} from "@mantine/core";
+import { LARGE_ICON_SIZE } from "@/utils/config";
+import { LoadingOverlay, Stack, Text } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
-import { IconSearch } from "@tabler/icons-react";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import { Icon } from "../Icon";
-import { PageStateHistoryResponse } from "@/requests/pages/types";
 import { rollbackPageState } from "@/requests/pages/mutations";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { decodeSchema } from "@/utils/compression";
 import { queryClient } from "@/utils/reactQuery";
+import { PageHistoryItem } from "./PageHistoryItem";
 
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -118,40 +102,5 @@ export const EditorHistorySection = () => {
         </Stack>
       )}
     </Stack>
-  );
-};
-
-type Props = {
-  history: PageStateHistoryResponse;
-  onRollback: (id: string) => void;
-  index: number;
-};
-
-const PageHistoryItem = ({ history, onRollback, index }: Props) => {
-  return (
-    <Card p="xs" w="100%">
-      <Stack>
-        <Flex align="center" w="100%" gap="xs" justify="space-between">
-          <Text size="xs" fw={500}>
-            {history.description ?? "Need to add description"}
-          </Text>
-          <ActionIconDefault
-            iconName="IconArrowBack"
-            tooltip="Revert to version"
-            onClick={() => onRollback(history.id)}
-          />
-        </Flex>
-        <Flex align="center" gap="xs" justify="space-between">
-          <Text size="xs" color="dimmed">
-            {new Date(history.created).toLocaleString()}
-          </Text>
-          {index === 0 && (
-            <Text size="xs" color="dimmed">
-              Current
-            </Text>
-          )}
-        </Flex>
-      </Stack>
-    </Card>
   );
 };
