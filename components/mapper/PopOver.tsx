@@ -25,7 +25,7 @@ const PopOverComponent = ({
     opened: propOpened,
     targetId,
     loading,
-    forceHide,
+    showInEditor,
     ...componentProps
   } = component.props as any;
 
@@ -68,7 +68,7 @@ const PopOverComponent = ({
     <MantinePopOver
       withinPortal
       trapFocus={false}
-      opened={isPreviewMode ? opened : !forceHide}
+      opened={isPreviewMode ? opened : !showInEditor}
       width="auto"
       portalProps={{
         target: target,

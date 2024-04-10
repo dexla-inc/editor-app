@@ -1594,7 +1594,7 @@ export const componentMapper: ComponentMapper = {
       // @ts-ignore
       <Modal component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["modal", "border", "effects"],
+    modifiers: ["modal", "spacing", "border", "effects"],
     actionTriggers: ["onClose"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
