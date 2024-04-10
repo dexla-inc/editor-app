@@ -57,3 +57,9 @@ export interface PageParams extends PagingParams {
   isHome?: boolean;
   slug?: string;
 }
+
+export type PageStateHistoryResponse = {
+  id: string;
+  created: number;
+  description: string;
+};

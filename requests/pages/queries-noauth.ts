@@ -3,10 +3,12 @@ import {
   PageListResponse,
   PageParams,
   PageResponse,
+  PageStateHistoryResponse,
   PageStateResponse,
 } from "@/requests/pages/types";
 import { getWithoutAuth } from "@/utils/apiNoAuth";
 import { buildQueryString } from "@/utils/dashboardTypes";
+import { PagingResponse } from "../types";
 
 export const getPageList = async (projectId: string, params?: PageParams) => {
   let url = `/projects/${projectId}/pages`;
@@ -45,6 +47,20 @@ export const getPageState = async (
     `/projects/${projectId}/pages/${pageId}/state?pageLoadTimestamp=${pageLoadTimestamp}&history=${history}`,
     init,
   )) as PageStateResponse;
+
+  return response;
+};
+
+export const getPageStateHistory = async (
+  projectId: string,
+  pageId: string,
+  timestamp: number,
+) => {
+  const response = (await getWithoutAuth<
+    PagingResponse<PageStateHistoryResponse>
+  >(
+    `/projects/${projectId}/pages/${pageId}/state/history?timestamp=${timestamp}`,
+  )) as PagingResponse<PageStateHistoryResponse>;
 
   return response;
 };
