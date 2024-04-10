@@ -8,12 +8,15 @@ export const jsonStructure = (props?: any): ComponentStructure => {
   const theme = props.theme ?? defaultTheme;
   const radioItemOne = radioItemStructure({
     theme,
-    label: "New Radio Item 1",
+    title: "Basic",
+    content: "For smaller businesses, with simple salaries and pay schedules.",
     props: { value: "change-me-1" },
   });
   const radioItemTwo = radioItemStructure({
     theme,
-    label: "New Radio Item 2",
+    title: "Complete",
+    content:
+      "For growing business who wants to create a rewarding place to work.",
     props: { value: "change-me-2" },
   });
 
