@@ -24,7 +24,7 @@ export const ModalData = ({ component }: DataProps) => {
     <Stack spacing="xs">
       <VisibilityModifier form={form} />
       <SegmentedControlYesNo
-        label="Force Hide in Editor"
+        label="Show in Editor"
         {...form.getInputProps("onLoad.forceHide")}
         onChange={(value) => {
           form.setFieldValue("onLoad.forceHide", value);

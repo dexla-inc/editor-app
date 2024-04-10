@@ -40,10 +40,6 @@ export const useComponentStates = () => {
       { label: "Active", value: "Active" },
       { label: "Complete", value: "Complete" },
     ],
-    Modal: [
-      { label: "Closed", value: "default" },
-      { label: "Opened", value: "opened" },
-    ],
     Popover: [
       { label: "Closed", value: "default" },
       { label: "Opened", value: "opened" },
@@ -52,10 +48,8 @@ export const useComponentStates = () => {
       { label: "Closed", value: "default" },
       { label: "Opened", value: "opened" },
     ],
-    Drawer: [
-      { label: "Closed", value: "default" },
-      { label: "Opened", value: "opened" },
-    ],
+    Drawer: [],
+    Modal: [],
     BarChart: [],
     LineChart: [],
     PieChart: [],
