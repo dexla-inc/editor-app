@@ -21,7 +21,6 @@ export type Modifiers =
   | "checkbox"
   | "table"
   | "radio"
-  | "radioItem"
   | "stepper"
   | "drawer"
   | "buttonIcon"
@@ -306,8 +305,6 @@ export const requiredModifiers: RequiredModifiers = {
     weight: "normal",
     align: "left",
     withAsterisk: false,
-  },
-  radioItem: {
     value: "",
   },
   stepper: {
