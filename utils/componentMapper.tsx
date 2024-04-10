@@ -1249,14 +1249,7 @@ export const componentMapper: ComponentMapper = {
       // @ts-ignore
       <RadioItem component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: [
-      "radioItem",
-      "background",
-      "spacing",
-      "size",
-      "border",
-      "position",
-    ],
+    modifiers: ["background", "spacing", "size", "border", "position"],
     actionTriggers: [],
     sequentialTriggers: ["onSuccess", "onError"],
   },
