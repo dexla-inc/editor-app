@@ -144,6 +144,7 @@ import {
   IconClockHour5,
   IconContainer,
   IconCursorText,
+  IconLayoutCards,
   IconExclamationMark,
   IconFile,
   IconFileText,
@@ -233,11 +234,11 @@ export const structureMapper: StructureMapper = {
     Draggable: () => (
       <DraggableComponent
         id="Card"
-        icon={<IconBoxModel size={LARGE_ICON_SIZE} />}
+        icon={<IconLayoutCards size={LARGE_ICON_SIZE} />}
       />
     ),
     category: "Layout",
-    icon: <IconBoxModel size={ICON_SIZE} />,
+    icon: <IconLayoutCards size={ICON_SIZE} />,
   },
   Button: {
     structure: (props: any) => ButtonStructure.jsonStructure(props),
