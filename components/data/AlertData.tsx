@@ -11,11 +11,6 @@ export const AlertData = ({ component }: DataProps) => {
   const form = useForm({
     initialValues: {
       onLoad: component?.onLoad,
-      props: {
-        style: {
-          display: component.props?.style?.display,
-        },
-      },
     },
   });
 
@@ -30,11 +25,7 @@ export const AlertData = ({ component }: DataProps) => {
 
   return (
     <Stack spacing="xs">
-      <VisibilityModifier
-        componentId={component.id!}
-        componentName={component.name}
-        form={form}
-      />
+      <VisibilityModifier form={form} />
       <ComponentToBindFromSelect
         size="xs"
         label="State"

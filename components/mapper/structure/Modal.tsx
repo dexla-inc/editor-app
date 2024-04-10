@@ -221,6 +221,12 @@ export const jsonStructure = (props?: any): ComponentStructure => {
       ...(props.props || {}),
       ...defaultModalValues,
     },
+    onLoad: {
+      isVisible: {
+        dataType: "static",
+        static: true,
+      },
+    },
     children: [
       {
         id: nanoid(),

@@ -20,6 +20,7 @@ import { forwardRef, memo } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { memoize } from "proxy-memoize";
 import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
+import { useInputValue } from "@/hooks/useInputValue";
 
 type Props = EditableComponentMapper & SelectProps & MultiSelectProps;
 
@@ -44,6 +45,7 @@ const SelectComponent = forwardRef(
       loading,
       dataType,
       bg,
+      size,
       textColor,
       multiSelect,
       ...componentProps
@@ -53,11 +55,17 @@ const SelectComponent = forwardRef(
       ? MantineMultiSelect
       : MantineSelect;
 
-    const componentId = component.id as string;
     const onLoad = useEditorTreeStore(
       memoize(
         (state) => state.componentMutableAttrs[component?.id!]?.onLoad ?? {},
       ),
+    );
+
+    const [value, setValue] = useInputValue(
+      {
+        value: onLoad?.value ?? "",
+      },
+      component.id!,
     );
 
     const { dataLabelKey, dataValueKey } = onLoad;
@@ -68,11 +76,6 @@ const SelectComponent = forwardRef(
       backgroundColor,
       color,
     });
-    const inputValue = useComputeValue({
-      componentId: component.id!,
-      field: "value",
-      shareableContent,
-    });
 
     const { data: response } = useEndpoint({
       onLoad,
@@ -80,11 +83,7 @@ const SelectComponent = forwardRef(
     });
 
     const handleChange = (value: string) => {
-      updateTreeComponentAttrs({
-        componentIds: [componentId],
-        attrs: { onLoad: { value: { static: value, dataType: "static" } } },
-        save: false,
-      });
+      setValue(value);
       onChange?.(value);
     };
 
@@ -108,13 +107,7 @@ const SelectComponent = forwardRef(
       data = component.props?.data ?? [];
     }
 
-    const rootStyleProps = [
-      "display",
-      "width",
-      "height",
-      "minHeight",
-      "minWidth",
-    ];
+    const rootStyleProps = ["display", "width", "minHeight", "minWidth"];
 
     return (
       <MantineSelectWrapper
@@ -135,7 +128,7 @@ const SelectComponent = forwardRef(
             position: "relative",
             ...pick(customStyle, rootStyleProps),
           },
-          input: customStyle,
+          input: { ...customStyle, minHeight: "auto" },
           values: { height: "inherit" },
         }}
         withinPortal={false}
@@ -144,7 +137,7 @@ const SelectComponent = forwardRef(
         dropdownComponent={CustomDropdown}
         rightSection={loading ? <InputLoader /> : null}
         label={undefined}
-        value={inputValue}
+        value={value}
         wrapperProps={{ "data-id": component.id }}
       />
     );

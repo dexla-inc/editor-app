@@ -210,11 +210,7 @@ export const DynamicSettings = ({
           </>
         )}
       </SidebarSection>
-      <VisibilityModifier
-        componentId={component.id!}
-        componentName={component.name}
-        form={form}
-      />
+      <VisibilityModifier form={form} />
     </>
   );
 };

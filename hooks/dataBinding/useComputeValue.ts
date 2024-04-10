@@ -7,6 +7,7 @@ import { useMemo } from "react";
 import get from "lodash.get";
 import { ValueProps } from "@/types/dataBinding";
 import { safeJsonParse } from "@/utils/common";
+import { useInputsStore } from "@/stores/inputs";
 
 type NextRouterKeys = keyof NextRouter;
 type RecordStringAny = Record<string, any>;
@@ -117,13 +118,10 @@ export const useComputeValue = ({
     ),
   ) as RecordStringAny;
 
-  const inputs = useEditorTreeStore(
+  const inputs = useInputsStore(
     memoize((state) =>
       componentKeys.reduce(
-        (acc, key) => ({
-          ...acc,
-          [key]: state.componentMutableAttrs[key]?.onLoad?.value.static ?? "",
-        }),
+        (acc, key) => ({ ...acc, [key]: state.inputValues[key] ?? "" }),
         {},
       ),
     ),

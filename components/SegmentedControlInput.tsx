@@ -1,5 +1,10 @@
 import { TopLabel } from "@/components/TopLabel";
-import { SegmentedControl, SegmentedControlProps, Stack } from "@mantine/core";
+import {
+  Flex,
+  SegmentedControl,
+  SegmentedControlProps,
+  Stack,
+} from "@mantine/core";
 
 interface Props extends SegmentedControlProps {
   label?: string;
@@ -7,9 +12,9 @@ interface Props extends SegmentedControlProps {
 
 export const SegmentedControlInput = ({ label, ...props }: Props) => {
   return (
-    <Stack spacing={2}>
+    <Flex gap={2} direction="column" style={{ flexGrow: 1 }}>
       {label && <TopLabel text={label} />}
       <SegmentedControl {...props} />
-    </Stack>
+    </Flex>
   );
 };

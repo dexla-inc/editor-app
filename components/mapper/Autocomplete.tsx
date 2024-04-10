@@ -17,6 +17,7 @@ import { forwardRef, memo, useEffect, useState } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { memoize } from "proxy-memoize";
 import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
+import { useInputValue } from "@/hooks/useInputValue";
 
 type Props = EditableComponentMapper & AutocompleteProps;
 
@@ -33,15 +34,21 @@ const AutocompleteComponent = forwardRef(
       ...componentProps
     } = component.props as any;
 
-    const componentId = component.id as string;
     const onLoad = useEditorTreeStore(
-      memoize((state) => state.componentMutableAttrs[component?.id!]?.onLoad),
+      memoize(
+        (state) => state.componentMutableAttrs[component?.id!]?.onLoad ?? {},
+      ),
     );
+
+    const [value, setValue] = useInputValue(
+      {
+        value: onLoad?.value ?? "",
+      },
+      component.id!,
+    );
+
     const { dataLabelKey, dataValueKey } = onLoad ?? {};
     const { onChange, onItemSubmit, ...restTriggers } = triggers || {};
-    const updateTreeComponentAttrs = useEditorTreeStore(
-      (state) => state.updateTreeComponentAttrs,
-    );
 
     const { color, backgroundColor } = useChangeState({ bg, textColor });
     const { borderStyle, inputStyle } = useBrandingStyles();
@@ -49,16 +56,11 @@ const AutocompleteComponent = forwardRef(
       backgroundColor,
       color,
     });
-    const inputValue = useComputeValue({
-      componentId: component.id!,
-      field: "value",
-      shareableContent,
-    });
 
     const { data: response, isLoading } = useEndpoint({
       onLoad,
       dataType,
-      enabled: !!inputValue,
+      enabled: !!value,
     });
 
     let data = [];
@@ -80,16 +82,7 @@ const AutocompleteComponent = forwardRef(
     const [timeoutId, setTimeoutId] = useState(null);
 
     const handleChange = (item: any) => {
-      updateTreeComponentAttrs({
-        componentIds: [componentId],
-        attrs: {
-          onLoad: {
-            static: { label: item.label, value: item.value },
-            dataType: "static",
-          },
-        },
-        save: false,
-      });
+      setValue(item);
 
       if (timeoutId) {
         clearTimeout(timeoutId);
@@ -108,21 +101,12 @@ const AutocompleteComponent = forwardRef(
 
     const handleItemSubmit = (item: AutocompleteItem) => {
       setItemSubmitted(true);
-      updateTreeComponentAttrs({
-        componentIds: [componentId],
-        attrs: {
-          onLoad: {
-            static: { label: item.label, value: item.value },
-            dataType: "static",
-          },
-        },
-        save: false,
-      });
+      setValue(item);
     };
 
     useEffect(() => {
-      if (itemSubmitted && onItemSubmit && inputValue) {
-        onItemSubmit && onItemSubmit(inputValue.value);
+      if (itemSubmitted && onItemSubmit && value) {
+        onItemSubmit && onItemSubmit(value.value);
         setItemSubmitted(false);
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -158,7 +142,7 @@ const AutocompleteComponent = forwardRef(
         dropdownComponent={CustomDropdown}
         rightSection={loading || isLoading ? <InputLoader /> : null}
         label={undefined}
-        value={inputValue?.label ?? inputValue}
+        value={value?.label ?? value}
       />
     );
   },
