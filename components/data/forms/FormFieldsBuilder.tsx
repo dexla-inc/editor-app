@@ -58,11 +58,6 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
   const form = useForm({
     initialValues: {
       onLoad: onLoadValues,
-      props: {
-        style: {
-          display: component.props?.style?.display,
-        },
-      },
     },
   });
 
@@ -126,11 +121,7 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
           </Group>
         );
       })}
-      <VisibilityModifier
-        componentId={component.id!}
-        componentName={component.name}
-        form={form}
-      />
+      <VisibilityModifier form={form} />
       <ComponentToBindFromSelect
         size="xs"
         label="State"

@@ -13,11 +13,6 @@ export const CommonData = ({ component }: DataProps) => {
       onLoad: {
         currentState: component?.onLoad?.currentState || "default",
       },
-      props: {
-        style: {
-          display: component.props?.style?.display,
-        },
-      },
     },
   });
 
@@ -32,11 +27,7 @@ export const CommonData = ({ component }: DataProps) => {
 
   return (
     <Stack spacing="xs">
-      <VisibilityModifier
-        componentId={component.id!}
-        componentName={component.name}
-        form={form}
-      />
+      <VisibilityModifier form={form} />
       <ComponentToBindFromSelect
         size="xs"
         label="State"

@@ -1,7 +1,6 @@
 import { APICallActionForm } from "@/components/actions/APICallActionForm";
 import { ChangeLanguageActionForm } from "@/components/actions/ChangeLanguageActionForm";
 import { ChangeStateActionForm } from "@/components/actions/ChangeStateActionForm";
-import { ChangeVisibilityActionForm } from "@/components/actions/ChangeVisibilityActionForm";
 import { CustomJavascriptActionForm } from "@/components/actions/CustomJavascriptActionForm";
 import { DebugActionForm } from "@/components/actions/DebugActionForm";
 import { GoToUrlForm } from "@/components/actions/GoToUrlForm";
@@ -23,17 +22,12 @@ import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useVariableStore } from "@/stores/variables";
 import { readDataFromStream } from "@/utils/api";
-import {
-  getComponentInitialDisplayValue,
-  isObject,
-  safeJsonParse,
-} from "@/utils/common";
+import { isObject, safeJsonParse } from "@/utils/common";
 import { Component } from "@/utils/editor";
 import { executeFlow } from "@/utils/logicFlows";
 import { ArrayMethods } from "@/utils/types";
 import { UseFormReturnType } from "@mantine/form";
 import { showNotification } from "@mantine/notifications";
-import isEmpty from "lodash.isempty";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { Router } from "next/router";
@@ -91,7 +85,6 @@ export const actions: ActionInfo[] = [
   { name: "changeVariable", group: "Data & Logic", icon: "IconVariable" },
   { name: "resetVariable", group: "Data & Logic", icon: "IconVariableOff" },
   { name: "changeState", group: "Design", icon: "IconTransform" },
-  { name: "changeVisibility", group: "Design", icon: "IconEyeOff" },
   { name: "navigateToPage", group: "Navigation", icon: "IconFileInvoice" },
   { name: "goToUrl", group: "Navigation", icon: "IconLink" },
   { name: "showNotification", group: "Feedback" },
@@ -148,12 +141,6 @@ export interface TriggerLogicFlowAction extends BaseAction {
   // obsolete, use logicFlow instead
   logicFlowId: string;
   logicFlow: LogicFlowResponse;
-}
-
-export interface TogglePropsAction extends BaseAction {
-  name: "changeVisibility";
-  componentId: ValueProps;
-  visibilityType: string;
 }
 
 export interface ShowNotificationAction extends BaseAction {
@@ -222,7 +209,6 @@ export type ActionType =
   | AlertAction
   | APICallAction
   | GoToUrlAction
-  | TogglePropsAction
   | ShowNotificationAction
   | ChangeStateAction
   | TriggerLogicFlowAction
@@ -318,83 +304,12 @@ export type ShowNotificationActionParams = ActionParams & {
   action: ShowNotificationAction;
 };
 
-export type TogglePropsActionParams = ActionParams & {
-  action: TogglePropsAction;
-};
-
 export type ChangeStateActionParams = ActionParams & {
   action: ChangeStateAction;
 };
 
 export type ChangeLanguageActionParams = ActionParams & {
   action: ChangeLanguageAction;
-};
-
-const createVisibilityObject = (value: string, currentDisplay: any) => ({
-  ...currentDisplay,
-  dataType: "static",
-  static: value,
-});
-
-const getComponentDisplayUpdate = (
-  visibilityType: string,
-  parsedCurrentDisplay: string,
-  defaultDisplayValue: string,
-  currentDisplay?: ValueProps,
-) => {
-  if (visibilityType === "toggle") {
-    return parsedCurrentDisplay === "none"
-      ? createVisibilityObject(defaultDisplayValue, currentDisplay)
-      : createVisibilityObject("none", currentDisplay);
-  } else return createVisibilityObject(visibilityType, currentDisplay);
-};
-
-export const useChangeVisibilityAction = ({
-  action,
-  computeValue,
-  actionResponses,
-}: TogglePropsActionParams) => {
-  const updateTreeComponentAttrs = useEditorTreeStore(
-    (state) => state.updateTreeComponentAttrs,
-  );
-  const componentId = computeValue<string>(
-    { value: action.componentId },
-    { actions: actionResponses },
-  );
-  const component = useEditorTreeStore(
-    (state) => state.componentMutableAttrs[componentId],
-  );
-
-  const defaultDisplayValue = getComponentInitialDisplayValue(component?.name!);
-
-  // Determine the current display state of the component
-  const currentDisplay = component?.props?.style?.display;
-  const parsedCurrentDisplay = computeValue<string>(
-    {
-      value: currentDisplay,
-      staticFallback: defaultDisplayValue,
-    },
-    { actions: actionResponses },
-  );
-
-  // Get value to update the display to
-  const newDisplay = getComponentDisplayUpdate(
-    action.visibilityType,
-    parsedCurrentDisplay,
-    defaultDisplayValue,
-    currentDisplay,
-  );
-
-  // Update the component with the new display value
-  updateTreeComponentAttrs({
-    componentIds: [componentId],
-    attrs: {
-      props: {
-        style: { display: newDisplay },
-      },
-    },
-    save: false,
-  });
 };
 
 export const useShowNotificationAction = async ({
@@ -943,13 +858,6 @@ export const actionMapper = {
     action: useChangeStateAction,
     form: ChangeStateActionForm,
     defaultValues: {},
-  },
-  changeVisibility: {
-    action: useChangeVisibilityAction,
-    form: ChangeVisibilityActionForm,
-    defaultValues: {
-      visibilityType: "toggle",
-    },
   },
   changeLanguage: {
     action: useChangeLanguageAction,

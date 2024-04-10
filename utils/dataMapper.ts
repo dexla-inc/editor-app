@@ -66,6 +66,3 @@ export const dataMapper = {
   RadarChart: Chart,
   RadialChart: Chart,
 };
-
-export const showVisibilityModifier = (component: any) =>
-  !Object.keys(dataMapper).includes(component.name);
