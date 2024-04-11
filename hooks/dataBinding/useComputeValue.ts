@@ -2,7 +2,6 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 import { useVariableStore } from "@/stores/variables";
 import { NextRouter, useRouter } from "next/router";
 import { useDataSourceStore } from "@/stores/datasource";
-import { memoize } from "proxy-memoize";
 import { useMemo } from "react";
 import get from "lodash.get";
 import { ValueProps } from "@/types/dataBinding";
@@ -45,7 +44,7 @@ export const useComputeValue = ({
 }: UseComputeValue) => {
   const browser = useRouter();
   const fieldValue = useEditorTreeStore(
-    memoize(
+    useShallow(
       (state) =>
         state.componentMutableAttrs[componentId]?.onLoad?.[field] ?? {},
     ),
@@ -125,7 +124,7 @@ export const useComputeValue = ({
   ) as RecordStringAny;
 
   const auth = useDataSourceStore(
-    memoize((state) =>
+    useShallow((state) =>
       authKeys.reduce(
         (acc, key) => ({
           ...acc,

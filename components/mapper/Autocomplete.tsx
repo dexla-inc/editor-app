@@ -15,9 +15,8 @@ import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { forwardRef, memo, useEffect, useState } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { memoize } from "proxy-memoize";
-import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
 import { useInputValue } from "@/hooks/useInputValue";
+import { useShallow } from "zustand/react/shallow";
 
 type Props = EditableComponentMapper & AutocompleteProps;
 
@@ -35,7 +34,7 @@ const AutocompleteComponent = forwardRef(
     } = component.props as any;
 
     const onLoad = useEditorTreeStore(
-      memoize(
+      useShallow(
         (state) => state.componentMutableAttrs[component?.id!]?.onLoad ?? {},
       ),
     );

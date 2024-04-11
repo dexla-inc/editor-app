@@ -1,7 +1,6 @@
 import { useVariableStore } from "@/stores/variables";
 import { NextRouter, useRouter } from "next/router";
 import { useDataSourceStore } from "@/stores/datasource";
-import { memoize } from "proxy-memoize";
 import { useCallback, useMemo } from "react";
 import get from "lodash.get";
 import { ValueProps } from "@/types/dataBinding";
@@ -128,7 +127,7 @@ export const useComputeValue2 = ({
   ) as RecordStringAny;
 
   const auth = useDataSourceStore(
-    memoize((state) =>
+    useShallow((state) =>
       authKeys.reduce(
         (acc, key) => ({
           ...acc,

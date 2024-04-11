@@ -1,10 +1,8 @@
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { Component } from "@/utils/editor";
-import { useMemo } from "react";
-import { useDataBinding } from "@/hooks/dataBinding/useDataBinding";
+import { useComputeValue2 } from "@/hooks/dataBinding/useComputeValue2";
 
 export const useComputeCurrentState = (component: Component): string => {
-  const { computeValue } = useDataBinding();
   const isEditorMode = useEditorTreeStore(
     (state) => !state.isPreviewMode && !state.isLive,
   );
@@ -12,12 +10,9 @@ export const useComputeCurrentState = (component: Component): string => {
     (state) => state.currentTreeComponentsStates?.[component.id!] ?? "default",
   );
 
-  return useMemo(() => {
-    const boundState = computeValue<string>({
-      value: component.onLoad?.currentState,
-      staticFallback: "default",
-    });
+  const { currentState } = useComputeValue2({
+    onLoad: component.onLoad,
+  });
 
-    return isEditorMode ? editorComponentState : boundState;
-  }, [component, computeValue, isEditorMode, editorComponentState]);
+  return isEditorMode ? editorComponentState : currentState;
 };

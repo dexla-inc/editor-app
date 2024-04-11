@@ -16,10 +16,10 @@ import {
 } from "@mantine/core";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
-import { forwardRef, memo, useEffect } from "react";
+import { forwardRef, memo } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useInputValue } from "@/hooks/useInputValue";
-import { memoize } from "proxy-memoize";
+import { useShallow } from "zustand/react/shallow";
 
 type Props = EditableComponentMapper & NumberInputProps & TextInputProps;
 
@@ -60,7 +60,9 @@ const InputComponent = forwardRef(
     const { borderStyle, inputStyle } = useBrandingStyles();
 
     const onLoad = useEditorTreeStore(
-      memoize((state) => state.componentMutableAttrs[component?.id!]?.onLoad),
+      useShallow(
+        (state) => state.componentMutableAttrs[component?.id!]?.onLoad,
+      ),
     );
 
     const [value, setValue] = useInputValue(

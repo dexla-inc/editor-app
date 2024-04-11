@@ -10,10 +10,9 @@ import {
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { ChangeEvent, forwardRef, memo } from "react";
-import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useInputValue } from "@/hooks/useInputValue";
-import { memoize } from "proxy-memoize";
+import { useShallow } from "zustand/react/shallow";
 type Props = EditableComponentMapper & TextareaProps;
 
 const TextareaComponent = forwardRef(
@@ -33,7 +32,7 @@ const TextareaComponent = forwardRef(
     });
 
     const onLoad = useEditorTreeStore(
-      memoize(
+      useShallow(
         (state) => state.componentMutableAttrs[component?.id!]?.onLoad ?? {},
       ),
     );

@@ -3,10 +3,10 @@ import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import { Group, Radio as MantineRadio, RadioGroupProps } from "@mantine/core";
 import merge from "lodash.merge";
-import { forwardRef, memo, useState } from "react";
+import { forwardRef, memo } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { memoize } from "proxy-memoize";
 import { useInputValue } from "@/hooks/useInputValue";
+import { useShallow } from "zustand/react/shallow";
 
 type Props = EditableComponentMapper & RadioGroupProps;
 
@@ -25,7 +25,7 @@ const RadioComponent = forwardRef(
     };
 
     const onLoad = useEditorTreeStore(
-      memoize(
+      useShallow(
         (state) => state.componentMutableAttrs[component?.id!]?.onLoad ?? {},
       ),
     );

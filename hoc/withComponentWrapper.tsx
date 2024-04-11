@@ -3,7 +3,6 @@ import { ComponentType, Fragment } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useShallow } from "zustand/react/shallow";
 import { CURSOR_COLORS } from "@/utils/config";
-import { memoize } from "proxy-memoize";
 import { useComputeCurrentState } from "@/hooks/reactQuery/useComputeCurrentState";
 import { useEditorStore } from "@/stores/editor";
 import {
@@ -33,7 +32,7 @@ export const withComponentWrapper = <T extends Record<string, any>>(
     );
 
     const isSelected = useEditorTreeStore(
-      memoize(
+      useShallow(
         (state) => state.selectedComponentIds?.includes(componentTree.id!),
       ),
     );
@@ -51,7 +50,9 @@ export const withComponentWrapper = <T extends Record<string, any>>(
     )!;
 
     const component = useEditorTreeStore(
-      memoize((state) => state.componentMutableAttrs[componentTree.id!] ?? {}),
+      useShallow(
+        (state) => state.componentMutableAttrs[componentTree.id!] ?? {},
+      ),
     );
 
     const hasTooltip = !!component?.props?.tooltip;

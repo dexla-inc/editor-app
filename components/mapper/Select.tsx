@@ -18,9 +18,8 @@ import { pick } from "next/dist/lib/pick";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { forwardRef, memo } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { memoize } from "proxy-memoize";
-import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
 import { useInputValue } from "@/hooks/useInputValue";
+import { useShallow } from "zustand/react/shallow";
 
 type Props = EditableComponentMapper & SelectProps & MultiSelectProps;
 
@@ -56,7 +55,7 @@ const SelectComponent = forwardRef(
       : MantineSelect;
 
     const onLoad = useEditorTreeStore(
-      memoize(
+      useShallow(
         (state) => state.componentMutableAttrs[component?.id!]?.onLoad ?? {},
       ),
     );
