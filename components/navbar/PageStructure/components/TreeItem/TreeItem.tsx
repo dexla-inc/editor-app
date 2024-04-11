@@ -16,6 +16,7 @@ import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { structureMapper } from "@/utils/componentMapper";
 import { ICON_SIZE } from "@/utils/config";
 import {
+  Component,
   ComponentTree,
   debouncedTreeComponentAttrsUpdate,
 } from "@/utils/editor";
@@ -36,10 +37,10 @@ import {
   IconDatabase,
   IconEyeOff,
 } from "@tabler/icons-react";
+import { useShallow } from "zustand/react/shallow";
 
 export interface Props extends Omit<HTMLAttributes<HTMLLIElement>, "id"> {
   id: any;
-  name?: string;
   childCount?: number;
   clone?: boolean;
   collapsed?: boolean;
@@ -50,7 +51,6 @@ export interface Props extends Omit<HTMLAttributes<HTMLLIElement>, "id"> {
   handleProps?: any;
   indicator?: boolean;
   indentationWidth: number;
-  value?: string;
   onCollapse?(): void;
   onRemove?(): void;
   wrapperRef?(node: HTMLLIElement): void;
@@ -74,9 +74,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
       onCollapse,
       onRemove,
       style,
-      value,
       id,
-      name,
       wrapperRef,
       component: componentTree,
       ...props
@@ -89,14 +87,23 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
       useDisclosure(false);
     const editFieldRef = useRef<HTMLInputElement>(null);
     const isSelected = useEditorTreeStore(
-      (state) => state.selectedComponentIds?.includes(id),
+      useShallow((state) => state.selectedComponentIds?.includes(id)),
     );
     const setSelectedComponentIds = useEditorTreeStore(
       (state) => state.setSelectedComponentIds,
     );
     const isDarkTheme = useUserConfigStore((state) => state.isDarkTheme);
     const component = useEditorTreeStore(
-      (state) => state.componentMutableAttrs[componentTree.id!] || {},
+      useShallow((state) => {
+        const c = state.componentMutableAttrs[componentTree.id!];
+        return {
+          actions: c?.actions?.length,
+          endpointId: c?.onLoad?.endpointId,
+          display: c?.props?.style?.display,
+          description: c?.description,
+          name: c?.name,
+        };
+      }),
     );
 
     const { componentContextMenu, forceDestroyContextMenu } =
@@ -104,7 +111,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
 
     const form = useForm({
       initialValues: {
-        value,
+        value: component.description,
       },
     });
 
@@ -130,8 +137,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
       if (e.key === "Enter" || e.key === "Escape") closeEdit();
     };
 
-    const icon = structureMapper[name as string]?.icon;
-    const componentActions = component.actions;
+    const icon = structureMapper[component.name as string]?.icon;
 
     useEffect(() => {
       const isRootOrContentWrapper = id === "root" || id === "content-wrapper";
@@ -176,7 +182,10 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
           toggleEdit();
         }}
         {...(editable && { onKeyDown: handleKeyPress })}
-        onContextMenu={componentContextMenu(component)}
+        onContextMenu={componentContextMenu({
+          id,
+          name: component.name,
+        } as Component)}
       >
         <div
           className={classNames(styles.TreeItem, isDarkTheme && styles.dark)}
@@ -276,19 +285,15 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
                   lineClamp={1}
                   sx={{ cursor: "move", width: "100%" }}
                 >
-                  {value}
+                  {component.description}
                 </Text>
               )}
             </Group>
           </Group>
           <Flex gap={4}>
-            {componentActions && !!componentActions.length && (
-              <IconBolt size={ICON_SIZE} />
-            )}
-            {component.props?.style?.display === "none" && (
-              <IconEyeOff size={ICON_SIZE} />
-            )}
-            {component.onLoad?.endpointId && <IconDatabase size={ICON_SIZE} />}
+            {!!component.actions && <IconBolt size={ICON_SIZE} />}
+            {component.display === "none" && <IconEyeOff size={ICON_SIZE} />}
+            {component.endpointId && <IconDatabase size={ICON_SIZE} />}
           </Flex>
         </div>
       </li>

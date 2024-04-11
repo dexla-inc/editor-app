@@ -1,7 +1,7 @@
 import Editor from "@/components/Editor";
 import { withPageOnLoad } from "@/hoc/withPageOnLoad";
 import { GetServerSidePropsContext } from "next";
-import { memo } from "react";
+import { memo, useEffect } from "react";
 import { listVariables } from "@/requests/variables/queries-noauth";
 import { useVariableStore } from "@/stores/variables";
 import { getDataSourceEndpoints } from "@/requests/datasources/queries-noauth";
@@ -74,11 +74,31 @@ type Props = {
 };
 
 const PageEditor = ({ project, page, variables, endpoints }: Props) => {
-  useVariableStore.getState().initializeVariableList(variables);
+  const initializeVariableList = useVariableStore(
+    (state) => state.initializeVariableList,
+  );
+  const setTheme = useThemeStore((state) => state.setTheme);
+  const setApiAuthConfig = useDataSourceStore(
+    (state) => state.setApiAuthConfig,
+  );
   const theme = prepareUserThemeLive(project);
-  useThemeStore.getState().setTheme(theme);
 
-  if (endpoints) useDataSourceStore.getState().setApiAuthConfig(endpoints);
+  useEffect(() => {
+    initializeVariableList(variables);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [variables]);
+
+  useEffect(() => {
+    setTheme(theme);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [theme]);
+
+  useEffect(() => {
+    if (endpoints) {
+      setApiAuthConfig(endpoints);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [endpoints]);
 
   return <Editor key={page} pageId={page} projectId={project.id} />;
 };

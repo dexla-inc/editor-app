@@ -32,7 +32,9 @@ export const withComponentWrapper = <T extends Record<string, any>>(
     );
 
     const isSelected = useEditorTreeStore(
-      (state) => state.selectedComponentIds?.includes(componentTree.id!),
+      memoize(
+        (state) => state.selectedComponentIds?.includes(componentTree.id!),
+      ),
     );
 
     const selectedByOther = useEditorTreeStore(
