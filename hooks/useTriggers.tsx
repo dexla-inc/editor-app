@@ -20,6 +20,8 @@ type UseTriggersProps = {
 export const useTriggers = ({ entity, projectId }: UseTriggersProps) => {
   const currentProjectId =
     useEditorTreeStore((state) => state.currentProjectId) ?? projectId;
+  const updateTreeComponentAttrs =
+    useEditorTreeStore.getState().updateTreeComponentAttrs;
   const router = useRouter();
   const { computeValue } = useDataBinding();
   const { data: endpoints } = useDataSourceEndpoints(currentProjectId);
@@ -65,6 +67,13 @@ export const useTriggers = ({ entity, projectId }: UseTriggersProps) => {
   const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (typeof triggers().onChange === "function") {
       triggers().onChange(e);
+    }
+    if (entity.props?.error) {
+      updateTreeComponentAttrs?.({
+        componentIds: [entity.id!],
+        attrs: { props: { error: `` } },
+        save: false,
+      });
     }
   };
 
