@@ -155,7 +155,10 @@ export const useComputeValue = ({
           `variables\\[(\\/\\* [\\S\\s]* \\*\\/)?\\s?'${key}'\\]`,
           "g",
         );
-        result = result.replaceAll(regex, variables[key]);
+        let replacer = variables[key];
+        replacer =
+          typeof replacer !== "string" ? JSON.stringify(replacer) : replacer;
+        result = result.replaceAll(regex, replacer);
       });
 
       componentKeys.forEach((key) => {

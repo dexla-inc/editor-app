@@ -79,13 +79,7 @@ const InputComponent = forwardRef(
 
     // clear input field
     const clearInput = async () => {
-      await updateTreeComponentAttrs({
-        componentIds: [component.id!],
-        attrs: {
-          onLoad: { value: { static: _defaultValue, dataType: "static" } },
-        },
-        save: false,
-      });
+      isNaN(value) ? setValue("") : setValue(0);
       const el = iframeWindow?.document.getElementById(component.id!);
       el?.focus();
     };
