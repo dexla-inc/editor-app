@@ -91,7 +91,7 @@ export const useComputeValue2 = ({
     }, [onLoad, valuePropsPaths]);
 
   const variables = useVariableStore(
-    memoize((state) =>
+    useShallow((state) =>
       variableKeys.reduce((acc, key) => {
         const variable = state.variableList.find((v) => v.id === key);
         const variableValue =
