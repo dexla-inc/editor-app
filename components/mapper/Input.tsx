@@ -35,7 +35,6 @@ const InputComponent = forwardRef(
 
     const {
       children,
-      error,
       type,
       icon,
       triggers,
@@ -70,8 +69,6 @@ const InputComponent = forwardRef(
       },
       component.id!,
     );
-
-    const newError = !value.length && error ? error : undefined;
 
     const isClearable = clearable && !!value;
     const customStyle = merge({}, borderStyle, inputStyle, props.style, {
@@ -120,20 +117,10 @@ const InputComponent = forwardRef(
         newValue = newValue ? Number(newValue) : 0;
       }
       setValue(newValue);
+      if (onChange) {
+        onChange(e);
+      }
     };
-
-    // TODO: Move to a hook. Doing this as we need to update input immediately but not call actions etc.
-    useEffect(() => {
-      // Set a timeout to delay the call to onChange
-      const timer = setTimeout(() => {
-        if (onChange) {
-          onChange();
-        }
-      }, 200);
-
-      // Cleanup function to clear the timeout if the component unmounts or if value changes
-      return () => clearTimeout(timer);
-    }, [value, onChange]);
 
     return (
       <>
@@ -245,7 +232,7 @@ const InputComponent = forwardRef(
             color={color}
             customStyle={customStyle}
             props={props}
-            componentProps={{ ...componentProps, error: newError }}
+            componentProps={componentProps}
             rootStyleProps={rootStyleProps}
           />
         ) : (
@@ -264,7 +251,6 @@ const InputComponent = forwardRef(
               input: { ...customStyle, minHeight: "auto" },
             }}
             value={value}
-            error={newError}
             {...restTriggers}
             onChange={handleChange}
             rightSection={
