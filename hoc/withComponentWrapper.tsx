@@ -18,6 +18,7 @@ import { useComputeChildStyles } from "@/hooks/useComputeChildStyles";
 import { useEditorClickHandler } from "@/hooks/useEditorClickHandler";
 import { ComponentToolbox } from "@/components/ComponentToolbox";
 import { WithComponentWrapperProps } from "@/types/component";
+import { Component } from "@/utils/editor";
 
 export const withComponentWrapper = <T extends Record<string, any>>(
   Component: ComponentType<T>,
@@ -115,6 +116,13 @@ export const withComponentWrapper = <T extends Record<string, any>>(
 
     if (!isVisible) return null;
 
+    const componentToolboxProps = {
+      id: component.id,
+      name: component.name,
+      description: component.description,
+      fixedPosition: component.fixedPosition,
+    } as Component;
+
     const props = {
       component: {
         ...component,
@@ -151,8 +159,8 @@ export const withComponentWrapper = <T extends Record<string, any>>(
         >
           <Component {...props} />
         </Wrapper>
-        {isSelected && isEditorMode && (
-          <ComponentToolbox component={component} />
+        {isSelected && isEditorMode && !shareableContent?.parentIndex && (
+          <ComponentToolbox component={componentToolboxProps} />
         )}
       </>
     );

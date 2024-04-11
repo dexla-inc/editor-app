@@ -11,6 +11,7 @@ import { CustomComponentModal } from "@/components/CustomComponentModal";
 import { useUserConfigStore } from "@/stores/userConfig";
 import useEditorHotkeysUndoRedo from "@/hooks/useEditorHotkeysUndoRedo";
 import { RenderTreeFunc } from "@/types/component";
+import { ComponentToolbox } from "@/components/ComponentToolbox";
 
 type Props = {
   projectId: string;
@@ -95,6 +96,7 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
             isCustomComponentModalOpen={isCustomComponentModalOpen}
           />
         )}
+        {/*<ComponentToolbox component={} />*/}
       </Box>
     </>
   );
