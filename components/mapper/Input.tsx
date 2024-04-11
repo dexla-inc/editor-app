@@ -35,6 +35,8 @@ const InputComponent = forwardRef(
 
     const {
       children,
+      error,
+      type,
       icon,
       triggers,
       loading,
@@ -51,7 +53,6 @@ const InputComponent = forwardRef(
       ...componentProps
     } = component.props as any;
 
-    const { type, ...restComponentProps } = componentProps;
     const { onChange, ...restTriggers } = triggers || {};
     const { name: iconName } = icon && icon!.props!;
     const { color, backgroundColor } = useChangeState({ bg, textColor });
@@ -69,6 +70,8 @@ const InputComponent = forwardRef(
       },
       component.id!,
     );
+
+    const newError = !value.length && error ? error : undefined;
 
     const isClearable = clearable && !!value;
     const customStyle = merge({}, borderStyle, inputStyle, props.style, {
@@ -159,7 +162,7 @@ const InputComponent = forwardRef(
                 type="number"
                 autoComplete="off"
                 id={component.id}
-                {...restComponentProps}
+                {...componentProps}
                 style={{}}
                 styles={{
                   root: {
@@ -199,7 +202,7 @@ const InputComponent = forwardRef(
         ) : type === "number" ? (
           <MantineNumberInput
             {...props}
-            {...restComponentProps}
+            {...componentProps}
             ref={ref}
             autoComplete="off"
             id={component.id}
@@ -242,7 +245,7 @@ const InputComponent = forwardRef(
             color={color}
             customStyle={customStyle}
             props={props}
-            restComponentProps={restComponentProps}
+            componentProps={{ ...componentProps, error: newError }}
             rootStyleProps={rootStyleProps}
           />
         ) : (
@@ -261,6 +264,7 @@ const InputComponent = forwardRef(
               input: { ...customStyle, minHeight: "auto" },
             }}
             value={value}
+            error={newError}
             {...restTriggers}
             onChange={handleChange}
             rightSection={

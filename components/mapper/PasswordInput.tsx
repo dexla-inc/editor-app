@@ -17,7 +17,7 @@ type Props = Omit<PasswordInputProps, "value"> & {
   displayRequirements?: boolean;
   testParameters: Record<string, any>;
   props: any;
-  restComponentProps: any;
+  componentProps: any;
   rootStyleProps: Array<keyof CSSProperties>;
 };
 
@@ -34,7 +34,7 @@ export const PasswordInput = ({
   color,
   onChange,
   props,
-  restComponentProps,
+  componentProps,
   rootStyleProps,
 }: Props) => {
   return (
@@ -47,7 +47,7 @@ export const PasswordInput = ({
     >
       <MantinePasswordInput
         {...props}
-        {...restComponentProps}
+        {...componentProps}
         ref={ref}
         id={componentId}
         icon={iconName ? <Icon name={iconName} /> : null}
