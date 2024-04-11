@@ -113,12 +113,18 @@ function LivePage({
   variables,
   endpoints,
 }: Props) {
-  useVariableStore.getState().initializeVariableList(variables);
-  if (endpoints) useDataSourceStore.getState().setApiAuthConfig(endpoints);
-  const setCurrentPageAndProjectIds =
-    useEditorTreeStore.getState().setCurrentPageAndProjectIds;
-  const setPreviewMode = useEditorTreeStore.getState().setPreviewMode;
-  const setIsLive = useEditorTreeStore.getState().setIsLive;
+  const initializeVariableList = useVariableStore(
+    (state) => state.initializeVariableList,
+  );
+  const setApiAuthConfig = useDataSourceStore(
+    (state) => state.setApiAuthConfig,
+  );
+  const setIsLive = useEditorTreeStore((state) => state.setIsLive);
+  const setCurrentPageAndProjectIds = useEditorTreeStore(
+    (state) => state.setCurrentPageAndProjectIds,
+  );
+  const setPreviewMode = useEditorTreeStore((state) => state.setPreviewMode);
+
   const theme = prepareUserThemeLive(project);
 
   useEffect(() => {
@@ -136,6 +142,18 @@ function LivePage({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [project, deploymentPage.id]);
+
+  useEffect(() => {
+    initializeVariableList(variables);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [variables]);
+
+  useEffect(() => {
+    if (endpoints) {
+      setApiAuthConfig(endpoints);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [endpoints]);
 
   return (
     <>
