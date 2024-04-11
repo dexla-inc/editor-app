@@ -9,8 +9,8 @@ import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { memo } from "react";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
-import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
 import { useChangeState } from "@/hooks/useChangeState";
+import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 
 type Props = EditableComponentMapper & DatePickerInputProps;
 
@@ -33,25 +33,13 @@ const DateInputComponent = ({
   } = component.props as any;
   const { borderStyle, inputStyle } = useBrandingStyles();
   const { color, backgroundColor } = useChangeState({ bg, textColor });
-
+  console.log({ component });
   const customStyle = merge({}, borderStyle, inputStyle, props.style);
   const isPositionLeft =
     !iconPosition || (iconPosition && iconPosition === "left");
+  const { type: typeValue, valueFormat: valueFormatValue } = component?.onLoad;
 
   const rootStyleProps = ["display", "width", "minHeight", "minWidth"];
-
-  const typeValue = useComputeValue({
-    componentId: component.id!,
-    field: "type",
-    shareableContent,
-    staticFallback: component.props?.type,
-  });
-  const valueFormatValue = useComputeValue({
-    componentId: component.id!,
-    field: "valueFormat",
-    shareableContent,
-    staticFallback: component.props?.valueFormat,
-  });
 
   return (
     <>
@@ -71,7 +59,11 @@ const DateInputComponent = ({
             ...pick(customStyle, rootStyleProps),
             height: "fit-content",
           },
-          input: { ...omit(customStyle, rootStyleProps), color, backgroundColor },
+          input: {
+            ...omit(customStyle, rootStyleProps),
+            color,
+            backgroundColor,
+          },
           icon: {
             color,
           },
@@ -85,4 +77,4 @@ const DateInputComponent = ({
   );
 };
 
-export const DateInput = memo(DateInputComponent);
+export const DateInput = memo(withComponentWrapper<Props>(DateInputComponent));

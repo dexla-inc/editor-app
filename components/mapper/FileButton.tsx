@@ -10,7 +10,6 @@ import merge from "lodash.merge";
 import { forwardRef, memo } from "react";
 import { isSame } from "@/utils/componentComparison";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
 
 type Props = EditableComponentMapper & FileButtonProps;
 
@@ -25,13 +24,7 @@ export const FileButtonComponent = forwardRef(
       component.id as string,
       ref,
     );
-
-    const nameValue = useComputeValue({
-      componentId: component.id!,
-      field: "name",
-      shareableContent,
-      staticFallback: component.props?.name,
-    });
+    const { name: nameValue } = component.onLoad;
 
     const { inputStyle } = useBrandingStyles();
     const customStyle = merge(inputStyle, style);

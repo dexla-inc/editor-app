@@ -5,7 +5,6 @@ import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import { Modal as MantineModal, ModalProps } from "@mantine/core";
 import { forwardRef, memo } from "react";
-import { useComputeValue2 } from "@/hooks/dataBinding/useComputeValue2";
 import { useVariableStore } from "@/stores/variables";
 import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { useShallow } from "zustand/react/shallow";
@@ -22,6 +21,7 @@ export const ModalComponent = forwardRef(
     const iframeWindow = useEditorStore((state) => state.iframeWindow);
 
     const { size, titleTag: tag, ...componentProps } = component.props as any;
+    const { showInEditor } = component.onLoad || {};
     const { titleStyle } = useBrandingStyles({ tag });
 
     const onLoad = useEditorTreeStore(
@@ -29,12 +29,6 @@ export const ModalComponent = forwardRef(
         (state) => state.componentMutableAttrs[component?.id!]?.onLoad,
       ),
     );
-
-    // This is not forceHide this is showInEditor
-    const { showInEditor } = useComputeValue2({
-      onLoad,
-      shareableContent,
-    });
 
     const target = iframeWindow?.document.getElementById("iframe-content");
 

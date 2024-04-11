@@ -6,7 +6,6 @@ import { EditableComponentMapper } from "@/utils/editor";
 import { AnchorProps, Anchor as MantineAnchor } from "@mantine/core";
 import merge from "lodash.merge";
 import { forwardRef, memo } from "react";
-import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
 
 type Props = EditableComponentMapper & AnchorProps;
 
@@ -14,18 +13,12 @@ const LinkComponent = forwardRef(
   ({ component, shareableContent, ...props }: Props, ref) => {
     const { triggers, variable, ...componentProps } = component.props as any;
     const { style, ...restProps } = props;
+    const { children: childrenValue } = component.onLoad;
 
     const contentEditableProps = useContentEditable(
       component.id as string,
       ref,
     );
-
-    const childrenValue = useComputeValue({
-      componentId: component.id!,
-      field: "children",
-      shareableContent,
-      staticFallback: component.props?.children,
-    });
 
     const { textStyle } = useBrandingStyles();
 

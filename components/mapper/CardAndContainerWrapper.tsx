@@ -4,7 +4,6 @@ import { EditableComponentMapper } from "@/utils/editor";
 import { FlexProps, LoadingOverlay, Flex as MantineFlex } from "@mantine/core";
 import { ForwardedRef } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { useShallow } from "zustand/react/shallow";
 
 type Props = EditableComponentMapper &
   FlexProps & { ref: ForwardedRef<unknown> };
@@ -21,13 +20,10 @@ export const CardAndContainerWrapper = ({
   const gapPx = convertSizeToPx(gap, "gap");
   const isPreviewMode = useEditorTreeStore((state) => state.isPreviewMode);
 
-  const onLoad = useEditorTreeStore(
-    useShallow((state) => state.componentMutableAttrs[component?.id!]?.onLoad),
-  );
-  const { endpointId } = onLoad ?? {};
+  const { endpointId } = component.onLoad ?? {};
 
   const { data } = useEndpoint({
-    onLoad,
+    onLoad: component.onLoad,
     dataType,
     includeExampleResponse: !isPreviewMode,
   });

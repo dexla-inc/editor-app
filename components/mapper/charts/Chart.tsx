@@ -9,8 +9,6 @@ import { useEndpoint } from "@/hooks/useEndpoint";
 import groupBy from "lodash.groupby";
 import { Box, Skeleton } from "@mantine/core";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
-import { useEditorTreeStore } from "@/stores/editorTree";
-import { useShallow } from "zustand/react/shallow";
 
 const ReactApexChart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
@@ -39,10 +37,6 @@ export const Chart = ({ component, ...props }: Props) => {
     ...componentProps
   } = component.props as any;
 
-  const onLoad = useEditorTreeStore(
-    useShallow((state) => state.componentMutableAttrs[component?.id!]?.onLoad),
-  );
-
   const theme = useThemeStore((state) => state.theme);
   const isPieOrRadial =
     component?.name === "PieChart" || component?.name === "RadialChart";
@@ -65,7 +59,7 @@ export const Chart = ({ component, ...props }: Props) => {
   const _foreColor = getChartColor(theme, foreColor, "Secondary.5");
 
   const { data: response, isLoading } = useEndpoint({
-    onLoad,
+    onLoad: component.onLoad,
     dataType,
   });
 

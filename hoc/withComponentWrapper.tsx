@@ -10,7 +10,7 @@ import {
   useComponentContextMenu,
 } from "@/hooks/useComponentContextMenu";
 import { useTriggers } from "@/hooks/useTriggers";
-import { useComputeValue2 } from "@/hooks/dataBinding/useComputeValue2";
+import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
 import { useEditorShadows } from "@/hooks/useEditorShadows";
 import { usePropsWithOverwrites } from "@/hooks/usePropsWithOverwrites";
 import { useComputeChildStyles } from "@/hooks/useComputeChildStyles";
@@ -36,6 +36,14 @@ export const withComponentWrapper = <T extends Record<string, any>>(
         (state) => state.selectedComponentIds?.includes(componentTree.id!),
       ),
     );
+
+    const onLoad = useEditorTreeStore(
+      useShallow(
+        (state) => state.componentMutableAttrs[componentTree?.id!]?.onLoad,
+      ),
+    );
+
+    const computedOnLoad = useComputeValue({ onLoad, shareableContent });
 
     const selectedByOther = useEditorTreeStore(
       useShallow((state) => {
@@ -63,7 +71,10 @@ export const withComponentWrapper = <T extends Record<string, any>>(
       ? Skeleton
       : Fragment;
 
-    let currentState = useComputeCurrentState(component);
+    let currentState = useComputeCurrentState(
+      componentTree.id!,
+      onLoad?.currentState,
+    );
 
     if (shareableContent?.parentState)
       currentState = shareableContent.parentState;
@@ -82,7 +93,7 @@ export const withComponentWrapper = <T extends Record<string, any>>(
       entity: component,
     });
 
-    const { isVisible = true } = useComputeValue2({
+    const { isVisible = true } = useComputeValue({
       onLoad: component.onLoad,
       shareableContent,
     });
@@ -129,6 +140,7 @@ export const withComponentWrapper = <T extends Record<string, any>>(
         ...component,
         ...componentTree,
         props: propsWithOverwrites,
+        onLoad: computedOnLoad ?? {},
       },
       renderTree,
       ...(isResizing || !isEditorMode ? {} : droppable),

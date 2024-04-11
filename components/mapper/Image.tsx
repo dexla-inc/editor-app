@@ -4,26 +4,13 @@ import { EditableComponentMapper } from "@/utils/editor";
 import { ImageProps, Image as MantineImage } from "@mantine/core";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { forwardRef, memo } from "react";
-import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
 
 type Props = EditableComponentMapper & ImageProps;
 
 const ImageComponent = forwardRef(
   ({ component, shareableContent, ...props }: Props, ref) => {
     const { triggers, loading, ...componentProps } = component.props as any;
-
-    const srcValue = useComputeValue({
-      componentId: component.id!,
-      field: "src",
-      shareableContent,
-      staticFallback: component.props?.src,
-    });
-    const altValue = useComputeValue({
-      componentId: component.id!,
-      field: "alt",
-      shareableContent,
-      staticFallback: component.props?.alt,
-    });
+    const { src: srcValue, alt: altValue } = component.onLoad;
 
     const {
       width,

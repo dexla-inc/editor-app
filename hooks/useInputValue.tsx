@@ -1,10 +1,8 @@
 import { useCallback, useEffect } from "react";
-import { useComputeValue2 } from "@/hooks/dataBinding/useComputeValue2";
 import { useInputsStore } from "@/stores/inputs";
 import { useShallow } from "zustand/react/shallow";
 
-export const useInputValue = (onLoad: any, componentId: string) => {
-  const { value = "" } = useComputeValue2({ onLoad: onLoad ?? {} });
+export const useInputValue = ({ value }: any, componentId: string) => {
   const setInputValue = useInputsStore((state) => state.setInputValue);
   const inputValue = useInputsStore(
     useShallow((state) => state.inputValues[componentId]),
