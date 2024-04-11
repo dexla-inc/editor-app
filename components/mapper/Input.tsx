@@ -35,6 +35,7 @@ const InputComponent = forwardRef(
 
     const {
       children,
+      type,
       icon,
       triggers,
       loading,
@@ -51,7 +52,6 @@ const InputComponent = forwardRef(
       ...componentProps
     } = component.props as any;
 
-    const { type, ...restComponentProps } = componentProps;
     const { onChange, ...restTriggers } = triggers || {};
     const { name: iconName } = icon && icon!.props!;
     const { color, backgroundColor } = useChangeState({ bg, textColor });
@@ -117,20 +117,10 @@ const InputComponent = forwardRef(
         newValue = newValue ? Number(newValue) : 0;
       }
       setValue(newValue);
+      if (onChange) {
+        onChange(e);
+      }
     };
-
-    // TODO: Move to a hook. Doing this as we need to update input immediately but not call actions etc.
-    useEffect(() => {
-      // Set a timeout to delay the call to onChange
-      const timer = setTimeout(() => {
-        if (onChange) {
-          onChange();
-        }
-      }, 200);
-
-      // Cleanup function to clear the timeout if the component unmounts or if value changes
-      return () => clearTimeout(timer);
-    }, [value, onChange]);
 
     return (
       <>
@@ -159,7 +149,7 @@ const InputComponent = forwardRef(
                 type="number"
                 autoComplete="off"
                 id={component.id}
-                {...restComponentProps}
+                {...componentProps}
                 style={{}}
                 styles={{
                   root: {
@@ -199,7 +189,7 @@ const InputComponent = forwardRef(
         ) : type === "number" ? (
           <MantineNumberInput
             {...props}
-            {...restComponentProps}
+            {...componentProps}
             ref={ref}
             autoComplete="off"
             id={component.id}
@@ -242,7 +232,7 @@ const InputComponent = forwardRef(
             color={color}
             customStyle={customStyle}
             props={props}
-            restComponentProps={restComponentProps}
+            componentProps={componentProps}
             rootStyleProps={rootStyleProps}
           />
         ) : (

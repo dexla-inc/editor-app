@@ -11,7 +11,7 @@ import {
 import { FlexProps, LoadingOverlay, Flex as MantineFlex } from "@mantine/core";
 import { FormEvent, forwardRef, memo } from "react";
 import { memoize } from "proxy-memoize";
-import { useDataBinding } from "@/hooks/dataBinding/useDataBinding";
+import { useInputsStore } from "@/stores/inputs";
 
 type Props = EditableComponentMapper & FlexProps;
 
@@ -28,7 +28,6 @@ const FormComponent = forwardRef(
     const setState = useEditorTreeStore(
       (state) => state.setTreeComponentCurrentState,
     );
-    const { computeValue } = useDataBinding();
 
     const onLoad = useEditorTreeStore(
       memoize((state) => state.componentMutableAttrs[component?.id!]?.onLoad),
@@ -49,17 +48,8 @@ const FormComponent = forwardRef(
 
       const updateTreeComponentAttrs =
         useEditorTreeStore.getState().updateTreeComponentAttrs;
-      const inputValues = Object.entries(
-        useEditorTreeStore.getState().componentMutableAttrs,
-      ).reduce(
-        (acc, [id, item]) => {
-          if (item.onLoad?.value)
-            acc[id] = computeValue({ value: item.onLoad?.value });
 
-          return acc;
-        },
-        {} as Record<string, unknown>,
-      );
+      const inputValues = useInputsStore.getState().inputValues;
 
       const validatableComponentsList = Object.entries(componentMapper).reduce(
         (acc, [key, value]) => {
@@ -100,27 +90,21 @@ const FormComponent = forwardRef(
         });
       });
 
-      invalidComponents.forEach((component) => {
-        updateTreeComponentAttrs({
-          componentIds: [component.id!],
-          attrs: { props: { error: `${component?.description} is required` } },
-          save: false,
-        });
-      });
-
       if (invalidComponents.length) {
+        invalidComponents.forEach((component) => {
+          updateTreeComponentAttrs({
+            componentIds: [component.id!],
+            attrs: {
+              props: { error: `${component?.description} is required` },
+            },
+            save: false,
+          });
+        });
         submitButtonComponents.map((component) => {
           setState(component.id!, "disabled");
         });
-      }
-
-      if (!invalidComponents.length && triggers.onSubmit) {
-        triggers.onSubmit(e);
-        updateTreeComponentAttrs({
-          componentIds: formFieldComponents.map((c) => c.id!),
-          attrs: { onLoad: { value: { static: "", dataType: "static" } } },
-          save: false,
-        });
+      } else {
+        onSubmit && onSubmit(e);
       }
     };
 
