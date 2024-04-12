@@ -1,4 +1,3 @@
-import { EditableComponent } from "@/components/EditableComponent";
 import { LiveWrapper } from "@/components/LiveWrapper";
 import { DeploymentPage } from "@/requests/deployments/types";
 import { ProjectResponse } from "@/requests/projects/types";
@@ -8,33 +7,12 @@ import { componentMapper } from "@/utils/componentMapper";
 import { decodeSchema } from "@/utils/compression";
 import { ComponentTree } from "@/utils/editor";
 import { Box } from "@mantine/core";
-import { ReactNode, useCallback, useEffect } from "react";
+import { useCallback, useEffect } from "react";
+import { RenderTreeFunc } from "@/types/component";
 
 type Props = {
   project: ProjectResponse;
   deploymentPage: DeploymentPage;
-};
-
-type EditableComponentContainerProps = {
-  children: ReactNode;
-  componentTree: ComponentTree;
-  shareableContent: any;
-};
-
-const EditableComponentContainer = ({
-  children,
-  componentTree,
-  shareableContent,
-}: EditableComponentContainerProps) => {
-  return (
-    <EditableComponent
-      id={componentTree.id!}
-      component={componentTree}
-      shareableContent={shareableContent}
-    >
-      {children}
-    </EditableComponent>
-  );
 };
 
 export const Live = ({ project, deploymentPage }: Props) => {
@@ -56,7 +34,7 @@ export const Live = ({ project, deploymentPage }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [deploymentPage]);
 
-  const renderTree = useCallback(
+  const renderTree: RenderTreeFunc = useCallback(
     (componentTree: ComponentTree, shareableContent = {}) => {
       if (componentTree.id === "root") {
         return (
@@ -68,24 +46,26 @@ export const Live = ({ project, deploymentPage }: Props) => {
             sx={{ flexDirection: "column" }}
             key={componentTree.id}
           >
-            {componentTree.children?.map((child) => renderTree(child))}
+            {componentTree.children?.map((child) =>
+              renderTree(child, shareableContent),
+            )}
           </Box>
         );
       }
 
-      const component =
-        useEditorTreeStore.getState().componentMutableAttrs[componentTree.id!];
-      const componentToRender = componentMapper[component.name];
+      const componentToRender = componentMapper[componentTree.name];
 
-      return (
-        <EditableComponentContainer
-          key={component.id}
-          componentTree={componentTree}
-          shareableContent={shareableContent}
-        >
-          {componentToRender?.Component({ component, renderTree })}
-        </EditableComponentContainer>
-      );
+      if (!componentToRender) {
+        return componentTree.children?.map((child) =>
+          renderTree(child, shareableContent),
+        );
+      }
+
+      return componentToRender?.Component({
+        component: componentTree,
+        renderTree,
+        shareableContent,
+      });
     },
     [],
   );

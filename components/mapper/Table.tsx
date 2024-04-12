@@ -10,7 +10,7 @@ import { forwardRef, memo } from "react";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useEndpoint } from "@/hooks/useEndpoint";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { memoize } from "proxy-memoize";
+import { useShallow } from "zustand/react/shallow";
 
 type Props = EditableComponentMapper & TableProps;
 
@@ -18,10 +18,7 @@ export const TableComponent = forwardRef(
   ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
     const { children, triggers, dataType, ...componentProps } =
       component.props as any;
-
-    const onLoad = useEditorTreeStore(
-      memoize((state) => state.componentMutableAttrs[component?.id!]?.onLoad),
-    );
+    const { onLoad } = component;
 
     const { data } = useEndpoint({
       onLoad,

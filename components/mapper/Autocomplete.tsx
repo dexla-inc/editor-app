@@ -14,9 +14,6 @@ import {
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { forwardRef, memo, useEffect, useState } from "react";
-import { useEditorTreeStore } from "@/stores/editorTree";
-import { memoize } from "proxy-memoize";
-import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
 import { useInputValue } from "@/hooks/useInputValue";
 
 type Props = EditableComponentMapper & AutocompleteProps;
@@ -34,20 +31,14 @@ const AutocompleteComponent = forwardRef(
       ...componentProps
     } = component.props as any;
 
-    const onLoad = useEditorTreeStore(
-      memoize(
-        (state) => state.componentMutableAttrs[component?.id!]?.onLoad ?? {},
-      ),
-    );
-
     const [value, setValue] = useInputValue(
       {
-        value: onLoad?.value ?? "",
+        value: component.onLoad?.value ?? "",
       },
       component.id!,
     );
 
-    const { dataLabelKey, dataValueKey } = onLoad ?? {};
+    const { dataLabelKey, dataValueKey } = component.onLoad ?? {};
     const { onChange, onItemSubmit, ...restTriggers } = triggers || {};
 
     const { color, backgroundColor } = useChangeState({ bg, textColor });
@@ -58,7 +49,7 @@ const AutocompleteComponent = forwardRef(
     });
 
     const { data: response, isLoading } = useEndpoint({
-      onLoad,
+      onLoad: component.onLoad,
       dataType,
       enabled: !!value,
     });

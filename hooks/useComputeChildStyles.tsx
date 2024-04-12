@@ -1,5 +1,4 @@
 import { GRAY_OUTLINE } from "@/utils/branding";
-import { useComputeValue2 } from "@/hooks/dataBinding/useComputeValue2";
 import { CSSObject } from "@mantine/core";
 import { handleBackground } from "@/hooks/handleBackground";
 import { Component } from "@/utils/editor";
@@ -17,23 +16,20 @@ export const useComputeChildStyles = ({
   currentState,
   isEditorMode,
 }: UseComputeChildStylesProps): CSSObject => {
-  const computedStyle =
-    useComputeValue2({ onLoad: propsWithOverwrites.style }) ?? {};
-
-  delete propsWithOverwrites.style;
-
   const childStyles: CSSObject = {
     position: "relative",
-    ...computedStyle,
+    ...propsWithOverwrites.style,
     ...(currentState === "hidden" && { display: "none" }),
     ...(currentState === "disabled" &&
       !isEditorMode && { pointerEvents: "none" }),
 
     outline:
-      !isEditorMode && computedStyle?.outline === GRAY_OUTLINE
+      !isEditorMode && propsWithOverwrites.style?.outline === GRAY_OUTLINE
         ? "none"
-        : computedStyle?.outline,
+        : propsWithOverwrites.style?.outline,
   };
+
+  delete propsWithOverwrites.style;
 
   handleBackground(component, childStyles);
 

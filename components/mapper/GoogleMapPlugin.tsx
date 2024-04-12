@@ -43,41 +43,14 @@ export const GoogleMapPlugin = ({
 
   const { options, language, loading, fade, ...componentProps } =
     component.props as GoogleMapProps;
+  const { apiKey, zoom, centerLat, centerLng, markers } = component.onLoad;
 
-  const apiKey = useComputeValue({
-    componentId: component.id!,
-    shareableContent,
-    field: "apiKey",
-  });
-  const zoom = parseInt(
-    useComputeValue({
-      componentId: component.id!,
-      shareableContent,
-      field: "zoom",
-    }),
-  );
-  const centerLat = useComputeValue({
-    componentId: component.id!,
-    shareableContent,
-    field: "centerLat",
-  });
-  const centerLng = useComputeValue({
-    componentId: component.id!,
-    shareableContent,
-    field: "centerLng",
-  });
   const center = {
     lat: centerLat ?? defaultCenter.lat,
     lng: centerLng ?? defaultCenter.lng,
   };
 
-  const markers = safeJsonParse(
-    useComputeValue({
-      componentId: component.id!,
-      shareableContent,
-      field: "markers",
-    }),
-  ) as MarkerItem[];
+  const markersParsed = safeJsonParse(markers) as MarkerItem[];
   const MAP_SCRIPT_DELAY_DURATION = 800;
 
   const { width, height, ...googleStyles } = props.style ?? {};
@@ -121,11 +94,13 @@ export const GoogleMapPlugin = ({
         lng: Number(center.lng),
       });
 
-      markers?.forEach?.(({ position }: Position) => bounds.extend(position));
+      markersParsed?.forEach?.(({ position }: Position) =>
+        bounds.extend(position),
+      );
       map.fitBounds(bounds);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [center, markers, zoom],
+    [center, markersParsed, zoom],
   );
 
   useEffect(() => {
@@ -176,7 +151,7 @@ export const GoogleMapPlugin = ({
         }}
         zoom={zoom}
       >
-        {markers?.map?.(({ id, name, position }) => (
+        {markersParsed?.map?.(({ id, name, position }) => (
           <Marker
             key={id}
             position={position}

@@ -1,6 +1,5 @@
 import { Icon } from "@/components/Icon";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
 import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { useChangeState } from "@/hooks/useChangeState";
 import { useContentEditable } from "@/hooks/useContentEditable";
@@ -29,20 +28,14 @@ const ButtonComponent = forwardRef(
       color,
       ...componentProps
     } = component.props as any;
-
+    const { children: childrenValue = component.props?.children } =
+      component.onLoad;
     const theme = useThemeStore((state) => state.theme);
 
     const contentEditableProps = useContentEditable(
       component.id as string,
       ref,
     );
-
-    const childrenValue = useComputeValue({
-      componentId: component.id!,
-      field: "children",
-      shareableContent,
-      staticFallback: component.props?.children,
-    });
 
     const defaultTriggers = isPreviewMode
       ? {}

@@ -10,7 +10,6 @@ import {
 } from "@/utils/editor";
 import { FlexProps, LoadingOverlay, Flex as MantineFlex } from "@mantine/core";
 import { FormEvent, forwardRef, memo } from "react";
-import { memoize } from "proxy-memoize";
 import { useInputsStore } from "@/stores/inputs";
 
 type Props = EditableComponentMapper & FlexProps;
@@ -29,13 +28,9 @@ const FormComponent = forwardRef(
       (state) => state.setTreeComponentCurrentState,
     );
 
-    const onLoad = useEditorTreeStore(
-      memoize((state) => state.componentMutableAttrs[component?.id!]?.onLoad),
-    );
-
-    const { endpointId } = onLoad ?? {};
+    const { endpointId } = component.onLoad ?? {};
     const { data } = useEndpoint({
-      onLoad,
+      onLoad: component.onLoad,
       dataType,
     });
 

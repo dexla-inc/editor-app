@@ -8,12 +8,12 @@ import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoint
 import { usePageListQuery } from "@/hooks/reactQuery/usePageListQuery";
 import { useEditorStore } from "@/stores/editor";
 import { useVariableStore } from "@/stores/variables";
-import { memoize } from "proxy-memoize";
 import { useRouter } from "next/router";
 import { useDataSourceStore } from "@/stores/datasource";
 import { pick } from "next/dist/lib/pick";
 import { useInputsStore } from "@/stores/inputs";
 import { Component } from "@/utils/editor";
+import { useShallow } from "zustand/react/shallow";
 
 type BindType = {
   selectedEntityId: string;
@@ -57,7 +57,7 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
   const inputsStore = useInputsStore((state) => state.inputValues);
 
   const allInputComponents = useEditorTreeStore(
-    memoize((state) =>
+    useShallow((state) =>
       Object.values(state.componentMutableAttrs).reduce((acc, c) => {
         const isInput = [
           "Input",

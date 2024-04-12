@@ -1,13 +1,15 @@
-import { useEditorTreeStore } from "@/stores/editorTree";
 import { useVariableStore } from "@/stores/variables";
 import { NextRouter, useRouter } from "next/router";
 import { useDataSourceStore } from "@/stores/datasource";
-import { memoize } from "proxy-memoize";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import get from "lodash.get";
 import { ValueProps } from "@/types/dataBinding";
+import set from "lodash.set";
 import { safeJsonParse } from "@/utils/common";
+import cloneDeep from "lodash.clonedeep";
 import { useInputsStore } from "@/stores/inputs";
+import { useShallow } from "zustand/react/shallow";
+import { pick } from "next/dist/lib/pick";
 
 type NextRouterKeys = keyof NextRouter;
 type RecordStringAny = Record<string, any>;
@@ -19,10 +21,8 @@ const browserPattern = /browser\[\s*(?:\/\*[\s\S]*?\*\/\s*)?'(.*?)'\s*\]/g;
 const authPattern = /auth\[\s*(?:\/\*[\s\S]*?\*\/\s*)?'(.*?)'\s*\]/g;
 
 type UseComputeValue = {
-  componentId: string;
-  field: string;
-  shareableContent: Record<string, unknown>;
-  staticFallback?: string | number | boolean | Record<string, unknown>;
+  shareableContent?: Record<string, unknown>;
+  onLoad: any;
 };
 
 const autoRunJavascriptCode = (boundCode: string) => {
@@ -35,77 +35,81 @@ const autoRunJavascriptCode = (boundCode: string) => {
   }
 };
 
+const findValuePropsPaths = (obj: any, prefix = ""): string[] => {
+  let paths: string[] = [];
+  Object.keys(obj).forEach((key) => {
+    const fullPath = prefix ? `${prefix}.${key}` : key;
+    if (typeof obj[key] === "object" && obj[key] !== null) {
+      if ("dataType" in obj[key]) {
+        paths.push(fullPath);
+      } else {
+        paths = [...paths, ...findValuePropsPaths(obj[key], fullPath)];
+      }
+    }
+  });
+  return paths;
+};
+
 export const useComputeValue = ({
-  componentId,
-  field,
   shareableContent,
-  staticFallback,
+  onLoad = {},
 }: UseComputeValue) => {
+  onLoad = cloneDeep(onLoad);
+
   const browser = useRouter();
-  const fieldValue = useEditorTreeStore(
-    memoize(
-      (state) =>
-        state.componentMutableAttrs[componentId]?.onLoad?.[field] ?? {},
-    ),
-  ) as ValueProps;
+  const valuePropsPaths = useMemo(() => {
+    return findValuePropsPaths(onLoad);
+  }, [onLoad]);
 
   const { variableKeys, componentKeys, actionKeys, browserKeys, authKeys } =
     useMemo(() => {
-      const variableKeys = [];
-      const componentKeys = [];
-      const actionKeys = [];
+      const variableKeys: any[] = [];
+      const componentKeys: any[] = [];
+      const actionKeys: any[] = [];
       const browserKeys: NextRouterKeys[] = [];
-      const authKeys = [];
+      const authKeys: any[] = [];
 
-      if (fieldValue.dataType === "boundCode" && fieldValue.boundCode) {
-        variableKeys.push(
-          ...[...fieldValue.boundCode.matchAll(variablePattern)].map(
-            (match) => match[1],
-          ),
-        );
-        componentKeys.push(
-          ...[...fieldValue.boundCode.matchAll(componentPattern)].map(
-            (match) => match[1],
-          ),
-        );
-        actionKeys.push(
-          ...[...fieldValue.boundCode.matchAll(actionPattern)].map(
-            (match) => match[1],
-          ),
-        );
-        browserKeys.push(
-          // @ts-ignore
-          ...[...fieldValue.boundCode.matchAll(browserPattern)].map(
-            (match) => match[1],
-          ),
-        );
-        authKeys.push(
-          ...[...fieldValue.boundCode.matchAll(authPattern)].map(
-            (match) => match[1],
-          ),
-        );
-      }
+      const patterns = [
+        { pattern: variablePattern, keys: variableKeys },
+        { pattern: componentPattern, keys: componentKeys },
+        { pattern: actionPattern, keys: actionKeys },
+        { pattern: browserPattern, keys: browserKeys },
+        { pattern: authPattern, keys: authKeys },
+      ];
+
+      valuePropsPaths.forEach((fieldValuePath) => {
+        const fieldValue = get(onLoad, fieldValuePath);
+        if (fieldValue.dataType === "boundCode" && fieldValue.boundCode) {
+          patterns.forEach(({ pattern, keys }) => {
+            keys.push(...extractKeysFromPattern(pattern, fieldValue.boundCode));
+          });
+        }
+      });
 
       return { variableKeys, componentKeys, actionKeys, browserKeys, authKeys };
-    }, [fieldValue]);
+    }, [onLoad, valuePropsPaths]);
 
   const variables = useVariableStore(
-    memoize((state) =>
+    useShallow((state) =>
       variableKeys.reduce((acc, key) => {
         const variable = state.variableList.find((v) => v.id === key);
-        const value = variable?.value ?? variable?.defaultValue ?? undefined;
+        const variableValue =
+          variable?.value ?? variable?.defaultValue ?? undefined;
         const variableHandler = {
-          TEXT: () => `\`${value}\``,
+          TEXT: () => `\`${variableValue}\``,
           BOOLEAN: () =>
-            typeof value === "boolean" ? value : JSON.parse(value),
-          NUMBER: () => safeJsonParse(value),
-          OBJECT: () => value,
-          ARRAY: () => value,
+            typeof variableValue === "boolean"
+              ? variableValue
+              : safeJsonParse(variableValue),
+          NUMBER: () => safeJsonParse(variableValue),
+          OBJECT: () => variableValue,
+          ARRAY: () => variableValue,
         };
 
         if (variable) {
           const value =
-            variableHandler[variable.type as keyof typeof variableHandler]();
+            variableHandler[variable.type as keyof typeof variableHandler]() ??
+            `undefined`;
 
           return {
             ...acc,
@@ -119,16 +123,11 @@ export const useComputeValue = ({
   ) as RecordStringAny;
 
   const inputs = useInputsStore(
-    memoize((state) =>
-      componentKeys.reduce(
-        (acc, key) => ({ ...acc, [key]: state.inputValues[key] ?? "" }),
-        {},
-      ),
-    ),
+    useShallow((state) => pick(state.inputValues, componentKeys)),
   ) as RecordStringAny;
 
   const auth = useDataSourceStore(
-    memoize((state) =>
+    useShallow((state) =>
       authKeys.reduce(
         (acc, key) => ({
           ...acc,
@@ -139,6 +138,7 @@ export const useComputeValue = ({
       ),
     ),
   ) as RecordStringAny;
+
   const browserValues: any = useMemo(() => {
     return browserKeys.reduce(
       (acc, key) => ({ ...acc, [key]: browser[key] }),
@@ -146,10 +146,9 @@ export const useComputeValue = ({
     );
   }, [browser, browserKeys]);
 
-  const boundCodeTransformed = useMemo(() => {
-    if (fieldValue.dataType === "boundCode") {
-      let result = fieldValue.boundCode ?? "";
-
+  const transformBoundCode = useCallback(
+    (boundCode: string) => {
+      let result = boundCode;
       variableKeys.forEach((key) => {
         const regex = new RegExp(
           `variables\\[(\\/\\* [\\S\\s]* \\*\\/)?\\s?'${key}'\\]`,
@@ -194,44 +193,67 @@ export const useComputeValue = ({
       });
 
       return result;
-    }
-  }, [
-    fieldValue,
-    variables,
-    inputs,
-    browserValues,
-    browserKeys,
-    componentKeys,
-    actionKeys,
-    variableKeys,
-    authKeys,
-    auth,
-  ]);
+    },
+    [
+      actionKeys,
+      auth,
+      authKeys,
+      browserKeys,
+      browserValues,
+      componentKeys,
+      inputs,
+      variableKeys,
+      variables,
+    ],
+  );
 
   const valueHandlers = useMemo(
     () => ({
-      dynamic: () => {
+      dynamic: (fieldValue: ValueProps) => {
         return get(
           shareableContent,
           `data.${fieldValue?.dynamic}`,
           fieldValue?.dynamic,
         );
       },
-      static: () => {
-        return get(fieldValue, "static", staticFallback);
+      static: (fieldValue: ValueProps) => {
+        return get(fieldValue, "static");
       },
-      boundCode: () => {
+      boundCode: (fieldValue: ValueProps) => {
         try {
-          return autoRunJavascriptCode(boundCodeTransformed ?? "");
+          const boundCode = transformBoundCode(fieldValue.boundCode ?? "");
+          return autoRunJavascriptCode(boundCode);
         } catch {
           return;
         }
       },
     }),
-    [fieldValue, shareableContent, staticFallback, boundCodeTransformed],
+    [shareableContent, transformBoundCode],
   );
 
-  return fieldValue && fieldValue.dataType
-    ? valueHandlers[fieldValue.dataType]()
-    : staticFallback;
+  return useMemo(
+    () =>
+      valuePropsPaths.reduce(
+        (acc, fieldValuePath) => {
+          const fieldValue = get(onLoad, fieldValuePath);
+          const { dataType } = fieldValue ?? {};
+
+          if (!dataType) return acc;
+
+          set(
+            acc,
+            fieldValuePath,
+            valueHandlers[dataType as keyof typeof valueHandlers]?.(fieldValue),
+          );
+
+          return acc;
+        },
+        onLoad as Record<string, any>,
+      ),
+    [onLoad, valueHandlers, valuePropsPaths],
+  );
 };
+
+function extractKeysFromPattern(pattern: RegExp, boundCode: any) {
+  return [...boundCode.matchAll(pattern)].map((match) => match[1]);
+}

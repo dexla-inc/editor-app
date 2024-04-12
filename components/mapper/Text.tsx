@@ -6,7 +6,6 @@ import { EditableComponentMapper } from "@/utils/editor";
 import { Text as MantineText, TextProps } from "@mantine/core";
 import merge from "lodash.merge";
 import { forwardRef, memo } from "react";
-import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
 
 type Props = EditableComponentMapper & TextProps;
 
@@ -21,17 +20,12 @@ const TextComponent = forwardRef(
     );
     const { triggers, hideIfDataIsEmpty, variable, text, ...componentProps } =
       component.props as any;
+    const { children: childrenValue = component.props?.children } =
+      component.onLoad;
     const { style, ...restProps } = props as any;
 
     const { textStyle } = useBrandingStyles();
     const customStyle = merge({}, textStyle, style);
-
-    const childrenValue = useComputeValue({
-      componentId: component.id!,
-      field: "children",
-      shareableContent,
-      staticFallback: component.props?.children,
-    });
 
     return (
       <MantineText

@@ -17,7 +17,6 @@ import {
   useRef,
   useState,
 } from "react";
-import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
 
 type Props = EditableComponentMapper & ButtonProps & ReactElement<"Button">;
 
@@ -36,6 +35,7 @@ const CountdownButtonComponent = forwardRef(
       duration,
       ...componentProps
     } = component.props as any;
+    const { children: childrenValue } = component.onLoad;
 
     const durationUnitAndValue = splitValueAndUnit(duration);
     const durationValue = durationUnitAndValue ? durationUnitAndValue[0] : 30;
@@ -52,13 +52,6 @@ const CountdownButtonComponent = forwardRef(
       component.id as string,
       ref,
     );
-
-    const childrenValue = useComputeValue({
-      componentId: component.id!,
-      field: "children",
-      shareableContent,
-      staticFallback: component.props?.children,
-    });
 
     const defaultTriggers = isPreviewMode
       ? {}

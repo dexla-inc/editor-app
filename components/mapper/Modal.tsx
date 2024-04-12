@@ -1,15 +1,13 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { useThemeStore } from "@/stores/theme";
 import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import { Modal as MantineModal, ModalProps } from "@mantine/core";
 import { forwardRef, memo } from "react";
-import { memoize } from "proxy-memoize";
-import { useComputeValue2 } from "@/hooks/dataBinding/useComputeValue2";
 import { useVariableStore } from "@/stores/variables";
 import { useBrandingStyles } from "@/hooks/useBrandingStyles";
+import { useShallow } from "zustand/react/shallow";
 
 type Props = EditableComponentMapper & Omit<ModalProps, "opened">;
 const variablePattern = /variables\[\s*(?:\/\*[\s\S]*?\*\/\s*)?'(.*?)'\s*\]/g;
@@ -23,17 +21,14 @@ export const ModalComponent = forwardRef(
     const iframeWindow = useEditorStore((state) => state.iframeWindow);
 
     const { size, titleTag: tag, ...componentProps } = component.props as any;
+    const { showInEditor } = component.onLoad || {};
     const { titleStyle } = useBrandingStyles({ tag });
 
     const onLoad = useEditorTreeStore(
-      memoize((state) => state.componentMutableAttrs[component?.id!]?.onLoad),
+      useShallow(
+        (state) => state.componentMutableAttrs[component?.id!]?.onLoad,
+      ),
     );
-
-    // This is not forceHide this is showInEditor
-    const { showInEditor } = useComputeValue2({
-      onLoad,
-      shareableContent,
-    });
 
     const target = iframeWindow?.document.getElementById("iframe-content");
 

@@ -2,19 +2,18 @@ import { useEndpoint } from "@/hooks/useEndpoint";
 import { convertSizeToPx } from "@/utils/defaultSizes";
 import { EditableComponentMapper } from "@/utils/editor";
 import { FlexProps, LoadingOverlay, Flex as MantineFlex } from "@mantine/core";
-import { memo } from "react";
-import { isSame } from "@/utils/componentComparison";
+import { ForwardedRef } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { memoize } from "proxy-memoize";
 import isEmpty from "lodash.isempty";
 
-type Props = EditableComponentMapper & FlexProps;
+type Props = EditableComponentMapper &
+  FlexProps & { ref: ForwardedRef<unknown> };
 
-const CardAndContainerWrapperInner = ({
+export const CardAndContainerWrapper = ({
   renderTree,
   component,
-  ref,
   shareableContent,
+  ref,
   ...props
 }: Props) => {
   const { children, bg, triggers, loading, dataType, gap, ...componentProps } =
@@ -22,13 +21,10 @@ const CardAndContainerWrapperInner = ({
   const gapPx = convertSizeToPx(gap, "gap");
   const isPreviewMode = useEditorTreeStore((state) => state.isPreviewMode);
 
-  const onLoad = useEditorTreeStore(
-    memoize((state) => state.componentMutableAttrs[component?.id!]?.onLoad),
-  );
-  const { endpointId } = onLoad ?? {};
+  const { endpointId } = component.onLoad ?? {};
 
   const { data } = useEndpoint({
-    onLoad,
+    onLoad: component.onLoad,
     dataType,
     includeExampleResponse: !isPreviewMode,
   });
@@ -77,8 +73,3 @@ const CardAndContainerWrapperInner = ({
     </MantineFlex>
   );
 };
-
-export const CardAndContainerWrapper = memo(
-  CardAndContainerWrapperInner,
-  isSame,
-);

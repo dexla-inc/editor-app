@@ -5,26 +5,13 @@ import { EditableComponentMapper } from "@/utils/editor";
 import { AvatarProps, Avatar as MantineAvatar } from "@mantine/core";
 import merge from "lodash.merge";
 import { forwardRef, memo } from "react";
-import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
 
 type Props = EditableComponentMapper & AvatarProps;
 
 const AvatarComponent = forwardRef(
   ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
     const { triggers, data, size, ...componentProps } = component.props as any;
-
-    const srcValue = useComputeValue({
-      componentId: component.id!,
-      field: "src",
-      shareableContent,
-      staticFallback: component.props?.src,
-    });
-    const childrenValue = useComputeValue({
-      componentId: component.id!,
-      field: "children",
-      shareableContent,
-      staticFallback: component.props?.children,
-    });
+    const { children: childrenValue, src: srcValue } = component.onLoad;
 
     const { avatarStyle } = useBrandingStyles();
 

@@ -1,17 +1,17 @@
 import { Droppable } from "@/components/Droppable";
-import { EditableComponentContainer } from "@/components/EditableComponentContainer";
 import { IFrame } from "@/components/IFrame";
 import useEditorHotkeys from "@/hooks/useEditorHotkeys";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { componentMapper } from "@/utils/componentMapper";
 import { HEADER_HEIGHT } from "@/utils/config";
-import { ComponentTree } from "@/utils/editor";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Box, Paper } from "@mantine/core";
 import { memo } from "react";
 import { CustomComponentModal } from "@/components/CustomComponentModal";
 import { useUserConfigStore } from "@/stores/userConfig";
 import useEditorHotkeysUndoRedo from "@/hooks/useEditorHotkeysUndoRedo";
+import { RenderTreeFunc } from "@/types/component";
+import { ComponentToolbox } from "@/components/ComponentToolbox";
 
 type Props = {
   projectId: string;
@@ -26,7 +26,7 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
     (state) => state.isCustomComponentModalOpen,
   );
 
-  const renderTree = (componentTree: ComponentTree, shareableContent = {}) => {
+  const renderTree: RenderTreeFunc = (componentTree, shareableContent) => {
     if (componentTree.id === "root") {
       return (
         <Droppable
@@ -43,37 +43,27 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
             display="flex"
             sx={{ flexDirection: "column" }}
           >
-            {componentTree.children?.map((child) => renderTree(child))}
+            {componentTree.children?.map((child) =>
+              renderTree(child, shareableContent),
+            )}
           </Paper>
         </Droppable>
       );
     }
 
-    const component =
-      useEditorTreeStore.getState().componentMutableAttrs[componentTree.id!];
-    const componentToRender = componentMapper[component.name];
+    const componentToRender = componentMapper[componentTree.name];
 
     if (!componentToRender) {
-      return (
-        <EditableComponentContainer
-          key={`${component.id}`}
-          componentTree={componentTree}
-          shareableContent={shareableContent}
-        >
-          {componentTree.children?.map((child) => renderTree(child))}
-        </EditableComponentContainer>
+      return componentTree.children?.map((child) =>
+        renderTree(child, shareableContent),
       );
     }
 
-    return (
-      <EditableComponentContainer
-        key={`${component.id}`}
-        componentTree={componentTree}
-        shareableContent={shareableContent}
-      >
-        {componentToRender?.Component({ component, renderTree })}
-      </EditableComponentContainer>
-    );
+    return componentToRender?.Component({
+      component: componentTree,
+      renderTree,
+      shareableContent,
+    });
   };
 
   if ((editorTree?.root?.children ?? [])?.length === 0) {
@@ -106,6 +96,7 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
             isCustomComponentModalOpen={isCustomComponentModalOpen}
           />
         )}
+        {/*<ComponentToolbox component={} />*/}
       </Box>
     </>
   );

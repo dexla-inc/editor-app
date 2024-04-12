@@ -3,9 +3,7 @@ import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import { Group, Radio as MantineRadio, RadioGroupProps } from "@mantine/core";
 import merge from "lodash.merge";
-import { forwardRef, memo, useState } from "react";
-import { useEditorTreeStore } from "@/stores/editorTree";
-import { memoize } from "proxy-memoize";
+import { forwardRef, memo } from "react";
 import { useInputValue } from "@/hooks/useInputValue";
 
 type Props = EditableComponentMapper & RadioGroupProps;
@@ -24,15 +22,9 @@ const RadioComponent = forwardRef(
       alignItems: "center",
     };
 
-    const onLoad = useEditorTreeStore(
-      memoize(
-        (state) => state.componentMutableAttrs[component?.id!]?.onLoad ?? {},
-      ),
-    );
-
     const [value, setValue] = useInputValue(
       {
-        value: onLoad?.value ?? "",
+        value: component?.onLoad?.value ?? "",
       },
       component.id!,
     );

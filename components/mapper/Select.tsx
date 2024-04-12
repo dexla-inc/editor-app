@@ -18,8 +18,6 @@ import { pick } from "next/dist/lib/pick";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { forwardRef, memo } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { memoize } from "proxy-memoize";
-import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
 import { useInputValue } from "@/hooks/useInputValue";
 
 type Props = EditableComponentMapper & SelectProps & MultiSelectProps;
@@ -55,20 +53,14 @@ const SelectComponent = forwardRef(
       ? MantineMultiSelect
       : MantineSelect;
 
-    const onLoad = useEditorTreeStore(
-      memoize(
-        (state) => state.componentMutableAttrs[component?.id!]?.onLoad ?? {},
-      ),
-    );
-
     const [value, setValue] = useInputValue(
       {
-        value: onLoad?.value ?? "",
+        value: component.onLoad?.value ?? "",
       },
       component.id!,
     );
 
-    const { dataLabelKey, dataValueKey } = onLoad;
+    const { dataLabelKey, dataValueKey } = component.onLoad;
     const { onChange, onSearchChange, ...restTriggers } = triggers || {};
     const { color, backgroundColor } = useChangeState({ bg, textColor });
     const { borderStyle, inputStyle } = useBrandingStyles();
@@ -78,7 +70,7 @@ const SelectComponent = forwardRef(
     });
 
     const { data: response } = useEndpoint({
-      onLoad,
+      onLoad: component.onLoad,
       dataType,
     });
 

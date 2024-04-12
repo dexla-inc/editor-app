@@ -11,7 +11,6 @@ import { EditableComponentMapper } from "@/utils/editor";
 import { NavLink as MantineNavLink, NavLinkProps } from "@mantine/core";
 import merge from "lodash.merge";
 import { forwardRef, memo } from "react";
-import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
 type Props = EditableComponentMapper & NavLinkProps;
 
 const NavLinkComponent = forwardRef(
@@ -49,13 +48,7 @@ const NavLinkComponent = forwardRef(
       variable,
       ...componentProps
     } = merge({}, component.props, activeProps) as any;
-
-    const labelValue = useComputeValue({
-      componentId: component.id!,
-      field: "label",
-      shareableContent,
-      staticFallback: component.props?.label,
-    });
+    const { label: labelValue } = component.onLoad;
 
     const { color: textColor, backgroundColor } = useChangeState({
       bg,

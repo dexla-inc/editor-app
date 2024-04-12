@@ -2,7 +2,6 @@ import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import { Radio as MantineRadio, RadioProps } from "@mantine/core";
 import { memo, useState } from "react";
-import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
 
 type Props = EditableComponentMapper & RadioProps;
 
@@ -18,13 +17,7 @@ const RadioItemComponent = ({
     children,
     ...componentProps
   } = component.props as any;
-
-  const value = useComputeValue({
-    componentId: component.id!,
-    field: "value",
-    shareableContent,
-    staticFallback: defaultValue,
-  });
+  const { value } = component.onLoad;
 
   const { value: parentValue, isInsideGroup = false } = shareableContent;
   const checked = parentValue === value;

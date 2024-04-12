@@ -11,8 +11,9 @@ import { encodeSchema } from "@/utils/compression";
 import { getTileData, getTiles } from "@/utils/editor";
 import camelcase from "lodash.camelcase";
 import { useRouter } from "next/router";
+import { memo } from "react";
 
-export const SaveTemplateButton = () => {
+const SaveTemplateButtonComponent = () => {
   const router = useRouter();
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
@@ -117,3 +118,5 @@ export const SaveTemplateButton = () => {
     // </Tooltip>
   );
 };
+
+export const SaveTemplateButton = memo(SaveTemplateButtonComponent);
