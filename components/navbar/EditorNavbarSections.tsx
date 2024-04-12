@@ -20,6 +20,7 @@ import {
   IconSettings,
 } from "@tabler/icons-react";
 import { EditorHistorySection } from "./EditorHistorySection";
+import { useMemo } from "react";
 
 export type SectionId =
   | "pages"
@@ -102,15 +103,16 @@ export const sectionMapper: SectionsMapper = {
 export const EditorNavbarSections = () => {
   const activeTab = useEditorStore((state) => state.activeTab);
 
-  const item = sections.find((item) => item.id === activeTab);
+  const selectedSection = useMemo(() => {
+    const item = sections.find((item) => item.id === activeTab);
 
-  return (
-    <NavbarSection sections={sections}>
-      {item &&
-        sectionMapper[item.id]({
-          ...item,
-          isActive: item.id === activeTab,
-        })}
-    </NavbarSection>
-  );
+    if (!item) return null;
+
+    return sectionMapper[item.id]({
+      ...item,
+      isActive: item.id === activeTab,
+    });
+  }, [activeTab]);
+
+  return <NavbarSection sections={sections}>{selectedSection}</NavbarSection>;
 };
