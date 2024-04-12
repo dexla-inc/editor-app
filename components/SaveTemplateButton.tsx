@@ -13,11 +13,11 @@ import camelcase from "lodash.camelcase";
 import { memo } from "react";
 
 const SaveTemplateButtonComponent = () => {
-  const startLoading = useAppStore((state) => state.startLoading);
-  const stopLoading = useAppStore((state) => state.stopLoading);
-  const company = usePropelAuthStore((state) => state.activeCompany);
-
   const saveTemplate = async () => {
+    const startLoading = useAppStore.getState().startLoading;
+    const stopLoading = useAppStore.getState().stopLoading;
+    const company = usePropelAuthStore.getState().activeCompany;
+
     try {
       startLoading({
         id: "save-template",
