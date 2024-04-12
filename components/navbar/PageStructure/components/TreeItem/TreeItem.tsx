@@ -292,10 +292,9 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
             {component.props?.style?.display === "none" && (
               <IconEyeOff size={ICON_SIZE} color="red" />
             )}
-            {component.onLoad?.endpointId &&
-              !isEmpty(component.onLoad?.endpointId) && (
-                <IconDatabase size={ICON_SIZE} />
-              )}
+            {!isEmpty(component.onLoad?.endpointId) && (
+              <IconDatabase size={ICON_SIZE} />
+            )}
           </Flex>
         </div>
       </li>
