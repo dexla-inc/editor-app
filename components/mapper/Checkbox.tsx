@@ -4,9 +4,7 @@ import { EditableComponentMapper } from "@/utils/editor";
 import { CheckboxProps, Checkbox as MantineCheckbox } from "@mantine/core";
 import merge from "lodash.merge";
 import { ChangeEvent, memo } from "react";
-import { useEditorTreeStore } from "@/stores/editorTree";
 import { useInputValue } from "@/hooks/useInputValue";
-import { useShallow } from "zustand/react/shallow";
 
 type Props = EditableComponentMapper & CheckboxProps;
 
@@ -29,15 +27,9 @@ const CheckboxComponent = ({
     color,
   });
 
-  const onLoad = useEditorTreeStore(
-    useShallow(
-      (state) => state.componentMutableAttrs[component?.id!]?.onLoad ?? {},
-    ),
-  );
-
   const [value, setValue] = useInputValue(
     {
-      value: onLoad?.value ?? "",
+      value: component?.onLoad?.value ?? "",
     },
     component.id!,
   );

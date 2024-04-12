@@ -123,6 +123,7 @@ function LivePage({
   const setCurrentPageAndProjectIds = useEditorTreeStore(
     (state) => state.setCurrentPageAndProjectIds,
   );
+  const setTheme = useThemeStore((state) => state.setTheme);
   const setPreviewMode = useEditorTreeStore((state) => state.setPreviewMode);
 
   const theme = prepareUserThemeLive(project);
@@ -154,6 +155,11 @@ function LivePage({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [endpoints]);
+
+  useEffect(() => {
+    setTheme(theme);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [theme]);
 
   return (
     <>

@@ -4,9 +4,7 @@ import { EditableComponentMapper } from "@/utils/editor";
 import { Group, Radio as MantineRadio, RadioGroupProps } from "@mantine/core";
 import merge from "lodash.merge";
 import { forwardRef, memo } from "react";
-import { useEditorTreeStore } from "@/stores/editorTree";
 import { useInputValue } from "@/hooks/useInputValue";
-import { useShallow } from "zustand/react/shallow";
 
 type Props = EditableComponentMapper & RadioGroupProps;
 
@@ -24,15 +22,9 @@ const RadioComponent = forwardRef(
       alignItems: "center",
     };
 
-    const onLoad = useEditorTreeStore(
-      useShallow(
-        (state) => state.componentMutableAttrs[component?.id!]?.onLoad ?? {},
-      ),
-    );
-
     const [value, setValue] = useInputValue(
       {
-        value: onLoad?.value ?? "",
+        value: component?.onLoad?.value ?? "",
       },
       component.id!,
     );

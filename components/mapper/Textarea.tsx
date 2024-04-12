@@ -12,7 +12,7 @@ import { pick } from "next/dist/lib/pick";
 import { ChangeEvent, forwardRef, memo } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useInputValue } from "@/hooks/useInputValue";
-import { useShallow } from "zustand/react/shallow";
+
 type Props = EditableComponentMapper & TextareaProps;
 
 const TextareaComponent = forwardRef(
@@ -31,15 +31,9 @@ const TextareaComponent = forwardRef(
       color,
     });
 
-    const onLoad = useEditorTreeStore(
-      useShallow(
-        (state) => state.componentMutableAttrs[component?.id!]?.onLoad ?? {},
-      ),
-    );
-
     const [value, setValue] = useInputValue(
       {
-        value: onLoad?.value ?? "",
+        value: component?.onLoad?.value ?? "",
       },
       component.id!,
     );

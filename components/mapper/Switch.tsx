@@ -2,9 +2,7 @@ import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { EditableComponentMapper } from "@/utils/editor";
 import { Switch as MantineSwitch, SwitchProps } from "@mantine/core";
 import { ChangeEvent, forwardRef, memo } from "react";
-import { useEditorTreeStore } from "@/stores/editorTree";
 import { useInputValue } from "@/hooks/useInputValue";
-import { useShallow } from "zustand/react/shallow";
 
 type Props = EditableComponentMapper & SwitchProps;
 
@@ -12,15 +10,9 @@ const SwitchComponent = forwardRef(
   ({ component, shareableContent, isPreviewMode, ...props }: Props, ref) => {
     const { label, triggers, ...componentProps } = component.props as any;
 
-    const onLoad = useEditorTreeStore(
-      useShallow(
-        (state) => state.componentMutableAttrs[component?.id!]?.onLoad ?? {},
-      ),
-    );
-
     const [value, setValue] = useInputValue(
       {
-        value: onLoad?.value ?? "",
+        value: component?.onLoad?.value ?? "",
       },
       component.id!,
     );

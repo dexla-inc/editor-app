@@ -18,12 +18,7 @@ export const TableComponent = forwardRef(
   ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
     const { children, triggers, dataType, ...componentProps } =
       component.props as any;
-
-    const onLoad = useEditorTreeStore(
-      useShallow(
-        (state) => state.componentMutableAttrs[component?.id!]?.onLoad,
-      ),
-    );
+    const { onLoad } = component;
 
     const { data } = useEndpoint({
       onLoad,
