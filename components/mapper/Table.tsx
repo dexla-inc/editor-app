@@ -1,4 +1,3 @@
-import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import {
   Table as MantineTable,
@@ -9,8 +8,6 @@ import {
 import { forwardRef, memo } from "react";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useEndpoint } from "@/hooks/useEndpoint";
-import { useEditorTreeStore } from "@/stores/editorTree";
-import { useShallow } from "zustand/react/shallow";
 
 type Props = EditableComponentMapper & TableProps;
 
@@ -136,4 +133,4 @@ export const TableCell = forwardRef(
 );
 TableCell.displayName = "TableCell";
 
-export const Table = memo(withComponentWrapper<Props>(TableComponent), isSame);
+export const Table = memo(withComponentWrapper<Props>(TableComponent));

@@ -28,7 +28,7 @@ export const withComponentWrapper = <T extends Record<string, any>>(
     shareableContent,
   }: WithComponentWrapperProps) => {
     const isEditorMode = useEditorTreeStore(
-      (state) => !state.isPreviewMode && !state.isLive,
+      useShallow((state) => !state.isPreviewMode && !state.isLive),
     );
 
     const isSelected = useEditorTreeStore(
@@ -139,7 +139,6 @@ export const withComponentWrapper = <T extends Record<string, any>>(
       renderTree,
       ...(isResizing || !isEditorMode ? {} : droppable),
       id: component.id,
-      isPreviewMode: !isEditorMode,
       style: childStyles,
       sx: tealOutline,
       ...(isEditorMode && {

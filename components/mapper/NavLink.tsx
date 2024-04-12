@@ -6,18 +6,18 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 import { useThemeStore } from "@/stores/theme";
 import { NavigationAction } from "@/utils/actions";
 import { getColorValue } from "@/utils/branding";
-import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import { NavLink as MantineNavLink, NavLinkProps } from "@mantine/core";
 import merge from "lodash.merge";
 import { forwardRef, memo } from "react";
+import { useShallow } from "zustand/react/shallow";
 type Props = EditableComponentMapper & NavLinkProps;
 
 const NavLinkComponent = forwardRef(
-  (
-    { renderTree, component, shareableContent, isPreviewMode, ...props }: Props,
-    ref,
-  ) => {
+  ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
+    const isPreviewMode = useEditorTreeStore(
+      useShallow((state) => state.isPreviewMode || state.isLive),
+    );
     const theme = useThemeStore((state) => state.theme);
     const currentPageId = useEditorTreeStore((state) => state.currentPageId);
     const contentEditableProps = useContentEditable(
@@ -107,7 +107,4 @@ const NavLinkComponent = forwardRef(
 );
 NavLinkComponent.displayName = "NavLink";
 
-export const NavLink = memo(
-  withComponentWrapper<Props>(NavLinkComponent),
-  isSame,
-);
+export const NavLink = memo(withComponentWrapper<Props>(NavLinkComponent));

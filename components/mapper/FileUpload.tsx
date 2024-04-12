@@ -1,21 +1,24 @@
 import { useBrandingStyles } from "@/hooks/useBrandingStyles";
-import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import { Box } from "@mantine/core";
 import { Dropzone, DropzoneProps } from "@mantine/dropzone";
 import merge from "lodash.merge";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { memo } from "react";
+import { useEditorTreeStore } from "@/stores/editorTree";
+import { useShallow } from "zustand/react/shallow";
 
 type Props = EditableComponentMapper & DropzoneProps;
 
 const FileUploadComponent = ({
   renderTree,
   component,
-  isPreviewMode,
   shareableContent,
   ...props
 }: Props) => {
+  const isPreviewMode = useEditorTreeStore(
+    useShallow((state) => state.isPreviewMode || state.isLive),
+  );
   const { children, ...componentProps } = component.props as any;
   const { dashedBorderStyle } = useBrandingStyles();
 
@@ -42,4 +45,4 @@ const FileUploadComponent = ({
   );
 };
 
-export const FileUpload = memo(FileUploadComponent, isSame);
+export const FileUpload = memo(FileUploadComponent);

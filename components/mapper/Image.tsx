@@ -1,5 +1,4 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import { ImageProps, Image as MantineImage } from "@mantine/core";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
@@ -46,4 +45,4 @@ const ImageComponent = forwardRef(
 );
 ImageComponent.displayName = "Image";
 
-export const Image = memo(withComponentWrapper<Props>(ImageComponent), isSame);
+export const Image = memo(withComponentWrapper<Props>(ImageComponent));
