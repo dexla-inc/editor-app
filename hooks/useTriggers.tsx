@@ -7,8 +7,6 @@ import { Router, useRouter } from "next/router";
 import { ChangeEvent } from "react";
 import { useDataBinding } from "@/hooks/dataBinding/useDataBinding";
 import { useFlowsQuery } from "@/hooks/reactQuery/useFlowsQuery";
-import { Endpoint } from "@/requests/datasources/types";
-import { LogicFlowResponse } from "@/requests/logicflows/types";
 
 const nonDefaultActionTriggers = ["onSuccess", "onError"];
 

@@ -54,4 +54,4 @@ export const ModalComponent = forwardRef(
 );
 ModalComponent.displayName = "Modal";
 
-export const Modal = memo(withComponentWrapper<Props>(ModalComponent), isSame);
+export const Modal = memo(withComponentWrapper<Props>(ModalComponent));

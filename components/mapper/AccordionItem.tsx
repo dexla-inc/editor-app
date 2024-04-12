@@ -1,4 +1,3 @@
-import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import {
   AccordionItemProps,
@@ -26,5 +25,4 @@ AccordionItemComponent.displayName = "AccordionItem";
 
 export const AccordionItem = memo(
   withComponentWrapper<Props>(AccordionItemComponent),
-  isSame,
 );
