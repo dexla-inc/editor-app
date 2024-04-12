@@ -133,6 +133,8 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
     const icon = structureMapper[name as string]?.icon;
     const componentActions = component.actions;
 
+    console.log(component);
+
     useEffect(() => {
       const isRootOrContentWrapper = id === "root" || id === "content-wrapper";
       if (isSelected && !isRootOrContentWrapper) {
@@ -285,7 +287,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
             {componentActions && !!componentActions.length && (
               <IconBolt size={ICON_SIZE} />
             )}
-            {component.props?.style?.display === "none" && (
+            {component.onLoad?.isVisible?.static === false && (
               <IconEyeOff size={ICON_SIZE} />
             )}
             {component.onLoad?.endpointId && <IconDatabase size={ICON_SIZE} />}
