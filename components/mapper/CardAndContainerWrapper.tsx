@@ -24,7 +24,7 @@ const CardAndContainerWrapperInner = ({
   const onLoad = useEditorTreeStore(
     memoize((state) => state.componentMutableAttrs[component?.id!]?.onLoad),
   );
-  const { endpointId } = onLoad ?? {};
+  const { endpointId } = onLoad ?? undefined;
 
   const { data } = useEndpoint({
     onLoad,
