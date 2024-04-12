@@ -6,6 +6,7 @@ import { memo } from "react";
 import { isSame } from "@/utils/componentComparison";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { memoize } from "proxy-memoize";
+import isEmpty from "lodash.isempty";
 
 type Props = EditableComponentMapper & FlexProps;
 
@@ -55,7 +56,7 @@ const CardAndContainerWrapperInner = ({
               : children;
             // TODO: I am unsure we need this object part
           })
-        : endpointId &&
+        : !isEmpty(endpointId) &&
           typeof data === "object" &&
           component.children?.map((child) =>
             renderTree(
