@@ -36,6 +36,7 @@ import {
   IconDatabase,
   IconEyeOff,
 } from "@tabler/icons-react";
+import isEmpty from "lodash.isempty";
 
 export interface Props extends Omit<HTMLAttributes<HTMLLIElement>, "id"> {
   id: any;
@@ -285,10 +286,15 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
             {componentActions && !!componentActions.length && (
               <IconBolt size={ICON_SIZE} />
             )}
-            {component.props?.style?.display === "none" && (
+            {component.onLoad?.isVisible?.static === false && (
               <IconEyeOff size={ICON_SIZE} />
             )}
-            {component.onLoad?.endpointId && <IconDatabase size={ICON_SIZE} />}
+            {component.props?.style?.display === "none" && (
+              <IconEyeOff size={ICON_SIZE} color="red" />
+            )}
+            {!isEmpty(component.onLoad?.endpointId) && (
+              <IconDatabase size={ICON_SIZE} />
+            )}
           </Flex>
         </div>
       </li>
