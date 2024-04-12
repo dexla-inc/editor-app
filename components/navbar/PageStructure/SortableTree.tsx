@@ -44,6 +44,7 @@ import { debouncedTreeRootChildrenUpdate } from "@/utils/editor";
 import { CSS } from "@dnd-kit/utilities";
 import { usePrevious } from "@mantine/hooks";
 import { useEditorTreeStore } from "../../../stores/editorTree";
+import List from "rc-virtual-list";
 
 const measuring = {
   droppable: {
@@ -315,30 +316,33 @@ export function NavbarLayersSection({
         items={sortedIds as string[]}
         strategy={verticalListSortingStrategy}
       >
-        {flattenedItems.map((component) => {
-          const isCollapsed = component.collapsed && component.children?.length;
+        <List data={flattenedItems} itemKey="id" itemHeight={30} height={800}>
+          {(component) => {
+            const isCollapsed =
+              component.collapsed && component.children?.length;
 
-          return (
-            <SortableTreeItem
-              component={component}
-              key={component.id}
-              id={component.id!}
-              depth={
-                component.id === activeId && projected
-                  ? projected.depth
-                  : component.depth
-              }
-              indentationWidth={indentationWidth}
-              indicator={indicator}
-              collapsed={Boolean(isCollapsed)}
-              onCollapse={
-                (component.children ?? [])!.length
-                  ? () => handleCollapse(component.id!)
-                  : undefined
-              }
-            />
-          );
-        })}
+            return (
+              <SortableTreeItem
+                component={component}
+                key={component.id}
+                id={component.id!}
+                depth={
+                  component.id === activeId && projected
+                    ? projected.depth
+                    : component.depth
+                }
+                indentationWidth={indentationWidth}
+                indicator={indicator}
+                collapsed={Boolean(isCollapsed)}
+                onCollapse={
+                  (component.children ?? [])!.length
+                    ? () => handleCollapse(component.id!)
+                    : undefined
+                }
+              />
+            );
+          }}
+        </List>
 
         {createPortal(
           <DragOverlay
