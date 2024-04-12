@@ -27,11 +27,6 @@ const InputComponent = forwardRef(
     { component, isPreviewMode, id, shareableContent, ...props }: Props,
     ref,
   ) => {
-    const iframeWindow = useEditorStore((state) => state.iframeWindow);
-    const updateTreeComponentAttrs = useEditorTreeStore(
-      (state) => state.updateTreeComponentAttrs,
-    );
-
     const {
       children,
       type,
@@ -74,15 +69,13 @@ const InputComponent = forwardRef(
 
     // clear input field
     const clearInput = async () => {
-      await updateTreeComponentAttrs({
-        componentIds: [component.id!],
-        attrs: {
-          onLoad: { value: { static: _defaultValue, dataType: "static" } },
-        },
-        save: false,
-      });
-      const el = iframeWindow?.document.getElementById(component.id!);
-      el?.focus();
+      setValue(_defaultValue);
+      const iframeWindow = useEditorStore.getState().iframeWindow;
+      const currentWindow = iframeWindow ?? window;
+      const inputElement = currentWindow.document.querySelector(
+        `div[data-id="${component.id}"] input[type='text']`,
+      ) as HTMLElement;
+      inputElement?.focus();
     };
 
     // handle increase number range

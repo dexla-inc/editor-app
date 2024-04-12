@@ -38,6 +38,8 @@ import {
   IconEyeOff,
 } from "@tabler/icons-react";
 import { useShallow } from "zustand/react/shallow";
+import isEmpty from "lodash.isempty";
+import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
 
 export interface Props extends Omit<HTMLAttributes<HTMLLIElement>, "id"> {
   id: any;
@@ -102,9 +104,17 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
           display: c?.props?.style?.display,
           description: c?.description,
           name: c?.name,
+          onLoad: {
+            endpointId: c?.onLoad?.endpointId,
+            isVisible: c?.onLoad?.isVisible,
+          },
         };
       }),
     );
+
+    const { isVisible = true, endpointId } = useComputeValue({
+      onLoad: component.onLoad,
+    });
 
     const { componentContextMenu, forceDestroyContextMenu } =
       useComponentContextMenu();
@@ -292,8 +302,11 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
           </Group>
           <Flex gap={4}>
             {!!component.actions && <IconBolt size={ICON_SIZE} />}
-            {component.display === "none" && <IconEyeOff size={ICON_SIZE} />}
-            {component.endpointId && <IconDatabase size={ICON_SIZE} />}
+            {!isVisible && <IconEyeOff size={ICON_SIZE} />}
+            {component.display === "none" && (
+              <IconEyeOff size={ICON_SIZE} color="red" />
+            )}
+            {!isEmpty(endpointId) && <IconDatabase size={ICON_SIZE} />}
           </Flex>
         </div>
       </li>

@@ -3,7 +3,6 @@ import { colors } from "@/components/datasources/DataSourceEndpoint";
 import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
 import { Endpoint } from "@/requests/datasources/types";
 import { MethodTypes } from "@/requests/types";
-import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { Box, Flex, Group, Select, SelectProps, Text } from "@mantine/core";
 import { forwardRef, useCallback, useEffect, useMemo, useState } from "react";

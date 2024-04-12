@@ -4,6 +4,7 @@ import { EditableComponentMapper } from "@/utils/editor";
 import { FlexProps, LoadingOverlay, Flex as MantineFlex } from "@mantine/core";
 import { ForwardedRef } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
+import isEmpty from "lodash.isempty";
 
 type Props = EditableComponentMapper &
   FlexProps & { ref: ForwardedRef<unknown> };
@@ -51,7 +52,7 @@ export const CardAndContainerWrapper = ({
               : children;
             // TODO: I am unsure we need this object part
           })
-        : endpointId &&
+        : !isEmpty(endpointId) &&
           typeof data === "object" &&
           component.children?.map((child) =>
             renderTree(

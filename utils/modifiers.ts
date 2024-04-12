@@ -268,7 +268,7 @@ export const requiredModifiers: RequiredModifiers = {
     showInEditor: true,
     size: "md",
     style: {
-      padding: "0px",
+      padding: "16px", // Evalio specific, need to add modal styling in branding to configure each size
       display: "block",
     },
     title: "Heading",
