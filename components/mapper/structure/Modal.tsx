@@ -25,8 +25,8 @@ export const jsonStructure = (props?: any): ComponentStructure => {
           width: "100%",
           backgroundColor: "white.6",
           flexDirection: "column",
-          gap: "10px",
         },
+        gap: "sm",
       },
       children: [
         {
@@ -37,8 +37,8 @@ export const jsonStructure = (props?: any): ComponentStructure => {
             style: {
               width: "100%",
               backgroundColor: "white.6",
-              gap: "10px",
             },
+            gap: "sm",
           },
           children: [
             {
