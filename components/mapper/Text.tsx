@@ -20,7 +20,8 @@ const TextComponent = forwardRef(
     );
     const { triggers, hideIfDataIsEmpty, variable, text, ...componentProps } =
       component.props as any;
-    const { children: childrenValue } = component.onLoad;
+    const { children: childrenValue = component.props?.children } =
+      component.onLoad;
     const { style, ...restProps } = props as any;
 
     const { textStyle } = useBrandingStyles();

@@ -71,13 +71,11 @@ export const withComponentWrapper = <T extends Record<string, any>>(
       ? Skeleton
       : Fragment;
 
-    let currentState = useComputeCurrentState(
+    const currentState = useComputeCurrentState(
       componentTree.id!,
-      onLoad?.currentState,
+      computedOnLoad?.currentState,
+      shareableContent.parentState,
     );
-
-    if (shareableContent?.parentState)
-      currentState = shareableContent.parentState;
 
     const isResizing = useEditorStore((state) => state.isResizing);
 
@@ -91,11 +89,6 @@ export const withComponentWrapper = <T extends Record<string, any>>(
 
     const triggers = useTriggers({
       entity: component,
-    });
-
-    const { isVisible = true } = useComputeValue({
-      onLoad: component.onLoad,
-      shareableContent,
     });
 
     const { isPicking, droppable, tealOutline } = useEditorShadows({
@@ -126,6 +119,7 @@ export const withComponentWrapper = <T extends Record<string, any>>(
       isPicking,
     );
 
+    const { isVisible = true } = computedOnLoad;
     if (!isVisible) return null;
 
     const componentToolboxProps = {

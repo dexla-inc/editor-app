@@ -33,7 +33,7 @@ const DateInputComponent = ({
   } = component.props as any;
   const { borderStyle, inputStyle } = useBrandingStyles();
   const { color, backgroundColor } = useChangeState({ bg, textColor });
-  console.log({ component });
+
   const customStyle = merge({}, borderStyle, inputStyle, props.style);
   const isPositionLeft =
     !iconPosition || (iconPosition && iconPosition === "left");
