@@ -26,6 +26,14 @@ const CustomSelectItem: React.FC<CustomSelectItemProps> = ({
   </Box>
 );
 
+const mantineSizes = [
+  { label: "Extra Small", value: "xs", description: "" },
+  { label: "Small", value: "sm", description: "" },
+  { label: "Medium", value: "md", description: "" },
+  { label: "Large", value: "lg", description: "" },
+  { label: "Extra Large", value: "xl", description: "" },
+];
+
 type Props = {
   showNone?: boolean;
   showFullscreen?: boolean;
@@ -40,10 +48,15 @@ export const SizeSelector = ({
   sizing,
   ...props
 }: Props) => {
-  const defaultData = [];
+  let defaultData = [] as SelectItem[];
+  if (!sizing) {
+    defaultData = mantineSizes;
+  }
 
-  if (showNone) {
+  if (showNone && sizing) {
     defaultData.push({ label: "None", value: "0", description: "0px" });
+  } else if (showNone) {
+    defaultData.push({ label: "None", value: "0" });
   }
 
   if (sizing) {
@@ -52,12 +65,14 @@ export const SizeSelector = ({
     });
   }
 
-  if (showFullscreen) {
+  if (showFullscreen && sizing) {
     defaultData.push({
       label: "Fullscreen",
       value: "fullscreen",
       description: "Full screen",
     });
+  } else if (showFullscreen) {
+    defaultData.push({ label: "Fullscreen", value: "fullscreen" });
   }
 
   return (
