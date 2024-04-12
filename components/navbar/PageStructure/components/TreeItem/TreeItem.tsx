@@ -37,6 +37,7 @@ import {
   IconEyeOff,
 } from "@tabler/icons-react";
 import isEmpty from "lodash.isempty";
+import { useComputeValue2 } from "@/hooks/dataBinding/useComputeValue2";
 
 export interface Props extends Omit<HTMLAttributes<HTMLLIElement>, "id"> {
   id: any;
@@ -99,6 +100,9 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
     const component = useEditorTreeStore(
       (state) => state.componentMutableAttrs[componentTree.id!] || {},
     );
+    const { isVisible = true, endpointId } = useComputeValue2({
+      onLoad: component.onLoad,
+    });
 
     const { componentContextMenu, forceDestroyContextMenu } =
       useComponentContextMenu();
@@ -286,15 +290,11 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
             {componentActions && !!componentActions.length && (
               <IconBolt size={ICON_SIZE} />
             )}
-            {component.onLoad?.isVisible?.static === false && (
-              <IconEyeOff size={ICON_SIZE} />
-            )}
+            {!isVisible && <IconEyeOff size={ICON_SIZE} />}
             {component.props?.style?.display === "none" && (
               <IconEyeOff size={ICON_SIZE} color="red" />
             )}
-            {!isEmpty(component.onLoad?.endpointId) && (
-              <IconDatabase size={ICON_SIZE} />
-            )}
+            {!isEmpty(endpointId) && <IconDatabase size={ICON_SIZE} />}
           </Flex>
         </div>
       </li>
