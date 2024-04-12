@@ -74,7 +74,7 @@ export const withComponentWrapper = <T extends Record<string, any>>(
     const currentState = useComputeCurrentState(
       componentTree.id!,
       computedOnLoad?.currentState,
-      shareableContent.parentState,
+      shareableContent?.parentState,
     );
 
     const isResizing = useEditorStore((state) => state.isResizing);
