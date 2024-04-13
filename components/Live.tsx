@@ -1,47 +1,58 @@
-import { EditableComponent } from "@/components/EditableComponent";
 import { LiveWrapper } from "@/components/LiveWrapper";
-import { DeploymentPage } from "@/requests/deployments/types";
-import { ProjectResponse } from "@/requests/projects/types";
 import { useAppStore } from "@/stores/app";
-import { useEditorTreeStore } from "@/stores/editorTree";
 import { componentMapper } from "@/utils/componentMapper";
 import { decodeSchema } from "@/utils/compression";
 import { ComponentTree } from "@/utils/editor";
 import { Box } from "@mantine/core";
-import { ReactNode, useCallback, useEffect } from "react";
+import { useCallback, useMemo } from "react";
+import { RenderTreeFunc } from "@/types/component";
+import { prepareUserThemeLive } from "@/hooks/prepareUserThemeLive";
+import { DeploymentPage } from "@/requests/deployments/types";
+import { ProjectResponse } from "@/requests/projects/types";
+import { useDataSourceStore } from "@/stores/datasource";
+import { useEditorTreeStore } from "@/stores/editorTree";
+import { useThemeStore } from "@/stores/theme";
+import { useVariableStore } from "@/stores/variables";
+import { initializeFonts } from "@/utils/webfontloader";
+import { useEffect } from "react";
+import { useVariableListQuery } from "@/hooks/reactQuery/useVariableListQuery";
+import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
+import { MantineThemeExtended } from "@/utils/types";
 
 type Props = {
   project: ProjectResponse;
   deploymentPage: DeploymentPage;
 };
 
-type EditableComponentContainerProps = {
-  children: ReactNode;
-  componentTree: ComponentTree;
-  shareableContent: any;
-};
-
-const EditableComponentContainer = ({
-  children,
-  componentTree,
-  shareableContent,
-}: EditableComponentContainerProps) => {
-  return (
-    <EditableComponent
-      id={componentTree.id!}
-      component={componentTree}
-      shareableContent={shareableContent}
-    >
-      {children}
-    </EditableComponent>
-  );
-};
+let theme: MantineThemeExtended | undefined;
 
 export const Live = ({ project, deploymentPage }: Props) => {
+  theme = theme === undefined ? prepareUserThemeLive(project.branding) : theme;
+
+  const { data: variables } = useVariableListQuery(project.id);
+  const { data: endpoints } = useDataSourceEndpoints(project.id);
+
   const editorTree = useEditorTreeStore((state) => state.tree);
   const setEditorTree = useEditorTreeStore((state) => state.setTree);
   const setIsLoading = useAppStore((state) => state.setIsLoading);
   const isLoading = useAppStore((state) => state.isLoading);
+  const initializeVariableList = useVariableStore(
+    (state) => state.initializeVariableList,
+  );
+  const setApiAuthConfig = useDataSourceStore(
+    (state) => state.setApiAuthConfig,
+  );
+  const setIsLive = useEditorTreeStore((state) => state.setIsLive);
+  const setCurrentPageAndProjectIds = useEditorTreeStore(
+    (state) => state.setCurrentPageAndProjectIds,
+  );
+  const setPreviewMode = useEditorTreeStore((state) => state.setPreviewMode);
+  const setTheme = useThemeStore((state) => state.setTheme);
+
+  useEffect(() => {
+    if (theme) setTheme(theme);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (deploymentPage?.pageState) {
@@ -56,7 +67,40 @@ export const Live = ({ project, deploymentPage }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [deploymentPage]);
 
-  const renderTree = useCallback(
+  useEffect(() => {
+    if (project && deploymentPage.id) {
+      setCurrentPageAndProjectIds(project.id, deploymentPage.id);
+      setPreviewMode(true);
+      setIsLive(true);
+
+      const loadFonts = async () => {
+        if (theme)
+          await initializeFonts(theme.fontFamily, theme.headings.fontFamily);
+      };
+
+      loadFonts();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [project, deploymentPage.id]);
+
+  useEffect(() => {
+    if (variables) initializeVariableList(variables.results);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [variables]);
+
+  useEffect(() => {
+    if (variables) initializeVariableList(variables.results);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [variables]);
+
+  useEffect(() => {
+    if (endpoints) {
+      setApiAuthConfig(endpoints.results);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [endpoints]);
+
+  const renderTree: RenderTreeFunc = useCallback(
     (componentTree: ComponentTree, shareableContent = {}) => {
       if (componentTree.id === "root") {
         return (
@@ -68,24 +112,26 @@ export const Live = ({ project, deploymentPage }: Props) => {
             sx={{ flexDirection: "column" }}
             key={componentTree.id}
           >
-            {componentTree.children?.map((child) => renderTree(child))}
+            {componentTree.children?.map((child) =>
+              renderTree(child, shareableContent),
+            )}
           </Box>
         );
       }
 
-      const component =
-        useEditorTreeStore.getState().componentMutableAttrs[componentTree.id!];
-      const componentToRender = componentMapper[component.name];
+      const componentToRender = componentMapper[componentTree.name];
 
-      return (
-        <EditableComponentContainer
-          key={component.id}
-          componentTree={componentTree}
-          shareableContent={shareableContent}
-        >
-          {componentToRender?.Component({ component, renderTree })}
-        </EditableComponentContainer>
-      );
+      if (!componentToRender) {
+        return componentTree.children?.map((child) =>
+          renderTree(child, shareableContent),
+        );
+      }
+
+      return componentToRender?.Component({
+        component: componentTree,
+        renderTree,
+        shareableContent,
+      });
     },
     [],
   );

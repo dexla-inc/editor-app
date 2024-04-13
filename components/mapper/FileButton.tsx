@@ -8,30 +8,24 @@ import {
 } from "@mantine/core";
 import merge from "lodash.merge";
 import { forwardRef, memo } from "react";
-import { isSame } from "@/utils/componentComparison";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
+import { useEditorTreeStore } from "@/stores/editorTree";
+import { useShallow } from "zustand/react/shallow";
 
 type Props = EditableComponentMapper & FileButtonProps;
 
 export const FileButtonComponent = forwardRef(
-  (
-    { component, onChange, isPreviewMode, shareableContent, ...props }: Props,
-    ref,
-  ) => {
+  ({ component, onChange, shareableContent, ...props }: Props, ref) => {
+    const isPreviewMode = useEditorTreeStore(
+      useShallow((state) => state.isPreviewMode || state.isLive),
+    );
     const { triggers, variable, ...componentProps } = component.props ?? {};
     const { style, ...restProps } = props as any;
     const contentEditableProps = useContentEditable(
       component.id as string,
       ref,
     );
-
-    const nameValue = useComputeValue({
-      componentId: component.id!,
-      field: "name",
-      shareableContent,
-      staticFallback: component.props?.name,
-    });
+    const { name: nameValue } = component.onLoad;
 
     const { inputStyle } = useBrandingStyles();
     const customStyle = merge(inputStyle, style);
@@ -60,5 +54,4 @@ FileButtonComponent.displayName = "FileButton";
 
 export const FileButton = memo(
   withComponentWrapper<Props>(FileButtonComponent),
-  isSame,
 );

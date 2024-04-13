@@ -1,8 +1,6 @@
 import { Icon } from "@/components/Icon";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useThemeStore } from "@/stores/theme";
-import { useEditorTreeStore } from "@/stores/editorTree";
-import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import { AlertProps, Alert as MantineAlert } from "@mantine/core";
 import get from "lodash.get";
@@ -42,4 +40,4 @@ const AlertComponent = forwardRef(
 );
 AlertComponent.displayName = "Alert";
 
-export const Alert = memo(withComponentWrapper<Props>(AlertComponent), isSame);
+export const Alert = memo(withComponentWrapper<Props>(AlertComponent));

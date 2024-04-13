@@ -4,7 +4,6 @@ import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { useChangeState } from "@/hooks/useChangeState";
 import { useEndpoint } from "@/hooks/useEndpoint";
-import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import {
   MultiSelect as MantineMultiSelect,
@@ -17,28 +16,12 @@ import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { forwardRef, memo } from "react";
-import { useEditorTreeStore } from "@/stores/editorTree";
-import { memoize } from "proxy-memoize";
-import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
 import { useInputValue } from "@/hooks/useInputValue";
 
 type Props = EditableComponentMapper & SelectProps & MultiSelectProps;
 
 const SelectComponent = forwardRef(
-  (
-    {
-      component,
-      children: child,
-      isPreviewMode,
-      shareableContent,
-      ...props
-    }: Props,
-    ref,
-  ) => {
-    const updateTreeComponentAttrs = useEditorTreeStore(
-      (state) => state.updateTreeComponentAttrs,
-    );
-
+  ({ component, children: child, shareableContent, ...props }: Props, ref) => {
     const {
       children,
       triggers,
@@ -55,20 +38,14 @@ const SelectComponent = forwardRef(
       ? MantineMultiSelect
       : MantineSelect;
 
-    const onLoad = useEditorTreeStore(
-      memoize(
-        (state) => state.componentMutableAttrs[component?.id!]?.onLoad ?? {},
-      ),
-    );
-
     const [value, setValue] = useInputValue(
       {
-        value: onLoad?.value ?? "",
+        value: component.onLoad?.value ?? "",
       },
       component.id!,
     );
 
-    const { dataLabelKey, dataValueKey } = onLoad;
+    const { dataLabelKey, dataValueKey } = component.onLoad;
     const { onChange, onSearchChange, ...restTriggers } = triggers || {};
     const { color, backgroundColor } = useChangeState({ bg, textColor });
     const { borderStyle, inputStyle } = useBrandingStyles();
@@ -78,7 +55,7 @@ const SelectComponent = forwardRef(
     });
 
     const { data: response } = useEndpoint({
-      onLoad,
+      onLoad: component.onLoad,
       dataType,
     });
 
@@ -145,7 +122,4 @@ const SelectComponent = forwardRef(
 );
 SelectComponent.displayName = "Select";
 
-export const Select = memo(
-  withComponentWrapper<Props>(SelectComponent),
-  isSame,
-);
+export const Select = memo(withComponentWrapper<Props>(SelectComponent));

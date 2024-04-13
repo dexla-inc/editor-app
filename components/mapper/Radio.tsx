@@ -1,20 +1,19 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import { Group, Radio as MantineRadio, RadioGroupProps } from "@mantine/core";
 import merge from "lodash.merge";
-import { forwardRef, memo, useState } from "react";
-import { useEditorTreeStore } from "@/stores/editorTree";
-import { memoize } from "proxy-memoize";
+import { forwardRef, memo } from "react";
 import { useInputValue } from "@/hooks/useInputValue";
+import { useEditorTreeStore } from "@/stores/editorTree";
+import { useShallow } from "zustand/react/shallow";
 
 type Props = EditableComponentMapper & RadioGroupProps;
 
 const RadioComponent = forwardRef(
-  (
-    { renderTree, component, isPreviewMode, shareableContent, ...props }: Props,
-    ref,
-  ) => {
+  ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
+    const isPreviewMode = useEditorTreeStore(
+      useShallow((state) => state.isPreviewMode || state.isLive),
+    );
     const { children, triggers, styles, ...componentProps } =
       component.props as any;
 
@@ -24,15 +23,9 @@ const RadioComponent = forwardRef(
       alignItems: "center",
     };
 
-    const onLoad = useEditorTreeStore(
-      memoize(
-        (state) => state.componentMutableAttrs[component?.id!]?.onLoad ?? {},
-      ),
-    );
-
     const [value, setValue] = useInputValue(
       {
-        value: onLoad?.value ?? "",
+        value: component?.onLoad?.value ?? "",
       },
       component.id!,
     );
@@ -80,4 +73,4 @@ const RadioComponent = forwardRef(
 );
 RadioComponent.displayName = "Radio";
 
-export const Radio = memo(withComponentWrapper<Props>(RadioComponent), isSame);
+export const Radio = memo(withComponentWrapper<Props>(RadioComponent));

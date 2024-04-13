@@ -10,15 +10,14 @@ import { usePropelAuthStore } from "@/stores/propelAuth";
 import { encodeSchema } from "@/utils/compression";
 import { getTileData, getTiles } from "@/utils/editor";
 import camelcase from "lodash.camelcase";
-import { useRouter } from "next/router";
+import { memo } from "react";
 
-export const SaveTemplateButton = () => {
-  const router = useRouter();
-  const startLoading = useAppStore((state) => state.startLoading);
-  const stopLoading = useAppStore((state) => state.stopLoading);
-  const company = usePropelAuthStore((state) => state.activeCompany);
-
+const SaveTemplateButtonComponent = () => {
   const saveTemplate = async () => {
+    const startLoading = useAppStore.getState().startLoading;
+    const stopLoading = useAppStore.getState().stopLoading;
+    const company = usePropelAuthStore.getState().activeCompany;
+
     try {
       startLoading({
         id: "save-template",
@@ -27,10 +26,8 @@ export const SaveTemplateButton = () => {
       });
 
       const editorTree = useEditorTreeStore.getState().tree;
-      const { id: projectId, page: pageId } = router.query as {
-        id: string;
-        page: string;
-      };
+      const pageId = useEditorTreeStore.getState().currentPageId!;
+      const projectId = useEditorTreeStore.getState().currentProjectId!;
 
       const page = await getPage(projectId, pageId);
 
@@ -117,3 +114,5 @@ export const SaveTemplateButton = () => {
     // </Tooltip>
   );
 };
+
+export const SaveTemplateButton = memo(SaveTemplateButtonComponent);

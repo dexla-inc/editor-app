@@ -24,7 +24,7 @@ import {
 } from "@/utils/editor";
 import { Group, Text, Tooltip, UnstyledButton } from "@mantine/core";
 import { IconGripVertical } from "@tabler/icons-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useDisclosure } from "@mantine/hooks";
 
@@ -32,12 +32,11 @@ type Props = {
   component: Component;
 };
 
-export const ComponentToolbox = ({ component }: Props) => {
+const ComponentToolboxInner = ({ component }: Props) => {
   const isResizing = useEditorStore((state) => state.isResizing);
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const editorTheme = useThemeStore((state) => state.theme);
 
-  // Move to functions
   const editorTree = useEditorTreeStore(
     (state) => state.tree as EditorTreeCopy,
   );
@@ -255,3 +254,5 @@ export const ComponentToolbox = ({ component }: Props) => {
     </>
   );
 };
+
+export const ComponentToolbox = memo(ComponentToolboxInner);

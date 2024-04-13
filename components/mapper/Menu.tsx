@@ -1,4 +1,3 @@
-import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import { Menu as MantineMenu, MenuProps } from "@mantine/core";
 import { forwardRef, memo } from "react";
@@ -21,4 +20,4 @@ const MenuComponent = forwardRef(
 );
 MenuComponent.displayName = "Menu";
 
-export const Menu = memo(withComponentWrapper<Props>(MenuComponent), isSame);
+export const Menu = memo(withComponentWrapper<Props>(MenuComponent));

@@ -1,6 +1,5 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { isSame } from "@/utils/componentComparison";
 import { GRID_SIZE } from "@/utils/config";
 import { convertSizeToPx } from "@/utils/defaultSizes";
 import { EditableComponentMapper, checkNavbarExists } from "@/utils/editor";
@@ -66,7 +65,4 @@ const GridComponent = forwardRef(
 );
 GridComponent.displayName = "Grid";
 
-export const Grid = memo(
-  withComponentWrapper<GridProps>(GridComponent),
-  isSame,
-);
+export const Grid = memo(withComponentWrapper<GridProps>(GridComponent));

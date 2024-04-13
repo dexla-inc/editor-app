@@ -5,7 +5,6 @@ import { useUserConfigStore } from "@/stores/userConfig";
 import { emptyEditorTree } from "@/utils/common";
 import { decodeSchema } from "@/utils/compression";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
 
 type getPageDataParams = {
   signal: AbortSignal | undefined;
@@ -60,7 +59,6 @@ export const useGetPageData = ({ projectId, pageId }: Props) => {
       setIsLoading(true);
 
       if (pageCancelled) {
-        //TODO: get this back - we might not need this
         setEditorTree(defaultPageState, {
           onLoad: false,
           action: "Initial State",
@@ -101,7 +99,7 @@ export const useGetPageData = ({ projectId, pageId }: Props) => {
   };
 
   useQuery({
-    queryKey: ["page-state", projectId, pageId, history],
+    queryKey: ["page-state", projectId, pageId, history.state.as],
     queryFn: async ({ signal }) => await getPageData({ signal }),
     enabled: !!projectId && !!pageId,
   });

@@ -2,12 +2,10 @@ import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useContentEditable } from "@/hooks/useContentEditable";
 import { useThemeStore } from "@/stores/theme";
 import { DISABLED_HOVER } from "@/utils/branding";
-import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper, getColorFromTheme } from "@/utils/editor";
 import { BadgeProps, Badge as MantineBadge } from "@mantine/core";
 import merge from "lodash.merge";
 import { forwardRef, memo } from "react";
-import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
 type Props = EditableComponentMapper & BadgeProps;
 
 const BadgeComponent = forwardRef(
@@ -18,18 +16,12 @@ const BadgeComponent = forwardRef(
     );
     const { style, color, variable, ...componentProps } =
       component.props as any;
+    const { children: childrenValue } = component.onLoad;
 
     const theme = useThemeStore((state) => state.theme);
     const customStyle = merge({}, style, {
       color: getColorFromTheme(theme, color),
       textTransform: "none",
-    });
-
-    const childrenValue = useComputeValue({
-      componentId: component.id!,
-      field: "children",
-      shareableContent,
-      staticFallback: component.props?.children,
     });
 
     return (
@@ -52,4 +44,4 @@ const BadgeComponent = forwardRef(
 );
 BadgeComponent.displayName = "Badge";
 
-export const Badge = memo(withComponentWrapper<Props>(BadgeComponent), isSame);
+export const Badge = memo(withComponentWrapper<Props>(BadgeComponent));

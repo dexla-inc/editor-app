@@ -5,8 +5,6 @@ import { getUrl, performFetch } from "@/utils/actions";
 import { DEFAULT_STALE_TIME } from "@/utils/config";
 import { useQuery } from "@tanstack/react-query";
 import get from "lodash.get";
-import { useComputeValue2 } from "@/hooks/dataBinding/useComputeValue2";
-import { useMemo } from "react";
 
 type UseEndpointProps = {
   dataType: "static" | "dynamic";
@@ -30,23 +28,15 @@ export const useEndpoint = ({
     endpointId,
     resultsKey,
     staleTime = DEFAULT_STALE_TIME,
+    binds: { parameter = {}, body = {} } = {},
   } = onLoad ?? {};
-
-  const binds = useMemo(() => ({ binds: onLoad?.binds }), [onLoad?.binds]);
 
   const projectId = useEditorTreeStore((state) => state.currentProjectId);
   const { data: endpoints } = useDataSourceEndpoints(projectId);
   const endpoint = endpoints?.results?.find((e) => e.id === endpointId);
-  const { binds: { parameter = {}, body = {} } = {} } = useComputeValue2({
-    onLoad: binds,
-  });
-
   const apiUrl = `${endpoint?.baseUrl}/${endpoint?.relativeUrl}`;
-
   const requestBody = endpoint ? { ...parameter, ...body } : {};
-
   const url = endpoint ? getUrl(Object.keys(parameter), apiUrl, parameter) : "";
-
   const fetchUrl = endpoint?.isServerRequest
     ? `/api/proxy?targetUrl=${encodeURIComponent(url)}`
     : url;

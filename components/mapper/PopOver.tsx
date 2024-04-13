@@ -1,11 +1,10 @@
-import { useAppMode } from "@/hooks/useAppMode";
 import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { isSame } from "@/utils/componentComparison";
 import { Component, EditableComponentMapper } from "@/utils/editor";
 import { Box, Popover as MantinePopOver, PopoverProps } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { memo, useEffect } from "react";
+import { useShallow } from "zustand/react/shallow";
 
 type Props = EditableComponentMapper & Omit<PopoverProps, "opened">;
 
@@ -16,7 +15,9 @@ const PopOverComponent = ({
   shareableContent,
   ...props
 }: Props) => {
-  const isPreviewMode = useEditorTreeStore((state) => state.isPreviewMode);
+  const isPreviewMode = useEditorTreeStore(
+    useShallow((state) => state.isPreviewMode || state.isLive),
+  );
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const isLive = useEditorTreeStore((state) => state.isLive);
 
@@ -94,4 +95,4 @@ const PopOverComponent = ({
   );
 };
 
-export const PopOver = memo(PopOverComponent, isSame);
+export const PopOver = memo(PopOverComponent);

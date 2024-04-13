@@ -1,7 +1,6 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useEndpoint } from "@/hooks/useEndpoint";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { isSame } from "@/utils/componentComparison";
 import { componentMapper } from "@/utils/componentMapper";
 import { convertSizeToPx } from "@/utils/defaultSizes";
 import {
@@ -10,16 +9,17 @@ import {
 } from "@/utils/editor";
 import { FlexProps, LoadingOverlay, Flex as MantineFlex } from "@mantine/core";
 import { FormEvent, forwardRef, memo } from "react";
-import { memoize } from "proxy-memoize";
 import { useInputsStore } from "@/stores/inputs";
+import { useShallow } from "zustand/react/shallow";
 
 type Props = EditableComponentMapper & FlexProps;
 
 const FormComponent = forwardRef(
-  (
-    { renderTree, component, isPreviewMode, shareableContent, ...props }: Props,
-    ref,
-  ) => {
+  ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
+    const isPreviewMode = useEditorTreeStore(
+      useShallow((state) => state.isPreviewMode || state.isLive),
+    );
+
     const { children, triggers, loading, dataType, gap, ...componentProps } =
       component.props as any;
     const { onSubmit, ...otherTriggers } = triggers || {};
@@ -29,13 +29,9 @@ const FormComponent = forwardRef(
       (state) => state.setTreeComponentCurrentState,
     );
 
-    const onLoad = useEditorTreeStore(
-      memoize((state) => state.componentMutableAttrs[component?.id!]?.onLoad),
-    );
-
-    const { endpointId } = onLoad ?? {};
+    const { endpointId } = component.onLoad ?? {};
     const { data } = useEndpoint({
-      onLoad,
+      onLoad: component.onLoad,
       dataType,
     });
 
@@ -148,4 +144,4 @@ const FormComponent = forwardRef(
 );
 FormComponent.displayName = "Form";
 
-export const Form = memo(withComponentWrapper<Props>(FormComponent), isSame);
+export const Form = memo(withComponentWrapper<Props>(FormComponent));

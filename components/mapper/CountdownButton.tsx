@@ -4,7 +4,6 @@ import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { useContentEditable } from "@/hooks/useContentEditable";
 import { useThemeStore } from "@/stores/theme";
 import { DISABLED_HOVER } from "@/utils/branding";
-import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper, getColorFromTheme } from "@/utils/editor";
 import { splitValueAndUnit } from "@/utils/splitValueAndUnit";
 import { ButtonProps, Button as MantineButton } from "@mantine/core";
@@ -17,15 +16,16 @@ import {
   useRef,
   useState,
 } from "react";
-import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
+import { useEditorTreeStore } from "@/stores/editorTree";
+import { useShallow } from "zustand/react/shallow";
 
 type Props = EditableComponentMapper & ButtonProps & ReactElement<"Button">;
 
 const CountdownButtonComponent = forwardRef(
-  (
-    { component, isPreviewMode, style, shareableContent, ...props }: Props,
-    ref,
-  ) => {
+  ({ component, style, shareableContent, ...props }: Props, ref) => {
+    const isPreviewMode = useEditorTreeStore(
+      useShallow((state) => state.isPreviewMode || state.isLive),
+    );
     const {
       triggers,
       icon,
@@ -36,6 +36,7 @@ const CountdownButtonComponent = forwardRef(
       duration,
       ...componentProps
     } = component.props as any;
+    const { children: childrenValue } = component.onLoad;
 
     const durationUnitAndValue = splitValueAndUnit(duration);
     const durationValue = durationUnitAndValue ? durationUnitAndValue[0] : 30;
@@ -52,13 +53,6 @@ const CountdownButtonComponent = forwardRef(
       component.id as string,
       ref,
     );
-
-    const childrenValue = useComputeValue({
-      componentId: component.id!,
-      field: "children",
-      shareableContent,
-      staticFallback: component.props?.children,
-    });
 
     const defaultTriggers = isPreviewMode
       ? {}
@@ -126,5 +120,4 @@ CountdownButtonComponent.displayName = "Button";
 
 export const CountdownButton = memo(
   withComponentWrapper<Props>(CountdownButtonComponent),
-  isSame,
 );

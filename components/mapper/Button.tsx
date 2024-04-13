@@ -1,24 +1,21 @@
 import { Icon } from "@/components/Icon";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
 import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { useChangeState } from "@/hooks/useChangeState";
 import { useContentEditable } from "@/hooks/useContentEditable";
 import { useThemeStore } from "@/stores/theme";
 import { DISABLED_HOVER } from "@/utils/branding";
-import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper, getColorFromTheme } from "@/utils/editor";
 import { ButtonProps, Button as MantineButton } from "@mantine/core";
 import merge from "lodash.merge";
 import { ReactElement, forwardRef, memo } from "react";
+import { useEditorTreeStore } from "@/stores/editorTree";
+import { useShallow } from "zustand/react/shallow";
 
 type Props = EditableComponentMapper & ButtonProps & ReactElement<"Button">;
 
 const ButtonComponent = forwardRef(
-  (
-    { component, isPreviewMode, style, shareableContent, ...props }: Props,
-    ref,
-  ) => {
+  ({ component, style, shareableContent, ...props }: Props, ref) => {
     const {
       triggers,
       icon,
@@ -29,7 +26,8 @@ const ButtonComponent = forwardRef(
       color,
       ...componentProps
     } = component.props as any;
-
+    const { children: childrenValue = component.props?.children } =
+      component.onLoad;
     const theme = useThemeStore((state) => state.theme);
 
     const contentEditableProps = useContentEditable(
@@ -37,12 +35,9 @@ const ButtonComponent = forwardRef(
       ref,
     );
 
-    const childrenValue = useComputeValue({
-      componentId: component.id!,
-      field: "children",
-      shareableContent,
-      staticFallback: component.props?.children,
-    });
+    const isPreviewMode = useEditorTreeStore(
+      useShallow((state) => state.isPreviewMode || state.isLive),
+    );
 
     const defaultTriggers = isPreviewMode
       ? {}
@@ -92,8 +87,4 @@ const ButtonComponent = forwardRef(
 );
 ButtonComponent.displayName = "Button";
 
-// export const Button = memo(ButtonComponent, isSame);
-export const Button = memo(
-  withComponentWrapper<Props>(ButtonComponent),
-  isSame,
-);
+export const Button = memo(withComponentWrapper<Props>(ButtonComponent));

@@ -1,4 +1,3 @@
-import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import {
   Table as MantineTable,
@@ -9,8 +8,6 @@ import {
 import { forwardRef, memo } from "react";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useEndpoint } from "@/hooks/useEndpoint";
-import { useEditorTreeStore } from "@/stores/editorTree";
-import { memoize } from "proxy-memoize";
 
 type Props = EditableComponentMapper & TableProps;
 
@@ -18,10 +15,7 @@ export const TableComponent = forwardRef(
   ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
     const { children, triggers, dataType, ...componentProps } =
       component.props as any;
-
-    const onLoad = useEditorTreeStore(
-      memoize((state) => state.componentMutableAttrs[component?.id!]?.onLoad),
-    );
+    const { onLoad } = component;
 
     const { data } = useEndpoint({
       onLoad,
@@ -139,4 +133,4 @@ export const TableCell = forwardRef(
 );
 TableCell.displayName = "TableCell";
 
-export const Table = memo(withComponentWrapper<Props>(TableComponent), isSame);
+export const Table = memo(withComponentWrapper<Props>(TableComponent));
