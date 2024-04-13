@@ -2,8 +2,6 @@ import { useTriggers } from "@/hooks/useTriggers";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { PageResponse } from "@/requests/pages/types";
-import { Endpoint } from "@/requests/datasources/types";
-import { LogicFlowResponse } from "@/requests/logicflows/types";
 import { ProjectResponse } from "@/requests/projects/types";
 
 // Props from server side
@@ -14,13 +12,18 @@ type Props = {
 };
 
 export const withPageOnLoad = (WrappedComponent: any) => {
-  const Config = (props: Props) => {
-    const { asPath } = useRouter();
+  const PageOnLoadWrapper = (props: Props) => {
+    const { asPath, query } = useRouter();
+    const { id: projectId, page: pageId } = query as {
+      id: string;
+      page: string;
+    };
+
     const page = props.deploymentPage;
 
     const { onPageLoad } = useTriggers({
       entity: page,
-      projectId: props.project.id,
+      projectId: props.project?.id || projectId,
     });
 
     const [actionTriggeredForPath, setActionTriggeredForPath] = useState("");
@@ -44,5 +47,5 @@ export const withPageOnLoad = (WrappedComponent: any) => {
     return <WrappedComponent {...props} />;
   };
 
-  return Config;
+  return PageOnLoadWrapper;
 };
