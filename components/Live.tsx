@@ -29,7 +29,6 @@ let theme: MantineThemeExtended | undefined;
 export const Live = ({ project, deploymentPage }: Props) => {
   theme = theme === undefined ? prepareUserThemeLive(project.branding) : theme;
 
-  console.log("Live", deploymentPage.slug);
   const { data: variables } = useVariableListQuery(project.id);
   const { data: endpoints } = useDataSourceEndpoints(project.id);
 
@@ -51,7 +50,6 @@ export const Live = ({ project, deploymentPage }: Props) => {
   const setTheme = useThemeStore((state) => state.setTheme);
 
   useEffect(() => {
-    console.log("Setting theme");
     if (theme) setTheme(theme);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -76,7 +74,8 @@ export const Live = ({ project, deploymentPage }: Props) => {
       setIsLive(true);
 
       const loadFonts = async () => {
-        await initializeFonts(theme.fontFamily, theme.headings.fontFamily);
+        if (theme)
+          await initializeFonts(theme.fontFamily, theme.headings.fontFamily);
       };
 
       loadFonts();

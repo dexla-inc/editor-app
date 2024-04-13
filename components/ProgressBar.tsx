@@ -50,7 +50,6 @@ export const useRouteChange = () => {
   const router = useRouter();
 
   useEffect(() => {
-    console.log("useRouteChange2");
     const handleRouteChangeStart = () => {
       setIsRouteChanging(true);
     };

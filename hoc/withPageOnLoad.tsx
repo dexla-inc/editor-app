@@ -1,5 +1,5 @@
 import { useTriggers } from "@/hooks/useTriggers";
-import { useRouter } from "next/router";
+import { Router, useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { PageResponse } from "@/requests/pages/types";
 import { ProjectResponse } from "@/requests/projects/types";
@@ -13,8 +13,8 @@ type Props = {
 
 export const withPageOnLoad = (WrappedComponent: any) => {
   const PageOnLoadWrapper = (props: Props) => {
-    const { asPath, query } = useRouter();
-    const { id: projectId, page: pageId } = query as {
+    const router = useRouter();
+    const { id: projectId, page: pageId } = router.query as {
       id: string;
       page: string;
     };
@@ -23,6 +23,7 @@ export const withPageOnLoad = (WrappedComponent: any) => {
 
     const { onPageLoad } = useTriggers({
       entity: page,
+      router: router as Router,
       projectId: props.project?.id || projectId,
     });
 
@@ -31,18 +32,24 @@ export const withPageOnLoad = (WrappedComponent: any) => {
     useEffect(() => {
       const triggerPageActions = async () => {
         const isPageValid =
-          page && (asPath.includes(page.id) || asPath.includes(page.slug));
+          page &&
+          (router.asPath.includes(page.id) ||
+            router.asPath.includes(page.slug));
         // TODO: Do not run when runInEditMode is false and the mode is editor.
         // TODO: Only the last action gets run
-        if (isPageValid && onPageLoad && actionTriggeredForPath !== asPath) {
+        if (
+          isPageValid &&
+          onPageLoad &&
+          actionTriggeredForPath !== router.asPath
+        ) {
           await onPageLoad?.();
-          setActionTriggeredForPath(asPath);
+          setActionTriggeredForPath(router.asPath);
         }
       };
 
       triggerPageActions();
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [asPath, page?.id]);
+    }, [router.asPath, page?.id]);
 
     return <WrappedComponent {...props} />;
   };

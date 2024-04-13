@@ -75,7 +75,6 @@ export const EditorNavbarThemesSection =
     const userTheme = project?.branding;
 
     useEffect(() => {
-      console.log("EditorNavbarThemesSection");
       if (userTheme) form.setValues(userTheme);
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [userTheme]);

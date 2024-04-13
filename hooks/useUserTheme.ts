@@ -7,7 +7,6 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 import { MantineThemeExtended } from "@/utils/types";
 
 export const useUserTheme = (projectId: string) => {
-  console.log("useUserTheme");
   const setTheme = useThemeStore((state) => state.setTheme);
   const [internalTheme, setInternalTheme] = useState<any>(null);
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
@@ -93,7 +92,6 @@ export const useUserTheme = (projectId: string) => {
 
   useEffect(() => {
     if (internalTheme) {
-      console.log("internalTheme", internalTheme);
       setTheme(internalTheme);
     }
   }, [internalTheme, setTheme]);
