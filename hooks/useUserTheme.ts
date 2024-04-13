@@ -6,6 +6,7 @@ import { useProjectQuery } from "./reactQuery/useProjectQuery";
 import { useEditorTreeStore } from "@/stores/editorTree";
 
 export const useUserTheme = (projectId: string) => {
+  console.log("useUserTheme");
   const setTheme = useThemeStore((state) => state.setTheme);
   const [internalTheme, setInternalTheme] = useState<any>(null);
   const iframeWindow = useEditorStore((state) => state.iframeWindow);

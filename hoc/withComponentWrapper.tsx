@@ -22,7 +22,7 @@ import { Component } from "@/utils/editor";
 export const withComponentWrapper = <T extends Record<string, any>>(
   Component: ComponentType<T>,
 ) => {
-  const Config = ({
+  const ComponentWrapper = ({
     component: componentTree,
     renderTree,
     shareableContent,
@@ -45,23 +45,26 @@ export const withComponentWrapper = <T extends Record<string, any>>(
 
     const computedOnLoad = useComputeValue({ onLoad, shareableContent });
 
-    const selectedByOther = useEditorTreeStore(
-      useShallow((state) => {
-        const other = state.liveblocks?.others?.find(({ presence }: any) => {
-          return presence.selectedComponentIds?.includes(componentTree.id);
-        });
+    // Commenting out as liveblocks doesn't work properly since detachment.
+    // const selectedByOther = useEditorTreeStore(
+    //   useShallow((state) => {
+    //     const other = state.liveblocks?.others?.find(({ presence }: any) => {
+    //       return presence.selectedComponentIds?.includes(componentTree.id);
+    //     });
 
-        if (!other) return null;
+    //     if (!other) return null;
 
-        return CURSOR_COLORS[other.connectionId % CURSOR_COLORS.length];
-      }),
-    )!;
+    //     return CURSOR_COLORS[other.connectionId % CURSOR_COLORS.length];
+    //   }),
+    // )!;
 
     const component = useEditorTreeStore(
       useShallow(
         (state) => state.componentMutableAttrs[componentTree.id!] ?? {},
       ),
     );
+
+    console.log("withComponentWrapper", component.description);
 
     const hasTooltip = !!component?.props?.tooltip;
     const initiallyLoading = component?.props?.initiallyLoading;
@@ -94,7 +97,7 @@ export const withComponentWrapper = <T extends Record<string, any>>(
     const { isPicking, droppable, tealOutline } = useEditorShadows({
       componentId: componentTree.id!,
       isSelected: false,
-      selectedByOther,
+      //selectedByOther,
     });
 
     const propsWithOverwrites = usePropsWithOverwrites(
@@ -172,5 +175,5 @@ export const withComponentWrapper = <T extends Record<string, any>>(
     );
   };
 
-  return Config;
+  return ComponentWrapper;
 };
