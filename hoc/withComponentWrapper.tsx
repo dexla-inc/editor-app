@@ -2,7 +2,6 @@ import { Skeleton, Tooltip } from "@mantine/core";
 import { ComponentType, Fragment } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useShallow } from "zustand/react/shallow";
-import { CURSOR_COLORS } from "@/utils/config";
 import { useComputeCurrentState } from "@/hooks/reactQuery/useComputeCurrentState";
 import { useEditorStore } from "@/stores/editor";
 import {
@@ -18,6 +17,7 @@ import { useEditorClickHandler } from "@/hooks/useEditorClickHandler";
 import { ComponentToolbox } from "@/components/ComponentToolbox";
 import { WithComponentWrapperProps } from "@/types/component";
 import { Component } from "@/utils/editor";
+import { Router, useRouter } from "next/router";
 
 export const withComponentWrapper = <T extends Record<string, any>>(
   Component: ComponentType<T>,
@@ -64,8 +64,6 @@ export const withComponentWrapper = <T extends Record<string, any>>(
       ),
     );
 
-    //console.log("withComponentWrapper", component.description);
-
     const hasTooltip = !!component?.props?.tooltip;
     const initiallyLoading = component?.props?.initiallyLoading;
     const Wrapper = hasTooltip
@@ -90,8 +88,11 @@ export const withComponentWrapper = <T extends Record<string, any>>(
       componentContextMenu,
     );
 
+    const router = useRouter();
+
     const triggers = useTriggers({
       entity: component,
+      router: router as Router,
     });
 
     const { isPicking, droppable, tealOutline } = useEditorShadows({

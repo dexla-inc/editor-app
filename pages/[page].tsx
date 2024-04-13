@@ -39,8 +39,6 @@ export const getServerSideProps = async ({
 
   const isLoggedIn = checkRefreshTokenExists(req.cookies["refreshToken"]);
 
-  console.log("deploymentPage", deploymentPage.slug);
-
   if (
     !isLoggedIn &&
     deploymentPage?.authenticatedOnly &&
@@ -80,7 +78,6 @@ type Props = {
 };
 
 function LivePage({ project, faviconUrl, deploymentPage }: Props) {
-  console.log("LivePage", deploymentPage.slug);
   return (
     <>
       <Head>
