@@ -4,6 +4,7 @@ import { defaultTheme } from "@/utils/branding";
 import { useEffect, useState } from "react";
 import { useProjectQuery } from "./reactQuery/useProjectQuery";
 import { useEditorTreeStore } from "@/stores/editorTree";
+import { MantineThemeExtended } from "@/utils/types";
 
 export const useUserTheme = (projectId: string) => {
   console.log("useUserTheme");
@@ -92,9 +93,10 @@ export const useUserTheme = (projectId: string) => {
 
   useEffect(() => {
     if (internalTheme) {
+      console.log("internalTheme", internalTheme);
       setTheme(internalTheme);
     }
   }, [internalTheme, setTheme]);
 
-  return internalTheme;
+  return internalTheme as MantineThemeExtended;
 };

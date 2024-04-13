@@ -64,7 +64,7 @@ export const withComponentWrapper = <T extends Record<string, any>>(
       ),
     );
 
-    console.log("withComponentWrapper", component.description);
+    //console.log("withComponentWrapper", component.description);
 
     const hasTooltip = !!component?.props?.tooltip;
     const initiallyLoading = component?.props?.initiallyLoading;

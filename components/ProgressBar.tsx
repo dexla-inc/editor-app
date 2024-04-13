@@ -9,7 +9,6 @@ interface Props {
 
 export const ProgressBar: React.FC<Props> = ({ color, enabled = true }) => {
   const isRouteChanging = useRouteChange();
-  console.log("ProgressBar", isRouteChanging);
   const { animationDuration, isFinished, progress } = useNProgress({
     isAnimating: isRouteChanging,
   });
