@@ -63,7 +63,6 @@ export const EditorNavbarThemesSection =
     const startLoading = useAppStore((state) => state.startLoading);
     const stopLoading = useAppStore((state) => state.stopLoading);
     const [currentFontIndex, setCurrentFontIndex] = useState<number>(0);
-    const mantineTheme = useMantineTheme();
 
     const [opened, { open, close }] = useDisclosure(false);
 
@@ -76,6 +75,7 @@ export const EditorNavbarThemesSection =
     const userTheme = project?.branding;
 
     useEffect(() => {
+      console.log("EditorNavbarThemesSection");
       if (userTheme) form.setValues(userTheme);
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [userTheme]);

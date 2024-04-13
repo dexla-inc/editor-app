@@ -11,7 +11,6 @@ type Props = {
 export const LiveWrapper = ({ children, project, ...props }: Props) => {
   const theme = useThemeStore((state) => state.theme);
   useCustomCode(project);
-  console.log("LiveWrapper", props);
 
   if (!theme) {
     return null;

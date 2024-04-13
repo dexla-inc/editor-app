@@ -17,17 +17,21 @@ import { initializeFonts } from "@/utils/webfontloader";
 import { useEffect } from "react";
 import { useVariableListQuery } from "@/hooks/reactQuery/useVariableListQuery";
 import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
+import { MantineThemeExtended } from "@/utils/types";
 
 type Props = {
   project: ProjectResponse;
   deploymentPage: DeploymentPage;
 };
 
+let theme: MantineThemeExtended | undefined;
+
 export const Live = ({ project, deploymentPage }: Props) => {
+  theme = theme === undefined ? prepareUserThemeLive(project.branding) : theme;
+
   console.log("Live", deploymentPage.slug);
   const { data: variables } = useVariableListQuery(project.id);
   const { data: endpoints } = useDataSourceEndpoints(project.id);
-  //const {data: logicFlows } = useFlowsQuery(project.id);
 
   const editorTree = useEditorTreeStore((state) => state.tree);
   const setEditorTree = useEditorTreeStore((state) => state.setTree);
@@ -44,17 +48,11 @@ export const Live = ({ project, deploymentPage }: Props) => {
     (state) => state.setCurrentPageAndProjectIds,
   );
   const setPreviewMode = useEditorTreeStore((state) => state.setPreviewMode);
-
-  const theme = useMemo(
-    () => prepareUserThemeLive(project.branding),
-    [project.branding],
-  );
-
   const setTheme = useThemeStore((state) => state.setTheme);
 
   useEffect(() => {
     console.log("Setting theme");
-    setTheme(theme);
+    if (theme) setTheme(theme);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

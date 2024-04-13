@@ -76,27 +76,21 @@ const PageEditor = () => {
     (state) => state.setApiAuthConfig,
   );
   const { data: variables } = useVariableListQuery(projectId);
-  const { data: endpoints } = useDataSourceEndpoints(pageId);
+  const { data: endpoints } = useDataSourceEndpoints(projectId);
 
   useEffect(() => {
-    if (variables) initializeVariableList(variables.results);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [variables]);
+    if (variables) {
+      initializeVariableList(variables.results);
+    }
+  }, [variables, initializeVariableList]);
 
   useEffect(() => {
     if (endpoints) {
       setApiAuthConfig(endpoints.results);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [endpoints]);
+  }, [endpoints, setApiAuthConfig]);
 
-  return (
-    <Editor
-      //key={page}
-      pageId={pageId}
-      projectId={projectId}
-    />
-  );
+  return <Editor pageId={pageId} projectId={projectId} />;
 };
 
 export default withPageOnLoad(memo(PageEditor));
