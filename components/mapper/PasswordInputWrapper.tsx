@@ -8,6 +8,8 @@ import {
 } from "@mantine/core";
 import { IconCheck, IconX } from "@tabler/icons-react";
 import React, { Fragment } from "react";
+import { useEditorTreeStore } from "@/stores/editorTree";
+import { useShallow } from "zustand/react/shallow";
 
 type Props = Omit<PasswordInputProps, "value"> & {
   children: React.ReactNode;
@@ -88,12 +90,14 @@ function PasswordRequirement({
 
 export const PasswordInputWrapper = ({
   children,
-  isPreviewMode,
   value,
   displayRequirements,
   testParameters,
   width,
 }: Props) => {
+  const isPreviewMode = useEditorTreeStore(
+    useShallow((state) => state.isPreviewMode || state.isLive),
+  );
   const requirements = fetchRequirements(testParameters);
   const strength = getStrength(value, requirements);
   const checks = requirements.map((requirement: any, index: number) => (

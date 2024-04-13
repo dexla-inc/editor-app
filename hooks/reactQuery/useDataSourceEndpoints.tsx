@@ -1,7 +1,8 @@
 import { getDataSourceEndpoints } from "@/requests/datasources/queries-noauth";
 import { Endpoint } from "@/requests/datasources/types";
 import { PagingResponse } from "@/requests/types";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { queryClient } from "@/utils/reactQuery";
+import { useQuery } from "@tanstack/react-query";
 
 const cacheTime = 30 * 60 * 1000; // 30 minutes
 
@@ -15,7 +16,6 @@ export const useDataSourceEndpoints = (projectId?: string) => {
     enabled: !!projectId,
   });
 
-  const queryClient = useQueryClient();
   const invalidate = () => {
     queryClient.invalidateQueries(queryKey);
   };

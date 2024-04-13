@@ -119,6 +119,7 @@ export const DynamicSettings = ({
       >
         <EndpointSelect
           {...form.getInputProps("onLoad.endpointId")}
+          isOnLoad
           onChange={async (selected) => {
             form.setValues({
               onLoad: {
