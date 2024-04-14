@@ -3,26 +3,14 @@ import { structureMapper } from "@/utils/componentMapper";
 import { ComponentStructure } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { px } from "@mantine/core";
-import merge from "lodash.merge";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): ComponentStructure => {
   const theme = props.theme ?? defaultTheme;
-  const {
-    input: defaultInputValues,
-    drawer: defaultDrawerValues,
-    layout: defaultLayoutValues,
-    icon: defaultIconValues,
-  } = requiredModifiers;
+  const { input: defaultInputValues, drawer: defaultDrawerValues } =
+    requiredModifiers;
 
   const defaultButton = structureMapper["Button"].structure({});
-  const defaultTitle = structureMapper["Title"].structure({
-    props: { order: 4 },
-  });
-
-  const defaultHeaderProps = merge({}, defaultLayoutValues, {
-    style: { alignItems: "center", justifyContent: "space-between" },
-  });
 
   const defaultChildren = [
     {
@@ -39,21 +27,6 @@ export const jsonStructure = (props?: any): ComponentStructure => {
         },
       },
       children: [
-        {
-          id: nanoid(),
-          name: "Container",
-          description: "Drawer Header",
-          props: defaultHeaderProps,
-          children: [
-            { id: nanoid(), ...defaultTitle },
-            {
-              id: nanoid(),
-              name: "Icon",
-              description: "Close Button",
-              props: { ...defaultIconValues, name: "IconX" },
-            },
-          ],
-        },
         {
           id: nanoid(),
           name: "Container",
@@ -203,6 +176,16 @@ export const jsonStructure = (props?: any): ComponentStructure => {
     props: {
       ...(props.props || {}),
       ...defaultDrawerValues,
+    },
+    onLoad: {
+      isVisible: {
+        dataType: "static",
+        static: true,
+      },
+      showInEditor: {
+        dataType: "static",
+        static: true,
+      },
     },
     children: props.children ?? defaultChildren,
   };

@@ -1,71 +1,52 @@
-import { useEditorStore } from "@/stores/editor";
-import { useEditorTreeStore } from "@/stores/editorTree";
-import { useThemeStore } from "@/stores/theme";
 import { EditableComponentMapper } from "@/utils/editor";
 import { DrawerProps, Drawer as MantineDrawer } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import { useEffect } from "react";
+import { forwardRef, memo } from "react";
+import { ModalAndDrawerWrapper } from "@/components/mapper/ModalAndDrawerWrapper";
+import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 
 type Props = EditableComponentMapper & Omit<DrawerProps, "opened">;
 
-export const Drawer = ({
-  renderTree,
-  component,
-  onClose: propOnClose,
-  shareableContent,
-  ...props
-}: Props) => {
-  const theme = useThemeStore((state) => state.theme);
-  const isPreviewMode = useEditorTreeStore((state) => state.isPreviewMode);
-  const iframeWindow = useEditorStore((state) => state.iframeWindow);
+export const DrawerComponent = forwardRef(
+  ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
+    return (
+      <ModalAndDrawerWrapper component={component}>
+        {({
+          isPreviewMode,
+          target,
+          sizeProps,
+          componentProps,
+          showInEditor,
+          handleClose,
+          titleStyle,
+          isSizeFullScreen,
+        }) => {
+          return (
+            <MantineDrawer
+              ref={ref}
+              withinPortal
+              trapFocus={false}
+              lockScroll={false}
+              target={target}
+              {...sizeProps}
+              {...props}
+              {...componentProps}
+              opened={isPreviewMode ? true : showInEditor}
+              onClose={handleClose}
+              styles={{
+                title: { ...titleStyle },
+                body: { height: "fit-content", padding: 0 },
+                ...(isSizeFullScreen && { inner: { left: 0 } }),
+              }}
+            >
+              {component.children?.map((child) => renderTree(child))}
+            </MantineDrawer>
+          );
+        }}
+      </ModalAndDrawerWrapper>
+    );
+  },
+);
 
-  const {
-    children,
-    title,
-    opened: propOpened,
-    showInEditor,
-    ...componentProps
-  } = component.props as any;
+DrawerComponent.displayName = "Drawer";
 
-  const [opened, { open, close }] = useDisclosure(propOpened);
-
-  const handleClose = () => {
-    close();
-    propOnClose && propOnClose();
-    const updateTreeComponentAttrs =
-      useEditorTreeStore.getState().updateTreeComponentAttrs;
-
-    updateTreeComponentAttrs({
-      componentIds: [component.id!],
-      attrs: { props: { opened: false } },
-      save: false,
-    });
-  };
-
-  useEffect(() => {
-    if (propOpened) open();
-    if (!propOpened) close();
-  }, [close, open, propOpened]);
-
-  return (
-    <MantineDrawer
-      withinPortal
-      trapFocus={false}
-      lockScroll={false}
-      target={iframeWindow?.document.getElementById("iframe-content")}
-      opened={isPreviewMode ? opened : showInEditor}
-      onClose={isPreviewMode ? handleClose : () => {}}
-      withCloseButton={false}
-      {...props}
-      {...componentProps}
-      styles={{
-        title: { fontFamily: theme.fontFamily },
-        body: { height: "fit-content", padding: 0 },
-      }}
-    >
-      {component.children && component.children.length > 0
-        ? component.children?.map((child) => renderTree(child))
-        : children}
-    </MantineDrawer>
-  );
-};
+export const Drawer = memo(withComponentWrapper<Props>(DrawerComponent));
