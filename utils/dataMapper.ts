@@ -43,6 +43,7 @@ export const dataMapper = {
   Avatar,
   NavLink,
   Modal,
+  Drawer: Modal,
   Badge,
   FileButton,
   Input,

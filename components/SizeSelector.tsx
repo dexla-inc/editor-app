@@ -1,4 +1,3 @@
-import { gapSizes, inputSizes } from "@/utils/defaultSizes";
 import {
   Box,
   MantineSize,
@@ -7,6 +6,7 @@ import {
   SelectProps,
   Text,
 } from "@mantine/core";
+import { useMemo } from "react";
 
 interface CustomSelectItemProps {
   label: string;
@@ -48,32 +48,36 @@ export const SizeSelector = ({
   sizing,
   ...props
 }: Props) => {
-  let defaultData = [] as SelectItem[];
-  if (!sizing) {
-    defaultData = mantineSizes;
-  }
+  const defaultData = useMemo(() => {
+    let newData = [...mantineSizes] as SelectItem[];
 
-  if (showNone && sizing) {
-    defaultData.push({ label: "None", value: "0", description: "0px" });
-  } else if (showNone) {
-    defaultData.push({ label: "None", value: "0" });
-  }
+    if (showFullscreen) {
+      newData.push({
+        label: "Fullscreen",
+        value: "fullscreen",
+        description: sizing ? "Full screen" : "",
+      });
+    }
 
-  if (sizing) {
-    Object.entries(sizing).forEach(([value, description]) => {
-      defaultData.push({ label: value.toUpperCase(), value, description });
-    });
-  }
+    if (showNone) {
+      newData.push({
+        label: "None",
+        value: "0",
+        description: sizing ? "0px" : "",
+      });
+    }
 
-  if (showFullscreen && sizing) {
-    defaultData.push({
-      label: "Fullscreen",
-      value: "fullscreen",
-      description: "Full screen",
-    });
-  } else if (showFullscreen) {
-    defaultData.push({ label: "Fullscreen", value: "fullscreen" });
-  }
+    if (sizing) {
+      const sizingItems = Object.entries(sizing).map(([size, description]) => ({
+        label: size.toUpperCase(),
+        value: size,
+        description: description,
+      }));
+      newData = newData.concat(sizingItems);
+    }
+
+    return newData;
+  }, [showNone, showFullscreen, sizing]);
 
   return (
     <Select
