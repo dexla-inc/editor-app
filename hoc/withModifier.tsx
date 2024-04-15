@@ -6,6 +6,7 @@ import set from "lodash.set";
 
 import { ComponentType, useMemo } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
+import { useShallow } from "zustand/react/shallow";
 
 type WithModifier = {
   selectedComponent: Component;
@@ -41,40 +42,44 @@ function findIntersectedKeyValues(objects: Component[]) {
 
 export const withModifier = (Modifier: ComponentType<WithModifier>) => {
   const ModifierWrapper = ({ initiallyOpened }: any) => {
-    const selectedComponents = useEditorTreeStore((state) =>
-      Object.entries(state.componentMutableAttrs).reduce(
-        (acc, [id, component]) => {
+    const component = useEditorTreeStore(
+      useShallow((state) => {
+        const selectedComponents = Object.entries(
+          state.componentMutableAttrs,
+        ).reduce((acc, [id, component]) => {
           if (state.selectedComponentIds?.includes(id)) {
             acc.push(component);
           }
           return acc;
-        },
-        [] as Component[],
-      ),
-    );
-    const language = "en";
-    const currentState = useEditorTreeStore(
-      (state) =>
-        state.currentTreeComponentsStates?.[
-          state.selectedComponentIds?.at(-1)!
-        ] ?? "default",
-    );
+        }, [] as Component[]);
 
-    const mergedCustomData = useMemo(() => {
-      return selectedComponents?.map((selectedComponent) => {
-        const mergedComponent = merge(
-          {},
-          selectedComponent,
-          { props: selectedComponent?.languages?.[language] },
-          { props: selectedComponent?.states?.[currentState] },
+        if (!selectedComponents.length) {
+          return null;
+        }
+
+        const language = "en";
+        const currentState =
+          state.currentTreeComponentsStates?.[
+            state.selectedComponentIds?.at(-1)!
+          ] ?? "default";
+
+        const mergedCustomData = selectedComponents?.map(
+          (selectedComponent) => {
+            const mergedComponent = merge(
+              {},
+              selectedComponent,
+              { props: selectedComponent?.languages?.[language] },
+              { props: selectedComponent?.states?.[currentState] },
+            );
+            return mergedComponent;
+          },
         );
-        return mergedComponent;
-      });
-    }, [selectedComponents, currentState, language]);
 
-    const component = findIntersectedKeyValues(mergedCustomData as Component[]);
+        return findIntersectedKeyValues(mergedCustomData as Component[]);
+      }),
+    );
 
-    if (!initiallyOpened || !selectedComponents?.length) {
+    if (!initiallyOpened || !component) {
       return null;
     }
 
