@@ -1,4 +1,5 @@
 import { useEditorTreeStore } from "@/stores/editorTree";
+import { useMemo } from "react";
 
 export const useComputeCurrentState = (
   componentId: string,
@@ -12,5 +13,7 @@ export const useComputeCurrentState = (
     (state) => state.currentTreeComponentsStates?.[componentId] ?? "default",
   );
 
-  return isEditorMode ? editorComponentState : parentState ?? currentState;
+  return useMemo(() => {
+    return isEditorMode ? editorComponentState : parentState ?? currentState;
+  }, [isEditorMode, editorComponentState, parentState, currentState]);
 };

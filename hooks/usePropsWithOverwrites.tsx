@@ -21,15 +21,23 @@ export const usePropsWithOverwrites = (
   );
 
   const hoverStateFunc = (e: React.MouseEvent<HTMLElement>) => {
+    e.stopPropagation();
+
     if (currentState === "default" && "hover" in (component?.states ?? {})) {
+      // When a component is hover, that means when I unhover it, I want to go back to the previous state
+      const toBePreviousState =
+        useEditorTreeStore.getState().componentMutableAttrs[component.id!]
+          ?.onLoad?.currentState;
+
       updateTreeComponentAttrs({
         componentIds: [e.currentTarget.id],
         attrs: {
           onLoad: {
             currentState: {
-              static: "hover",
-              dataType: "static",
+              static: "return 'hover';",
+              dataType: "boundCode",
             },
+            previousState: toBePreviousState,
           },
         },
         save: false,
@@ -38,15 +46,17 @@ export const usePropsWithOverwrites = (
   };
 
   const leaveHoverStateFunc = (e: React.MouseEvent<HTMLElement>) => {
+    e.stopPropagation();
+
     if (currentState === "hover" || currentState === "checked") {
+      const previousState =
+        useEditorTreeStore.getState().componentMutableAttrs[component.id!]
+          ?.onLoad?.previousState;
       updateTreeComponentAttrs({
         componentIds: [e.currentTarget.id],
         attrs: {
           onLoad: {
-            currentState: {
-              static: "default",
-              dataType: "static",
-            },
+            currentState: previousState,
           },
         },
         save: false,
