@@ -1,8 +1,8 @@
 import { useEditorTreeStore } from "@/stores/editorTree";
 
 export const useComponentStates = (
-  componentName: string,
-  currentState: string,
+  componentName: string = "",
+  currentState: string = "",
 ) => {
   type ComponentAppearence = {
     label: string;
