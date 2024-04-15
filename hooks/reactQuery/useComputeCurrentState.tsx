@@ -12,10 +12,5 @@ export const useComputeCurrentState = (
     (state) => state.currentTreeComponentsStates?.[componentId] ?? "default",
   );
 
-  // if parentState is defined overwrite component state
-  if (parentState) {
-    return parentState;
-  }
-
-  return isEditorMode ? editorComponentState : currentState;
+  return isEditorMode ? editorComponentState : parentState ?? currentState;
 };
