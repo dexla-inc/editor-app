@@ -150,7 +150,7 @@ export function NavbarLayersSection({
       .reduce(
         // @ts-ignore
         (acc, { children, collapsed, id }: TreeItem) => {
-          const isCollapsed = collapsed && children?.length;
+          const isCollapsed = collapsed ?? true;
           if (isCollapsed && !ancestors.find((a) => a.id === id)) {
             return [...acc, id];
           }
