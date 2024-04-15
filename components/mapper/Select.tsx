@@ -4,7 +4,6 @@ import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { useChangeState } from "@/hooks/useChangeState";
 import { useEndpoint } from "@/hooks/useEndpoint";
-import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import {
   MultiSelect as MantineMultiSelect,
@@ -17,26 +16,12 @@ import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { forwardRef, memo } from "react";
-import { useEditorTreeStore } from "@/stores/editorTree";
 import { useInputValue } from "@/hooks/useInputValue";
 
 type Props = EditableComponentMapper & SelectProps & MultiSelectProps;
 
 const SelectComponent = forwardRef(
-  (
-    {
-      component,
-      children: child,
-      isPreviewMode,
-      shareableContent,
-      ...props
-    }: Props,
-    ref,
-  ) => {
-    const updateTreeComponentAttrs = useEditorTreeStore(
-      (state) => state.updateTreeComponentAttrs,
-    );
-
+  ({ component, children: child, shareableContent, ...props }: Props, ref) => {
     const {
       children,
       triggers,
@@ -137,7 +122,4 @@ const SelectComponent = forwardRef(
 );
 SelectComponent.displayName = "Select";
 
-export const Select = memo(
-  withComponentWrapper<Props>(SelectComponent),
-  isSame,
-);
+export const Select = memo(withComponentWrapper<Props>(SelectComponent));

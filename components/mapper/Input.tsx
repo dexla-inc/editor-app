@@ -19,14 +19,15 @@ import { pick } from "next/dist/lib/pick";
 import { forwardRef, memo } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useInputValue } from "@/hooks/useInputValue";
+import { useShallow } from "zustand/react/shallow";
 
 type Props = EditableComponentMapper & NumberInputProps & TextInputProps;
 
 const InputComponent = forwardRef(
-  (
-    { component, isPreviewMode, id, shareableContent, ...props }: Props,
-    ref,
-  ) => {
+  ({ component, id, shareableContent, ...props }: Props, ref) => {
+    const isPreviewMode = useEditorTreeStore(
+      useShallow((state) => state.isPreviewMode || state.isLive),
+    );
     const {
       children,
       type,

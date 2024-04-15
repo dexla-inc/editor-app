@@ -40,7 +40,7 @@ function findIntersectedKeyValues(objects: Component[]) {
 }
 
 export const withModifier = (Modifier: ComponentType<WithModifier>) => {
-  const Config = ({ initiallyOpened }: any) => {
+  const ModifierWrapper = ({ initiallyOpened }: any) => {
     const selectedComponents = useEditorTreeStore((state) =>
       Object.entries(state.componentMutableAttrs).reduce(
         (acc, [id, component]) => {
@@ -87,5 +87,5 @@ export const withModifier = (Modifier: ComponentType<WithModifier>) => {
     );
   };
 
-  return Config;
+  return ModifierWrapper;
 };

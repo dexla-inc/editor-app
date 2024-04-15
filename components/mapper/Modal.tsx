@@ -1,5 +1,4 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import { Modal as MantineModal, ModalProps } from "@mantine/core";
 import { forwardRef, memo } from "react";
@@ -54,4 +53,4 @@ export const ModalComponent = forwardRef(
 );
 ModalComponent.displayName = "Modal";
 
-export const Modal = memo(withComponentWrapper<Props>(ModalComponent), isSame);
+export const Modal = memo(withComponentWrapper<Props>(ModalComponent));

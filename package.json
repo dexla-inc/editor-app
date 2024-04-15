@@ -78,6 +78,7 @@
     "openai": "^4.28.4",
     "prisma": "^5.10.2",
     "proxy-memoize": "^2.0.5",
+    "rc-virtual-list": "^3.11.4",
     "re-resizable": "^6.9.11",
     "react": "18.2.0",
     "react-apexcharts": "^1.4.1",

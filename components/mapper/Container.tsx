@@ -5,15 +5,16 @@ import { EditableComponentMapper } from "@/utils/editor";
 import { FlexProps } from "@mantine/core";
 import merge from "lodash.merge";
 import { forwardRef, memo } from "react";
-import { isSame } from "@/utils/componentComparison";
+import { useEditorTreeStore } from "@/stores/editorTree";
+import { useShallow } from "zustand/react/shallow";
 
 type Props = EditableComponentMapper & FlexProps;
 
 export const ContainerComponent = forwardRef(
-  (
-    { renderTree, shareableContent, component, isPreviewMode, ...props }: Props,
-    ref,
-  ) => {
+  ({ renderTree, shareableContent, component, ...props }: Props, ref) => {
+    const isPreviewMode = useEditorTreeStore(
+      useShallow((state) => state.isPreviewMode || state.isLive),
+    );
     const defaultBorder = setComponentBorder(props.style, isPreviewMode);
     const customStyle = merge({ width: "100%" }, props.style, defaultBorder);
 
@@ -31,7 +32,4 @@ export const ContainerComponent = forwardRef(
 );
 ContainerComponent.displayName = "Container";
 
-export const Container = memo(
-  withComponentWrapper<Props>(ContainerComponent),
-  isSame,
-);
+export const Container = memo(withComponentWrapper<Props>(ContainerComponent));

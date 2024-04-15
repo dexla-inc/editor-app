@@ -27,7 +27,6 @@ export type EditableComponentMapper = {
   renderTree: RenderTreeFunc;
   component: ComponentTree & Component;
   shareableContent?: any;
-  isPreviewMode?: boolean;
   style?: CSSObject & { display?: string | ValueProps };
 };
 

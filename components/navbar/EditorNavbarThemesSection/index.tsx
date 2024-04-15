@@ -63,7 +63,6 @@ export const EditorNavbarThemesSection =
     const startLoading = useAppStore((state) => state.startLoading);
     const stopLoading = useAppStore((state) => state.stopLoading);
     const [currentFontIndex, setCurrentFontIndex] = useState<number>(0);
-    const mantineTheme = useMantineTheme();
 
     const [opened, { open, close }] = useDisclosure(false);
 

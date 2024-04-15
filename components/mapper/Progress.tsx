@@ -1,4 +1,3 @@
-import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import { Progress as MantineProgress, ProgressProps } from "@mantine/core";
 import { forwardRef, memo } from "react";
@@ -26,7 +25,4 @@ const ProgressComponent = forwardRef(
 );
 ProgressComponent.displayName = "Progress";
 
-export const Progress = memo(
-  withComponentWrapper<Props>(ProgressComponent),
-  isSame,
-);
+export const Progress = memo(withComponentWrapper<Props>(ProgressComponent));
