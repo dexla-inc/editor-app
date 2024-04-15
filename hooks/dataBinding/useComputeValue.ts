@@ -108,8 +108,9 @@ export const useComputeValue = ({
 
         if (variable) {
           const value =
-            variableHandler[variable.type as keyof typeof variableHandler]() ??
-            `undefined`;
+            variableHandler[
+              variable.type as keyof typeof variableHandler
+            ]?.() ?? `undefined`;
 
           return {
             ...acc,

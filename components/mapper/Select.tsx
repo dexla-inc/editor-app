@@ -45,6 +45,8 @@ const SelectComponent = forwardRef(
       component.id!,
     );
 
+    console.log("value", value);
+
     const { dataLabelKey, dataValueKey } = component.onLoad;
     const { onChange, onSearchChange, ...restTriggers } = triggers || {};
     const { color, backgroundColor } = useChangeState({ bg, textColor });
@@ -114,7 +116,7 @@ const SelectComponent = forwardRef(
         dropdownComponent={CustomDropdown}
         rightSection={loading ? <InputLoader /> : null}
         label={undefined}
-        value={value}
+        value={String(value)}
         wrapperProps={{ "data-id": component.id }}
       />
     );
