@@ -4,6 +4,7 @@ import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { useContentEditable } from "@/hooks/useContentEditable";
 import { useThemeStore } from "@/stores/theme";
 import { DISABLED_HOVER } from "@/utils/branding";
+import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper, getColorFromTheme } from "@/utils/editor";
 import { splitValueAndUnit } from "@/utils/splitValueAndUnit";
 import { ButtonProps, Button as MantineButton } from "@mantine/core";
@@ -16,16 +17,14 @@ import {
   useRef,
   useState,
 } from "react";
-import { useEditorTreeStore } from "@/stores/editorTree";
-import { useShallow } from "zustand/react/shallow";
 
 type Props = EditableComponentMapper & ButtonProps & ReactElement<"Button">;
 
 const CountdownButtonComponent = forwardRef(
-  ({ component, style, shareableContent, ...props }: Props, ref) => {
-    const isPreviewMode = useEditorTreeStore(
-      useShallow((state) => state.isPreviewMode || state.isLive),
-    );
+  (
+    { component, isPreviewMode, style, shareableContent, ...props }: Props,
+    ref,
+  ) => {
     const {
       triggers,
       icon,
@@ -120,4 +119,5 @@ CountdownButtonComponent.displayName = "Button";
 
 export const CountdownButton = memo(
   withComponentWrapper<Props>(CountdownButtonComponent),
+  isSame,
 );

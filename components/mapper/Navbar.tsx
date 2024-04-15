@@ -1,6 +1,7 @@
 import { useThemeStore } from "@/stores/theme";
+import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper, getColorFromTheme } from "@/utils/editor";
-import { Box, BoxProps } from "@mantine/core";
+import { Box, BoxProps, ScrollArea } from "@mantine/core";
 import merge from "lodash.merge";
 import { memo } from "react";
 type Props = EditableComponentMapper & BoxProps;
@@ -28,4 +29,4 @@ const NavbarComponent = ({
   );
 };
 
-export const Navbar = memo(NavbarComponent);
+export const Navbar = memo(NavbarComponent, isSame);

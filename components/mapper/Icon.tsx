@@ -2,6 +2,7 @@ import { Icon as BaseIconComponent } from "@/components/Icon";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useThemeStore } from "@/stores/theme";
 import { getColorValue, globalStyles } from "@/utils/branding";
+import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import merge from "lodash.merge";
 import { forwardRef, memo } from "react";
@@ -36,4 +37,4 @@ const IconComponent = forwardRef(
 );
 IconComponent.displayName = "Icon";
 
-export const Icon = memo(withComponentWrapper<Props>(IconComponent));
+export const Icon = memo(withComponentWrapper<Props>(IconComponent), isSame);

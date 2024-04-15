@@ -1,7 +1,9 @@
 import { useTriggers } from "@/hooks/useTriggers";
-import { Router, useRouter } from "next/router";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { PageResponse } from "@/requests/pages/types";
+import { Endpoint } from "@/requests/datasources/types";
+import { LogicFlowResponse } from "@/requests/logicflows/types";
 import { ProjectResponse } from "@/requests/projects/types";
 
 // Props from server side
@@ -12,19 +14,13 @@ type Props = {
 };
 
 export const withPageOnLoad = (WrappedComponent: any) => {
-  const PageOnLoadWrapper = (props: Props) => {
-    const router = useRouter();
-    const { id: projectId, page: pageId } = router.query as {
-      id: string;
-      page: string;
-    };
-
+  const Config = (props: Props) => {
+    const { asPath } = useRouter();
     const page = props.deploymentPage;
 
     const { onPageLoad } = useTriggers({
       entity: page,
-      router: router as Router,
-      projectId: props.project?.id || projectId,
+      projectId: props.project.id,
     });
 
     const [actionTriggeredForPath, setActionTriggeredForPath] = useState("");
@@ -32,27 +28,21 @@ export const withPageOnLoad = (WrappedComponent: any) => {
     useEffect(() => {
       const triggerPageActions = async () => {
         const isPageValid =
-          page &&
-          (router.asPath.includes(page.id) ||
-            router.asPath.includes(page.slug));
+          page && (asPath.includes(page.id) || asPath.includes(page.slug));
         // TODO: Do not run when runInEditMode is false and the mode is editor.
         // TODO: Only the last action gets run
-        if (
-          isPageValid &&
-          onPageLoad &&
-          actionTriggeredForPath !== router.asPath
-        ) {
+        if (isPageValid && onPageLoad && actionTriggeredForPath !== asPath) {
           await onPageLoad?.();
-          setActionTriggeredForPath(router.asPath);
+          setActionTriggeredForPath(asPath);
         }
       };
 
       triggerPageActions();
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [router.asPath, page?.id]);
+    }, [asPath, page?.id]);
 
     return <WrappedComponent {...props} />;
   };
 
-  return PageOnLoadWrapper;
+  return Config;
 };

@@ -15,7 +15,6 @@ export const useCustomComponentList = (
     queryFn: () => getComponentList(projectId, companyId),
     enabled: !!projectId && componentTypeToShow === "custom",
     staleTime: cacheTime,
-    networkMode: "offlineFirst",
   });
 
   const queryClient = useQueryClient();

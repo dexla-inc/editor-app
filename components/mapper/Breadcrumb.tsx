@@ -1,3 +1,4 @@
+import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import {
   BreadcrumbsProps,
@@ -25,4 +26,5 @@ BreadcrumbComponent.displayName = "Breadcrumb";
 
 export const Breadcrumb = memo(
   withComponentWrapper<Props>(BreadcrumbComponent),
+  isSame,
 );

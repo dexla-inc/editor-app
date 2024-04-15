@@ -5,8 +5,6 @@ import {
 import { pick } from "next/dist/lib/pick";
 import { PasswordInputWrapper } from "./PasswordInputWrapper";
 import { CSSProperties } from "react";
-import { useEditorTreeStore } from "@/stores/editorTree";
-import { useShallow } from "zustand/react/shallow";
 
 type Props = Omit<PasswordInputProps, "value"> & {
   componentId: string;
@@ -27,6 +25,7 @@ export const PasswordInput = ({
   componentId,
   ref,
   value,
+  isPreviewMode,
   customStyle,
   iconComponent: Icon,
   iconName,
@@ -38,10 +37,6 @@ export const PasswordInput = ({
   componentProps,
   rootStyleProps,
 }: Props) => {
-  const isPreviewMode = useEditorTreeStore(
-    useShallow((state) => state.isPreviewMode || state.isLive),
-  );
-
   return (
     <PasswordInputWrapper
       value={value}

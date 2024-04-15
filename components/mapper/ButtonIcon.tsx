@@ -3,6 +3,7 @@ import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { useChangeState } from "@/hooks/useChangeState";
 import { DISABLED_HOVER, globalStyles } from "@/utils/branding";
+import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import {
   ActionIconProps,
@@ -65,4 +66,5 @@ ButtonIconComponent.displayName = "ButtonIcon";
 
 export const ButtonIcon = memo(
   withComponentWrapper<Props>(ButtonIconComponent),
+  isSame,
 );

@@ -3,16 +3,11 @@ import { EditableComponentMapper } from "@/utils/editor";
 import { Switch as MantineSwitch, SwitchProps } from "@mantine/core";
 import { ChangeEvent, forwardRef, memo } from "react";
 import { useInputValue } from "@/hooks/useInputValue";
-import { useEditorTreeStore } from "@/stores/editorTree";
-import { useShallow } from "zustand/react/shallow";
 
 type Props = EditableComponentMapper & SwitchProps;
 
 const SwitchComponent = forwardRef(
-  ({ component, shareableContent, ...props }: Props, ref) => {
-    const isPreviewMode = useEditorTreeStore(
-      useShallow((state) => state.isPreviewMode || state.isLive),
-    );
+  ({ component, shareableContent, isPreviewMode, ...props }: Props, ref) => {
     const { label, triggers, ...componentProps } = component.props as any;
 
     const [value, setValue] = useInputValue(

@@ -1,6 +1,7 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useEndpoint } from "@/hooks/useEndpoint";
 import { useEditorTreeStore } from "@/stores/editorTree";
+import { isSame } from "@/utils/componentComparison";
 import { componentMapper } from "@/utils/componentMapper";
 import { convertSizeToPx } from "@/utils/defaultSizes";
 import {
@@ -10,16 +11,14 @@ import {
 import { FlexProps, LoadingOverlay, Flex as MantineFlex } from "@mantine/core";
 import { FormEvent, forwardRef, memo } from "react";
 import { useInputsStore } from "@/stores/inputs";
-import { useShallow } from "zustand/react/shallow";
 
 type Props = EditableComponentMapper & FlexProps;
 
 const FormComponent = forwardRef(
-  ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
-    const isPreviewMode = useEditorTreeStore(
-      useShallow((state) => state.isPreviewMode || state.isLive),
-    );
-
+  (
+    { renderTree, component, isPreviewMode, shareableContent, ...props }: Props,
+    ref,
+  ) => {
     const { children, triggers, loading, dataType, gap, ...componentProps } =
       component.props as any;
     const { onSubmit, ...otherTriggers } = triggers || {};
@@ -144,4 +143,4 @@ const FormComponent = forwardRef(
 );
 FormComponent.displayName = "Form";
 
-export const Form = memo(withComponentWrapper<Props>(FormComponent));
+export const Form = memo(withComponentWrapper<Props>(FormComponent), isSame);

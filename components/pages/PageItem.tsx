@@ -10,12 +10,14 @@ import { ICON_SIZE } from "@/utils/config";
 import {
   Flex,
   Group,
+  Loader,
   Text,
   UnstyledButton,
   useMantineTheme,
 } from "@mantine/core";
 import { IconFileAnalytics, IconHome } from "@tabler/icons-react";
 import Link from "next/link";
+import { useState } from "react";
 
 type Props = {
   projectId: string;
@@ -25,6 +27,7 @@ type Props = {
 };
 
 export const PageItem = ({ projectId, page, currentPage, setPage }: Props) => {
+  const [isLoading, setLoading] = useState(false);
   const theme = useMantineTheme();
   const { color, background, hoveredBackground, hoveredColor, whiteColor } = {
     color: theme.colorScheme === "dark" ? GRAY_WHITE_COLOR : theme.black,
@@ -43,6 +46,11 @@ export const PageItem = ({ projectId, page, currentPage, setPage }: Props) => {
       key={page.id}
       component={Link}
       href={`/projects/${projectId}/editor/${page.id}`}
+      onClick={() => {
+        if (!isCurrentPage) {
+          setLoading(true);
+        }
+      }}
     >
       <Group
         px="xs"
@@ -66,7 +74,9 @@ export const PageItem = ({ projectId, page, currentPage, setPage }: Props) => {
       >
         <Flex gap="xs" sx={{ maxWidth: 164 }}>
           <Flex style={{ flex: "0 0 auto" }}>
-            {page.isHome ? (
+            {isLoading ? (
+              <Loader size="xs" />
+            ) : page.isHome ? (
               <IconHome size={ICON_SIZE} style={{ flex: "flex-grow" }} />
             ) : (
               <IconFileAnalytics size={ICON_SIZE} />

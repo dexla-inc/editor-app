@@ -1,10 +1,11 @@
 import { DraggableComponent } from "@/components/DraggableComponent";
 import GridItemComponent from "@/components/navbar/ComponentGridItem";
 import { useCustomComponentList } from "@/hooks/reactQuery/useCustomComponentList";
+import { useUserTheme } from "@/hooks/useUserTheme";
 import { CustomComponentResponse } from "@/requests/components/types";
+import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { usePropelAuthStore } from "@/stores/propelAuth";
-import { useThemeStore } from "@/stores/theme";
 import {
   ComponentCategoryType,
   componentMapper,
@@ -61,7 +62,7 @@ export const EditorNavbarComponentsSection = () => {
   ) as string;
   const activeCompany = usePropelAuthStore((state) => state.activeCompany);
   const customStackRef = useRef<HTMLDivElement>(null);
-  const userTheme = useThemeStore((state) => state.theme);
+  const userTheme = useUserTheme(projectId);
 
   const { data: componentList } = useCustomComponentList(
     projectId,

@@ -1,8 +1,9 @@
 import { defaultTheme } from "@/utils/branding";
+import { ProjectResponse } from "@/requests/projects/types";
 import { MantineThemeExtended } from "@/utils/types";
-import { ThemeResponse } from "@/requests/themes/types";
 
-export const prepareUserThemeLive = (projectBranding: ThemeResponse) => {
+export const prepareUserThemeLive = (project: ProjectResponse) => {
+  const projectBranding = project.branding;
   const defaultFontFamily =
     projectBranding?.defaultFont ?? defaultTheme.fontFamily ?? "Open Sans";
   const headingsFontFamily =
