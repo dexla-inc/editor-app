@@ -66,6 +66,7 @@ export const useEndpoint = ({
       },
       staleTime: staleTime * 1000 * 60,
       enabled: isEnabled,
+      networkMode: "offlineFirst",
     },
   );
 

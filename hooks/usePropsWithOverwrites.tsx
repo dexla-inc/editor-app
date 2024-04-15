@@ -24,7 +24,7 @@ export const usePropsWithOverwrites = (
     e.stopPropagation();
 
     if (currentState === "default" && "hover" in (component?.states ?? {})) {
-      // When a component is hover, that means when I unhover it, I want to go back to the previous state
+      // When the state is hover, that means when I unhover it, I want to go back to the previous state
       const toBePreviousState =
         useEditorTreeStore.getState().componentMutableAttrs[component.id!]
           ?.onLoad?.currentState;
@@ -34,7 +34,7 @@ export const usePropsWithOverwrites = (
         attrs: {
           onLoad: {
             currentState: {
-              static: "return 'hover';",
+              boundCode: "return 'hover';",
               dataType: "boundCode",
             },
             previousState: toBePreviousState,
