@@ -174,11 +174,7 @@ export const DateInputData = ({ component, endpoints }: DataProps) => {
             </Group>
           );
         })}
-        <VisibilityModifier
-          componentId={component.id!}
-          componentName={component.name}
-          form={form}
-        />
+        <VisibilityModifier form={form} />
         <ComponentToBindFromSelect
           size="xs"
           label="State"
