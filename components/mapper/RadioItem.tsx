@@ -20,7 +20,7 @@ const RadioItemComponent = ({
     children,
     ...componentProps
   } = component.props as any;
-  const { value } = component.onLoad;
+  const { value } = component.onLoad ?? {};
 
   const { value: parentValue, isInsideGroup = false } = shareableContent;
   const checked = parentValue === value;
