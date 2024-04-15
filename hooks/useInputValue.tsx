@@ -20,5 +20,5 @@ export const useInputValue = ({ value }: any, componentId: string) => {
     customSetInputValue(value);
   }, [customSetInputValue, value]);
 
-  return [inputValue ?? {}, customSetInputValue];
+  return [inputValue ?? "", customSetInputValue];
 };
