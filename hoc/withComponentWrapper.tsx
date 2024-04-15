@@ -78,8 +78,6 @@ export const withComponentWrapper = <T extends Record<string, any>>(
       shareableContent?.parentState,
     );
 
-    console.log({ currentState });
-
     const isResizing = useEditorStore((state) => state.isResizing);
 
     const { componentContextMenu, forceDestroyContextMenu } =
