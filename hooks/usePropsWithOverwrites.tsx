@@ -21,8 +21,6 @@ export const usePropsWithOverwrites = (
   );
 
   const hoverStateFunc = (e: React.MouseEvent<HTMLElement>) => {
-    e.stopPropagation();
-
     if (currentState === "default" && "hover" in (component?.states ?? {})) {
       // When the state is hover, that means when I unhover it, I want to go back to the previous state
       const toBePreviousState =
@@ -46,8 +44,6 @@ export const usePropsWithOverwrites = (
   };
 
   const leaveHoverStateFunc = (e: React.MouseEvent<HTMLElement>) => {
-    e.stopPropagation();
-
     if (currentState === "hover" || currentState === "checked") {
       const previousState =
         useEditorTreeStore.getState().componentMutableAttrs[component.id!]
