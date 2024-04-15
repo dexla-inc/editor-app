@@ -1,3 +1,4 @@
+import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import { DividerProps, Divider as MantineDivider } from "@mantine/core";
 import { forwardRef, memo } from "react";
@@ -25,4 +26,7 @@ const DividerComponent = forwardRef(
 );
 DividerComponent.displayName = "Divider";
 
-export const Divider = memo(withComponentWrapper<Props>(DividerComponent));
+export const Divider = memo(
+  withComponentWrapper<Props>(DividerComponent),
+  isSame,
+);

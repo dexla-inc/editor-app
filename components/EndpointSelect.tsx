@@ -38,29 +38,22 @@ const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>(
 SelectItem.displayName = "EndpointSelectItem";
 interface EndpointSelectProps extends Omit<SelectProps, "data"> {
   value?: string;
-  isOnLoad?: boolean;
 }
 
-export const EndpointSelect = ({
-  value,
-  isOnLoad,
-  ...props
-}: EndpointSelectProps) => {
+export const EndpointSelect = ({ value, ...props }: EndpointSelectProps) => {
   const projectId = useEditorTreeStore((state) => state.currentProjectId);
   const { data: endpoints } = useDataSourceEndpoints(projectId);
   const [selectedEndpoint, setSelectedEndpoint] = useState<Endpoint>();
 
   const selectData = useMemo(() => {
     return (
-      endpoints?.results
-        ?.filter((f) => !isOnLoad || (isOnLoad && f.methodType === "GET"))
-        .map((endpoint) => ({
-          label: `${endpoint.relativeUrl} | ${endpoint.description}`,
-          value: endpoint.id,
-          method: endpoint.methodType,
-        })) ?? []
+      endpoints?.results?.map((endpoint) => ({
+        label: `${endpoint.relativeUrl} | ${endpoint.description}`,
+        value: endpoint.id,
+        method: endpoint.methodType,
+      })) ?? []
     );
-  }, [endpoints, isOnLoad]);
+  }, [endpoints]);
 
   const handleChange = useCallback(
     (selectedValue: string) => {

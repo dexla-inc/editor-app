@@ -1,16 +1,23 @@
 import { Shell } from "@/components/AppShell";
 import { Cursor } from "@/components/Cursor";
 import { EditorCanvas } from "@/components/EditorCanvas";
+import EditorAsideSections from "@/components/aside/EditorAsideSections";
+import { EditorNavbarSections } from "@/components/navbar/EditorNavbarSections";
 import { useGetPageData } from "@/hooks/useGetPageData";
+import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { globalStyles } from "@/utils/branding";
-import { CURSOR_COLORS } from "@/utils/config";
-import { Global } from "@mantine/core";
+import {
+  ASIDE_WIDTH,
+  CURSOR_COLORS,
+  HEADER_HEIGHT,
+  NAVBAR_MIN_WIDTH,
+  NAVBAR_WIDTH,
+} from "@/utils/config";
+import { Aside, Box, Global, Navbar, ScrollArea } from "@mantine/core";
 import { useEffect, useState } from "react";
-import { Navbar } from "@/components/navbar/Navbar";
-import { Aside } from "@/components/aside/Aside";
 
 type Props = {
   projectId: string;
@@ -22,6 +29,8 @@ const Editor = ({ projectId, pageId }: Props) => {
     (state) => state.setCurrentPageAndProjectIds,
   );
   const liveblocks = useEditorTreeStore((state) => state.liveblocks);
+  const isPreviewMode = useEditorTreeStore((state) => state.isPreviewMode);
+  const isNavBarVisible = useEditorStore((state) => state.isNavBarVisible);
   const setCurrentUser = useEditorTreeStore((state) => state.setCurrentUser);
   const isDarkTheme = useUserConfigStore((state) => state.isDarkTheme);
   const user = usePropelAuthStore((state) => state.user);
@@ -58,7 +67,42 @@ const Editor = ({ projectId, pageId }: Props) => {
 
   return (
     <>
-      <Shell pos="relative" navbar={<Navbar />} aside={<Aside />}>
+      <Shell
+        pos="relative"
+        navbar={
+          !isPreviewMode && isNavBarVisible ? (
+            <Navbar
+              miw={{ base: NAVBAR_MIN_WIDTH }}
+              width={{ base: NAVBAR_MIN_WIDTH }}
+              maw={{ base: NAVBAR_WIDTH }}
+              sx={{
+                height: `calc(100% - ${HEADER_HEIGHT}px)`,
+                zIndex: 300,
+              }}
+            >
+              <Navbar.Section grow py="sm">
+                <EditorNavbarSections />
+              </Navbar.Section>
+            </Navbar>
+          ) : undefined
+        }
+        aside={
+          !isPreviewMode ? (
+            <Aside
+              width={{ base: ASIDE_WIDTH }}
+              sx={{
+                height: `calc(100% - ${HEADER_HEIGHT}px)`,
+              }}
+            >
+              <Aside.Section grow component={ScrollArea}>
+                <Box py="sm">
+                  <EditorAsideSections />
+                </Box>
+              </Aside.Section>
+            </Aside>
+          ) : undefined
+        }
+      >
         <Global styles={globalStyles(isDarkTheme)} />
         <EditorCanvas projectId={projectId} />
       </Shell>

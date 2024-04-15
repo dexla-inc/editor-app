@@ -30,7 +30,6 @@ const PageSelector = () => {
         ...flexStyles,
         whiteSpace: "nowrap",
       }}
-      searchable
     />
   );
 };

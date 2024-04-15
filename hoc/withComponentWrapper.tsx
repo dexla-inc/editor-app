@@ -2,6 +2,7 @@ import { Skeleton, Tooltip } from "@mantine/core";
 import { ComponentType, Fragment } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useShallow } from "zustand/react/shallow";
+import { CURSOR_COLORS } from "@/utils/config";
 import { useComputeCurrentState } from "@/hooks/reactQuery/useComputeCurrentState";
 import { useEditorStore } from "@/stores/editor";
 import {
@@ -17,18 +18,17 @@ import { useEditorClickHandler } from "@/hooks/useEditorClickHandler";
 import { ComponentToolbox } from "@/components/ComponentToolbox";
 import { WithComponentWrapperProps } from "@/types/component";
 import { Component } from "@/utils/editor";
-import { Router, useRouter } from "next/router";
 
 export const withComponentWrapper = <T extends Record<string, any>>(
   Component: ComponentType<T>,
 ) => {
-  const ComponentWrapper = ({
+  const Config = ({
     component: componentTree,
     renderTree,
     shareableContent,
   }: WithComponentWrapperProps) => {
     const isEditorMode = useEditorTreeStore(
-      useShallow((state) => !state.isPreviewMode && !state.isLive),
+      (state) => !state.isPreviewMode && !state.isLive,
     );
 
     const isSelected = useEditorTreeStore(
@@ -45,18 +45,17 @@ export const withComponentWrapper = <T extends Record<string, any>>(
 
     const computedOnLoad = useComputeValue({ onLoad, shareableContent });
 
-    // Commenting out as liveblocks doesn't work properly since detachment.
-    // const selectedByOther = useEditorTreeStore(
-    //   useShallow((state) => {
-    //     const other = state.liveblocks?.others?.find(({ presence }: any) => {
-    //       return presence.selectedComponentIds?.includes(componentTree.id);
-    //     });
+    const selectedByOther = useEditorTreeStore(
+      useShallow((state) => {
+        const other = state.liveblocks?.others?.find(({ presence }: any) => {
+          return presence.selectedComponentIds?.includes(componentTree.id);
+        });
 
-    //     if (!other) return null;
+        if (!other) return null;
 
-    //     return CURSOR_COLORS[other.connectionId % CURSOR_COLORS.length];
-    //   }),
-    // )!;
+        return CURSOR_COLORS[other.connectionId % CURSOR_COLORS.length];
+      }),
+    )!;
 
     const component = useEditorTreeStore(
       useShallow(
@@ -88,17 +87,14 @@ export const withComponentWrapper = <T extends Record<string, any>>(
       componentContextMenu,
     );
 
-    const router = useRouter();
-
     const triggers = useTriggers({
       entity: component,
-      router: router as Router,
     });
 
     const { isPicking, droppable, tealOutline } = useEditorShadows({
       componentId: componentTree.id!,
       isSelected: false,
-      //selectedByOther,
+      selectedByOther,
     });
 
     const propsWithOverwrites = usePropsWithOverwrites(
@@ -143,6 +139,7 @@ export const withComponentWrapper = <T extends Record<string, any>>(
       renderTree,
       ...(isResizing || !isEditorMode ? {} : droppable),
       id: component.id,
+      isPreviewMode: !isEditorMode,
       style: childStyles,
       sx: tealOutline,
       ...(isEditorMode && {
@@ -176,5 +173,5 @@ export const withComponentWrapper = <T extends Record<string, any>>(
     );
   };
 
-  return ComponentWrapper;
+  return Config;
 };

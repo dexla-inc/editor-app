@@ -1,6 +1,7 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { useContentEditable } from "@/hooks/useContentEditable";
+import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import { Text as MantineText, TextProps } from "@mantine/core";
 import merge from "lodash.merge";
@@ -9,7 +10,10 @@ import { forwardRef, memo } from "react";
 type Props = EditableComponentMapper & TextProps;
 
 const TextComponent = forwardRef(
-  ({ component, shareableContent, ...props }: Props, ref: any) => {
+  (
+    { component, isPreviewMode, shareableContent, ...props }: Props,
+    ref: any,
+  ) => {
     const contentEditableProps = useContentEditable(
       component.id as string,
       ref,
@@ -39,4 +43,4 @@ const TextComponent = forwardRef(
 );
 TextComponent.displayName = "Text";
 
-export const Text = memo(withComponentWrapper<Props>(TextComponent));
+export const Text = memo(withComponentWrapper<Props>(TextComponent), isSame);

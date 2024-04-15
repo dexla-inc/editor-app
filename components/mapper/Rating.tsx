@@ -1,4 +1,5 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import { Rating as MantineRating, RatingProps } from "@mantine/core";
 import { forwardRef, memo } from "react";
@@ -14,4 +15,7 @@ const RatingComponent = forwardRef(
 );
 RatingComponent.displayName = "Rating";
 
-export const Rating = memo(withComponentWrapper<Props>(RatingComponent));
+export const Rating = memo(
+  withComponentWrapper<Props>(RatingComponent),
+  isSame,
+);

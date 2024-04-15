@@ -1,5 +1,6 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useEditorTreeStore } from "@/stores/editorTree";
+import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import {
   Pagination as MantinePagination,
@@ -40,4 +41,5 @@ PaginationComponent.displayName = "Pagination";
 
 export const Pagination = memo(
   withComponentWrapper<Props>(PaginationComponent),
+  isSame,
 );

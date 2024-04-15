@@ -2,6 +2,7 @@ import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useContentEditable } from "@/hooks/useContentEditable";
 import { useThemeStore } from "@/stores/theme";
 import { DISABLED_HOVER } from "@/utils/branding";
+import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper, getColorFromTheme } from "@/utils/editor";
 import { BadgeProps, Badge as MantineBadge } from "@mantine/core";
 import merge from "lodash.merge";
@@ -44,4 +45,4 @@ const BadgeComponent = forwardRef(
 );
 BadgeComponent.displayName = "Badge";
 
-export const Badge = memo(withComponentWrapper<Props>(BadgeComponent));
+export const Badge = memo(withComponentWrapper<Props>(BadgeComponent), isSame);

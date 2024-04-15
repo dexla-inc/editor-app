@@ -2,6 +2,7 @@ import { Icon } from "@/components/Icon";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useThemeStore } from "@/stores/theme";
 import { getColorValue } from "@/utils/branding";
+import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import { Tabs as MantineTabs, TabProps } from "@mantine/core";
 import { forwardRef, memo } from "react";
@@ -38,4 +39,4 @@ const TabComponent = forwardRef(
 );
 TabComponent.displayName = "Tab";
 
-export const Tab = memo(withComponentWrapper<Props>(TabComponent));
+export const Tab = memo(withComponentWrapper<Props>(TabComponent), isSame);

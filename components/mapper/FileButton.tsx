@@ -8,17 +8,16 @@ import {
 } from "@mantine/core";
 import merge from "lodash.merge";
 import { forwardRef, memo } from "react";
+import { isSame } from "@/utils/componentComparison";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { useEditorTreeStore } from "@/stores/editorTree";
-import { useShallow } from "zustand/react/shallow";
 
 type Props = EditableComponentMapper & FileButtonProps;
 
 export const FileButtonComponent = forwardRef(
-  ({ component, onChange, shareableContent, ...props }: Props, ref) => {
-    const isPreviewMode = useEditorTreeStore(
-      useShallow((state) => state.isPreviewMode || state.isLive),
-    );
+  (
+    { component, onChange, isPreviewMode, shareableContent, ...props }: Props,
+    ref,
+  ) => {
     const { triggers, variable, ...componentProps } = component.props ?? {};
     const { style, ...restProps } = props as any;
     const contentEditableProps = useContentEditable(
@@ -54,4 +53,5 @@ FileButtonComponent.displayName = "FileButton";
 
 export const FileButton = memo(
   withComponentWrapper<Props>(FileButtonComponent),
+  isSame,
 );

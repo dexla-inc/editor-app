@@ -1,3 +1,4 @@
+import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import {
   Accordion as MantineAccordion,
@@ -25,4 +26,5 @@ AccordionPanelComponent.displayName = "AccordionPanelComponent";
 
 export const AccordionPanel = memo(
   withComponentWrapper<Props>(AccordionPanelComponent),
+  isSame,
 );

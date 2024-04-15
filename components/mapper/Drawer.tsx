@@ -5,7 +5,6 @@ import { EditableComponentMapper } from "@/utils/editor";
 import { DrawerProps, Drawer as MantineDrawer } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useEffect } from "react";
-import { useShallow } from "zustand/react/shallow";
 
 type Props = EditableComponentMapper & Omit<DrawerProps, "opened">;
 
@@ -17,9 +16,7 @@ export const Drawer = ({
   ...props
 }: Props) => {
   const theme = useThemeStore((state) => state.theme);
-  const isPreviewMode = useEditorTreeStore(
-    useShallow((state) => state.isPreviewMode || state.isLive),
-  );
+  const isPreviewMode = useEditorTreeStore((state) => state.isPreviewMode);
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
 
   const {

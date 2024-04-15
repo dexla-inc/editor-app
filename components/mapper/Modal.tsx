@@ -1,6 +1,7 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
+import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import { Modal as MantineModal, ModalProps } from "@mantine/core";
 import { forwardRef, memo } from "react";
@@ -16,9 +17,7 @@ export const ModalComponent = forwardRef(
     { renderTree, component, style, shareableContent, ...props }: Props,
     ref,
   ) => {
-    const isPreviewMode = useEditorTreeStore(
-      useShallow((state) => state.isPreviewMode || state.isLive),
-    );
+    const isPreviewMode = useEditorTreeStore((state) => state.isPreviewMode);
     const iframeWindow = useEditorStore((state) => state.iframeWindow);
 
     const { size, titleTag: tag, ...componentProps } = component.props as any;
@@ -84,7 +83,7 @@ export const ModalComponent = forwardRef(
 );
 ModalComponent.displayName = "Modal";
 
-export const Modal = memo(withComponentWrapper<Props>(ModalComponent));
+export const Modal = memo(withComponentWrapper<Props>(ModalComponent), isSame);
 
 function extractKeysFromPattern(pattern: RegExp, boundCode: any) {
   return [...boundCode.matchAll(pattern)].map((match) => match[1]);

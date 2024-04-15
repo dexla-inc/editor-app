@@ -1,22 +1,25 @@
 import { GridColumn as GridColumnBase } from "@/components/GridColumn";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { isSame } from "@/utils/componentComparison";
 import { convertSizeToPx } from "@/utils/defaultSizes";
 import { EditableComponentMapper } from "@/utils/editor";
 import { BoxProps, MantineSize } from "@mantine/core";
 import { forwardRef, memo } from "react";
-import { useEditorTreeStore } from "@/stores/editorTree";
-import { useShallow } from "zustand/react/shallow";
 
 type Props = EditableComponentMapper & BoxProps;
 
 const GridColumnComponent = forwardRef(
   (
-    { renderTree, component, shareableContent, style, ...props }: Props,
+    {
+      renderTree,
+      component,
+      shareableContent,
+      style,
+      isPreviewMode,
+      ...props
+    }: Props,
     ref,
   ) => {
-    const isPreviewMode = useEditorTreeStore(
-      useShallow((state) => state.isPreviewMode || state.isLive),
-    );
     // @ts-ignore
     const { gap, ...componentProps } = component.props;
     const gapPx = convertSizeToPx(gap as MantineSize, "gap");
@@ -49,4 +52,5 @@ GridColumnComponent.displayName = "GridColumn";
 
 export const GridColumn = memo(
   withComponentWrapper<Props>(GridColumnComponent),
+  isSame,
 );

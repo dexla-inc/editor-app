@@ -1,3 +1,4 @@
+import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import { Tabs as MantineTabs, TabsProps } from "@mantine/core";
 import { forwardRef, memo } from "react";
@@ -26,4 +27,4 @@ const TabsComponent = forwardRef(
 );
 TabsComponent.displayName = "Tabs";
 
-export const Tabs = memo(withComponentWrapper(TabsComponent));
+export const Tabs = memo(withComponentWrapper(TabsComponent), isSame);

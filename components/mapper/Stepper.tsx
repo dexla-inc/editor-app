@@ -1,5 +1,7 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
+import { isSame } from "@/utils/componentComparison";
 import {
   ComponentTree,
   EditableComponentMapper,
@@ -113,4 +115,4 @@ const StepperComponent = forwardRef(
 );
 StepperComponent.displayName = "Stepper";
 
-export const Stepper = memo(withComponentWrapper(StepperComponent));
+export const Stepper = memo(withComponentWrapper(StepperComponent), isSame);

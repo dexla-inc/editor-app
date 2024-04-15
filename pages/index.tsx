@@ -5,10 +5,22 @@ import { getProject } from "@/requests/projects/queries-noauth";
 import { checkRefreshTokenExists } from "@/utils/serverside";
 import { GetServerSidePropsContext } from "next";
 import Head from "next/head";
+import { useEffect } from "react";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { dehydrate } from "@tanstack/react-query";
 import { getDeploymentPage } from "@/requests/deployments/queries-noauth";
+import { getDataSourceEndpoints } from "@/requests/datasources/queries-noauth";
 import { queryClient } from "@/utils/reactQuery";
 import { ProjectResponse } from "@/requests/projects/types";
+import { prepareUserThemeLive } from "@/hooks/prepareUserThemeLive";
+import { useThemeStore } from "@/stores/theme";
+import { initializeFonts } from "@/utils/webfontloader";
+import { listVariables } from "@/requests/variables/queries-noauth";
+import { VariableResponse } from "@/requests/variables/types";
+import { useVariableStore } from "@/stores/variables";
+import { useDataSourceStore } from "@/stores/datasource";
+import { Endpoint } from "@/requests/datasources/types";
+import { listLogicFlows } from "@/requests/logicflows/queries-noauth";
 
 export const getServerSideProps = async ({
   req,
@@ -28,10 +40,22 @@ export const getServerSideProps = async ({
 
   const currentSlug = "/";
 
-  const [deploymentPage] = await Promise.all([
+  const [deploymentPage, variables, endpoints, logicFlows] = await Promise.all([
     getDeploymentPage(project.id, currentSlug),
+    listVariables(project.id),
+    getDataSourceEndpoints(project.id),
+    listLogicFlows(project.id),
+  ]);
+
+  await Promise.all([
     queryClient.prefetchQuery(["project", project.id], () =>
       Promise.resolve(project),
+    ),
+    queryClient.prefetchQuery(["endpoints", project.id], () =>
+      Promise.resolve(endpoints),
+    ),
+    queryClient.prefetchQuery(["logic-flows", project.id], () =>
+      Promise.resolve(logicFlows),
     ),
   ]);
 
@@ -54,6 +78,8 @@ export const getServerSideProps = async ({
         faviconUrl: project.faviconUrl,
         isLive: true,
         deploymentPage,
+        variables: variables.results,
+        endpoints: endpoints.results || [],
       },
     };
   }
@@ -65,6 +91,8 @@ export const getServerSideProps = async ({
       faviconUrl: project.faviconUrl,
       isLive: true,
       deploymentPage,
+      variables: variables.results,
+      endpoints: endpoints.results || [],
     },
   };
 };
@@ -73,9 +101,59 @@ type Props = {
   project: ProjectResponse;
   faviconUrl?: string;
   deploymentPage: DeploymentPage;
+  variables: VariableResponse[];
+  endpoints: Endpoint[];
 };
 
-const HomePage = ({ project, faviconUrl, deploymentPage }: Props) => {
+const HomePage = ({
+  project,
+  faviconUrl,
+  deploymentPage,
+  variables,
+  endpoints,
+}: Props) => {
+  const initializeVariableList = useVariableStore(
+    (state) => state.initializeVariableList,
+  );
+  const setApiAuthConfig = useDataSourceStore(
+    (state) => state.setApiAuthConfig,
+  );
+  const setIsLive = useEditorTreeStore((state) => state.setIsLive);
+  const setCurrentPageAndProjectIds = useEditorTreeStore(
+    (state) => state.setCurrentPageAndProjectIds,
+  );
+  const setPreviewMode = useEditorTreeStore((state) => state.setPreviewMode);
+
+  const theme = prepareUserThemeLive(project);
+
+  useEffect(() => {
+    if (project && deploymentPage.id) {
+      useThemeStore.getState().setTheme(theme);
+      setCurrentPageAndProjectIds(project.id, deploymentPage.id);
+      setPreviewMode(true);
+      setIsLive(true);
+
+      const loadFonts = async () => {
+        await initializeFonts(theme.fontFamily, theme.headings.fontFamily);
+      };
+
+      loadFonts();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [project, deploymentPage.id]);
+
+  useEffect(() => {
+    initializeVariableList(variables);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [variables]);
+
+  useEffect(() => {
+    if (endpoints) {
+      setApiAuthConfig(endpoints);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [endpoints]);
+
   return (
     <>
       <Head>

@@ -5,17 +5,19 @@ import { useChangeState } from "@/hooks/useChangeState";
 import { useContentEditable } from "@/hooks/useContentEditable";
 import { useThemeStore } from "@/stores/theme";
 import { DISABLED_HOVER } from "@/utils/branding";
+import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper, getColorFromTheme } from "@/utils/editor";
 import { ButtonProps, Button as MantineButton } from "@mantine/core";
 import merge from "lodash.merge";
 import { ReactElement, forwardRef, memo } from "react";
-import { useEditorTreeStore } from "@/stores/editorTree";
-import { useShallow } from "zustand/react/shallow";
 
 type Props = EditableComponentMapper & ButtonProps & ReactElement<"Button">;
 
 const ButtonComponent = forwardRef(
-  ({ component, style, shareableContent, ...props }: Props, ref) => {
+  (
+    { component, isPreviewMode, style, shareableContent, ...props }: Props,
+    ref,
+  ) => {
     const {
       triggers,
       icon,
@@ -33,10 +35,6 @@ const ButtonComponent = forwardRef(
     const contentEditableProps = useContentEditable(
       component.id as string,
       ref,
-    );
-
-    const isPreviewMode = useEditorTreeStore(
-      useShallow((state) => state.isPreviewMode || state.isLive),
     );
 
     const defaultTriggers = isPreviewMode
@@ -87,4 +85,8 @@ const ButtonComponent = forwardRef(
 );
 ButtonComponent.displayName = "Button";
 
-export const Button = memo(withComponentWrapper<Props>(ButtonComponent));
+// export const Button = memo(ButtonComponent, isSame);
+export const Button = memo(
+  withComponentWrapper<Props>(ButtonComponent),
+  isSame,
+);
