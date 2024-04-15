@@ -1,23 +1,26 @@
-import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import { Radio as MantineRadio, RadioProps } from "@mantine/core";
 import { memo, useState } from "react";
+import { useEditorTreeStore } from "@/stores/editorTree";
+import { useShallow } from "zustand/react/shallow";
 
 type Props = EditableComponentMapper & RadioProps;
 
 const RadioItemComponent = ({
   renderTree,
   component,
-  isPreviewMode,
   shareableContent,
   ...props
 }: Props) => {
+  const isPreviewMode = useEditorTreeStore(
+    useShallow((state) => state.isPreviewMode || state.isLive),
+  );
   const {
     value: defaultValue,
     children,
     ...componentProps
   } = component.props as any;
-  const { value } = component.onLoad;
+  const { value } = component.onLoad ?? {};
 
   const { value: parentValue, isInsideGroup = false } = shareableContent;
   const checked = parentValue === value;
@@ -69,4 +72,4 @@ const RadioItemComponent = ({
   );
 };
 
-export const RadioItem = memo(RadioItemComponent, isSame);
+export const RadioItem = memo(RadioItemComponent);

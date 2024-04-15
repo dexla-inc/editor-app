@@ -1,6 +1,5 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useBrandingStyles } from "@/hooks/useBrandingStyles";
-import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import { AvatarProps, Avatar as MantineAvatar } from "@mantine/core";
 import merge from "lodash.merge";
@@ -34,7 +33,4 @@ const AvatarComponent = forwardRef(
 );
 AvatarComponent.displayName = "Avatar";
 
-export const Avatar = memo(
-  withComponentWrapper<Props>(AvatarComponent),
-  isSame,
-);
+export const Avatar = memo(withComponentWrapper<Props>(AvatarComponent));

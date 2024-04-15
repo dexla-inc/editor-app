@@ -1,27 +1,16 @@
 import { Live } from "@/components/Live";
 import { withPageOnLoad } from "@/hoc/withPageOnLoad";
-import { prepareUserThemeLive } from "@/hooks/prepareUserThemeLive";
-import { getDataSourceEndpoints } from "@/requests/datasources/queries-noauth";
-import { Endpoint } from "@/requests/datasources/types";
 import { getDeploymentPage } from "@/requests/deployments/queries-noauth";
 import { DeploymentPage } from "@/requests/deployments/types";
 import { getProject } from "@/requests/projects/queries-noauth";
 import { ProjectResponse } from "@/requests/projects/types";
-import { listVariables } from "@/requests/variables/queries-noauth";
-import { VariableResponse } from "@/requests/variables/types";
-import { useDataSourceStore } from "@/stores/datasource";
-import { useEditorTreeStore } from "@/stores/editorTree";
-import { useThemeStore } from "@/stores/theme";
-import { useVariableStore } from "@/stores/variables";
 import { queryClient } from "@/utils/reactQuery";
 import { checkRefreshTokenExists } from "@/utils/serverside";
-import { initializeFonts } from "@/utils/webfontloader";
 import { dehydrate } from "@tanstack/react-query";
 import { GetServerSidePropsContext } from "next";
 import Head from "next/head";
-import { useEffect } from "react";
-import { listLogicFlows } from "@/requests/logicflows/queries-noauth";
 
+// TODO: Backend changes so we only make one API call or two light API calls for getting project and deployment page.
 export const getServerSideProps = async ({
   req,
   query,
@@ -41,22 +30,10 @@ export const getServerSideProps = async ({
 
   const currentSlug = query.page as string;
 
-  const [deploymentPage, variables, endpoints, logicFlows] = await Promise.all([
+  const [deploymentPage] = await Promise.all([
     getDeploymentPage(project.id, currentSlug),
-    listVariables(project.id),
-    getDataSourceEndpoints(project.id),
-    listLogicFlows(project.id),
-  ]);
-
-  await Promise.all([
     queryClient.prefetchQuery(["project", project.id], () =>
       Promise.resolve(project),
-    ),
-    queryClient.prefetchQuery(["endpoints", project.id], () =>
-      Promise.resolve(endpoints),
-    ),
-    queryClient.prefetchQuery(["logic-flows", project.id], () =>
-      Promise.resolve(logicFlows),
     ),
   ]);
 
@@ -79,8 +56,6 @@ export const getServerSideProps = async ({
         isLive: true,
         project,
         deploymentPage,
-        variables: variables.results,
-        endpoints: endpoints.results || [],
       },
     };
   }
@@ -92,8 +67,6 @@ export const getServerSideProps = async ({
       project,
       deploymentPage,
       faviconUrl: project.faviconUrl,
-      variables: variables.results,
-      endpoints: endpoints.results || [],
     },
   };
 };
@@ -102,65 +75,9 @@ type Props = {
   project: ProjectResponse;
   faviconUrl?: string;
   deploymentPage: DeploymentPage;
-  variables: VariableResponse[];
-  endpoints: Endpoint[];
 };
 
-function LivePage({
-  project,
-  faviconUrl,
-  deploymentPage,
-  variables,
-  endpoints,
-}: Props) {
-  const initializeVariableList = useVariableStore(
-    (state) => state.initializeVariableList,
-  );
-  const setApiAuthConfig = useDataSourceStore(
-    (state) => state.setApiAuthConfig,
-  );
-  const setIsLive = useEditorTreeStore((state) => state.setIsLive);
-  const setCurrentPageAndProjectIds = useEditorTreeStore(
-    (state) => state.setCurrentPageAndProjectIds,
-  );
-  const setTheme = useThemeStore((state) => state.setTheme);
-  const setPreviewMode = useEditorTreeStore((state) => state.setPreviewMode);
-
-  const theme = prepareUserThemeLive(project);
-
-  useEffect(() => {
-    if (project && deploymentPage.id) {
-      useThemeStore.getState().setTheme(theme);
-      setCurrentPageAndProjectIds(project.id, deploymentPage.id);
-      setPreviewMode(true);
-      setIsLive(true);
-
-      const loadFonts = async () => {
-        await initializeFonts(theme.fontFamily, theme.headings.fontFamily);
-      };
-
-      loadFonts();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [project, deploymentPage.id]);
-
-  useEffect(() => {
-    initializeVariableList(variables);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [variables]);
-
-  useEffect(() => {
-    if (endpoints) {
-      setApiAuthConfig(endpoints);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [endpoints]);
-
-  useEffect(() => {
-    setTheme(theme);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [theme]);
-
+function LivePage({ project, faviconUrl, deploymentPage }: Props) {
   return (
     <>
       <Head>

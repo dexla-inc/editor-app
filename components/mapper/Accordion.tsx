@@ -1,4 +1,3 @@
-import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import { AccordionProps, Accordion as MantineAccordion } from "@mantine/core";
 import { forwardRef, memo } from "react";
@@ -27,7 +26,4 @@ const AccordionComponent = forwardRef(
 );
 AccordionComponent.displayName = "Accordion";
 
-export const Accordion = memo(
-  withComponentWrapper<Props>(AccordionComponent),
-  isSame,
-);
+export const Accordion = memo(withComponentWrapper<Props>(AccordionComponent));

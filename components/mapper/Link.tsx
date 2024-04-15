@@ -1,7 +1,6 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { useContentEditable } from "@/hooks/useContentEditable";
-import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import { AnchorProps, Anchor as MantineAnchor } from "@mantine/core";
 import merge from "lodash.merge";
@@ -40,4 +39,4 @@ const LinkComponent = forwardRef(
 );
 LinkComponent.displayName = "Link";
 
-export const Link = memo(withComponentWrapper<Props>(LinkComponent), isSame);
+export const Link = memo(withComponentWrapper<Props>(LinkComponent));

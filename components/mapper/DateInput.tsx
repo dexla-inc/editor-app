@@ -17,7 +17,6 @@ type Props = EditableComponentMapper & DatePickerInputProps;
 const DateInputComponent = ({
   renderTree,
   component,
-  isPreviewMode,
   shareableContent,
   ...props
 }: Props) => {

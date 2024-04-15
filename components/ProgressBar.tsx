@@ -45,7 +45,7 @@ export const ProgressBar: React.FC<Props> = ({ color, enabled = true }) => {
   );
 };
 
-const useRouteChange = () => {
+export const useRouteChange = () => {
   const [isRouteChanging, setIsRouteChanging] = useState(false);
   const router = useRouter();
 

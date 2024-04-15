@@ -1,6 +1,5 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useContentEditable } from "@/hooks/useContentEditable";
-import { isSame } from "@/utils/componentComparison";
 import { EditableComponentMapper } from "@/utils/editor";
 import { Title as MantineTitle, TitleProps } from "@mantine/core";
 import { forwardRef, memo } from "react";
@@ -8,10 +7,7 @@ import { forwardRef, memo } from "react";
 type Props = EditableComponentMapper & TitleProps;
 
 const TitleComponent = forwardRef(
-  (
-    { component, isPreviewMode, shareableContent, ...props }: Props,
-    ref: any,
-  ) => {
+  ({ component, shareableContent, ...props }: Props, ref: any) => {
     const contentEditableProps = useContentEditable(
       component.id as string,
       ref,
@@ -43,4 +39,4 @@ const TitleComponent = forwardRef(
 
 TitleComponent.displayName = "Title";
 
-export const Title = memo(withComponentWrapper<Props>(TitleComponent), isSame);
+export const Title = memo(withComponentWrapper<Props>(TitleComponent));
