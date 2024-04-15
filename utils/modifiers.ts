@@ -1,4 +1,4 @@
-import { GRAY_OUTLINE } from "./branding";
+import { GRAY_OUTLINE } from "@/utils/branding";
 
 export type Modifiers =
   | "spacing"
@@ -316,6 +316,10 @@ export const requiredModifiers: RequiredModifiers = {
   drawer: {
     position: "left",
     size: "md",
+    showInEditor: true,
+    title: "Heading",
+    titleTag: "H4",
+    withCloseButton: true,
   },
   buttonIcon: {
     style: {

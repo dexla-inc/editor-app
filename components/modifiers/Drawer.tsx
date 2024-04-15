@@ -1,74 +1,30 @@
 import { TopLabel } from "@/components/TopLabel";
 import { withModifier } from "@/hoc/withModifier";
-import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
-import { requiredModifiers } from "@/utils/modifiers";
-import { Checkbox, SegmentedControl, Stack } from "@mantine/core";
-import { useForm } from "@mantine/form";
-import merge from "lodash.merge";
-import { useEffect } from "react";
-import { SizeSelector } from "../SizeSelector";
+import { SegmentedControl, Stack } from "@mantine/core";
+import { ModalDrawerFormBuilder } from "@/components/modifiers/ModalDrawerFormBuilder";
 
 const Modifier = withModifier(({ selectedComponent }) => {
-  const form = useForm();
-
-  useEffect(() => {
-    form.setValues(
-      merge({}, requiredModifiers.drawer, {
-        position: selectedComponent.props?.position,
-        size: selectedComponent.props?.size,
-        showInEditor: selectedComponent.props?.showInEditor,
-      }),
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponent]);
-
   return (
-    <form>
-      <Stack spacing="xs">
-        <Stack spacing={2}>
-          <TopLabel text="Position" />
-          <SegmentedControl
-            size="xs"
-            data={[
-              { label: "Left", value: "left" },
-              { label: "Top", value: "top" },
-              { label: "Right", value: "right" },
-              { label: "Bottom", value: "bottom" },
-            ]}
-            {...form.getInputProps("position")}
-            onChange={(value) => {
-              form.setFieldValue("position", value as string);
-              debouncedTreeComponentAttrsUpdate({
-                attrs: { props: { position: value } },
-              });
-            }}
-          />
-        </Stack>
-        <SizeSelector
-          label="Size"
-          showNone
-          showFullscreen
-          {...form.getInputProps("size")}
-          onChange={(value) => {
-            form.setFieldValue("size", value as string);
-            debouncedTreeComponentAttrsUpdate({
-              attrs: { props: { size: value } },
-            });
-          }}
-        />
-        <Checkbox
-          size="xs"
-          label="Force Hide"
-          {...form.getInputProps("showInEditor", { type: "checkbox" })}
-          onChange={(e) => {
-            form.setFieldValue("showInEditor", e.target.checked);
-            debouncedTreeComponentAttrsUpdate({
-              attrs: { props: { showInEditor: e.target.checked } },
-            });
-          }}
-        />
-      </Stack>
-    </form>
+    <ModalDrawerFormBuilder selectedComponent={selectedComponent}>
+      {({ form, onChange }) => {
+        return (
+          <Stack spacing={2}>
+            <TopLabel text="Position" />
+            <SegmentedControl
+              size="xs"
+              data={[
+                { label: "Left", value: "left" },
+                { label: "Top", value: "top" },
+                { label: "Right", value: "right" },
+                { label: "Bottom", value: "bottom" },
+              ]}
+              {...form.getInputProps("position")}
+              onChange={(value) => onChange("position", value)}
+            />
+          </Stack>
+        );
+      }}
+    </ModalDrawerFormBuilder>
   );
 });
 
