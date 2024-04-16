@@ -36,36 +36,35 @@ export const StateSelector = ({ componentName }: Props) => {
   const updateTreeComponentAttrs = useEditorTreeStore(
     (state) => state.updateTreeComponentAttrs,
   );
+  const resetComponentsState = useEditorTreeStore(
+    (state) => state.resetComponentsState,
+  );
 
   const onClickResetToDefault = () => {
-    const selectedComponentId = useEditorTreeStore
-      .getState()
-      .selectedComponentIds?.at(-1);
-    const component =
-      useEditorTreeStore.getState().componentMutableAttrs[selectedComponentId!];
+    const selectedComponentId =
+      useEditorTreeStore.getState().selectedComponentIds!;
 
-    updateTreeComponentAttrs({
-      componentIds: [selectedComponentId!],
-      attrs: { props: component?.props },
-      forceState: currentState,
-    });
+    resetComponentsState(selectedComponentId, currentState);
   };
   const { getComponentsStates } = useComponentStates();
 
-  const onClickSaveNewState = () => {
+  const onClickSaveNewState = async () => {
     if (isEmpty(createState)) return;
 
     const selectedComponentId = useEditorTreeStore
       .getState()
       .selectedComponentIds?.at(-1)!;
 
-    setTreeComponentCurrentState(selectedComponentId, createState!);
-    updateTreeComponentAttrs({
-      componentIds: [selectedComponentId!],
-      attrs: { states: { [createState!]: {} } },
-      forceState: currentState,
-    });
     setCreateState(undefined);
+
+    await Promise.all([
+      setTreeComponentCurrentState(selectedComponentId, createState!),
+      updateTreeComponentAttrs({
+        componentIds: [selectedComponentId!],
+        attrs: { states: { [createState!]: {} } },
+        forceState: currentState,
+      }),
+    ]);
   };
 
   return (
