@@ -7,6 +7,7 @@ import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { memo } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useShallow } from "zustand/react/shallow";
+import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 
 type Props = EditableComponentMapper & DropzoneProps;
 
@@ -45,4 +46,4 @@ const FileUploadComponent = ({
   );
 };
 
-export const FileUpload = memo(FileUploadComponent);
+export const FileUpload = memo(withComponentWrapper(FileUploadComponent));

@@ -14,13 +14,12 @@ export const useComputeCurrentState = (
   );
 
   const editorComponentState = useEditorTreeStore(
-    (state) =>
-      state.currentTreeComponentsStates?.[componentId] ??
-      parentState ??
-      "default",
+    (state) => state.currentTreeComponentsStates?.[componentId] ?? "default",
   );
 
+  // if parent state is set, we want it both in editor and preview mode
   return useMemo(() => {
-    return isEditorMode ? editorComponentState : parentState ?? currentState;
+    const computedState = isEditorMode ? editorComponentState : currentState;
+    return parentState ?? computedState;
   }, [isEditorMode, editorComponentState, parentState, currentState]);
 };

@@ -1,3 +1,4 @@
+import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { Component, EditableComponentMapper } from "@/utils/editor";
@@ -95,4 +96,4 @@ const PopOverComponent = ({
   );
 };
 
-export const PopOver = memo(PopOverComponent);
+export const PopOver = memo(withComponentWrapper(PopOverComponent));
