@@ -3,6 +3,7 @@ import { Radio as MantineRadio, RadioProps } from "@mantine/core";
 import { memo, useState } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useShallow } from "zustand/react/shallow";
+import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
 
 type Props = EditableComponentMapper & RadioProps;
 
@@ -20,10 +21,14 @@ const RadioItemComponent = ({
     children,
     ...componentProps
   } = component.props as any;
-  const { value } = component.onLoad ?? {};
+  const computedOnLoad = useComputeValue({
+    onLoad: component.onLoad,
+    shareableContent,
+  });
+  const { value = defaultValue } = computedOnLoad ?? {};
 
   const { value: parentValue, isInsideGroup = false } = shareableContent;
-  const checked = parentValue === value;
+  const checked = parentValue === String(value);
 
   const [_checked, setChecked] = useState<boolean>(checked);
 

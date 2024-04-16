@@ -14,7 +14,10 @@ export const useComputeCurrentState = (
   );
 
   const editorComponentState = useEditorTreeStore(
-    (state) => state.currentTreeComponentsStates?.[componentId] ?? "default",
+    (state) =>
+      state.currentTreeComponentsStates?.[componentId] ??
+      parentState ??
+      "default",
   );
 
   return useMemo(() => {
