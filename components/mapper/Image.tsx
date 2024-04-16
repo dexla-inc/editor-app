@@ -8,8 +8,9 @@ type Props = EditableComponentMapper & ImageProps;
 
 const ImageComponent = forwardRef(
   ({ component, shareableContent, ...props }: Props, ref) => {
-    const { triggers, loading, ...componentProps } = component.props as any;
-    const { src: srcValue, alt: altValue } = component.onLoad;
+    const { triggers, loading, src, alt, ...componentProps } =
+      component.props as any;
+    const { src: srcValue = src, alt: altValue = alt } = component.onLoad;
 
     const {
       width,

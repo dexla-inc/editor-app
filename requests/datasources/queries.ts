@@ -1,6 +1,7 @@
 import { DataSourceResponse } from "@/requests/datasources/types";
 import { get } from "@/utils/api";
 import { buildQueryString } from "@/utils/dashboardTypes";
+import { evictCache } from "@/requests/cache/queries-noauth";
 
 export const getSwagger = async (
   projectId: string,
@@ -15,6 +16,9 @@ export const getSwagger = async (
     url,
     {},
   )) as DataSourceResponse;
+
+  const cacheTag = `/projects/${projectId}/datasources/endpoints`;
+  await evictCache(cacheTag);
 
   return response;
 };

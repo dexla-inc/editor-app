@@ -48,7 +48,7 @@ const NavLinkComponent = forwardRef(
       variable,
       ...componentProps
     } = merge({}, component.props, activeProps) as any;
-    const { label: labelValue } = component.onLoad;
+    const { label: labelValue = componentProps.label } = component.onLoad;
 
     const { color: textColor, backgroundColor } = useChangeState({
       bg,

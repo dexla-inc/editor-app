@@ -9,8 +9,8 @@ import {
 } from "@react-google-maps/api";
 import merge from "lodash.merge";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
-import { useCallback, useEffect, useState } from "react";
-import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
+import { forwardRef, memo, useCallback, useEffect, useState } from "react";
+import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 
 type Props = EditableComponentMapper & {
   onClick?: (e: any) => void;
@@ -32,142 +32,148 @@ type Position = {
 
 const defaultCenter = { lat: 25.816347481537285, lng: -80.1219500315037 };
 
-export const GoogleMapPlugin = ({
-  component,
-  shareableContent,
-  onClick,
-  ...props
-}: Props) => {
-  const [activeMarkerId, setActiveMarkerId] = useState<string | null>(null);
-  const [map, setMap] = useState<any | null>(null);
+const GoogleMapPluginComponent = forwardRef<GoogleMap, Props>(
+  (
+    { renderTree, component, shareableContent, onClick, ...props }: Props,
+    ref,
+  ) => {
+    const [activeMarkerId, setActiveMarkerId] = useState<string | null>(null);
+    const [map, setMap] = useState<any | null>(null);
 
-  const { options, language, loading, fade, ...componentProps } =
-    component.props as GoogleMapProps;
-  const { apiKey, zoom, centerLat, centerLng, markers } = component.onLoad;
+    const { options, language, loading, fade, ...componentProps } =
+      component.props as GoogleMapProps;
+    const { apiKey, zoom, centerLat, centerLng, markers } = component.onLoad;
 
-  const center = {
-    lat: centerLat ?? defaultCenter.lat,
-    lng: centerLng ?? defaultCenter.lng,
-  };
+    const center = {
+      lat: centerLat ?? defaultCenter.lat,
+      lng: centerLng ?? defaultCenter.lng,
+    };
 
-  const markersParsed = safeJsonParse(markers) as MarkerItem[];
-  const MAP_SCRIPT_DELAY_DURATION = 800;
+    const markersParsed = safeJsonParse(markers) as MarkerItem[];
+    const MAP_SCRIPT_DELAY_DURATION = 800;
 
-  const { width, height, ...googleStyles } = props.style ?? {};
-  const containerStyle = { width, height };
+    const { width, height, ...googleStyles } = props.style ?? {};
+    const containerStyle = { width, height };
 
-  const otherProps = omit(props, ["style"]);
+    const otherProps = omit(props, ["style"]);
 
-  const LOADING_TEXT = (
-    <Text {...otherProps} w="100%" h="auto" pos="relative">
-      Enter API key and refresh the page...
-    </Text>
-  );
+    const LOADING_TEXT = (
+      <Text {...otherProps} w="100%" h="auto" pos="relative">
+        Enter API key and refresh the page...
+      </Text>
+    );
 
-  const loadScript = useLoadScript({
-    id: `map-${component.id}`,
-    googleMapsApiKey: apiKey,
-    language: language,
-  });
+    const loadScript = useLoadScript({
+      id: `map-${component.id}`,
+      googleMapsApiKey: apiKey,
+      language: language,
+    });
 
-  // Determine whether the maps API is loaded
-  const isAlreadyLoaded = !!window.google;
-  const isLoaded = isAlreadyLoaded || loadScript.isLoaded;
+    // Determine whether the maps API is loaded
+    const isAlreadyLoaded = !!window.google;
+    const isLoaded = isAlreadyLoaded || loadScript.isLoaded;
 
-  const handleActiveMarker = (markerId: string) => {
-    if (markerId !== activeMarkerId) {
-      setActiveMarkerId(markerId);
-    }
-  };
-
-  const handleClick = (e: any) => {
-    onClick?.(e);
-    setActiveMarkerId(null);
-  };
-
-  const gmOnLoad = useCallback(
-    (map: google.maps.Map) => {
-      setMap(map);
-
-      const bounds = new window.google.maps.LatLngBounds({
-        lat: Number(center.lat),
-        lng: Number(center.lng),
-      });
-
-      markersParsed?.forEach?.(({ position }: Position) =>
-        bounds.extend(position),
-      );
-      map.fitBounds(bounds);
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [center, markersParsed, zoom],
-  );
-
-  useEffect(() => {
-    setTimeout(() => {
-      if (map) {
-        map.setZoom(zoom);
+    const handleActiveMarker = (markerId: string) => {
+      if (markerId !== activeMarkerId) {
+        setActiveMarkerId(markerId);
       }
-    }, MAP_SCRIPT_DELAY_DURATION);
-  }, [zoom, map]);
+    };
 
-  const unMount = useCallback((map: any) => {
-    setMap(null);
-  }, []);
+    const handleClick = (e: any) => {
+      onClick?.(e);
+      setActiveMarkerId(null);
+    };
 
-  if (!isLoaded || !apiKey) {
-    return LOADING_TEXT;
-  }
+    const gmOnLoad = useCallback(
+      (map: google.maps.Map) => {
+        setMap(map);
 
-  if (loading) {
-    return <Skeleton height={300} visible />;
-  }
-
-  const customOptions = merge({}, options, {
-    // @ts-ignore
-    mapTypeId: google.maps.MapTypeId[options?.mapTypeId],
-  });
-
-  return (
-    <Box
-      pos="relative"
-      {...otherProps}
-      style={containerStyle}
-      id={component.id}
-      onClick={handleClick}
-    >
-      <GoogleMap
-        key={apiKey}
-        options={customOptions}
-        onLoad={gmOnLoad}
-        onUnmount={unMount}
-        mapContainerStyle={containerStyle}
-        {...componentProps}
-        {...props}
-        {...googleStyles}
-        center={{
+        const bounds = new window.google.maps.LatLngBounds({
           lat: Number(center.lat),
           lng: Number(center.lng),
-        }}
-        zoom={zoom}
-      >
-        {markersParsed?.map?.(({ id, name, position }) => (
-          <Marker
-            key={id}
-            position={position}
-            onMouseOver={() => handleActiveMarker(id)}
-            onMouseOut={() => setActiveMarkerId(null)}
-          >
-            {activeMarkerId === id && (
-              <InfoWindow onCloseClick={() => setActiveMarkerId(null)}>
-                <Text>{name}</Text>
-              </InfoWindow>
-            )}
-          </Marker>
-        ))}
-      </GoogleMap>
+        });
 
-      {fade && <Overlay color="#fff" opacity={0.7} blur={0.5} zIndex={1} />}
-    </Box>
-  );
-};
+        markersParsed?.forEach?.(({ position }: Position) =>
+          bounds.extend(position),
+        );
+        map.fitBounds(bounds);
+      },
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      [center, markersParsed, zoom],
+    );
+
+    useEffect(() => {
+      setTimeout(() => {
+        if (map) {
+          map.setZoom(zoom);
+        }
+      }, MAP_SCRIPT_DELAY_DURATION);
+    }, [zoom, map]);
+
+    const unMount = useCallback((map: any) => {
+      setMap(null);
+    }, []);
+
+    if (!isLoaded || !apiKey) {
+      return LOADING_TEXT;
+    }
+
+    if (loading) {
+      return <Skeleton height={300} visible />;
+    }
+
+    const customOptions = merge({}, options, {
+      // @ts-ignore
+      mapTypeId: google.maps.MapTypeId[options?.mapTypeId],
+    });
+
+    return (
+      <Box
+        pos="relative"
+        {...otherProps}
+        style={containerStyle}
+        id={component.id}
+        onClick={handleClick}
+      >
+        <GoogleMap
+          ref={ref}
+          key={apiKey}
+          options={customOptions}
+          onLoad={gmOnLoad}
+          onUnmount={unMount}
+          mapContainerStyle={containerStyle}
+          {...componentProps}
+          {...props}
+          {...googleStyles}
+          center={{
+            lat: Number(center.lat),
+            lng: Number(center.lng),
+          }}
+          zoom={zoom}
+        >
+          {markersParsed?.map?.(({ id, name, position }) => (
+            <Marker
+              key={id}
+              position={position}
+              onMouseOver={() => handleActiveMarker(id)}
+              onMouseOut={() => setActiveMarkerId(null)}
+            >
+              {activeMarkerId === id && (
+                <InfoWindow onCloseClick={() => setActiveMarkerId(null)}>
+                  <Text>{name}</Text>
+                </InfoWindow>
+              )}
+            </Marker>
+          ))}
+        </GoogleMap>
+
+        {fade && <Overlay color="#fff" opacity={0.7} blur={0.5} zIndex={1} />}
+      </Box>
+    );
+  },
+);
+
+GoogleMapPluginComponent.displayName = "GoogleMapPlugin";
+export const GoogleMapPlugin = memo(
+  withComponentWrapper(GoogleMapPluginComponent),
+);

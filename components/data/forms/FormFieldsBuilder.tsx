@@ -53,7 +53,11 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
     {} as Record<string, ValueProps>,
   );
 
-  const onLoadValues = merge({}, onLoadFieldsStarter, component?.onLoad);
+  const onLoadValues = merge(
+    { currentState: { static: "default", dataType: "static" } },
+    onLoadFieldsStarter,
+    component?.onLoad,
+  );
 
   const form = useForm({
     initialValues: {
@@ -63,6 +67,7 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
 
   useEffect(() => {
     if (form.isTouched() && form.isDirty()) {
+      console.log(form.values);
       debouncedTreeComponentAttrsUpdate({ attrs: form.values });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -415,6 +415,7 @@ export const updateTreeComponentAttrs = (
 ) => {
   const translatableProps = pickBy(attrs.props, pickTranslatableFields);
   const styleProps = pickBy(attrs.props, pickStyleFields);
+  // properties that are not merging with states or languages
   const alwaysDefaultProps = omit(attrs.props ?? {}, [
     ...translatableFieldsKeys,
     ...styleFieldsKeys,
@@ -436,12 +437,16 @@ export const updateTreeComponentAttrs = (
     });
   }
 
+  // attributes we want to deep merge
   merge(component, { props: alwaysDefaultProps });
   merge(component, { onLoad: attrs.onLoad });
-  // iterate attributes that we want to replace instead of merging
-  Object.entries(omit(attrs, ["props", "onLoad"])).forEach(([key, value]) => {
-    component[key as keyof Component] = value;
-  });
+  merge(component, { states: attrs.states });
+  // attribute we want to overwrite, in this case, the ones that are not listed above
+  Object.entries(omit(attrs, ["props", "onLoad", "states"])).forEach(
+    ([key, value]) => {
+      component[key as keyof Component] = value;
+    },
+  );
 
   return component;
 };

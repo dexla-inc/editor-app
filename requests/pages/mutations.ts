@@ -7,12 +7,16 @@ import {
   PagesResponse,
 } from "@/requests/pages/types";
 import { del, post, put } from "@/utils/api";
+import { evictCache } from "../cache/queries-noauth";
 
 export const createPage = async (params: PageBody, projectId: string) => {
   const response = (await post<PageResponse>(
     `/projects/${projectId}/pages`,
     params,
   )) as PageResponse;
+
+  const cacheTag = getCacheTag(projectId);
+  await evictCache(cacheTag);
 
   return response;
 };
@@ -27,6 +31,9 @@ export const updatePage = async (
     params,
   )) as PageResponse;
 
+  const cacheTag = getCacheTag(projectId);
+  await evictCache(cacheTag);
+
   return response;
 };
 
@@ -35,6 +42,9 @@ export const createPages = async (params: PageBody[], projectId: string) => {
     `/projects/${projectId}/pages/many`,
     params,
   )) as PagesResponse;
+
+  const cacheTag = getCacheTag(projectId);
+  await evictCache(cacheTag);
 
   return response;
 };
@@ -86,6 +96,9 @@ export const updatePageState = async (
 export const deletePage = async (id: string, pageId: string) => {
   const response = (await del<any>(`/projects/${id}/pages/${pageId}`)) as any;
 
+  const cacheTag = getCacheTag(id);
+  await evictCache(cacheTag);
+
   return response;
 };
 
@@ -98,3 +111,5 @@ export const rollbackPageState = async (
   const response = (await post<any>(url, {})) as PageStateResponse;
   return response;
 };
+
+const getCacheTag = (projectId: string) => `/projects/${projectId}/pages`;

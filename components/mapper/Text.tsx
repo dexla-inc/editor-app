@@ -37,6 +37,7 @@ const TextComponent = forwardRef(
     );
   },
 );
+
 TextComponent.displayName = "Text";
 
 export const Text = memo(withComponentWrapper<Props>(TextComponent));

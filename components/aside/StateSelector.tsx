@@ -14,6 +14,7 @@ import {
 } from "@mantine/core";
 import { IconCheck, IconX } from "@tabler/icons-react";
 import { useState } from "react";
+import isEmpty from "lodash.isempty";
 
 type Props = {
   componentName: string;
@@ -35,29 +36,35 @@ export const StateSelector = ({ componentName }: Props) => {
   const updateTreeComponentAttrs = useEditorTreeStore(
     (state) => state.updateTreeComponentAttrs,
   );
+  const resetComponentsState = useEditorTreeStore(
+    (state) => state.resetComponentsState,
+  );
 
   const onClickResetToDefault = () => {
-    const selectedComponentId = useEditorTreeStore
-      .getState()
-      .selectedComponentIds?.at(-1);
-    const component =
-      useEditorTreeStore.getState().componentMutableAttrs[selectedComponentId!];
+    const selectedComponentId =
+      useEditorTreeStore.getState().selectedComponentIds!;
 
-    updateTreeComponentAttrs({
-      componentIds: [selectedComponentId!],
-      attrs: { props: component?.props },
-      forceState: currentState,
-    });
+    resetComponentsState(selectedComponentId, currentState);
   };
   const { getComponentsStates } = useComponentStates();
 
-  const onClickSaveNewState = () => {
+  const onClickSaveNewState = async () => {
+    if (isEmpty(createState)) return;
+
     const selectedComponentId = useEditorTreeStore
       .getState()
       .selectedComponentIds?.at(-1)!;
 
-    setTreeComponentCurrentState(selectedComponentId, createState!);
     setCreateState(undefined);
+
+    await Promise.all([
+      setTreeComponentCurrentState(selectedComponentId, createState!),
+      updateTreeComponentAttrs({
+        componentIds: [selectedComponentId!],
+        attrs: { states: { [createState!]: {} } },
+        forceState: currentState,
+      }),
+    ]);
   };
 
   return (
@@ -103,37 +110,42 @@ export const StateSelector = ({ componentName }: Props) => {
           </Stack>
         )}
         {createState !== undefined && (
-          <Flex gap="10px" align="flex-end">
-            <TextInput
-              style={{ flex: "1" }}
-              size="xs"
-              label="State Name"
-              placeholder="My New State"
-              value={createState}
-              onChange={(event) => {
-                setCreateState(event.currentTarget.value);
-              }}
-            />
-            <Tooltip label={`Cancel`}>
-              <ActionIcon
-                variant="default"
-                size="1.875rem"
-                onClick={() => setCreateState(undefined)}
-              >
-                <IconX size="1rem" />
-              </ActionIcon>
-            </Tooltip>
-            <Tooltip label={`Save new state`}>
-              <ActionIcon
-                color="teal"
-                variant="filled"
-                size="1.875rem"
-                onClick={onClickSaveNewState}
-              >
-                <IconCheck size="1rem" />
-              </ActionIcon>
-            </Tooltip>
-          </Flex>
+          <form onSubmit={onClickSaveNewState}>
+            <Flex gap="10px" align="flex-end">
+              <TextInput
+                style={{ flex: "1" }}
+                size="xs"
+                label="State Name"
+                placeholder="My New State"
+                value={createState}
+                required
+                withAsterisk
+                onChange={(event) => {
+                  setCreateState(event.currentTarget.value);
+                }}
+              />
+              <Tooltip label={`Cancel`}>
+                <ActionIcon
+                  variant="default"
+                  size="1.875rem"
+                  type="button"
+                  onClick={() => setCreateState(undefined)}
+                >
+                  <IconX size="1rem" />
+                </ActionIcon>
+              </Tooltip>
+              <Tooltip label={`Save new state`}>
+                <ActionIcon
+                  color="teal"
+                  variant="filled"
+                  size="1.875rem"
+                  type="submit"
+                >
+                  <IconCheck size="1rem" />
+                </ActionIcon>
+              </Tooltip>
+            </Flex>
+          </form>
         )}
       </Stack>
     )

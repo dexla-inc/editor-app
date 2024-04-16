@@ -9,12 +9,12 @@ export const jsonStructure = (props?: any): ComponentStructure => {
     description: "Image",
     onLoad: {
       src: {
-        value:
+        static:
           "https://www.contentviewspro.com/wp-content/uploads/2017/07/default_image.png",
         dataType: "static",
       },
       alt: {
-        value: "",
+        static: "",
         dataType: "static",
       },
     },
