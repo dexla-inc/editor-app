@@ -1,6 +1,9 @@
 import { useEditorTreeStore } from "@/stores/editorTree";
 
-export const useComponentStates = () => {
+export const useComponentStates = (
+  componentName: string = "",
+  currentState: string = "",
+) => {
   type ComponentAppearence = {
     label: string;
     value: string;
@@ -119,15 +122,19 @@ export const useComponentStates = () => {
     return appearencesList.concat(...(customAppearences ?? []));
   };
 
-  const handleComponentIfDisabledState = (e: any) => e.preventDefault();
+  const isDisabledState =
+    ["Pagination"].includes(componentName) && currentState === "disabled";
 
-  const checkIfIsDisabledState = (name: string, state: string) => {
-    return ["Pagination"].includes(name) && state === "disabled";
+  const handleComponentIfDisabledState = (e: any) => {
+    if (isDisabledState) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
   };
 
   return {
     getComponentsStates,
     handleComponentIfDisabledState,
-    checkIfIsDisabledState,
+    isDisabledState,
   };
 };
