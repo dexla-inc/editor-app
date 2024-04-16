@@ -28,7 +28,7 @@ const RadioItemComponent = ({
   const { value = defaultValue } = computedOnLoad ?? {};
 
   const { value: parentValue, isInsideGroup = false } = shareableContent;
-  const checked = parentValue === String(value);
+  const checked = parentValue === value;
 
   const [_checked, setChecked] = useState<boolean>(checked);
 
