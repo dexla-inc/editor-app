@@ -25,7 +25,7 @@ export const usePropsWithOverwrites = (
     if (
       currentState !== "hover" &&
       currentState !== "disabled" &&
-      "hover" in (component?.states ?? {})
+      Object.keys(component?.states?.hover ?? {}).length
     ) {
       const toBePreviousStateDef = useEditorTreeStore.getState()
         .componentMutableAttrs[component.id!]?.onLoad?.currentState ?? {
