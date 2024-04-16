@@ -33,4 +33,4 @@ export const promoteDeployment = async (projectId: string) => {
 };
 
 const getCacheTag = (projectId: string) =>
-  `/projects/${projectId}/deployments/pages`;
+  `/projects/${projectId}/deployments/page`;
