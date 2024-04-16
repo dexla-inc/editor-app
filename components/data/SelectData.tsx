@@ -3,6 +3,7 @@ import { SelectOptionsForm } from "@/components/data/forms/static/SelectOptionsF
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { SegmentedControl, Select, Stack, Text, Title } from "@mantine/core";
 import { DataProps } from "@/components/data/type";
+import { StaticFormFieldsBuilder } from "@/components/data/forms/StaticFormFieldsBuilder";
 
 export const SelectData = ({ component, endpoints, dataType }: DataProps) => {
   const updateTreeComponentAttrs = useEditorTreeStore(
@@ -39,6 +40,14 @@ export const SelectData = ({ component, endpoints, dataType }: DataProps) => {
           {({ form, selectableObjectKeys }) => {
             return (
               <Stack spacing="xs" my="xs">
+                <StaticFormFieldsBuilder
+                  form={form}
+                  field={{
+                    name: "value",
+                    label: "Default Value",
+                    type: "text",
+                  }}
+                />
                 <Title order={6} mt="xs">
                   Options
                 </Title>
