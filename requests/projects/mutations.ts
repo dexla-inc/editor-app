@@ -3,6 +3,7 @@ import { PatchParams } from "@/requests/types";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { del, patch, post } from "@/utils/api";
 import { buildQueryString } from "@/utils/dashboardTypes";
+import { evictCache } from "@/requests/cache/queries-noauth";
 
 export const createProject = async (
   params: ProjectParams | { companyId: string },
@@ -16,6 +17,8 @@ export const createProject = async (
     url,
     params,
   )) as ProjectResponse;
+
+  await evictCache(url);
 
   return response;
 };
@@ -41,16 +44,23 @@ export const createEntities = async (params: ProjectParams, init = {}) => {
 };
 
 export const patchProject = async (id: string, params: PatchParams[]) => {
+  const url = `/projects/${id}`;
   const response = (await patch<ProjectResponse>(
-    `/projects/${id}`,
+    url,
     params,
   )) as ProjectResponse;
+
+  await evictCache(url);
 
   return response;
 };
 
 export const deleteProject = async (id: string) => {
+  const url = `/projects/${id}`;
+
   const response = (await del<any>(`/projects/${id}`)) as any;
+
+  await evictCache(url);
 
   return response;
 };
