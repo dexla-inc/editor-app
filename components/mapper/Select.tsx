@@ -114,7 +114,7 @@ const SelectComponent = forwardRef(
         dropdownComponent={CustomDropdown}
         rightSection={loading ? <InputLoader /> : null}
         label={undefined}
-        value={String(value)}
+        value={value}
         wrapperProps={{ "data-id": component.id }}
       />
     );
