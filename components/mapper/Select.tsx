@@ -45,8 +45,6 @@ const SelectComponent = forwardRef(
       component.id!,
     );
 
-    console.log("value", value);
-
     const { dataLabelKey, dataValueKey } = component.onLoad;
     const { onChange, onSearchChange, ...restTriggers } = triggers || {};
     const { color, backgroundColor } = useChangeState({ bg, textColor });

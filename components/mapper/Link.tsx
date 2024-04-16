@@ -10,9 +10,14 @@ type Props = EditableComponentMapper & AnchorProps;
 
 const LinkComponent = forwardRef(
   ({ component, shareableContent, ...props }: Props, ref) => {
-    const { triggers, variable, ...componentProps } = component.props as any;
+    const {
+      triggers,
+      variable,
+      children: defaultValue,
+      ...componentProps
+    } = component.props as any;
     const { style, ...restProps } = props;
-    const { children: childrenValue } = component.onLoad;
+    const { children: childrenValue = defaultValue } = component.onLoad;
 
     const contentEditableProps = useContentEditable(
       component.id as string,

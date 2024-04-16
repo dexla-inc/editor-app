@@ -1,31 +1,31 @@
+import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useThemeStore } from "@/stores/theme";
 import { EditableComponentMapper, getColorFromTheme } from "@/utils/editor";
 import { Box, BoxProps } from "@mantine/core";
 import merge from "lodash.merge";
-import { memo } from "react";
+import { forwardRef, memo } from "react";
 type Props = EditableComponentMapper & BoxProps;
 
-const NavbarComponent = ({
-  renderTree,
-  component,
-  shareableContent,
-  ...props
-}: Props) => {
-  const theme = useThemeStore((state) => state.theme);
+const NavbarComponent = forwardRef(
+  ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
+    const theme = useThemeStore((state) => state.theme);
 
-  const { children, bg = "", ...componentProps } = component.props as any;
+    const { children, bg = "", ...componentProps } = component.props as any;
 
-  const backgroundColor = getColorFromTheme(theme, bg);
+    const backgroundColor = getColorFromTheme(theme, bg);
 
-  merge(componentProps, { style: { ...props.style, backgroundColor } });
+    merge(componentProps, { style: { ...props.style, backgroundColor } });
 
-  return (
-    <Box display="grid" {...component.props} {...props}>
-      {component.children &&
-        component.children.length > 0 &&
-        component.children?.map((child) => renderTree(child))}
-    </Box>
-  );
-};
+    return (
+      <Box display="grid" {...component.props} {...props}>
+        {component.children &&
+          component.children.length > 0 &&
+          component.children?.map((child) => renderTree(child))}
+      </Box>
+    );
+  },
+);
 
-export const Navbar = memo(NavbarComponent);
+NavbarComponent.displayName = "Navbar";
+
+export const Navbar = memo(withComponentWrapper(NavbarComponent));
