@@ -11,7 +11,7 @@ export const createVariable = async (
   projectId: string,
   params: Omit<VariableResponse, "id">,
 ) => {
-  let url = `/projects/${projectId}/variables`;
+  const url = `/projects/${projectId}/variables`;
 
   const response = (await post<VariableResponse>(
     url,
@@ -28,21 +28,28 @@ export const updateVariable = async (
   projectId: string,
   params: Omit<VariableResponse, "id">,
 ) => {
-  let url = `/projects/${projectId}/variables/${id}`;
+  const cacheTag = `/projects/${projectId}/variables`;
+  const url = `${cacheTag}/${id}`;
 
   const response = (await put<VariableResponse>(
     url,
     params,
   )) as VariableResponse;
+
   setVariable({ id: response.id, value: params.defaultValue, ...params });
-  await evictCache(url);
+
+  await evictCache(cacheTag);
+
   return response;
 };
 
 export const deleteVariable = async (projectId: string, id: string) => {
-  let url = `/projects/${projectId}/variables/${id}`;
+  const cacheTag = `/projects/${projectId}/variables`;
+  const url = `${cacheTag}/${id}`;
+
   deleteVariableFromStore(id);
   const response = (await del<SuccessResponse>(url)) as SuccessResponse;
+
   await evictCache(url);
   return response;
 };

@@ -18,8 +18,6 @@ export const createProject = async (
     params,
   )) as ProjectResponse;
 
-  await evictCache(url);
-
   return response;
 };
 
@@ -50,7 +48,8 @@ export const patchProject = async (id: string, params: PatchParams[]) => {
     params,
   )) as ProjectResponse;
 
-  await evictCache(url);
+  const cacheTag = getCacheTag(id);
+  await evictCache(cacheTag);
 
   return response;
 };
@@ -58,9 +57,12 @@ export const patchProject = async (id: string, params: PatchParams[]) => {
 export const deleteProject = async (id: string) => {
   const url = `/projects/${id}`;
 
-  const response = (await del<any>(`/projects/${id}`)) as any;
+  const response = (await del<any>(url)) as any;
 
-  await evictCache(url);
+  const cacheTag = getCacheTag(id);
+  await evictCache(cacheTag);
 
   return response;
 };
+
+const getCacheTag = (projectId: string) => `/projects/${projectId}`;
