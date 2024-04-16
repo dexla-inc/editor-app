@@ -1,3 +1,6 @@
+// With this file my intention is to export any folder files, or file imports then I want to share this structure
+// with an AI and ask it to restructure the imports in a way that makes sense.
+
 const { Project } = require("ts-morph");
 const fs = require("fs");
 
