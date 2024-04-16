@@ -40,7 +40,12 @@ const findValuePropsPaths = (obj: any, prefix = ""): string[] => {
   Object.keys(obj).forEach((key) => {
     const fullPath = prefix ? `${prefix}.${key}` : key;
     if (typeof obj[key] === "object" && obj[key] !== null) {
-      if ("dataType" in obj[key]) {
+      if (
+        "dataType" in obj[key] ||
+        "boundCode" in obj[key] ||
+        "dynamic" in obj[key] ||
+        "static" in obj[key]
+      ) {
         paths.push(fullPath);
       } else {
         paths = [...paths, ...findValuePropsPaths(obj[key], fullPath)];
@@ -237,9 +242,7 @@ export const useComputeValue = ({
       valuePropsPaths.reduce(
         (acc, fieldValuePath) => {
           const fieldValue = get(onLoad, fieldValuePath);
-          const { dataType } = fieldValue ?? {};
-
-          if (!dataType) return acc;
+          const { dataType = "static" } = fieldValue ?? {};
 
           set(
             acc,

@@ -22,6 +22,7 @@ import merge from "lodash.merge";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import cloneDeep from "lodash.clonedeep";
+import setObj from "lodash.set";
 
 const client = createClient({
   publicApiKey: process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY ?? "",
@@ -91,6 +92,10 @@ export type EditorTreeState = {
     forceState?: string;
     save?: boolean;
   }) => Promise<void>;
+  resetComponentsState: (
+    componentIds: string[],
+    stateToBeRemoved: string,
+  ) => void;
   historyCount: number | null;
   setHistoryCount: (count: number | null) => void;
   pageLoadTree?: EditorTree;
@@ -321,6 +326,42 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
               false,
               "editorTree/updateTreeComponentAttrs",
             );
+          },
+          resetComponentsState: (componentIds, stateToBeRemoved) => {
+            set((state) => {
+              componentIds.forEach((id) => {
+                state.componentMutableAttrs[id] = cloneDeep(
+                  state.componentMutableAttrs[id] ?? {},
+                );
+                setObj(
+                  state.componentMutableAttrs[id].states ?? {},
+                  stateToBeRemoved,
+                  {},
+                );
+              });
+
+              const treeWithRecoveredAttrs = recoverTreeComponentAttrs(
+                state.tree,
+                state.componentMutableAttrs,
+              );
+              if (!state.isPreviewMode && !state.isLive) {
+                debouncedUpdatePageState(
+                  encodeSchema(
+                    JSON.stringify(
+                      removeKeysRecursive(treeWithRecoveredAttrs, ["error"]),
+                    ),
+                  ),
+                  state.currentProjectId ?? "",
+                  state.currentPageId ?? "",
+                  state.setIsSaving,
+                  state.pageLoadTimestamp,
+                );
+              }
+
+              return {
+                componentMutableAttrs: state.componentMutableAttrs,
+              };
+            });
           },
           tree: emptyEditorTree,
           componentMutableAttrs: emptyEditorComponentMutableAttrs,

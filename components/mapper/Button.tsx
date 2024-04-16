@@ -28,6 +28,7 @@ const ButtonComponent = forwardRef(
     } = component.props as any;
     const { children: childrenValue = component.props?.children } =
       component.onLoad;
+
     const theme = useThemeStore((state) => state.theme);
 
     const contentEditableProps = useContentEditable(
