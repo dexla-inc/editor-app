@@ -21,11 +21,12 @@ const RadioItemComponent = ({
     children,
     ...componentProps
   } = component.props as any;
-  const computedOnLoad = useComputeValue({
-    onLoad: component.onLoad,
-    shareableContent,
-  });
-  const { value = defaultValue } = computedOnLoad ?? {};
+
+  const { value = defaultValue } =
+    useComputeValue({
+      onLoad: component.onLoad,
+      shareableContent,
+    }) ?? {};
 
   const { value: parentValue, isInsideGroup = false } = shareableContent;
   const checked = parentValue === value;
