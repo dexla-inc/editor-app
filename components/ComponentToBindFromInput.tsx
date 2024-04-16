@@ -143,20 +143,22 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
           />
         </Stack>
       ) : (
-        <TextInput
-          {...commonProps}
-          placeholder={placeholder}
-          value={value?.static}
-          type={fieldType}
-          onChange={(e) =>
-            onChange({
-              ...value,
-              dataType: "static",
-              static: e.currentTarget.value,
-            })
-          }
-          {...props}
-        />
+        <Stack w="100%">
+          <TextInput
+            {...commonProps}
+            placeholder={placeholder}
+            value={value?.static}
+            type={fieldType}
+            onChange={(e) =>
+              onChange({
+                ...value,
+                dataType: "static",
+                static: e.currentTarget.value,
+              })
+            }
+            {...props}
+          />
+        </Stack>
       )}
     </ComponentToBindWrapper>
   );
