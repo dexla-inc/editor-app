@@ -2,7 +2,6 @@ import { useEditorStore } from "@/stores/editor";
 import { Component } from "@/utils/editor";
 import merge from "lodash.merge";
 import { useMemo } from "react";
-import { useComponentStates } from "./useComponentStates";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
 
@@ -13,8 +12,6 @@ export const usePropsWithOverwrites = (
   triggers: any,
 ) => {
   const language = useEditorStore((state) => state.language);
-  const { isDisabledState, handleComponentIfDisabledState } =
-    useComponentStates(component.name, currentState);
 
   const updateTreeComponentAttrs = useEditorTreeStore(
     (state) => state.updateTreeComponentAttrs,
@@ -23,8 +20,13 @@ export const usePropsWithOverwrites = (
   // Hover state function - if a component has a hover state, it should be triggered on hover
   // that means when a component is hovered then unhovered, it needs to go back to the previous state
   // here is store the currentState as previousState now, and we force the currentState to be hover
+  // it shouldn't trigger if the component is disabled
   const hoverStateFunc = (e: React.MouseEvent<HTMLElement>) => {
-    if (currentState !== "hover" && "hover" in (component?.states ?? {})) {
+    if (
+      currentState !== "hover" &&
+      currentState !== "disabled" &&
+      "hover" in (component?.states ?? {})
+    ) {
       const toBePreviousStateDef =
         useEditorTreeStore.getState().componentMutableAttrs[component.id!]
           ?.onLoad?.currentState;
@@ -73,14 +75,14 @@ export const usePropsWithOverwrites = (
       component.languages?.[language],
       component.states?.[currentState],
       {
-        disabled: isDisabledState,
+        disabled: currentState === "disabled",
         triggers: !isEditorMode && {
           ...triggers,
           // Critical Rerender Bug: Commenting this out doesn't stop the re render, think it is DataProvider as it
           // stopped when I commented out parts from editor store
           onMouseOver: triggers?.onHover ?? hoverStateFunc,
           onMouseLeave: leaveHoverStateFunc,
-          onKeyDown: handleComponentIfDisabledState,
+          // onKeyDown: handleComponentIfDisabledState,
         },
       },
     );
