@@ -20,10 +20,12 @@ export const usePropsWithOverwrites = (
     (state) => state.updateTreeComponentAttrs,
   );
 
+  // Hover state function - if a component has a hover state, it should be triggered on hover
+  // that means when a component is hovered then unhovered, it needs to go back to the previous state
+  // here is store the currentState as previousState now, and we force the currentState to be hover
   const hoverStateFunc = (e: React.MouseEvent<HTMLElement>) => {
-    if (currentState === "default" && "hover" in (component?.states ?? {})) {
-      // When the state is hover, that means when I unhover it, I want to go back to the previous state
-      const toBePreviousState =
+    if (currentState !== "hover" && "hover" in (component?.states ?? {})) {
+      const toBePreviousStateDef =
         useEditorTreeStore.getState().componentMutableAttrs[component.id!]
           ?.onLoad?.currentState;
 
@@ -32,10 +34,10 @@ export const usePropsWithOverwrites = (
         attrs: {
           onLoad: {
             currentState: {
-              boundCode: "return 'hover';",
+              boundCode: "return 'hover'",
               dataType: "boundCode",
             },
-            previousState: toBePreviousState,
+            previousState: toBePreviousStateDef,
           },
         },
         save: false,
@@ -43,11 +45,15 @@ export const usePropsWithOverwrites = (
     }
   };
 
+  // Unhover state function - if a component has a hover state, it should be triggered on mouse leave
+  // that means when a component is currently hovered, we need to force what the previousState that was stored before
+  // to be the currentState now
   const leaveHoverStateFunc = (e: React.MouseEvent<HTMLElement>) => {
-    if (currentState === "hover" || currentState === "checked") {
+    if (currentState === "hover") {
       const previousState =
         useEditorTreeStore.getState().componentMutableAttrs[component.id!]
           ?.onLoad?.previousState;
+
       updateTreeComponentAttrs({
         componentIds: [e.currentTarget.id],
         attrs: {
