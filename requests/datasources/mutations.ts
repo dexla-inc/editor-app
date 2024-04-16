@@ -7,16 +7,21 @@ import {
 } from "@/requests/datasources/types";
 import { CreatedResponse, PatchParams } from "@/requests/types";
 import { del, patch, post, put } from "@/utils/api";
+import { evictCache } from "@/requests/cache/queries-noauth";
 
 export async function createDataSource(
   projectId: string,
   type: DataSourceTypes,
   params: DataSourceParams,
 ): Promise<DataSourceResponse> {
+  const url = `/projects/${projectId}/datasources/${type}`;
   const response = (await post<DataSourceResponse>(
-    `/projects/${projectId}/datasources/${type}`,
+    url,
     params,
   )) as DataSourceResponse;
+
+  const cacheTag = getDatasourceCacheTag(projectId);
+  await evictCache(cacheTag);
 
   return response;
 }
@@ -27,18 +32,24 @@ export async function updateDataSource(
   reFetch: boolean,
   params: DataSourceParams,
 ): Promise<DataSourceResponse> {
+  const url = `/projects/${projectId}/datasources/${id}?reFetch=${reFetch}`;
   const response = (await put<DataSourceResponse>(
-    `/projects/${projectId}/datasources/${id}?reFetch=${reFetch}`,
+    url,
     params,
   )) as DataSourceResponse;
+
+  const cacheTag = getDatasourceCacheTag(projectId);
+  await evictCache(cacheTag);
 
   return response;
 }
 
 export const deleteDataSource = async (projectId: string, id: string) => {
-  const response = (await del<any>(
-    `/projects/${projectId}/datasources/${id}`,
-  )) as any;
+  const url = `/projects/${projectId}/datasources/${id}`;
+  const response = (await del<any>(url)) as any;
+
+  const cacheTag = getDatasourceCacheTag(projectId);
+  await evictCache(cacheTag);
 
   return response;
 };
@@ -48,10 +59,14 @@ export const createDataSourceEndpoint = async (
   datasourceId: string,
   params: EndpointParams,
 ): Promise<CreatedResponse> => {
+  const url = `/projects/${projectId}/datasources/${datasourceId}/endpoints`;
   const response = (await post<CreatedResponse>(
-    `/projects/${projectId}/datasources/${datasourceId}/endpoints`,
+    url,
     params,
   )) as CreatedResponse;
+
+  const cacheTag = getEndpointsCacheTag(projectId);
+  await evictCache(cacheTag);
 
   return response;
 };
@@ -62,10 +77,11 @@ export const updateDataSourceEndpoint = async (
   id: string,
   params: EndpointParams,
 ): Promise<Endpoint> => {
-  const response = (await put<Endpoint>(
-    `/projects/${projectId}/datasources/${datasourceId}/endpoints/${id}`,
-    params,
-  )) as Endpoint;
+  const url = `/projects/${projectId}/datasources/${datasourceId}/endpoints/${id}`;
+  const response = (await put<Endpoint>(url, params)) as Endpoint;
+
+  const cacheTag = getEndpointsCacheTag(projectId);
+  await evictCache(cacheTag);
 
   return response;
 };
@@ -76,10 +92,11 @@ export async function patchDataSourceEndpoint(
   id: string,
   params: PatchParams[],
 ): Promise<Endpoint> {
-  const response = (await patch<Endpoint>(
-    `/projects/${projectId}/datasources/${apiId}/endpoints/${id}`,
-    params,
-  )) as Endpoint;
+  const url = `/projects/${projectId}/datasources/${apiId}/endpoints/${id}`;
+  const response = (await patch<Endpoint>(url, params)) as Endpoint;
+
+  const cacheTag = getEndpointsCacheTag(projectId);
+  await evictCache(cacheTag);
 
   return response;
 }
@@ -89,9 +106,16 @@ export const deleteDataSourceEndpoint = async (
   datasourceId: string,
   id: string,
 ): Promise<Endpoint> => {
-  const response = (await del<Endpoint>(
-    `/projects/${projectId}/datasources/${datasourceId}/endpoints/${id}`,
-  )) as Endpoint;
+  const url = `/projects/${projectId}/datasources/${datasourceId}/endpoints/${id}`;
+  const response = (await del<Endpoint>(url)) as Endpoint;
+
+  const cacheTag = getEndpointsCacheTag(projectId);
+  await evictCache(cacheTag);
 
   return response;
 };
+
+const getDatasourceCacheTag = (projectId: string) =>
+  `/projects/${projectId}/datasources`;
+const getEndpointsCacheTag = (projectId: string) =>
+  `/projects/${projectId}/datasources/endpoints`;
