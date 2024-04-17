@@ -13,6 +13,8 @@ import { Button } from "@/components/mapper/Button";
 import { ButtonIcon } from "@/components/mapper/ButtonIcon";
 import { Card } from "@/components/mapper/Card";
 import { Checkbox } from "@/components/mapper/Checkbox";
+import { CheckboxGroup } from "@/components/mapper/CheckboxGroup";
+import { CheckboxItem } from "@/components/mapper/CheckboxItem";
 import { Container } from "@/components/mapper/Container";
 import { CountdownButton } from "@/components/mapper/CountdownButton";
 import { DateInput } from "@/components/mapper/DateInput";
@@ -69,6 +71,8 @@ import * as ButtonStructure from "@/components/mapper/structure/Button";
 import * as ButtonIconStructure from "@/components/mapper/structure/ButtonIcon";
 import * as CardStructure from "@/components/mapper/structure/Card";
 import * as CheckboxStructure from "@/components/mapper/structure/Checkbox";
+import * as CheckboxItemStructure from "@/components/mapper/structure/CheckboxItem";
+import * as CheckboxGroupStructure from "@/components/mapper/structure/CheckboxGroup";
 import * as ContainerStructure from "@/components/mapper/structure/Container";
 import * as CountdownButtonStructure from "@/components/mapper/structure/CountdownButton";
 import * as DateInputStructure from "@/components/mapper/structure/DateInput";
@@ -174,8 +178,8 @@ import {
   IconTable,
   IconToggleLeft,
   IconUser,
+  IconListCheck,
 } from "@tabler/icons-react";
-import { saveFile } from "./fileUpload";
 
 export type ComponentCategoryType =
   | "Layout"
@@ -194,6 +198,7 @@ export type StructureDefinition = {
   Draggable?: any;
   category: ComponentCategoryType;
   icon?: JSX.Element;
+  hide?: boolean;
 };
 
 export type StructureMapper = {
@@ -273,6 +278,17 @@ export const structureMapper: StructureMapper = {
     category: "Input",
     icon: <IconSelect size={ICON_SIZE} />,
   },
+  CheckboxGroup: {
+    structure: (props: any) => CheckboxGroupStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="CheckboxGroup"
+        icon={<IconListCheck size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Input",
+    icon: <IconListCheck size={ICON_SIZE} />,
+  },
   Checkbox: {
     structure: (props: any) => CheckboxStructure.jsonStructure(props),
     Draggable: () => (
@@ -283,6 +299,19 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Input",
     icon: <IconCheckbox size={ICON_SIZE} />,
+  },
+  CheckboxItem: {
+    structure: (props: any) => CheckboxItemStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="CheckboxItem"
+        icon={<IconCheckbox size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Input",
+    icon: <IconCheckbox size={ICON_SIZE} />,
+    // Need to add a way to hide components that should not be visible in components list.
+    hide: true,
   },
   RadioGroup: {
     structure: (props: any) => RadioGroupStructure.jsonStructure(props),
@@ -1140,10 +1169,29 @@ export const componentMapper: ComponentMapper = {
     actionTriggers: ["onChange"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
+  CheckboxGroup: {
+    Component: (props) => <CheckboxGroup {...props} />,
+    modifiers: ["checkbox", "layout", "spacing", "size", "border", "effects"],
+    actionTriggers: ["onChange", "onClick"],
+    sequentialTriggers: ["onSuccess", "onError"],
+  },
   Checkbox: {
     Component: (props) => <Checkbox {...props} />,
     modifiers: ["checkbox", "spacing", "size", "border", "effects"],
     actionTriggers: ["onChange", "onClick"],
+    sequentialTriggers: ["onSuccess", "onError"],
+  },
+  CheckboxItem: {
+    Component: (props) => <CheckboxItem {...props} />,
+    modifiers: [
+      "background",
+      "layout",
+      "spacing",
+      "size",
+      "border",
+      "position",
+    ],
+    actionTriggers: [],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Switch: {
@@ -1154,7 +1202,7 @@ export const componentMapper: ComponentMapper = {
   },
   RadioItem: {
     Component: (props) => <RadioItem {...props} />,
-      modifiers: ["background", "spacing", "size", "border", "position"],
+    modifiers: ["background", "spacing", "size", "border", "position"],
     actionTriggers: [],
     sequentialTriggers: ["onSuccess", "onError"],
   },

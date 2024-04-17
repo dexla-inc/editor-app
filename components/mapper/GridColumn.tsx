@@ -36,6 +36,7 @@ const GridColumnComponent = forwardRef(
         {...componentProps}
         {...props}
         id={component.id}
+        isPreviewMode
       >
         {component.children &&
           component.children.length > 0 &&

@@ -7,7 +7,7 @@ import {
 } from "@mantine/core";
 import merge from "lodash.merge";
 import { ChangeEvent, forwardRef, memo, ForwardedRef } from "react";
-import { useInputValue } from "@/hooks/useInputValue";
+import { useGenericInputValue, useInputValue } from "@/hooks/useInputValue";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useShallow } from "zustand/react/shallow";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
@@ -33,7 +33,7 @@ const CheckboxComponent = forwardRef<HTMLInputElement, Props>(
     });
     const [value, setValue] = useInputValue(
       {
-        value: component?.onLoad?.value ?? "",
+        value: component?.onLoad?.value ?? "false",
       },
       component.id!,
     );
