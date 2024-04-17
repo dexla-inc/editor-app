@@ -7,7 +7,7 @@ import {
 } from "@mantine/core";
 import merge from "lodash.merge";
 import { ChangeEvent, forwardRef, memo, ForwardedRef } from "react";
-import { useGenericInputValue, useInputValue } from "@/hooks/useInputValue";
+import { useInputValue } from "@/hooks/useInputValue";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useShallow } from "zustand/react/shallow";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";

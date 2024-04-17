@@ -94,7 +94,8 @@ import * as NavbarStructure from "@/components/mapper/structure/Navbar";
 import * as PaginationStructure from "@/components/mapper/structure/Pagination";
 import * as PopOverStructure from "@/components/mapper/structure/PopOver";
 import * as ProgressStructure from "@/components/mapper/structure/Progress";
-import * as RadioGroupStructure from "@/components/mapper/structure/RadioGroup";
+import * as RadioStructure from "@/components/mapper/structure/Radio";
+import * as RadioItemStructure from "@/components/mapper/structure/RadioItem";
 import * as RatingStructure from "@/components/mapper/structure/Rating";
 import * as SelectStructure from "@/components/mapper/structure/Select";
 import * as StepperStructure from "@/components/mapper/structure/Stepper";
@@ -179,6 +180,7 @@ import {
   IconToggleLeft,
   IconUser,
   IconListCheck,
+  IconGradienter,
 } from "@tabler/icons-react";
 
 export type ComponentCategoryType =
@@ -313,18 +315,29 @@ export const structureMapper: StructureMapper = {
     // Need to add a way to hide components that should not be visible in components list.
     hide: true,
   },
-  RadioGroup: {
-    structure: (props: any) => RadioGroupStructure.jsonStructure(props),
+  Radio: {
+    structure: (props: any) => RadioStructure.jsonStructure(props),
     Draggable: () => (
       <DraggableComponent
-        id="RadioGroup"
+        id="Radio"
         icon={<IconCircleDot size={LARGE_ICON_SIZE} />}
       />
     ),
     category: "Input",
     icon: <IconCircleDot size={ICON_SIZE} />,
   },
-
+  RadioItem: {
+    structure: (props: any) => RadioItemStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="RadioItem"
+        icon={<IconGradienter size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Input",
+    icon: <IconGradienter size={ICON_SIZE} />,
+    hide: true,
+  },
   Form: {
     structure: (props: any) => FormStructure.jsonStructure(props),
     Draggable: () => (
@@ -435,39 +448,6 @@ export const structureMapper: StructureMapper = {
     category: "Input",
     icon: <IconClockHour5 size={ICON_SIZE} />,
   },
-  // RadioItem: {
-  //   structure: (props: any) => RadioItemStructure.jsonStructure(props),
-  //   category: "Input",
-  //   Draggable: () => (
-  //     <DraggableComponent
-  //       id="RadioItem"
-  //       icon={<IconCircleDot size={LARGE_ICON_SIZE} />}
-  //     />
-  //   ),
-  //   icon: <IconCircleDot size={ICON_SIZE} />,
-  // },
-  // RadioItemComplex: {
-  //   structure: (props: any) => RadioItemComplexStructure.jsonStructure(props),
-  //   category: "Input",
-  //   Draggable: () => (
-  //     <DraggableComponent
-  //       id="RadioItemComplex"
-  //       icon={<IconCircleDotFilled size={LARGE_ICON_SIZE} />}
-  //     />
-  //   ),
-  //   icon: <IconCircleDotFilled size={ICON_SIZE} />,
-  // },
-  // RadioGroupComplex: {
-  //   structure: (props: any) => RadioComplexGroupStructure.jsonStructure(props),
-  //   Draggable: () => (
-  //     <DraggableComponent
-  //       id="RadioGroupComplex"
-  //       icon={<IconCirclesFilled size={LARGE_ICON_SIZE} />}
-  //     />
-  //   ),
-  //   category: "Input",
-  //   icon: <IconCirclesFilled size={ICON_SIZE} />,
-  // },
   Text: {
     structure: (props: any) => TextStructure.jsonStructure(props),
     Draggable: () => (
