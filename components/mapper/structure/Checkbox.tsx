@@ -1,10 +1,7 @@
-import { defaultTheme } from "@/utils/branding";
 import { ComponentStructure } from "@/utils/editor";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): ComponentStructure => {
-  const theme = props.theme ?? defaultTheme;
-
   return {
     id: nanoid(),
     name: "Checkbox",
@@ -14,6 +11,8 @@ export const jsonStructure = (props?: any): ComponentStructure => {
         width: "fit-content",
         height: "fit-content",
       },
+      // TODO: Get size from branding
+      size: "sm",
       ...(props.props || {}),
     },
     onLoad: {

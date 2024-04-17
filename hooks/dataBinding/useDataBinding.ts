@@ -52,6 +52,7 @@ export const useDataBinding = () => {
         "Input",
         "Select",
         "Checkbox",
+        "CheckboxGroup",
         "RadioGroup",
         "Switch",
         "Textarea",

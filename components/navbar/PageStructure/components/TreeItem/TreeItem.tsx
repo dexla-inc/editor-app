@@ -224,10 +224,6 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
               {onCollapse && (
                 <ActionIcon
                   onClick={onCollapse}
-                  className={classNames(
-                    styles.Collapse,
-                    collapsed && styles.collapsed,
-                  )}
                   sx={{
                     pointerEvents: "all",
                     width: "auto",
@@ -239,7 +235,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
                     size={ICON_SIZE}
                     style={{
                       transition: "transform 200ms ease",
-                      transform: !collapsed ? `none` : "rotate(-90deg)",
+                      transform: !collapsed ? "none" : "rotate(-90deg)",
                     }}
                   />
                 </ActionIcon>

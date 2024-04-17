@@ -8,13 +8,7 @@ import {
 import { calculateGridSizes } from "@/utils/grid";
 import { Box, Text, px, useMantineTheme } from "@mantine/core";
 import { Resizable } from "re-resizable";
-import {
-  PropsWithChildren,
-  forwardRef,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { PropsWithChildren, useMemo, useState } from "react";
 
 export const GridColumn = ({
   children,
