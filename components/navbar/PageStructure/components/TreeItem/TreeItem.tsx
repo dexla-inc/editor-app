@@ -235,7 +235,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
                     size={ICON_SIZE}
                     style={{
                       transition: "transform 200ms ease",
-                      transform: collapsed ? "rotate(-90deg)" : "none",
+                      transform: !collapsed ? "none" : "rotate(-90deg)",
                     }}
                   />
                 </ActionIcon>

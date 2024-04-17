@@ -56,8 +56,6 @@ const CheckboxItemComponent = forwardRef<HTMLInputElement, Props>(
             : children
         }
         value={value}
-        style={{ gap: "10px" }}
-        styles={{ root: { gap: "10px" } }}
       />
     );
   },

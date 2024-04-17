@@ -6,7 +6,7 @@ import {
   Group,
 } from "@mantine/core";
 import merge from "lodash.merge";
-import { forwardRef, memo } from "react";
+import { forwardRef, memo, useMemo } from "react";
 import { useInputValue } from "@/hooks/useInputValue";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useShallow } from "zustand/react/shallow";
@@ -14,6 +14,13 @@ import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { gapSizes } from "@/utils/defaultSizes";
 
 type Props = EditableComponentMapper & CheckboxGroupProps;
+
+const defaultStyle = {
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "flex-start",
+  justify: "center",
+};
 
 const CheckboxGroupComponent = forwardRef(
   ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
@@ -24,14 +31,6 @@ const CheckboxGroupComponent = forwardRef(
       component.props as any;
 
     const gapSize = gapSizes[gap ?? "sm"];
-
-    const defaultStyle = {
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "flex-start",
-      justify: "center",
-      gap: gapSize,
-    };
 
     const [value, setValue] = useInputValue(
       {
@@ -64,6 +63,7 @@ const CheckboxGroupComponent = forwardRef(
         style={{
           ...(style ?? {}),
           ...defaultStyle,
+          gap: gapSize,
         }}
         styles={merge(
           {

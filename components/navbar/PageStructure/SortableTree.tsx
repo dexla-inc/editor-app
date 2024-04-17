@@ -321,7 +321,7 @@ export function NavbarLayersSection({
       >
         <List data={flattenedItems} itemKey="id" itemHeight={30} height={800}>
           {(component) => {
-            const isCollapsed = component?.collapsed && true;
+            const isCollapsed = !!component?.collapsed;
 
             return (
               <SortableTreeItem
