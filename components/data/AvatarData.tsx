@@ -16,6 +16,8 @@ export const AvatarData = ({ component, endpoints }: DataProps) => {
       {
         name: "children",
         label: "Value",
+        // Need a way to add a default value, this doesn't work
+        defaultValue: "TM",
       },
     ],
     Image: [

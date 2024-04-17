@@ -111,10 +111,14 @@ const SelectComponent = forwardRef(
         withinPortal={false}
         maxDropdownHeight={150}
         data={data}
-        dropdownComponent={CustomDropdown}
+        {...(component.props?.customText
+          ? {
+              dropdownComponent: CustomDropdown,
+            }
+          : {})}
         rightSection={loading ? <InputLoader /> : null}
         label={undefined}
-        value={String(value)}
+        value={typeof value === "number" ? String(value) : value}
         wrapperProps={{ "data-id": component.id }}
       />
     );
