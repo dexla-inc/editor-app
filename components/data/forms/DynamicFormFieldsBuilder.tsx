@@ -5,6 +5,7 @@ import { extractKeys } from "@/utils/data";
 import { Component, getParentComponentData } from "@/utils/editor";
 import { Select } from "@mantine/core";
 import get from "lodash.get";
+import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
 
 type DynamicFormFieldsBuilderProps = {
   form: any;
@@ -30,16 +31,25 @@ export const DynamicFormFieldsBuilder = ({
     editorTree.root,
     component.id!,
   );
-  const parentEndpoint = endpoints?.results?.find(
-    (e) => e.id === parentDataComponent?.onLoad?.endpointId,
-  );
+  const { data: staticData } = useComputeValue({
+    onLoad: parentDataComponent?.onLoad,
+  });
 
-  const selectableObject = parentDataComponent?.onLoad?.resultsKey
-    ? get(
-        JSON.parse(parentEndpoint?.exampleResponse || "{}"),
-        parentDataComponent?.onLoad?.resultsKey,
-      )
-    : JSON.parse(parentEndpoint?.exampleResponse || "{}");
+  const { dataType = "static" } = parentDataComponent?.props!;
+  let selectableObject = staticData;
+
+  if (dataType === "dynamic") {
+    const parentEndpoint = endpoints?.results?.find(
+      (e) => e.id === parentDataComponent?.onLoad?.endpointId,
+    );
+
+    selectableObject = parentDataComponent?.onLoad?.resultsKey
+      ? get(
+          JSON.parse(parentEndpoint?.exampleResponse || "{}"),
+          parentDataComponent?.onLoad?.resultsKey,
+        )
+      : JSON.parse(parentEndpoint?.exampleResponse || "{}");
+  }
 
   const selectableObjectKeys = extractKeys(selectableObject);
 

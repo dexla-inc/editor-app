@@ -16,7 +16,7 @@ import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { CSSProperties } from "react";
 import crawl from "tree-crawl";
 import { MantineThemeExtended } from "./types";
-import { ValueProps } from "@/types/dataBinding";
+import { DataType, ValueProps } from "@/types/dataBinding";
 import { RenderTreeFunc } from "@/types/component";
 
 export type ComponentStructure = {
@@ -38,7 +38,7 @@ type ComponentBase = {
 export type Component = {
   description?: string;
   title?: string;
-  props?: { [key: string]: any };
+  props?: { [key: string]: any; dataType?: DataType };
   blockDroppingChildrenInside?: boolean;
   fixedPosition?: {
     position: "left" | "top";
@@ -46,7 +46,6 @@ export type Component = {
   };
   actions?: Action[];
   onLoad?: any;
-  dataType?: "static" | "dynamic";
   states?: Record<string, any>;
   languages?: Record<string, any>;
   isBeingAdded?: boolean;
@@ -522,7 +521,7 @@ export const getParentComponentData = (
       const node =
         useEditorTreeStore.getState().componentMutableAttrs[nodeTree.id!];
       if (
-        !isEmpty(node.onLoad?.endpointId) &&
+        (node?.props?.data || !isEmpty(node.onLoad?.endpointId)) &&
         parentComponentNames.includes(node.name)
       ) {
         const childComponent = getComponentTreeById(nodeTree, componentId);

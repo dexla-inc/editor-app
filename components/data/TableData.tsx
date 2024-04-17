@@ -10,6 +10,7 @@ import {
 } from "@mantine/core";
 import { TableForm } from "./forms/static/TableForm";
 import { DataProps } from "@/components/data/type";
+import { DataType } from "@/types/dataBinding";
 
 export const TableData = ({ component, endpoints, dataType }: DataProps) => {
   const updateTreeComponentAttrs = useEditorTreeStore(
@@ -26,7 +27,7 @@ export const TableData = ({ component, endpoints, dataType }: DataProps) => {
           { label: "Static", value: "static" },
           { label: "Dynamic", value: "dynamic" },
         ]}
-        onChange={(e) =>
+        onChange={(e: DataType) =>
           updateTreeComponentAttrs({
             componentIds: [component.id!],
             attrs: { props: { dataType: e } },

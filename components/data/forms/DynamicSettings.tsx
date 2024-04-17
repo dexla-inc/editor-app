@@ -15,6 +15,7 @@ import { useForm } from "@mantine/form";
 import get from "lodash.get";
 import { useEffect, useState } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
+import { DataType } from "@/types/dataBinding";
 
 type Props = {
   component: Component;
@@ -94,7 +95,9 @@ export const DynamicSettings = ({
         ...form.values,
         props: {
           ...form.values.props,
-          dataType: form.values.onLoad.endpointId ? "dynamic" : "static",
+          dataType: (form.values.onLoad.endpointId
+            ? "dynamic"
+            : "static") as DataType,
         },
       };
 
