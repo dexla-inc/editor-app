@@ -276,6 +276,9 @@ export function NavbarLayersSection({
     (id: UniqueIdentifier) => {
       setItems(
         setProperty(items as TreeItems, id, "collapsed", (value) => {
+          if (value === undefined) {
+            return false;
+          }
           return !value;
         }),
         false,
@@ -318,8 +321,7 @@ export function NavbarLayersSection({
       >
         <List data={flattenedItems} itemKey="id" itemHeight={30} height={800}>
           {(component) => {
-            const isCollapsed =
-              component.collapsed && component.children?.length;
+            const isCollapsed = !!component?.collapsed;
 
             return (
               <SortableTreeItem
@@ -335,7 +337,7 @@ export function NavbarLayersSection({
                 indicator={indicator}
                 collapsed={Boolean(isCollapsed)}
                 onCollapse={
-                  (component.children ?? [])!.length
+                  (component.children ?? []).length
                     ? () => handleCollapse(component.id!)
                     : undefined
                 }

@@ -63,6 +63,7 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
           "Input",
           "Select",
           "Checkbox",
+          "CheckboxGroup",
           "Radio",
           "Switch",
           "Textarea",

@@ -33,18 +33,20 @@ type DraggableComponentData = {
   id: string;
   draggable: any;
   category?: ComponentCategoryType;
+  hide?: boolean;
 };
 
 const componentsGroupedByCategory = Object.keys(structureMapper).reduce(
   (groups, key) => {
     const draggable = structureMapper[key]?.Draggable;
     const category = structureMapper[key]?.category;
+    const hide = structureMapper[key]?.hide ?? false;
 
     if (draggable) {
       if (!groups[category]) {
         groups[category] = [];
       }
-      groups[category].push({ draggable, id: toSpaced(key) });
+      groups[category].push({ draggable, id: toSpaced(key), hide });
     }
 
     return groups;
@@ -104,8 +106,11 @@ export const EditorNavbarComponentsSection = () => {
           {Object.entries(componentsGroupedByCategory).map(
             ([category, components]) => {
               // Filter the components based on the query before rendering
-              const filteredComponents = components.filter(({ id }) =>
-                query ? id.toLowerCase().includes(query.toLowerCase()) : true,
+              const filteredComponents = components.filter(
+                ({ id, hide }) =>
+                  (query
+                    ? id.toLowerCase().includes(query.toLowerCase())
+                    : true) && !hide,
               );
 
               if (filteredComponents.length === 0) {

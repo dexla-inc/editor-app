@@ -13,6 +13,8 @@ import { Button } from "@/components/mapper/Button";
 import { ButtonIcon } from "@/components/mapper/ButtonIcon";
 import { Card } from "@/components/mapper/Card";
 import { Checkbox } from "@/components/mapper/Checkbox";
+import { CheckboxGroup } from "@/components/mapper/CheckboxGroup";
+import { CheckboxItem } from "@/components/mapper/CheckboxItem";
 import { Container } from "@/components/mapper/Container";
 import { CountdownButton } from "@/components/mapper/CountdownButton";
 import { DateInput } from "@/components/mapper/DateInput";
@@ -69,6 +71,8 @@ import * as ButtonStructure from "@/components/mapper/structure/Button";
 import * as ButtonIconStructure from "@/components/mapper/structure/ButtonIcon";
 import * as CardStructure from "@/components/mapper/structure/Card";
 import * as CheckboxStructure from "@/components/mapper/structure/Checkbox";
+import * as CheckboxItemStructure from "@/components/mapper/structure/CheckboxItem";
+import * as CheckboxGroupStructure from "@/components/mapper/structure/CheckboxGroup";
 import * as ContainerStructure from "@/components/mapper/structure/Container";
 import * as CountdownButtonStructure from "@/components/mapper/structure/CountdownButton";
 import * as DateInputStructure from "@/components/mapper/structure/DateInput";
@@ -90,7 +94,8 @@ import * as NavbarStructure from "@/components/mapper/structure/Navbar";
 import * as PaginationStructure from "@/components/mapper/structure/Pagination";
 import * as PopOverStructure from "@/components/mapper/structure/PopOver";
 import * as ProgressStructure from "@/components/mapper/structure/Progress";
-import * as RadioGroupStructure from "@/components/mapper/structure/RadioGroup";
+import * as RadioStructure from "@/components/mapper/structure/Radio";
+import * as RadioItemStructure from "@/components/mapper/structure/RadioItem";
 import * as RatingStructure from "@/components/mapper/structure/Rating";
 import * as SelectStructure from "@/components/mapper/structure/Select";
 import * as StepperStructure from "@/components/mapper/structure/Stepper";
@@ -174,8 +179,9 @@ import {
   IconTable,
   IconToggleLeft,
   IconUser,
+  IconListCheck,
+  IconGradienter,
 } from "@tabler/icons-react";
-import { saveFile } from "./fileUpload";
 
 export type ComponentCategoryType =
   | "Layout"
@@ -194,6 +200,7 @@ export type StructureDefinition = {
   Draggable?: any;
   category: ComponentCategoryType;
   icon?: JSX.Element;
+  hide?: boolean;
 };
 
 export type StructureMapper = {
@@ -273,6 +280,17 @@ export const structureMapper: StructureMapper = {
     category: "Input",
     icon: <IconSelect size={ICON_SIZE} />,
   },
+  CheckboxGroup: {
+    structure: (props: any) => CheckboxGroupStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="CheckboxGroup"
+        icon={<IconListCheck size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Input",
+    icon: <IconListCheck size={ICON_SIZE} />,
+  },
   Checkbox: {
     structure: (props: any) => CheckboxStructure.jsonStructure(props),
     Draggable: () => (
@@ -284,18 +302,42 @@ export const structureMapper: StructureMapper = {
     category: "Input",
     icon: <IconCheckbox size={ICON_SIZE} />,
   },
-  RadioGroup: {
-    structure: (props: any) => RadioGroupStructure.jsonStructure(props),
+  CheckboxItem: {
+    structure: (props: any) => CheckboxItemStructure.jsonStructure(props),
     Draggable: () => (
       <DraggableComponent
-        id="RadioGroup"
+        id="CheckboxItem"
+        icon={<IconCheckbox size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Input",
+    icon: <IconCheckbox size={ICON_SIZE} />,
+    // Need to add a way to hide components that should not be visible in components list.
+    hide: true,
+  },
+  Radio: {
+    structure: (props: any) => RadioStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="Radio"
         icon={<IconCircleDot size={LARGE_ICON_SIZE} />}
       />
     ),
     category: "Input",
     icon: <IconCircleDot size={ICON_SIZE} />,
   },
-
+  RadioItem: {
+    structure: (props: any) => RadioItemStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="RadioItem"
+        icon={<IconGradienter size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Input",
+    icon: <IconGradienter size={ICON_SIZE} />,
+    hide: true,
+  },
   Form: {
     structure: (props: any) => FormStructure.jsonStructure(props),
     Draggable: () => (
@@ -406,39 +448,6 @@ export const structureMapper: StructureMapper = {
     category: "Input",
     icon: <IconClockHour5 size={ICON_SIZE} />,
   },
-  // RadioItem: {
-  //   structure: (props: any) => RadioItemStructure.jsonStructure(props),
-  //   category: "Input",
-  //   Draggable: () => (
-  //     <DraggableComponent
-  //       id="RadioItem"
-  //       icon={<IconCircleDot size={LARGE_ICON_SIZE} />}
-  //     />
-  //   ),
-  //   icon: <IconCircleDot size={ICON_SIZE} />,
-  // },
-  // RadioItemComplex: {
-  //   structure: (props: any) => RadioItemComplexStructure.jsonStructure(props),
-  //   category: "Input",
-  //   Draggable: () => (
-  //     <DraggableComponent
-  //       id="RadioItemComplex"
-  //       icon={<IconCircleDotFilled size={LARGE_ICON_SIZE} />}
-  //     />
-  //   ),
-  //   icon: <IconCircleDotFilled size={ICON_SIZE} />,
-  // },
-  // RadioGroupComplex: {
-  //   structure: (props: any) => RadioComplexGroupStructure.jsonStructure(props),
-  //   Draggable: () => (
-  //     <DraggableComponent
-  //       id="RadioGroupComplex"
-  //       icon={<IconCirclesFilled size={LARGE_ICON_SIZE} />}
-  //     />
-  //   ),
-  //   category: "Input",
-  //   icon: <IconCirclesFilled size={ICON_SIZE} />,
-  // },
   Text: {
     structure: (props: any) => TextStructure.jsonStructure(props),
     Draggable: () => (
@@ -1140,10 +1149,29 @@ export const componentMapper: ComponentMapper = {
     actionTriggers: ["onChange"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
+  CheckboxGroup: {
+    Component: (props) => <CheckboxGroup {...props} />,
+    modifiers: ["checkbox", "layout", "spacing", "size", "border", "effects"],
+    actionTriggers: ["onChange", "onClick"],
+    sequentialTriggers: ["onSuccess", "onError"],
+  },
   Checkbox: {
     Component: (props) => <Checkbox {...props} />,
     modifiers: ["checkbox", "spacing", "size", "border", "effects"],
     actionTriggers: ["onChange", "onClick"],
+    sequentialTriggers: ["onSuccess", "onError"],
+  },
+  CheckboxItem: {
+    Component: (props) => <CheckboxItem {...props} />,
+    modifiers: [
+      "background",
+      "layout",
+      "spacing",
+      "size",
+      "border",
+      "position",
+    ],
+    actionTriggers: [],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Switch: {
@@ -1154,7 +1182,7 @@ export const componentMapper: ComponentMapper = {
   },
   RadioItem: {
     Component: (props) => <RadioItem {...props} />,
-      modifiers: ["background", "spacing", "size", "border", "position"],
+    modifiers: ["background", "spacing", "size", "border", "position"],
     actionTriggers: [],
     sequentialTriggers: ["onSuccess", "onError"],
   },
