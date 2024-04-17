@@ -1,10 +1,13 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { Component, EditableComponentMapper } from "@/utils/editor";
+import {
+  Component,
+  ComponentTree,
+  EditableComponentMapper,
+} from "@/utils/editor";
 import { Box, Popover as MantinePopOver, PopoverProps } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import { memo, useEffect } from "react";
+import { memo } from "react";
 import { useShallow } from "zustand/react/shallow";
 
 type Props = EditableComponentMapper & Omit<PopoverProps, "opened">;
@@ -22,45 +25,19 @@ const PopOverComponent = ({
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const isLive = useEditorTreeStore((state) => state.isLive);
 
-  const {
-    children,
-    opened: propOpened,
-    targetId,
-    loading,
-    showInEditor,
-    ...componentProps
-  } = component.props as any;
+  const { targetId, loading, showInEditor, ...componentProps } =
+    component.props as any;
 
   let targetComponent: Component | null = null;
-  const [opened, { open, close }] = useDisclosure(propOpened);
-  const childrenWithoutTarget = (children || component.children).reduce(
-    (acc: any, item: any) => {
-      if (item.id === targetId) {
-        targetComponent = item;
-        return acc;
-      }
-      return acc.concat(item);
-    },
-    [],
-  );
-
-  const handleClose = () => {
-    close();
-    propOnClose?.();
-    const updateTreeComponentAttrs =
-      useEditorTreeStore.getState().updateTreeComponentAttrs;
-
-    updateTreeComponentAttrs({
-      componentIds: [component.id!],
-      attrs: { props: { opened: false } },
-      save: false,
-    });
-  };
-
-  useEffect(() => {
-    if (propOpened) open();
-    if (!propOpened) close();
-  }, [close, open, propOpened]);
+  const childrenWithoutTarget: ComponentTree[] = (
+    component.children ?? []
+  ).reduce((acc: any, item: any) => {
+    if (item.id === targetId) {
+      targetComponent = item;
+      return acc;
+    }
+    return acc.concat(item);
+  }, []);
 
   const target = (isLive ? window : iframeWindow)?.document.getElementById(
     "iframe-content",
@@ -70,13 +47,12 @@ const PopOverComponent = ({
     <MantinePopOver
       withinPortal
       trapFocus={false}
-      opened={isPreviewMode ? opened : !showInEditor}
+      {...(!isPreviewMode && showInEditor ? { opened: true } : {})}
       width="auto"
       portalProps={{
         target: target,
       }}
       middlewares={{ flip: false, shift: false, inline: true }}
-      onClose={isPreviewMode ? handleClose : () => {}}
       {...props}
       {...componentProps}
       maw="fit-content"
@@ -88,9 +64,7 @@ const PopOverComponent = ({
       )}
 
       <MantinePopOver.Dropdown w="auto">
-        {childrenWithoutTarget && childrenWithoutTarget.length > 0
-          ? childrenWithoutTarget?.map((child: any) => renderTree(child))
-          : children}
+        {childrenWithoutTarget?.map((child) => renderTree(child))}
       </MantinePopOver.Dropdown>
     </MantinePopOver>
   );

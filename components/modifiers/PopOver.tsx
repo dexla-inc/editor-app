@@ -2,7 +2,7 @@ import { TopLabel } from "@/components/TopLabel";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { Checkbox, SegmentedControl, Stack } from "@mantine/core";
+import { Checkbox, SegmentedControl, Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
 import { useEffect } from "react";
@@ -26,13 +26,21 @@ const Modifier = withModifier(({ selectedComponent }) => {
       <Stack spacing="xs">
         <Stack spacing={2}>
           <TopLabel text="Position" />
-          <SegmentedControl
+          <Select
             size="xs"
             data={[
               { label: "Left", value: "left" },
               { label: "Top", value: "top" },
               { label: "Right", value: "right" },
               { label: "Bottom", value: "bottom" },
+              { label: "Left End", value: "left-end" },
+              { label: "Left Start", value: "left-start" },
+              { label: "Top End", value: "top-end" },
+              { label: "Top Start", value: "top-start" },
+              { label: "Right End", value: "right-end" },
+              { label: "Right Start", value: "right-start" },
+              { label: "Bottom End", value: "bottom-end" },
+              { label: "Bottom Start", value: "bottom-start" },
             ]}
             {...form.getInputProps("position")}
             onChange={(value) => {
@@ -48,8 +56,9 @@ const Modifier = withModifier(({ selectedComponent }) => {
           />
 
           <Checkbox
+            mt={6}
             size="xs"
-            label="Force Hide"
+            label="Force Show"
             {...form.getInputProps("showInEditor", { type: "checkbox" })}
             onChange={(e) => {
               form.setFieldValue("showInEditor", e.target.checked);
