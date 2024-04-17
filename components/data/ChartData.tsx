@@ -3,6 +3,7 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 import { SegmentedControl, Select, Stack, Text, Title } from "@mantine/core";
 import { ChartForm } from "@/components/data/forms/static/ChartForm";
 import { DataProps } from "@/components/data/type";
+import { DataType } from "@/types/dataBinding";
 
 export const ChartData = ({ component, endpoints, dataType }: DataProps) => {
   const updateTreeComponentAttrs = useEditorTreeStore(
@@ -19,7 +20,7 @@ export const ChartData = ({ component, endpoints, dataType }: DataProps) => {
           { label: "Static", value: "static" },
           { label: "Dynamic", value: "dynamic" },
         ]}
-        onChange={(e) =>
+        onChange={(e: DataType) =>
           updateTreeComponentAttrs({
             componentIds: [component.id!],
             attrs: {

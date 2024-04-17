@@ -1,32 +1,42 @@
-import { CardAndContainerWrapper } from "@/components/mapper/CardAndContainerWrapper";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { setComponentBorder } from "@/utils/branding";
 import { EditableComponentMapper } from "@/utils/editor";
-import { FlexProps } from "@mantine/core";
+import { FlexProps, Flex as MantineFlex } from "@mantine/core";
 import merge from "lodash.merge";
 import { forwardRef, memo } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { useShallow } from "zustand/react/shallow";
+import { useRenderData } from "@/hooks/useRenderData";
+import { convertSizeToPx } from "@/utils/defaultSizes";
 
 type Props = EditableComponentMapper & FlexProps;
 
-export const ContainerComponent = forwardRef(
-  ({ renderTree, shareableContent, component, ...props }: Props, ref) => {
+export const ContainerComponent = forwardRef<HTMLDivElement, Props>(
+  ({ renderTree, shareableContent, component, ...props }, ref) => {
     const isPreviewMode = useEditorTreeStore(
-      useShallow((state) => state.isPreviewMode || state.isLive),
+      (state) => state.isPreviewMode || state.isLive,
     );
+
+    const { dataType, data, triggers, ...componentProps } =
+      component?.props ?? {};
+
     const defaultBorder = setComponentBorder(props.style, isPreviewMode);
-    const customStyle = merge({ width: "100%" }, props.style, defaultBorder);
+    const gapPx = convertSizeToPx(component?.props?.gap, "gap");
+    const customStyle = merge({ width: "100%" }, props.style, defaultBorder, {
+      gap: gapPx,
+    });
+
+    const { renderData } = useRenderData({ component });
 
     return (
-      <CardAndContainerWrapper
+      <MantineFlex
         ref={ref}
-        renderTree={renderTree}
-        component={component}
         {...props}
         style={customStyle}
-        shareableContent={shareableContent}
-      />
+        {...triggers}
+        {...componentProps}
+      >
+        {renderData({ renderTree, shareableContent })}
+      </MantineFlex>
     );
   },
 );

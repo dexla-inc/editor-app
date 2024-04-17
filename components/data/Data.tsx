@@ -25,7 +25,7 @@ export const Data = () => {
       <DataSection
         component={component}
         endpoints={endpoints}
-        dataType={component.props?.dataType}
+        dataType={component.props?.dataType!}
       />
     </Stack>
   );
