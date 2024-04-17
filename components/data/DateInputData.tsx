@@ -8,12 +8,7 @@ import { useForm } from "@mantine/form";
 import { ComponentToBindFromSelect } from "@/components/ComponentToBindFromSelect";
 import { useEffect } from "react";
 import { ComponentToBindFromSegmentedControl } from "@/components/ComponentToBindFromSegmentedControl";
-import { CommonData } from "@/components/data/CommonData";
-import { FormFieldsBuilder } from "@/components/data/forms/FormFieldsBuilder";
-import {
-  FieldType,
-  StaticFormFieldsBuilder,
-} from "@/components/data/forms/StaticFormFieldsBuilder";
+import { StaticFormFieldsBuilder } from "@/components/data/forms/StaticFormFieldsBuilder";
 import { IconPlug, IconPlugOff } from "@tabler/icons-react";
 import { DynamicFormFieldsBuilder } from "@/components/data/forms/DynamicFormFieldsBuilder";
 import { ICON_SIZE } from "@/utils/config";

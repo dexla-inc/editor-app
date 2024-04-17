@@ -55,6 +55,7 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
 
   const onLoadValues = merge(
     { currentState: { static: "default", dataType: "static" } },
+    { isVisible: { static: true, dataType: "static" } },
     onLoadFieldsStarter,
     component?.onLoad,
   );
