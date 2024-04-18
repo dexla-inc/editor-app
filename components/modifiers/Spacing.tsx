@@ -27,14 +27,14 @@ const Modifier = withModifier(({ selectedComponent }) => {
 
   const isPaddingAllSame =
     (style?.paddingTop === style?.paddingBottom &&
-      style?.paddingLeft &&
-      style?.paddingRight) ??
+      style?.paddingTop === style?.paddingLeft &&
+      style?.paddingTop === style?.paddingRight) ??
     true;
 
   const isMarginAllSame =
     (style?.marginTop === style?.marginBottom &&
-      style?.marginLeft &&
-      style?.marginRight) ??
+      style?.marginTop === style?.marginLeft &&
+      style?.marginTop === style?.marginRight) ??
     true;
 
   const form = useForm<SpacingeModifierProps>();
