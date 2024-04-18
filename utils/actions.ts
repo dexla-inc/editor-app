@@ -226,7 +226,6 @@ export type ActionParams = {
   actionId: string;
   router: Router;
   setActionsResponses: any;
-  actionResponses?: any;
   computeValue: ComputeValueProps;
   event?: any;
   entity: Component | PageResponse;
@@ -273,13 +272,9 @@ export const useNavigationAction = ({
 export const useGoToUrlAction = async ({
   action,
   computeValue,
-  actionResponses,
 }: GoToUrlParams) => {
   const { url, openInNewTab } = action;
-  const value = computeValue<string>(
-    { value: url },
-    { actions: actionResponses },
-  );
+  const value = String(computeValue<string>({ value: url }));
 
   if (openInNewTab) {
     window.open(value, "_blank");
@@ -315,17 +310,10 @@ export type ChangeLanguageActionParams = ActionParams & {
 export const useShowNotificationAction = async ({
   action,
   computeValue,
-  actionResponses,
 }: ShowNotificationActionParams) => {
   return showNotification({
-    title: computeValue<string>(
-      { value: action.title },
-      { actions: actionResponses },
-    ),
-    message: computeValue<string>(
-      { value: action.message },
-      { actions: actionResponses },
-    ),
+    title: String(computeValue<string>({ value: action.title })),
+    message: String(computeValue<string>({ value: action.message })),
     color: action.color,
   });
 };
@@ -347,12 +335,8 @@ export const useTriggerLogicFlowAction = async (
 export const useChangeStateAction = ({
   action,
   computeValue,
-  actionResponses,
 }: ChangeStateActionParams) => {
-  const componentId = computeValue<string>(
-    { value: action.componentId },
-    { actions: actionResponses },
-  );
+  const componentId = computeValue<string>({ value: action.componentId });
   const updateTreeComponentAttrs =
     useEditorTreeStore.getState().updateTreeComponentAttrs;
 
@@ -571,14 +555,7 @@ export const useApiCallAction = async (
   try {
     const accessToken = useDataSourceStore.getState().authState.accessToken;
 
-    const customComputeValue = (args: { value: ValueProps }) =>
-      computeValue(args, { actions: props.actionResponses });
-
-    const { url, body } = prepareRequestData(
-      action,
-      endpoint,
-      customComputeValue,
-    );
+    const { url, body } = prepareRequestData(action, endpoint, computeValue);
 
     let responseJson: any;
 
@@ -771,15 +748,11 @@ const updateVariableArray = (
 export const useChangeVariableAction = async ({
   action,
   computeValue,
-  actionResponses,
 }: ChangeVariableActionParams) => {
   const setVariable = useVariableStore.getState().setVariable;
   const index = computeValue<number>({ value: action.index });
   const path = computeValue<string>({ value: action.path });
-  let value = computeValue(
-    { value: action.value },
-    { actions: actionResponses },
-  );
+  let value = computeValue({ value: action.value });
 
   if (action.variableType === "ARRAY") {
     value = updateVariableArray(action, index, value, path);

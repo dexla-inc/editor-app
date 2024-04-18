@@ -13,14 +13,6 @@ import { safeJsonParse } from "@/utils/common";
 import { useInputsStore } from "@/stores/inputs";
 import { Component } from "@/utils/editor";
 
-const parseVariableValue = (value: string): any => {
-  try {
-    return JSON.parse(value);
-  } catch (_) {
-    return value;
-  }
-};
-
 export const useDataBinding = () => {
   const browser = useRouter();
   const computeValue: ComputeValueProps = (
@@ -121,7 +113,9 @@ export const useDataBinding = () => {
     if (value === undefined) return staticFallback || "";
     let dataType = value?.dataType ?? "static";
 
-    return valueHandlers[dataType](value);
+    const result = valueHandlers[dataType](value);
+
+    return result;
   };
 
   return { computeValue };
