@@ -5,9 +5,10 @@ import { getUrl, performFetch } from "@/utils/actions";
 import { DEFAULT_STALE_TIME } from "@/utils/config";
 import { useQuery } from "@tanstack/react-query";
 import get from "lodash.get";
+import { DataType } from "@/types/dataBinding";
 
 type UseEndpointProps = {
-  dataType: "static" | "dynamic";
+  dataType: DataType;
   onLoad?: any;
   forceEnabled?: boolean;
   enabled?: boolean;

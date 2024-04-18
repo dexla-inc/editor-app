@@ -6,8 +6,10 @@ export type BindingTab =
   | "auth"
   | "browser";
 
+export type DataType = "static" | "dynamic" | "boundCode";
+
 export type ValueProps = Partial<{
-  dataType: "static" | "dynamic" | "boundCode";
+  dataType: DataType;
   static: any;
   dynamic: string;
   boundCode: string;

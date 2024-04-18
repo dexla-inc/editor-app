@@ -1,34 +1,44 @@
 import { getCardStyling } from "@/components/CardStyleSelector";
-import { CardAndContainerWrapper } from "@/components/mapper/CardAndContainerWrapper";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useThemeStore } from "@/stores/theme";
 import { EditableComponentMapper } from "@/utils/editor";
-import { FlexProps } from "@mantine/core";
+import { FlexProps, Flex as MantineFlex } from "@mantine/core";
 import merge from "lodash.merge";
 import { forwardRef, memo } from "react";
+import { useRenderData } from "@/hooks/useRenderData";
+import { convertSizeToPx } from "@/utils/defaultSizes";
 type Props = EditableComponentMapper & FlexProps;
 
 export const CardComponent = forwardRef(
   ({ renderTree, shareableContent, component, ...props }: Props, ref) => {
     const theme = useThemeStore((state) => state.theme);
 
+    const { dataType, data, triggers, ...componentProps } =
+      component?.props ?? {};
+
+    const gapPx = convertSizeToPx(component?.props?.gap, "gap");
     const cardStylingProps = getCardStyling(
       theme.cardStyle ?? "OUTLINED_ROUNDED",
       theme.colors["Border"][6],
       theme.defaultRadius,
     );
 
-    const customStyle = merge({}, cardStylingProps, props.style);
+    const customStyle = merge({}, cardStylingProps, props.style, {
+      gap: gapPx,
+    });
+
+    const { renderData } = useRenderData({ component });
 
     return (
-      <CardAndContainerWrapper
+      <MantineFlex
         ref={ref}
-        renderTree={renderTree}
-        component={component}
         {...props}
         style={customStyle}
-        shareableContent={shareableContent}
-      />
+        {...triggers}
+        {...componentProps}
+      >
+        {renderData({ renderTree, shareableContent })}
+      </MantineFlex>
     );
   },
 );
