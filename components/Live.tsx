@@ -89,11 +89,6 @@ export const Live = ({ project, deploymentPage }: Props) => {
   }, [variables]);
 
   useEffect(() => {
-    if (variables) initializeVariableList(variables.results);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [variables]);
-
-  useEffect(() => {
     if (endpoints) {
       setApiAuthConfig(endpoints.results);
     }

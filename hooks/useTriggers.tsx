@@ -3,10 +3,11 @@ import { PageResponse } from "@/requests/pages/types";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { Action, ActionTrigger, actionMapper } from "@/utils/actions";
 import { Component } from "@/utils/editor";
-import { Router, useRouter } from "next/router";
+import { Router } from "next/router";
 import { ChangeEvent } from "react";
 import { useDataBinding } from "@/hooks/dataBinding/useDataBinding";
 import { useFlowsQuery } from "@/hooks/reactQuery/useFlowsQuery";
+import { ComputeValueProps } from "@/types/dataBinding";
 
 const nonDefaultActionTriggers = ["onSuccess", "onError"];
 
@@ -34,6 +35,9 @@ export const useTriggers = ({
     actionResponses[actionId] = response;
   };
 
+  const customComputeValue: ComputeValueProps = (args) =>
+    computeValue(args, { actions: actionResponses });
+
   const triggers = () => {
     const actions: Action[] = entity?.actions ?? [];
 
@@ -51,7 +55,7 @@ export const useTriggers = ({
               action: action.action,
               actionId: action.id,
               router,
-              computeValue,
+              computeValue: customComputeValue,
               actionResponses,
               setActionsResponses,
               event: e,
