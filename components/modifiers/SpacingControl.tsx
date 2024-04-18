@@ -49,8 +49,46 @@ export const SpacingControl = ({ type, form, mode }: Props) => {
   };
 
   const handleModeChange = (newValue: string) => {
-    setCurrentMode(newValue === allTypes ? "all" : "sides");
-    // Add logic here if you need to perform any additional operations when mode changes
+    const newMode = newValue === allTypes ? "all" : "sides";
+    setCurrentMode(newMode);
+
+    // Clear all individual side values when switching to "all"
+    if (newMode === "all") {
+      const unifiedValue = form.values[`${type.toLowerCase()}Top`];
+      const resetValues = {
+        [`${type.toLowerCase()}Top`]: unifiedValue ?? "0px",
+        [`${type.toLowerCase()}Bottom`]: unifiedValue ?? "0px",
+        [`${type.toLowerCase()}Left`]: unifiedValue ?? "0px",
+        [`${type.toLowerCase()}Right`]: unifiedValue ?? "0px",
+      };
+      form.setValues({
+        ...form.values,
+        ...resetValues,
+        [`${type.toLowerCase()}`]: unifiedValue || "",
+      });
+      debouncedTreeComponentAttrsUpdate({
+        attrs: {
+          props: {
+            style: {
+              ...resetValues,
+              [type.toLowerCase()]: unifiedValue || undefined,
+            },
+          },
+        },
+      });
+    } else {
+      // Reset unified value when switching to "sides"
+      const resetValue = {
+        [`${type.toLowerCase()}`]: undefined,
+      };
+      form.setValues({
+        ...form.values,
+        ...resetValue,
+      });
+      debouncedTreeComponentAttrsUpdate({
+        attrs: { props: { style: resetValue } },
+      });
+    }
   };
 
   return (
