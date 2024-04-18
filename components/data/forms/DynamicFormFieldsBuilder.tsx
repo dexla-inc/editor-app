@@ -31,11 +31,12 @@ export const DynamicFormFieldsBuilder = ({
     editorTree.root,
     component.id!,
   );
+
   const { data: staticData } = useComputeValue({
     onLoad: parentDataComponent?.onLoad,
   });
 
-  const { dataType = "static" } = parentDataComponent?.props!;
+  const { dataType = "static" } = parentDataComponent?.props ?? {};
   let selectableObject = staticData;
 
   if (dataType === "dynamic") {

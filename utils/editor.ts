@@ -521,9 +521,10 @@ export const getParentComponentData = (
       const node =
         useEditorTreeStore.getState().componentMutableAttrs[nodeTree.id!];
       if (
-        (node?.props?.data || !isEmpty(node.onLoad?.endpointId)) &&
+        (!isEmpty(node?.onLoad?.data) || !isEmpty(node.onLoad?.endpointId)) &&
         parentComponentNames.includes(node.name)
       ) {
+        console.log("parentData", node);
         const childComponent = getComponentTreeById(nodeTree, componentId);
         if (childComponent) {
           parentWithOnLoad = node;
