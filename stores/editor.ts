@@ -84,12 +84,20 @@ export const useEditorStore = create<EditorState>()(
   devtools(
     (set) => ({
       setActionsResponse: (actionId, response) =>
-        set((state) => ({
-          actionsResponse: {
-            ...state.actionsResponse,
-            [actionId]: merge({}, state.actionsResponse?.[actionId], response),
-          },
-        })),
+        set(
+          (state) => ({
+            actionsResponse: {
+              ...state.actionsResponse,
+              [actionId]: merge(
+                {},
+                state.actionsResponse?.[actionId],
+                response,
+              ),
+            },
+          }),
+          false,
+          "editor/setActionsResponse",
+        ),
       setActivePage: async (activePage) =>
         set({ activePage }, false, "editor/setActivePage"),
       collapsedItemsCount: 0,
