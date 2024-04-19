@@ -1,3 +1,4 @@
+import { ActionIconDefault } from "@/components/ActionIconDefault";
 import { NodeData } from "@/components/logic-flow/nodes/CustomNode";
 import { VariablesButton } from "@/components/variables/VariablesButton";
 import { useEditorTreeStore } from "@/stores/editorTree";
@@ -11,7 +12,6 @@ import { NodeProps } from "reactflow";
 
 export const useLogicFlows = () => {
   const setShowFormModal = useFlowStore((state) => state.setShowFormModal);
-  const pageId = useEditorTreeStore((state) => state.currentPageId);
   const projectId = useEditorTreeStore((state) => state.currentProjectId);
   const setSelectedTabView = useFlowStore((state) => state.setSelectedTabView);
   const selectedTabView = useFlowStore((state) => state.selectedTabView);
@@ -43,6 +43,14 @@ export const useLogicFlows = () => {
             <Button onClick={() => setShowFormModal(true)} compact>
               Create Logic Flow
             </Button>
+            {/* Need to change this so title is reactive to change. Only show on when selectedTabView === flow */}
+            {/* {selectedTabView === "flow" && ( */}
+            <ActionIconDefault
+              iconName="IconPlayerPlay"
+              tooltip="Test Logic Flow"
+              onClick={() => {}}
+            />
+            {/* )} */}
             <VariablesButton projectId={projectId!} />
           </Flex>
         </Flex>

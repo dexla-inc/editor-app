@@ -21,7 +21,9 @@ export const withPageOnLoad = (WrappedComponent: any) => {
 
     const page = props.deploymentPage;
 
-    const { onPageLoad } = useTriggers({
+    const {
+      triggers: { onPageLoad },
+    } = useTriggers({
       entity: page,
       router: router as Router,
       projectId: props.project?.id || projectId,

@@ -30,7 +30,7 @@ export const useRenderData = ({ component }: UseRenderDataProps) => {
 
   const renderData = ({ renderTree, shareableContent }: RenderDataProps) => {
     if (isLoading) {
-      return <LoadingOverlay visible overlayBlur={2} />;
+      return <LoadingOverlay visible overlayBlur={2} zIndex={1000} />;
     }
 
     if (Array.isArray(data)) {

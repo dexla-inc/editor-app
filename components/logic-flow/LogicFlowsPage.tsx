@@ -129,19 +129,14 @@ export const LogicFlowsPage = ({ flow }: Props) => {
       actionMapper[selectedNode.data.form.action]
     : null;
 
-  const form = useForm({
-    initialValues: {
-      ...actionMapped?.defaultValues,
-      label: selectedNode?.data.label ?? "",
-    },
-  });
+  const form = useForm();
 
   useEffect(() => {
     if (selectedNode && previousSelectedNode?.id !== selectedNode?.id) {
       form.setValues({
         ...actionMapped?.defaultValues,
         ...selectedNode.data.form,
-        label: selectedNode.data.label,
+        label: selectedNode.data.label ?? "",
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

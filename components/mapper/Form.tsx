@@ -1,5 +1,4 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { useEndpoint } from "@/hooks/useEndpoint";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { componentMapper } from "@/utils/componentMapper";
 import { convertSizeToPx } from "@/utils/defaultSizes";
@@ -7,10 +6,11 @@ import {
   EditableComponentMapper,
   getAllComponentsByName,
 } from "@/utils/editor";
-import { FlexProps, LoadingOverlay, Flex as MantineFlex } from "@mantine/core";
+import { FlexProps, Flex as MantineFlex } from "@mantine/core";
 import { FormEvent, forwardRef, memo } from "react";
 import { useInputsStore } from "@/stores/inputs";
 import { useShallow } from "zustand/react/shallow";
+import { useRenderData } from "@/hooks/useRenderData";
 
 type Props = EditableComponentMapper & FlexProps;
 
@@ -25,15 +25,11 @@ const FormComponent = forwardRef(
     const { onSubmit, ...otherTriggers } = triggers || {};
     const { style, ...otherProps } = props as any;
     const gapPx = convertSizeToPx(gap, "gap");
-    const setState = useEditorTreeStore(
+    const setTreeComponentCurrentState = useEditorTreeStore(
       (state) => state.setTreeComponentCurrentState,
     );
 
-    const { endpointId } = component.onLoad ?? {};
-    const { data } = useEndpoint({
-      onLoad: component.onLoad,
-      dataType,
-    });
+    const { renderData } = useRenderData({ component });
 
     const onSubmitCustom = async (e: FormEvent<any>) => {
       e.preventDefault();
@@ -97,7 +93,7 @@ const FormComponent = forwardRef(
           });
         });
         submitButtonComponents.map((component) => {
-          setState(component.id!, "disabled");
+          setTreeComponentCurrentState(component.id!, "disabled");
         });
       } else {
         onSubmit && onSubmit(e);
@@ -119,25 +115,7 @@ const FormComponent = forwardRef(
         {...otherTriggers}
         pos="relative"
       >
-        {endpointId &&
-          Array.isArray(data) &&
-          data?.map((item: any, parentIndex: number) => {
-            return component.children && component.children.length > 0
-              ? component.children?.map((child) =>
-                  renderTree(child, {
-                    ...shareableContent,
-                    data: item,
-                    parentIndex,
-                  }),
-                )
-              : children;
-          })}
-        {component.children && component.children.length > 0
-          ? component.children?.map((child) =>
-              renderTree(child, { ...shareableContent, data }),
-            )
-          : children}
-        <LoadingOverlay visible={loading} zIndex={1000} radius="sm" />
+        {renderData({ renderTree, shareableContent })}
       </MantineFlex>
     );
   },

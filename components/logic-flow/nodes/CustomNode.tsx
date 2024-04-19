@@ -1,10 +1,20 @@
+import { Icon } from "@/components/Icon";
 import { useFlowStore } from "@/stores/flow";
 import { NodeTriggerCondition } from "@/utils/triggerConditions";
-import { Card, CSSObject, Stack, Text, useMantineTheme } from "@mantine/core";
+import {
+  Button,
+  Card,
+  CSSObject,
+  Stack,
+  Text,
+  useMantineTheme,
+} from "@mantine/core";
 import { IconBoxModel2 } from "@tabler/icons-react";
 import startCase from "lodash.startcase";
 import { nanoid } from "nanoid";
 import { Handle, NodeProps, Position } from "reactflow";
+import { useRouter } from "next/router";
+import { useTriggers } from "@/hooks/useTriggers";
 
 export type NodeInput = {
   id: string;
@@ -36,10 +46,13 @@ export const CustomNode = (props: CustomNodeProps) => {
   const { data, selected, avatar: Avatar, ...node } = props;
   const { style } = props;
   const { selectedNode } = useFlowStore();
+  const router = useRouter();
+  // const trigger = useTriggers({ entity: node, router });
 
   return (
     <Card
       p={0}
+      bg="dark"
       sx={{
         border: "1px solid",
         borderColor: `${
@@ -74,8 +87,24 @@ export const CustomNode = (props: CustomNodeProps) => {
           );
         })}
       </Stack>
+
       <Stack justify="center" align="center" spacing={2} mt="8px" mb="4px">
         {Avatar ? <Avatar size={14} /> : <NodeAvatar size={14} />}
+        <Button
+          // @ts-ignore
+          size={7}
+          variant="default"
+          pos="absolute"
+          right="0"
+          top="0"
+          m={4}
+          p={2}
+          leftIcon={<Icon name="IconPlayerPlay" size={10} />}
+          styles={{ leftIcon: { marginRight: 2 } }}
+        >
+          Test
+        </Button>
+
         <Text size={6} weight="bold" w="90%" ta="center">
           {node.type === "conditionalNode" && "Conditional"}
           {node.type === "booleanNode"
