@@ -51,7 +51,7 @@ export const TypographyModal = ({
                 onChange={(value: string) => {
                   form.setFieldValue(`defaultFont`, value);
                   form.values.fonts.forEach((font, index) => {
-                    if (!font.tag.toLowerCase().startsWith("h")) {
+                    if (!font.tag?.toLowerCase().startsWith("h")) {
                       form.setFieldValue(`fonts.${index}.fontFamily`, value);
                     }
                   });
@@ -62,7 +62,7 @@ export const TypographyModal = ({
                 value={form.values.fonts[0]?.fontFamily}
                 onChange={(value: string) => {
                   form.values.fonts.forEach((font, index) => {
-                    if (font.tag.toLowerCase().startsWith("h")) {
+                    if (font.tag?.toLowerCase().startsWith("h")) {
                       form.setFieldValue(`fonts.${index}.fontFamily`, value);
                     }
                   });

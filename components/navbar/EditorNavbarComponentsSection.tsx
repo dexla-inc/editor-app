@@ -109,7 +109,7 @@ export const EditorNavbarComponentsSection = () => {
               const filteredComponents = components.filter(
                 ({ id, hide }) =>
                   (query
-                    ? id.toLowerCase().includes(query.toLowerCase())
+                    ? id?.toLowerCase().includes(query?.toLowerCase())
                     : true) && !hide,
               );
 

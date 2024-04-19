@@ -1,4 +1,7 @@
-import { CommonData as Alert } from "@/components/data/CommonData";
+import {
+  CommonData as Alert,
+  CommonData as Icon,
+} from "@/components/data/CommonData";
 import { ModalData as Modal } from "@/components/data/ModalData";
 import {
   AvatarData as Avatar,
@@ -64,6 +67,7 @@ export const dataMapper = {
   Autocomplete,
   Progress,
   GoogleMap,
+  Icon,
   AreaChart: Chart,
   BarChart: Chart,
   LineChart: Chart,

@@ -34,9 +34,9 @@ export const VariableList = ({ projectId }: Props) => {
   const filteredVariables =
     variableList
       ?.filter((variable) => {
-        const searchStr = filter.toLowerCase().replace(/_/g, " ");
+        const searchStr = filter?.toLowerCase().replace(/_/g, " ");
         const variableNameNormalized = variable.name
-          .toLowerCase()
+          ?.toLowerCase()
           .replace(/_/g, " ");
         return variableNameNormalized.includes(searchStr);
       })
