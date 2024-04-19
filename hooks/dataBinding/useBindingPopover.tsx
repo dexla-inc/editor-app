@@ -182,7 +182,7 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
           ...actionsResponse[actionId],
         };
       }
-      if (actions[actionId]) {
+      if (actions && actions[actionId]) {
         actions[actionId] = {
           ...(actions?.[actionId] ?? {}),
           ...(actionsResponse?.[actionId] ?? {}),
