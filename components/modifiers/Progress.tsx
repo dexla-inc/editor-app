@@ -2,12 +2,12 @@ import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { NumberInput, Stack } from "@mantine/core";
+import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
 import { SizeSelector } from "../SizeSelector";
-import { SwitchSelector } from "../SwitchSelector";
 import { useEffect } from "react";
+import { SegmentedControlYesNo } from "../SegmentedControlYesNo";
 
 const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm();
@@ -53,31 +53,13 @@ const Modifier = withModifier(({ selectedComponent }) => {
           }}
           showNone={false}
         />
-        <NumberInput
-          label="Value"
-          size="xs"
-          min={0}
-          max={100}
-          {...form.getInputProps("value")}
-          onChange={(value) => {
-            form.setFieldValue("value", value as number);
-            debouncedTreeComponentAttrsUpdate({
-              attrs: {
-                props: { value: value },
-              },
-            });
-          }}
-        />
-        <SwitchSelector
-          topLabel="Animate"
+        <SegmentedControlYesNo
+          label="Animate"
           {...form.getInputProps("animate")}
-          checked={selectedComponent.props?.animate}
-          onChange={(event) => {
-            form.setFieldValue("animate", event.currentTarget.checked);
+          onChange={(value) => {
+            form.setFieldValue("animate", value);
             debouncedTreeComponentAttrsUpdate({
-              attrs: {
-                props: { animate: event.currentTarget.checked },
-              },
+              attrs: { props: { animate: value } },
             });
           }}
         />
