@@ -10,10 +10,7 @@ const ProgressComponent = forwardRef(
   ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
     const { children, ...componentProps } = component.props as any;
 
-    const { value } = useComputeValue({
-      shareableContent,
-      onLoad: component.onLoad,
-    });
+    const { value = 0 } = component.onLoad;
 
     return (
       <MantineProgress
