@@ -114,7 +114,6 @@ export type EditorTreeState = {
   selectedComponentIds?: string[];
   selectedComponentParentIndex?: number | undefined;
   setSelectedComponentIds: (cb: (ids: string[]) => string[]) => void;
-  setSelectedComponentParentIndex: (parentIndex: number | undefined) => void;
   setCurrentPageAndProjectIds: (
     currentProjectId: string,
     currentPageId: string,
@@ -404,12 +403,6 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
               "editorTree/setSelectedComponentIds",
             );
           },
-          setSelectedComponentParentIndex: (selectedComponentParentIndex) =>
-            set(
-              { selectedComponentParentIndex },
-              false,
-              "editor/setSelectedComponentParentIndex",
-            ),
           setTreeComponentCurrentState: (
             componentId,
             currentState = "default",

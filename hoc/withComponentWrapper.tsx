@@ -112,7 +112,6 @@ export const withComponentWrapper = <T extends Record<string, any>>(
     const handleClick = useEditorClickHandler(
       componentTree.id!,
       propsWithOverwrites,
-      shareableContent?.parentIndex,
       isPicking,
     );
 
