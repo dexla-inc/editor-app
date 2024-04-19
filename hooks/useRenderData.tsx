@@ -3,6 +3,7 @@ import { useShallow } from "zustand/react/shallow";
 import { Component, ComponentTree } from "@/utils/editor";
 import { useEndpoint } from "@/hooks/useEndpoint";
 import { LoadingOverlay } from "@mantine/core";
+import merge from "lodash.merge";
 
 type UseRenderDataProps = {
   component: Component & ComponentTree;
@@ -45,10 +46,7 @@ export const useRenderData = ({ component }: UseRenderDataProps) => {
       });
     } else {
       return component.children?.map((child) =>
-        renderTree(child, {
-          ...shareableContent,
-          data,
-        }),
+        renderTree(child, merge({}, shareableContent, data ?? {})),
       );
     }
   };

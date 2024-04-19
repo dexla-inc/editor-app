@@ -64,18 +64,19 @@ export const ActionSettingsForm = ({
   return (
     <Stack spacing="xs">
       {children && children({ form })}
-      {action.action.name === "apiCall" && (
-        <Button
-          size="xs"
-          type="button"
-          onClick={openSequential}
-          variant="light"
-          mt="xs"
-          leftIcon={<Icon name="IconPlus"></Icon>}
-        >
-          Add Sequential Action
-        </Button>
-      )}
+      {action.action.name === "apiCall" ||
+        (action.action.name === "changeVariable" && (
+          <Button
+            size="xs"
+            type="button"
+            onClick={openSequential}
+            variant="light"
+            mt="xs"
+            leftIcon={<Icon name="IconPlus"></Icon>}
+          >
+            Add Sequential Action
+          </Button>
+        ))}
       {addSequentialForm && (
         <>
           <Divider my="lg" label="Sequential Action" labelPosition="center" />
