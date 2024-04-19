@@ -12,5 +12,11 @@ export const jsonStructure = (props?: any): ComponentStructure => {
       ...requiredModifiers.progress,
       ...(props.props || {}),
     },
+    onLoad: {
+      value: {
+        static: 50,
+        dataType: "static",
+      },
+    },
   };
 };

@@ -468,7 +468,6 @@ export const requiredModifiers: RequiredModifiers = {
   progress: {
     color: "Primary.6",
     size: "xs",
-    value: 50,
     animate: true,
   },
 };
