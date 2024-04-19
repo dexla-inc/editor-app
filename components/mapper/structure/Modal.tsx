@@ -181,10 +181,6 @@ export const jsonStructure = (props?: any): ComponentStructure => {
         dataType: "static",
         static: true,
       },
-      showInEditor: {
-        dataType: "static",
-        static: true,
-      },
     },
     children: [
       {

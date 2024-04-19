@@ -63,6 +63,7 @@ const Modifier = withModifier(({ selectedComponent }) => {
             onChange={(e) => {
               form.setFieldValue("showInEditor", e.target.checked);
               debouncedTreeComponentAttrsUpdate({
+                // Change to devProp
                 attrs: { props: { showInEditor: e.target.checked } },
               });
             }}

@@ -23,13 +23,6 @@ export const ModalData = ({ component }: DataProps) => {
   return (
     <Stack spacing="xs">
       <VisibilityModifier form={form} />
-      <SegmentedControlYesNo
-        label="Show in Editor"
-        {...form.getInputProps("onLoad.showInEditor")}
-        onChange={(value) => {
-          form.setFieldValue("onLoad.showInEditor", value);
-        }}
-      />
     </Stack>
   );
 };
