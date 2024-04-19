@@ -184,8 +184,8 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
       }
       if (actions[actionId]) {
         actions[actionId] = {
-          ...actions[actionId],
-          ...actionsResponse[actionId],
+          ...(actions?.[actionId] ?? {}),
+          ...(actionsResponse?.[actionId] ?? {}),
         };
       }
     });

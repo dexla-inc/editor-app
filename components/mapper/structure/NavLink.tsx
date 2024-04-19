@@ -9,7 +9,7 @@ export const jsonStructure = (props?: any): ComponentStructure => {
     description: "Nav Link",
     onLoad: {
       label: {
-        value: "Nav Link",
+        static: "Nav Link",
         dataType: "static",
       },
     },

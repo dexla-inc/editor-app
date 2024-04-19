@@ -68,7 +68,6 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
 
   useEffect(() => {
     if (form.isTouched() && form.isDirty()) {
-      console.log(form.values);
       debouncedTreeComponentAttrsUpdate({ attrs: form.values });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

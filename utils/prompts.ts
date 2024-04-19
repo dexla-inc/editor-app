@@ -511,8 +511,8 @@ type RadioItem = BaseComponent & {
   name: "RadioItem";
   props: { value: string; label: string; [key: string]: string };
 };
-type RadioGroup = BaseComponent & {
-  name: "RadioGroup";
+type Radio = BaseComponent & {
+  name: "Radio";
   props: { label: string; [key: string]: string };
   children: RadioItem[];
 };
@@ -547,7 +547,7 @@ type Form = BaseComponent & {
     | Select
     | Switch
     | Checkbox
-    | RadioGroup
+    | Radio
     | Rating
     | Textarea;
 };
@@ -706,7 +706,7 @@ type Component =
   | Image
   | Link
   | Navbar
-  | RadioGroup
+  | Radio
   | Rating
   | Select
   | Switch
