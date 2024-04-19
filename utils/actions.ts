@@ -30,9 +30,8 @@ import { UseFormReturnType } from "@mantine/form";
 import { showNotification } from "@mantine/notifications";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
-import { Router } from "next/router";
+import { NextRouter } from "next/router";
 import { ComputeValueProps, ValueProps } from "@/types/dataBinding";
-import { PagingResponse } from "@/requests/types";
 import { ResetVariableActionForm } from "@/components/actions/ResetVariableActionForm";
 
 const triggers = [
@@ -224,7 +223,7 @@ export type Action = {
 
 export type ActionParams = {
   actionId: string;
-  router: Router;
+  router: NextRouter;
   setActionsResponses: any;
   computeValue: ComputeValueProps;
   event?: any;

@@ -90,7 +90,7 @@ export const withComponentWrapper = <T extends Record<string, any>>(
 
     const router = useRouter();
 
-    const triggers = useTriggers({
+    const { triggers } = useTriggers({
       entity: component,
       router: router as Router,
     });

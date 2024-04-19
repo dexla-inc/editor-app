@@ -9,10 +9,12 @@ import {
   Text,
   useMantineTheme,
 } from "@mantine/core";
-import { IconBoxModel2, IconPlayerPause } from "@tabler/icons-react";
+import { IconBoxModel2 } from "@tabler/icons-react";
 import startCase from "lodash.startcase";
 import { nanoid } from "nanoid";
 import { Handle, NodeProps, Position } from "reactflow";
+import { useRouter } from "next/router";
+import { useTriggers } from "@/hooks/useTriggers";
 
 export type NodeInput = {
   id: string;
@@ -44,6 +46,8 @@ export const CustomNode = (props: CustomNodeProps) => {
   const { data, selected, avatar: Avatar, ...node } = props;
   const { style } = props;
   const { selectedNode } = useFlowStore();
+  const router = useRouter();
+  // const trigger = useTriggers({ entity: node, router });
 
   return (
     <Card

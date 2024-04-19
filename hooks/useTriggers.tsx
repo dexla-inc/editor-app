@@ -3,7 +3,7 @@ import { PageResponse } from "@/requests/pages/types";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { Action, ActionTrigger, actionMapper } from "@/utils/actions";
 import { Component } from "@/utils/editor";
-import { Router } from "next/router";
+import { NextRouter } from "next/router";
 import { ChangeEvent } from "react";
 import { useDataBinding } from "@/hooks/dataBinding/useDataBinding";
 import { useFlowsQuery } from "@/hooks/reactQuery/useFlowsQuery";
@@ -13,7 +13,7 @@ const nonDefaultActionTriggers = ["onSuccess", "onError"];
 
 type UseTriggersProps = {
   entity: Component | PageResponse;
-  router: Router;
+  router: NextRouter;
   projectId?: string;
 };
 
@@ -38,9 +38,24 @@ export const useTriggers = ({
   const customComputeValue: ComputeValueProps = (args) =>
     computeValue(args, { actions: actionResponses });
 
-  const triggers = () => {
-    const actions: Action[] = entity?.actions ?? [];
+  const actions: Action[] = entity?.actions ?? [];
 
+  const buildAction = (action: Action, event?: any): any => {
+    return actionMapper[action.action.name].action({
+      // @ts-ignore
+      action: action.action,
+      actionId: action.id,
+      router,
+      computeValue: customComputeValue,
+      setActionsResponses,
+      event,
+      endpointResults: endpoints?.results ?? [],
+      entity,
+      flowsList: logicFlows?.results ?? [],
+    });
+  };
+
+  const buildTriggers = () => {
     return actions.reduce(
       (acc, action: Action) => {
         if (nonDefaultActionTriggers.includes(action.trigger)) {
@@ -50,19 +65,7 @@ export const useTriggers = ({
         return {
           ...acc,
           [action.trigger]: async (e: any) => {
-            return actionMapper[action.action.name].action({
-              // @ts-ignore
-              action: action.action,
-              actionId: action.id,
-              router,
-              computeValue: customComputeValue,
-              actionResponses,
-              setActionsResponses,
-              event: e,
-              endpointResults: endpoints?.results ?? [],
-              entity,
-              flowsList: logicFlows?.results ?? [],
-            });
+            return buildAction(action, e);
           },
         };
       },
@@ -70,9 +73,11 @@ export const useTriggers = ({
     );
   };
 
+  const triggers = buildTriggers();
+
   const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (typeof triggers().onChange === "function") {
-      triggers().onChange(e);
+    if (typeof triggers.onChange === "function") {
+      triggers.onChange(e);
     }
     if (entity.props?.error) {
       updateTreeComponentAttrs?.({
@@ -84,7 +89,10 @@ export const useTriggers = ({
   };
 
   return {
-    ...triggers(),
-    onChange: handleOnChange,
+    triggers: {
+      ...triggers,
+      onChange: handleOnChange,
+    },
+    buildAction,
   };
 };
