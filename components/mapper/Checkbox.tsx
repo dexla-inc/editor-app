@@ -31,6 +31,7 @@ const CheckboxComponent = forwardRef<HTMLInputElement, Props>(
       backgroundColor,
       color,
     });
+
     const [value, setValue] = useInputValue(
       {
         value: component?.onLoad?.value ?? "false",
