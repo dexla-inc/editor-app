@@ -265,7 +265,9 @@ export const requiredModifiers: RequiredModifiers = {
     tooltipPosition: "top",
   },
   modal: {
-    showInEditor: true,
+    devProps: {
+      showInEditor: true,
+    },
     size: "md",
     style: {
       padding: "16px", // Evalio specific, need to add modal styling in branding to configure each size
@@ -316,7 +318,9 @@ export const requiredModifiers: RequiredModifiers = {
   drawer: {
     position: "left",
     size: "md",
-    showInEditor: true,
+    devProps: {
+      showInEditor: true,
+    },
     title: "Heading",
     titleTag: "H4",
     withCloseButton: true,

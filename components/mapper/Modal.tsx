@@ -14,7 +14,7 @@ export const ModalComponent = forwardRef(
     return (
       <ModalAndDrawerWrapper component={component}>
         {({
-          isPreviewMode,
+          isLive,
           target,
           sizeProps,
           componentProps,
@@ -22,7 +22,15 @@ export const ModalComponent = forwardRef(
           handleClose,
           titleStyle,
           isSizeFullScreen,
+          isVisible,
         }) => {
+          console.log(
+            "ModalComponent",
+            component?.description,
+            isVisible,
+            isLive,
+            showInEditor,
+          );
           return (
             <MantineModal
               ref={ref}
@@ -34,7 +42,7 @@ export const ModalComponent = forwardRef(
               {...sizeProps}
               {...props}
               {...componentProps}
-              opened={isPreviewMode ? true : showInEditor}
+              opened={isLive ? isVisible : showInEditor}
               onClose={handleClose}
               styles={{
                 content: style ?? {},

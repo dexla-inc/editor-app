@@ -31,6 +31,8 @@ export const withComponentWrapper = <T extends Record<string, any>>(
       (state) => !state.isPreviewMode && !state.isLive,
     );
 
+    const isLive = useEditorTreeStore((state) => state.isLive);
+
     const isSelected = useEditorTreeStore(
       useShallow(
         (state) => state.selectedComponentIds?.includes(componentTree.id!),
@@ -63,6 +65,8 @@ export const withComponentWrapper = <T extends Record<string, any>>(
         (state) => state.componentMutableAttrs[componentTree.id!] ?? {},
       ),
     );
+    if (component.name === "Modal")
+      console.log(component?.description, computedOnLoad, shareableContent);
 
     const hasTooltip = !!component?.props?.tooltip;
     const initiallyLoading = component?.props?.initiallyLoading;
@@ -133,9 +137,16 @@ export const withComponentWrapper = <T extends Record<string, any>>(
       fixedPosition: component.fixedPosition,
     } as Component;
 
+    // Exclude devProps from component props in live apps
+    const { devProps, ...componentWithoutDevProps } = component;
+
+    const componentProps = isLive
+      ? componentWithoutDevProps
+      : { ...componentWithoutDevProps, ...devProps };
+
     const props = {
       component: {
-        ...component,
+        ...componentProps,
         ...componentTree,
         props: propsWithOverwrites,
         onLoad: computedOnLoad ?? {},
@@ -151,6 +162,8 @@ export const withComponentWrapper = <T extends Record<string, any>>(
       }),
       shareableContent,
     } as any;
+
+    //  omit component.devProps from props?
 
     return (
       <>

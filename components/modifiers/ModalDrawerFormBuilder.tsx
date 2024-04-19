@@ -22,6 +22,7 @@ export const ModalDrawerFormBuilder = ({
     Object.entries(defaultFormProps).map(([key, value]) => [
       key,
       selectedComponent.props?.[key] ?? value,
+      selectedComponent.devProps?.[key] ?? value,
     ]),
   );
 
@@ -42,6 +43,20 @@ export const ModalDrawerFormBuilder = ({
   return (
     <form>
       <Stack spacing="xs">
+        <SegmentedControlYesNo
+          label="Show in Editor"
+          {...form.getInputProps("showInEditor")}
+          onChange={(value) => {
+            form.setFieldValue("showInEditor", value);
+            debouncedTreeComponentAttrsUpdate({
+              attrs: {
+                devProps: {
+                  showInEditor: value,
+                },
+              },
+            });
+          }}
+        />
         <TextInput
           label="Title"
           size="xs"

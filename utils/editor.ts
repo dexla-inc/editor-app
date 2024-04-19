@@ -39,6 +39,7 @@ export type Component = {
   description?: string;
   title?: string;
   props?: { [key: string]: any; dataType?: DataType };
+  devProps?: { [key: string]: any }; // props ignored on live such as force show modal
   blockDroppingChildrenInside?: boolean;
   fixedPosition?: {
     position: "left" | "top";

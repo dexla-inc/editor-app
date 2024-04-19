@@ -4,6 +4,7 @@ import { useShallow } from "zustand/react/shallow";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useEditorStore } from "@/stores/editor";
 import { Component, ComponentTree } from "@/utils/editor";
+import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
 
 type Props = {
   component: ComponentTree & Component;
@@ -13,19 +14,23 @@ type Props = {
 const variablePattern = /variables\[\s*(?:\/\*[\s\S]*?\*\/\s*)?'(.*?)'\s*\]/g;
 
 export const ModalAndDrawerWrapper = ({ component, children }: Props) => {
-  const isPreviewMode = useEditorTreeStore(
-    useShallow((state) => state.isPreviewMode || state.isLive),
-  );
+  const isLive = useEditorTreeStore(useShallow((state) => state.isLive));
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
 
   const { size, titleTag: tag, ...componentProps } = component.props as any;
-  const { showInEditor = component.props?.showInEditor } =
-    component.onLoad || {};
+  const {
+    showInEditor = component.props?.showInEditor ||
+      component.devProps?.showInEditor,
+  } = component.devProps?.showInEditor || {};
   const { titleStyle } = useBrandingStyles({ tag });
 
   const onLoad = useEditorTreeStore(
     useShallow((state) => state.componentMutableAttrs[component?.id!]?.onLoad),
   );
+
+  const { isVisible } = useComputeValue({ onLoad });
+
+  console.log("ModalAndDrawer", onLoad);
 
   const target = iframeWindow?.document.getElementById("iframe-content");
 
@@ -55,7 +60,7 @@ export const ModalAndDrawerWrapper = ({ component, children }: Props) => {
     <>
       {children &&
         children({
-          isPreviewMode,
+          isLive,
           target,
           showInEditor,
           componentProps,
@@ -63,6 +68,7 @@ export const ModalAndDrawerWrapper = ({ component, children }: Props) => {
           handleClose,
           sizeProps,
           isSizeFullScreen,
+          isVisible,
         })}
     </>
   );

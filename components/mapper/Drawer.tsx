@@ -11,7 +11,7 @@ export const DrawerComponent = forwardRef(
     return (
       <ModalAndDrawerWrapper component={component}>
         {({
-          isPreviewMode,
+          isLive,
           target,
           sizeProps,
           componentProps,
@@ -19,6 +19,7 @@ export const DrawerComponent = forwardRef(
           handleClose,
           titleStyle,
           isSizeFullScreen,
+          isVisible,
         }) => {
           return (
             <MantineDrawer
@@ -30,7 +31,7 @@ export const DrawerComponent = forwardRef(
               {...sizeProps}
               {...props}
               {...componentProps}
-              opened={isPreviewMode ? true : showInEditor}
+              opened={isLive ? isVisible : showInEditor}
               onClose={handleClose}
               styles={{
                 title: { ...titleStyle },
