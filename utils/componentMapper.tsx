@@ -1402,7 +1402,7 @@ export const componentMapper: ComponentMapper = {
   },
   PopOver: {
     Component: (props) => <PopOver {...props} />,
-    modifiers: ["popOver", "border", "effects"],
+    modifiers: ["popOver", "spacing", "border"],
     actionTriggers: ["onClose"],
     sequentialTriggers: ["onSuccess", "onError"],
   },

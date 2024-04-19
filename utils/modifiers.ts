@@ -354,6 +354,9 @@ export const requiredModifiers: RequiredModifiers = {
   },
   popOver: {
     position: "bottom",
+    style: {
+      padding: "10px",
+    },
   },
   navLink: {
     color: "Black.6",
