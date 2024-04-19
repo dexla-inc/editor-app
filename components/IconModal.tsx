@@ -46,8 +46,8 @@ export const IconModal = ({ onIconSelect }: Props) => {
   const theme = useMantineTheme();
   const iconsPerPage = 30;
 
-  const filteredIconNames = allIconNames.filter(({ spaced }) =>
-    spaced.toLowerCase().includes(searchQuery.toLowerCase()),
+  const filteredIconNames = allIconNames.filter(
+    ({ spaced }) => spaced?.toLowerCase().includes(searchQuery?.toLowerCase()),
   );
   // Get current icons
   const indexOfLastIcon = currentPage * iconsPerPage;

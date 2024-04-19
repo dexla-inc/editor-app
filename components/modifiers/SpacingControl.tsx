@@ -24,11 +24,11 @@ export const SpacingControl = ({ type, form, mode }: Props) => {
 
   const handleUnifiedChange = (value: string) => {
     const newValues = {
-      [`${type.toLowerCase()}`]: value,
-      [`${type.toLowerCase()}Top`]: value,
-      [`${type.toLowerCase()}Bottom`]: value,
-      [`${type.toLowerCase()}Left`]: value,
-      [`${type.toLowerCase()}Right`]: value,
+      [`${type?.toLowerCase()}`]: value,
+      [`${type?.toLowerCase()}Top`]: value,
+      [`${type?.toLowerCase()}Bottom`]: value,
+      [`${type?.toLowerCase()}Left`]: value,
+      [`${type?.toLowerCase()}Right`]: value,
     };
     form.setValues(newValues);
 
@@ -41,7 +41,7 @@ export const SpacingControl = ({ type, form, mode }: Props) => {
     side: "Top" | "Bottom" | "Left" | "Right",
     value: string,
   ) => {
-    const key = `${type.toLowerCase()}${side}`;
+    const key = `${type?.toLowerCase()}${side}`;
     form.setFieldValue(key, value);
     debouncedTreeComponentAttrsUpdate({
       attrs: { props: { style: { [key]: value } } },
@@ -54,24 +54,24 @@ export const SpacingControl = ({ type, form, mode }: Props) => {
 
     // Clear all individual side values when switching to "all"
     if (newMode === "all") {
-      const unifiedValue = form.values[`${type.toLowerCase()}Top`];
+      const unifiedValue = form.values[`${type?.toLowerCase()}Top`];
       const resetValues = {
-        [`${type.toLowerCase()}Top`]: unifiedValue ?? "0px",
-        [`${type.toLowerCase()}Bottom`]: unifiedValue ?? "0px",
-        [`${type.toLowerCase()}Left`]: unifiedValue ?? "0px",
-        [`${type.toLowerCase()}Right`]: unifiedValue ?? "0px",
+        [`${type?.toLowerCase()}Top`]: unifiedValue ?? "0px",
+        [`${type?.toLowerCase()}Bottom`]: unifiedValue ?? "0px",
+        [`${type?.toLowerCase()}Left`]: unifiedValue ?? "0px",
+        [`${type?.toLowerCase()}Right`]: unifiedValue ?? "0px",
       };
       form.setValues({
         ...form.values,
         ...resetValues,
-        [`${type.toLowerCase()}`]: unifiedValue || "",
+        [`${type?.toLowerCase()}`]: unifiedValue || "",
       });
       debouncedTreeComponentAttrsUpdate({
         attrs: {
           props: {
             style: {
               ...resetValues,
-              [type.toLowerCase()]: unifiedValue || undefined,
+              [type?.toLowerCase()]: unifiedValue || undefined,
             },
           },
         },
@@ -79,7 +79,7 @@ export const SpacingControl = ({ type, form, mode }: Props) => {
     } else {
       // Reset unified value when switching to "sides"
       const resetValue = {
-        [`${type.toLowerCase()}`]: undefined,
+        [`${type?.toLowerCase()}`]: undefined,
       };
       form.setValues({
         ...form.values,
@@ -114,7 +114,7 @@ export const SpacingControl = ({ type, form, mode }: Props) => {
         />
         {currentMode === "all" && (
           <UnitInput
-            {...form.getInputProps(`${type.toLowerCase()}`)}
+            {...form.getInputProps(`${type?.toLowerCase()}`)}
             onChange={handleUnifiedChange}
           />
         )}
@@ -124,24 +124,24 @@ export const SpacingControl = ({ type, form, mode }: Props) => {
           <Group noWrap>
             <UnitInput
               label="Top"
-              {...form.getInputProps(`${type.toLowerCase()}Top`)}
+              {...form.getInputProps(`${type?.toLowerCase()}Top`)}
               onChange={(value) => handleSideChange("Top", value)}
             />
             <UnitInput
               label="Bottom"
-              {...form.getInputProps(`${type.toLowerCase()}Bottom`)}
+              {...form.getInputProps(`${type?.toLowerCase()}Bottom`)}
               onChange={(value) => handleSideChange("Bottom", value)}
             />
           </Group>
           <Group noWrap>
             <UnitInput
               label="Left"
-              {...form.getInputProps(`${type.toLowerCase()}Left`)}
+              {...form.getInputProps(`${type?.toLowerCase()}Left`)}
               onChange={(value) => handleSideChange("Left", value)}
             />
             <UnitInput
               label="Right"
-              {...form.getInputProps(`${type.toLowerCase()}Right`)}
+              {...form.getInputProps(`${type?.toLowerCase()}Right`)}
               onChange={(value) => handleSideChange("Right", value)}
             />
           </Group>
