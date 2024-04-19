@@ -2,10 +2,11 @@ import { TopLabel } from "@/components/TopLabel";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { Checkbox, SegmentedControl, Select, Stack } from "@mantine/core";
+import { Checkbox, Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
 import { useEffect } from "react";
+import { SegmentedControlYesNo } from "../SegmentedControlYesNo";
 
 export const defaultPopOverValues = requiredModifiers.popOver;
 
@@ -54,16 +55,13 @@ const Modifier = withModifier(({ selectedComponent }) => {
               });
             }}
           />
-
-          <Checkbox
-            mt={6}
-            size="xs"
-            label="Force Show"
-            {...form.getInputProps("showInEditor", { type: "checkbox" })}
-            onChange={(e) => {
-              form.setFieldValue("showInEditor", e.target.checked);
+          <SegmentedControlYesNo
+            label="Show in Editor"
+            {...form.getInputProps("showInEditor")}
+            onChange={(value) => {
+              form.setFieldValue("showInEditor", value);
               debouncedTreeComponentAttrsUpdate({
-                attrs: { props: { showInEditor: e.target.checked } },
+                attrs: { props: { showInEditor: value } },
               });
             }}
           />

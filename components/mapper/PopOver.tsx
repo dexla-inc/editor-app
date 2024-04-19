@@ -9,6 +9,8 @@ import {
 import { Box, Popover as MantinePopOver, PopoverProps } from "@mantine/core";
 import { memo } from "react";
 import { useShallow } from "zustand/react/shallow";
+import { pick } from "next/dist/lib/pick";
+import merge from "lodash.merge";
 
 type Props = EditableComponentMapper & Omit<PopoverProps, "opened">;
 
@@ -28,6 +30,8 @@ const PopOverComponent = ({
   const { targetId, loading, showInEditor, ...componentProps } =
     component.props as any;
 
+  const { style, ...restProps } = props;
+
   let targetComponent: Component | null = null;
   const childrenWithoutTarget: ComponentTree[] = (
     component.children ?? []
@@ -43,6 +47,8 @@ const PopOverComponent = ({
     "iframe-content",
   );
 
+  const customStyle = merge({}, props.style);
+
   return (
     <MantinePopOver
       withinPortal
@@ -53,9 +59,14 @@ const PopOverComponent = ({
         target: target,
       }}
       middlewares={{ flip: false, shift: false, inline: true }}
-      {...props}
+      {...restProps}
       {...componentProps}
       maw="fit-content"
+      styles={{
+        dropdown: {
+          ...pick(customStyle, rootStyleProps),
+        },
+      }}
     >
       {targetComponent && (
         <MantinePopOver.Target>
@@ -69,5 +80,20 @@ const PopOverComponent = ({
     </MantinePopOver>
   );
 };
+
+const rootStyleProps = [
+  "padding",
+  "paddingLeft",
+  "paddingRight",
+  "paddingTop",
+  "paddingBottom",
+  "border",
+  "borderBottomColor",
+  "borderColor",
+  "borderLeftColor",
+  "borderRightColor",
+  "borderTopColor",
+  "background",
+];
 
 export const PopOver = memo(withComponentWrapper(PopOverComponent));

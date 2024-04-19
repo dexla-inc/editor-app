@@ -524,7 +524,6 @@ export const getParentComponentData = (
         (!isEmpty(node?.onLoad?.data) || !isEmpty(node.onLoad?.endpointId)) &&
         parentComponentNames.includes(node.name)
       ) {
-        console.log("parentData", node);
         const childComponent = getComponentTreeById(nodeTree, componentId);
         if (childComponent) {
           parentWithOnLoad = node;

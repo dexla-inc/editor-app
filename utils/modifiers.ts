@@ -354,6 +354,9 @@ export const requiredModifiers: RequiredModifiers = {
   },
   popOver: {
     position: "bottom",
+    style: {
+      padding: "10px",
+    },
   },
   navLink: {
     color: "Black.6",
@@ -465,7 +468,6 @@ export const requiredModifiers: RequiredModifiers = {
   progress: {
     color: "Primary.6",
     size: "xs",
-    value: 50,
     animate: true,
   },
 };
