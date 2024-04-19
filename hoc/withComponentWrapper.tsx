@@ -127,9 +127,9 @@ export const withComponentWrapper = <T extends Record<string, any>>(
     } as Component;
 
     let id = component.id;
-    if (shareableContent?.parentIndex !== undefined) {
-      id = `${component.id}-${shareableContent?.parentIndex}`;
-    }
+    // if (shareableContent?.parentIndex !== undefined) {
+    //   id = `${component.id}-${shareableContent?.parentIndex}`;
+    // }
 
     const props = {
       component: {

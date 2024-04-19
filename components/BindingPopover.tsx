@@ -10,7 +10,7 @@ import {
 } from "@/utils/branding";
 import { isObjectOrArray } from "@/utils/common";
 import { ICON_SIZE } from "@/utils/config";
-import { BindingTab, ValueProps } from "@/types/dataBinding";
+import { BindingTab, ContextType, ValueProps } from "@/types/dataBinding";
 import {
   ActionIcon,
   Box,
@@ -93,9 +93,9 @@ export default function BindingPopover({
   // );
 
   const currentValue = computeValue<string>({ value }, { actions });
-
+  console.log(Array.of(auth), auth);
   const entitiesDataTreeList: Array<{
-    entity: "auth" | "components" | "browser" | "variables" | "actions";
+    entity: ContextType;
     dataItems: any;
   }> = [
     {
@@ -117,6 +117,10 @@ export default function BindingPopover({
     {
       entity: "actions",
       dataItems: Object.values(actions?.list ?? []),
+    },
+    {
+      entity: "event",
+      dataItems: [{ target: { value: "", checked: "" } }],
     },
   ];
 
@@ -286,6 +290,17 @@ export default function BindingPopover({
                     <Icon name="IconWorldWww" />
                     <Text ml={ML} size={TAB_TEXT_SIZE}>
                       Browser
+                    </Text>
+                  </Center>
+                ),
+              },
+              {
+                value: "event",
+                label: (
+                  <Center>
+                    <Icon name="IconRouteAltRight" />
+                    <Text ml={ML} size={TAB_TEXT_SIZE}>
+                      Event
                     </Text>
                   </Center>
                 ),

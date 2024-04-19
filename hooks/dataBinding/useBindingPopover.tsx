@@ -14,10 +14,11 @@ import { pick } from "next/dist/lib/pick";
 import { useInputsStore } from "@/stores/inputs";
 import { Component } from "@/utils/editor";
 import { useShallow } from "zustand/react/shallow";
+import { ContextType } from "@/types/dataBinding";
 
 type BindType = {
   selectedEntityId: string;
-  entity: "auth" | "components" | "browser" | "variables" | "actions";
+  entity: ContextType;
 };
 
 type Props = {
@@ -203,6 +204,7 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
         }'].${parsed.path}`;
       },
       browser: () => setEntityString({ selectedEntityId, entity }),
+      event: () => setEntityString({ selectedEntityId, entity }),
       variables: () => {
         try {
           const parsed = JSON.parse(selectedEntityId);

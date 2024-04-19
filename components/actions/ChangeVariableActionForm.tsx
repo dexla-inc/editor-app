@@ -19,6 +19,7 @@ export const ArrayVariableForm = ({ form, isPageAction }: Props) => {
     { label: "Remove at index", value: "REMOVE_AT_INDEX" },
     { label: "Remove at start", value: "REMOVE_AT_START" },
     { label: "Remove at last", value: "REMOVE_AT_LAST" },
+    { label: "Toggle item", value: "TOGGLE_ITEM" },
   ];
 
   const method = form.getInputProps("method");

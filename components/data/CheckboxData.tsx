@@ -10,6 +10,11 @@ export const CheckboxData = ({ component, endpoints }: DataProps) => {
       label: "Checked",
       type: "boolean" as FieldType,
     },
+    {
+      name: "optionValue",
+      label: "Value",
+      type: "text" as FieldType,
+    },
   ];
 
   return (
