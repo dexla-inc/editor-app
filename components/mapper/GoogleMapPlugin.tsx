@@ -42,8 +42,14 @@ const GoogleMapPluginComponent = forwardRef<GoogleMap, Props>(
 
     const { options, language, loading, fade, ...componentProps } =
       component.props as GoogleMapProps;
-    const { apiKey, zoom, centerLat, centerLng, markers } = component.onLoad;
-
+    const {
+      apiKey,
+      zoom: zoomValue,
+      centerLat,
+      centerLng,
+      markers,
+    } = component.onLoad;
+    const zoom = Number(zoomValue);
     const center = {
       lat: centerLat ?? defaultCenter.lat,
       lng: centerLng ?? defaultCenter.lng,
