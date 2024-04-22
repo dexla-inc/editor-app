@@ -397,7 +397,11 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                   state.selectedComponentIds ?? [],
                 ).filter((id) => id !== "content-wrapper");
 
-                return { selectedComponentIds };
+                return {
+                  selectedComponentIds: selectedComponentIds.map(
+                    (id) => id.split("-repeated-")[0],
+                  ),
+                };
               },
               false,
               "editorTree/setSelectedComponentIds",

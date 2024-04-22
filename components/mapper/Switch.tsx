@@ -14,10 +14,11 @@ const SwitchComponent = forwardRef(
       useShallow((state) => state.isPreviewMode || state.isLive),
     );
     const { label, triggers, ...componentProps } = component.props as any;
+    const { optionValue } = component?.onLoad ?? {};
 
     const [value, setValue] = useInputValue(
       {
-        value: component?.onLoad?.value ?? "",
+        value: component?.onLoad?.value ?? false,
       },
       component.id!,
     );
@@ -42,6 +43,7 @@ const SwitchComponent = forwardRef(
         label={undefined}
         onChange={handleInputChange}
         checked={Boolean(value)}
+        value={optionValue}
       />
     );
   },
