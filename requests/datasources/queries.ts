@@ -17,8 +17,10 @@ export const getSwagger = async (
     {},
   )) as DataSourceResponse;
 
-  const cacheTag = `/projects/${projectId}/datasources/endpoints`;
-  await evictCache(cacheTag);
+  const datasourceCacheTag = `/projects/${projectId}/datasources`;
+  const endpointsCacheTag = `/projects/${projectId}/datasources/endpoints`;
+  await evictCache(datasourceCacheTag);
+  await evictCache(endpointsCacheTag);
 
   return response;
 };
