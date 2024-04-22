@@ -47,24 +47,24 @@ const PopOverComponent = ({
     "iframe-content",
   );
 
-  const customStyle = merge({}, props.style);
+  const customDropdownStyle = pick(merge({}, style), rootStyleProps);
+  const customStyle = pick(merge({}, style), styleProps);
 
   return (
     <MantinePopOver
       withinPortal
       trapFocus={false}
       {...(!isPreviewMode && showInEditor ? { opened: true } : {})}
-      width="auto"
       portalProps={{
         target: target,
       }}
       middlewares={{ flip: false, shift: false, inline: true }}
       {...restProps}
       {...componentProps}
-      maw="fit-content"
+      style={{ ...customStyle }}
       styles={{
         dropdown: {
-          ...pick(customStyle, rootStyleProps),
+          ...customDropdownStyle,
         },
       }}
     >
@@ -95,5 +95,6 @@ const rootStyleProps = [
   "borderTopColor",
   "background",
 ];
+const styleProps = ["width", "maxWidth"];
 
 export const PopOver = memo(withComponentWrapper(PopOverComponent));
