@@ -56,7 +56,9 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
   const browser = useRouter();
   const auth = useDataSourceStore((state) => state.getAuthState());
   const inputsStore = useInputsStore((state) => state.inputValues);
-
+  const selectedComponentId = useEditorTreeStore(
+    (state) => state.selectedComponentIds?.at(-1),
+  );
   const allInputComponents = useEditorTreeStore(
     useShallow((state) =>
       Object.values(state.componentMutableAttrs).reduce((acc, c) => {
@@ -192,6 +194,17 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
     });
   }
 
+  const selectedComponentValue = inputsStore[selectedComponentId!];
+  console.log({ inputsStore });
+  const event = [
+    {
+      target: {
+        checked: selectedComponentValue,
+        value: null,
+      },
+    },
+  ];
+
   const getEntityEditorValue = ({ selectedEntityId, entity }: BindType) => {
     const entityHandlers = {
       auth: () => setEntityString({ selectedEntityId, entity }),
@@ -226,6 +239,7 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
     browserList,
     components,
     variables,
+    event,
     getEntityEditorValue,
   };
 };

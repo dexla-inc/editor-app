@@ -96,13 +96,7 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
         const DataTypeIcon = isDynamic ? IconPlugOff : IconPlug;
 
         return (
-          <Group
-            key={f.name}
-            noWrap
-            align="flex-end"
-            spacing={10}
-            grow={!hasParentComponentData}
-          >
+          <Group key={f.name} noWrap align="flex-end" spacing={10} w="100%">
             {isDynamic ? (
               <DynamicFormFieldsBuilder
                 form={form}
