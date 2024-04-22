@@ -6,13 +6,18 @@ import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useEffect } from "react";
 import { ComponentToBindFromSelect } from "../ComponentToBindFromSelect";
+import merge from "lodash.merge";
 
 export const CommonData = ({ component }: DataProps) => {
+  const onLoadValues = merge(
+    { currentState: { static: "default", dataType: "static" } },
+    { isVisible: { static: true, dataType: "static" } },
+    component?.onLoad,
+  );
+
   const form = useForm({
     initialValues: {
-      onLoad: {
-        currentState: component?.onLoad?.currentState || "default",
-      },
+      onLoad: onLoadValues,
     },
   });
 
