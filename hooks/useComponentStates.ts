@@ -51,6 +51,7 @@ const appearencesByComponent: ComponentAppearances = {
     { label: "Opened", value: "opened" },
   ],
   Drawer: [],
+  Badge: [{ label: "Hover", value: "hover" }],
   Modal: [],
   BarChart: [],
   LineChart: [],

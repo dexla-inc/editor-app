@@ -27,13 +27,14 @@ import {
   Group,
   Select,
   Stack,
+  TextInput,
   Title,
-  useMantineTheme,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
-import { IconArrowsMaximize } from "@tabler/icons-react";
+import { IconArrowsMaximize, IconSearch } from "@tabler/icons-react";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import set from "lodash.set";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 type EditorNavbarThemesSectionProps = {
@@ -161,6 +162,10 @@ export const EditorNavbarThemesSection =
       }),
     );
 
+    const [searchResults, setSearchResults] = useState(
+      form.values?.colors ?? [],
+    );
+
     return (
       <form onSubmit={form.onSubmit(onSubmit)}>
         <TypographyModal
@@ -174,34 +179,48 @@ export const EditorNavbarThemesSection =
             <Title order={6} fw={600}>
               Color palette
             </Title>
-            {form.values?.colors &&
-              form.values?.colors.map(({ friendlyName, hex, name }, index) => (
-                <ColorSelector
-                  size={30}
-                  key={`color-${name}`}
-                  friendlyName={friendlyName}
-                  hex={hex}
-                  isDefault={form.values.colors[index].isDefault}
-                  onValueChange={(value) => {
+            <TextInput
+              placeholder="Search by hex"
+              icon={<IconSearch size={ICON_SIZE} />}
+              onChange={(event) => {
+                const value = event.currentTarget.value.toLowerCase();
+                const _colors = userTheme?.colors.filter(
+                  (color) =>
+                    color.name.toLowerCase().includes(value) ||
+                    color.hex.toLowerCase().includes(value) ||
+                    color.friendlyName.toLowerCase().includes(value),
+                );
+                setSearchResults(_colors ?? []);
+              }}
+              mb="xs"
+            />
+            {searchResults.map(({ friendlyName, hex, name }, index) => (
+              <ColorSelector
+                size={30}
+                key={`color-${name}`}
+                friendlyName={friendlyName}
+                hex={hex}
+                isDefault={form.values.colors[index].isDefault}
+                onValueChange={(value) => {
+                  form.setFieldValue(
+                    `colors.${index}.friendlyName`,
+                    value.friendlyName,
+                  );
+                  form.setFieldValue(`colors.${index}.hex`, value.hex);
+                  if (!form.values.colors[index].isDefault) {
                     form.setFieldValue(
-                      `colors.${index}.friendlyName`,
+                      `colors.${index}.name`,
                       value.friendlyName,
                     );
-                    form.setFieldValue(`colors.${index}.hex`, value.hex);
-                    if (!form.values.colors[index].isDefault) {
-                      form.setFieldValue(
-                        `colors.${index}.name`,
-                        value.friendlyName,
-                      );
-                    }
-                  }}
-                  deleteColor={() => {
-                    if (!form.values.colors[index].isDefault) {
-                      form.removeListItem("colors", index);
-                    }
-                  }}
-                />
-              ))}
+                  }
+                }}
+                deleteColor={() => {
+                  if (!form.values.colors[index].isDefault) {
+                    form.removeListItem("colors", index);
+                  }
+                }}
+              />
+            ))}
 
             <Button
               mt="md"
