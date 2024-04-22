@@ -61,7 +61,6 @@ const PopOverComponent = ({
       middlewares={{ flip: false, shift: false, inline: true }}
       {...restProps}
       {...componentProps}
-      maw="fit-content"
       styles={{
         dropdown: {
           ...pick(customStyle, rootStyleProps),
