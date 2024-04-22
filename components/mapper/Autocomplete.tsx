@@ -35,7 +35,7 @@ const AutocompleteComponent = forwardRef(
       {
         value: component.onLoad?.value ?? "",
       },
-      component.id!,
+      props.id!,
     );
 
     const { dataLabelKey, dataValueKey } = component.onLoad ?? {};

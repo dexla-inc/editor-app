@@ -37,7 +37,7 @@ const CheckboxComponent = forwardRef<HTMLInputElement, Props>(
       {
         value: component?.onLoad?.value ?? false,
       },
-      component.id!,
+      props.id!,
     );
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {

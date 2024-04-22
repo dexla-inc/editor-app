@@ -20,7 +20,7 @@ const SwitchComponent = forwardRef(
       {
         value: component?.onLoad?.value ?? false,
       },
-      component.id!,
+      props.id!,
     );
 
     const handleInputChange = async (e: ChangeEvent<HTMLInputElement>) => {

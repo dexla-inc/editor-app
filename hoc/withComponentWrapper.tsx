@@ -136,7 +136,7 @@ export const withComponentWrapper = <T extends Record<string, any>>(
         ...componentTree,
         props: propsWithOverwrites,
         onLoad: computedOnLoad ?? {},
-        id,
+        // id,
       },
       renderTree,
       ...(isResizing || !isEditorMode ? {} : droppable),
