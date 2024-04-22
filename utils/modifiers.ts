@@ -356,6 +356,8 @@ export const requiredModifiers: RequiredModifiers = {
     position: "bottom",
     style: {
       padding: "10px",
+      width: "fit-content",
+      maxWidth: "fit-content",
     },
   },
   navLink: {

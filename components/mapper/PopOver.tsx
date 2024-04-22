@@ -47,7 +47,8 @@ const PopOverComponent = ({
     "iframe-content",
   );
 
-  const customStyle = merge({}, style);
+  const customDropdownStyle = pick(merge({}, style), rootStyleProps);
+  const customStyle = pick(merge({}, style), styleProps);
 
   return (
     <MantinePopOver
@@ -60,10 +61,10 @@ const PopOverComponent = ({
       middlewares={{ flip: false, shift: false, inline: true }}
       {...restProps}
       {...componentProps}
-      style={{ width: "auto", maxWidth: "fit-content" }}
+      style={{ ...customStyle }}
       styles={{
         dropdown: {
-          ...pick(customStyle, rootStyleProps),
+          ...customDropdownStyle,
         },
       }}
     >
@@ -94,5 +95,6 @@ const rootStyleProps = [
   "borderTopColor",
   "background",
 ];
+const styleProps = ["width", "maxWidth"];
 
 export const PopOver = memo(withComponentWrapper(PopOverComponent));
