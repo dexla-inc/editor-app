@@ -58,7 +58,7 @@ const InputComponent = forwardRef(
       {
         value: component?.onLoad?.value ?? "",
       },
-      props.id!,
+      id!,
     );
 
     const isClearable = clearable && !!value;
