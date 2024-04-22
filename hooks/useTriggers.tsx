@@ -35,9 +35,6 @@ export const useTriggers = ({
     actionResponses[actionId] = response;
   };
 
-  const customComputeValue: ComputeValueProps = (args) =>
-    computeValue(args, { actions: actionResponses });
-
   const triggers = () => {
     const actions: Action[] = entity?.actions ?? [];
 
@@ -50,6 +47,9 @@ export const useTriggers = ({
         return {
           ...acc,
           [action.trigger]: async (e: any) => {
+            const customComputeValue: ComputeValueProps = (args) =>
+              computeValue(args, { actions: { ...actionResponses }, event: e });
+
             return actionMapper[action.action.name].action({
               // @ts-ignore
               action: action.action,

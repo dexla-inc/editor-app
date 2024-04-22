@@ -34,7 +34,7 @@ export const ComponentToBindWrapper = ({
   const styles = useTextInputStyles(theme);
 
   return (
-    <Flex mih={50} align="end" gap="xs" pos="relative">
+    <Flex mih={50} align="end" gap="xs" pos="relative" style={{ flexGrow: 1 }}>
       {value?.dataType === "boundCode" ? (
         <Stack pos="absolute" spacing={0} w="100%">
           {label && <TopLabel text={label} required />}

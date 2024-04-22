@@ -23,6 +23,8 @@ export type ClipboardProps = {
   componentStates: Record<string, any>;
 };
 
+export type Tab = "design" | "data" | "actions";
+
 export type EditorState = {
   copiedComponent?: ComponentTree;
   componentToAdd?: ComponentStructure;
@@ -76,6 +78,8 @@ export type EditorState = {
   activePage?: PageResponse | null;
   actionsResponse: ActionsResponsesType;
   setActionsResponse: (actionId: string, response: any) => void;
+  asideSelectedTab: Tab;
+  setAsideSelectedTab: (tab: Tab) => void;
 };
 
 // creates a store with undo/redo capability
@@ -83,6 +87,8 @@ export const useEditorStore = create<EditorState>()(
   // @ts-ignore
   devtools(
     (set) => ({
+      asideSelectedTab: "design",
+      setAsideSelectedTab: (tab) => set({ asideSelectedTab: tab }),
       setActionsResponse: (actionId, response) =>
         set(
           (state) => ({

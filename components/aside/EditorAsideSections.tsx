@@ -1,7 +1,7 @@
 import SidebarSection from "@/components/SidebarSection";
 import { StateSelector } from "@/components/aside/StateSelector";
 
-import { useEditorStore } from "@/stores/editor";
+import { Tab, useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { componentMapper } from "@/utils/componentMapper";
 import { dataMapper } from "@/utils/dataMapper";
@@ -14,12 +14,10 @@ import {
   Text,
 } from "@mantine/core";
 import intersection from "lodash.intersection";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useEditorTreeStore } from "../../stores/editorTree";
 import { ActionsTab, Data, modifierSectionMapper } from "./dynamicModifiers";
 import { useShallow } from "zustand/react/shallow";
-
-type Tab = "design" | "data" | "actions";
 
 const EditorAsideSections = () => {
   const setOpenAction = useEditorStore((state) => state.setOpenAction);
@@ -33,8 +31,10 @@ const EditorAsideSections = () => {
     (state) => state.selectedComponentIds?.at(-1),
   );
   const openAction = useEditorStore((state) => state.openAction);
-
-  const [tab, setTab] = useState<Tab>("design");
+  const asideSelectedTab = useEditorStore((state) => state.asideSelectedTab);
+  const setAsideSelectedTab = useEditorStore(
+    (state) => state.setAsideSelectedTab,
+  );
 
   const componentName = useEditorTreeStore(
     useShallow(
@@ -58,7 +58,7 @@ const EditorAsideSections = () => {
   useEffect(() => {
     selectedComponentId !== openAction?.componentId &&
       setOpenAction({ actionIds: undefined, componentId: undefined });
-    setTab("design");
+    setAsideSelectedTab("design");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedComponentId]);
 
@@ -121,21 +121,21 @@ const EditorAsideSections = () => {
           size="xs"
           style={{ width: "100%" }}
           data={tabs}
-          onChange={(value) => {
-            setTab(value as Tab);
+          onChange={(value: Tab) => {
+            setAsideSelectedTab(value);
             setOpenAction({ actionIds: undefined, componentId: undefined });
           }}
-          value={tab}
+          value={asideSelectedTab}
         />
       </Flex>
-      {tab === "design" && (
+      {asideSelectedTab === "design" && (
         <Stack spacing="xs">
           {componentName && <StateSelector componentName={componentName} />}
           {designSections}
         </Stack>
       )}
-      {tab === "data" && <Data />}
-      {tab === "actions" && <ActionsTab />}
+      {asideSelectedTab === "data" && <Data />}
+      {asideSelectedTab === "actions" && <ActionsTab />}
     </Stack>
   );
 };

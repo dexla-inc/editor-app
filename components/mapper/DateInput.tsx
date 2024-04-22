@@ -46,7 +46,7 @@ const DateInputComponent = ({
     {
       value: component.onLoad?.value ?? "",
     },
-    component.id!,
+    props.id!,
   );
   const { onChange, ...restTriggers } = triggers || {};
 

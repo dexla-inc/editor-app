@@ -7,6 +7,13 @@ export type BindingTab =
   | "browser";
 
 export type DataType = "static" | "dynamic" | "boundCode";
+export type ContextType =
+  | "auth"
+  | "components"
+  | "actions"
+  | "browser"
+  | "event"
+  | "variables";
 
 export type ValueProps = Partial<{
   dataType: DataType;
@@ -23,7 +30,7 @@ export type GetValueProps = {
 
 export type ComputeValuePropCtx = Record<
   string,
-  { actions?: ActionsResponsesType }
+  { actions?: ActionsResponsesType; event?: Event }
 >;
 
 export type ComputeValueProps = <T>(

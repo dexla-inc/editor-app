@@ -4,10 +4,7 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 import { useShallow } from "zustand/react/shallow";
 import { useComputeCurrentState } from "@/hooks/reactQuery/useComputeCurrentState";
 import { useEditorStore } from "@/stores/editor";
-import {
-  useComponentContextEventHandler,
-  useComponentContextMenu,
-} from "@/hooks/useComponentContextMenu";
+import { useComponentContextEventHandler } from "@/hooks/useComponentContextMenu";
 import { useTriggers } from "@/hooks/useTriggers";
 import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
 import { useEditorShadows } from "@/hooks/useEditorShadows";
@@ -18,6 +15,7 @@ import { ComponentToolbox } from "@/components/ComponentToolbox";
 import { WithComponentWrapperProps } from "@/types/component";
 import { Component } from "@/utils/editor";
 import { Router, useRouter } from "next/router";
+import merge from "lodash.merge";
 
 export const withComponentWrapper = <T extends Record<string, any>>(
   Component: ComponentType<T>,
@@ -80,12 +78,8 @@ export const withComponentWrapper = <T extends Record<string, any>>(
 
     const isResizing = useEditorStore((state) => state.isResizing);
 
-    const { componentContextMenu, forceDestroyContextMenu } =
-      useComponentContextMenu();
-
     const handleContextMenu = useComponentContextEventHandler(
-      { ...{}, ...componentTree, ...component },
-      componentContextMenu,
+      merge({}, componentTree, component),
     );
 
     const router = useRouter();
@@ -117,8 +111,6 @@ export const withComponentWrapper = <T extends Record<string, any>>(
 
     const handleClick = useEditorClickHandler(
       componentTree.id!,
-      isEditorMode,
-      forceDestroyContextMenu,
       propsWithOverwrites,
       isPicking,
     );
@@ -133,16 +125,22 @@ export const withComponentWrapper = <T extends Record<string, any>>(
       fixedPosition: component.fixedPosition,
     } as Component;
 
+    let id = component.id;
+    if (shareableContent?.parentIndex !== undefined) {
+      id = `${component.id}-repeated-${shareableContent?.parentIndex}`;
+    }
+
     const props = {
       component: {
         ...component,
         ...componentTree,
         props: propsWithOverwrites,
         onLoad: computedOnLoad ?? {},
+        // id,
       },
       renderTree,
       ...(isResizing || !isEditorMode ? {} : droppable),
-      id: component.id,
+      id,
       style: childStyles,
       sx: tealOutline,
       ...(isEditorMode && {

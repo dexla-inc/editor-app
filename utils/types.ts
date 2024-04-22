@@ -46,4 +46,5 @@ export type ArrayMethods =
   | "INSERT_AT_INDEX"
   | "REMOVE_AT_INDEX"
   | "REMOVE_AT_START"
-  | "REMOVE_AT_LAST";
+  | "REMOVE_AT_LAST"
+  | "TOGGLE_ITEM";

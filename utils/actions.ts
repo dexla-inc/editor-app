@@ -718,6 +718,16 @@ const arrayActions = {
     value.pop();
     return value;
   },
+
+  TOGGLE_ITEM: ({ value = [], newValue }: ArrayActionsType) => {
+    const index = value.indexOf(newValue);
+    if (index === -1) {
+      value.push(newValue);
+    } else {
+      value.splice(index, 1);
+    }
+    return value;
+  },
 };
 
 const updateVariableArray = (
@@ -735,7 +745,8 @@ const updateVariableArray = (
   }
 
   const _value = variable.value ?? variable.defaultValue;
-  let value = typeof _value === "string" ? JSON.parse(_value ?? "[]") : _value;
+  let value =
+    typeof _value === "string" ? JSON.parse(_value ?? "[]") : _value ?? [];
   newValue = typeof newValue === "string" ? JSON.parse(newValue) : newValue;
 
   if (action.method) {

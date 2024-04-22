@@ -10,7 +10,6 @@ import {
 } from "@/utils/branding";
 import { DROP_INDICATOR_WIDTH } from "@/utils/config";
 import { useMemo } from "react";
-import { useAppMode } from "./useAppMode";
 import { useEditorTreeStore } from "@/stores/editorTree";
 
 type Props = {

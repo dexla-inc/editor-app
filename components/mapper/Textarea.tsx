@@ -31,7 +31,7 @@ const TextareaComponent = forwardRef(
       {
         value: component?.onLoad?.value ?? "",
       },
-      component.id!,
+      props.id!,
     );
 
     // handle changes to input field
