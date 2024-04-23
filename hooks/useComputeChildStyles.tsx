@@ -19,7 +19,6 @@ export const useComputeChildStyles = ({
   const childStyles: CSSObject = {
     position: "relative",
     ...propsWithOverwrites.style,
-    ...(currentState === "hidden" && { display: "none" }),
     ...(currentState === "disabled" &&
       !isEditorMode && { pointerEvents: "none" }),
 

@@ -25,18 +25,21 @@ const CheckboxComponent = forwardRef<HTMLInputElement, Props>(
     );
     const { label, triggers, bg, textColor, ...componentProps } =
       component.props as any;
+    const { optionValue } = component?.onLoad ?? {};
     const { color, backgroundColor } = useChangeState({ bg, textColor });
     const { borderStyle } = useBrandingStyles();
     const customStyle = merge({}, borderStyle, props.style, {
       backgroundColor,
       color,
     });
+
     const [value, setValue] = useInputValue(
       {
-        value: component?.onLoad?.value ?? "false",
+        value: component?.onLoad?.value ?? false,
       },
-      component.id!,
+      props.id!,
     );
+
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
       if (!isPreviewMode) {
         e.preventDefault();
@@ -46,6 +49,7 @@ const CheckboxComponent = forwardRef<HTMLInputElement, Props>(
       setValue(newValue);
       triggers?.onChange?.(e);
     };
+
     return (
       <MantineCheckbox
         ref={ref}
@@ -70,6 +74,7 @@ const CheckboxComponent = forwardRef<HTMLInputElement, Props>(
         }}
         label={label}
         checked={Boolean(value)}
+        value={optionValue}
         {...triggers}
         onChange={handleInputChange}
         wrapperProps={{ "data-id": component.id }}

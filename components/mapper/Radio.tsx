@@ -27,7 +27,7 @@ const RadioComponent = forwardRef(
       {
         value: component?.onLoad?.value ?? "",
       },
-      component.id!,
+      props.id!,
     );
 
     const { onChange, ...otherTriggers } = triggers || {};

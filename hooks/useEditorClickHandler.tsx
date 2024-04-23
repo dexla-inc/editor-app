@@ -1,20 +1,24 @@
 import { ComponentToBind, useEditorStore } from "@/stores/editor";
 import { useCallback } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
+import { useComponentContextMenu } from "@/hooks/useComponentContextMenu";
 
 export const useEditorClickHandler = (
   componentId: string,
-  isEditorMode: boolean,
-  forceDestroyContextMenu: any,
   propsWithOverwrites: any,
   isPicking?: ComponentToBind,
 ) => {
+  const isEditorMode = useEditorTreeStore(
+    (state) => !state.isPreviewMode && !state.isLive,
+  );
   const setComponentToBind = useEditorStore(
     (state) => state.setComponentToBind,
   );
   const setSelectedComponentIds = useEditorTreeStore(
     (state) => state.setSelectedComponentIds,
   );
+  const { forceDestroyContextMenu } = useComponentContextMenu();
+
   return useCallback(
     (e: any) => {
       if (isEditorMode) {

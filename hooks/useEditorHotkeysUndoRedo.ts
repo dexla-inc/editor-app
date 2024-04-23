@@ -1,4 +1,3 @@
-import { useAppMode } from "@/hooks/useAppMode";
 import { useHotkeysOnIframe } from "@/hooks/useHotkeysOnIframe";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useHotkeys } from "@mantine/hooks";

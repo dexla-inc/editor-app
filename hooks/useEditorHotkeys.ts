@@ -1,4 +1,3 @@
-import { useAppMode } from "@/hooks/useAppMode";
 import { useHotkeysOnIframe } from "@/hooks/useHotkeysOnIframe";
 import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";

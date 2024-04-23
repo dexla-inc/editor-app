@@ -24,6 +24,7 @@ export type ComponentStructure = {
 } & Component;
 
 export type EditableComponentMapper = {
+  id: string;
   renderTree: RenderTreeFunc;
   component: ComponentTree & Component;
   shareableContent?: any;

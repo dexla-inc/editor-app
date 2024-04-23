@@ -2,7 +2,7 @@ import { Icon } from "@/components/Icon";
 import { ActionButtons } from "@/components/actions/ActionButtons";
 import { SelectActionForm } from "@/components/pages/SelectActionForm";
 import { PageResponse } from "@/requests/pages/types";
-import { Action } from "@/utils/actions";
+import { Action, showSequentialActionButton } from "@/utils/actions";
 import { Button, Divider, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
@@ -60,19 +60,18 @@ export const ActionSettingsForm = ({
   return (
     <Stack spacing="xs">
       {children && children({ form })}
-      {action.action.name === "apiCall" ||
-        (action.action.name === "changeVariable" && (
-          <Button
-            size="xs"
-            type="button"
-            onClick={openSequential}
-            variant="light"
-            mt="xs"
-            leftIcon={<Icon name="IconPlus"></Icon>}
-          >
-            Add Sequential Action
-          </Button>
-        ))}
+      {showSequentialActionButton(action.action.name) && (
+        <Button
+          size="xs"
+          type="button"
+          onClick={openSequential}
+          variant="light"
+          mt="xs"
+          leftIcon={<Icon name="IconPlus"></Icon>}
+        >
+          Add Sequential Action
+        </Button>
+      )}
       {addSequentialForm && (
         <>
           <Divider my="lg" label="Sequential Action" labelPosition="center" />

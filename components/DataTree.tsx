@@ -3,11 +3,12 @@ import { jsonInString, safeJsonParse } from "@/utils/common";
 import { Button, Flex, ScrollArea, Stack } from "@mantine/core";
 import { useMemo } from "react";
 import DataItemValuePreview from "./DataItemValuePreview";
+import { ContextType } from "@/types/dataBinding";
 
 type Props = {
   dataItems: any[];
   onItemSelection: (selected: string) => void;
-  type?: "components" | "variables" | "auth" | "browser" | "actions";
+  type?: ContextType;
   filterKeyword?: string;
 };
 
@@ -52,10 +53,10 @@ const DataItem = ({ onClick, item, onItemSelection, type }: DataItemProps) => {
   }
   if (type === "components")
     return <DataItemButton item={item} onClick={onClick} />;
-  if (type === "auth" || type === "browser")
+  if (["auth", "browser", "event"].includes(type!))
     return (
       <JSONSelector
-        name={type}
+        name={type!}
         data={item}
         onSelectValue={(selected) => onItemSelection(`${selected.path}`)}
       />

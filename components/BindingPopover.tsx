@@ -10,7 +10,7 @@ import {
 } from "@/utils/branding";
 import { isObjectOrArray } from "@/utils/common";
 import { ICON_SIZE } from "@/utils/config";
-import { BindingTab, ValueProps } from "@/types/dataBinding";
+import { BindingTab, ContextType, ValueProps } from "@/types/dataBinding";
 import {
   ActionIcon,
   Box,
@@ -29,6 +29,8 @@ import {
 import { IconExternalLink, IconPlugConnected } from "@tabler/icons-react";
 import { useState } from "react";
 import { useDataBinding } from "@/hooks/dataBinding/useDataBinding";
+import { useEditorTreeStore } from "@/stores/editorTree";
+import { useEditorStore } from "@/stores/editor";
 
 const TAB_TEXT_SIZE = "xs";
 const ML = 10;
@@ -56,12 +58,15 @@ export default function BindingPopover({
   const [filterKeyword, setFilterKeyword] = useState<string>("");
   const { computeValue } = useDataBinding();
   const [selectedItem, setSelectedItem] = useState<string>();
+  const asideSelectedTab = useEditorStore((state) => state.asideSelectedTab);
+
   const {
     actions,
     variables,
     components,
     browserList,
     auth,
+    event,
     getEntityEditorValue,
   } = useBindingPopover({ isPageAction });
   const onChangeDataTypeAsBoundCode = () => {
@@ -93,9 +98,8 @@ export default function BindingPopover({
   // );
 
   const currentValue = computeValue<string>({ value }, { actions });
-
   const entitiesDataTreeList: Array<{
-    entity: "auth" | "components" | "browser" | "variables" | "actions";
+    entity: ContextType;
     dataItems: any;
   }> = [
     {
@@ -118,7 +122,84 @@ export default function BindingPopover({
       entity: "actions",
       dataItems: Object.values(actions?.list ?? []),
     },
+    {
+      entity: "event",
+      dataItems: event,
+    },
   ];
+
+  const segmentedTabOptions = [
+    {
+      value: "components",
+      label: (
+        <Center>
+          <Icon name="IconComponents" />
+          <Text ml={ML} size={TAB_TEXT_SIZE}>
+            Components
+          </Text>
+        </Center>
+      ),
+    },
+    // TODO: Update Variables so Objects and Arrays are supported, like in actions
+    {
+      value: "variables",
+      label: (
+        <Center>
+          <Icon name="IconVariable" />
+          <Text ml={ML} size={TAB_TEXT_SIZE}>
+            Variables
+          </Text>
+        </Center>
+      ),
+    },
+    {
+      value: "actions",
+      label: (
+        <Center>
+          <Icon name="IconBolt" />
+          <Text ml={ML} size={TAB_TEXT_SIZE}>
+            Actions
+          </Text>
+        </Center>
+      ),
+    },
+    {
+      value: "auth",
+      label: (
+        <Center>
+          <Icon name="IconLogin" />
+          <Text ml={ML} size={TAB_TEXT_SIZE}>
+            Auth
+          </Text>
+        </Center>
+      ),
+    },
+    {
+      value: "browser",
+      label: (
+        <Center>
+          <Icon name="IconWorldWww" />
+          <Text ml={ML} size={TAB_TEXT_SIZE}>
+            Browser
+          </Text>
+        </Center>
+      ),
+    },
+  ];
+
+  if (asideSelectedTab === "actions") {
+    segmentedTabOptions.push({
+      value: "event",
+      label: (
+        <Center>
+          <Icon name="IconRouteAltRight" />
+          <Text ml={ML} size={TAB_TEXT_SIZE}>
+            Event
+          </Text>
+        </Center>
+      ),
+    });
+  }
 
   return (
     <Popover
@@ -233,64 +314,7 @@ export default function BindingPopover({
           <SegmentedControl
             value={tab}
             onChange={(value) => setTab(value as BindingTab)}
-            data={[
-              {
-                value: "components",
-                label: (
-                  <Center>
-                    <Icon name="IconComponents" />
-                    <Text ml={ML} size={TAB_TEXT_SIZE}>
-                      Components
-                    </Text>
-                  </Center>
-                ),
-              },
-              // TODO: Update Variables so Objects and Arrays are supported, like in actions
-              {
-                value: "variables",
-                label: (
-                  <Center>
-                    <Icon name="IconVariable" />
-                    <Text ml={ML} size={TAB_TEXT_SIZE}>
-                      Variables
-                    </Text>
-                  </Center>
-                ),
-              },
-              {
-                value: "actions",
-                label: (
-                  <Center>
-                    <Icon name="IconBolt" />
-                    <Text ml={ML} size={TAB_TEXT_SIZE}>
-                      Actions
-                    </Text>
-                  </Center>
-                ),
-              },
-              {
-                value: "auth",
-                label: (
-                  <Center>
-                    <Icon name="IconLogin" />
-                    <Text ml={ML} size={TAB_TEXT_SIZE}>
-                      Auth
-                    </Text>
-                  </Center>
-                ),
-              },
-              {
-                value: "browser",
-                label: (
-                  <Center>
-                    <Icon name="IconWorldWww" />
-                    <Text ml={ML} size={TAB_TEXT_SIZE}>
-                      Browser
-                    </Text>
-                  </Center>
-                ),
-              },
-            ]}
+            data={segmentedTabOptions}
           />
           <TextInput
             size="xs"

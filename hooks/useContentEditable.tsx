@@ -1,6 +1,5 @@
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useCallback, useState } from "react";
-import { useAppMode } from "./useAppMode";
 
 export const useContentEditable = (componentId: string, ref: any) => {
   const [isEditable, setIsEditable] = useState(false);
@@ -35,7 +34,7 @@ export const useContentEditable = (componentId: string, ref: any) => {
       });
     }
     toggleEdit(false);
-  }, [componentId, toggleEdit]);
+  }, [componentId, toggleEdit, ref]);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {

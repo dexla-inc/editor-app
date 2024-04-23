@@ -283,14 +283,9 @@ export const useComponentContextMenu = () => {
   };
 };
 
-export const useComponentContextEventHandler = (
-  component: Component,
-  componentContextMenu: (
-    component: Component,
-    x?: number | undefined,
-    y?: number | undefined,
-  ) => MouseEventHandler,
-) => {
+export const useComponentContextEventHandler = (component: Component) => {
+  const { componentContextMenu } = useComponentContextMenu();
+
   return useCallback(
     (event: any) => {
       if (event.shiftKey || event.ctrlKey || event.metaKey) {
