@@ -782,6 +782,10 @@ export const useResetVariableAction = async ({
   resetVariable(action.variableId);
 };
 
+export function showSequentialActionButton(actionName: string) {
+  return actionName === "apiCall" || actionName === "changeVariable";
+}
+
 export const actionMapper = {
   alert: {
     action: useDebugAction,
