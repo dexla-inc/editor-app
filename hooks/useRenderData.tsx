@@ -46,7 +46,7 @@ export const useRenderData = ({ component }: UseRenderDataProps) => {
       });
     } else {
       return component.children?.map((child) =>
-        renderTree(child, merge({}, shareableContent, data ?? {})),
+        renderTree(child, merge({}, shareableContent, { data: data ?? {} })),
       );
     }
   };
