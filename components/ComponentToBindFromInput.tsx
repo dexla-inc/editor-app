@@ -7,6 +7,7 @@ import {
   NumberInputProps,
   SegmentedControlProps,
   Stack,
+  Text,
   TextInput,
   TextInputProps,
 } from "@mantine/core";
@@ -54,6 +55,7 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
   isPageAction,
   ...props
 }: ComponentToBindFromInputProps<T>) => {
+  console.log(label, fieldType);
   const setHighlightedComponentId = useEditorStore(
     (state) => state.setHighlightedComponentId,
   );
@@ -76,11 +78,11 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
       value={value}
       isPageAction={isPageAction}
     >
-      {fieldType === "number" ? (
+      {["number", "integer"].includes(fieldType) ? (
         <NumberInput
           {...commonProps}
           placeholder={placeholder}
-          value={parseFloatExtension(value?.static)}
+          value={value?.static ? parseFloatExtension(value?.static) : ""}
           onChange={(val) =>
             onChange({
               ...value,
@@ -90,8 +92,12 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
           }
           {...props}
           precision={decimalPlaces}
-          parser={(value) => parseFloatExtension(value).toString()}
-          formatter={(value) => parseFloatExtension(value).toString()}
+          parser={(value) =>
+            value ? parseFloatExtension(value).toString() : ""
+          }
+          formatter={(value) =>
+            value ? parseFloatExtension(value).toString() : ""
+          }
         />
       ) : fieldType === "boolean" ? (
         <Stack w="100%">
@@ -127,8 +133,19 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
           {...props}
         />
       ) : fieldType === "array" ? (
-        <Stack w="100%">
+        <Stack w="100%" spacing={0}>
           <TopLabel text={label} required />
+          {
+            // @ts-ignore
+            props?.description && (
+              <Text size={9} color="dimmed">
+                {
+                  // @ts-ignore
+                  props?.description
+                }
+              </Text>
+            )
+          }
           <MonacoEditorJson
             {...commonProps}
             value={value?.static?.toString() || (props.defaultValue as string)}
