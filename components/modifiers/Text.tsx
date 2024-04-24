@@ -117,21 +117,18 @@ const Modifier = withModifier(({ selectedComponent }) => {
               label="Style"
               data={textProps}
               getInputProps={(val) => form.getInputProps(val)}
-              onChange={useCallback(
-                (prop: string, value: string | number) => {
-                  form.setFieldValue(prop, value);
-                  debouncedTreeComponentAttrsUpdate({
-                    attrs: {
-                      props: {
-                        style: {
-                          [prop]: value,
-                        },
+              onChange={(prop: string, value: string | number) => {
+                form.setFieldValue(prop, value);
+                debouncedTreeComponentAttrsUpdate({
+                  attrs: {
+                    props: {
+                      style: {
+                        [prop]: value,
                       },
                     },
-                  });
-                },
-                [form],
-              )}
+                  },
+                });
+              }}
             />
           </>
         )}
