@@ -9,6 +9,7 @@ export type FieldType =
   | "date"
   | "unit"
   | "yesno"
+  | "integer"
   | Lowercase<FrontEndTypes>;
 
 type StaticFormFieldsBuilderProps = {
