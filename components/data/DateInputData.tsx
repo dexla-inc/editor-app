@@ -17,6 +17,7 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 import { useComponentStates } from "@/hooks/useComponentStates";
 import { ValueProps } from "@/types/dataBinding";
 import merge from "lodash.merge";
+import { useDataBinding } from "@/hooks/dataBinding/useDataBinding";
 
 export const DateInputData = ({ component, endpoints }: DataProps) => {
   const fields = [
@@ -28,9 +29,12 @@ export const DateInputData = ({ component, endpoints }: DataProps) => {
   ];
 
   const editorTree = useEditorTreeStore((state) => state.tree);
+  const { computeValue } = useDataBinding();
   const hasParentComponentData = !!getParentComponentData(
     editorTree.root,
     component.id!,
+    endpoints!,
+    computeValue,
   );
   const { getComponentsStates } = useComponentStates();
 
