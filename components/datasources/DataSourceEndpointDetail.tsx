@@ -448,11 +448,14 @@ export const DataSourceEndpointDetail = ({
 
         handleInputChange("errorExampleResponse", errorExampleResponse);
       } else {
-        // If the result is an array, limit it to the first 10 items
-        const result = await response.json();
+        // If the result is an array, limit it to the first 2 items
+        let result = {};
+
+        if (response.headers.get("content-type")?.includes("application/json"))
+          result = await response.json();
         let exampleResult = result;
         if (Array.isArray(result)) {
-          exampleResult = result.slice(0, 10);
+          exampleResult = result.slice(0, 2);
         }
 
         const exampleResponse = JSON.stringify(exampleResult, null, 2);
