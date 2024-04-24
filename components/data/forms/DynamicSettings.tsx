@@ -184,6 +184,7 @@ export const DynamicSettings = ({
               <Select
                 clearable
                 label="Results key"
+                searchable
                 placeholder="user.list"
                 data={resultsKeysList}
                 {...form.getInputProps("onLoad.resultsKey")}
