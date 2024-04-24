@@ -195,7 +195,7 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
   }
 
   const selectedComponentValue = inputsStore[selectedComponentId!];
-  console.log({ inputsStore });
+
   const event = [
     {
       target: {
