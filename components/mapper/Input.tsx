@@ -102,7 +102,7 @@ const InputComponent = forwardRef(
 
     const handleChange = async (e: any) => {
       let newValue = e.target ? e.target.value : e;
-      if (type === "number") {
+      if (type === "number" || type === "numberRange") {
         newValue = newValue ? Number(newValue) : 0;
       }
       setValue(newValue);
