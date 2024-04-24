@@ -137,7 +137,7 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
           {
             // @ts-ignore
             props?.description && (
-              <Text size={9} color="dimmed">
+              <Text size={10} color="dimmed">
                 {
                   // @ts-ignore
                   props?.description

@@ -4,16 +4,27 @@ import {
   SegmentedControl,
   SegmentedControlProps,
   Stack,
+  Text,
 } from "@mantine/core";
 
 interface Props extends SegmentedControlProps {
   label?: string;
+  description?: string;
 }
 
-export const SegmentedControlInput = ({ label, ...props }: Props) => {
+export const SegmentedControlInput = ({
+  label,
+  description,
+  ...props
+}: Props) => {
   return (
     <Flex gap={2} direction="column" style={{ flexGrow: 1 }}>
       {label && <TopLabel text={label} />}
+      {description && (
+        <Text size={10} color="dimmed">
+          {description}
+        </Text>
+      )}
       <SegmentedControl {...props} />
     </Flex>
   );
