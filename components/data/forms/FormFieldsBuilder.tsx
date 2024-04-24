@@ -21,6 +21,7 @@ import { IconPlug, IconPlugOff } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
 import { ValueProps } from "@/types/dataBinding";
+import { useDataBinding } from "@/hooks/dataBinding/useDataBinding";
 
 type Props = {
   fields: Array<{
@@ -37,10 +38,15 @@ type Props = {
 
 export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
   const editorTree = useEditorTreeStore((state) => state.tree);
-  const hasParentComponentData = !!getParentComponentData(
+  const { computeValue } = useDataBinding();
+  const parentData = getParentComponentData(
     editorTree.root,
     component.id!,
+    endpoints,
+    computeValue,
   );
+  console.log(parentData);
+  const hasParentComponentData = !!parentData;
   const { getComponentsStates } = useComponentStates();
 
   const onLoadFieldsStarter = fields.reduce(
