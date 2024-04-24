@@ -124,9 +124,11 @@ export const DynamicSettings = ({
           {...form.getInputProps("onLoad.endpointId")}
           isOnLoad
           onChange={async (selected) => {
+            console.log("handleChange Select");
             form.setValues({
+              // @ts-ignore
               onLoad: {
-                ...onLoadValues,
+                ...(selected === null ? {} : onLoadValues),
                 endpointId: selected,
                 resultsKey: "",
               },
