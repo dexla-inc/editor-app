@@ -85,6 +85,13 @@ const SelectComponent = forwardRef(
     }
 
     const rootStyleProps = ["display", "width", "minHeight", "minWidth"];
+    const wrapperStyleProps = [
+      "margin",
+      "marginBottom",
+      "marginTop",
+      "marginLeft",
+      "marginRight",
+    ];
 
     return (
       <MantineSelectWrapper
@@ -105,7 +112,10 @@ const SelectComponent = forwardRef(
             position: "relative",
             ...pick(customStyle, rootStyleProps),
           },
-          input: { ...customStyle, minHeight: "auto" },
+          wrapper: {
+            ...pick(customStyle, wrapperStyleProps),
+          },
+          input: { ...omit(customStyle, wrapperStyleProps), minHeight: "auto" },
           values: { height: "inherit" },
         }}
         withinPortal={false}
