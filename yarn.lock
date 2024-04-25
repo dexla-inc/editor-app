@@ -1170,17 +1170,17 @@
   dependencies:
     "@prisma/debug" "5.11.0"
 
-"@propelauth/javascript@^2.0.13":
-  version "2.0.13"
-  resolved "https://registry.npmjs.org/@propelauth/javascript/-/javascript-2.0.13.tgz"
-  integrity sha512-6IIVc4H4mltooN9RPqVwJtMYeTkRH6aOKDb6Uz6rDgzbgUmsJ3mJXKbs6EheraX+cZA/oYIDaTAKCQrME+413g==
+"@propelauth/javascript@^2.0.15":
+  version "2.0.15"
+  resolved "https://registry.yarnpkg.com/@propelauth/javascript/-/javascript-2.0.15.tgz#c6d2cdd484289b06bde7125ac00990923de965fa"
+  integrity sha512-/9Z/MCPnW20jtBdXXORtZx29eTlnlX7rg+CgTT1rLPQSCf97G/SSZtSDYMFHJXO6BhgMuyHz8uIqVzui77n7kQ==
 
-"@propelauth/react@^2.0.17":
-  version "2.0.17"
-  resolved "https://registry.npmjs.org/@propelauth/react/-/react-2.0.17.tgz"
-  integrity sha512-6OgCzKoOlJ1V8TcQ17aXFyZB13LVbLxqNekaT5zm0sfNoYn7q9JcGs5Rvx9W0/rnZl8cGpBgPRhf96tpVtSh8A==
+"@propelauth/react@^2.0.20":
+  version "2.0.20"
+  resolved "https://registry.yarnpkg.com/@propelauth/react/-/react-2.0.20.tgz#ae89b40f5f372a82f5723ae297543da5e2051368"
+  integrity sha512-78vOaiZk5jb4sXBIkTXwPMmlYdC1peUBQfT9gvMSoVtwMUe8kDbP/PL58xd6MxsRQ+T6VFSbbgechy9HTGa/3Q==
   dependencies:
-    "@propelauth/javascript" "^2.0.13"
+    "@propelauth/javascript" "^2.0.15"
     hoist-non-react-statics "^3.3.2"
     utility-types "^3.10.0"
 
@@ -1424,9 +1424,9 @@
   dependencies:
     tslib "^2.4.0"
 
-"@tabler/icons-react@^2.45.0":
+"@tabler/icons-react@2.47.0":
   version "2.47.0"
-  resolved "https://registry.npmjs.org/@tabler/icons-react/-/icons-react-2.47.0.tgz"
+  resolved "https://registry.yarnpkg.com/@tabler/icons-react/-/icons-react-2.47.0.tgz#b704e7ae98f95be8bd6e938b4b2e84cd20b0cf31"
   integrity sha512-iqly2FvCF/qUbgmvS8E40rVeYY7laltc5GUjRxQj59DuX0x/6CpKHTXt86YlI2whg4czvd/c8Ce8YR08uEku0g==
   dependencies:
     "@tabler/icons" "2.47.0"

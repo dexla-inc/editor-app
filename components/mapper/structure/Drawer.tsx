@@ -16,7 +16,7 @@ export const jsonStructure = (props?: any): ComponentStructure => {
     {
       id: nanoid(),
       name: "Container",
-      description: "Table Container",
+      description: "Container",
       props: {
         gap: "lg",
         style: {
