@@ -1206,7 +1206,7 @@ export const componentMapper: ComponentMapper = {
   },
   Divider: {
     Component: (props) => <Divider {...props} />,
-    modifiers: ["divider", "spacing", "size", "border", "effects"],
+    modifiers: ["divider", "spacing", "size"],
     actionTriggers: [],
     sequentialTriggers: ["onSuccess", "onError"],
   },

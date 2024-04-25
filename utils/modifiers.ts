@@ -212,7 +212,7 @@ export const requiredModifiers: RequiredModifiers = {
     bg: "transparent",
   },
   divider: {
-    color: "Neutral.9",
+    color: "Neutral.6",
     label: "Divider",
     labelPosition: "center",
     orientation: "horizontal",
