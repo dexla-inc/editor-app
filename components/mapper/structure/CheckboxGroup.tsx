@@ -26,6 +26,8 @@ export const jsonStructure = (props?: any): ComponentStructure => {
       style: {
         width: "fit-content",
         height: "fit-content",
+        flexWrap: "nowrap",
+        flexDirection: "column",
       },
       // TODO: Get size from branding
       size: "sm",
