@@ -218,7 +218,7 @@ export const useComputeValue = ({
       dynamic: (fieldValue: ValueProps) => {
         return get(
           shareableContent,
-          `data.${fieldValue?.dynamic}`,
+          `data.${fieldValue?.dynamic?.replace(".$", "")}`,
           fieldValue?.dynamic,
         );
       },

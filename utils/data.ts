@@ -1,33 +1,29 @@
-// This extracts keys in the format .$. for arrays and . for nested objects.
 export function extractKeys(
-  obj: Array<{}> | Array<number | string> | {},
+  obj: Record<string, any> | null | undefined,
   parentKey: string = "",
 ): string[] {
-  if (obj === null || obj === undefined) return [];
+  if (obj === null || obj === undefined) return []; // Handle null or undefined input early
 
   let keys: string[] = [];
 
-  const isArrayOfObjects =
-    Array.isArray(obj) && obj.every((item) => typeof item === "object");
+  if (!Array.isArray(obj)) {
+    // Ensure we only process objects
+    Object.entries(obj).forEach(([key, value]) => {
+      const newKey = parentKey ? `${parentKey}.${key}` : key;
 
-  const objToIterate = isArrayOfObjects ? obj[0] : obj;
-
-  Object.entries(objToIterate).forEach(([key, value]) => {
-    const newKey = parentKey ? `${parentKey}.${key}` : key;
-
-    if (typeof value === "object" && value !== null) {
-      if (Array.isArray(value)) {
-        keys.push(`${newKey}.$`);
-        if (value.length > 0 && typeof value[0] === "object") {
-          keys = keys.concat(extractKeys(value[0], `${newKey}.$`));
-        }
-      } else {
+      if (
+        typeof value === "object" &&
+        value !== null &&
+        !Array.isArray(value)
+      ) {
+        // Recurse into nested objects
         keys = keys.concat(extractKeys(value, newKey));
+      } else {
+        // Collect key if it's not an object or it's an array
+        keys.push(newKey);
       }
-    } else {
-      keys.push(newKey);
-    }
-  });
+    });
+  }
 
   return keys;
 }
