@@ -52,7 +52,7 @@ const CheckboxGroupComponent = forwardRef(
     const rootStyleProps = ["flexWrap", "flexDirection"];
 
     const { renderData } = useRenderData({ component });
-    console.log("component", props.style, props.style?.flexFlow);
+
     return (
       <MantineCheckbox.Group
         ref={ref}
