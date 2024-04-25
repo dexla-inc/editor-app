@@ -11,15 +11,16 @@ import {
 } from "@/utils/editor";
 import debounce from "lodash.debounce";
 import { useCallback, useState } from "react";
+import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 
 const debouncedDragEnter = debounce((event: any, id: string) => {
   const isResizing = useEditorStore.getState().isResizing;
   if (isResizing) return;
 
   const componentToAdd = useEditorStore.getState().componentToAdd;
-  const selectedComponentId = useEditorTreeStore
-    .getState()
-    .selectedComponentIds?.at(-1);
+  const selectedComponentId = selectedComponentIdSelector(
+    useEditorTreeStore.getState(),
+  );
   const setCurrentTargetId = useEditorStore.getState().setCurrentTargetId;
   const activeTab = useEditorStore.getState().activeTab;
   const setActiveTab = useEditorStore.getState().setActiveTab;
@@ -91,9 +92,9 @@ export const useDroppable = ({
   const handleDrop = useCallback(
     (event: React.DragEvent) => {
       if (isResizing) return;
-      const selectedComponentId = useEditorTreeStore
-        .getState()
-        .selectedComponentIds?.at(-1);
+      const selectedComponentId = selectedComponentIdSelector(
+        useEditorTreeStore.getState(),
+      );
       const activeId = componentToAdd?.id ?? selectedComponentId;
 
       event.preventDefault();

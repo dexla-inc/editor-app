@@ -1,4 +1,6 @@
 import { jsonStructure as checkboxItemStructure } from "@/components/mapper/structure/CheckboxItem";
+import { jsonStructure as containerStructure } from "@/components/mapper/structure/Container";
+import { jsonStructure as textStructure } from "@/components/mapper/structure/Text";
 import { defaultTheme } from "@/utils/branding";
 import { ComponentStructure } from "@/utils/editor";
 import { nanoid } from "nanoid";
@@ -8,13 +10,23 @@ export const jsonStructure = (props?: any): ComponentStructure => {
   const theme = props.theme ?? defaultTheme;
   const checkboxItemOne = checkboxItemStructure({
     theme,
-    children: "Option 1",
-    props: { value: "option-1" },
+    onLoad: { optionValue: { static: "option-1" } },
+  });
+  const textCheckboxItemOne = textStructure({
+    props: { children: "Option 1" },
+  });
+  const containerCheckboxItemOne = containerStructure({
+    children: [checkboxItemOne, textCheckboxItemOne],
   });
   const checkboxItemTwo = checkboxItemStructure({
     theme,
-    children: "Option 2",
     props: { value: "option-2" },
+  });
+  const textCheckboxItemTwo = textStructure({
+    props: { children: "Option 2" },
+  });
+  const containerCheckboxItemTwo = containerStructure({
+    children: [checkboxItemTwo, textCheckboxItemTwo],
   });
 
   return {
@@ -31,22 +43,8 @@ export const jsonStructure = (props?: any): ComponentStructure => {
       },
       // TODO: Get size from branding
       size: "sm",
-      // dataType: "static",
-      // data: [
-      //   { label: "Option 1", value: "option-1" },
-      //   { label: "Option 2", value: "option-2" },
-      // ],
       ...(props.props || {}),
     },
-    children: [
-      {
-        id: nanoid(),
-        ...checkboxItemOne,
-      },
-      {
-        id: nanoid(),
-        ...checkboxItemTwo,
-      },
-    ],
+    children: [containerCheckboxItemOne, containerCheckboxItemTwo],
   };
 };

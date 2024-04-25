@@ -16,46 +16,12 @@ export const jsonStructure = (props?: any): ComponentStructure => {
       ...(props.props || {}),
     },
     onLoad: {
-      value: {
-        static: props.value,
+      optionValue: {
+        static: props?.onLoad?.optionValue?.static ?? "option-1",
         dataType: "static",
       },
     },
     states: { disabled: { bg: "Neutral.7", textColor: "PrimaryText.9" } },
     blockDroppingChildrenInside: true,
-    children: [
-      {
-        id: nanoid(),
-        name: "Container",
-        description: "Container",
-        props: {
-          gap: "xs",
-          style: { flexDirection: "column" },
-          ...(props.props || {}),
-        },
-        children: [
-          {
-            id: nanoid(),
-            name: "Text",
-            description: "Text",
-            children: [],
-            props: {
-              children: props?.children ?? "Option 1",
-              color: "Black.6",
-              size: "sm",
-              style: {
-                lineHeight: "110%",
-                letterSpacing: "0px",
-                width: "auto",
-                height: "auto",
-                marginRight: "0px",
-                marginBottom: "0px",
-              },
-            },
-            blockDroppingChildrenInside: true,
-          },
-        ],
-      },
-    ],
   };
 };

@@ -1,16 +1,16 @@
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { Action, BaseAction } from "@/utils/actions";
+import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 
 type SharedActionData<T extends BaseAction> = {
   componentActions: Action[];
 };
 
 export function useActionData<T extends BaseAction>(): SharedActionData<T> {
-  const componentActions = useEditorTreeStore(
-    (state) =>
-      state.componentMutableAttrs[state.selectedComponentIds?.at(-1)!]
-        .actions ?? [],
-  );
+  const componentActions = useEditorTreeStore((state) => {
+    const selectedComponentId = selectedComponentIdSelector(state);
+    return state.componentMutableAttrs[selectedComponentId!].actions ?? [];
+  });
 
   return {
     componentActions,

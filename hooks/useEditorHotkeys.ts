@@ -15,6 +15,10 @@ import {
 import { useHotkeys } from "@mantine/hooks";
 import cloneDeep from "lodash.clonedeep";
 import { useCallback } from "react";
+import {
+  selectedComponentIdSelector,
+  selectedComponentIdsSelector,
+} from "@/utils/componentSelectors";
 
 export const useEditorHotkeys = () => {
   const editorTree = useEditorTreeStore((state) => state.tree);
@@ -34,8 +38,9 @@ export const useEditorHotkeys = () => {
   );
 
   const deleteComponent = useCallback(() => {
-    const selectedComponentIds =
-      useEditorTreeStore.getState().selectedComponentIds;
+    const selectedComponentIds = selectedComponentIdsSelector(
+      useEditorTreeStore.getState(),
+    );
     if (
       selectedComponentIds &&
       selectedComponentIds.length > 0 &&
@@ -111,9 +116,9 @@ export const useEditorHotkeys = () => {
   ]);
 
   const copySelectedComponent = useCallback(() => {
-    const selectedComponentId = useEditorTreeStore
-      .getState()
-      .selectedComponentIds?.at(-1);
+    const selectedComponentId = selectedComponentIdSelector(
+      useEditorTreeStore.getState(),
+    );
     const componentToCopy = getComponentTreeById(
       editorTree.root,
       selectedComponentId!,
@@ -133,9 +138,9 @@ export const useEditorHotkeys = () => {
       return;
     }
 
-    const selectedComponentId = useEditorTreeStore
-      .getState()
-      .selectedComponentIds?.at(-1);
+    const selectedComponentId = selectedComponentIdSelector(
+      useEditorTreeStore.getState(),
+    );
 
     if (!selectedComponentId || selectedComponentId === "root")
       return "content-wrapper";
@@ -208,9 +213,9 @@ export const useEditorHotkeys = () => {
   }, [copiedComponent, editorTree, isPreviewMode, setEditorTree]);
 
   const cutSelectedComponent = useCallback(() => {
-    const selectedComponentId = useEditorTreeStore
-      .getState()
-      .selectedComponentIds?.at(-1);
+    const selectedComponentId = selectedComponentIdSelector(
+      useEditorTreeStore.getState(),
+    );
 
     if (!isPreviewMode && selectedComponentId) {
       copySelectedComponent();

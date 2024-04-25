@@ -18,6 +18,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import merge from "lodash.merge";
 import { useRouter } from "next/router";
 import { useUserConfigStore } from "@/stores/userConfig";
+import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 
 type Props = {
   isCustomComponentModalOpen: boolean;
@@ -68,9 +69,9 @@ export const CustomComponentModal = ({ isCustomComponentModalOpen }: Props) => {
 
   const handleSubmitCustomComponent = async (values: any) => {
     const editorTree = useEditorTreeStore.getState().tree;
-    const selectedComponentId = useEditorTreeStore
-      .getState()
-      .selectedComponentIds?.at(-1);
+    const selectedComponentId = selectedComponentIdSelector(
+      useEditorTreeStore.getState(),
+    );
 
     const componentTree = getComponentTreeById(
       editorTree.root,

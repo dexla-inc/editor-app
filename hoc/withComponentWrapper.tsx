@@ -29,10 +29,13 @@ export const withComponentWrapper = <T extends Record<string, any>>(
       (state) => !state.isPreviewMode && !state.isLive,
     );
 
+    let id = componentTree.id;
+    if (shareableContent?.parentIndex !== undefined) {
+      id = `${componentTree.id}-repeated-${shareableContent?.parentIndex}`;
+    }
+
     const isSelected = useEditorTreeStore(
-      useShallow(
-        (state) => state.selectedComponentIds?.includes(componentTree.id!),
-      ),
+      useShallow((state) => state.selectedComponentIds?.includes(id!)),
     );
 
     const onLoad = useEditorTreeStore(
@@ -110,7 +113,7 @@ export const withComponentWrapper = <T extends Record<string, any>>(
     });
 
     const handleClick = useEditorClickHandler(
-      componentTree.id!,
+      id!,
       propsWithOverwrites,
       isPicking,
     );
@@ -119,16 +122,11 @@ export const withComponentWrapper = <T extends Record<string, any>>(
     if (!isVisible) return null;
 
     const componentToolboxProps = {
-      id: component.id,
+      id,
       name: component.name,
       description: component.description,
       fixedPosition: component.fixedPosition,
     } as Component;
-
-    let id = component.id;
-    if (shareableContent?.parentIndex !== undefined) {
-      id = `${component.id}-repeated-${shareableContent?.parentIndex}`;
-    }
 
     const props = {
       component: {
@@ -167,7 +165,7 @@ export const withComponentWrapper = <T extends Record<string, any>>(
         >
           <Component {...props} />
         </Wrapper>
-        {isSelected && isEditorMode && !shareableContent?.parentIndex && (
+        {isSelected && isEditorMode && (
           <ComponentToolbox component={componentToolboxProps} />
         )}
       </>

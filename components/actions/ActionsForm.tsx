@@ -15,6 +15,7 @@ import { useForm } from "@mantine/form";
 import startCase from "lodash.startcase";
 import { nanoid } from "nanoid";
 import { useEffect, useMemo } from "react";
+import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 
 type ActionProps = {
   sequentialTo?: string;
@@ -22,9 +23,9 @@ type ActionProps = {
 };
 
 export const ActionsForm = ({ sequentialTo, close }: ActionProps) => {
-  const selectedComponentId = useEditorTreeStore
-    .getState()
-    .selectedComponentIds?.at(-1);
+  const selectedComponentId = selectedComponentIdSelector(
+    useEditorTreeStore.getState(),
+  );
   const updateTreeComponentAttrs =
     useEditorTreeStore.getState().updateTreeComponentAttrs;
   const copiedAction = useEditorStore.getState().copiedAction;

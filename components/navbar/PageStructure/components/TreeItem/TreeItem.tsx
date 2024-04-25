@@ -40,6 +40,7 @@ import {
 import { useShallow } from "zustand/react/shallow";
 import isEmpty from "lodash.isempty";
 import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
+import { isSelectedSelector } from "@/utils/componentSelectors";
 
 export interface Props extends Omit<HTMLAttributes<HTMLLIElement>, "id"> {
   id: any;
@@ -89,7 +90,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
       useDisclosure(false);
     const editFieldRef = useRef<HTMLInputElement>(null);
     const isSelected = useEditorTreeStore(
-      useShallow((state) => state.selectedComponentIds?.includes(id)),
+      useShallow(isSelectedSelector(id as string)),
     );
     const setSelectedComponentIds = useEditorTreeStore(
       (state) => state.setSelectedComponentIds,

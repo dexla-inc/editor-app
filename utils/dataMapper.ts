@@ -56,7 +56,7 @@ export const dataMapper = {
   DateInput,
   Switch,
   Checkbox,
-  CheckboxItem: Input,
+  CheckboxItem: Checkbox,
   CheckboxGroup: Container,
   Radio: Input,
   RadioItem: Input,

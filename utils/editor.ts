@@ -20,6 +20,10 @@ import { DataType, ValueProps } from "@/types/dataBinding";
 import { RenderTreeFunc } from "@/types/component";
 import { PagingResponse } from "@/requests/types";
 import { Endpoint } from "@/requests/datasources/types";
+import {
+  selectedComponentIdSelector,
+  selectedComponentIdsSelector,
+} from "@/utils/componentSelectors";
 
 export type ComponentStructure = {
   children?: ComponentStructure[];
@@ -833,9 +837,9 @@ export const debouncedTreeComponentChildrenUpdate = debounce(
   async (value: Component[], save = true) => {
     const updateTreeComponentChildren =
       useEditorTreeStore.getState().updateTreeComponentChildren;
-    const selectedComponentId = useEditorTreeStore
-      .getState()
-      .selectedComponentIds?.at(-1);
+    const selectedComponentId = selectedComponentIdSelector(
+      useEditorTreeStore.getState(),
+    );
 
     return await updateTreeComponentChildren(
       selectedComponentId as string,
@@ -870,8 +874,9 @@ export const debouncedTreeComponentAttrsUpdate = debounce(
   }) => {
     const updateTreeComponentAttrs =
       useEditorTreeStore.getState().updateTreeComponentAttrs;
-    const selectedComponentIds =
-      useEditorTreeStore.getState().selectedComponentIds ?? [];
+    const selectedComponentIds = selectedComponentIdsSelector(
+      useEditorTreeStore.getState(),
+    );
 
     if (!componentIds.length) {
       componentIds = selectedComponentIds;
