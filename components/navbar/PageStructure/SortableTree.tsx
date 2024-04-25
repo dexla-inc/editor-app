@@ -45,6 +45,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { usePrevious } from "@mantine/hooks";
 import { useEditorTreeStore } from "../../../stores/editorTree";
 import List from "rc-virtual-list";
+import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 
 const measuring = {
   droppable: {
@@ -95,9 +96,7 @@ export function NavbarLayersSection({
     const { children } = state.tree.root;
     return children;
   });
-  const selectedComponentId = useEditorTreeStore(
-    (state) => state.selectedComponentIds?.at(-1),
-  );
+  const selectedComponentId = useEditorTreeStore(selectedComponentIdSelector);
   const isStructureCollapsed = useEditorStore(
     (state) => state.isStructureCollapsed,
   );

@@ -3,13 +3,14 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 import { dataMapper } from "@/utils/dataMapper";
 import { Stack } from "@mantine/core";
 import { useShallow } from "zustand/react/shallow";
+import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 
 export const Data = () => {
   const component = useEditorTreeStore(
-    useShallow(
-      (state) =>
-        state.componentMutableAttrs[state.selectedComponentIds?.at(-1)!],
-    ),
+    useShallow((state) => {
+      const selectedComponentId = selectedComponentIdSelector(state);
+      return state.componentMutableAttrs[selectedComponentId!];
+    }),
   );
   const projectId = useEditorTreeStore((state) => state.currentProjectId);
   const { data: endpoints } = useDataSourceEndpoints(projectId);

@@ -15,6 +15,7 @@ import { useInputsStore } from "@/stores/inputs";
 import { Component } from "@/utils/editor";
 import { useShallow } from "zustand/react/shallow";
 import { ContextType } from "@/types/dataBinding";
+import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 
 type BindType = {
   selectedEntityId: string;
@@ -41,10 +42,10 @@ const setEntityString = ({ selectedEntityId, entity }: BindType) => {
 
 export const useBindingPopover = ({ isPageAction }: Props) => {
   const activePage = useEditorStore((state) => state.activePage);
-  const selectedComponentActions = useEditorTreeStore(
-    (state) =>
-      state.componentMutableAttrs[state.selectedComponentIds?.at(-1)!]?.actions,
-  );
+  const selectedComponentActions = useEditorTreeStore((state) => {
+    const selectedComponentId = selectedComponentIdSelector(state);
+    return state.componentMutableAttrs[selectedComponentId!]?.actions;
+  });
   const nodes = useNodes<NodeData>();
   const projectId = useEditorTreeStore((state) => state.currentProjectId ?? "");
   const { data: endpoints } = useDataSourceEndpoints(projectId);
@@ -56,9 +57,7 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
   const browser = useRouter();
   const auth = useDataSourceStore((state) => state.getAuthState());
   const inputsStore = useInputsStore((state) => state.inputValues);
-  const selectedComponentId = useEditorTreeStore(
-    (state) => state.selectedComponentIds?.at(-1),
-  );
+  const selectedComponentId = useEditorTreeStore(selectedComponentIdSelector);
   const allInputComponents = useEditorTreeStore(
     useShallow((state) =>
       Object.values(state.componentMutableAttrs).reduce((acc, c) => {

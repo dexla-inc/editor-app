@@ -287,6 +287,9 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
           }) => {
             set(
               (state: EditorTreeState) => {
+                componentIds = componentIds.map(
+                  (id) => id.split("-repeated-")[0],
+                );
                 const lastComponentId = componentIds.at(-1)!;
                 const currentState =
                   forceState ??
@@ -398,9 +401,7 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                 ).filter((id) => id !== "content-wrapper");
 
                 return {
-                  selectedComponentIds: selectedComponentIds.map(
-                    (id) => id.split("-repeated-")[0],
-                  ),
+                  selectedComponentIds,
                 };
               },
               false,

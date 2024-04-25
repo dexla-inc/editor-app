@@ -15,6 +15,10 @@ import {
 import { IconCheck, IconX } from "@tabler/icons-react";
 import { useState } from "react";
 import isEmpty from "lodash.isempty";
+import {
+  selectedComponentIdSelector,
+  selectedComponentIdsSelector,
+} from "@/utils/componentSelectors";
 
 type Props = {
   componentName: string;
@@ -24,12 +28,12 @@ export const StateSelector = ({ componentName }: Props) => {
   const [createState, setCreateState] = useState<undefined | string>(undefined);
   const excludeComponentsForState = ["Text", "Title"];
 
-  const currentState = useEditorTreeStore(
-    (state) =>
-      state.currentTreeComponentsStates?.[
-        state.selectedComponentIds?.at(-1)!
-      ] ?? "default",
-  );
+  const currentState = useEditorTreeStore((state) => {
+    const selectedComponentId = selectedComponentIdSelector(state);
+    return (
+      state.currentTreeComponentsStates?.[selectedComponentId!] ?? "default"
+    );
+  });
   const setTreeComponentCurrentState = useEditorTreeStore(
     (state) => state.setTreeComponentCurrentState,
   );
@@ -41,19 +45,20 @@ export const StateSelector = ({ componentName }: Props) => {
   );
 
   const onClickResetToDefault = () => {
-    const selectedComponentId =
-      useEditorTreeStore.getState().selectedComponentIds!;
+    const selectedComponentIds = selectedComponentIdsSelector(
+      useEditorTreeStore.getState(),
+    );
 
-    resetComponentsState(selectedComponentId, currentState);
+    resetComponentsState(selectedComponentIds, currentState);
   };
   const { getComponentsStates } = useComponentStates();
 
   const onClickSaveNewState = async () => {
     if (isEmpty(createState)) return;
 
-    const selectedComponentId = useEditorTreeStore
-      .getState()
-      .selectedComponentIds?.at(-1)!;
+    const selectedComponentId = selectedComponentIdSelector(
+      useEditorTreeStore.getState(),
+    )!;
 
     setCreateState(undefined);
 
@@ -92,9 +97,9 @@ export const StateSelector = ({ componentName }: Props) => {
                 nothingFound="Nothing found"
                 searchable
                 onChange={(value: string) => {
-                  const selectedComponentId = useEditorTreeStore
-                    .getState()
-                    .selectedComponentIds?.at(-1)!;
+                  const selectedComponentId = selectedComponentIdSelector(
+                    useEditorTreeStore.getState(),
+                  )!;
                   setTreeComponentCurrentState(selectedComponentId, value);
                 }}
                 {...AUTOCOMPLETE_OFF_PROPS}

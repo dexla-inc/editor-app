@@ -15,7 +15,8 @@ type Props = EditableComponentMapper & CheckboxProps;
 
 const CheckboxItemComponent = forwardRef<HTMLInputElement, Props>(
   ({ renderTree, component, shareableContent = {}, ...props }: Props, ref) => {
-    const { children, ...componentProps } = component.props as any;
+    const { children, triggers, ...componentProps } = component.props as any;
+    const { optionValue } = component?.onLoad ?? {};
 
     return (
       <MantineCheckbox
@@ -25,10 +26,10 @@ const CheckboxItemComponent = forwardRef<HTMLInputElement, Props>(
           label: { width: "100%" },
           root: { gap: "10px", alignItems: "flex-start" },
         }}
-        wrapperProps={{ "data-id": component.id }}
-        label={component?.children?.map((child) =>
-          renderTree(child, shareableContent),
-        )}
+        wrapperProps={{ "data-id": props.id }}
+        label={null}
+        value={optionValue}
+        {...triggers}
       />
     );
   },

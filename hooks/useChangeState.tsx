@@ -8,6 +8,7 @@ import {
   debouncedTreeComponentAttrsUpdate,
   getColorFromTheme,
 } from "@/utils/editor";
+import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 
 type StateProps = {
   bg?: string | undefined;
@@ -46,11 +47,12 @@ export const useChangeState = ({
   const backgroundColor = getColorFromTheme(theme, bg) ?? defaultBg;
   const color = getColorFromTheme(theme, textColor) ?? "black";
 
-  const currentState = useEditorTreeStore(
-    (state) =>
-      state.currentTreeComponentsStates?.[state.selectedComponentIds?.[0]!] ??
-      "default",
-  );
+  const currentState = useEditorTreeStore((state) => {
+    const selectedComponentId = selectedComponentIdSelector(state);
+    return (
+      state.currentTreeComponentsStates?.[selectedComponentId!] ?? "default"
+    );
+  });
 
   const componentsWithBackgroundModifier = Object.entries(
     componentMapper,

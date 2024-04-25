@@ -26,5 +26,6 @@ export const jsonStructure = (props?: any): ComponentStructure => {
       style: mergedStyle,
       data: restProps.data,
     },
+    ...(props?.children && { children: props.children }),
   };
 };
