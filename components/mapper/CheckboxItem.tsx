@@ -21,6 +21,10 @@ const CheckboxItemComponent = forwardRef<HTMLInputElement, Props>(
       <MantineCheckbox
         {...props}
         {...componentProps}
+        styles={{
+          label: { width: "100%" },
+          root: { gap: "10px", alignItems: "flex-start" },
+        }}
         wrapperProps={{ "data-id": component.id }}
         label={component?.children?.map((child) =>
           renderTree(child, shareableContent),
