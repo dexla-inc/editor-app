@@ -45,7 +45,7 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
     endpoints,
     computeValue,
   );
-  console.log(parentData);
+
   const hasParentComponentData = !!parentData;
   const { getComponentsStates } = useComponentStates();
 
