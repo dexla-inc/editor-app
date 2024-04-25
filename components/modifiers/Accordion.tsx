@@ -12,12 +12,14 @@ import { Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
 import { useEffect } from "react";
+import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 
 const Modifier = withModifier(({ selectedComponent }) => {
   const editorTree = useEditorTreeStore((state) => state.tree);
-  const selectedComponentTree = useEditorTreeStore((state) =>
-    getComponentTreeById(editorTree.root, state.selectedComponentIds?.at(-1)!),
-  );
+  const selectedComponentTree = useEditorTreeStore((state) => {
+    const selectedComponentId = selectedComponentIdSelector(state);
+    return getComponentTreeById(editorTree.root, selectedComponentId!);
+  });
   const form = useForm({
     initialValues: {
       variant: "default",

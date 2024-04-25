@@ -27,6 +27,7 @@ import { IconGripVertical } from "@tabler/icons-react";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useDisclosure } from "@mantine/hooks";
+import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 
 type Props = {
   component: Component;
@@ -177,9 +178,9 @@ const ComponentToolboxInner = ({ component }: Props) => {
                 theme: editorTheme,
               }) as ComponentStructure;
 
-              const selectedComponentId = useEditorTreeStore
-                .getState()
-                .selectedComponentIds?.at(-1);
+              const selectedComponentId = selectedComponentIdSelector(
+                useEditorTreeStore.getState(),
+              );
 
               const componentToBeWrapped = getComponentTreeById(
                 editorTree.root,

@@ -18,6 +18,7 @@ import { useEffect } from "react";
 import { useEditorTreeStore } from "../../stores/editorTree";
 import { ActionsTab, Data, modifierSectionMapper } from "./dynamicModifiers";
 import { useShallow } from "zustand/react/shallow";
+import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 
 const EditorAsideSections = () => {
   const setOpenAction = useEditorStore((state) => state.setOpenAction);
@@ -27,9 +28,7 @@ const EditorAsideSections = () => {
   const setInitiallyOpenedModifiersByComponent = useUserConfigStore(
     (state) => state.setInitiallyOpenedModifiersByComponent,
   );
-  const selectedComponentId = useEditorTreeStore(
-    (state) => state.selectedComponentIds?.at(-1),
-  );
+  const selectedComponentId = useEditorTreeStore(selectedComponentIdSelector);
   const openAction = useEditorStore((state) => state.openAction);
   const asideSelectedTab = useEditorStore((state) => state.asideSelectedTab);
   const setAsideSelectedTab = useEditorStore(
@@ -37,10 +36,10 @@ const EditorAsideSections = () => {
   );
 
   const componentName = useEditorTreeStore(
-    useShallow(
-      (state) =>
-        state.componentMutableAttrs[state.selectedComponentIds?.at(-1)!]?.name,
-    ),
+    useShallow((state) => {
+      const selectedComponentId = selectedComponentIdSelector(state);
+      return state.componentMutableAttrs[selectedComponentId!]?.name;
+    }),
   );
 
   const mappedModifiers = useEditorTreeStore(
@@ -48,8 +47,9 @@ const EditorAsideSections = () => {
       intersection(
         ...(state.selectedComponentIds ?? [])?.map(
           (id) =>
-            componentMapper[state.componentMutableAttrs[id]?.name]?.modifiers ??
-            [],
+            componentMapper[
+              state.componentMutableAttrs[id?.split("-repeated-")[0]]?.name
+            ]?.modifiers ?? [],
         ),
       ),
     ),

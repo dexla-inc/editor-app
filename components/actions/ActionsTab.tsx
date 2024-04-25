@@ -7,11 +7,13 @@ import { Action, actionMapper } from "@/utils/actions";
 import { Box, Button, Stack } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import startCase from "lodash.startcase";
+import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 
 export const ActionsTab = () => {
-  const component = useEditorTreeStore(
-    (state) => state.componentMutableAttrs[state.selectedComponentIds?.at(-1)!],
-  );
+  const component = useEditorTreeStore((state) => {
+    const selectedComponentId = selectedComponentIdSelector(state);
+    return state.componentMutableAttrs[selectedComponentId!];
+  });
 
   const openAction = useEditorStore((state) => state.openAction);
   const setOpenAction = useEditorStore((state) => state.setOpenAction);

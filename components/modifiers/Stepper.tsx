@@ -16,14 +16,16 @@ import { IconArrowNarrowDown, IconArrowNarrowRight } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { ThemeColorSelector } from "../ThemeColorSelector";
 import { useEffect } from "react";
+import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 
 const defaultStepperValues = requiredModifiers.stepper;
 
 const Modifier = withModifier(({ selectedComponent }) => {
   const editorTree = useEditorTreeStore((state) => state.tree);
-  const selectedComponentTree = useEditorTreeStore((state) =>
-    getComponentTreeById(editorTree.root, state.selectedComponentIds?.at(-1)!),
-  );
+  const selectedComponentTree = useEditorTreeStore((state) => {
+    const selectedComponentId = selectedComponentIdSelector(state);
+    return getComponentTreeById(editorTree.root, selectedComponentId!);
+  });
   const form = useForm();
 
   useEffect(() => {

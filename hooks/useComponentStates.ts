@@ -82,7 +82,10 @@ export const useComponentStates = () => {
     useShallow((state) => [
       ...new Set(
         state.selectedComponentIds?.map((id) =>
-          pick(state.componentMutableAttrs[id], ["name", "states"]),
+          pick(state.componentMutableAttrs[id.split("-repeated-")[0]], [
+            "name",
+            "states",
+          ]),
         ),
       ),
     ]),

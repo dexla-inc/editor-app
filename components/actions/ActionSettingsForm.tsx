@@ -15,6 +15,7 @@ import { Button, Divider, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { useEffect } from "react";
+import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 
 type Props = {
   action: Action;
@@ -49,9 +50,9 @@ export const ActionSettingsForm = ({
   }, [form.values]);
 
   const onSubmit = async (updatedValues: any) => {
-    const selectedComponentId = useEditorTreeStore
-      .getState()
-      .selectedComponentIds?.at(-1);
+    const selectedComponentId = selectedComponentIdSelector(
+      useEditorTreeStore.getState(),
+    );
 
     try {
       await updateActionInTree<ChangeLanguageAction>({
