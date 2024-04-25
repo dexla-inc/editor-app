@@ -122,8 +122,8 @@ function clearPreviousHighlights(editor: any): void {
 // Find the item that matches the end of the input text
 function findMatchingItem(items: any[], inputText: string): any | undefined {
   return items.find((item) => {
-    const itemNameAtEnd = inputText.slice(-item.name.length).toLowerCase();
-    return item.name.toLowerCase() === itemNameAtEnd;
+    const itemNameAtEnd = inputText.slice(-item.name.length)?.toLowerCase();
+    return item.name?.toLowerCase() === itemNameAtEnd;
   });
 }
 

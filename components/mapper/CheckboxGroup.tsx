@@ -8,6 +8,8 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 import { useShallow } from "zustand/react/shallow";
 import { gapSizes } from "@/utils/defaultSizes";
 import { useRenderData } from "@/hooks/useRenderData";
+import { pick } from "next/dist/lib/pick";
+import { omit } from "next/dist/shared/lib/router/utils/omit";
 
 type Props = EditableComponentMapper & CheckboxGroupProps;
 
@@ -45,9 +47,12 @@ const CheckboxGroupComponent = forwardRef(
           },
         }
       : {};
+    const customStyle = merge({}, defaultStyle, props.style);
+
+    const rootStyleProps = ["flexWrap", "flexDirection"];
 
     const { renderData } = useRenderData({ component });
-
+    console.log("component", props.style, props.style?.flexFlow);
     return (
       <MantineCheckbox.Group
         ref={ref}
@@ -62,13 +67,19 @@ const CheckboxGroupComponent = forwardRef(
           ...(style ?? {}),
           ...defaultStyle,
           gap: gapSize,
+          ...pick(customStyle, rootStyleProps),
         }}
-        styles={merge(
-          {
-            label: { width: "100%" },
-          },
-          styles,
-        )}
+        styles={{
+          label: { width: "100%" },
+          //input: { ...omit(customStyle, wrapperStyleProps), minHeight: "auto" },
+        }}
+        // styles={merge(
+        //   {
+        //     label: { width: "100%" },
+        //     root: { flexDirection: "column" }
+        //   },
+        //   styles,
+        // )}
       >
         {renderData({ renderTree, shareableContent })}
       </MantineCheckbox.Group>

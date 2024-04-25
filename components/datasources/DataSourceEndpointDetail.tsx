@@ -395,7 +395,7 @@ export const DataSourceEndpointDetail = ({
         for (const param of parameters) {
           if (
             param.value !== null &&
-            param.location.toLowerCase() === "Query".toLowerCase()
+            param.location?.toLowerCase() === "Query"?.toLowerCase()
           ) {
             urlParams.append(param.name, param.value?.toString());
           }
