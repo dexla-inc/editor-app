@@ -18,6 +18,8 @@ import crawl from "tree-crawl";
 import { MantineThemeExtended } from "./types";
 import { DataType, ValueProps } from "@/types/dataBinding";
 import { RenderTreeFunc } from "@/types/component";
+import { PagingResponse } from "@/requests/types";
+import { Endpoint } from "@/requests/datasources/types";
 
 export type ComponentStructure = {
   children?: ComponentStructure[];
@@ -509,33 +511,85 @@ export const updateTreeComponentChildren = (
   );
 };
 
-//TODO: make it run through the new component list and find the parent component by id
 export const getParentComponentData = (
   treeRoot: ComponentTree,
   componentId: string,
-): Component | null => {
-  const parentComponentNames = ["Container", "Table", "Form", "Card"];
-  let parentWithOnLoad: Component | null = null;
+  endpoints: PagingResponse<Endpoint>,
+  computeValue: any,
+  shareableContent = {},
+  isComponentFound = false,
+): any => {
+  const parentComponentNames = [
+    "Container",
+    "Table",
+    "Form",
+    "Card",
+    "CheckboxGroup",
+  ];
+
+  if (isComponentFound) {
+    return get(shareableContent, "[0]", shareableContent);
+  }
+
   crawl(
     treeRoot,
     (nodeTree, context) => {
+      if (nodeTree.id === componentId || isComponentFound) {
+        isComponentFound = true; // Set the flag when target is found
+        context.break();
+      }
+
       const node =
         useEditorTreeStore.getState().componentMutableAttrs[nodeTree.id!];
       if (
-        (!isEmpty(node?.onLoad?.data) || !isEmpty(node.onLoad?.endpointId)) &&
+        (!isEmpty(node?.onLoad?.data) || !isEmpty(node?.onLoad?.endpointId)) &&
         parentComponentNames.includes(node.name)
       ) {
-        const childComponent = getComponentTreeById(nodeTree, componentId);
+        const childComponent = getComponentTreeById(
+          { children: nodeTree.children } as ComponentTree,
+          componentId,
+        );
+
         if (childComponent) {
-          parentWithOnLoad = node;
-          context.break();
+          const { dataType = "static" } = node?.props ?? {};
+          if (dataType === "dynamic") {
+            const parentEndpoint = endpoints?.results?.find(
+              (e) => e.id === node?.onLoad?.endpointId,
+            );
+
+            shareableContent = get(
+              JSON.parse(parentEndpoint?.exampleResponse || "{}"),
+              node?.onLoad?.resultsKey,
+              JSON.parse(parentEndpoint?.exampleResponse || "{}"),
+            );
+          } else {
+            const staticData = computeValue({
+              value: node.onLoad.data,
+              shareableContent: {
+                data: get(shareableContent, "[0]", shareableContent),
+              },
+            });
+            if (staticData) {
+              shareableContent = staticData;
+            }
+          }
+
+          getParentComponentData(
+            { children: nodeTree.children } as ComponentTree,
+            componentId,
+            endpoints,
+            computeValue,
+            shareableContent,
+          );
         }
       }
     },
     { order: "pre" },
   );
 
-  return parentWithOnLoad;
+  return isComponentFound
+    ? get(shareableContent, "[0]", shareableContent)
+    : false; // Use the flag to determine what to return
 };
 
 export const getComponentParent = (

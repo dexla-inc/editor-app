@@ -1,17 +1,13 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { EditableComponentMapper } from "@/utils/editor";
-import {
-  Checkbox as MantineCheckbox,
-  CheckboxGroupProps,
-  Group,
-} from "@mantine/core";
+import { Checkbox as MantineCheckbox, CheckboxGroupProps } from "@mantine/core";
 import merge from "lodash.merge";
-import { forwardRef, memo, useMemo } from "react";
+import { forwardRef, memo } from "react";
 import { useInputValue } from "@/hooks/useInputValue";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useShallow } from "zustand/react/shallow";
-import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { gapSizes } from "@/utils/defaultSizes";
+import { useRenderData } from "@/hooks/useRenderData";
 
 type Props = EditableComponentMapper & CheckboxGroupProps;
 
@@ -50,6 +46,8 @@ const CheckboxGroupComponent = forwardRef(
         }
       : {};
 
+    const { renderData } = useRenderData({ component });
+
     return (
       <MantineCheckbox.Group
         ref={ref}
@@ -72,14 +70,7 @@ const CheckboxGroupComponent = forwardRef(
           styles,
         )}
       >
-        {component.children && component.children.length > 0
-          ? component.children?.map((child) =>
-              renderTree(child, {
-                isInsideGroup: isPreviewMode,
-                value,
-              }),
-            )
-          : children}
+        {renderData({ renderTree, shareableContent })}
       </MantineCheckbox.Group>
     );
   },
