@@ -242,3 +242,15 @@ export function toSnakeCase(input: string): string {
   // Convert to lowercase
   return temp.toLowerCase();
 }
+
+export function removeEmpty(obj: Record<string, any>): Record<string, any> {
+  return Object.entries(obj).reduce(
+    (acc, [key, value]) => {
+      if (value !== undefined && value !== "undefined" && value !== "") {
+        acc[key] = value;
+      }
+      return acc;
+    },
+    {} as Record<string, any>,
+  );
+}

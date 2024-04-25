@@ -40,7 +40,7 @@ const SelectComponent = forwardRef(
 
     const [value, setValue] = useInputValue(
       {
-        value: component.onLoad?.value ?? "",
+        value: component.onLoad?.value,
       },
       props.id!,
     );
