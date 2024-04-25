@@ -51,15 +51,25 @@ const DateInputComponent = ({
   const { onChange, ...restTriggers } = triggers || {};
 
   const handleChange = (value: Date | Date[] | null) => {
-    let newValue: string | Array<string> | null = "";
-    const isInvalidArray = Array.isArray(value) && value?.every((d) => !d);
-    if (value) {
-      if (isInvalidArray) newValue = [];
-      newValue = getNewDate(value, valueFormatValue);
+    // Date Range check
+    if (Array.isArray(value)) {
+      if (value.length === 2 && value[0] && value[1]) {
+        const formattedValue = getNewDate(value, valueFormatValue);
+        onChange?.(formattedValue);
+        setValue(formattedValue);
+      } else {
+        console.log("Incomplete date range:", value);
+        return;
+      }
+    } else if (value instanceof Date) {
+      // Handle single date picker scenario
+      const formattedValue = getNewDate(value, valueFormatValue);
+      onChange?.(formattedValue);
+      setValue(formattedValue);
+    } else {
+      onChange?.(null);
+      setValue(null);
     }
-
-    setValue(newValue);
-    onChange?.(newValue);
   };
 
   const dateInputValue = setDate(value, typeValue, valueFormatValue);
