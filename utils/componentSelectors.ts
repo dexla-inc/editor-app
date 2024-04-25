@@ -5,3 +5,8 @@ export const selectedComponentIdSelector = (state: EditorTreeState) =>
 
 export const selectedComponentIdsSelector = (state: EditorTreeState) =>
   state.selectedComponentIds?.map((id) => id.split("-repeated-")[0]) ?? [];
+
+export const isSelectedSelector = (id: string) => (state: EditorTreeState) =>
+  state.selectedComponentIds?.some(
+    (selectedComponentId) => selectedComponentId.split("-repeated-")[0] === id,
+  );
