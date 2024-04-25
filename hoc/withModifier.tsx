@@ -7,7 +7,10 @@ import set from "lodash.set";
 import { ComponentType, useMemo } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useShallow } from "zustand/react/shallow";
-import { selectedComponentIdSelector } from "@/utils/componentSelectors";
+import {
+  selectedComponentIdSelector,
+  selectedComponentIdsSelector,
+} from "@/utils/componentSelectors";
 
 type WithModifier = {
   selectedComponent: Component;
@@ -48,11 +51,7 @@ export const withModifier = (Modifier: ComponentType<WithModifier>) => {
         const selectedComponents = Object.entries(
           state.componentMutableAttrs,
         ).reduce((acc, [id, component]) => {
-          if (
-            state.selectedComponentIds
-              ?.map((id) => id?.split("-repeated-")[0])
-              ?.includes(id)
-          ) {
+          if (selectedComponentIdsSelector(state)?.includes(id)) {
             acc.push(component);
           }
           return acc;

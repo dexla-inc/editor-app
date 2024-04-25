@@ -15,7 +15,10 @@ import {
 import { useHotkeys } from "@mantine/hooks";
 import cloneDeep from "lodash.clonedeep";
 import { useCallback } from "react";
-import { selectedComponentIdSelector } from "@/utils/componentSelectors";
+import {
+  selectedComponentIdSelector,
+  selectedComponentIdsSelector,
+} from "@/utils/componentSelectors";
 
 export const useEditorHotkeys = () => {
   const editorTree = useEditorTreeStore((state) => state.tree);
@@ -35,8 +38,9 @@ export const useEditorHotkeys = () => {
   );
 
   const deleteComponent = useCallback(() => {
-    const selectedComponentIds =
-      useEditorTreeStore.getState().selectedComponentIds;
+    const selectedComponentIds = selectedComponentIdsSelector(
+      useEditorTreeStore.getState(),
+    );
     if (
       selectedComponentIds &&
       selectedComponentIds.length > 0 &&

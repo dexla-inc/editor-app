@@ -15,7 +15,10 @@ import {
 import { IconCheck, IconX } from "@tabler/icons-react";
 import { useState } from "react";
 import isEmpty from "lodash.isempty";
-import { selectedComponentIdSelector } from "@/utils/componentSelectors";
+import {
+  selectedComponentIdSelector,
+  selectedComponentIdsSelector,
+} from "@/utils/componentSelectors";
 
 type Props = {
   componentName: string;
@@ -42,10 +45,11 @@ export const StateSelector = ({ componentName }: Props) => {
   );
 
   const onClickResetToDefault = () => {
-    const selectedComponentId =
-      useEditorTreeStore.getState().selectedComponentIds!;
+    const selectedComponentIds = selectedComponentIdsSelector(
+      useEditorTreeStore.getState(),
+    );
 
-    resetComponentsState(selectedComponentId, currentState);
+    resetComponentsState(selectedComponentIds, currentState);
   };
   const { getComponentsStates } = useComponentStates();
 

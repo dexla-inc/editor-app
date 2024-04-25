@@ -20,7 +20,10 @@ import { DataType, ValueProps } from "@/types/dataBinding";
 import { RenderTreeFunc } from "@/types/component";
 import { PagingResponse } from "@/requests/types";
 import { Endpoint } from "@/requests/datasources/types";
-import { selectedComponentIdSelector } from "@/utils/componentSelectors";
+import {
+  selectedComponentIdSelector,
+  selectedComponentIdsSelector,
+} from "@/utils/componentSelectors";
 
 export type ComponentStructure = {
   children?: ComponentStructure[];
@@ -871,8 +874,9 @@ export const debouncedTreeComponentAttrsUpdate = debounce(
   }) => {
     const updateTreeComponentAttrs =
       useEditorTreeStore.getState().updateTreeComponentAttrs;
-    const selectedComponentIds =
-      useEditorTreeStore.getState().selectedComponentIds ?? [];
+    const selectedComponentIds = selectedComponentIdsSelector(
+      useEditorTreeStore.getState(),
+    );
 
     if (!componentIds.length) {
       componentIds = selectedComponentIds;

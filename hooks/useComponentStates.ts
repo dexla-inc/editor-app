@@ -2,6 +2,7 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 import { useShallow } from "zustand/react/shallow";
 import { pick } from "next/dist/lib/pick";
 import { useCallback } from "react";
+import { selectedComponentIdsSelector } from "@/utils/componentSelectors";
 
 type ComponentAppearance = {
   label: string;
@@ -81,11 +82,8 @@ export const useComponentStates = () => {
   const components = useEditorTreeStore(
     useShallow((state) => [
       ...new Set(
-        state.selectedComponentIds?.map((id) =>
-          pick(state.componentMutableAttrs[id.split("-repeated-")[0]], [
-            "name",
-            "states",
-          ]),
+        selectedComponentIdsSelector(state).map((id) =>
+          pick(state.componentMutableAttrs[id], ["name", "states"]),
         ),
       ),
     ]),

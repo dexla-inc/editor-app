@@ -18,7 +18,10 @@ import { useEffect } from "react";
 import { useEditorTreeStore } from "../../stores/editorTree";
 import { ActionsTab, Data, modifierSectionMapper } from "./dynamicModifiers";
 import { useShallow } from "zustand/react/shallow";
-import { selectedComponentIdSelector } from "@/utils/componentSelectors";
+import {
+  selectedComponentIdSelector,
+  selectedComponentIdsSelector,
+} from "@/utils/componentSelectors";
 
 const EditorAsideSections = () => {
   const setOpenAction = useEditorStore((state) => state.setOpenAction);
@@ -45,11 +48,10 @@ const EditorAsideSections = () => {
   const mappedModifiers = useEditorTreeStore(
     useShallow((state) =>
       intersection(
-        ...(state.selectedComponentIds ?? [])?.map(
+        ...selectedComponentIdsSelector(state)?.map(
           (id) =>
-            componentMapper[
-              state.componentMutableAttrs[id?.split("-repeated-")[0]]?.name
-            ]?.modifiers ?? [],
+            componentMapper[state.componentMutableAttrs[id]?.name]?.modifiers ??
+            [],
         ),
       ),
     ),
