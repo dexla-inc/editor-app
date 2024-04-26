@@ -4,6 +4,7 @@ import { usePageListQuery } from "@/hooks/reactQuery/usePageListQuery";
 import { useProjectQuery } from "@/hooks/reactQuery/useProjectQuery";
 import { createDeployment } from "@/requests/deployments/mutations";
 import { useAppStore } from "@/stores/app";
+import { useEditorStore } from "@/stores/editor";
 import { Button, Tooltip } from "@mantine/core";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -12,7 +13,8 @@ export const DeployButton = () => {
   const router = useRouter();
   const { id: projectId, page } = router.query as { id: string; page: string };
 
-  const { data: pageListQuery } = usePageListQuery(projectId, null);
+  const { data: pageListQuery, isFetched } = usePageListQuery(projectId, null);
+  const setPages = useEditorStore((state) => state.setPages);
 
   const { startLoading, stopLoading, isLoading } = useAppStore((state) => ({
     startLoading: state.startLoading,
@@ -92,6 +94,12 @@ export const DeployButton = () => {
       }
     }
   }, [project]);
+
+  useEffect(() => {
+    if (isFetched) {
+      setPages(pageListQuery?.results!);
+    }
+  }, [pageListQuery, isFetched, setPages]);
 
   return (
     <Button.Group>
