@@ -32,7 +32,9 @@ export const updatePage = async (
   )) as PageResponse;
 
   const cacheTag = getCacheTag(projectId);
+  const pageCacheTag = getPageCacheTag(projectId, pageId);
   await evictCache(cacheTag);
+  await evictCache(pageCacheTag);
 
   return response;
 };
@@ -113,3 +115,5 @@ export const rollbackPageState = async (
 };
 
 const getCacheTag = (projectId: string) => `/projects/${projectId}/pages`;
+const getPageCacheTag = (projectId: string, pageId: string) =>
+  `/projects/${projectId}/pages/${pageId}`;
