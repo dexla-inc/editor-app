@@ -60,11 +60,13 @@ export const SelectData = ({ component, endpoints, dataType }: DataProps) => {
                   label="Label"
                   data={selectableObjectKeys}
                   {...form.getInputProps("onLoad.dataLabelKey")}
+                  searchable
                 />
                 <Select
                   label="Value"
                   data={selectableObjectKeys}
                   {...form.getInputProps("onLoad.dataValueKey")}
+                  searchable
                 />
               </Stack>
             );
