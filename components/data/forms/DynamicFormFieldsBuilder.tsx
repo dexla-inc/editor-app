@@ -1,10 +1,9 @@
 import { Endpoint } from "@/requests/datasources/types";
 import { PagingResponse } from "@/requests/types";
-import { useEditorTreeStore } from "@/stores/editorTree";
 import { extractKeys } from "@/utils/data";
-import { Component, getParentComponentData } from "@/utils/editor";
+import { Component } from "@/utils/editor";
 import { Select } from "@mantine/core";
-import { useDataBinding } from "@/hooks/dataBinding/useDataBinding";
+import { useShareableContent } from "@/hooks/useShareableContent";
 
 type DynamicFormFieldsBuilderProps = {
   form: any;
@@ -19,20 +18,12 @@ type DynamicFormFieldsBuilderProps = {
 };
 
 export const DynamicFormFieldsBuilder = ({
-  component,
   form,
   field,
   endpoints,
 }: DynamicFormFieldsBuilderProps) => {
-  const editorTree = useEditorTreeStore((state) => state.tree);
-  const { computeValue } = useDataBinding();
-
-  const parentDataComponent = getParentComponentData(
-    editorTree.root,
-    component.id!,
-    endpoints,
-    computeValue,
-  );
+  const relatedComponentsData = useShareableContent({ endpoints });
+  const parentDataComponent = Object.values(relatedComponentsData).at(-1);
 
   return (
     <Select

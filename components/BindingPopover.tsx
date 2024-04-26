@@ -29,7 +29,6 @@ import {
 import { IconExternalLink, IconPlugConnected } from "@tabler/icons-react";
 import { useState } from "react";
 import { useDataBinding } from "@/hooks/dataBinding/useDataBinding";
-import { useEditorTreeStore } from "@/stores/editorTree";
 import { useEditorStore } from "@/stores/editor";
 
 const TAB_TEXT_SIZE = "xs";
@@ -68,6 +67,7 @@ export default function BindingPopover({
     auth,
     event,
     getEntityEditorValue,
+    item,
   } = useBindingPopover({ isPageAction });
   const onChangeDataTypeAsBoundCode = () => {
     onChange({
@@ -102,6 +102,10 @@ export default function BindingPopover({
     entity: ContextType;
     dataItems: any;
   }> = [
+    {
+      entity: "item",
+      dataItems: Array.of(item),
+    },
     {
       entity: "components",
       dataItems: Object.values(components?.list),
@@ -186,6 +190,20 @@ export default function BindingPopover({
       ),
     },
   ];
+
+  if (item) {
+    segmentedTabOptions.unshift({
+      value: "item",
+      label: (
+        <Center>
+          <Icon name="IconRouteAltRight" />
+          <Text ml={ML} size={TAB_TEXT_SIZE}>
+            Item
+          </Text>
+        </Center>
+      ),
+    });
+  }
 
   if (asideSelectedTab === "actions") {
     segmentedTabOptions.push({

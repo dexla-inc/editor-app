@@ -30,8 +30,8 @@ export const withComponentWrapper = <T extends Record<string, any>>(
     );
 
     let id = componentTree.id;
-    if (shareableContent?.parentIndex !== undefined) {
-      id = `${componentTree.id}-repeated-${shareableContent?.parentIndex}`;
+    if (shareableContent?.parentSuffix !== undefined) {
+      id = `${componentTree.id}-repeated-${shareableContent?.parentSuffix}`;
     }
 
     const isSelected = useEditorTreeStore(
@@ -44,7 +44,10 @@ export const withComponentWrapper = <T extends Record<string, any>>(
       ),
     );
 
-    const computedOnLoad = useComputeValue({ onLoad, shareableContent });
+    const computedOnLoad = useComputeValue({
+      onLoad,
+      shareableContent,
+    });
 
     // Commenting out as liveblocks doesn't work properly since detachment.
     // const selectedByOther = useEditorTreeStore(
@@ -88,7 +91,7 @@ export const withComponentWrapper = <T extends Record<string, any>>(
     const router = useRouter();
 
     const triggers = useTriggers({
-      entity: component,
+      entity: { ...component, id },
       router: router as Router,
     });
 

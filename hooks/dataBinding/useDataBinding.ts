@@ -21,11 +21,7 @@ export const useDataBinding = () => {
   ) => {
     const valueHandlers = {
       dynamic: function (value: ValueProps) {
-        return get(
-          shareableContent,
-          `data.${value?.dynamic}`.replace(".$", ""),
-          value?.dynamic,
-        );
+        return get(shareableContent, `data.${value?.dynamic}`, value?.dynamic);
       },
       static: function (value: ValueProps) {
         return get(value, "static", staticFallback);
