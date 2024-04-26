@@ -80,7 +80,7 @@ export const TestUserLogin = ({
     <Stack spacing="xs" py="xl">
       <Title order={4}>Test Account Login</Title>
       {!dataSourceAuthConfig?.authConfigurations[dataSourceId || ""]
-        .accessTokenUrl && (
+        ?.accessTokenUrl && (
         <ErrorAlert
           title="Set up your login URL"
           text="You need to set up your login URL in the data source settings before you can test your login."

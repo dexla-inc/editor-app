@@ -57,7 +57,8 @@ export type MediaTypes =
   | "application/x-www-form-urlencoded"
   | "application/graphql"
   | "text/event-stream"
-  | "application/octet-stream";
+  | "application/octet-stream"
+  | "multipart/form-data";
 
 export type Endpoint = {
   id: string;
