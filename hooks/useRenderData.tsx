@@ -54,9 +54,24 @@ export const useRenderData = ({ component }: UseRenderDataProps) => {
         });
       });
     } else {
-      return component.children?.map((child) =>
-        renderTree(child, merge({}, shareableContent, { data: data ?? {} })),
-      );
+      return component.children?.map((child) => {
+        let newParentSuffix;
+        if (shareableContent?.data) {
+          const currentComponentGroupId = `${component.id}`;
+          newParentSuffix = currentComponentGroupId;
+          if (shareableContent?.parentSuffix) {
+            newParentSuffix = `${shareableContent.parentSuffix}--${newParentSuffix}`;
+          }
+        }
+        console.log(newParentSuffix);
+        return renderTree(
+          child,
+          merge({}, shareableContent, {
+            data: data ?? {},
+            ...(newParentSuffix ? { parentSuffix: newParentSuffix } : {}),
+          }),
+        );
+      });
     }
   };
 
