@@ -10,6 +10,7 @@ import { devtools, persist } from "zustand/middleware";
 export type AuthState = {
   accessToken?: string;
   expiresAt?: number;
+  additionalInfo?: Record<string, any>;
 };
 
 type DataSourceState = {
@@ -32,9 +33,9 @@ export const useDataSourceStore = create<DataSourceState>()(
         endpoints: undefined,
         authState: {},
         getAuthState: () => {
-          const { accessToken, expiresAt } = get().authState;
+          const { accessToken, expiresAt, additionalInfo } = get().authState;
           const refreshToken = Cookies.get("refreshToken");
-          return { accessToken, expiresAt, refreshToken };
+          return { accessToken, expiresAt, refreshToken, additionalInfo };
         },
         setAuthTokens: (response) => {
           const accessToken = response[response.accessTokenProperty];
@@ -42,12 +43,22 @@ export const useDataSourceStore = create<DataSourceState>()(
           const expirySeconds = response[response.expiryTokenProperty];
           const expiresAt = Date.now() + expirySeconds * 1000;
 
+          const additionalInfo = Object.keys(response).reduce(
+            (acc: any, key) => {
+              if (!keysToExclude.includes(key)) {
+                acc[key] = response[key];
+              }
+              return acc;
+            },
+            {},
+          );
+
           Cookies.set("refreshToken", refreshToken, {
             expires: expirySeconds / 60 / 60 / 24,
           });
 
           set(
-            { authState: { accessToken, expiresAt } },
+            { authState: { accessToken, expiresAt, additionalInfo } },
             false,
             "datasource/setAuthTokens",
           );
@@ -180,3 +191,17 @@ export const useDataSourceStore = create<DataSourceState>()(
     { name: "Data Source store" },
   ),
 );
+
+const keysToExclude = [
+  "accessTokenProperty",
+  "refreshTokenProperty",
+  "expiryTokenProperty",
+  "accessTokenUrl",
+  "refreshTokenUrl",
+  "userEndpointUrl",
+  "expiry_seconds",
+  "access",
+  "refresh",
+  "access_token",
+  "refresh_token",
+];
