@@ -17,6 +17,7 @@ export const useShareableContent = ({
   const selectedComponentId = useEditorTreeStore(
     (state) => componentId ?? state.selectedComponentIds?.at(-1),
   );
+  console.log({ selectedComponentId });
   const { computeValue } = useDataBinding();
 
   const [, parentIdsGroup] = selectedComponentId?.split("-repeated-") ?? [];
@@ -40,7 +41,7 @@ export const useShareableContent = ({
 
         acc[groupId] = get(
           parsedResponse,
-          `${node?.onLoad?.resultsKey}[${index}]`,
+          `${node?.onLoad?.resultsKey}[0]`,
           parsedResponse,
         );
         shareableContent = cloneDeep(acc[groupId]);
