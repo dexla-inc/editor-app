@@ -25,6 +25,7 @@ export const jsonStructure = (props?: any): ComponentStructure => {
       ...restProps,
       style: mergedStyle,
       data: restProps.data,
+      dataType: "static",
     },
     ...(props?.children && { children: props.children }),
   };

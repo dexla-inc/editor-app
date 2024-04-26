@@ -74,7 +74,7 @@ export const DateInputData = ({ component, endpoints }: DataProps) => {
   };
 
   useEffect(() => {
-    if (form.isTouched() && form.isDirty()) {
+    if (form.isTouched()) {
       debouncedTreeComponentAttrsUpdate({
         attrs: form.values,
       });
