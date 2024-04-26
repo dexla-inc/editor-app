@@ -37,14 +37,19 @@ export const useRenderData = ({ component }: UseRenderDataProps) => {
     if (Array.isArray(data)) {
       return data.map((item: any, parentIndex: number) => {
         return component.children?.map((child) => {
-          let newParentIndex = `${component.id}__${parentIndex}`;
-          if (shareableContent?.parentIndex) {
-            newParentIndex = `${shareableContent.parentIndex}--${component.id}__${parentIndex}`;
+          const currentComponentGroupId = `${component.id}__${parentIndex}`;
+          let newParentSuffix = currentComponentGroupId;
+          if (shareableContent?.parentSuffix) {
+            newParentSuffix = `${shareableContent.parentSuffix}--${component.id}__${parentIndex}`;
           }
           return renderTree(child, {
             ...shareableContent,
             data: item,
-            parentIndex: newParentIndex,
+            parentSuffix: newParentSuffix,
+            relatedComponentsData: {
+              ...(shareableContent?.relatedComponentsData ?? {}),
+              [currentComponentGroupId]: item,
+            },
           });
         });
       });

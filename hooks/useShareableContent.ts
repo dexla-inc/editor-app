@@ -6,14 +6,16 @@ import get from "lodash.get";
 import cloneDeep from "lodash.clonedeep";
 
 type UseShareableContentProps = {
+  componentId?: string;
   endpoints: PagingResponse<Endpoint>;
 };
 
 export const useShareableContent = ({
+  componentId,
   endpoints,
 }: UseShareableContentProps) => {
   const selectedComponentId = useEditorTreeStore(
-    (state) => state.selectedComponentIds?.at(-1),
+    (state) => componentId ?? state.selectedComponentIds?.at(-1),
   );
   const { computeValue } = useDataBinding();
 

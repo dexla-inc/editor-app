@@ -27,3 +27,5 @@ export function extractKeys(
 
   return keys;
 }
+
+export const relatedKeys = ["data", "parent", "grandparent"];
