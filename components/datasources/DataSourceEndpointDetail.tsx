@@ -54,6 +54,7 @@ const MediaTypeArray: MediaTypes[] = [
   "application/graphql",
   "text/event-stream",
   "application/octet-stream",
+  "multipart/form-data",
 ];
 const MethodTypesWithRequestBody: MethodTypes[] = ["POST", "PATCH", "PUT"];
 
