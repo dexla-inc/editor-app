@@ -3,6 +3,7 @@ import { Router, useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { PageResponse } from "@/requests/pages/types";
 import { ProjectResponse } from "@/requests/projects/types";
+import { usePageQuery } from "@/hooks/reactQuery/usePageQuery";
 
 // Props from server side
 type Props = {
@@ -19,9 +20,15 @@ export const withPageOnLoad = (WrappedComponent: any) => {
       page: string;
     };
 
-    const page = props.deploymentPage;
+    const source = WrappedComponent.type?.name; // If "PageEditor" then get page actions from page. If deployed then deploymentPage
+    const isEditor = source === "PageEditor";
+
+    const { data: editorPage } = usePageQuery(projectId, pageId, isEditor);
+
+    const page = isEditor ? editorPage : props.deploymentPage;
 
     const { onPageLoad } = useTriggers({
+      // @ts-ignore
       entity: page,
       router: router as Router,
       projectId: props.project?.id || projectId,
