@@ -184,6 +184,7 @@ export const useDataSourceStore = create<DataSourceState>()(
           authState: {
             accessToken: state.authState.accessToken,
             expiresAt: state.authState.expiresAt,
+            additionalInfo: state.authState.additionalInfo,
           },
         }),
       },

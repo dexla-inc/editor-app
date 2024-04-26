@@ -58,7 +58,7 @@ const DateInputComponent = ({
         onChange?.(formattedValue);
         setValue(formattedValue);
       } else {
-        console.log("Incomplete date range:", value);
+        console.warn("Incomplete date range:", value);
         return;
       }
     } else if (value instanceof Date) {
