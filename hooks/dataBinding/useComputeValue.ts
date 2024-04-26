@@ -10,6 +10,7 @@ import cloneDeep from "lodash.clonedeep";
 import { useInputsStore } from "@/stores/inputs";
 import { useShallow } from "zustand/react/shallow";
 import { pick } from "next/dist/lib/pick";
+import { relatedKeys } from "@/utils/data";
 
 type NextRouterKeys = keyof NextRouter;
 type RecordStringAny = Record<string, any>;
@@ -19,6 +20,7 @@ const componentPattern = /components\[\s*(?:\/\*[\s\S]*?\*\/\s*)?'(.*?)'\s*\]/g;
 const actionPattern = /actions\[\s*(?:\/\*[\s\S]*?\*\/\s*)?'(.*?)'\s*\]/g;
 const browserPattern = /browser\[\s*(?:\/\*[\s\S]*?\*\/\s*)?'(.*?)'\s*\]/g;
 const authPattern = /auth\[\s*(?:\/\*[\s\S]*?\*\/\s*)?'(.*?)'\s*\]/g;
+const itemPattern = /item\[\s*(?:\/\*[\s\S]*?\*\/\s*)?'(.*?)'\s*\]/g;
 
 type UseComputeValue = {
   shareableContent?: Record<string, unknown>;
@@ -66,33 +68,65 @@ export const useComputeValue = ({
     return findValuePropsPaths(onLoad);
   }, [onLoad]);
 
-  const { variableKeys, componentKeys, actionKeys, browserKeys, authKeys } =
-    useMemo(() => {
-      const variableKeys: any[] = [];
-      const componentKeys: any[] = [];
-      const actionKeys: any[] = [];
-      const browserKeys: NextRouterKeys[] = [];
-      const authKeys: any[] = [];
+  const relatedComponentsDataList = Object.entries(
+    shareableContent?.relatedComponentsData ?? {},
+  );
+  const itemData = relatedComponentsDataList?.at(-1);
 
-      const patterns = [
-        { pattern: variablePattern, keys: variableKeys },
-        { pattern: componentPattern, keys: componentKeys },
-        { pattern: actionPattern, keys: actionKeys },
-        { pattern: browserPattern, keys: browserKeys },
-        { pattern: authPattern, keys: authKeys },
-      ];
+  const item = cloneDeep(relatedComponentsDataList)
+    ?.reverse()
+    .reduce(
+      (acc, [key, value], i) => {
+        acc[relatedKeys[i]] = value;
+        return acc;
+      },
+      {
+        index: itemData?.[0]?.split("__")?.[1],
+      } as any,
+    );
 
-      valuePropsPaths.forEach((fieldValuePath) => {
-        const fieldValue = get(onLoad, fieldValuePath);
-        if (fieldValue.dataType === "boundCode" && fieldValue.boundCode) {
-          patterns.forEach(({ pattern, keys }) => {
-            keys.push(...extractKeysFromPattern(pattern, fieldValue.boundCode));
-          });
-        }
-      });
+  const {
+    variableKeys,
+    componentKeys,
+    actionKeys,
+    browserKeys,
+    authKeys,
+    itemKeys,
+  } = useMemo(() => {
+    const variableKeys: any[] = [];
+    const componentKeys: any[] = [];
+    const actionKeys: any[] = [];
+    const browserKeys: NextRouterKeys[] = [];
+    const authKeys: any[] = [];
+    const itemKeys: any[] = [];
 
-      return { variableKeys, componentKeys, actionKeys, browserKeys, authKeys };
-    }, [onLoad, valuePropsPaths]);
+    const patterns = [
+      { pattern: variablePattern, keys: variableKeys },
+      { pattern: componentPattern, keys: componentKeys },
+      { pattern: actionPattern, keys: actionKeys },
+      { pattern: browserPattern, keys: browserKeys },
+      { pattern: authPattern, keys: authKeys },
+      { pattern: itemPattern, keys: itemKeys },
+    ];
+
+    valuePropsPaths.forEach((fieldValuePath) => {
+      const fieldValue = get(onLoad, fieldValuePath);
+      if (fieldValue.dataType === "boundCode" && fieldValue.boundCode) {
+        patterns.forEach(({ pattern, keys }) => {
+          keys.push(...extractKeysFromPattern(pattern, fieldValue.boundCode));
+        });
+      }
+    });
+
+    return {
+      variableKeys,
+      componentKeys,
+      actionKeys,
+      browserKeys,
+      authKeys,
+      itemKeys,
+    };
+  }, [onLoad, valuePropsPaths]);
 
   const variables = useVariableStore(
     useShallow((state) =>
@@ -152,6 +186,11 @@ export const useComputeValue = ({
     );
   }, [browser, browserKeys]);
 
+  const itemValues: any = itemKeys.reduce(
+    (acc, key) => ({ ...acc, [key]: JSON.stringify(item[key]) }),
+    {},
+  );
+
   const transformBoundCode = useCallback(
     (boundCode: string) => {
       let result = boundCode;
@@ -198,6 +237,14 @@ export const useComputeValue = ({
         result = result.replaceAll(regex, `'${auth[key]}'`);
       });
 
+      itemKeys.forEach((key) => {
+        const regex = new RegExp(
+          `item\\[(\\/\\* [\\S\\s]* \\*\\/)?\\s?'${key}'\\]`,
+          "g",
+        );
+        result = result.replaceAll(regex, `${itemValues[key]}`);
+      });
+
       return result;
     },
     [
@@ -210,6 +257,8 @@ export const useComputeValue = ({
       inputs,
       variableKeys,
       variables,
+      itemKeys,
+      itemValues,
     ],
   );
 
@@ -218,7 +267,7 @@ export const useComputeValue = ({
       dynamic: (fieldValue: ValueProps) => {
         return get(
           shareableContent,
-          `data.${fieldValue?.dynamic?.replace(".$", "")}`,
+          `data.${fieldValue?.dynamic}`,
           fieldValue?.dynamic,
         );
       },

@@ -70,7 +70,12 @@ const ComponentToolboxInner = ({ component }: Props) => {
 
   const parentTree = useMemo(
     () =>
-      component.id ? getComponentParent(editorTree.root, component.id) : null,
+      component.id
+        ? getComponentParent(
+            editorTree.root,
+            component.id?.split("-repeated-")[0],
+          )
+        : null,
     [editorTree.root, component.id],
   );
 

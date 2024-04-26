@@ -51,9 +51,10 @@ const DataItem = ({ onClick, item, onItemSelection, type }: DataItemProps) => {
       />
     );
   }
-  if (type === "components")
+  if (type === "components") {
     return <DataItemButton item={item} onClick={onClick} />;
-  if (["auth", "browser", "event"].includes(type!))
+  }
+  if (["auth", "browser", "event", "item"].includes(type!)) {
     return (
       <JSONSelector
         name={type!}
@@ -61,6 +62,7 @@ const DataItem = ({ onClick, item, onItemSelection, type }: DataItemProps) => {
         onSelectValue={(selected) => onItemSelection(`${selected.path}`)}
       />
     );
+  }
   if (type === "variables") {
     const isVariableNotObject =
       item?.type && item?.type !== "OBJECT" && item?.type !== "ARRAY";

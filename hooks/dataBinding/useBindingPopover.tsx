@@ -16,6 +16,9 @@ import { Component } from "@/utils/editor";
 import { useShallow } from "zustand/react/shallow";
 import { ContextType } from "@/types/dataBinding";
 import { selectedComponentIdSelector } from "@/utils/componentSelectors";
+import { useShareableContent } from "@/hooks/useShareableContent";
+import { relatedKeys } from "@/utils/data";
+import cloneDeep from "lodash.clonedeep";
 
 type BindType = {
   selectedEntityId: string;
@@ -53,6 +56,7 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
   const pageActions = pageListQuery?.results?.find(
     (p) => p.id === activePage?.id,
   )?.actions;
+  const relatedComponentsData = useShareableContent({ endpoints: endpoints! });
   const variablesList = useVariableStore((state) => state.variableList);
   const browser = useRouter();
   const auth = useDataSourceStore((state) => state.getAuthState());
@@ -204,6 +208,21 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
     },
   ];
 
+  const relatedComponentsDataList = Object.entries(relatedComponentsData);
+  const itemData = relatedComponentsDataList?.at(-1);
+
+  const item = cloneDeep(relatedComponentsDataList)
+    ?.reverse()
+    .reduce(
+      (acc, [key, value], i) => {
+        acc[relatedKeys[i]] = value;
+        return acc;
+      },
+      {
+        index: itemData?.[0]?.split("__")?.[1],
+      } as any,
+    );
+
   const getEntityEditorValue = ({ selectedEntityId, entity }: BindType) => {
     const entityHandlers = {
       auth: () => setEntityString({ selectedEntityId, entity }),
@@ -217,6 +236,7 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
       },
       browser: () => setEntityString({ selectedEntityId, entity }),
       event: () => setEntityString({ selectedEntityId, entity }),
+      item: () => setEntityString({ selectedEntityId, entity }),
       variables: () => {
         try {
           const parsed = JSON.parse(selectedEntityId);
@@ -240,5 +260,6 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
     variables,
     event,
     getEntityEditorValue,
+    item,
   };
 };

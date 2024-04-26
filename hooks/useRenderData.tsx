@@ -36,13 +36,22 @@ export const useRenderData = ({ component }: UseRenderDataProps) => {
 
     if (Array.isArray(data)) {
       return data.map((item: any, parentIndex: number) => {
-        return component.children?.map((child) =>
-          renderTree(child, {
+        return component.children?.map((child) => {
+          const currentComponentGroupId = `${component.id}__${parentIndex}`;
+          let newParentSuffix = currentComponentGroupId;
+          if (shareableContent?.parentSuffix) {
+            newParentSuffix = `${shareableContent.parentSuffix}--${component.id}__${parentIndex}`;
+          }
+          return renderTree(child, {
             ...shareableContent,
             data: item,
-            parentIndex,
-          }),
-        );
+            parentSuffix: newParentSuffix,
+            relatedComponentsData: {
+              ...(shareableContent?.relatedComponentsData ?? {}),
+              [currentComponentGroupId]: item,
+            },
+          });
+        });
       });
     } else {
       return component.children?.map((child) =>
