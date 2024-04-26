@@ -6,7 +6,12 @@ export function extractKeys(
 
   let keys: string[] = [];
 
-  if (!Array.isArray(obj)) {
+  if (Array.isArray(obj)) {
+    // If the object is an array, iterate over each element
+    obj.forEach((item) => {
+      keys = keys.concat(extractKeys(item, parentKey));
+    });
+  } else if (!Array.isArray(obj)) {
     // Ensure we only process objects
     Object.entries(obj).forEach(([key, value]) => {
       const newKey = parentKey ? `${parentKey}.${key}` : key;
