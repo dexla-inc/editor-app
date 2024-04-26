@@ -10,18 +10,13 @@ import { Endpoint } from "@/requests/datasources/types";
 import { PagingResponse } from "@/requests/types";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { ICON_SIZE } from "@/utils/config";
-import {
-  Component,
-  debouncedTreeComponentAttrsUpdate,
-  getParentComponentData,
-} from "@/utils/editor";
+import { Component, debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { ActionIcon, Group, Tooltip } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconPlug, IconPlugOff } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
 import { ValueProps } from "@/types/dataBinding";
-import { useDataBinding } from "@/hooks/dataBinding/useDataBinding";
 
 type Props = {
   fields: Array<{
@@ -37,16 +32,9 @@ type Props = {
 };
 
 export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
-  const editorTree = useEditorTreeStore((state) => state.tree);
-  const { computeValue } = useDataBinding();
-  const parentData = getParentComponentData(
-    editorTree.root,
-    component.id!,
-    endpoints,
-    computeValue,
+  const hasParentComponentData = useEditorTreeStore(
+    (state) => state.selectedComponentIds?.at(-1)?.includes("-repeated-"),
   );
-
-  const hasParentComponentData = !!parentData;
   const { getComponentsStates } = useComponentStates();
 
   const onLoadFieldsStarter = fields.reduce(

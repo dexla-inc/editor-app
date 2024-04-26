@@ -1,9 +1,6 @@
 import { DataProps } from "@/components/data/type";
 import { ActionIcon, Group, Stack, Tooltip } from "@mantine/core";
-import {
-  debouncedTreeComponentAttrsUpdate,
-  getParentComponentData,
-} from "@/utils/editor";
+import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { useForm } from "@mantine/form";
 import { ComponentToBindFromSelect } from "@/components/ComponentToBindFromSelect";
 import { useEffect } from "react";
@@ -17,7 +14,6 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 import { useComponentStates } from "@/hooks/useComponentStates";
 import { ValueProps } from "@/types/dataBinding";
 import merge from "lodash.merge";
-import { useDataBinding } from "@/hooks/dataBinding/useDataBinding";
 
 export const DateInputData = ({ component, endpoints }: DataProps) => {
   const fields = [
@@ -28,13 +24,8 @@ export const DateInputData = ({ component, endpoints }: DataProps) => {
     },
   ];
 
-  const editorTree = useEditorTreeStore((state) => state.tree);
-  const { computeValue } = useDataBinding();
-  const hasParentComponentData = !!getParentComponentData(
-    editorTree.root,
-    component.id!,
-    endpoints!,
-    computeValue,
+  const hasParentComponentData = useEditorTreeStore(
+    (state) => state.selectedComponentIds?.at(-1)?.includes("-repeated-"),
   );
   const { getComponentsStates } = useComponentStates();
 

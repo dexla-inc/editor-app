@@ -36,13 +36,17 @@ export const useRenderData = ({ component }: UseRenderDataProps) => {
 
     if (Array.isArray(data)) {
       return data.map((item: any, parentIndex: number) => {
-        return component.children?.map((child) =>
-          renderTree(child, {
+        return component.children?.map((child) => {
+          let newParentIndex = `${component.id}__${parentIndex}`;
+          if (shareableContent?.parentIndex) {
+            newParentIndex = `${shareableContent.parentIndex}--${component.id}__${parentIndex}`;
+          }
+          return renderTree(child, {
             ...shareableContent,
             data: item,
-            parentIndex,
-          }),
-        );
+            parentIndex: newParentIndex,
+          });
+        });
       });
     } else {
       return component.children?.map((child) =>
