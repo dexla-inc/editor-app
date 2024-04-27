@@ -34,9 +34,17 @@ export const withPageOnLoad = (WrappedComponent: any) => {
       projectId: props.project?.id || projectId,
     });
 
+    const [clientIsReady, setClientIsReady] = useState(false);
     const [actionTriggeredForPath, setActionTriggeredForPath] = useState("");
 
     useEffect(() => {
+      if (typeof window !== "undefined") {
+        setClientIsReady(true);
+      }
+    }, []);
+
+    useEffect(() => {
+      if (!clientIsReady) return;
       const triggerPageActions = async () => {
         const isPageValid =
           page &&
@@ -56,7 +64,7 @@ export const withPageOnLoad = (WrappedComponent: any) => {
 
       triggerPageActions();
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [router.asPath, page?.id, props, onPageLoad]);
+    }, [clientIsReady, router.asPath, page?.id]);
 
     return <WrappedComponent {...props} />;
   };
