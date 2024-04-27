@@ -19,7 +19,6 @@ export const withPageOnLoad = (WrappedComponent: any) => {
       id: string;
       page: string;
     };
-    console.log(router);
 
     const source = WrappedComponent.type?.name; // If "PageEditor" then get page actions from page. If deployed then deploymentPage
     const isEditor = source === "PageEditor";
@@ -45,6 +44,20 @@ export const withPageOnLoad = (WrappedComponent: any) => {
             router.asPath.includes(page.slug));
         // TODO: Do not run when runInEditMode is false and the mode is editor.
         // TODO: Only the last action gets run
+        console.log(
+          "router path ",
+          router.asPath,
+          "\n page valid ",
+          isPageValid,
+          "\n page ",
+          page,
+          "\n router",
+          router,
+          "\n onPageLoad ",
+          onPageLoad,
+          "\n pageId",
+          pageId,
+        );
         if (
           isPageValid &&
           onPageLoad &&
