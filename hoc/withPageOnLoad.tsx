@@ -19,6 +19,7 @@ export const withPageOnLoad = (WrappedComponent: any) => {
       id: string;
       page: string;
     };
+    console.log(router);
 
     const source = WrappedComponent.type?.name; // If "PageEditor" then get page actions from page. If deployed then deploymentPage
     const isEditor = source === "PageEditor";
