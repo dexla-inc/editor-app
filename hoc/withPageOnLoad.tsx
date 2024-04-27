@@ -44,20 +44,6 @@ export const withPageOnLoad = (WrappedComponent: any) => {
             router.asPath.includes(page.slug));
         // TODO: Do not run when runInEditMode is false and the mode is editor.
         // TODO: Only the last action gets run
-        console.log(
-          "router path ",
-          router.asPath,
-          "\n page valid ",
-          isPageValid,
-          "\n page ",
-          page,
-          "\n router",
-          router,
-          "\n onPageLoad ",
-          onPageLoad,
-          "\n pageId",
-          pageId,
-        );
         if (
           isPageValid &&
           onPageLoad &&
@@ -70,7 +56,7 @@ export const withPageOnLoad = (WrappedComponent: any) => {
 
       triggerPageActions();
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [router.asPath, page?.id]);
+    }, [router.asPath, page?.id, props, onPageLoad]);
 
     return <WrappedComponent {...props} />;
   };
