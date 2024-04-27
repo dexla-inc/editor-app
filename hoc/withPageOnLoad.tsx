@@ -52,12 +52,13 @@ export const withPageOnLoad = (WrappedComponent: any) => {
             router.asPath.includes(page.slug));
         // TODO: Do not run when runInEditMode is false and the mode is editor.
         // TODO: Only the last action gets run
+        console.log(isPageValid, onPageLoad);
         if (
           isPageValid &&
           onPageLoad &&
           actionTriggeredForPath !== router.asPath
         ) {
-          await onPageLoad?.();
+          await onPageLoad();
           setActionTriggeredForPath(router.asPath);
         }
       };
