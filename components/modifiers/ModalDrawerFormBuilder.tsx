@@ -16,7 +16,7 @@ export const ModalDrawerFormBuilder = ({
   selectedComponent,
   children,
 }: Props) => {
-  const modifier = selectedComponent.name.toLowerCase() as Modifiers;
+  const modifier = selectedComponent.name?.toLowerCase() as Modifiers;
   const defaultFormProps = requiredModifiers[modifier] ?? {};
   const newFormProps = Object.fromEntries(
     Object.entries(defaultFormProps).map(([key, value]) => [

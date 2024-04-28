@@ -183,12 +183,12 @@ export const EditorNavbarThemesSection =
               placeholder="Search by hex"
               icon={<IconSearch size={ICON_SIZE} />}
               onChange={(event) => {
-                const value = event.currentTarget.value.toLowerCase();
+                const value = event.currentTarget.value?.toLowerCase();
                 const _colors = userTheme?.colors.filter(
                   (color) =>
-                    color.name.toLowerCase().includes(value) ||
-                    color.hex.toLowerCase().includes(value) ||
-                    color.friendlyName.toLowerCase().includes(value),
+                    color.name?.toLowerCase().includes(value) ||
+                    color.hex?.toLowerCase().includes(value) ||
+                    color.friendlyName?.toLowerCase().includes(value),
                 );
                 setSearchResults(_colors ?? []);
               }}
@@ -263,7 +263,7 @@ export const EditorNavbarThemesSection =
               onChange={(value: string) => {
                 form.setFieldValue(`defaultFont`, value);
                 form.values.fonts.forEach((font, index) => {
-                  if (!font.tag.toLowerCase().startsWith("h")) {
+                  if (!font.tag?.toLowerCase().startsWith("h")) {
                     form.setFieldValue(`fonts.${index}.fontFamily`, value);
                   }
                 });
@@ -274,7 +274,7 @@ export const EditorNavbarThemesSection =
               value={form.values.fonts[0]?.fontFamily}
               onChange={(value: string) => {
                 form.values.fonts.forEach((font, index) => {
-                  if (font.tag.toLowerCase().startsWith("h")) {
+                  if (font.tag?.toLowerCase().startsWith("h")) {
                     form.setFieldValue(`fonts.${index}.fontFamily`, value);
                   }
                 });

@@ -27,8 +27,8 @@ export const EditorNavbarPagesSection = () => {
 
   useEffect(() => {
     if (pageListQuery?.results) {
-      const filteredPages = pageListQuery.results.filter((p) =>
-        p.title.toLowerCase().includes(search.toLowerCase()),
+      const filteredPages = pageListQuery.results.filter(
+        (p) => p.title?.toLowerCase().includes(search?.toLowerCase()),
       );
       setPages(filteredPages);
     }

@@ -20,7 +20,7 @@ export const prepareUserThemeLive = (projectBranding: ThemeResponse) => {
       sizes: projectBranding?.fonts?.reduce((acc, font) => {
         return {
           ...acc,
-          [font.tag.toLowerCase()]: {
+          [font.tag?.toLowerCase()]: {
             fontSize: font.fontSize,
             lineHeight: font.lineHeight,
             fontWeight: font.fontWeight,
