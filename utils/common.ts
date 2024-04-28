@@ -1,7 +1,6 @@
 import { FileWithPath } from "@mantine/dropzone";
 import { requiredModifiers } from "./modifiers";
 import { GRID_SIZE } from "./config";
-import isEmpty from "lodash.isempty";
 
 export const convertToBase64 = (file: FileWithPath): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -247,11 +246,21 @@ export function toSnakeCase(input: string): string {
 export function removeEmpty(obj: Record<string, any>): Record<string, any> {
   return Object.entries(obj).reduce(
     (acc, [key, value]) => {
-      if (!isEmpty(value) && value !== "undefined") {
+      if (notEmpty(value)) {
         acc[key] = value;
       }
       return acc;
     },
     {} as Record<string, any>,
+  );
+}
+
+function notEmpty(value: any): boolean {
+  return (
+    value !== null &&
+    value !== undefined &&
+    value !== "" &&
+    value !== "undefined" &&
+    value !== "null"
   );
 }
