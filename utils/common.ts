@@ -241,7 +241,7 @@ export function toSnakeCase(input: string): string {
   temp = temp.trim().replace(/ /g, "_");
 
   // Convert to lowercase
-  return temp.toLowerCase();
+  return temp?.toLowerCase();
 }
 
 export function removeEmpty(obj: Record<string, any>): Record<string, any> {

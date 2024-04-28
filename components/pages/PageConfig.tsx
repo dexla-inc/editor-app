@@ -181,7 +181,7 @@ export default function PageConfig({ page, setPage }: Props) {
   useEffect(() => {
     if (page) {
       form.setFieldValue("title", page.title);
-      form.setFieldValue("slug", page.slug.toLowerCase());
+      form.setFieldValue("slug", page.slug?.toLowerCase());
       form.setFieldValue("queryStrings", page.queryStrings);
       form.setFieldValue("authenticatedOnly", page.authenticatedOnly);
       setSlug(page.slug);

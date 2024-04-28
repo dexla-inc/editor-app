@@ -18,8 +18,8 @@ export const AssetImages = ({ search, projectId }: Props) => {
 
   const filteredImages = useMemo(
     () =>
-      images?.filter((image) =>
-        image.name.toLowerCase().includes(search.toLowerCase()),
+      images?.filter(
+        (image) => image.name?.toLowerCase().includes(search?.toLowerCase()),
       ) || [],
     [images, search],
   );

@@ -25,8 +25,8 @@ export const SelectFont = ({ label, value, onChange }: SelectFontProps) => {
       value={value}
       data={googleFontsData
         .map((f: any) => f.family)
-        .filter((f: string) =>
-          f.toLowerCase().includes(fontSearch.toLowerCase()),
+        .filter(
+          (f: string) => f?.toLowerCase().includes(fontSearch?.toLowerCase()),
         )
         .slice(0, 10)}
       onChange={onChange}

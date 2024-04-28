@@ -17,7 +17,7 @@ export const VariableSelect = ({
   const variableSelectData = (variables ?? []).map((variable) => {
     return {
       value: variable.id,
-      label: variable.name,
+      label: variable.name ?? "",
       type: variable.type,
     };
   });

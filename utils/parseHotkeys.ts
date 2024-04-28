@@ -14,7 +14,7 @@ type CheckHotkeyMatch = (event: KeyboardEvent) => boolean;
 
 export function parseHotkey(hotkey: string): Hotkey {
   const keys = hotkey
-    .toLowerCase()
+    ?.toLowerCase()
     .split("+")
     .map((part) => part.trim());
 
@@ -62,8 +62,8 @@ function isExactHotkey(hotkey: Hotkey, event: KeyboardEvent): boolean {
 
   if (
     key &&
-    (pressedKey.toLowerCase() === key.toLowerCase() ||
-      event.code.replace("Key", "").toLowerCase() === key.toLowerCase())
+    (pressedKey?.toLowerCase() === key?.toLowerCase() ||
+      event.code.replace("Key", "")?.toLowerCase() === key?.toLowerCase())
   ) {
     return true;
   }
@@ -82,7 +82,7 @@ export interface HotkeyItemOptions {
 type HotkeyItem = [
   string,
   (event: React.KeyboardEvent<HTMLElement> | KeyboardEvent) => void,
-  HotkeyItemOptions?
+  HotkeyItemOptions?,
 ];
 
 export function getHotkeyHandler(hotkeys: HotkeyItem[]) {
