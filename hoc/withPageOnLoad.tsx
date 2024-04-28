@@ -21,11 +21,15 @@ export const withPageOnLoad = (WrappedComponent: any) => {
     };
 
     const source = WrappedComponent.type?.name; // If "PageEditor" then get page actions from page. If deployed then deploymentPage
+    console.log("source", source);
     const isEditor = source === "PageEditor";
+    console.log("isEditor", isEditor);
 
     const { data: editorPage } = usePageQuery(projectId, pageId, isEditor);
+    console.log("editorPage", editorPage);
 
     const page = isEditor ? editorPage : props.deploymentPage;
+    console.log("page", page);
 
     const { onPageLoad } = useTriggers({
       // @ts-ignore
@@ -33,6 +37,8 @@ export const withPageOnLoad = (WrappedComponent: any) => {
       router: router as Router,
       projectId: props.project?.id || projectId,
     });
+
+    console.log("onPageLoad", onPageLoad);
 
     const [actionTriggeredForPath, setActionTriggeredForPath] = useState("");
 
