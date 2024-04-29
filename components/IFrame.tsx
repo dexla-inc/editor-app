@@ -1,4 +1,4 @@
-import { useUserTheme } from "@/hooks/useUserTheme";
+import { useUserTheme } from "@/hooks/editor/useUserTheme";
 import { useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { HEADER_HEIGHT, NAVBAR_MIN_WIDTH, NAVBAR_WIDTH } from "@/utils/config";

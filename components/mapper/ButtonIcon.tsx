@@ -1,7 +1,7 @@
 import { Icon as BaseIconComponent } from "@/components/Icon";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { useBrandingStyles } from "@/hooks/useBrandingStyles";
-import { useChangeState } from "@/hooks/useChangeState";
+import { useBrandingStyles } from "@/hooks/editor/useBrandingStyles";
+import { useChangeState } from "@/hooks/components/useChangeState";
 import { DISABLED_HOVER, globalStyles } from "@/utils/branding";
 import { EditableComponentMapper } from "@/utils/editor";
 import {

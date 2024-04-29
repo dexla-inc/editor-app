@@ -1,5 +1,5 @@
-import { useBrandingStyles } from "@/hooks/useBrandingStyles";
-import { useChangeState } from "@/hooks/useChangeState";
+import { useBrandingStyles } from "@/hooks/editor/useBrandingStyles";
+import { useChangeState } from "@/hooks/components/useChangeState";
 import { EditableComponentMapper } from "@/utils/editor";
 import {
   CheckboxProps as MantineCheckboxProps,
@@ -7,7 +7,7 @@ import {
 } from "@mantine/core";
 import merge from "lodash.merge";
 import { ChangeEvent, forwardRef, memo, ForwardedRef } from "react";
-import { useInputValue } from "@/hooks/useInputValue";
+import { useInputValue } from "@/hooks/components/useInputValue";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useShallow } from "zustand/react/shallow";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";

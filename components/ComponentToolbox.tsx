@@ -1,6 +1,6 @@
 import { ActionIconTransparent } from "@/components/ActionIconTransparent";
-import { useDraggable } from "@/hooks/useDraggable";
-import { useOnDragStart } from "@/hooks/useOnDragStart";
+import { useDraggable } from "@/hooks/editor/useDraggable";
+import { useOnDragStart } from "@/hooks/editor/useOnDragStart";
 import { useEditorStore } from "@/stores/editor";
 import { useThemeStore } from "@/stores/theme";
 import { useUserConfigStore } from "@/stores/userConfig";

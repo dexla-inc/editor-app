@@ -5,7 +5,7 @@ import { Action, ActionTrigger, actionMapper } from "@/utils/actions";
 import { Component } from "@/utils/editor";
 import { Router } from "next/router";
 import { ChangeEvent, useMemo } from "react";
-import { useDataBinding } from "@/hooks/dataBinding/useDataBinding";
+import { useDataBinding } from "@/hooks/data/useDataBinding";
 import { useFlowsQuery } from "@/hooks/reactQuery/useFlowsQuery";
 import { ComputeValueProps } from "@/types/dataBinding";
 

@@ -5,7 +5,7 @@ import { ApexOptions } from "apexcharts";
 import get from "lodash.get";
 import merge from "lodash.merge";
 import dynamic from "next/dynamic";
-import { useEndpoint } from "@/hooks/useEndpoint";
+import { useEndpoint } from "@/hooks/components/useEndpoint";
 import groupBy from "lodash.groupby";
 import { Box, Skeleton } from "@mantine/core";
 import { omit } from "next/dist/shared/lib/router/utils/omit";

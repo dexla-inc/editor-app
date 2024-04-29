@@ -7,7 +7,7 @@ import {
 } from "@mantine/core";
 import { forwardRef, memo } from "react";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { useEndpoint } from "@/hooks/useEndpoint";
+import { useEndpoint } from "@/hooks/components/useEndpoint";
 
 type Props = EditableComponentMapper & TableProps;
 

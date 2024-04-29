@@ -1,6 +1,6 @@
 import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 import { ComponentToBindFromSelect } from "@/components/ComponentToBindFromSelect";
-import { useComponentStates } from "@/hooks/useComponentStates";
+import { useComponentStates } from "@/hooks/editor/useComponentStates";
 import { useEditorStore } from "@/stores/editor";
 import { ChangeStateAction } from "@/utils/actions";
 import { Stack } from "@mantine/core";

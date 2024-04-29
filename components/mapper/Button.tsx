@@ -1,8 +1,8 @@
 import { Icon } from "@/components/Icon";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { useBrandingStyles } from "@/hooks/useBrandingStyles";
-import { useChangeState } from "@/hooks/useChangeState";
-import { useContentEditable } from "@/hooks/useContentEditable";
+import { useBrandingStyles } from "@/hooks/editor/useBrandingStyles";
+import { useChangeState } from "@/hooks/components/useChangeState";
+import { useContentEditable } from "@/hooks/components/useContentEditable";
 import { useThemeStore } from "@/stores/theme";
 import { DISABLED_HOVER } from "@/utils/branding";
 import { EditableComponentMapper, getColorFromTheme } from "@/utils/editor";

@@ -5,7 +5,7 @@ import { FlexProps, Flex as MantineFlex } from "@mantine/core";
 import merge from "lodash.merge";
 import { forwardRef, memo } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { useRenderData } from "@/hooks/useRenderData";
+import { useRenderData } from "@/hooks/components/useRenderData";
 import { convertSizeToPx } from "@/utils/defaultSizes";
 
 type Props = EditableComponentMapper & FlexProps;

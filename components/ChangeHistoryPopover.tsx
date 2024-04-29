@@ -1,5 +1,5 @@
 import { SavingDisplay } from "@/components/SavingDisplay";
-import { usePreventNavigationOnSaving } from "@/hooks/usePreventNavigationOnSaving";
+import { usePreventNavigationOnSaving } from "@/hooks/editor/usePreventNavigationOnSaving";
 import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import {

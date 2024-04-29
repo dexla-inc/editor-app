@@ -1,7 +1,7 @@
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useShallow } from "zustand/react/shallow";
 import { Component, ComponentTree } from "@/utils/editor";
-import { useEndpoint } from "@/hooks/useEndpoint";
+import { useEndpoint } from "@/hooks/components/useEndpoint";
 import { LoadingOverlay } from "@mantine/core";
 import merge from "lodash.merge";
 
@@ -54,24 +54,9 @@ export const useRenderData = ({ component }: UseRenderDataProps) => {
         });
       });
     } else {
-      return component.children?.map((child) => {
-        let newParentSuffix;
-        if (shareableContent?.data) {
-          const currentComponentGroupId = `${component.id}`;
-          newParentSuffix = currentComponentGroupId;
-          if (shareableContent?.parentSuffix) {
-            newParentSuffix = `${shareableContent.parentSuffix}--${newParentSuffix}`;
-          }
-        }
-        console.log(newParentSuffix);
-        return renderTree(
-          child,
-          merge({}, shareableContent, {
-            data: data ?? {},
-            ...(newParentSuffix ? { parentSuffix: newParentSuffix } : {}),
-          }),
-        );
-      });
+      return component.children?.map((child) =>
+        renderTree(child, merge({}, shareableContent, { data: data ?? {} })),
+      );
     }
   };
 

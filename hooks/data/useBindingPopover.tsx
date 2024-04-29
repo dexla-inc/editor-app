@@ -16,7 +16,7 @@ import { Component } from "@/utils/editor";
 import { useShallow } from "zustand/react/shallow";
 import { ContextType } from "@/types/dataBinding";
 import { selectedComponentIdSelector } from "@/utils/componentSelectors";
-import { useShareableContent } from "@/hooks/useShareableContent";
+import { useShareableContent } from "@/hooks/data/useShareableContent";
 import { relatedKeys } from "@/utils/data";
 import cloneDeep from "lodash.clonedeep";
 

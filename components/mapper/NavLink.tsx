@@ -1,7 +1,7 @@
 import { Icon } from "@/components/Icon";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { useChangeState } from "@/hooks/useChangeState";
-import { useContentEditable } from "@/hooks/useContentEditable";
+import { useChangeState } from "@/hooks/components/useChangeState";
+import { useContentEditable } from "@/hooks/components/useContentEditable";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useThemeStore } from "@/stores/theme";
 import { NavigationAction } from "@/utils/actions";

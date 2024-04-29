@@ -2,8 +2,8 @@ import { Icon } from "@/components/Icon";
 import { InputLoader } from "@/components/InputLoader";
 import { PasswordInput } from "@/components/mapper/PasswordInput";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { useBrandingStyles } from "@/hooks/useBrandingStyles";
-import { useChangeState } from "@/hooks/useChangeState";
+import { useBrandingStyles } from "@/hooks/editor/useBrandingStyles";
+import { useChangeState } from "@/hooks/components/useChangeState";
 import { useEditorStore } from "@/stores/editor";
 import { EditableComponentMapper } from "@/utils/editor";
 import {
@@ -18,7 +18,7 @@ import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { forwardRef, memo } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { useInputValue } from "@/hooks/useInputValue";
+import { useInputValue } from "@/hooks/components/useInputValue";
 import { useShallow } from "zustand/react/shallow";
 
 type Props = EditableComponentMapper & NumberInputProps & TextInputProps;

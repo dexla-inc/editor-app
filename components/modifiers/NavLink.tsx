@@ -1,7 +1,7 @@
 import { IconSelector } from "@/components/IconSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { withModifier } from "@/hoc/withModifier";
-import { useChangeState } from "@/hooks/useChangeState";
+import { useChangeState } from "@/hooks/components/useChangeState";
 import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Select, Stack } from "@mantine/core";

@@ -1,5 +1,5 @@
 import { ProgressBar } from "@/components/ProgressBar";
-import { useCustomCode } from "@/hooks/useCustomCode";
+import { useCustomCode } from "@/hooks/editor/useCustomCode";
 import { ProjectResponse } from "@/requests/projects/types";
 import { useThemeStore } from "@/stores/theme";
 import { Box, BoxProps, MantineProvider } from "@mantine/core";

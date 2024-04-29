@@ -1,4 +1,4 @@
-import { useHotkeysOnIframe } from "@/hooks/useHotkeysOnIframe";
+import { useHotkeysOnIframe } from "@/hooks/editor/useHotkeysOnIframe";
 import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { copyToClipboard, pasteFromClipboard } from "@/utils/clipboard";
