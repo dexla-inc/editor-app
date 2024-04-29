@@ -94,4 +94,4 @@ function LivePage({ project, faviconUrl, deploymentPage }: Props) {
   );
 }
 
-export default withPageOnLoad(LivePage);
+export default withPageOnLoad(LivePage, { isLive: true });
