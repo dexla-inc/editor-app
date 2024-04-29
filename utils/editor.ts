@@ -685,6 +685,7 @@ export const addComponent = (
           } else if (node.id === dropTarget.id) {
             const isPopOver = copyComponentToAdd.name === "PopOver";
             if (isPopOver) {
+              // if(!isPasteAction){
               copyComponentToAdd.props!.targetId = node.id;
               copyComponentToAdd.children = [
                 ...(copyComponentToAdd.children || []),
@@ -695,6 +696,14 @@ export const addComponent = (
                 1,
                 copyComponentToAdd,
               );
+              // } else {
+              //    // add component normally
+              //    const index = dropIndex ?? context.index - 1;
+              //    node.children?.splice(index, 0, {
+              //      ...copyComponentToAdd,
+              //      id: copyComponentToAddId,
+              //    });
+              //   };
             } else {
               node.children = node.children ?? [];
 

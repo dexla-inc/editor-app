@@ -156,9 +156,12 @@ export const useEditorHotkeys = () => {
 
     let componentIndex = 0;
 
-    const isSpecialComponents = ["GridColumn", "Alert", "Accordion"].includes(
-      clipboardContent.name,
-    );
+    const isSpecialComponents = [
+      "GridColumn",
+      "Alert",
+      "Accordion",
+      "PopOver",
+    ].includes(clipboardContent.name);
     const isGridItems = ["Grid", "GridColumn"].includes(componentToPaste.name);
     const isTargetGridItems = ["Grid", "GridColumn"].includes(
       selectedComponent?.name!,
@@ -166,6 +169,7 @@ export const useEditorHotkeys = () => {
     const isTargetModalsOrDrawers = ["Modal", "Drawer"].includes(
       selectedComponent?.name!,
     );
+
     const isLayoutCategory =
       structureMapper[componentToPaste.name!]?.category === "Layout";
     const isAllowedGridMatch =
@@ -179,6 +183,17 @@ export const useEditorHotkeys = () => {
       isSpecialComponents ||
       isAllowedSibling ||
       isAllowedGridMatch;
+
+    if (componentToPaste.name === "PopOver") {
+      // Ensuring the Popover component has a valid targetId
+      // This example assumes the first child can be the target; adjust accordingly.
+      if (componentToPaste.children && componentToPaste.children.length > 0) {
+        componentToPaste.props.targetId = componentToPaste.children[0].id;
+      } else {
+        // Handle the case where there is no valid target by default
+        componentToPaste.props.targetId = "default-target"; // Ensure 'default-target' is a valid id
+      }
+    }
 
     const editorTreeCopy = cloneDeep(editorTree) as EditorTreeCopy;
 
