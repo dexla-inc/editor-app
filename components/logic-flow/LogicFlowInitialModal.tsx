@@ -6,8 +6,18 @@ import { LogicFlowResponse } from "@/requests/logicflows/types";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useFlowStore } from "@/stores/flow";
 import { LOGICFLOW_BACKGROUND } from "@/utils/branding";
-import { Box, Button, Group, Stack, Tabs, Text } from "@mantine/core";
+import {
+  Box,
+  Button,
+  Group,
+  Stack,
+  Tabs,
+  Text,
+  TextInput,
+} from "@mantine/core";
+import { useDebouncedState } from "@mantine/hooks";
 import { ContextModalProps } from "@mantine/modals";
+import { IconSearch } from "@tabler/icons-react";
 import { GetServerSidePropsContext } from "next";
 import { useEffect, useState } from "react";
 
@@ -41,11 +51,24 @@ export default function LogicFlowInitialModal({}: ContextModalProps) {
   }, [projectId, resetFlow]);
 
   const [flow, setFlow] = useState<LogicFlowResponse>();
+  const [filter, setFilter] = useDebouncedState("", 100);
+  const [filteredFlows, setFilteredFlows] = useState<LogicFlowResponse[]>([]);
+
+  // Update filtered flows whenever the filter or the original list changes
+  useEffect(() => {
+    if (logicFlows?.results) {
+      const lowerCaseFilter = filter.toLowerCase();
+      const filtered = logicFlows.results.filter((flow) =>
+        flow.name.toLowerCase().includes(lowerCaseFilter),
+      );
+      setFilteredFlows(filtered);
+    }
+  }, [filter, logicFlows]);
 
   return (
     <Tabs value={selectedTabView} onTabChange={setSelectedTabView}>
       <Tabs.Panel value={"list"}>
-        <LogicFlowShell>
+        <LogicFlowShell sx={{ padding: "20px" }}>
           {logicFlows?.results.length === 0 && !isLoading && (
             <Box
               w="100%"
@@ -63,8 +86,18 @@ export default function LogicFlowInitialModal({}: ContextModalProps) {
               </Stack>
             </Box>
           )}
-          <Group sx={{ padding: "20px" }}>
-            {logicFlows?.results.map((flow: LogicFlowResponse) => {
+          <TextInput
+            placeholder="Search"
+            mb="xs"
+            maw={600}
+            icon={<IconSearch size={14} />}
+            defaultValue={filter}
+            onChange={(event) => {
+              setFilter(event.currentTarget.value);
+            }}
+          />
+          <Group>
+            {filteredFlows.map((flow: LogicFlowResponse) => {
               return (
                 <LogicFlowCard
                   key={flow.id}
