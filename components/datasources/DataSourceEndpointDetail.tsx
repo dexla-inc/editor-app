@@ -1,6 +1,6 @@
 import { WarningAlert } from "@/components/Alerts";
 import { Icon } from "@/components/Icon";
-import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
+import { useDataSourceEndpoints } from "@/hooks/editor/reactQuery/useDataSourceEndpoints";
 import {
   createDataSourceEndpoint,
   deleteDataSourceEndpoint,

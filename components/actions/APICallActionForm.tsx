@@ -1,7 +1,7 @@
 import EmptyDatasourcesPlaceholder from "@/components/datasources/EmptyDatasourcesPlaceholder";
 import { EndpointRequestInputs } from "@/components/EndpointRequestInputs";
 import { EndpointSelect } from "@/components/EndpointSelect";
-import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
+import { useDataSourceEndpoints } from "@/hooks/editor/reactQuery/useDataSourceEndpoints";
 import {
   ActionFormProps,
   APICallAction,

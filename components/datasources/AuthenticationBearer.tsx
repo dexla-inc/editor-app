@@ -13,7 +13,7 @@ import {
   validateTokenProperty,
 } from "@/components/datasources/AuthenticationInputs";
 import TextInputComponent from "@/components/datasources/TextInputComponent";
-import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
+import { useDataSourceEndpoints } from "@/hooks/editor/reactQuery/useDataSourceEndpoints";
 import { RequestBody } from "@/requests/datasources/types";
 import { useDataSourceStore } from "@/stores/datasource";
 import { DataSourceStepperProps } from "@/utils/dashboardTypes";

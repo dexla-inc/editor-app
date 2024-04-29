@@ -1,5 +1,5 @@
-import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
-import { useDataSources } from "@/hooks/reactQuery/useDataSources";
+import { useDataSourceEndpoints } from "@/hooks/editor/reactQuery/useDataSourceEndpoints";
+import { useDataSources } from "@/hooks/editor/reactQuery/useDataSources";
 import { getSwagger } from "@/requests/datasources/queries";
 import { useEditorStore } from "@/stores/editor";
 import {

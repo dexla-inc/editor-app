@@ -1,5 +1,5 @@
 import { InformationAlert, SuccessAlert } from "@/components/Alerts";
-import { useProjectQuery } from "@/hooks/reactQuery/useProjectQuery";
+import { useProjectQuery } from "@/hooks/editor/reactQuery/useProjectQuery";
 import { patchProject } from "@/requests/projects/mutations";
 import { useAppStore } from "@/stores/app";
 import { convertToPatchParams } from "@/utils/dashboardTypes";
