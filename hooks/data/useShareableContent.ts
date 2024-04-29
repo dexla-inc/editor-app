@@ -22,7 +22,7 @@ export const useShareableContent = ({
 
   const [, parentIdsGroup] = selectedComponentId?.split("-repeated-") ?? [];
   const relatedComponentIds = parentIdsGroup?.split("--") ?? [];
-
+  console.log("useShareableContent->", selectedComponentId);
   let shareableContent = {};
   return relatedComponentIds.reduce(
     (acc, groupId) => {
@@ -52,8 +52,10 @@ export const useShareableContent = ({
             data: shareableContent,
           },
         });
-        acc[groupId] = get(staticData, index, staticData);
-        shareableContent = cloneDeep(acc[groupId]);
+        if (staticData) {
+          acc[groupId] = get(staticData, index, staticData);
+          shareableContent = cloneDeep(acc[groupId]);
+        }
       }
 
       return acc;
