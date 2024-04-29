@@ -4,7 +4,7 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 import { Action, ActionTrigger, actionMapper } from "@/utils/actions";
 import { Component } from "@/utils/editor";
 import { Router } from "next/router";
-import { ChangeEvent } from "react";
+import { ChangeEvent, useMemo } from "react";
 import { useDataBinding } from "@/hooks/dataBinding/useDataBinding";
 import { useFlowsQuery } from "@/hooks/reactQuery/useFlowsQuery";
 import { ComputeValueProps } from "@/types/dataBinding";
@@ -27,15 +27,21 @@ export const useTriggers = ({
   const updateTreeComponentAttrs =
     useEditorTreeStore.getState().updateTreeComponentAttrs;
   const { computeValue } = useDataBinding();
-  const { data: endpoints } = useDataSourceEndpoints(currentProjectId);
-  const { data: logicFlows } = useFlowsQuery(currentProjectId ?? "");
+  const { data: endpoints, isFetched: endpointsIsFetched } =
+    useDataSourceEndpoints(currentProjectId);
+  const { data: logicFlows, isFetched: logicFlowsIsFetched } =
+    useFlowsQuery(currentProjectId);
 
   const actionResponses: Record<string, any> = {};
   const setActionsResponses = (actionId: string, response: any) => {
     actionResponses[actionId] = response;
   };
 
-  const triggers = () => {
+  const triggers = useMemo(() => {
+    if (!endpointsIsFetched || !logicFlowsIsFetched) {
+      return {} as Record<ActionTrigger, any>;
+    }
+
     const actions: Action[] = entity?.actions ?? [];
 
     return actions.reduce(
@@ -68,11 +74,19 @@ export const useTriggers = ({
       },
       {} as Record<ActionTrigger, any>,
     );
-  };
+  }, [
+    actionResponses,
+    endpoints?.results,
+    endpointsIsFetched,
+    entity,
+    logicFlows,
+    logicFlowsIsFetched,
+    router,
+  ]);
 
   const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (typeof triggers().onChange === "function") {
-      triggers().onChange(e);
+    if (typeof triggers.onChange === "function") {
+      triggers.onChange(e);
     }
     if (entity.props?.error) {
       updateTreeComponentAttrs?.({
@@ -84,7 +98,7 @@ export const useTriggers = ({
   };
 
   return {
-    ...triggers(),
+    ...triggers,
     onChange: handleOnChange,
   };
 };

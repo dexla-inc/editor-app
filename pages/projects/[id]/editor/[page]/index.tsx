@@ -42,4 +42,4 @@ const PageEditor = () => {
   return <Editor pageId={pageId} projectId={projectId} />;
 };
 
-export default withPageOnLoad(memo(PageEditor));
+export default withPageOnLoad(PageEditor, { isLive: false });

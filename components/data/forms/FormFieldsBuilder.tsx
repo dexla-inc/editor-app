@@ -66,7 +66,7 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.values]);
-  console.log(form.values);
+
   const onClickToggleDataType = (field: string) => {
     form.setTouched({ [`onLoad.${field}.dataType`]: true });
     form.setValues({

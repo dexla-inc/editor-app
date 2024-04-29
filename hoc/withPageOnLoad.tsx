@@ -12,7 +12,10 @@ type Props = {
   project: ProjectResponse;
 };
 
-export const withPageOnLoad = (WrappedComponent: any) => {
+export const withPageOnLoad = (
+  WrappedComponent: any,
+  config: { isLive?: boolean },
+) => {
   const PageOnLoadWrapper = (props: Props) => {
     const router = useRouter();
     const { id: projectId, page: pageId } = router.query as {
@@ -20,15 +23,13 @@ export const withPageOnLoad = (WrappedComponent: any) => {
       page: string;
     };
 
-    const source = WrappedComponent.type?.name; // If "PageEditor" then get page actions from page. If deploye    console.log("sourc    console.log("source", source)
-    const isEditor = source === "PageEditor";
-    console.log("isEditor", isEditor);
+    const { data: editorPage } = usePageQuery(
+      projectId,
+      pageId,
+      !config.isLive,
+    );
 
-    const { data: editorPage } = usePageQuery(projectId, pageId, isEditor);
-    console.log("editorPage", editorPage);
-
-    const page = isEditor ? editorPage : props.deploymentPage;
-    console.log("page", page);
+    const page = config.isLive ? props.deploymentPage : editorPage;
 
     const { onPageLoad } = useTriggers({
       // @ts-ignore
@@ -36,8 +37,6 @@ export const withPageOnLoad = (WrappedComponent: any) => {
       router: router as Router,
       projectId: props.project?.id || projectId,
     });
-
-    console.log("onPageLoad", onPageLoad);
 
     const [actionTriggeredForPath, setActionTriggeredForPath] = useState("");
 
@@ -49,6 +48,7 @@ export const withPageOnLoad = (WrappedComponent: any) => {
             router.asPath.includes(page.slug));
         // TODO: Do not run when runInEditMode is false and the mode is editor.
         // TODO: Only the last action gets run
+
         if (
           isPageValid &&
           onPageLoad &&
@@ -60,8 +60,7 @@ export const withPageOnLoad = (WrappedComponent: any) => {
       };
 
       triggerPageActions();
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [router.asPath, page?.id]);
+    }, [router.asPath, page?.id, onPageLoad, actionTriggeredForPath, page]);
 
     return <WrappedComponent {...props} />;
   };

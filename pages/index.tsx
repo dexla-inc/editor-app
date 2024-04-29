@@ -92,4 +92,4 @@ const HomePage = ({ project, faviconUrl, deploymentPage }: Props) => {
   );
 };
 
-export default withPageOnLoad(HomePage);
+export default withPageOnLoad(HomePage, { isLive: true });
