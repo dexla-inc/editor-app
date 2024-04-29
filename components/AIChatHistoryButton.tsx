@@ -1,6 +1,6 @@
 import { ActionIconDefault } from "@/components/ActionIconDefault";
 import { buttonHoverStyles } from "@/components/styles/buttonHoverStyles";
-import { useAutomationsQuery } from "@/hooks/reactQuery/useAutomationsQuery";
+import { useAutomationsQuery } from "@/hooks/editor/reactQuery/useAutomationsQuery";
 import { LARGE_ICON_SIZE } from "@/utils/config";
 import TOML from "@iarna/toml";
 import {

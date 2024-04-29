@@ -1,6 +1,6 @@
 import { ActionIconDefault } from "@/components/ActionIconDefault";
 import { AssetImages } from "@/components/storage/AssetImages";
-import { useStorageQuery } from "@/hooks/reactQuery/useStorageQuery";
+import { useStorageQuery } from "@/hooks/editor/reactQuery/useStorageQuery";
 import { uploadFile } from "@/requests/storage/mutations";
 import { ICON_SIZE } from "@/utils/config";
 import {

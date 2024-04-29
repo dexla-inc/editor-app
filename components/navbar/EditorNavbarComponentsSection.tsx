@@ -1,6 +1,6 @@
 import { DraggableComponent } from "@/components/DraggableComponent";
 import GridItemComponent from "@/components/navbar/ComponentGridItem";
-import { useCustomComponentList } from "@/hooks/reactQuery/useCustomComponentList";
+import { useCustomComponentList } from "@/hooks/editor/reactQuery/useCustomComponentList";
 import { CustomComponentResponse } from "@/requests/components/types";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { usePropelAuthStore } from "@/stores/propelAuth";

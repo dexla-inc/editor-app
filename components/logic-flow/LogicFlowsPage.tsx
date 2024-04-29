@@ -1,6 +1,6 @@
 import { LogicFlow } from "@/components/logic-flow/LogicFlow";
 import { LogicFlowShell } from "@/components/logic-flow/LogicFlowShell";
-import { useFlowsQuery } from "@/hooks/reactQuery/useFlowsQuery";
+import { useFlowsQuery } from "@/hooks/editor/reactQuery/useFlowsQuery";
 import { patchLogicFlow } from "@/requests/logicflows/mutations";
 import {
   LogicFlowParams,

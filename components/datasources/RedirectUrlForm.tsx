@@ -1,4 +1,4 @@
-import { useProjectQuery } from "@/hooks/reactQuery/useProjectQuery";
+import { useProjectQuery } from "@/hooks/editor/reactQuery/useProjectQuery";
 import { patchProject } from "@/requests/projects/mutations";
 import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";

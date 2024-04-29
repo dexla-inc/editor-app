@@ -1,7 +1,7 @@
 import { ActionIconDefault } from "@/components/ActionIconDefault";
 import { QueryStringsForm } from "@/components/QueryStringsForm";
 import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
-import { usePageListQuery } from "@/hooks/reactQuery/usePageListQuery";
+import { usePageListQuery } from "@/hooks/editor/reactQuery/usePageListQuery";
 import { createPage, deletePage, updatePage } from "@/requests/pages/mutations";
 import {
   PageBody,
