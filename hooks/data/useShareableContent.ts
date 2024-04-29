@@ -22,7 +22,7 @@ export const useShareableContent = ({
 
   const [, parentIdsGroup] = selectedComponentId?.split("-repeated-") ?? [];
   const relatedComponentIds = parentIdsGroup?.split("--") ?? [];
-  console.log("useShareableContent->", selectedComponentId);
+
   let shareableContent = {};
   return relatedComponentIds.reduce(
     (acc, groupId) => {
