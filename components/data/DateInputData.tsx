@@ -25,7 +25,7 @@ export const DateInputData = ({ component, endpoints }: DataProps) => {
   ];
 
   const hasParentComponentData = useEditorTreeStore(
-    (state) => state.selectedComponentIds?.at(-1)?.includes("-repeated-"),
+    (state) => state.selectedComponentIds?.at(-1)?.includes("-related-"),
   );
   const { getComponentsStates } = useComponentStates();
 

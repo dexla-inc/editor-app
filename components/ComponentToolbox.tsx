@@ -73,7 +73,7 @@ const ComponentToolboxInner = ({ component }: Props) => {
       component.id
         ? getComponentParent(
             editorTree.root,
-            component.id?.split("-repeated-")[0],
+            component.id?.split("-related-")[0],
           )
         : null,
     [editorTree.root, component.id],
