@@ -4,12 +4,14 @@ import { SegmentedControlInput } from "@/components/SegmentedControlInput";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { TopLabel } from "@/components/TopLabel";
 import { UnitInput } from "@/components/UnitInput";
-import { getThemeColor } from "@/components/modifiers/Border";
 import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon";
 import { withModifier } from "@/hoc/withModifier";
 import { useThemeStore } from "@/stores/theme";
 import { ICON_SIZE } from "@/utils/config";
-import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
+import {
+  debouncedTreeComponentAttrsUpdate,
+  getThemeColor,
+} from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { ActionIcon, Flex, SegmentedControl, Stack, Text } from "@mantine/core";
 import { useForm } from "@mantine/form";

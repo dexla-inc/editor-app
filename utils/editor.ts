@@ -825,6 +825,20 @@ export const getColorFromTheme = (
     : section;
 };
 
+export const getThemeColor = (theme: any, hex: string) => {
+  hex = hex.replace("!important", "").trim();
+  if (hex === "transparent") return hex;
+  return Object.keys(theme.colors).reduce((themeColor: string, key: string) => {
+    const colorIndex = theme.colors[key].findIndex((c: string) => c === hex);
+
+    if (colorIndex > -1) {
+      themeColor = `${key}.${colorIndex}`;
+    }
+
+    return themeColor;
+  }, "Border.6");
+};
+
 export const componentStyleMapper = (
   componentName: string,
   { style }: { style: CSSProperties },
