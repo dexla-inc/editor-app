@@ -44,13 +44,6 @@ export const withComponentWrapper = <T extends Record<string, any>>(
       ),
     );
 
-    if (componentTree.id === "dVa0Lx10TcabKbufyz3RV") {
-      console.log({
-        onLoad,
-        shareableContent,
-      });
-    }
-
     const computedOnLoad = useComputeValue({
       onLoad,
       shareableContent,
