@@ -5,7 +5,7 @@ import {
   FieldType,
   StaticFormFieldsBuilder,
 } from "@/components/data/forms/StaticFormFieldsBuilder";
-import { useComponentStates } from "@/hooks/useComponentStates";
+import { useComponentStates } from "@/hooks/editor/useComponentStates";
 import { Endpoint } from "@/requests/datasources/types";
 import { PagingResponse } from "@/requests/types";
 import { useEditorTreeStore } from "@/stores/editorTree";

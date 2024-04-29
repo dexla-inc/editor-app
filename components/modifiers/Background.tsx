@@ -4,7 +4,7 @@ import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { TopLabel } from "@/components/TopLabel";
 import { UnitInput } from "@/components/UnitInput";
 import { withModifier } from "@/hoc/withModifier";
-import { useChangeState } from "@/hooks/useChangeState";
+import { useChangeState } from "@/hooks/components/useChangeState";
 import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { SegmentedControl, Stack, TextInput } from "@mantine/core";

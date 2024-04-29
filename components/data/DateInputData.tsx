@@ -11,7 +11,7 @@ import { DynamicFormFieldsBuilder } from "@/components/data/forms/DynamicFormFie
 import { ICON_SIZE } from "@/utils/config";
 import { VisibilityModifier } from "@/components/data/VisibilityModifier";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { useComponentStates } from "@/hooks/useComponentStates";
+import { useComponentStates } from "@/hooks/editor/useComponentStates";
 import { ValueProps } from "@/types/dataBinding";
 import merge from "lodash.merge";
 

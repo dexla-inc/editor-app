@@ -1,4 +1,4 @@
-import { useDraggable } from "@/hooks/useDraggable";
+import { useDraggable } from "@/hooks/editor/useDraggable";
 import { deleteCustomComponent } from "@/requests/components/mutations";
 import { useEditorStore } from "@/stores/editor";
 import { usePropelAuthStore } from "@/stores/propelAuth";

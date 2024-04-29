@@ -2,7 +2,7 @@ import { EditableComponentMapper } from "@/utils/editor";
 import { Progress as MantineProgress, ProgressProps } from "@mantine/core";
 import { forwardRef, memo } from "react";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
+import { useComputeValue } from "@/hooks/data/useComputeValue";
 
 type Props = EditableComponentMapper & ProgressProps;
 

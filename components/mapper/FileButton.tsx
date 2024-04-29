@@ -1,5 +1,5 @@
-import { useBrandingStyles } from "@/hooks/useBrandingStyles";
-import { useContentEditable } from "@/hooks/useContentEditable";
+import { useBrandingStyles } from "@/hooks/editor/useBrandingStyles";
+import { useContentEditable } from "@/hooks/components/useContentEditable";
 import { EditableComponentMapper } from "@/utils/editor";
 import {
   Button,

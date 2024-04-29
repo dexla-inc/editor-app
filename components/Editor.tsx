@@ -1,7 +1,7 @@
 import { Shell } from "@/components/AppShell";
 import { Cursor } from "@/components/Cursor";
 import { EditorCanvas } from "@/components/EditorCanvas";
-import { useGetPageData } from "@/hooks/useGetPageData";
+import { useGetPageData } from "@/hooks/reactQuery/useGetPageData";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { useUserConfigStore } from "@/stores/userConfig";

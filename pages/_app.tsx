@@ -21,7 +21,7 @@ import { ReactFlowProvider } from "reactflow";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { MantineGlobal } from "@/components/MantineGlobal";
 import { queryClient } from "@/utils/reactQuery";
-import { useInitialiseLive } from "@/hooks/useInitialiseLive";
+import { useInitialiseLive } from "@/hooks/editor/useInitialiseLive";
 
 // If loading a variable font, you don't need to specify the font weight
 const inter = Inter({

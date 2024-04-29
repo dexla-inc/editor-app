@@ -1,4 +1,4 @@
-import { useHotkeysOnIframe } from "@/hooks/useHotkeysOnIframe";
+import { useHotkeysOnIframe } from "@/hooks/editor/useHotkeysOnIframe";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useHotkeys } from "@mantine/hooks";
 import { useCallback, useEffect } from "react";

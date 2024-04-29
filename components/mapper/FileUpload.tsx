@@ -1,4 +1,4 @@
-import { useBrandingStyles } from "@/hooks/useBrandingStyles";
+import { useBrandingStyles } from "@/hooks/editor/useBrandingStyles";
 import { EditableComponentMapper } from "@/utils/editor";
 import { Box } from "@mantine/core";
 import { Dropzone, DropzoneProps } from "@mantine/dropzone";

@@ -1,5 +1,5 @@
-import { useDroppable } from "@/hooks/useDroppable";
-import { useOnDrop } from "@/hooks/useOnDrop";
+import { useDroppable } from "@/hooks/editor/useDroppable";
+import { useOnDrop } from "@/hooks/editor/useOnDrop";
 import { ComponentToBind, useEditorStore } from "@/stores/editor";
 import {
   GREEN_BASE_SHADOW,

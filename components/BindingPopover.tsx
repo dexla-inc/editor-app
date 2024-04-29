@@ -2,7 +2,7 @@ import { CustomJavaScriptTextArea } from "@/components/CustomJavaScriptTextArea"
 import { DataTree } from "@/components/DataTree";
 import { Icon } from "@/components/Icon";
 import { JSONViewer } from "@/components/JSONViewer";
-import { useBindingPopover } from "@/hooks/dataBinding/useBindingPopover";
+import { useBindingPopover } from "@/hooks/data/useBindingPopover";
 import {
   BG_COLOR,
   BINDER_BACKGROUND,
@@ -28,7 +28,7 @@ import {
 } from "@mantine/core";
 import { IconExternalLink, IconPlugConnected } from "@tabler/icons-react";
 import { useState } from "react";
-import { useDataBinding } from "@/hooks/dataBinding/useDataBinding";
+import { useDataBinding } from "@/hooks/data/useDataBinding";
 import { useEditorStore } from "@/stores/editor";
 
 const TAB_TEXT_SIZE = "xs";

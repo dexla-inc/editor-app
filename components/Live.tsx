@@ -6,7 +6,7 @@ import { ComponentTree } from "@/utils/editor";
 import { Box } from "@mantine/core";
 import { useCallback, useMemo } from "react";
 import { RenderTreeFunc } from "@/types/component";
-import { prepareUserThemeLive } from "@/hooks/prepareUserThemeLive";
+import { prepareUserThemeLive } from "@/utils/prepareUserThemeLive";
 import { DeploymentPage } from "@/requests/deployments/types";
 import { ProjectResponse } from "@/requests/projects/types";
 import { useDataSourceStore } from "@/stores/datasource";

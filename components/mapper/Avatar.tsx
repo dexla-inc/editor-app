@@ -1,5 +1,5 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { useBrandingStyles } from "@/hooks/useBrandingStyles";
+import { useBrandingStyles } from "@/hooks/editor/useBrandingStyles";
 import { EditableComponentMapper } from "@/utils/editor";
 import { AvatarProps, Avatar as MantineAvatar } from "@mantine/core";
 import merge from "lodash.merge";

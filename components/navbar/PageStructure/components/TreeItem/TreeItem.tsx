@@ -8,7 +8,7 @@ import React, {
 } from "react";
 
 import styles from "@/components/navbar/PageStructure/components/TreeItem/TreeItem.module.scss";
-import { useComponentContextMenu } from "@/hooks/useComponentContextMenu";
+import { useComponentContextMenu } from "@/hooks/components/useComponentContextMenu";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { DARK_COLOR, GRAY_WHITE_COLOR } from "@/utils/branding";
@@ -39,7 +39,7 @@ import {
 } from "@tabler/icons-react";
 import { useShallow } from "zustand/react/shallow";
 import isEmpty from "lodash.isempty";
-import { useComputeValue } from "@/hooks/dataBinding/useComputeValue";
+import { useComputeValue } from "@/hooks/data/useComputeValue";
 import { isSelectedSelector } from "@/utils/componentSelectors";
 
 export interface Props extends Omit<HTMLAttributes<HTMLLIElement>, "id"> {

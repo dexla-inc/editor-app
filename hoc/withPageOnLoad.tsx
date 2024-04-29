@@ -1,4 +1,4 @@
-import { useTriggers } from "@/hooks/useTriggers";
+import { useTriggers } from "@/hooks/components/useTriggers";
 import { Router, useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { PageResponse } from "@/requests/pages/types";

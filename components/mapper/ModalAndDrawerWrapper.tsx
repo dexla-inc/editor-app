@@ -1,5 +1,5 @@
 import { useVariableStore } from "@/stores/variables";
-import { useBrandingStyles } from "@/hooks/useBrandingStyles";
+import { useBrandingStyles } from "@/hooks/editor/useBrandingStyles";
 import { useShallow } from "zustand/react/shallow";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useEditorStore } from "@/stores/editor";

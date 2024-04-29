@@ -1,5 +1,5 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { useContentEditable } from "@/hooks/useContentEditable";
+import { useContentEditable } from "@/hooks/components/useContentEditable";
 import { useThemeStore } from "@/stores/theme";
 import { DISABLED_HOVER } from "@/utils/branding";
 import { EditableComponentMapper, getColorFromTheme } from "@/utils/editor";

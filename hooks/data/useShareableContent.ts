@@ -1,5 +1,5 @@
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { useDataBinding } from "@/hooks/dataBinding/useDataBinding";
+import { useDataBinding } from "@/hooks/data/useDataBinding";
 import { PagingResponse } from "@/requests/types";
 import { Endpoint } from "@/requests/datasources/types";
 import get from "lodash.get";
