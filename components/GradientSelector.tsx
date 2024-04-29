@@ -1,7 +1,7 @@
 import { TopLabel } from "@/components/TopLabel";
 import { useThemeStore } from "@/stores/theme";
 import { DARK_COLOR } from "@/utils/branding";
-import { getColorFromTheme } from "@/utils/editor";
+import { getColorFromTheme, getThemeColor } from "@/utils/editor";
 import {
   ActionIcon,
   Box,
@@ -23,7 +23,6 @@ import { IconPlus } from "@tabler/icons-react";
 import { useEffect } from "react";
 import { NuAnglePicker } from "react-nu-anglepicker";
 import { ThemeColorSelector } from "./ThemeColorSelector";
-import { getThemeColor } from "./modifiers/Border";
 
 type GradientPickerProps = {
   getValue: any;

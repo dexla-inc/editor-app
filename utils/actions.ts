@@ -23,17 +23,16 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 import { useVariableStore } from "@/stores/variables";
 import { readDataFromStream } from "@/utils/api";
 import { isObject, safeJsonParse } from "@/utils/common";
-import { Component } from "@/utils/editor";
+import { Component, getColorFromTheme } from "@/utils/editor";
 import { executeFlow } from "@/utils/logicFlows";
 import { ArrayMethods } from "@/utils/types";
 import { UseFormReturnType } from "@mantine/form";
-import { showNotification } from "@mantine/notifications";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { Router } from "next/router";
 import { ComputeValueProps, ValueProps } from "@/types/dataBinding";
-import { PagingResponse } from "@/requests/types";
 import { ResetVariableActionForm } from "@/components/actions/ResetVariableActionForm";
+import { useThemeStore } from "@/stores/theme";
 
 const triggers = [
   "onClick",
@@ -311,10 +310,15 @@ export const useShowNotificationAction = async ({
   action,
   computeValue,
 }: ShowNotificationActionParams) => {
+  const theme = useThemeStore.getState().theme;
+  const showNotification = useThemeStore.getState().showNotification;
+  const color = getColorFromTheme(theme, action.color);
+
+  console.log(action.color, color);
   return showNotification({
     title: String(computeValue<string>({ value: action.title })),
     message: String(computeValue<string>({ value: action.message })),
-    color: action.color,
+    color: color,
   });
 };
 

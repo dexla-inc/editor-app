@@ -13,7 +13,10 @@ import { useThemeStore } from "@/stores/theme";
 import { allEqual } from "@/utils/common";
 import { INPUT_SIZE } from "@/utils/config";
 import { radiusSizes } from "@/utils/defaultSizes";
-import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
+import {
+  debouncedTreeComponentAttrsUpdate,
+  getThemeColor,
+} from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Group, SegmentedControl, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -34,20 +37,6 @@ import startCase from "lodash.startcase";
 import { useEffect } from "react";
 
 export const defaultBorderValues = requiredModifiers.border;
-
-export const getThemeColor = (theme: any, hex: string) => {
-  hex = hex.replace("!important", "").trim();
-  if (hex === "transparent") return hex;
-  return Object.keys(theme.colors).reduce((themeColor: string, key: string) => {
-    const colorIndex = theme.colors[key].findIndex((c: string) => c === hex);
-
-    if (colorIndex > -1) {
-      themeColor = `${key}.${colorIndex}`;
-    }
-
-    return themeColor;
-  }, "Border.6");
-};
 
 const Modifier = withModifier(({ selectedComponent }) => {
   const theme = useThemeStore((state) => state.theme);
