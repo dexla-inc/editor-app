@@ -1,7 +1,7 @@
 import { ComponentToBind, useEditorStore } from "@/stores/editor";
 import { useCallback } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { useComponentContextMenu } from "@/hooks/useComponentContextMenu";
+import { useComponentContextMenu } from "@/hooks/components/useComponentContextMenu";
 
 export const useEditorClickHandler = (
   componentId: string,

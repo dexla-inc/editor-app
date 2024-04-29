@@ -1,7 +1,7 @@
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useShallow } from "zustand/react/shallow";
 import { Component, ComponentTree } from "@/utils/editor";
-import { useEndpoint } from "@/hooks/useEndpoint";
+import { useEndpoint } from "@/hooks/components/useEndpoint";
 import { LoadingOverlay } from "@mantine/core";
 import merge from "lodash.merge";
 

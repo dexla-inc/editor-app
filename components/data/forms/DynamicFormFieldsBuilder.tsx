@@ -3,7 +3,7 @@ import { PagingResponse } from "@/requests/types";
 import { extractKeys } from "@/utils/data";
 import { Component } from "@/utils/editor";
 import { Select } from "@mantine/core";
-import { useShareableContent } from "@/hooks/useShareableContent";
+import { useShareableContent } from "@/hooks/data/useShareableContent";
 
 type DynamicFormFieldsBuilderProps = {
   form: any;

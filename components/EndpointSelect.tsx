@@ -1,6 +1,6 @@
 import { EndpointExampleResponsePreview } from "@/components/EndpointExampleResponsePreview";
 import { colors } from "@/components/datasources/DataSourceEndpoint";
-import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
+import { useDataSourceEndpoints } from "@/hooks/editor/reactQuery/useDataSourceEndpoints";
 import { Endpoint } from "@/requests/datasources/types";
 import { MethodTypes } from "@/requests/types";
 import { useEditorTreeStore } from "@/stores/editorTree";

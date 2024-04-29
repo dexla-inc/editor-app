@@ -1,4 +1,4 @@
-import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
+import { useDataSourceEndpoints } from "@/hooks/editor/reactQuery/useDataSourceEndpoints";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { getUrl, performFetch } from "@/utils/actions";

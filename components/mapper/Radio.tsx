@@ -3,7 +3,7 @@ import { EditableComponentMapper } from "@/utils/editor";
 import { Group, Radio as MantineRadio, RadioGroupProps } from "@mantine/core";
 import merge from "lodash.merge";
 import { forwardRef, memo } from "react";
-import { useInputValue } from "@/hooks/useInputValue";
+import { useInputValue } from "@/hooks/components/useInputValue";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useShallow } from "zustand/react/shallow";
 

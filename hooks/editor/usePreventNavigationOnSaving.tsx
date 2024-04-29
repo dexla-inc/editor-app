@@ -1,4 +1,3 @@
-import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useRouter } from "next/router";
 import { useEffect, useRef } from "react";

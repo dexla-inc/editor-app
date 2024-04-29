@@ -3,7 +3,7 @@ import { SegmentedControlInput } from "@/components/SegmentedControlInput";
 import { SegmentedControlSizes } from "@/components/SegmentedControlSizes";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { withModifier } from "@/hoc/withModifier";
-import { useChangeState } from "@/hooks/useChangeState";
+import { useChangeState } from "@/hooks/components/useChangeState";
 import { useThemeStore } from "@/stores/theme";
 import { inputSizes } from "@/utils/defaultSizes";
 import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";

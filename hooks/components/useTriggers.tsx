@@ -1,12 +1,12 @@
-import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
+import { useDataSourceEndpoints } from "@/hooks/editor/reactQuery/useDataSourceEndpoints";
 import { PageResponse } from "@/requests/pages/types";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { Action, ActionTrigger, actionMapper } from "@/utils/actions";
 import { Component } from "@/utils/editor";
 import { Router } from "next/router";
 import { ChangeEvent, useMemo } from "react";
-import { useDataBinding } from "@/hooks/dataBinding/useDataBinding";
-import { useFlowsQuery } from "@/hooks/reactQuery/useFlowsQuery";
+import { useDataBinding } from "@/hooks/data/useDataBinding";
+import { useFlowsQuery } from "@/hooks/editor/reactQuery/useFlowsQuery";
 import { ComputeValueProps } from "@/types/dataBinding";
 
 const nonDefaultActionTriggers = ["onSuccess", "onError"];

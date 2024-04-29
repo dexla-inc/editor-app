@@ -6,7 +6,7 @@ import { ComponentTree } from "@/utils/editor";
 import { Box } from "@mantine/core";
 import { useCallback, useMemo } from "react";
 import { RenderTreeFunc } from "@/types/component";
-import { prepareUserThemeLive } from "@/hooks/prepareUserThemeLive";
+import { prepareUserThemeLive } from "@/utils/prepareUserThemeLive";
 import { DeploymentPage } from "@/requests/deployments/types";
 import { ProjectResponse } from "@/requests/projects/types";
 import { useDataSourceStore } from "@/stores/datasource";
@@ -15,8 +15,8 @@ import { useThemeStore } from "@/stores/theme";
 import { useVariableStore } from "@/stores/variables";
 import { initializeFonts } from "@/utils/webfontloader";
 import { useEffect } from "react";
-import { useVariableListQuery } from "@/hooks/reactQuery/useVariableListQuery";
-import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
+import { useVariableListQuery } from "@/hooks/editor/reactQuery/useVariableListQuery";
+import { useDataSourceEndpoints } from "@/hooks/editor/reactQuery/useDataSourceEndpoints";
 import { MantineThemeExtended } from "@/utils/types";
 
 type Props = {

@@ -3,7 +3,7 @@ import { EndpointSelect } from "@/components/EndpointSelect";
 import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
 import SidebarSection from "@/components/SidebarSection";
 import { VisibilityModifier } from "@/components/data/VisibilityModifier";
-import { useData } from "@/hooks/useData";
+import { useData } from "@/hooks/data/useData";
 import { Endpoint } from "@/requests/datasources/types";
 import { PagingResponse } from "@/requests/types";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";

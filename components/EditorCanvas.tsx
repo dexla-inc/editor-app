@@ -1,6 +1,6 @@
 import { Droppable } from "@/components/Droppable";
 import { IFrame } from "@/components/IFrame";
-import useEditorHotkeys from "@/hooks/useEditorHotkeys";
+import useEditorHotkeys from "@/hooks/editor/useEditorHotkeys";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { componentMapper } from "@/utils/componentMapper";
 import { HEADER_HEIGHT } from "@/utils/config";
@@ -9,7 +9,7 @@ import { Box, Paper } from "@mantine/core";
 import { memo } from "react";
 import { CustomComponentModal } from "@/components/CustomComponentModal";
 import { useUserConfigStore } from "@/stores/userConfig";
-import useEditorHotkeysUndoRedo from "@/hooks/useEditorHotkeysUndoRedo";
+import useEditorHotkeysUndoRedo from "@/hooks/editor/useEditorHotkeysUndoRedo";
 import { RenderTreeFunc } from "@/types/component";
 import { ComponentToolbox } from "@/components/ComponentToolbox";
 import { MantineThemeExtended } from "@/utils/types";

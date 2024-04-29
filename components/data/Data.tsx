@@ -1,4 +1,4 @@
-import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
+import { useDataSourceEndpoints } from "@/hooks/editor/reactQuery/useDataSourceEndpoints";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { dataMapper } from "@/utils/dataMapper";
 import { Stack } from "@mantine/core";

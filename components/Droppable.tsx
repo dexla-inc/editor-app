@@ -1,5 +1,5 @@
-import { useDroppable } from "@/hooks/useDroppable";
-import { useOnDrop } from "@/hooks/useOnDrop";
+import { useDroppable } from "@/hooks/editor/useDroppable";
+import { useOnDrop } from "@/hooks/editor/useOnDrop";
 import { useEditorStore } from "@/stores/editor";
 import { DROP_INDICATOR_WIDTH } from "@/utils/config";
 import { Box, BoxProps, useMantineTheme } from "@mantine/core";

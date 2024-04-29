@@ -1,5 +1,5 @@
 import { ActionIconDefault } from "@/components/ActionIconDefault";
-import { useComponentStates } from "@/hooks/useComponentStates";
+import { useComponentStates } from "@/hooks/editor/useComponentStates";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import {

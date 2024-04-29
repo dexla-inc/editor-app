@@ -1,5 +1,5 @@
 import { DataSourceEndpoint } from "@/components/datasources/DataSourceEndpoint";
-import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
+import { useDataSourceEndpoints } from "@/hooks/editor/reactQuery/useDataSourceEndpoints";
 import { getDataSourceEndpoints } from "@/requests/datasources/queries-noauth";
 import { Endpoint } from "@/requests/datasources/types";
 import { PagingResponse } from "@/requests/types";

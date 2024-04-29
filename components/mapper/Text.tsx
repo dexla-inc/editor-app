@@ -1,6 +1,6 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { useBrandingStyles } from "@/hooks/useBrandingStyles";
-import { useContentEditable } from "@/hooks/useContentEditable";
+import { useBrandingStyles } from "@/hooks/editor/useBrandingStyles";
+import { useContentEditable } from "@/hooks/components/useContentEditable";
 import { EditableComponentMapper } from "@/utils/editor";
 import { Text as MantineText, TextProps } from "@mantine/core";
 import merge from "lodash.merge";

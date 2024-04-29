@@ -1,5 +1,5 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { useEndpoint } from "@/hooks/useEndpoint";
+import { useEndpoint } from "@/hooks/components/useEndpoint";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { componentMapper } from "@/utils/componentMapper";
 import { convertSizeToPx } from "@/utils/defaultSizes";

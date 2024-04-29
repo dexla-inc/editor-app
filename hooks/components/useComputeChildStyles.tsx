@@ -1,6 +1,6 @@
 import { GRAY_OUTLINE } from "@/utils/branding";
 import { CSSObject } from "@mantine/core";
-import { handleBackground } from "@/hooks/handleBackground";
+import { handleBackground } from "@/hooks/components/handleBackground";
 import { Component } from "@/utils/editor";
 
 type UseComputeChildStylesProps = {

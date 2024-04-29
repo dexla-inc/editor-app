@@ -1,6 +1,6 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { useBrandingStyles } from "@/hooks/useBrandingStyles";
-import { useChangeState } from "@/hooks/useChangeState";
+import { useBrandingStyles } from "@/hooks/editor/useBrandingStyles";
+import { useChangeState } from "@/hooks/components/useChangeState";
 import { EditableComponentMapper } from "@/utils/editor";
 import {
   Loader,
@@ -11,7 +11,7 @@ import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { ChangeEvent, forwardRef, memo } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { useInputValue } from "@/hooks/useInputValue";
+import { useInputValue } from "@/hooks/components/useInputValue";
 
 type Props = EditableComponentMapper & TextareaProps;
 

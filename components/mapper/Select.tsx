@@ -1,9 +1,9 @@
 import { InputLoader } from "@/components/InputLoader";
 import { CustomDropdown } from "@/components/mapper/CustomSelectDropdown";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { useBrandingStyles } from "@/hooks/useBrandingStyles";
-import { useChangeState } from "@/hooks/useChangeState";
-import { useEndpoint } from "@/hooks/useEndpoint";
+import { useBrandingStyles } from "@/hooks/editor/useBrandingStyles";
+import { useChangeState } from "@/hooks/components/useChangeState";
+import { useEndpoint } from "@/hooks/components/useEndpoint";
 import { EditableComponentMapper } from "@/utils/editor";
 import {
   MultiSelect as MantineMultiSelect,
@@ -16,7 +16,7 @@ import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { forwardRef, memo } from "react";
-import { useInputValue } from "@/hooks/useInputValue";
+import { useInputValue } from "@/hooks/components/useInputValue";
 
 type Props = EditableComponentMapper & SelectProps & MultiSelectProps;
 

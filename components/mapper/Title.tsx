@@ -1,5 +1,5 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { useContentEditable } from "@/hooks/useContentEditable";
+import { useContentEditable } from "@/hooks/components/useContentEditable";
 import { EditableComponentMapper } from "@/utils/editor";
 import { Title as MantineTitle, TitleProps } from "@mantine/core";
 import { forwardRef, memo } from "react";
