@@ -20,7 +20,7 @@ export const useShareableContent = ({
 
   const { computeValue } = useDataBinding();
 
-  const [, parentIdsGroup] = selectedComponentId?.split("-repeated-") ?? [];
+  const [, parentIdsGroup] = selectedComponentId?.split("-related-") ?? [];
   const relatedComponentIds = parentIdsGroup?.split("--") ?? [];
 
   let shareableContent = {};

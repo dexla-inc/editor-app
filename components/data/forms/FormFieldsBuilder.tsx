@@ -33,7 +33,7 @@ type Props = {
 
 export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
   const hasParentComponentData = useEditorTreeStore(
-    (state) => state.selectedComponentIds?.at(-1)?.includes("-repeated-"),
+    (state) => state.selectedComponentIds?.at(-1)?.includes("-related-"),
   );
   const { getComponentsStates } = useComponentStates();
 

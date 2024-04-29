@@ -288,7 +288,7 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
             set(
               (state: EditorTreeState) => {
                 componentIds = componentIds.map(
-                  (id) => id.split("-repeated-")[0],
+                  (id) => id.split("-related-")[0],
                 );
                 const lastComponentId = componentIds.at(-1)!;
                 const currentState =

@@ -31,7 +31,7 @@ export const withComponentWrapper = <T extends Record<string, any>>(
 
     let id = componentTree.id;
     if (shareableContent?.parentSuffix !== undefined) {
-      id = `${componentTree.id}-repeated-${shareableContent?.parentSuffix}`;
+      id = `${componentTree.id}-related-${shareableContent?.parentSuffix}`;
     }
 
     const isSelected = useEditorTreeStore(
