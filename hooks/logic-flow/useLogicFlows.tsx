@@ -11,7 +11,6 @@ import { NodeProps } from "reactflow";
 
 export const useLogicFlows = () => {
   const setShowFormModal = useFlowStore((state) => state.setShowFormModal);
-  const pageId = useEditorTreeStore((state) => state.currentPageId);
   const projectId = useEditorTreeStore((state) => state.currentProjectId);
   const setSelectedTabView = useFlowStore((state) => state.setSelectedTabView);
   const selectedTabView = useFlowStore((state) => state.selectedTabView);
