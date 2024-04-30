@@ -6,27 +6,17 @@ import { usePropelAuthStore } from "@/stores/propelAuth";
 import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
 import { Button, Flex, Group, Select, Text, TextInput } from "@mantine/core";
 import { Dispatch, SetStateAction, useState } from "react";
-import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
-import { NavigationAction } from "@/utils/actions";
-import { UseFormReturnType } from "@mantine/form";
 
 type QueryStringsFormProps = {
   queryStringState: [
     QueryStringListItem[],
     Dispatch<SetStateAction<QueryStringListItem[]>>,
   ];
-  form: UseFormReturnType<
-    Omit<NavigationAction, "name">,
-    (values: Omit<NavigationAction, "name">) => Omit<NavigationAction, "name">
-  >;
-  isPageAction?: boolean | undefined;
   readOnlyKeys?: boolean;
 };
 
 export const QueryStringsForm = ({
   queryStringState,
-  form,
-  isPageAction,
   readOnlyKeys = false,
 }: QueryStringsFormProps) => {
   const [queryKey, setQueryKey] = useState("");
@@ -112,25 +102,18 @@ export const QueryStringsForm = ({
                   size="xs"
                 />
               ) : (
-                // <TextInput
-                //   placeholder="value"
-                //   value={value}
-                //   onChange={(event) => {
-                //     setQueryStrings((prev: QueryStringListItem[]) => {
-                //       const nPrev = [...prev];
-                //       nPrev[index].value = event.target.value;
-                //       return nPrev;
-                //     });
-                //   }}
-                //   size="xs"
-                //   style={{ width: "50%" }}
-                // />
-                <ComponentToBindFromInput
-                  size="xs"
+                <TextInput
                   placeholder="value"
-                  label=""
-                  isPageAction={isPageAction}
-                  {...form.getInputProps("url")}
+                  value={value}
+                  onChange={(event) => {
+                    setQueryStrings((prev: QueryStringListItem[]) => {
+                      const nPrev = [...prev];
+                      nPrev[index].value = event.target.value;
+                      return nPrev;
+                    });
+                  }}
+                  size="xs"
+                  style={{ width: "50%" }}
                 />
               )}
 
