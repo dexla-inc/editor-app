@@ -17,25 +17,42 @@ type Props = {
   page: PageResponse;
 };
 
+type TriggerGroup = Trigger[];
+
+type Triggers = {
+  sequential: TriggerGroup;
+  page: TriggerGroup;
+};
+
+type Trigger = {
+  value: string;
+  label: string;
+};
+
+const triggers: Triggers = {
+  sequential: [
+    { value: "onSuccess", label: "On Success" },
+    { value: "onError", label: "On Error" },
+  ],
+  page: [{ value: "onPageLoad", label: "On Page Load" }],
+};
+
 export const SelectActionForm = ({
   sequentialTo,
   onUpdatePage,
   close,
   page,
 }: Props) => {
-  const triggers = {
-    sequential: [
-      { value: "onSuccess", label: "On Success" },
-      { value: "onError", label: "On Error" },
-    ],
-    page: [{ value: "onPageLoad", label: "On Page Load" }],
-  };
-
   const triggerType = !!sequentialTo ? "sequential" : "page";
+
+  // I want to filter out the sequential triggers that have already been used in the page.actions array
+  const availableTriggers = triggers[triggerType].filter((trigger) => {
+    return !page.actions?.some((action) => action.trigger === trigger.value);
+  });
 
   const form = useForm({
     initialValues: {
-      trigger: triggers[triggerType][0].value as any,
+      trigger: availableTriggers[0]?.value as any,
       action: {
         name: "" as any,
       } as ActionType,
@@ -80,8 +97,8 @@ export const SelectActionForm = ({
       <Select
         size="xs"
         placeholder="Select a trigger"
-        label="Trigger"
-        data={triggers[triggerType]}
+        label="Trigger 2"
+        data={availableTriggers}
         {...form.getInputProps("trigger")}
       />
       <Select

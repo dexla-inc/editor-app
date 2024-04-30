@@ -53,6 +53,8 @@ export default function PageActions({ page, onUpdatePage }: Props) {
             sequentialAction.action.name,
           )}`,
           my: 20,
+          trigger: sequentialAction.trigger,
+          action: sequentialAction.action,
         };
 
         return (
@@ -62,7 +64,7 @@ export default function PageActions({ page, onUpdatePage }: Props) {
               isAction
               {...item}
               removeAction={removeAction}
-              key={item.label}
+              key={item.trigger}
             >
               <ActionSettingsForm
                 action={sequentialAction}
@@ -77,6 +79,7 @@ export default function PageActions({ page, onUpdatePage }: Props) {
                     form={form}
                     actionId={sequentialAction.id}
                     isPageAction
+                    key={sequentialAction.id}
                   />
                 )}
               </ActionSettingsForm>
@@ -133,7 +136,9 @@ export default function PageActions({ page, onUpdatePage }: Props) {
               >
                 {({ form }) => {
                   const ActionForm = actionMapped.form;
-                  return <ActionForm form={form} isPageAction />;
+                  return (
+                    <ActionForm form={form} isPageAction key={action.id} />
+                  );
                 }}
               </ActionSettingsForm>
               {renderSequentialActions(action)}
