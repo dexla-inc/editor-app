@@ -61,7 +61,7 @@ const SelectComponent = forwardRef(
 
     const handleChange = (value: string) => {
       setValue(value);
-      onChange?.(value);
+      onChange?.({ target: { value } });
     };
 
     const debouncedHandleSearchChange = debounce((value) => {
