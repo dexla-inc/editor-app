@@ -8,7 +8,7 @@ import {
 
 interface Props
   extends Omit<SegmentedControlProps, "data" | "onChange" | "value"> {
-  label: string;
+  label?: string;
   description?: string;
   value?: boolean;
   useTrueOrFalseStrings?: boolean;
@@ -41,7 +41,7 @@ export const SegmentedControlYesNo = ({
 
   return (
     <Stack spacing={2} w="100%">
-      <TopLabel text={label} />
+      <TopLabel text={label!} />
       {description && (
         <Text size={10} color="dimmed">
           {description}

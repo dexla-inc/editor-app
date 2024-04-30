@@ -8,11 +8,9 @@ import {
   Text,
   TextInput,
 } from "@mantine/core";
-import { useState } from "react";
 import { SegmentedControlYesNo } from "../SegmentedControlYesNo";
 import { usePageListQuery } from "@/hooks/editor/reactQuery/usePageListQuery";
 import { useRouter } from "next/router";
-import { QueryStringListItem } from "@/requests/pages/types";
 import { ActionIconDefault } from "../ActionIconDefault";
 import { ComponentToBindFromInput } from "../ComponentToBindFromInput";
 import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
@@ -25,60 +23,12 @@ export const NavigationActionForm = ({ form, isPageAction }: Props) => {
   const projectId = router.query.id as string;
   const { data: pageListQuery } = usePageListQuery(projectId, null);
 
-  // Local state to handle query strings
-  const initialQueryStrings = Object.entries(
-    form.values.queryStrings || {},
-  ).map(([key, value]) => ({
-    key,
-    value,
-  }));
-
-  // Local state to handle query strings initialized from form values
-  const [queryStrings, setQueryStrings] =
-    useState<QueryStringListItem[]>(initialQueryStrings);
-
-  // Function to handle adding new query string to local state and form
-  const handleAddQueryString = (key: string, value: string) => {
-    const newQueryStrings = queryStrings.concat({ key, value });
-    setQueryStrings(newQueryStrings);
-    form.setFieldValue(
-      "queryStrings",
-      newQueryStrings.reduce(
-        (acc, { key, value }) => {
-          acc[key] = value;
-          return acc;
-        },
-        {} as Record<string, string>,
-      ),
-    );
+  const onClickAddQueryString = () => {
+    form.insertListItem("queryStrings", { key: "", value: {} });
   };
 
-  const updateFormState = (queryStrings: QueryStringListItem[]) => {
-    form.setFieldValue(
-      "queryStrings",
-      queryStrings.reduce(
-        (acc, { key, value }) => {
-          acc[key] = value;
-          return acc;
-        },
-        {} as Record<string, string>,
-      ),
-    );
-  };
-
-  const handleQueryStringChange = (
-    key: string,
-    value: string,
-    index: number,
-  ) => {
-    const newQueryStrings = queryStrings.map((qs, qsIndex) => {
-      if (index === qsIndex) {
-        return { ...qs, key, value };
-      }
-      return qs;
-    });
-    setQueryStrings(newQueryStrings);
-    updateFormState(newQueryStrings);
+  const onClickRemoveQueryString = (index: number) => {
+    form.removeListItem("queryStrings", index);
   };
 
   return (
@@ -121,7 +71,7 @@ export const NavigationActionForm = ({ form, isPageAction }: Props) => {
         <Button
           type="button"
           compact
-          onClick={() => handleAddQueryString("", "")}
+          onClick={onClickAddQueryString}
           variant="default"
           sx={{ marginRight: 0 }}
           leftIcon={<Icon name="IconPlus" size={ICON_SIZE} />}
@@ -129,51 +79,25 @@ export const NavigationActionForm = ({ form, isPageAction }: Props) => {
           Add
         </Button>
       </Flex>
-      {queryStrings.map(({ key, value }, index) => (
-        <Group key={index} style={{ flexWrap: "nowrap" }}>
+      {(form.values.queryStrings ?? [])?.map(({ key, value }, index) => (
+        <Group key={index} style={{ flexWrap: "nowrap" }} align="end">
           <TextInput
             placeholder="key"
-            value={key}
-            onChange={(event) =>
-              handleQueryStringChange(
-                event.target.value,
-                queryStrings[index].value,
-                index,
-              )
-            }
             size="xs"
             style={{ width: "50%" }}
+            {...form.getInputProps(`queryStrings.${index}.key`)}
           />
-          <TextInput
+          <ComponentToBindFromInput
             placeholder="value"
-            value={value}
-            onChange={(event) =>
-              handleQueryStringChange(
-                queryStrings[index].key,
-                event.target.value,
-                index,
-              )
-            }
             size="xs"
-            style={{ width: "50%" }}
+            label=""
+            {...form.getInputProps(`queryStrings.${index}.value`)}
+            isPageAction={isPageAction}
           />
-          {/* <ComponentToBindFromInput
-        size="xs"
-        placeholder="value"
-        label=""
-        isPageAction={isPageAction}
-        {...form.getInputProps(`queryStrings.${index}.value`)}
-        onChange={(event) => handleQueryStringChange(queryStrings[index].key, value, index)}
-      /> */}
           <ActionIconDefault
             iconName={ICON_DELETE}
             tooltip="Delete"
-            onClick={() => {
-              const newQueryStrings = queryStrings.filter(
-                (_, i) => i !== index,
-              );
-              setQueryStrings(newQueryStrings);
-            }}
+            onClick={() => onClickRemoveQueryString(index)}
           />
         </Group>
       ))}
