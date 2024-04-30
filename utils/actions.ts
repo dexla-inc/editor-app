@@ -120,7 +120,7 @@ export interface NavigationAction extends BaseAction {
   name: "navigateToPage";
   pageId: string;
   pageSlug: string;
-  queryStrings?: Record<string, string>;
+  queryStrings?: Array<{ key: string; value: ValueProps }>;
   runInEditMode: boolean;
 }
 
@@ -243,6 +243,7 @@ export type GoToUrlParams = ActionParams & {
 export const useNavigationAction = ({
   action,
   router,
+  computeValue,
 }: NavigationActionParams) => {
   const isLive = useEditorTreeStore.getState().isLive;
   const projectId = useEditorTreeStore.getState().currentProjectId;
@@ -256,11 +257,10 @@ export const useNavigationAction = ({
     ? `/${action.pageSlug}`.replace("//", "/")
     : `/projects/${projectId}/editor/${action.pageId}`;
 
-  if (action.queryStrings && Object.keys(action.queryStrings).length) {
-    const queryStrings = [];
-    for (const key in action.queryStrings) {
-      queryStrings.push(`${key}=${action.queryStrings[key]}`);
-    }
+  if (action.queryStrings?.length) {
+    const queryStrings = action.queryStrings.map((item) => {
+      return `${item.key}=${computeValue({ value: item.value })}`;
+    });
 
     url += `?${queryStrings.join("&")}`;
   }
@@ -812,6 +812,7 @@ export const actionMapper = {
     defaultValues: {
       // runInEditMode: isPageAction ? false : true
       runInEditMode: true,
+      queryStrings: [],
     },
   },
   apiCall: {

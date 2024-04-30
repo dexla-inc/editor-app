@@ -60,7 +60,6 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
   );
 
   const commonProps = {
-    label,
     onFocus: (e: any) => {
       setHighlightedComponentId(e.target.value);
     },
