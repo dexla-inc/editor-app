@@ -34,28 +34,15 @@ export const useDataBinding = () => {
     };
 
     const variablesList = useVariableStore.getState().variableList;
-    const inputsStore = useInputsStore.getState().inputValues;
     const auth = useDataSourceStore.getState().getAuthState();
 
-    const allInputComponents = Object.values(
-      useEditorTreeStore.getState().componentMutableAttrs,
-    ).reduce((acc, c) => {
-      const isInput = [
-        "Input",
-        "Select",
-        "Checkbox",
-        "CheckboxGroup",
-        "Radio",
-        "Switch",
-        "Textarea",
-        "Autocomplete",
-        "DateInput",
-      ].includes(c?.name!);
-      if (isInput) {
-        acc.push({ id: c.id, description: c.name });
-      }
+    const components = Object.entries(
+      useInputsStore.getState().inputValues,
+    ).reduce((acc, [componentGroupId, value]) => {
+      acc[componentGroupId] = value;
+
       return acc;
-    }, [] as Partial<Component>[]);
+    }, {} as any);
 
     const autoRunJavascriptCode = <T>(
       boundCode: string,
@@ -97,17 +84,6 @@ export const useDataBinding = () => {
 
     const browserList = Array.of(
       pick(browser, ["asPath", "basePath", "pathname", "query", "route"]),
-    );
-
-    const components = allInputComponents.reduce(
-      (acc, component) => {
-        const value = inputsStore[component?.id!];
-        component = { ...component, name: component.description! };
-        acc.list[component?.id!] = component;
-        acc[component?.id!] = value;
-        return acc;
-      },
-      { list: {} } as any,
     );
 
     if (value === undefined) return staticFallback || "";

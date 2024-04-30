@@ -62,37 +62,31 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
   const auth = useDataSourceStore((state) => state.getAuthState());
   const inputsStore = useInputsStore((state) => state.inputValues);
   const selectedComponentId = useEditorTreeStore(selectedComponentIdSelector);
-  const allInputComponents = useEditorTreeStore(
+  const components = useEditorTreeStore(
     useShallow((state) =>
-      Object.values(state.componentMutableAttrs).reduce((acc, c) => {
-        const isInput = [
-          "Input",
-          "Select",
-          "Checkbox",
-          "CheckboxGroup",
-          "Radio",
-          "Switch",
-          "Textarea",
-          "Autocomplete",
-          "DateInput",
-        ].includes(c?.name!);
-        if (isInput) {
-          acc.push({ id: c.id, name: c.name, description: c.description });
-        }
-        return acc;
-      }, [] as Partial<Component>[]),
-    ),
-  );
+      Object.entries(inputsStore).reduce(
+        (acc, [componentGroupId, value]) => {
+          const [componentId, groupId] = componentGroupId.split("-related-");
+          const index = Number(groupId?.split("__")?.at(-1));
+          const c = state.componentMutableAttrs[componentId];
 
-  const components = allInputComponents.reduce(
-    (acc, component) => {
-      const value = inputsStore[component?.id!];
-      component = { ...component, name: component.description! };
-      acc.list[component?.id!] = component;
-      acc[component?.id!] = value;
-      return acc;
-    },
-    { list: {} } as any,
+          let description = c.description;
+          if (!isNaN(index)) {
+            description = `${description} [${index}]`;
+          }
+
+          acc.list[componentGroupId] = {
+            id: componentGroupId,
+            name: description,
+            description,
+          };
+          acc[componentGroupId] = value;
+
+          return acc;
+        },
+        { list: {} } as any,
+      ),
+    ),
   );
 
   const variables = variablesList.reduce(
