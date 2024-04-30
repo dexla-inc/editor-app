@@ -5,6 +5,7 @@ import {
   Flex,
   MantineTheme,
   Stack,
+  Text,
   TextInput,
   useMantineTheme,
 } from "@mantine/core";
@@ -12,6 +13,7 @@ import { useDisclosure } from "@mantine/hooks";
 
 type Props = {
   label?: string;
+  // description?: string;
   value: ValueProps;
   onChange: (value: ValueProps) => void;
   children?: React.ReactNode;
@@ -34,10 +36,18 @@ export const ComponentToBindWrapper = ({
   const styles = useTextInputStyles(theme);
 
   return (
-    <Flex mih={50} align="end" gap="xs" pos="relative" style={{ flexGrow: 1 }}>
+    <Flex
+      mih={50}
+      align="end"
+      gap="xs"
+      pos="relative"
+      style={{ flexGrow: 1, minHeight: 0 }}
+      w="100%"
+    >
       {value?.dataType === "boundCode" ? (
         <Stack pos="absolute" spacing={0} w="100%">
           {label && <TopLabel text={label} required />}
+          {/* {description && <Text color="dimmed" size={10}>{description}</Text>} */}
           <TextInput
             w="100%"
             styles={styles}
