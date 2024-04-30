@@ -6,13 +6,13 @@ import {
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { TopLabel } from "@/components/TopLabel";
 import { UnitInput } from "@/components/UnitInput";
-import { getThemeColor } from "@/components/modifiers/Border";
 import { withModifier } from "@/hoc/withModifier";
 import { CardStyle } from "@/requests/projects/types";
 import { useThemeStore } from "@/stores/theme";
 import {
   debouncedTreeComponentAttrsUpdate,
   getColorFromTheme,
+  getThemeColor,
 } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Flex, SegmentedControl, Stack } from "@mantine/core";

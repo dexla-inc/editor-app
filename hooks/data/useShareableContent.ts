@@ -20,7 +20,7 @@ export const useShareableContent = ({
 
   const { computeValue } = useDataBinding();
 
-  const [, parentIdsGroup] = selectedComponentId?.split("-repeated-") ?? [];
+  const [, parentIdsGroup] = selectedComponentId?.split("-related-") ?? [];
   const relatedComponentIds = parentIdsGroup?.split("--") ?? [];
 
   let shareableContent = {};
@@ -52,8 +52,10 @@ export const useShareableContent = ({
             data: shareableContent,
           },
         });
-        acc[groupId] = get(staticData, index, staticData);
-        shareableContent = cloneDeep(acc[groupId]);
+        if (staticData) {
+          acc[groupId] = get(staticData, index, staticData);
+          shareableContent = cloneDeep(acc[groupId]);
+        }
       }
 
       return acc;

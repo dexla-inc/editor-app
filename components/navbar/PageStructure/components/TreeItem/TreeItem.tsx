@@ -41,6 +41,7 @@ import { useShallow } from "zustand/react/shallow";
 import isEmpty from "lodash.isempty";
 import { useComputeValue } from "@/hooks/data/useComputeValue";
 import { isSelectedSelector } from "@/utils/componentSelectors";
+import { useEditorStore } from "@/stores/editor";
 
 export interface Props extends Omit<HTMLAttributes<HTMLLIElement>, "id"> {
   id: any;
@@ -96,6 +97,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
       (state) => state.setSelectedComponentIds,
     );
     const isDarkTheme = useUserConfigStore((state) => state.isDarkTheme);
+    const iframeWindow = useEditorStore((state) => state.iframeWindow);
     const component = useEditorTreeStore(
       useShallow((state) => {
         const c = state.componentMutableAttrs[componentTree.id!];
@@ -131,15 +133,22 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
       id: string,
     ) => {
       if (id !== "root") {
+        const comp =
+          iframeWindow?.document?.querySelector(`[data-id^="${id}"]`) ??
+          iframeWindow?.document?.querySelector(`[id^="${id}"]`);
+
+        const newId =
+          comp?.getAttribute("data-id") ?? comp?.getAttribute("id")!;
+
         if (e.ctrlKey || e.metaKey) {
           setSelectedComponentIds((prev) => {
-            if (prev.includes(id)) {
-              return prev.filter((p) => p !== id);
+            if (prev.includes(newId)) {
+              return prev.filter((p) => p !== newId);
             }
-            return [...prev, id];
+            return [...prev, newId];
           });
         } else {
-          setSelectedComponentIds(() => [id]);
+          setSelectedComponentIds(() => [newId]);
         }
       }
     };
