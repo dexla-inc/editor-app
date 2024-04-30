@@ -187,11 +187,13 @@ export const useEditorHotkeys = () => {
     if (componentToPaste.name === "PopOver") {
       // Ensuring the Popover component has a valid targetId
       // This example assumes the first child can be the target; adjust accordingly.
-      if (componentToPaste.children && componentToPaste.children.length > 0) {
-        componentToPaste.props.targetId = componentToPaste.children[0].id;
-      } else {
-        // Handle the case where there is no valid target by default
-        componentToPaste.props.targetId = "default-target"; // Ensure 'default-target' is a valid id
+      if (componentToPaste.props) {
+        if (componentToPaste.children && componentToPaste.children.length > 0) {
+          componentToPaste.props.targetId = componentToPaste.children[0].id;
+        } else {
+          // Handle the case where there is no valid target by default
+          componentToPaste.props.targetId = "default-target"; // Ensure 'default-target' is a valid id
+        }
       }
     }
 
