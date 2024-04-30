@@ -394,10 +394,7 @@ export const DataSourceEndpointDetail = ({
       if (parameters && parameters.length > 0) {
         const urlParams = new URLSearchParams();
         for (const param of parameters) {
-          if (
-            param.value !== null &&
-            param.location?.toLowerCase() === "Query"?.toLowerCase()
-          ) {
+          if (param.value !== null && param.location === "Query") {
             urlParams.append(param.name, param.value?.toString());
           }
         }
@@ -648,12 +645,7 @@ export const DataSourceEndpointDetail = ({
               ]}
               value={item.location ?? "Query"}
               onChange={(value) =>
-                handleArrayChange(
-                  index,
-                  "location",
-                  value?.toLowerCase(),
-                  "parameter",
-                )
+                handleArrayChange(index, "location", value, "parameter")
               }
               sx={{ width: 110 }}
             />
