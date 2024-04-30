@@ -34,10 +34,17 @@ export const ComponentToBindWrapper = ({
   const styles = useTextInputStyles(theme);
 
   return (
-    <Flex mih={50} align="end" gap="xs" pos="relative" style={{ flexGrow: 1 }}>
-      {value?.dataType === "boundCode" ? (
-        <Stack pos="absolute" spacing={0} w="100%">
-          {label && <TopLabel text={label} required />}
+    <Stack spacing={0} w="100%">
+      {label && <TopLabel text={label} required />}
+      <Flex
+        mih={50}
+        align="end"
+        gap="xs"
+        pos="relative"
+        style={{ flexGrow: 1, minHeight: 0 }}
+        w="100%"
+      >
+        {value?.dataType === "boundCode" ? (
           <TextInput
             w="100%"
             styles={styles}
@@ -46,22 +53,22 @@ export const ComponentToBindWrapper = ({
             disabled={isBindingPopOverOpen}
             onClick={onOpenBindingPopOver}
           />
-        </Stack>
-      ) : (
-        children
-      )}
-      <BindingPopover
-        isPageAction={isPageAction}
-        value={value}
-        onChange={onChange}
-        controls={{
-          isOpen: isBindingPopOverOpen,
-          onClose: onCloseBindingPopOver,
-          onOpen: onOpenBindingPopOver,
-        }}
-        style="iconButton"
-      />
-    </Flex>
+        ) : (
+          children
+        )}
+        <BindingPopover
+          isPageAction={isPageAction}
+          value={value}
+          onChange={onChange}
+          controls={{
+            isOpen: isBindingPopOverOpen,
+            onClose: onCloseBindingPopOver,
+            onOpen: onOpenBindingPopOver,
+          }}
+          style="iconButton"
+        />
+      </Flex>
+    </Stack>
   );
 };
 

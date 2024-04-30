@@ -2,7 +2,6 @@ import { ActionIconDefault } from "@/components/ActionIconDefault";
 import { Icon } from "@/components/Icon";
 import { QueryStringListItem } from "@/requests/pages/types";
 import { TemplateTypesOptions } from "@/requests/templates/types";
-import { useEditorStore } from "@/stores/editor";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
 import { Button, Flex, Group, Select, Text, TextInput } from "@mantine/core";
@@ -23,13 +22,6 @@ export const QueryStringsForm = ({
   const [queryKey, setQueryKey] = useState("");
   const [queryValue, setQueryValue] = useState("");
   const [queryStrings, setQueryStrings] = queryStringState;
-
-  const setComponentToBind = useEditorStore(
-    (state) => state.setComponentToBind,
-  );
-  const setPickingComponentToBindTo = useEditorStore(
-    (state) => state.setPickingComponentToBindTo,
-  );
 
   const company = usePropelAuthStore((state) => state.activeCompany);
 
