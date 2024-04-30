@@ -138,7 +138,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
           iframeWindow?.document?.querySelector(`[id^="${id}"]`);
 
         const newId =
-          comp?.getAttribute("data-id") ?? comp?.getAttribute("id")!;
+          comp?.getAttribute("data-id") ?? comp?.getAttribute("id")! ?? id;
 
         if (e.ctrlKey || e.metaKey) {
           setSelectedComponentIds((prev) => {
