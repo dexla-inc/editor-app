@@ -1,5 +1,4 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { useEndpoint } from "@/hooks/components/useEndpoint";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { componentMapper } from "@/utils/componentMapper";
 import { convertSizeToPx } from "@/utils/defaultSizes";
@@ -7,7 +6,7 @@ import {
   EditableComponentMapper,
   getAllComponentsByName,
 } from "@/utils/editor";
-import { FlexProps, LoadingOverlay, Flex as MantineFlex } from "@mantine/core";
+import { FlexProps, Flex as MantineFlex } from "@mantine/core";
 import { FormEvent, forwardRef, memo } from "react";
 import { useInputsStore } from "@/stores/inputs";
 import { useShallow } from "zustand/react/shallow";
@@ -29,12 +28,6 @@ const FormComponent = forwardRef(
     const setState = useEditorTreeStore(
       (state) => state.setTreeComponentCurrentState,
     );
-
-    const { endpointId } = component.onLoad ?? {};
-    const { data } = useEndpoint({
-      onLoad: component.onLoad,
-      dataType,
-    });
 
     const onSubmitCustom = async (e: FormEvent<any>) => {
       e.preventDefault();
@@ -123,7 +116,6 @@ const FormComponent = forwardRef(
         pos="relative"
       >
         {renderData({ renderTree, shareableContent })}
-        <LoadingOverlay visible={loading} zIndex={1000} radius="sm" />
       </MantineFlex>
     );
   },
