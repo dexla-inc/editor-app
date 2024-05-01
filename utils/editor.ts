@@ -104,32 +104,36 @@ export const replaceIdsDeeply = (treeRoot: ComponentStructure) => {
   const componentMutableAttrs =
     useEditorTreeStore.getState().componentMutableAttrs;
 
-  let targetId = treeRoot.props?.targetId;
+  let popoverNode: ComponentStructure;
   crawl(
     treeRoot,
     async (node) => {
       const newId = nanoid();
+
       const nodeAttrs = cloneDeep(componentMutableAttrs[node.id!]);
       nodeAttrs.id = newId;
 
-      if (node.id === targetId && nodeAttrs.props) {
-        targetId = newId;
+      // if targetId is equal to the current pointer node, update that parent targetId with the new id of the current node
+      if (node.id === popoverNode?.props?.targetId) {
+        popoverNode.props!.targetId = newId;
       }
 
+      // copying all attributes from the old node to the new node
       updateTreeComponentAttrs({
         componentIds: [newId],
         attrs: nodeAttrs,
         save: false,
       });
 
+      // if the node is a PopOver, we keep the node to be updated when we find the targetId
+      if (node.name === "PopOver") {
+        popoverNode = node;
+      }
+
       node.id = newId;
     },
     { order: "bfs" },
   );
-
-  if (treeRoot.props!.targetId !== undefined) {
-    treeRoot.props!.targetId = targetId;
-  }
 };
 
 // TODO: get this back - not sure if we need this
