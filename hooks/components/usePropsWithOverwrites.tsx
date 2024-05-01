@@ -18,12 +18,22 @@ export const usePropsWithOverwrites = (
     setCustomCurrentState(currentState);
   }, [currentState]);
 
-  const hoverStateFunc = () => {
-    setCustomCurrentState("hover");
+  const hoverStateFunc = (e: React.MouseEvent<HTMLElement>) => {
+    if (
+      component.id! === e.currentTarget.id &&
+      Object.keys(component?.states?.hover ?? {}).length
+    ) {
+      setCustomCurrentState("hover");
+    }
   };
 
-  const leaveHoverStateFunc = () => {
-    setCustomCurrentState(currentState);
+  const leaveHoverStateFunc = (e: React.MouseEvent<HTMLElement>) => {
+    if (
+      component.id! === e.currentTarget.id &&
+      Object.keys(component?.states?.hover ?? {}).length
+    ) {
+      setCustomCurrentState(currentState);
+    }
   };
 
   return useMemo(() => {
