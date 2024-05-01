@@ -234,7 +234,10 @@ export const useComputeValue = ({
           `auth\\[(\\/\\* [\\S\\s]* \\*\\/)?\\s?'${key}'\\]`,
           "g",
         );
-        result = result.replaceAll(regex, `'${auth[key]}'`);
+        let replacer = auth[key];
+        replacer =
+          typeof replacer !== "string" ? JSON.stringify(replacer) : replacer;
+        result = result.replaceAll(regex, replacer);
       });
 
       itemKeys.forEach((key) => {
