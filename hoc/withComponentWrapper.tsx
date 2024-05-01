@@ -38,14 +38,14 @@ export const withComponentWrapper = <T extends Record<string, any>>(
       useShallow((state) => state.selectedComponentIds?.includes(id!)),
     );
 
-    const onLoad = useEditorTreeStore(
+    const component = useEditorTreeStore(
       useShallow(
-        (state) => state.componentMutableAttrs[componentTree?.id!]?.onLoad,
+        (state) => state.componentMutableAttrs[componentTree.id!] ?? {},
       ),
     );
 
     const computedOnLoad = useComputeValue({
-      onLoad,
+      onLoad: component?.onLoad ?? {},
       shareableContent,
     });
 
@@ -61,12 +61,6 @@ export const withComponentWrapper = <T extends Record<string, any>>(
     //     return CURSOR_COLORS[other.connectionId % CURSOR_COLORS.length];
     //   }),
     // )!;
-
-    const component = useEditorTreeStore(
-      useShallow(
-        (state) => state.componentMutableAttrs[componentTree.id!] ?? {},
-      ),
-    );
 
     const hasTooltip = !!component?.props?.tooltip;
     const initiallyLoading = component?.props?.initiallyLoading;
@@ -95,18 +89,18 @@ export const withComponentWrapper = <T extends Record<string, any>>(
       router: router as Router,
     });
 
-    const { isPicking, droppable, tealOutline } = useEditorShadows({
-      componentId: componentTree.id!,
-      isSelected: false,
-      //selectedByOther,
-    });
-
     const propsWithOverwrites = usePropsWithOverwrites(
       component,
       isEditorMode,
       currentState,
       triggers,
     );
+
+    const { isPicking, droppable, tealOutline } = useEditorShadows({
+      componentId: componentTree.id!,
+      isSelected: false,
+      //selectedByOther,
+    });
 
     const childStyles = useComputeChildStyles({
       component,
@@ -137,7 +131,6 @@ export const withComponentWrapper = <T extends Record<string, any>>(
         ...componentTree,
         props: propsWithOverwrites,
         onLoad: computedOnLoad ?? {},
-        // id,
       },
       renderTree,
       ...(isResizing || !isEditorMode ? {} : droppable),
