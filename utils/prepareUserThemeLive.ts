@@ -42,7 +42,9 @@ export const prepareUserThemeLive = (projectBranding: ThemeResponse) => {
             defaultTheme.fn.lighten(hex, 0.5),
             defaultTheme.fn.lighten(hex, 0.4),
             color.hex,
-            defaultTheme.fn.darken(hex, 0.1),
+            color.hex.startsWith("#FFFFFF")
+              ? "#F5F8F8"
+              : defaultTheme.fn.darken(hex, 0.1), // Custom hover for white
             defaultTheme.fn.darken(hex, 0.2),
             defaultTheme.fn.darken(hex, 0.3),
           ],

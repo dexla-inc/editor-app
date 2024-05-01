@@ -162,7 +162,9 @@ export default function BrandingStep({
                 theme.fn.lighten(hex, 0.5),
                 theme.fn.lighten(hex, 0.4),
                 color.hex,
-                theme.fn.darken(hex, 0.1),
+                color.hex.startsWith("#FFFFFF")
+                  ? "#F5F8F8"
+                  : theme.fn.darken(hex, 0.1), // Custom hover for white
                 theme.fn.darken(hex, 0.2),
                 theme.fn.darken(hex, 0.3),
               ],
