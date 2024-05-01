@@ -141,7 +141,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
           comp?.getAttribute("data-id") ??
           comp?.getAttribute("id")! ??
           id
-        ).split("-title")[0];
+        ).replace(/-(title|target)$/, "");
 
         if (e.ctrlKey || e.metaKey) {
           setSelectedComponentIds((prev) => {
