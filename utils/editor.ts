@@ -114,7 +114,7 @@ export const replaceIdsDeeply = (treeRoot: ComponentStructure) => {
       nodeAttrs.id = newId;
 
       // if targetId is equal to the current pointer node, update that parent targetId with the new id of the current node
-      if (node.id === popoverNode.props?.targetId) {
+      if (node.id === popoverNode?.props?.targetId) {
         popoverNode.props!.targetId = newId;
       }
 
