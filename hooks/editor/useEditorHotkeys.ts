@@ -151,6 +151,7 @@ export const useEditorHotkeys = () => {
     ) as ComponentStructure;
 
     let targetId = selectedComponentId;
+    const targetName = selectedComponent?.name!;
 
     if (!targetId || targetId === "root") return "content-wrapper";
 
@@ -160,17 +161,13 @@ export const useEditorHotkeys = () => {
       clipboardContent.name,
     );
     const isGridItems = ["Grid", "GridColumn"].includes(componentToPaste.name);
-    const isTargetGridItems = ["Grid", "GridColumn"].includes(
-      selectedComponent?.name!,
-    );
-    const isTargetModalsOrDrawers = ["Modal", "Drawer"].includes(
-      selectedComponent?.name!,
-    );
+    const isTargetGridItems = ["Grid", "GridColumn"].includes(targetName);
+    const isTargetModalsOrDrawers = ["Modal", "Drawer"].includes(targetName);
+
     const isLayoutCategory =
       structureMapper[componentToPaste.name!]?.category === "Layout";
     const isAllowedGridMatch =
-      isGridItems === isTargetGridItems &&
-      selectedComponent?.name === componentToPaste.name;
+      isGridItems === isTargetGridItems && targetName === componentToPaste.name;
     const isAllowedSibling =
       isLayoutCategory && !isTargetGridItems && !isTargetModalsOrDrawers;
 
