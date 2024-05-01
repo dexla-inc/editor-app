@@ -198,7 +198,7 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                   pageLoadTree: options?.onLoad ? tree : state.pageLoadTree,
                   tree: {
                     ...tree,
-                    name: options?.action || "Generic move",
+                    name: options?.action || "Generic change",
                     timestamp: Date.now(),
                   },
                   componentMutableAttrs: merge(
