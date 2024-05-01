@@ -1,14 +1,17 @@
 import { Icon } from "@/components/Icon";
 import { TopLabel } from "@/components/TopLabel";
-import { VisibilityModifier } from "@/components/data/VisibilityModifier";
 import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
-import { Component, debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
+import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { Button, Flex, Group, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useEffect } from "react";
-import { StaticFormFieldsBuilder } from "../StaticFormFieldsBuilder";
+import { FormFieldsBuilder } from "@/components/data/forms/FormFieldsBuilder";
+import { DataProps } from "@/types/dataBinding";
 
-export const SelectOptionsForm = ({ component }: { component: Component }) => {
+export const SelectOptionsForm = ({
+  component,
+  endpoints,
+}: Omit<DataProps, "dataType">) => {
   const form = useForm({
     initialValues: {
       props: {
@@ -72,11 +75,11 @@ export const SelectOptionsForm = ({ component }: { component: Component }) => {
           );
         })}
       </Flex>
-      <StaticFormFieldsBuilder
-        form={form}
-        field={{ name: "value", label: "Value", type: "text" }}
+      <FormFieldsBuilder
+        fields={[{ name: "value", label: "Value", type: "text" }]}
+        component={component}
+        endpoints={endpoints!}
       />
-      <VisibilityModifier form={form} />
     </Stack>
   );
 };

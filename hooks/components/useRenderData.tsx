@@ -60,14 +60,14 @@ export const useRenderData = ({ component }: UseRenderDataProps) => {
 
     if (Array.isArray(data)) {
       return data.map((item: any, parentIndex: number) => {
-        return component.children?.map((child) => {
-          // Build parentSuffix for the current component
-          const currentComponentGroupId = `${component.id}__${parentIndex}`;
-          let newParentSuffix = currentComponentGroupId;
-          if (shareableContent?.parentSuffix) {
-            newParentSuffix = `${shareableContent.parentSuffix}--${component.id}__${parentIndex}`;
-          }
+        // Build parentSuffix for the current component
+        const currentComponentGroupId = `${component.id}__${parentIndex}`;
+        let newParentSuffix = currentComponentGroupId;
+        if (shareableContent?.parentSuffix) {
+          newParentSuffix = `${shareableContent.parentSuffix}--${component.id}__${parentIndex}`;
+        }
 
+        return component.children?.map((child) => {
           return renderComponent({
             child,
             data: item,
@@ -77,13 +77,13 @@ export const useRenderData = ({ component }: UseRenderDataProps) => {
         });
       });
     } else {
-      return component.children?.map((child) => {
-        let newParentSuffix = component.id!;
-        // Build parentSuffix for the current component
-        if (shareableContent?.parentSuffix) {
-          newParentSuffix = `${shareableContent.parentSuffix}--${newParentSuffix}`;
-        }
+      let newParentSuffix = component.id!;
+      // Build parentSuffix for the current component
+      if (shareableContent?.parentSuffix) {
+        newParentSuffix = `${shareableContent.parentSuffix}--${newParentSuffix}`;
+      }
 
+      return component.children?.map((child) => {
         return renderComponent({
           child,
           data,

@@ -1,5 +1,5 @@
 import { FormFieldsBuilder } from "@/components/data/forms/FormFieldsBuilder";
-import { DataProps } from "@/components/data/type";
+import { DataProps } from "@/types/dataBinding";
 import { Stack } from "@mantine/core";
 import { FieldType } from "./forms/StaticFormFieldsBuilder";
 

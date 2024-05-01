@@ -9,7 +9,7 @@ import {
   Title,
 } from "@mantine/core";
 import { TableForm } from "./forms/static/TableForm";
-import { DataProps } from "@/components/data/type";
+import { DataProps } from "@/types/dataBinding";
 import { DataType } from "@/types/dataBinding";
 
 export const TableData = ({ component, endpoints, dataType }: DataProps) => {
