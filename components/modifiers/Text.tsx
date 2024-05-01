@@ -93,7 +93,7 @@ const Modifier = withModifier(({ selectedComponent }) => {
     {
       name: "bold",
       defaultValue: "normal",
-      value: 500,
+      value: 600,
       propName: "fontWeight",
       iconName: "IconBold",
     },
