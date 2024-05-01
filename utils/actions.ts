@@ -314,7 +314,6 @@ export const useShowNotificationAction = async ({
   const showNotification = useThemeStore.getState().showNotification;
   const color = getColorFromTheme(theme, action.color);
 
-  console.log(action.color, color);
   return showNotification({
     title: String(computeValue<string>({ value: action.title })),
     message: String(computeValue<string>({ value: action.message })),
@@ -494,33 +493,45 @@ export async function performFetch(
   const isGetMethodType = endpoint?.methodType === "GET";
 
   const headers = constructHeaders(endpoint, authHeaderKey);
-  const response = await fetch(url, {
+
+  const init: RequestInit = {
     method: endpoint?.methodType,
     headers: headers,
-    ...(!!body && !isGetMethodType && { body: JSON.stringify(body) }),
-  });
-
-  const responseString = response.status.toString();
-  const handledError = responseString.startsWith("4");
-  const unhandledError = responseString.startsWith("5");
-
-  if (handledError) {
-    if (includeExampleResponse) {
-      return safeJsonParse(endpoint?.exampleResponse || "");
-    }
-    const error = await readDataFromStream(response.body);
-    throw new Error(error);
-  } else if (unhandledError) {
-    const error = await readDataFromStream(response.body);
-    console.error(error);
-    throw new Error(error);
+  };
+  if (body && !isGetMethodType) {
+    init.body = JSON.stringify(body);
   }
 
-  if (response.status === 204) {
+  const response = await fetch(url, init);
+
+  // Early return for non-2xx status codes
+  if (!response.ok) {
+    const errorBody = await readDataFromStream(response.body);
+    if (response.status >= 400 && response.status < 500) {
+      if (includeExampleResponse) {
+        return safeJsonParse(endpoint?.exampleResponse || "");
+      }
+      throw new Error(errorBody);
+    } else if (response.status >= 500) {
+      console.error(errorBody);
+      throw new Error(errorBody);
+    }
+  }
+
+  // Handle no-content responses explicitly
+  if (
+    response.status === 204 ||
+    response.headers.get("Content-Length") === "0"
+  ) {
     return null;
   }
 
-  return response.json();
+  try {
+    return await response.json();
+  } catch (error) {
+    console.error("Failed to parse JSON:", error);
+    return null;
+  }
 }
 
 const setLoadingState = (
