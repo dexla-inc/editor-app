@@ -42,7 +42,7 @@ const PopOverComponent = ({
     }
     return acc.concat(item);
   }, []);
-  console.log({ targetId, targetComponent });
+
   const target = (isLive ? window : iframeWindow)?.document.getElementById(
     "iframe-content",
   );

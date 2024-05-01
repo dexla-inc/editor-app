@@ -697,7 +697,7 @@ export const addComponent = (
             const isPopOver = copyComponentToAdd.name === "PopOver";
             if (isPopOver) {
               if (isPasteAction) {
-                node.children?.push(copyComponentToAdd);
+                node.children = [...(node.children || []), copyComponentToAdd];
               } else {
                 copyComponentToAdd.props!.targetId = node.id;
                 copyComponentToAdd.children = [
