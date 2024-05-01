@@ -1,13 +1,8 @@
 import { ActionIconDefault } from "@/components/ActionIconDefault";
-import { QueryStringsForm } from "@/components/QueryStringsForm";
 import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
 import { usePageListQuery } from "@/hooks/editor/reactQuery/usePageListQuery";
 import { createPage, deletePage, updatePage } from "@/requests/pages/mutations";
-import {
-  PageBody,
-  PageResponse,
-  QueryStringListItem,
-} from "@/requests/pages/types";
+import { PageBody, PageResponse } from "@/requests/pages/types";
 import { useAppStore } from "@/stores/app";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
@@ -33,14 +28,14 @@ export default function PageConfig({ page, setPage }: Props) {
   const [slug, setSlug] = useState("");
   const resetTree = useEditorTreeStore((state) => state.resetTree);
   const { invalidate } = usePageListQuery(projectId, null);
-  const queryStringState = useState(
-    page?.queryStrings
-      ? Object.entries(page?.queryStrings || {}).map(([key, value]) => ({
-          key,
-          value,
-        }))
-      : [],
-  );
+  // const queryStringState = useState(
+  //   page?.queryStrings
+  //     ? Object.entries(page?.queryStrings || {}).map(([key, value]) => ({
+  //         key,
+  //         value,
+  //       }))
+  //     : [],
+  // );
 
   const form = useForm<PageBody>({
     initialValues: {
@@ -110,13 +105,13 @@ export default function PageConfig({ page, setPage }: Props) {
         message: "Wait while your page is being saved",
       });
 
-      values.queryStrings = queryStringState[0].reduce(
-        (acc: Record<string, string>, item: QueryStringListItem) => {
-          acc[item.key] = item.value;
-          return acc;
-        },
-        {},
-      );
+      // values.queryStrings = queryStringState[0].reduce(
+      //   (acc: Record<string, string>, item: QueryStringListItem) => {
+      //     acc[item.key] = item.value;
+      //     return acc;
+      //   },
+      //   {},
+      // );
 
       form.validate();
       let pageId = page?.id;
@@ -253,7 +248,7 @@ export default function PageConfig({ page, setPage }: Props) {
           {...form.getInputProps("authenticatedOnly")}
         />
 
-        <QueryStringsForm queryStringState={queryStringState} />
+        {/* <QueryStringsForm queryStringState={queryStringState} /> */}
 
         {page ? (
           <Button type="submit" loading={isLoading} compact>
