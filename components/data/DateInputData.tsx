@@ -1,4 +1,4 @@
-import { DataProps } from "@/components/data/type";
+import { DataProps } from "@/types/dataBinding";
 import { ActionIcon, Group, Stack, Tooltip } from "@mantine/core";
 import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { useForm } from "@mantine/form";

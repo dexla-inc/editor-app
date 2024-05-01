@@ -1,3 +1,7 @@
+import { Component } from "@/utils/editor";
+import { PagingResponse } from "@/requests/types";
+import { Endpoint } from "@/requests/datasources/types";
+
 export type BindingType = "Formula" | "JavaScript";
 export type BindingTab =
   | "components"
@@ -46,3 +50,9 @@ export type ActionsResponsesType = Record<
     error: unknown;
   }
 >;
+
+export type DataProps = {
+  component: Component;
+  endpoints: PagingResponse<Endpoint> | undefined;
+  dataType: DataType;
+};
