@@ -2,7 +2,7 @@ import { DynamicSettings } from "@/components/data/forms/DynamicSettings";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { SegmentedControl, Select, Stack, Text, Title } from "@mantine/core";
 import { ChartForm } from "@/components/data/forms/static/ChartForm";
-import { DataProps } from "@/components/data/type";
+import { DataProps } from "@/types/dataBinding";
 import { DataType } from "@/types/dataBinding";
 
 export const ChartData = ({ component, endpoints, dataType }: DataProps) => {

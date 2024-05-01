@@ -1,5 +1,5 @@
 import { VisibilityModifier } from "@/components/data/VisibilityModifier";
-import { DataProps } from "@/components/data/type";
+import { DataProps } from "@/types/dataBinding";
 import { useComponentStates } from "@/hooks/editor/useComponentStates";
 import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { Stack } from "@mantine/core";

@@ -1,6 +1,5 @@
 import { FormFieldsBuilder } from "@/components/data/forms/FormFieldsBuilder";
-import { DataProps } from "@/components/data/type";
-import { useEditorStore } from "@/stores/editor";
+import { DataProps } from "@/types/dataBinding";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { Stack } from "@mantine/core";
 import { UnitInput } from "../UnitInput";

@@ -1,7 +1,7 @@
 import { Icon } from "@/components/Icon";
 import { TopLabel } from "@/components/TopLabel";
 import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
-import { Component, debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
+import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { Button, Flex, Group, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useEffect } from "react";
