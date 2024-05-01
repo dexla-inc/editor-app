@@ -4,16 +4,16 @@ import { FormFieldsBuilder } from "@/components/data/forms/FormFieldsBuilder";
 import { FieldType } from "@/components/data/forms/StaticFormFieldsBuilder";
 
 export const CheckboxData = ({ component, endpoints }: DataProps) => {
-  const staticFields =
-    component.name === "Checkbox"
-      ? [
-          {
-            name: "value",
-            label: "Checked",
-            type: "boolean" as FieldType,
-          },
-        ]
-      : [];
+  // We do this because CheckboxItem shares the same form, and we don't want to show the value field
+  const staticFields = ["Checkbox", "Switch"].includes(component.name)
+    ? [
+        {
+          name: "value",
+          label: "Checked",
+          type: "boolean" as FieldType,
+        },
+      ]
+    : [];
 
   staticFields.push({
     name: "optionValue",
