@@ -151,30 +151,23 @@ export const useEditorHotkeys = () => {
     ) as ComponentStructure;
 
     let targetId = selectedComponentId;
+    const targetName = selectedComponent?.name!;
 
     if (!targetId || targetId === "root") return "content-wrapper";
 
     let componentIndex = 0;
 
-    const isSpecialComponents = [
-      "GridColumn",
-      "Alert",
-      "Accordion",
-      "PopOver",
-    ].includes(clipboardContent.name);
+    const isSpecialComponents = ["GridColumn", "Alert", "Accordion"].includes(
+      clipboardContent.name,
+    );
     const isGridItems = ["Grid", "GridColumn"].includes(componentToPaste.name);
-    const isTargetGridItems = ["Grid", "GridColumn"].includes(
-      selectedComponent?.name!,
-    );
-    const isTargetModalsOrDrawers = ["Modal", "Drawer"].includes(
-      selectedComponent?.name!,
-    );
+    const isTargetGridItems = ["Grid", "GridColumn"].includes(targetName);
+    const isTargetModalsOrDrawers = ["Modal", "Drawer"].includes(targetName);
 
     const isLayoutCategory =
       structureMapper[componentToPaste.name!]?.category === "Layout";
     const isAllowedGridMatch =
-      isGridItems === isTargetGridItems &&
-      selectedComponent?.name === componentToPaste.name;
+      isGridItems === isTargetGridItems && targetName === componentToPaste.name;
     const isAllowedSibling =
       isLayoutCategory && !isTargetGridItems && !isTargetModalsOrDrawers;
 
@@ -183,19 +176,6 @@ export const useEditorHotkeys = () => {
       isSpecialComponents ||
       isAllowedSibling ||
       isAllowedGridMatch;
-
-    if (componentToPaste.name === "PopOver") {
-      // Ensuring the Popover component has a valid targetId
-      // This example assumes the first child can be the target; adjust accordingly.
-      if (componentToPaste.props) {
-        if (componentToPaste.children && componentToPaste.children.length > 0) {
-          componentToPaste.props.targetId = componentToPaste.children[0].id;
-        } else {
-          // Handle the case where there is no valid target by default
-          componentToPaste.props.targetId = "default-target"; // Ensure 'default-target' is a valid id
-        }
-      }
-    }
 
     const editorTreeCopy = cloneDeep(editorTree) as EditorTreeCopy;
 

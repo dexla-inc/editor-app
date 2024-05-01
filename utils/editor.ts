@@ -103,12 +103,19 @@ export const replaceIdsDeeply = (treeRoot: ComponentStructure) => {
     useEditorTreeStore.getState().updateTreeComponentAttrs;
   const componentMutableAttrs =
     useEditorTreeStore.getState().componentMutableAttrs;
+
+  let targetId = treeRoot.props?.targetId;
   crawl(
     treeRoot,
     async (node) => {
       const newId = nanoid();
-      const nodeAttrs = componentMutableAttrs[node.id!];
+      const nodeAttrs = cloneDeep(componentMutableAttrs[node.id!]);
       nodeAttrs.id = newId;
+
+      if (node.id === targetId && nodeAttrs.props) {
+        targetId = newId;
+      }
+
       updateTreeComponentAttrs({
         componentIds: [newId],
         attrs: nodeAttrs,
@@ -119,6 +126,10 @@ export const replaceIdsDeeply = (treeRoot: ComponentStructure) => {
     },
     { order: "bfs" },
   );
+
+  if (treeRoot.props!.targetId !== undefined) {
+    treeRoot.props!.targetId = targetId;
+  }
 };
 
 // TODO: get this back - not sure if we need this
@@ -685,25 +696,20 @@ export const addComponent = (
           } else if (node.id === dropTarget.id) {
             const isPopOver = copyComponentToAdd.name === "PopOver";
             if (isPopOver) {
-              // if(!isPasteAction){
-              copyComponentToAdd.props!.targetId = node.id;
-              copyComponentToAdd.children = [
-                ...(copyComponentToAdd.children || []),
-                node,
-              ];
-              context.parent?.children?.splice(
-                context.index,
-                1,
-                copyComponentToAdd,
-              );
-              // } else {
-              //    // add component normally
-              //    const index = dropIndex ?? context.index - 1;
-              //    node.children?.splice(index, 0, {
-              //      ...copyComponentToAdd,
-              //      id: copyComponentToAddId,
-              //    });
-              //   };
+              if (isPasteAction) {
+                node.children?.push(copyComponentToAdd);
+              } else {
+                copyComponentToAdd.props!.targetId = node.id;
+                copyComponentToAdd.children = [
+                  ...(copyComponentToAdd.children || []),
+                  node,
+                ];
+                context.parent?.children?.splice(
+                  context.index,
+                  1,
+                  copyComponentToAdd,
+                );
+              }
             } else {
               node.children = node.children ?? [];
 
