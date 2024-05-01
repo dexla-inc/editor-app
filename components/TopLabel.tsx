@@ -9,13 +9,14 @@ type Props = {
 
 export const TopLabel = ({ text, size = "xs", required }: Props) => {
   return (
-    <Flex gap={3}>
+    <Flex gap={3} maw={200}>
       <Text
         sx={(theme) =>
           theme.colorScheme === "dark" ? { color: GRAY_COLOR } : {}
         }
         size={size}
         fw={500}
+        truncate
       >
         {text}
       </Text>
