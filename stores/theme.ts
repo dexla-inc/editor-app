@@ -26,7 +26,7 @@ export const useThemeStore = create<ThemeState>()(
         showNotification: (props: NotificationProps) => {
           const theme = get().theme;
           const isDarkTheme = theme.colorScheme === "dark";
-          const color = getColorFromTheme(theme, "Primary.6");
+          const color = props.color || getColorFromTheme(theme, "Primary.6");
           const titleColor = getColorFromTheme(
             theme,
             isDarkTheme ? "White.6" : "Black.6",
