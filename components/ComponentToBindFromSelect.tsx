@@ -17,6 +17,8 @@ export const ComponentToBindFromSelect = ({
   componentId,
   ...rest
 }: Props) => {
+  const { label, ...restProps } = rest;
+
   return (
     <ComponentToBindWrapper
       label={rest?.label}
@@ -34,7 +36,7 @@ export const ComponentToBindFromSelect = ({
         onChange={(e: string) => {
           onChange({ ...value, dataType: "static", static: e });
         }}
-        {...rest}
+        {...restProps}
         {...AUTOCOMPLETE_OFF_PROPS}
       />
     </ComponentToBindWrapper>
