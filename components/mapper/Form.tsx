@@ -11,6 +11,7 @@ import { FlexProps, LoadingOverlay, Flex as MantineFlex } from "@mantine/core";
 import { FormEvent, forwardRef, memo } from "react";
 import { useInputsStore } from "@/stores/inputs";
 import { useShallow } from "zustand/react/shallow";
+import { useRenderData } from "@/hooks/components/useRenderData";
 
 type Props = EditableComponentMapper & FlexProps;
 
@@ -104,6 +105,8 @@ const FormComponent = forwardRef(
       }
     };
 
+    const { renderData } = useRenderData({ component });
+
     return (
       <MantineFlex
         ref={ref}
@@ -119,24 +122,7 @@ const FormComponent = forwardRef(
         {...otherTriggers}
         pos="relative"
       >
-        {endpointId &&
-          Array.isArray(data) &&
-          data?.map((item: any, parentIndex: number) => {
-            return component.children && component.children.length > 0
-              ? component.children?.map((child) =>
-                  renderTree(child, {
-                    ...shareableContent,
-                    data: item,
-                    parentIndex,
-                  }),
-                )
-              : children;
-          })}
-        {component.children && component.children.length > 0
-          ? component.children?.map((child) =>
-              renderTree(child, { ...shareableContent, data }),
-            )
-          : children}
+        {renderData({ renderTree, shareableContent })}
         <LoadingOverlay visible={loading} zIndex={1000} radius="sm" />
       </MantineFlex>
     );
