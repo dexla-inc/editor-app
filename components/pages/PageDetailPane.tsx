@@ -24,6 +24,7 @@ export default function PageDetailPane({ page, setPage }: PageDetailPaneProps) {
   const queryKey = ["pages", projectId, null];
 
   const onUpdatePage = async (values: any) => {
+    console.log("values", values);
     setPage(values);
     const result = await updatePage(values, projectId, page?.id as string);
 
