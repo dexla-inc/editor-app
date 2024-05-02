@@ -31,7 +31,7 @@ const TabComponent = forwardRef(
       >
         {component.children && component.children.length > 0
           ? component.children?.map((child) =>
-              renderTree(childs, shareableContent),
+              renderTree(child, shareableContent),
             )
           : children}
       </MantineTabs.Tab>
