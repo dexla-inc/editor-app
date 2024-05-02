@@ -101,7 +101,7 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
         <Stack w="100%">
           <SegmentedControlInput
             {...commonProps}
-            value={value?.static ?? "false"}
+            value={value?.static ?? ""}
             onChange={(val) =>
               onChange({
                 ...value,
@@ -112,6 +112,7 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
             data={[
               { label: "True", value: "true" },
               { label: "False", value: "false" },
+              { label: "-", value: "" },
             ]}
             {...props}
           />
