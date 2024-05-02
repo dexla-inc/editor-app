@@ -34,13 +34,17 @@ const FileUploadComponent = ({
   return isPreviewMode ? (
     <Dropzone {...props} {...dragProps} {...componentProps} style={style}>
       {component.children && component.children.length > 0
-        ? component.children?.map((child) => renderTree(child))
+        ? component.children?.map((child) =>
+            renderTree(child, shareableContent),
+          )
         : children}
     </Dropzone>
   ) : (
     <Box {...otherProps} {...componentProps} style={style}>
       {component.children && component.children.length > 0
-        ? component.children?.map((child) => renderTree(child))
+        ? component.children?.map((child) =>
+            renderTree(child, shareableContent),
+          )
         : children}
     </Box>
   );

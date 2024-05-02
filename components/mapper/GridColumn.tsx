@@ -40,7 +40,9 @@ const GridColumnComponent = forwardRef(
       >
         {component.children &&
           component.children.length > 0 &&
-          component.children?.map((child: any) => renderTree(child))}
+          component.children?.map((child: any) =>
+            renderTree(child, shareableContent),
+          )}
       </GridColumnBase>
     );
   },

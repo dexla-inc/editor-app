@@ -3,7 +3,7 @@ import {
   Radio as MantineRadio,
   RadioProps as MantineRadioProps,
 } from "@mantine/core";
-import { forwardRef, memo, useState, ForwardedRef } from "react";
+import { forwardRef, memo, ForwardedRef } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useShallow } from "zustand/react/shallow";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
@@ -23,6 +23,7 @@ const RadioItemComponent = forwardRef<HTMLInputElement, Props>(
     const {
       value: defaultValue,
       children,
+      triggers,
       ...componentProps
     } = component.props as any;
 
@@ -30,44 +31,26 @@ const RadioItemComponent = forwardRef<HTMLInputElement, Props>(
     const { value: parentValue, isInsideGroup = false } = shareableContent;
     const checked = parentValue === String(value);
 
-    const [_checked, setChecked] = useState<boolean>(checked);
-
-    const defaultTriggers = isPreviewMode
-      ? isInsideGroup
-        ? {}
-        : {
-            onChange: (e: any) => {
-              setChecked(e.currentTarget.checked);
-            },
-          }
-      : {
-          onChange: (e: any) => {
-            e?.preventDefault();
-            e?.stopPropagation();
-            setChecked(false);
-          },
-        };
-
     return (
       <MantineRadio
         ref={ref}
         {...props}
         {...componentProps}
-        {...defaultTriggers}
-        wrapperProps={{ "data-id": component.id }}
+        {...(!isPreviewMode && { wrapperProps: { "data-id": component.id } })}
         label={
-          component.children && component.children.length > 0
-            ? component.children?.map((child) =>
-                renderTree(child, {
-                  ...(checked && {
-                    parentState: "checked",
-                  }),
+          <div {...(isPreviewMode && { id: component.id })} {...triggers}>
+            {component.children?.map((child) =>
+              renderTree(child, {
+                ...shareableContent,
+                ...(checked && {
+                  parentState: "checked",
                 }),
-              )
-            : children
+              }),
+            )}
+          </div>
         }
         value={value}
-        checked={_checked}
+        checked={checked}
         styles={{
           inner: { display: "none" },
           label: {

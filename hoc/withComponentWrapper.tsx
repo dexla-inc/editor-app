@@ -105,7 +105,6 @@ export const withComponentWrapper = <T extends Record<string, any>>(
     const childStyles = useComputeChildStyles({
       component,
       propsWithOverwrites,
-      currentState,
       isEditorMode,
     });
 

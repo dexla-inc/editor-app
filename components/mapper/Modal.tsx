@@ -43,7 +43,9 @@ export const ModalComponent = forwardRef(
                 ...(isSizeFullScreen && { inner: { left: 0 } }),
               }}
             >
-              {component.children?.map((child) => renderTree(child))}
+              {component.children?.map((child) =>
+                renderTree(child, shareableContent),
+              )}
             </MantineModal>
           );
         }}
