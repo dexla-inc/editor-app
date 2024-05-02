@@ -419,11 +419,12 @@ export const prepareRequestData = (
     ? pick<Record<string, string>, string>(computedValues, bodyKeys)
     : undefined;
 
-  endpoint.requestBody.forEach((item) => {
-    if (body && body[item.name] && typeof body[item.name] === "string") {
-      body[item.name] = safeJsonParse(body[item.name]);
-    }
-  });
+  // Commenting out as there is an issue in BETA converting an array as a string. No time to investigate.
+  // endpoint.requestBody.forEach((item) => {
+  //   if (body && body[item.name] && typeof body[item.name] === "string") {
+  //     body[item.name] = safeJsonParse(body[item.name]);
+  //   }
+  // });
 
   return { url, body };
 };
