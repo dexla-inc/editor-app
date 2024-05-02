@@ -419,6 +419,12 @@ export const prepareRequestData = (
     ? pick<Record<string, string>, string>(computedValues, bodyKeys)
     : undefined;
 
+  endpoint.requestBody.forEach((item) => {
+    if (body && body[item.name] && typeof body[item.name] === "string") {
+      body[item.name] = safeJsonParse(body[item.name]);
+    }
+  });
+
   return { url, body };
 };
 
