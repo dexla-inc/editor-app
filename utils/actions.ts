@@ -614,7 +614,7 @@ export const useApiCallAction = async (
         responseJson = await performFetch(
           fetchUrl,
           endpoint,
-          body,
+          body ?? {},
           authHeaderKey,
         );
     }
