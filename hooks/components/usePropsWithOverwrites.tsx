@@ -18,7 +18,7 @@ export const usePropsWithOverwrites = (
     setCustomCurrentState(currentState);
   }, [currentState]);
 
-  const hoverStateFunc = (e: React.MouseEvent<any>) => {
+  const hoverStateFunc = (e: React.MouseEvent<HTMLElement>) => {
     if (
       component.id! === e.currentTarget.id &&
       Object.keys(component?.states?.hover ?? {}).length
