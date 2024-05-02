@@ -33,6 +33,7 @@ import { nanoid } from "nanoid";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useRef } from "react";
 import { useUpdateNodeInternals } from "reactflow";
+import { safeJsonParse } from "@/utils/common";
 
 type Props = {
   flow: LogicFlowResponse;
@@ -63,7 +64,7 @@ export const LogicFlowsPage = ({ flow }: Props) => {
 
   useEffect(() => {
     if (flow?.data) {
-      const data = JSON.parse(decodeSchema(flow.data as string));
+      const data = safeJsonParse(decodeSchema(flow.data as string));
       restoreFlow(data as any);
     }
   }, [flow.data, restoreFlow]);

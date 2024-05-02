@@ -36,7 +36,7 @@ export const FileButtonComponent = forwardRef(
           onChange={(e) => {
             if (!isPreviewMode) return;
             onChange && onChange(e);
-            triggers?.onChange && triggers.onChange?.(e);
+            triggers?.onChange && triggers.onChange?.({ target: { files: e } });
           }}
           {...contentEditableProps}
           {...componentProps}

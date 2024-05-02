@@ -36,7 +36,7 @@ const RadioComponent = forwardRef(
       ? {
           onChange: (val: string) => {
             setValue(val);
-            onChange && onChange(val);
+            onChange && onChange({ target: { value: val } });
           },
         }
       : {};

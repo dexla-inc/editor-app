@@ -7,6 +7,7 @@ import { useForm } from "@mantine/form";
 import { Editor } from "@monaco-editor/react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { safeJsonParse } from "@/utils/common";
 
 const editorOptions = {
   automaticLayout: true,
@@ -55,7 +56,7 @@ export const EditorNavbarCustomCodeSection = () => {
   useEffect(() => {
     if (project) {
       const customCode = project.customCode
-        ? JSON.parse(decodeSchema(project.customCode))
+        ? safeJsonParse(decodeSchema(project.customCode))
         : undefined;
       if (customCode) {
         form.setValues(customCode);

@@ -18,6 +18,7 @@ import { useEffect } from "react";
 import { useVariableListQuery } from "@/hooks/editor/reactQuery/useVariableListQuery";
 import { useDataSourceEndpoints } from "@/hooks/editor/reactQuery/useDataSourceEndpoints";
 import { MantineThemeExtended } from "@/utils/types";
+import { safeJsonParse } from "@/utils/common";
 
 type Props = {
   project: ProjectResponse;
@@ -57,7 +58,7 @@ export const Live = ({ project, deploymentPage }: Props) => {
   useEffect(() => {
     if (deploymentPage?.pageState) {
       const decodedSchema = decodeSchema(deploymentPage.pageState);
-      const state = JSON.parse(decodedSchema);
+      const state = safeJsonParse(decodedSchema);
       setEditorTree(state, {
         onLoad: true,
         action: "Initial State",

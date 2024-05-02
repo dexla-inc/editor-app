@@ -2,6 +2,7 @@ import { JSONSelector } from "@/components/JSONSelector";
 import { Endpoint } from "@/requests/datasources/types";
 import { scrollbarStyles } from "@/utils/branding";
 import { Anchor, Popover, ScrollArea } from "@mantine/core";
+import { safeJsonParse } from "@/utils/common";
 
 type Props = {
   endpoint: Endpoint;
@@ -21,7 +22,7 @@ export const EndpointExampleResponsePreview = ({ endpoint }: Props) => {
           <JSONSelector
             data={
               endpoint.exampleResponse
-                ? JSON.parse(endpoint.exampleResponse)
+                ? safeJsonParse(endpoint.exampleResponse)
                 : endpoint.exampleResponse
             }
             name={endpoint.relativeUrl}

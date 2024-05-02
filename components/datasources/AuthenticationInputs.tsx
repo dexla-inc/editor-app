@@ -1,5 +1,6 @@
 import { patchDataSourceEndpoint } from "@/requests/datasources/mutations";
 import { Endpoint, RequestBody } from "@/requests/datasources/types";
+import { safeJsonParse } from "@/utils/common";
 
 type EndpointDropdown = {
   value: string;
@@ -35,7 +36,7 @@ export type ExampleResponseDropdown = {
 export function mapEndpointExampleResponse(
   exampleJsonResponse: string,
 ): ExampleResponseDropdown[] | undefined {
-  const exampleJson = JSON.parse(exampleJsonResponse);
+  const exampleJson = safeJsonParse(exampleJsonResponse);
 
   const keys = Object.keys(exampleJson);
   return keys

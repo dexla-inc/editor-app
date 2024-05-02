@@ -46,6 +46,7 @@ import { usePrevious } from "@mantine/hooks";
 import { useEditorTreeStore } from "../../../stores/editorTree";
 import List from "rc-virtual-list";
 import { selectedComponentIdSelector } from "@/utils/componentSelectors";
+import { safeJsonParse } from "@/utils/common";
 
 const measuring = {
   droppable: {
@@ -239,7 +240,7 @@ export function NavbarLayersSection({
 
     if (projected && over) {
       const { depth, parentId } = projected;
-      const clonedItems: FlattenedItem[] = JSON.parse(
+      const clonedItems: FlattenedItem[] = safeJsonParse(
         JSON.stringify(flattenTree(items as TreeItems)),
       );
       const overIndex = clonedItems.findIndex(({ id }) => id === over.id);
