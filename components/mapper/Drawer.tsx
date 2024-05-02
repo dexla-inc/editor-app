@@ -38,7 +38,9 @@ export const DrawerComponent = forwardRef(
                 ...(isSizeFullScreen && { inner: { left: 0 } }),
               }}
             >
-              {component.children?.map((child) => renderTree(child))}
+              {component.children?.map((child) =>
+                renderTree(child, shareableContent),
+              )}
             </MantineDrawer>
           );
         }}

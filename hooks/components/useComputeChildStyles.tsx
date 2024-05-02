@@ -6,20 +6,18 @@ import { Component } from "@/utils/editor";
 type UseComputeChildStylesProps = {
   component: Component;
   propsWithOverwrites: any;
-  currentState: any;
   isEditorMode: boolean;
 };
 
 export const useComputeChildStyles = ({
   component,
   propsWithOverwrites,
-  currentState,
   isEditorMode,
 }: UseComputeChildStylesProps): CSSObject => {
   const childStyles: CSSObject = {
     position: "relative",
     ...propsWithOverwrites.style,
-    ...(currentState === "disabled" &&
+    ...(propsWithOverwrites.disabled &&
       !isEditorMode && { pointerEvents: "none" }),
 
     outline:

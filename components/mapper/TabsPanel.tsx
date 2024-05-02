@@ -12,7 +12,9 @@ const TabsPanelComponent = forwardRef(
     return (
       <MantineTabs.Panel ref={ref} {...props} {...componentProps}>
         {component.children && component.children.length > 0
-          ? component.children?.map((child) => renderTree(child))
+          ? component.children?.map((child) =>
+              renderTree(child, shareableContent),
+            )
           : children}
       </MantineTabs.Panel>
     );
