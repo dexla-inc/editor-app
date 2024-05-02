@@ -56,6 +56,17 @@ const GoogleMapPluginComponent = forwardRef<GoogleMap, Props>(
     };
 
     const markersParsed = safeJsonParse(markers) as MarkerItem[];
+    const validMarkers = markersParsed.filter((marker) => {
+      const isValidLat =
+        typeof marker.position.lat === "number" && !isNaN(marker.position.lat);
+      const isValidLng =
+        typeof marker.position.lng === "number" && !isNaN(marker.position.lng);
+      if (!isValidLat || !isValidLng) {
+        console.error("Invalid marker position:", marker);
+        return false;
+      }
+      return true;
+    });
     const MAP_SCRIPT_DELAY_DURATION = 800;
 
     const { width, height, ...googleStyles } = props.style ?? {};
@@ -94,12 +105,8 @@ const GoogleMapPluginComponent = forwardRef<GoogleMap, Props>(
       (map: google.maps.Map) => {
         setMap(map);
 
-        const bounds = new window.google.maps.LatLngBounds({
-          lat: Number(center.lat),
-          lng: Number(center.lng),
-        });
-
-        markersParsed?.forEach?.(({ position }: Position) =>
+        const bounds = new window.google.maps.LatLngBounds();
+        validMarkers.forEach(({ position }: Position) =>
           bounds.extend(position),
         );
         map.fitBounds(bounds);
