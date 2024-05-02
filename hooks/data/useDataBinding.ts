@@ -1,7 +1,6 @@
 import { useVariableStore } from "@/stores/variables";
 import { useRouter } from "next/router";
 import { useDataSourceStore } from "@/stores/datasource";
-import { useEditorTreeStore } from "@/stores/editorTree";
 import { pick } from "next/dist/lib/pick";
 import get from "lodash.get";
 import {
@@ -11,7 +10,6 @@ import {
 } from "@/types/dataBinding";
 import { safeJsonParse } from "@/utils/common";
 import { useInputsStore } from "@/stores/inputs";
-import { Component } from "@/utils/editor";
 
 export const useDataBinding = () => {
   const browser = useRouter();
@@ -49,6 +47,7 @@ export const useDataBinding = () => {
       ctx?: ComputeValuePropCtx,
     ): T | undefined => {
       const { actions, event } = ctx ?? {};
+      const item = shareableContent;
 
       try {
         const result = eval(`(function () { ${boundCode} })`)();
