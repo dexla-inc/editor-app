@@ -226,7 +226,10 @@ export const useComputeValue = ({
           `browser\\[(\\/\\* [\\S\\s]* \\*\\/)?\\s?'${key}'\\]`,
           "g",
         );
-        result = result.replaceAll(regex, `'${browserValues[key]}'`);
+        let replacer = browserValues[key];
+        replacer =
+          typeof replacer !== "string" ? JSON.stringify(replacer) : replacer;
+        result = result.replaceAll(regex, replacer);
       });
 
       authKeys.forEach((key) => {
