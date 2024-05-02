@@ -13,11 +13,14 @@ const TabsComponent = forwardRef(
       <MantineTabs ref={ref} {...props} {...componentProps} keepMounted={false}>
         {component.children && component.children.length > 0
           ? component.children?.map((child) =>
-              renderTree({
-                ...child,
-                // TODO: get this back
-                // props: { ...child.props, tabVariant: componentProps.variant },
-              }),
+              renderTree(
+                {
+                  ...child,
+                  // TODO: get this back
+                  // props: { ...child.props, tabVariant: componentProps.variant },
+                },
+                shareableContent,
+              ),
             )
           : children}
       </MantineTabs>
