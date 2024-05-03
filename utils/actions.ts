@@ -641,9 +641,11 @@ export const useApiCallAction = async (
 
     setActionsResponses(actionId, {
       success: responseJson,
+      status: "success",
     });
     setActionsResponse(actionId, {
       success: responseJson,
+      status: "success",
       list: {
         id: actionId,
         name: action.name,
@@ -658,9 +660,11 @@ export const useApiCallAction = async (
     if (error instanceof Error) {
       setActionsResponses(actionId, {
         error: safeJsonParse(error.message),
+        status: "error",
       });
       setActionsResponse(actionId, {
         error: safeJsonParse(error.message),
+        status: "error",
         list: {
           id: actionId,
           name: action.name,
