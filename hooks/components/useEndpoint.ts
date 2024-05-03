@@ -30,7 +30,7 @@ export const useEndpoint = ({
     endpointId,
     resultsKey,
     staleTime = DEFAULT_STALE_TIME,
-    binds: { parameter = {}, body = {} } = {},
+    binds: { parameter = {}, header = {}, body = {} } = {},
   } = onLoad ?? {};
 
   const projectId = useEditorTreeStore((state) => state.currentProjectId);
@@ -38,6 +38,7 @@ export const useEndpoint = ({
   const endpoint = endpoints?.results?.find((e) => e.id === endpointId);
   const apiUrl = `${endpoint?.baseUrl}/${endpoint?.relativeUrl}`;
   const requestBody = endpoint ? { ...parameter, ...body } : {};
+  const headers = endpoint ? { ...header } : {};
   const cleanParameter = removeEmpty(parameter);
   const url = endpoint
     ? getUrl(Object.keys(cleanParameter), apiUrl, cleanParameter)
@@ -52,6 +53,7 @@ export const useEndpoint = ({
     return performFetch(
       fetchUrl,
       endpoint,
+      headers,
       body,
       authHeaderKey,
       includeExampleResponse,
@@ -63,7 +65,7 @@ export const useEndpoint = ({
   const isEnabled = !!endpoint && dataType === "dynamic" && enabled;
 
   const { data, isLoading } = useQuery(
-    [fetchUrl, JSON.stringify(requestBody), accessToken],
+    [fetchUrl, headers, JSON.stringify(requestBody), accessToken],
     apiCall,
     {
       select: (response) => {
