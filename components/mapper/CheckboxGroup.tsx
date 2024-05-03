@@ -2,7 +2,7 @@ import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { EditableComponentMapper } from "@/utils/editor";
 import { Checkbox as MantineCheckbox, CheckboxGroupProps } from "@mantine/core";
 import merge from "lodash.merge";
-import { forwardRef, memo } from "react";
+import { forwardRef, memo, useEffect, useState } from "react";
 import { useInputValue } from "@/hooks/components/useInputValue";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useShallow } from "zustand/react/shallow";
@@ -30,7 +30,7 @@ const CheckboxGroupComponent = forwardRef(
 
     const gapSize = gapSizes[gap ?? "sm"];
 
-    const [value, setValue] = useInputValue<string[]>(
+    const [, setInputStore] = useInputValue<string[]>(
       {
         value: component?.onLoad?.value ?? [],
       },
@@ -43,13 +43,20 @@ const CheckboxGroupComponent = forwardRef(
       ? {
           onChange: (val: string[]) => {
             setValue(val);
-            onChange && onChange({ target: { value: val } });
+            onChange?.({ target: { value: val } });
           },
         }
       : {};
     const customStyle = merge({}, defaultStyle, props.style);
 
     const rootStyleProps = ["flexWrap", "flexDirection"];
+
+    const [value, setValue] = useState<string[]>([]);
+
+    useEffect(() => {
+      setInputStore(value);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [value]);
 
     const { renderData } = useRenderData({ component });
 
@@ -71,15 +78,7 @@ const CheckboxGroupComponent = forwardRef(
         }}
         styles={{
           label: { width: "100%" },
-          //input: { ...omit(customStyle, wrapperStyleProps), minHeight: "auto" },
         }}
-        // styles={merge(
-        //   {
-        //     label: { width: "100%" },
-        //     root: { flexDirection: "column" }
-        //   },
-        //   styles,
-        // )}
       >
         {renderData({ renderTree, shareableContent })}
       </MantineCheckbox.Group>

@@ -14,7 +14,7 @@ interface CheckboxProps extends MantineCheckboxProps {
 type Props = EditableComponentMapper & CheckboxProps;
 
 const CheckboxItemComponent = forwardRef<HTMLInputElement, Props>(
-  ({ renderTree, component, shareableContent = {}, ...props }: Props, ref) => {
+  ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
     const { children, triggers, ...componentProps } = component.props as any;
     const { optionValue } = component?.onLoad ?? {};
 
@@ -29,7 +29,6 @@ const CheckboxItemComponent = forwardRef<HTMLInputElement, Props>(
         wrapperProps={{ "data-id": props.id }}
         label={null}
         value={optionValue}
-        {...triggers}
         ref={ref}
       />
     );

@@ -83,6 +83,7 @@ export const useTriggers = ({
       {} as Record<ActionTrigger, any>,
     );
   }, [
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     actionResponses,
     endpoints?.results,
     endpointsIsFetched,
@@ -90,9 +91,7 @@ export const useTriggers = ({
     logicFlows,
     logicFlowsIsFetched,
     router,
-    computeValue,
     shareableContent,
-    setActionsResponses,
   ]);
 
   const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {

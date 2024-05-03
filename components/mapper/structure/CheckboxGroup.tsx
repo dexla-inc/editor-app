@@ -20,7 +20,7 @@ export const jsonStructure = (props?: any): ComponentStructure => {
   });
   const checkboxItemTwo = checkboxItemStructure({
     theme,
-    props: { value: "option-2" },
+    onLoad: { optionValue: { static: "option-2" } },
   });
   const textCheckboxItemTwo = textStructure({
     props: { children: "Option 2" },
