@@ -30,9 +30,9 @@ const CheckboxGroupComponent = forwardRef(
 
     const gapSize = gapSizes[gap ?? "sm"];
 
-    const [value, setValue] = useInputValue(
+    const [value, setValue] = useInputValue<string[]>(
       {
-        value: component?.onLoad?.value ?? "",
+        value: component?.onLoad?.value ?? [],
       },
       props.id!,
     );

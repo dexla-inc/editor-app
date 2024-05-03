@@ -54,7 +54,6 @@ const FileUploadComponent = ({
       {...componentProps}
       {...otherTriggers}
       {...defaultTriggers}
-      onChange={console.log}
       style={style}
     >
       {component.children && component.children.length > 0

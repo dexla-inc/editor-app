@@ -30,6 +30,7 @@ const CheckboxItemComponent = forwardRef<HTMLInputElement, Props>(
         label={null}
         value={optionValue}
         {...triggers}
+        ref={ref}
       />
     );
   },
