@@ -90,7 +90,7 @@ const InputComponent = forwardRef(
     // handle decrease number range
     const decreaseNumber = () => {
       let val = value;
-      if (val === undefined) val = -1;
+      if ([undefined, "", 0].includes(val)) val = 0;
       else val -= 1;
       handleChange(val);
     };
