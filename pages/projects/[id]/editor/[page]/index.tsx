@@ -31,7 +31,7 @@ const PageEditor = () => {
     if (variables) {
       initializeVariableList(variables.results);
     }
-  }, [variables, initializeVariableList]);
+  }, [variables, initializeVariableList, pageId]); // pageId is used to reinitialize non global variables
 
   useEffect(() => {
     if (endpoints) {
