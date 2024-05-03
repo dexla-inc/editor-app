@@ -5,12 +5,8 @@ import { useComponentContextMenu } from "@/hooks/components/useComponentContextM
 
 export const useEditorClickHandler = (
   componentId: string,
-  propsWithOverwrites: any,
   isPicking?: ComponentToBind,
 ) => {
-  const isEditorMode = useEditorTreeStore(
-    (state) => !state.isPreviewMode && !state.isLive,
-  );
   const setComponentToBind = useEditorStore(
     (state) => state.setComponentToBind,
   );
@@ -21,9 +17,7 @@ export const useEditorClickHandler = (
 
   return useCallback(
     (e: any) => {
-      if (isEditorMode) {
-        e.stopPropagation?.();
-      }
+      e.stopPropagation?.();
 
       if (isPicking) {
         setComponentToBind(componentId);
@@ -40,15 +34,12 @@ export const useEditorClickHandler = (
         }
       }
 
-      propsWithOverwrites.onClick?.(e);
       forceDestroyContextMenu();
     },
     [
-      isEditorMode,
       forceDestroyContextMenu,
       componentId,
       isPicking,
-      propsWithOverwrites,
       setComponentToBind,
       setSelectedComponentIds,
     ],

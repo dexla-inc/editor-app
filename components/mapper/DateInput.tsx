@@ -42,7 +42,7 @@ const DateInputComponent = ({
 
   const rootStyleProps = ["display", "width", "minHeight", "minWidth"];
 
-  const [value, setValue] = useInputValue(
+  const [value, setValue] = useInputValue<string | string[]>(
     {
       value: component.onLoad?.value,
     },
@@ -52,24 +52,22 @@ const DateInputComponent = ({
 
   const handleChange = (value: Date | Date[] | null) => {
     // Date Range check
+    let formattedValue;
+
     if (Array.isArray(value)) {
       if (value.length === 2 && value[0] && value[1]) {
-        const formattedValue = getNewDate(value, valueFormatValue);
-        onChange?.(formattedValue);
-        setValue(formattedValue);
+        formattedValue = getNewDate(value, valueFormatValue);
       } else {
         console.warn("Incomplete date range:", value);
         return;
       }
     } else if (value instanceof Date) {
       // Handle single date picker scenario
-      const formattedValue = getNewDate(value, valueFormatValue);
-      onChange?.(formattedValue);
-      setValue(formattedValue);
-    } else {
-      onChange?.(null);
-      setValue(null);
+      formattedValue = getNewDate(value, valueFormatValue);
     }
+
+    onChange?.({ target: { value: formattedValue ?? "" } });
+    setValue(formattedValue ?? "");
   };
 
   const dateInputValue = setDate(value, typeValue, valueFormatValue);
@@ -85,8 +83,8 @@ const DateInputComponent = ({
         type={typeValue}
         valueFormat={valueFormatValue}
         value={dateInputValue}
-        onChange={handleChange}
         {...restTriggers}
+        onChange={handleChange}
         style={{}}
         styles={{
           root: {

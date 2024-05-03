@@ -781,8 +781,8 @@ const updateVariableArray = (
 
   const _value = variable.value ?? variable.defaultValue;
   let value =
-    typeof _value === "string" ? JSON.parse(_value ?? "[]") : _value ?? [];
-  newValue = typeof newValue === "string" ? JSON.parse(newValue) : newValue;
+    typeof _value === "string" ? safeJsonParse(_value ?? "[]") : _value ?? [];
+  newValue = typeof newValue === "string" ? safeJsonParse(newValue) : newValue;
 
   if (action.method) {
     value = arrayActions[action.method]({ value, newValue, index, path });

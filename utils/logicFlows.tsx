@@ -9,6 +9,7 @@ import { FlowData } from "@/stores/flow";
 import { decodeSchema } from "@/utils/compression";
 import startCase from "lodash.startcase";
 import { getOutgoers, Node, NodeProps } from "reactflow";
+import { safeJsonParse } from "@/utils/common";
 
 const {
   ConnectionCreatorNode,
@@ -101,7 +102,7 @@ const run = async (state: FlowData, params: any) => {
 
 export const executeFlow = async (flow: LogicFlowResponse, params: any) => {
   try {
-    const flowData: FlowData = JSON.parse(decodeSchema(flow.data as string));
+    const flowData: FlowData = safeJsonParse(decodeSchema(flow.data as string));
 
     await run(flowData, params);
   } catch (error) {
