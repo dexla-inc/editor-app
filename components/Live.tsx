@@ -86,7 +86,7 @@ export const Live = ({ project, deploymentPage }: Props) => {
   useEffect(() => {
     if (variables) initializeVariableList(variables.results);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [variables]);
+  }, [variables, deploymentPage.id]); // deploymentpage.id is used to reinitialize non global variables
 
   useEffect(() => {
     if (endpoints) {
