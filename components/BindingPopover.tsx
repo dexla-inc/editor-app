@@ -191,7 +191,8 @@ export default function BindingPopover({
     },
   ];
 
-  if (item) {
+  // testing if item has a key other than "index" only, if it doesnt, it means it is not supposed to be an item component
+  if (Object.keys(item ?? {}).length > 1) {
     segmentedTabOptions.unshift({
       value: "item",
       label: (
