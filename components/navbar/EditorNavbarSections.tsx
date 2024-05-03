@@ -29,7 +29,7 @@ export type SectionId =
   | "theme"
   | "datasources"
   | "customCode"
-  | "history"
+  //| "history"
   | "settings"
   | "assets";
 
@@ -65,11 +65,11 @@ const sections = [
     label: "Assets",
     icon: IconPhoto,
   },
-  {
-    id: "history" as SectionId,
-    label: "History",
-    icon: IconHistory,
-  },
+  // {
+  //   id: "history" as SectionId,
+  //   label: "History",
+  //   icon: IconHistory,
+  // },
   {
     id: "customCode" as SectionId,
     label: "Custom Code",
@@ -94,7 +94,7 @@ export const sectionMapper: SectionsMapper = {
   components: (props: any) => <EditorNavbarComponentsSection {...props} />,
   theme: (props: any) => <EditorNavbarThemesSection {...props} />,
   datasources: (props: any) => <EditorNavbarDataSourcesSection {...props} />,
-  history: (props: any) => <EditorHistorySection {...props} />,
+  //history: (props: any) => <EditorHistorySection {...props} />,
   assets: (props: any) => <EditorAssetsSection {...props} />,
   customCode: (props: any) => <EditorNavbarCustomCodeSection {...props} />,
   settings: (props: any) => <EditorNavbarSettingsSection {...props} />,
