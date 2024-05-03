@@ -9,6 +9,7 @@ type EndpointDropdown = {
 }[];
 
 export function filterAndMapEndpoints(
+  datasourceId: string,
   endpoints: Array<Endpoint> | undefined,
   methodType: string,
 ): EndpointDropdown {
@@ -16,7 +17,11 @@ export function filterAndMapEndpoints(
     return [];
   }
   return endpoints
-    .filter((endpoint) => endpoint.methodType === methodType)
+    .filter(
+      (endpoint) =>
+        endpoint.methodType === methodType &&
+        endpoint.dataSourceId === datasourceId,
+    )
     .map((endpoint) => ({
       value: endpoint.id,
       label: `${endpoint.relativeUrl} | ${endpoint.description}`,
