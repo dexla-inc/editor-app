@@ -19,7 +19,7 @@ const DashboardRedirector = ({ projectId }: Props) => {
           <Logo />
         </Link>
       </Tooltip>
-      <AIPromptTextInput />
+      {/* <AIPromptTextInput /> */}
       <OtherAvatars />
     </Group>
   );
