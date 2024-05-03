@@ -107,7 +107,6 @@ export default function AuthenticationBearer({
         validateTokenProperty("Refresh", value, values.refreshEndpointId),
     },
   });
-  console.log(dataSource);
   const postEndpoints = filterAndMapEndpoints(
     dataSource?.id ?? "",
     endpoints?.results,
