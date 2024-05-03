@@ -107,9 +107,17 @@ export default function AuthenticationBearer({
         validateTokenProperty("Refresh", value, values.refreshEndpointId),
     },
   });
-
-  const postEndpoints = filterAndMapEndpoints(endpoints?.results, "POST");
-  const getEndpoints = filterAndMapEndpoints(endpoints?.results, "GET");
+  console.log(dataSource);
+  const postEndpoints = filterAndMapEndpoints(
+    dataSource?.id ?? "",
+    endpoints?.results,
+    "POST",
+  );
+  const getEndpoints = filterAndMapEndpoints(
+    dataSource?.id ?? "",
+    endpoints?.results,
+    "GET",
+  );
 
   const onSubmit = async (values: AuthenticationBearerTokenParams) => {
     try {

@@ -403,18 +403,27 @@ export const prepareRequestData = (
   computeValue: any,
 ) => {
   if (!endpoint) {
-    return { url: "", body: {} };
+    return { url: "", header: {}, body: {} };
   }
+  const headerKeys = Object.keys(action.binds?.header ?? {});
   const queryStringKeys = Object.keys(action.binds?.parameter ?? {});
   const bodyKeys = Object.keys(action.binds?.body ?? {});
   const apiUrl = `${endpoint?.baseUrl}/${endpoint?.relativeUrl}`;
 
   const computedValues = getVariablesValue(
-    merge(action.binds?.body ?? {}, action.binds?.parameter ?? {}),
+    merge(
+      action.binds?.body ?? {},
+      action.binds?.parameter ?? {},
+      action.binds?.header ?? {},
+    ),
     computeValue,
   );
 
   const url = getUrl(queryStringKeys, apiUrl, computedValues);
+  const header = headerKeys.length
+    ? pick<Record<string, string>, string>(computedValues, headerKeys)
+    : undefined;
+
   const body = bodyKeys.length
     ? pick<Record<string, string>, string>(computedValues, bodyKeys)
     : undefined;
@@ -426,7 +435,7 @@ export const prepareRequestData = (
   //   }
   // });
 
-  return { url, body };
+  return { url, header, body };
 };
 
 const handleError = async (props: APICallActionParams) => {
@@ -471,20 +480,16 @@ const handleSuccess = async (props: APICallActionParams) => {
   });
 };
 
-export function constructHeaders(endpoint?: Endpoint, authHeaderKey = "") {
+export function constructHeaders(
+  endpoint?: Endpoint,
+  headers?: any,
+  authHeaderKey = "",
+) {
   const contentType = endpoint?.mediaType || "application/json";
-
-  const endpointHeaders = endpoint?.headers
-    .filter((e) => e.name !== "Authorization")
-    .reduce((acc, header) => {
-      // @ts-ignore
-      acc[header.name] = header.value;
-      return acc;
-    }, {});
 
   return {
     "Content-Type": contentType,
-    ...endpointHeaders,
+    ...headers,
     ...(authHeaderKey ? { Authorization: authHeaderKey } : {}),
   };
 }
@@ -493,18 +498,20 @@ export function constructHeaders(endpoint?: Endpoint, authHeaderKey = "") {
 export async function performFetch(
   url: string,
   endpoint?: Endpoint,
+  headers?: any,
   body?: any,
   authHeaderKey?: string,
   includeExampleResponse = false,
 ) {
   const isGetMethodType = endpoint?.methodType === "GET";
 
-  const headers = constructHeaders(endpoint, authHeaderKey);
+  const _headers = constructHeaders(endpoint, headers, authHeaderKey);
 
   const init: RequestInit = {
     method: endpoint?.methodType,
-    headers: headers,
+    headers: _headers,
   };
+
   if (body && !isGetMethodType) {
     init.body = JSON.stringify(body);
   }
@@ -577,7 +584,11 @@ export const useApiCallAction = async (
   try {
     const accessToken = useDataSourceStore.getState().authState.accessToken;
 
-    const { url, body } = prepareRequestData(action, endpoint, computeValue);
+    const { url, header, body } = prepareRequestData(
+      action,
+      endpoint,
+      computeValue,
+    );
 
     let responseJson: any;
 
@@ -590,7 +601,7 @@ export const useApiCallAction = async (
 
     switch (action.authType) {
       case "login":
-        responseJson = await performFetch(url, endpoint, body);
+        responseJson = await performFetch(url, endpoint, header, body);
         const apiAuthConfig = useDataSourceStore.getState().apiAuthConfig;
         const authConfig =
           apiAuthConfig?.authConfigurations[endpoint.dataSourceId];
@@ -603,6 +614,7 @@ export const useApiCallAction = async (
         responseJson = await performFetch(
           fetchUrl,
           endpoint,
+          header,
           body,
           authHeaderKey,
         );
@@ -621,6 +633,7 @@ export const useApiCallAction = async (
         responseJson = await performFetch(
           fetchUrl,
           endpoint,
+          header,
           body ?? {},
           authHeaderKey,
         );
