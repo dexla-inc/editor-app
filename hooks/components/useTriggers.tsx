@@ -15,12 +15,14 @@ type UseTriggersProps = {
   entity: Component | PageResponse;
   router: Router;
   projectId?: string;
+  shareableContent?: Record<string, any>;
 };
 
 export const useTriggers = ({
   entity,
   router,
   projectId,
+  shareableContent = {},
 }: UseTriggersProps) => {
   const currentProjectId =
     useEditorTreeStore((state) => state.currentProjectId) ?? projectId;
@@ -54,7 +56,13 @@ export const useTriggers = ({
           ...acc,
           [action.trigger]: async (e: any) => {
             const customComputeValue: ComputeValueProps = (args) =>
-              computeValue(args, { actions: { ...actionResponses }, event: e });
+              computeValue(
+                { ...args, shareableContent },
+                {
+                  actions: { ...actionResponses },
+                  event: e,
+                },
+              );
 
             return actionMapper[action.action.name].action({
               // @ts-ignore
