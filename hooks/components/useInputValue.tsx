@@ -3,7 +3,7 @@ import { useInputsStore } from "@/stores/inputs";
 import { useShallow } from "zustand/react/shallow";
 
 export const useInputValue = <T = string,>(
-  { value }: any,
+  { value }: { value: T },
   componentId: string,
 ) => {
   const setInputValue = useInputsStore((state) => state.setInputValue);
@@ -12,8 +12,8 @@ export const useInputValue = <T = string,>(
   );
 
   const customSetInputValue = useCallback(
-    (value: T) => {
-      setInputValue(componentId, value);
+    (newValue: T) => {
+      setInputValue(componentId, newValue);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [componentId],

@@ -90,6 +90,9 @@ export const useTriggers = ({
     logicFlows,
     logicFlowsIsFetched,
     router,
+    computeValue,
+    shareableContent,
+    setActionsResponses,
   ]);
 
   const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {

@@ -11,11 +11,12 @@ import { forwardRef, memo } from "react";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useShallow } from "zustand/react/shallow";
+import { useInputValue } from "@/hooks/components/useInputValue";
 
 type Props = EditableComponentMapper & FileButtonProps;
 
 export const FileButtonComponent = forwardRef(
-  ({ component, onChange, shareableContent, ...props }: Props, ref) => {
+  ({ component, shareableContent, ...props }: Props, ref) => {
     const isPreviewMode = useEditorTreeStore(
       useShallow((state) => state.isPreviewMode || state.isLive),
     );
@@ -30,22 +31,34 @@ export const FileButtonComponent = forwardRef(
     const { inputStyle } = useBrandingStyles();
     const customStyle = merge(inputStyle, style);
 
+    const [value, setValue] = useInputValue<File | File[]>(
+      {
+        value: component.onLoad?.value,
+      },
+      props.id!,
+    );
+
+    const handleChange = (newValue: File | File[]) => {
+      if (!isPreviewMode) return;
+      setValue(newValue);
+      triggers?.onChange?.({ target: { files: newValue } });
+    };
+
     return (
       <>
         <MantineFileButton
-          onChange={(e) => {
-            if (!isPreviewMode) return;
-            onChange && onChange(e);
-            triggers?.onChange && triggers.onChange?.({ target: { files: e } });
-          }}
           {...contentEditableProps}
           {...componentProps}
           style={customStyle}
           {...restProps}
           ref={ref}
+          {...triggers}
+          onChange={handleChange}
         >
           {(props) => <Button {...props}>{nameValue}</Button>}
         </MantineFileButton>
+        {/*@ts-ignore*/}
+        {value?.name}
       </>
     );
   },
