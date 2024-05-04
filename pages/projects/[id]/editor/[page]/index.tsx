@@ -31,7 +31,8 @@ const PageEditor = () => {
     if (variables) {
       initializeVariableList(variables.results);
     }
-  }, [variables, initializeVariableList, pageId]); // pageId is used to reinitialize non global variables
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [variables, pageId]); // pageId is used to reinitialize non global variables
 
   useEffect(() => {
     if (endpoints) {
