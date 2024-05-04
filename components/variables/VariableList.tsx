@@ -40,7 +40,11 @@ export const VariableList = ({ projectId }: Props) => {
           .replace(/_/g, " ");
         return variableNameNormalized.includes(searchStr);
       })
-      .sort((a, b) => a.name.localeCompare(b.name)) ?? [];
+      .sort((a, b) => {
+        const nameA = a.name ?? "";
+        const nameB = b.name ?? "";
+        return nameA.localeCompare(nameB);
+      }) ?? [];
 
   const rows = filteredVariables.map((variable: any) => {
     const defaultValue = variable.defaultValue;
