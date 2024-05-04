@@ -19,6 +19,7 @@ import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 import { useShareableContent } from "@/hooks/data/useShareableContent";
 import { relatedKeys } from "@/utils/data";
 import cloneDeep from "lodash.clonedeep";
+import { useEventData } from "@/hooks/data/useEventData";
 
 type BindType = {
   selectedEntityId: string;
@@ -61,7 +62,7 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
   const browser = useRouter();
   const auth = useDataSourceStore((state) => state.getAuthState());
   const inputsStore = useInputsStore((state) => state.inputValues);
-  const selectedComponentId = useEditorTreeStore(selectedComponentIdSelector);
+  const event = useEventData();
   const components = useEditorTreeStore(
     useShallow((state) =>
       Object.entries(inputsStore).reduce(
@@ -70,7 +71,7 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
           const index = Number(groupId?.split("__")?.at(-1));
           const c = state.componentMutableAttrs[componentId];
 
-          let description = c.description;
+          let description = c?.description;
           if (!isNaN(index)) {
             description = `${description} [${index}]`;
           }
@@ -190,17 +191,6 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
       }
     });
   }
-
-  const selectedComponentValue = inputsStore[selectedComponentId!];
-
-  const event = [
-    {
-      target: {
-        checked: selectedComponentValue,
-        value: null,
-      },
-    },
-  ];
 
   const relatedComponentsDataList = Object.entries(relatedComponentsData);
   const itemData = relatedComponentsDataList?.at(-1);

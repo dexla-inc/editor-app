@@ -2,7 +2,7 @@ import { getPageState } from "@/requests/pages/queries-noauth";
 import { useAppStore } from "@/stores/app";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useUserConfigStore } from "@/stores/userConfig";
-import { emptyEditorTree } from "@/utils/common";
+import { emptyEditorTree, safeJsonParse } from "@/utils/common";
 import { decodeSchema } from "@/utils/compression";
 import { useQuery } from "@tanstack/react-query";
 
@@ -69,7 +69,7 @@ export const useGetPageData = ({ projectId, pageId }: Props) => {
         return defaultPageState;
       } else if (page.state) {
         const decodedSchema = decodeSchema(page.state);
-        const parsedTree = JSON.parse(decodedSchema);
+        const parsedTree = safeJsonParse(decodedSchema);
         setPageLoadTree(parsedTree);
         setEditorTree(parsedTree, {
           onLoad: true,
@@ -77,7 +77,7 @@ export const useGetPageData = ({ projectId, pageId }: Props) => {
         });
 
         setIsLoading(false);
-        return JSON.parse(decodedSchema);
+        return safeJsonParse(decodedSchema);
       } else {
         setIsLoading(false);
         return defaultPageState;

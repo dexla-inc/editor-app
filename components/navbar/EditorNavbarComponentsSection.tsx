@@ -28,6 +28,7 @@ import {
 } from "@mantine/core";
 import { IconFrustum, IconSearch } from "@tabler/icons-react";
 import { useCallback, useRef, useState } from "react";
+import { safeJsonParse } from "@/utils/common";
 
 type DraggableComponentData = {
   id: string;
@@ -159,7 +160,7 @@ export const EditorNavbarComponentsSection = () => {
                 : componentList?.results
               )?.map(
                 ({ id, content, description }: CustomComponentResponse) => {
-                  const componentData = JSON.parse(decodeSchema(content));
+                  const componentData = safeJsonParse(decodeSchema(content));
 
                   return (
                     <HoverCard

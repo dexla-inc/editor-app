@@ -6,7 +6,7 @@ import { generateThemeFromScreenshot } from "@/requests/ai/queries";
 import { saveBasicTheme, saveTheme } from "@/requests/themes/mutations";
 import { Color, ThemeResponse } from "@/requests/themes/types";
 import { useThemeStore } from "@/stores/theme";
-import { convertToBase64 } from "@/utils/common";
+import { convertToBase64, safeJsonParse } from "@/utils/common";
 import { componentMapper } from "@/utils/componentMapper";
 import { ICON_SIZE } from "@/utils/config";
 import {
@@ -60,7 +60,7 @@ function updateThemeResponseColor(
   updatedColor: Color,
 ): ThemeResponse {
   // Deep clone the themeResponse object
-  const updatedThemeResponse: ThemeResponse = JSON.parse(
+  const updatedThemeResponse: ThemeResponse = safeJsonParse(
     JSON.stringify(themeResponse),
   );
 
@@ -75,7 +75,7 @@ function updateThemeResponseFontFamily(
   fontFamily: string,
 ): ThemeResponse {
   // Deep clone the themeResponse object
-  const updatedThemeResponse: ThemeResponse = JSON.parse(
+  const updatedThemeResponse: ThemeResponse = safeJsonParse(
     JSON.stringify(themeResponse),
   );
 

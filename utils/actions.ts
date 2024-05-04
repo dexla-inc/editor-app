@@ -641,9 +641,11 @@ export const useApiCallAction = async (
 
     setActionsResponses(actionId, {
       success: responseJson,
+      status: "success",
     });
     setActionsResponse(actionId, {
       success: responseJson,
+      status: "success",
       list: {
         id: actionId,
         name: action.name,
@@ -658,9 +660,11 @@ export const useApiCallAction = async (
     if (error instanceof Error) {
       setActionsResponses(actionId, {
         error: safeJsonParse(error.message),
+        status: "error",
       });
       setActionsResponse(actionId, {
         error: safeJsonParse(error.message),
+        status: "error",
         list: {
           id: actionId,
           name: action.name,
@@ -781,8 +785,8 @@ const updateVariableArray = (
 
   const _value = variable.value ?? variable.defaultValue;
   let value =
-    typeof _value === "string" ? JSON.parse(_value ?? "[]") : _value ?? [];
-  newValue = typeof newValue === "string" ? JSON.parse(newValue) : newValue;
+    typeof _value === "string" ? safeJsonParse(_value ?? "[]") : _value ?? [];
+  newValue = typeof newValue === "string" ? safeJsonParse(newValue) : newValue;
 
   if (action.method) {
     value = arrayActions[action.method]({ value, newValue, index, path });

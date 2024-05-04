@@ -47,6 +47,7 @@ export type ActionsResponsesType = Record<
   string,
   {
     success: unknown;
+    type: "success" | "error";
     error: unknown;
   }
 >;

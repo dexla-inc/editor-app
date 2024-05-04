@@ -7,6 +7,7 @@ import { UseFormReturnType } from "@mantine/form";
 import { IconArrowFork } from "@tabler/icons-react";
 import { nanoid } from "nanoid";
 import { NodeProps } from "reactflow";
+import { safeJsonParse } from "@/utils/common";
 
 type FormValues = {
   value?: string;
@@ -58,7 +59,9 @@ export const NodeForm = ({ form }: NodeFormType) => {
           );
           form.setFieldValue("variable", variable);
         }}
-        value={form.values.variable ? JSON.parse(form.values.variable).id : ""}
+        value={
+          form.values.variable ? safeJsonParse(form.values.variable).id : ""
+        }
       />
       <OutputForm form={form as any} node={selectedNode!} />
       <Button

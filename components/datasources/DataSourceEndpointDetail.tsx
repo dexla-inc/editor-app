@@ -39,6 +39,7 @@ import { useForm } from "@mantine/form";
 import debounce from "lodash.debounce";
 import { useEffect, useReducer, useState } from "react";
 import { MonacoEditorJson } from "../MonacoEditorJson";
+import { safeJsonParse } from "@/utils/common";
 
 const MethodTypeArray: MethodTypes[] = [
   "GET",
@@ -497,7 +498,7 @@ export const DataSourceEndpointDetail = ({
   useEffect(() => {
     // Check if `body` is a valid JSON string and parse it
     try {
-      const bodyObj = state.body && JSON.parse(state.body);
+      const bodyObj = state.body && safeJsonParse(state.body);
       const newRequestBody = Object.keys(bodyObj).map((key) => ({
         name: key,
         type: typeof bodyObj[key], // You might need a more sophisticated method to determine the type

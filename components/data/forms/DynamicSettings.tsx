@@ -6,7 +6,7 @@ import { VisibilityModifier } from "@/components/data/VisibilityModifier";
 import { useData } from "@/hooks/data/useData";
 import { Endpoint } from "@/requests/datasources/types";
 import { PagingResponse } from "@/requests/types";
-import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
+import { AUTOCOMPLETE_OFF_PROPS, safeJsonParse } from "@/utils/common";
 import { DEFAULT_STALE_TIME } from "@/utils/config";
 import { extractKeys } from "@/utils/data";
 import { Component, debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
@@ -43,7 +43,9 @@ export const DynamicSettings = ({
   >(endpoints?.results?.find((e) => e.id === component.onLoad?.endpointId));
   const { getObjectAndArrayKeys } = useData();
 
-  const exampleResponse = JSON.parse(selectedEndpoint?.exampleResponse ?? "{}");
+  const exampleResponse = safeJsonParse(
+    selectedEndpoint?.exampleResponse ?? "{}",
+  );
 
   const resultsKeysList = getObjectAndArrayKeys(exampleResponse);
 

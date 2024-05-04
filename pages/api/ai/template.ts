@@ -1,6 +1,6 @@
 import { listTemplates } from "@/requests/templates/queries-noauth";
 import { TemplateDetail } from "@/requests/templates/types";
-import { cleanJson } from "@/utils/common";
+import { cleanJson, safeJsonParse } from "@/utils/common";
 import { GPT4_PREVIEW_MODEL } from "@/utils/config";
 import { openai } from "@/utils/openai";
 import { getTemplatePrompt } from "@/utils/prompts";
@@ -48,7 +48,7 @@ export default async function handler(
 
     const message = response.choices[0].message;
     const cleanedJson = cleanJson(message.content);
-    const content = JSON.parse(cleanedJson ?? "{}");
+    const content = safeJsonParse(cleanedJson ?? "{}");
 
     return res.status(200).json(content);
   } catch (error) {

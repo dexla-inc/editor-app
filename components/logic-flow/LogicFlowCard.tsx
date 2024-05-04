@@ -25,6 +25,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { Edge, Node } from "reactflow";
+import { safeJsonParse } from "@/utils/common";
 
 dayjs.extend(relativeTime);
 
@@ -40,7 +41,7 @@ export const LogicFlowCard = ({ flow, onEdit, onClick }: FlowCardProps) => {
 
   const projectId = useEditorTreeStore((state) => state.currentProjectId ?? "");
 
-  const data = JSON.parse(decodeSchema(flow.data as string)) as unknown as {
+  const data = safeJsonParse(decodeSchema(flow.data as string)) as unknown as {
     nodes: Node[];
     edges: Edge[];
   };

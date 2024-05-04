@@ -109,11 +109,7 @@ export const withComponentWrapper = <T extends Record<string, any>>(
       isEditorMode,
     });
 
-    const handleClick = useEditorClickHandler(
-      id!,
-      propsWithOverwrites,
-      isPicking,
-    );
+    const handleClick = useEditorClickHandler(id!, isPicking);
 
     const { isVisible = true } = computedOnLoad;
     if (!isVisible) return null;
