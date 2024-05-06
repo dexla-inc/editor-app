@@ -34,9 +34,6 @@ export const useEditorShadows = ({
   const isOver = useEditorStore(
     (state) => state.currentTargetId === componentId,
   );
-  const isHighlighted = useEditorStore(
-    (state) => state.highlightedComponentId === componentId,
-  );
   const onDrop = useOnDrop();
 
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
@@ -55,9 +52,7 @@ export const useEditorShadows = ({
   });
 
   const shadows = useMemo(() => {
-    if (isHighlighted) {
-      return { boxShadow: ORANGE_BASE_SHADOW };
-    } else if (isOver) {
+    if (isOver) {
       let boxShadow;
       switch (edge) {
         case "top":
@@ -93,7 +88,7 @@ export const useEditorShadows = ({
     } else {
       return {};
     }
-  }, [isHighlighted, isOver, edge, selectedByOther, baseShadow, isSelected]);
+  }, [isOver, edge, selectedByOther, baseShadow, isSelected]);
 
   const tealOutline = useMemo(
     () => ({
