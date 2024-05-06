@@ -55,17 +55,7 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
   isPageAction,
   ...props
 }: ComponentToBindFromInputProps<T>) => {
-  const setHighlightedComponentId = useEditorStore(
-    (state) => state.setHighlightedComponentId,
-  );
-
   const commonProps = {
-    onFocus: (e: any) => {
-      setHighlightedComponentId(e.target.value);
-    },
-    onBlur: () => {
-      setHighlightedComponentId(null);
-    },
     ...AUTOCOMPLETE_OFF_PROPS,
   };
 
