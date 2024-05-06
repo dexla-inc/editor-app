@@ -33,6 +33,8 @@ import { Router } from "next/router";
 import { ComputeValueProps, ValueProps } from "@/types/dataBinding";
 import { ResetVariableActionForm } from "@/components/actions/ResetVariableActionForm";
 import { useThemeStore } from "@/stores/theme";
+import set from "lodash.set";
+import cloneDeep from "lodash.clonedeep";
 
 const triggers = [
   "onClick",
@@ -769,12 +771,42 @@ const arrayActions = {
   },
 };
 
-const updateVariableArray = (
-  action: ChangeVariableAction,
-  index: number | undefined = 0,
-  newValue: any,
-  path: string,
-) => {
+type UpdateVariableArrayParams = {
+  currentValue: any;
+  method: ArrayMethods | undefined;
+  index: number | undefined;
+  newValue: any;
+  path: string;
+};
+
+const updateVariableArray = ({
+  currentValue,
+  method,
+  index = 0,
+  newValue,
+  path,
+}: UpdateVariableArrayParams) => {
+  // const _value = variable.value ?? variable.defaultValue;
+  // let value =
+  //   typeof _value === "string" ? safeJsonParse(_value ?? "[]") : _value ?? [];
+  // newValue = typeof newValue === "string" ? safeJsonParse(newValue) : newValue;
+
+  if (method) {
+    currentValue = arrayActions[method]({
+      value: currentValue,
+      newValue,
+      index,
+      path,
+    });
+  }
+
+  return currentValue;
+};
+
+export const useChangeVariableAction = async ({
+  action,
+  computeValue,
+}: ChangeVariableActionParams) => {
   const variable = useVariableStore
     .getState()
     .variableList.find((v) => v.id === action.variableId);
@@ -783,33 +815,29 @@ const updateVariableArray = (
     return;
   }
 
-  const _value = variable.value ?? variable.defaultValue;
-  let value =
-    typeof _value === "string" ? safeJsonParse(_value ?? "[]") : _value ?? [];
-  newValue = typeof newValue === "string" ? safeJsonParse(newValue) : newValue;
+  const currentValue = safeJsonParse(variable.value ?? variable.defaultValue);
 
-  if (action.method) {
-    value = arrayActions[action.method]({ value, newValue, index, path });
-  }
-
-  return value;
-};
-
-export const useChangeVariableAction = async ({
-  action,
-  computeValue,
-}: ChangeVariableActionParams) => {
   const setVariable = useVariableStore.getState().setVariable;
   const index = computeValue<number>({ value: action.index });
   const path = computeValue<string>({ value: action.path });
-  let value = computeValue({ value: action.value });
+  let newValue = safeJsonParse(computeValue({ value: action.value }));
 
   if (action.variableType === "ARRAY") {
-    value = updateVariableArray(action, index, value, path);
+    newValue = updateVariableArray({
+      currentValue,
+      method: action.method,
+      index,
+      newValue,
+      path,
+    });
+  } else if (action.variableType === "OBJECT" && action.partialUpdate) {
+    currentValue[path] = newValue;
+    newValue = currentValue;
   }
+
   setVariable({
     id: action.variableId,
-    value: value,
+    value: newValue,
   });
 };
 

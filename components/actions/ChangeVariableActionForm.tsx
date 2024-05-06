@@ -81,6 +81,20 @@ export const ChangeVariableActionForm = ({ form, isPageAction }: Props) => {
       {variableType === "ARRAY" && (
         <ArrayVariableForm form={form} isPageAction={isPageAction} />
       )}
+      {variableType === "OBJECT" && (
+        <SegmentedControlYesNo
+          label="Partial Update"
+          {...form.getInputProps("partialUpdate")}
+        />
+      )}
+      {form.values.partialUpdate && (
+        <ComponentToBindFromInput
+          required
+          label="Path"
+          isPageAction={isPageAction}
+          {...form.getInputProps("path")}
+        />
+      )}
 
       {!hideInputField && (
         <ComponentToBindFromInput
