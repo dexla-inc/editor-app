@@ -31,8 +31,8 @@ import { useState } from "react";
 import { useDataBinding } from "@/hooks/data/useDataBinding";
 import { useEditorStore } from "@/stores/editor";
 
-const TAB_TEXT_SIZE = "xs";
-const ML = 10;
+const TAB_TEXT_SIZE = 11;
+const ML = 5;
 
 type Props = {
   value: ValueProps;
@@ -191,6 +191,20 @@ export default function BindingPopover({
     },
   ];
 
+  if (asideSelectedTab === "actions") {
+    segmentedTabOptions.unshift({
+      value: "event",
+      label: (
+        <Center>
+          <Icon name="IconRouteAltRight" />
+          <Text ml={ML} size={TAB_TEXT_SIZE}>
+            Event
+          </Text>
+        </Center>
+      ),
+    });
+  }
+
   // testing if item has a key other than "index" only, if it doesnt, it means it is not supposed to be an item component
   if (Object.keys(item ?? {}).length > 1) {
     segmentedTabOptions.unshift({
@@ -200,20 +214,6 @@ export default function BindingPopover({
           <Icon name="IconRouteAltRight" />
           <Text ml={ML} size={TAB_TEXT_SIZE}>
             Item
-          </Text>
-        </Center>
-      ),
-    });
-  }
-
-  if (asideSelectedTab === "actions") {
-    segmentedTabOptions.push({
-      value: "event",
-      label: (
-        <Center>
-          <Icon name="IconRouteAltRight" />
-          <Text ml={ML} size={TAB_TEXT_SIZE}>
-            Event
           </Text>
         </Center>
       ),

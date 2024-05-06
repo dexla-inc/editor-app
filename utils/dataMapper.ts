@@ -10,6 +10,7 @@ import {
 } from "@/components/data/AvatarData";
 import { ChartData as Chart } from "@/components/data/ChartData";
 import { ContainerData as Container } from "@/components/data/ContainerData";
+import { CheckboxGroupData as CheckboxGroup } from "@/components/data/CheckboxGroupData";
 import { CountdownButtonData as CountdownButton } from "@/components/data/CountdownButtonData";
 import { ProgressData as Progress } from "@/components/data/ProgressData";
 import { GoogleMapData as GoogleMap } from "@/components/data/GoogleMapData";
@@ -57,7 +58,7 @@ export const dataMapper = {
   Switch,
   Checkbox,
   CheckboxItem: Checkbox,
-  CheckboxGroup: Container,
+  CheckboxGroup,
   Radio: Input,
   RadioItem: Input,
   Textarea,
