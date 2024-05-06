@@ -1238,7 +1238,7 @@ export const componentMapper: ComponentMapper = {
   },
   Tab: {
     Component: (props) => <Tab {...props} />,
-    modifiers: ["tab", "spacing", "size", "border", "effects"],
+    modifiers: ["tab", "layout", "spacing", "size", "border", "effects"],
     actionTriggers: ["onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
   },

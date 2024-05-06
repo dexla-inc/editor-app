@@ -395,7 +395,12 @@ export const requiredModifiers: RequiredModifiers = {
     iconColor: "Primary.6",
   },
   tabsPanel: { value: "first" },
-  tabsList: { position: "left" },
+  tabsList: {
+    position: "left",
+    style: {
+      flexWrap: "wrap",
+    },
+  },
   alert: {
     title: "Alert",
     color: "Danger.6",
