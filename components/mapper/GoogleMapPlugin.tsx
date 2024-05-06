@@ -185,7 +185,7 @@ const GoogleMapPluginComponent = forwardRef<GoogleMap, Props>(
       <Box
         pos="relative"
         {...otherProps}
-        style={containerStyle}
+        style={{ width, height }}
         id={component.id}
         onClick={handleClick}
       >
