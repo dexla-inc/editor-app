@@ -1244,7 +1244,7 @@ export const componentMapper: ComponentMapper = {
   },
   TabsList: {
     Component: (props) => <TabsList {...props} />,
-    modifiers: ["tabsList", "spacing", "size", "border", "effects"],
+    modifiers: ["tabsList", "layout", "spacing", "size", "border", "effects"],
     actionTriggers: ["onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
