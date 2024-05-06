@@ -55,22 +55,44 @@ const GoogleMapPluginComponent = forwardRef<GoogleMap, Props>(
       lng: centerLng ?? defaultCenter.lng,
     };
 
-    const markersParsed = safeJsonParse(markers) as MarkerItem[];
-    const validMarkers = markersParsed.filter((marker) => {
-      const isValidLat =
-        typeof marker.position.lat === "number" && !isNaN(marker.position.lat);
-      const isValidLng =
-        typeof marker.position.lng === "number" && !isNaN(marker.position.lng);
-      if (!isValidLat || !isValidLng) {
-        console.error("Invalid marker position:", marker);
-        return false;
-      }
-      return true;
-    });
     const MAP_SCRIPT_DELAY_DURATION = 800;
 
-    const { width, height, ...googleStyles } = props.style ?? {};
-    const containerStyle = { width, height };
+    const {
+      width,
+      height,
+      borderBottomLeftRadius,
+      borderStyle,
+      borderBottomRightRadius,
+      borderRadius,
+      borderTopLeftRadius,
+      borderTopRightRadius,
+      borderWidth,
+      borderColor,
+      borderTopWidth,
+      borderRightWidth,
+      borderBottomWidth,
+      borderLeftWidth,
+      border,
+      ...googleStyles
+    } = props.style ?? {};
+
+    const containerStyle = {
+      width,
+      height,
+      borderBottomLeftRadius,
+      borderBottomRightRadius,
+      borderTopLeftRadius,
+      borderTopRightRadius,
+      borderRadius,
+      borderWidth,
+      borderColor,
+      borderTopWidth,
+      borderRightWidth,
+      borderBottomWidth,
+      borderLeftWidth,
+      borderStyle,
+      border,
+    };
 
     const otherProps = omit(props, ["style"]);
 
@@ -101,12 +123,31 @@ const GoogleMapPluginComponent = forwardRef<GoogleMap, Props>(
       setActiveMarkerId(null);
     };
 
+    const markersParsed =
+      (safeJsonParse(markers) as MarkerItem[] | undefined) ?? [];
+
+    const validMarkers = Array.isArray(markersParsed)
+      ? markersParsed.filter((marker) => {
+          const isValidLat =
+            typeof marker.position.lat === "number" &&
+            !isNaN(marker.position.lat);
+          const isValidLng =
+            typeof marker.position.lng === "number" &&
+            !isNaN(marker.position.lng);
+          if (!isValidLat || !isValidLng) {
+            console.error("Invalid marker position:", marker);
+            return false;
+          }
+          return true;
+        })
+      : [];
+
     const gmOnLoad = useCallback(
       (map: google.maps.Map) => {
         setMap(map);
 
         const bounds = new window.google.maps.LatLngBounds();
-        validMarkers.forEach(({ position }: Position) =>
+        validMarkers?.forEach(({ position }: Position) =>
           bounds.extend(position),
         );
         map.fitBounds(bounds);
