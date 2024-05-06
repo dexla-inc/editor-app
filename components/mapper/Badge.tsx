@@ -14,7 +14,7 @@ const BadgeComponent = forwardRef(
       component.id as string,
       ref,
     );
-    const { style, color, variable, triggers, ...componentProps } =
+    const { style, color, variable, ...componentProps } =
       component.props as any;
     const { children: childrenValue } = component.onLoad;
 
@@ -34,7 +34,6 @@ const BadgeComponent = forwardRef(
         }}
         {...props}
         {...componentProps}
-        {...triggers}
       >
         {component.children && component.children.length > 0
           ? component.children?.map((child) =>

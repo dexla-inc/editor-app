@@ -338,46 +338,52 @@ const Modifier = withModifier(({ selectedComponent }) => {
               onChange={(value) => changeBorderStyle(value)}
             />
           </Stack>
-          <UnitInput
-            label="Size"
-            {...form.getInputProps(getBorderProp("Width"))}
-            onChange={(value) => {
-              let borderWidth = {};
+          {form.values.borderStyle !== "none" && (
+            <>
+              {/* Start: Hide if border style is none */}
+              <UnitInput
+                label="Size"
+                {...form.getInputProps(getBorderProp("Width"))}
+                onChange={(value) => {
+                  let borderWidth = {};
 
-              if (form.values.showBorder === "all") {
-                borderWidth = {
-                  borderWidth: value,
-                  borderTopWidth: value,
-                  borderRightWidth: value,
-                  borderBottomWidth: value,
-                  borderLeftWidth: value,
-                };
-                form.setValues({ ...borderWidth });
-              } else {
-                const key = `border${startCase(
-                  form.values.showBorder as string,
-                )}Width`;
-                form.setFieldValue("borderWidth", value);
-                form.setFieldValue(key, value);
-                borderWidth = {
-                  [key]: value,
-                };
-              }
+                  if (form.values.showBorder === "all") {
+                    borderWidth = {
+                      borderWidth: value,
+                      borderTopWidth: value,
+                      borderRightWidth: value,
+                      borderBottomWidth: value,
+                      borderLeftWidth: value,
+                    };
+                    form.setValues({ ...borderWidth });
+                  } else {
+                    const key = `border${startCase(
+                      form.values.showBorder as string,
+                    )}Width`;
+                    form.setFieldValue("borderWidth", value);
+                    form.setFieldValue(key, value);
+                    borderWidth = {
+                      [key]: value,
+                    };
+                  }
 
-              debouncedTreeComponentAttrsUpdate({
-                attrs: {
-                  props: {
-                    style: borderWidth,
-                  },
-                },
-              });
-            }}
-          />
-          <ThemeColorSelector
-            label="Color"
-            {...form.getInputProps(getBorderProp("Color"))}
-            onChange={(_value: string) => changeBorderColor(_value)}
-          />
+                  debouncedTreeComponentAttrsUpdate({
+                    attrs: {
+                      props: {
+                        style: borderWidth,
+                      },
+                    },
+                  });
+                }}
+              />
+              <ThemeColorSelector
+                label="Color"
+                {...form.getInputProps(getBorderProp("Color"))}
+                onChange={(_value: string) => changeBorderColor(_value)}
+              />
+              {/* End: Hide if border style is none */}
+            </>
+          )}
           <Stack spacing={4} mt={12}>
             <TopLabel text="Radius" />
             <Group noWrap>
