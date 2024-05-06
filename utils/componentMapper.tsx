@@ -913,7 +913,7 @@ export const componentMapper: ComponentMapper = {
   Badge: {
     Component: (props) => <Badge {...props} />,
     modifiers: ["badge", "spacing", "size", "border", "effects"],
-    actionTriggers: ["onClick"],
+    actionTriggers: [], // Triggers are not needed for this component
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Breadcrumb: {
