@@ -220,19 +220,19 @@ export const useEditorHotkeys = () => {
     }
   }, [copySelectedComponent, deleteComponent, isPreviewMode]);
 
+  const isMac = window.navigator.userAgent.includes("Mac");
+  const deleteHotkey = isMac ? "backspace" : "delete";
+
   useHotkeys([
-    ["backspace", deleteComponent],
-    ["delete", deleteComponent],
+    [deleteHotkey, deleteComponent],
     ["mod+C", copySelectedComponent],
     ["mod+V", pasteCopiedComponent],
     ["mod+X", cutSelectedComponent],
   ]);
 
-  const isMac = window.navigator.userAgent.includes("Mac");
-
   useHotkeysOnIframe([
     [
-      isMac ? "backspace" : "delete",
+      deleteHotkey,
       (e) => {
         // @ts-ignore
         if (e.target.contentEditable !== "true" && !isPreviewMode) {

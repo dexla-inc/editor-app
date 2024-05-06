@@ -248,7 +248,10 @@ export const useComputeValue = ({
           `item\\[(\\/\\* [\\S\\s]* \\*\\/)?\\s?'${key}'\\]`,
           "g",
         );
-        result = result.replaceAll(regex, `${itemValues[key]}`);
+        let replacer = itemValues[key];
+        replacer =
+          typeof replacer !== "string" ? JSON.stringify(replacer) : replacer;
+        result = result.replaceAll(regex, replacer);
       });
 
       return result;
