@@ -10,8 +10,9 @@ export const uploadFile = async (
   projectId: string,
   file: File | File[] | FileWithPath | FileWithPath[],
   isMultiple: boolean = false,
+  internal: boolean = false,
 ) => {
-  let url = `/projects/${projectId}/storage?isMultiple=${isMultiple}`;
+  let url = `/projects/${projectId}/storage?isMultiple=${isMultiple}?internal=${true}`;
 
   const formData = new FormData();
   if (Array.isArray(file)) file.forEach((f) => formData.append("file", f));
