@@ -22,7 +22,8 @@ type Props = {
 };
 
 export const JSONSelector = ({ data, onSelectValue, name, type }: Props) => {
-  const variableType = type === "variables";
+  // I dont understand this condition, Idk what is the purpose of this, added components but dont know a better name
+  const variableType = type === "variables" || type === "components";
   let items: ObjectItem[] = objToItems(data, data);
 
   const renderList = (item: any) => {
@@ -133,6 +134,7 @@ const ListItem = ({
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
+                      console.log({ item });
                       onSelectValue?.(item);
                     }}
                   >

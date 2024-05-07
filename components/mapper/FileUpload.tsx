@@ -25,7 +25,7 @@ const FileUploadComponent = ({
   const { dashedBorderStyle } = useBrandingStyles();
   const { onChange, ...otherTriggers } = triggers || {};
 
-  const [, setValue] = useInputValue<File[]>(
+  const [, setValue] = useInputValue<File | File[]>(
     {
       value: component?.onLoad?.value,
     },
@@ -33,7 +33,9 @@ const FileUploadComponent = ({
   );
 
   const defaultTriggers = {
-    onDrop: (newValue: File[]) => {
+    onDrop: (newValue: File | File[]) => {
+      newValue = Array.isArray(newValue) ? newValue : [newValue];
+
       setValue(newValue);
       onChange?.({ target: { files: newValue } });
     },

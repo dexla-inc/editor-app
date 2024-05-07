@@ -40,6 +40,8 @@ export const FileButtonComponent = forwardRef(
 
     const handleChange = (newValue: File | File[]) => {
       if (!isPreviewMode) return;
+      newValue = Array.isArray(newValue) ? newValue : [newValue];
+
       setValue(newValue);
       triggers?.onChange?.({ target: { files: newValue } });
     };
@@ -57,8 +59,6 @@ export const FileButtonComponent = forwardRef(
         >
           {(props) => <Button {...props}>{nameValue}</Button>}
         </MantineFileButton>
-        {/*@ts-ignore*/}
-        {value?.name}
       </>
     );
   },
