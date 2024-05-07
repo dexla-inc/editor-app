@@ -78,6 +78,16 @@ export function safeJsonParse<T>(str: string) {
   }
 }
 
+export function safeJsonStringify(str: any) {
+  if (!str) return str;
+  try {
+    const canParse = JSON.parse(str);
+    return canParse ? str : JSON.stringify(str, null, 2);
+  } catch (e) {
+    return JSON.stringify(str, null, 2);
+  }
+}
+
 export function jsonInString(value: any) {
   return (
     typeof value === "string" &&
