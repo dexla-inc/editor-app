@@ -44,6 +44,26 @@ const setEntityString = ({ selectedEntityId, entity }: BindType) => {
   return `${entity}['${entityKey}']${path}`;
 };
 
+const valueSerializer = (component: Component, value: any) => {
+  const defaultFileProps = {
+    name: "string",
+    size: "number",
+    type: "string",
+    lastModified: "number",
+  };
+  value = value ?? [defaultFileProps];
+
+  const pickFileProps = (file: File) =>
+    pick(file, ["name", "size", "type", "lastModified"]);
+
+  // File handling
+  if (["FileButton", "FileUpload"].includes(component.name)) {
+    return value.map(pickFileProps);
+  }
+
+  return value;
+};
+
 export const useBindingPopover = ({ isPageAction }: Props) => {
   const activePage = useEditorStore((state) => state.activePage);
   const selectedComponentActions = useEditorTreeStore((state) => {
@@ -63,6 +83,7 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
   const auth = useDataSourceStore((state) => state.getAuthState());
   const inputsStore = useInputsStore((state) => state.inputValues);
   const event = useEventData();
+
   const components = useEditorTreeStore(
     useShallow((state) =>
       Object.entries(inputsStore).reduce(
@@ -80,6 +101,7 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
             id: componentGroupId,
             name: description,
             description,
+            value: valueSerializer(c, value),
           };
           acc[componentGroupId] = value;
 
@@ -210,8 +232,16 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
   const getEntityEditorValue = ({ selectedEntityId, entity }: BindType) => {
     const entityHandlers = {
       auth: () => setEntityString({ selectedEntityId, entity }),
-      components: () =>
-        `${entity}[/* ${components?.list[selectedEntityId].description} */'${selectedEntityId}']`,
+      components: () => {
+        try {
+          const parsed = JSON.parse(selectedEntityId);
+          return `${entity}[/* ${components?.list[parsed.id].description} */ '${
+            parsed.id
+          }']${parsed.path.replace("value", "")}`;
+        } catch {
+          return `${entity}[/* ${components?.list[selectedEntityId].description} */'${selectedEntityId}']`;
+        }
+      },
       actions: () => {
         const parsed = JSON.parse(selectedEntityId);
         return `${entity}[/* ${actions?.list[parsed.id].name} */ '${
