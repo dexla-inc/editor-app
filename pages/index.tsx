@@ -35,13 +35,33 @@ export const getServerSideProps = async ({
     ),
   ]);
 
+  const notFoundPageslug = deploymentPage.project.redirects?.notFoundPageId;
+  // Check if page exists
+  if (!deploymentPage.id) {
+    return {
+      redirect: {
+        destination: notFoundPageslug
+          ? `/${notFoundPageslug}`
+          : "https://dexla.ai/404",
+        permanent: false,
+      },
+      props: {
+        dehydratedState: dehydrate(queryClient),
+        isLive: true,
+        project,
+      },
+    };
+  }
+
+  // Check if user is logged in
   const isLoggedIn = checkRefreshTokenExists(req.cookies["refreshToken"]);
+  const signInPageSlug = deploymentPage.project.redirects?.signInPageId;
 
   if (
     !isLoggedIn &&
     deploymentPage?.authenticatedOnly &&
-    project.redirectSlug &&
-    currentSlug !== project.redirectSlug
+    signInPageSlug &&
+    currentSlug !== signInPageSlug
   ) {
     return {
       redirect: {
