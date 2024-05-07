@@ -16,7 +16,7 @@ type Params = {
 
 const mapPagesToSelectData = (pages: any[]) => {
   return pages.map((page) => ({
-    value: page.id,
+    value: page.slug,
     label: page.title,
   }));
 };

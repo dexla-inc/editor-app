@@ -1,5 +1,7 @@
 import { EnvironmentTypes } from "@/requests/datasources/types";
 import { Action } from "@/utils/actions";
+import { ProjectResponse } from "../projects/types";
+import { ThemeResponse } from "../themes/types";
 
 export type DeploymentParams = {
   commitMessage?: string;
@@ -25,6 +27,8 @@ export type DeploymentPage = {
   authenticatedUserRole?: string;
   pageState: string;
   actions?: Action[];
+  project: ProjectResponse;
+  branding: ThemeResponse;
 };
 
 export type DeploymentPageParams = {

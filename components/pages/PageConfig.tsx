@@ -219,12 +219,6 @@ export default function PageConfig({ page, setPage }: Props) {
           {...form.getInputProps("title")}
           onChange={(event) => {
             form.getInputProps("title").onChange(event);
-            const newSlug = slugify(event.currentTarget.value, {
-              lower: true,
-            });
-            setSlug(newSlug);
-            form.setFieldValue("slug", newSlug);
-            form.setTouched({ slug: false });
           }}
           size="xs"
           {...AUTOCOMPLETE_OFF_PROPS}
@@ -236,6 +230,13 @@ export default function PageConfig({ page, setPage }: Props) {
           value={slug}
           onChange={(event) => {
             const newSlug = event.target.value;
+            setSlug(newSlug);
+            form.setFieldValue("slug", newSlug);
+            form.setTouched({ slug: true });
+          }}
+          onFocus={(event) => {
+            if (form.values.slug) return;
+            const newSlug = slugify(form.values.title);
             setSlug(newSlug);
             form.setFieldValue("slug", newSlug);
             form.setTouched({ slug: true });
