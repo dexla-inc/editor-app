@@ -29,7 +29,9 @@ const NavLinkComponent = forwardRef(
     const navigateAction = component.actions?.find(
       (action) => action.action.name === "navigateToPage",
     )?.action as NavigationAction;
-    const isQueryParamsMatch = useQueryParamsMatch(navigateAction.queryStrings);
+    const isQueryParamsMatch = useQueryParamsMatch(
+      navigateAction?.queryStrings,
+    );
     const activePageId = navigateAction?.pageId;
     const active = currentPageId === activePageId && isQueryParamsMatch;
 
