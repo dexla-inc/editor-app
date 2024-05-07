@@ -1,6 +1,7 @@
 import { FileWithPath } from "@mantine/dropzone";
 import { requiredModifiers } from "./modifiers";
 import { GRID_SIZE } from "./config";
+import { empty } from "@prisma/client/runtime/library";
 
 export const convertToBase64 = (file: FileWithPath): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -271,6 +272,16 @@ function notEmpty(value: any): boolean {
     value !== undefined &&
     value !== "" &&
     value !== "undefined" &&
-    value !== "null"
+    value !== "null" &&
+    !emptyArray(value) &&
+    !emptyObject(value)
   );
+}
+
+function emptyArray(value: any): boolean {
+  return Array.isArray(value) && value.length === 0;
+}
+
+function emptyObject(value: any): boolean {
+  return isObject(value) && Object.keys(value).length === 0;
 }
