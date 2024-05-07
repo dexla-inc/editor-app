@@ -2,6 +2,7 @@ import { Icon } from "@/components/Icon";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useChangeState } from "@/hooks/components/useChangeState";
 import { useContentEditable } from "@/hooks/components/useContentEditable";
+import { useQueryParamsMatch } from "@/hooks/components/useQueryParamsMatch";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useThemeStore } from "@/stores/theme";
 import { NavigationAction } from "@/utils/actions";
@@ -25,12 +26,12 @@ const NavLinkComponent = forwardRef(
       ref,
     );
 
-    const activePageId = (
-      component.actions?.find(
-        (action) => action.action.name === "navigateToPage",
-      )?.action as NavigationAction
-    )?.pageId;
-    const active = currentPageId === activePageId;
+    const navigateAction = component.actions?.find(
+      (action) => action.action.name === "navigateToPage",
+    )?.action as NavigationAction;
+    const isQueryParamsMatch = useQueryParamsMatch(navigateAction.queryStrings);
+    const activePageId = navigateAction?.pageId;
+    const active = currentPageId === activePageId && isQueryParamsMatch;
 
     const activeProps = {};
     if (active && isPreviewMode) {
