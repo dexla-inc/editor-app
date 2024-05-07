@@ -21,12 +21,14 @@ import { useForm } from "@mantine/form";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { TopLabel } from "../TopLabel";
-import { toSnakeCase } from "@/utils/common";
+import { safeJsonParse, toSnakeCase } from "@/utils/common";
+import { Prism } from "@mantine/prism";
 
 type VariablesFormValues = {
   name: string;
   type: FrontEndTypes;
   defaultValue: string;
+  value?: string;
   isGlobal: boolean;
 };
 
@@ -49,6 +51,7 @@ export const VariableForm = ({ variableId }: Props) => {
       name: variable?.name ?? "",
       type: variable?.type ?? "TEXT",
       defaultValue: variable?.defaultValue ?? "",
+      value: variable?.value,
       isGlobal: variable?.isGlobal ?? false,
     },
     validate: {
@@ -154,6 +157,22 @@ export const VariableForm = ({ variableId }: Props) => {
           disabled={!!variableId}
         />
         {DefaultValueInput()}
+        <Stack spacing={2}>
+          <TopLabel text="Current Value" size="sm" />
+          <Prism
+            language="json"
+            colorScheme="dark"
+            w="100%"
+            copyLabel="Copy to clipboard"
+            copiedLabel="Copied to clipboard"
+            mah={400}
+            sx={{ copy: { paddingTop: "20px" } }}
+          >
+            {(form.values.value
+              ? JSON.stringify(form.values.value, null, 2)
+              : form.values.value) ?? "// Code will appear here"}
+          </Prism>
+        </Stack>
         <Group align="end">
           <SegmentedControlYesNo
             label="Is Global"
