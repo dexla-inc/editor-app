@@ -8,10 +8,20 @@ import { useForm } from "@mantine/form";
 import { useEffect, useState } from "react";
 
 type Params = {
-  redirectSlug: string;
+  redirects?: {
+    signInPageId?: string;
+    notFoundPageId?: string;
+  };
 };
 
-export const RedirectUrlForm = () => {
+const mapPagesToSelectData = (pages: any[]) => {
+  return pages.map((page) => ({
+    value: page.id,
+    label: page.title,
+  }));
+};
+
+export const ProjectSettings = () => {
   const projectId = useEditorTreeStore(
     (state) => state.currentProjectId,
   ) as string;
@@ -36,9 +46,15 @@ export const RedirectUrlForm = () => {
     }
   };
 
+  const pagesMinimal = mapPagesToSelectData(pages);
+
   useEffect(() => {
     form.setValues({
-      redirectSlug: project?.redirectSlug,
+      // new fields
+      redirects: {
+        signInPageId: project?.redirects?.signInPageId,
+        notFoundPageId: project?.redirects?.notFoundPageId,
+      },
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -46,18 +62,22 @@ export const RedirectUrlForm = () => {
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
       <Stack>
-        <Title order={6}>Authentication</Title>
+        <Title order={3}>Redirections</Title>
         <Select
-          label="Redirection Page"
-          description="Select a page to redirect to when the user is not signed in."
-          data={pages.map((page) => {
-            return {
-              value: page.slug,
-              label: page.title,
-            };
-          })}
-          {...form.getInputProps("redirectSlug")}
+          label="Sign in page"
+          description="Page redirected to when a user is not signed in."
+          data={pagesMinimal}
+          {...form.getInputProps("redirects.signInPageId")}
           clearable
+          searchable
+        />
+        <Select
+          label="Not found page"
+          description="Page redirected to when a page is not found."
+          data={pagesMinimal}
+          {...form.getInputProps("redirects.notFoundPageId")}
+          clearable
+          searchable
         />
         <Button type="submit" loading={isLoading}>
           Save

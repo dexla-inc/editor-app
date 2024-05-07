@@ -8,7 +8,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { DataSourceForm } from "../datasources/DataSourceForm";
-import { RedirectUrlForm } from "../datasources/RedirectUrlForm";
+import { ProjectSettings } from "../datasources/ProjectSettings";
 
 export const EditorNavbarDataSourcesSection = () => {
   const router = useRouter();
@@ -77,7 +77,6 @@ export const EditorNavbarDataSourcesSection = () => {
             />
 
             {datasource && <DataSourceForm datasource={datasource} />}
-            <RedirectUrlForm />
           </Stack>
         ) : (
           <EmptyDatasourcesPlaceholder

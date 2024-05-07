@@ -42,9 +42,14 @@ export type ProjectResponse = {
   subDomain: string;
   homePageId?: string;
   customCode?: string;
-  redirectSlug?: string;
   faviconUrl?: string;
   branding: ThemeResponse;
+  // redirectSlug is obsolete
+  redirectSlug?: string;
+  redirects?: {
+    signInPageId?: string;
+    notFoundPageId?: string;
+  };
 };
 
 export type ProjectListResponse = {
