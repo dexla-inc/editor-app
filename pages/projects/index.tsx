@@ -117,15 +117,18 @@ export default function Projects() {
           <Flex>
             {company.orgName !== "Dexla" ? (
               <Flex gap="sm">
-                <Link
-                  href={`/projects/new?company=${company.orgId}&id=${manuallyCreatedProjectId}`}
-                >
-                  <IconTitleDescriptionButton
-                    icon="IconSparkles"
-                    title="Create new project"
-                    description="Type what you want to build and customise"
-                  />
-                </Link>
+                <Tooltip label="Coming soon">
+                  <Link
+                    href={`/projects/new?company=${company.orgId}&id=${manuallyCreatedProjectId}`}
+                  >
+                    <IconTitleDescriptionButton
+                      icon="IconSparkles"
+                      title="Create new project"
+                      description="Type what you want to build and customise. (Coming soon)"
+                      disabled
+                    />
+                  </Link>
+                </Tooltip>
                 <IconTitleDescriptionButton
                   icon="IconSparkles"
                   title="Create empty project"

@@ -27,6 +27,7 @@ type IconTitleDescriptionButtonProps = {
   onClick?: () => void;
   color?: "teal" | "white";
   width?: number;
+  disabled?: boolean;
 } & UnstyledButtonProps;
 
 export default function IconTitleDescriptionButton({
@@ -37,6 +38,7 @@ export default function IconTitleDescriptionButton({
   onClick,
   color = "white",
   width = 220,
+  disabled,
   ...props
 }: IconTitleDescriptionButtonProps) {
   const theme = useMantineTheme();
@@ -50,6 +52,7 @@ export default function IconTitleDescriptionButton({
     <Tooltip label={tooltip} disabled={tooltip === undefined}>
       <UnstyledButton
         {...props}
+        disabled
         sx={(theme) => ({
           padding: theme.spacing.md,
           borderRadius: theme.radius.sm,
