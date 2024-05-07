@@ -21,8 +21,9 @@ import { useForm } from "@mantine/form";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { TopLabel } from "../TopLabel";
-import { safeJsonParse, toSnakeCase } from "@/utils/common";
+import { safeJsonParse, safeJsonStringify, toSnakeCase } from "@/utils/common";
 import { Prism } from "@mantine/prism";
+import { omit } from "next/dist/shared/lib/router/utils/omit";
 
 type VariablesFormValues = {
   name: string;
@@ -65,7 +66,7 @@ export const VariableForm = ({ variableId }: Props) => {
       const name = toSnakeCase(values.name);
       updateVariablesMutation.mutate({
         id: variableId,
-        values: { ...values, name },
+        values: { ...omit(values, ["value"]), name },
       });
       setVariable({ ...values, id: variableId, name });
     } else {
@@ -168,9 +169,7 @@ export const VariableForm = ({ variableId }: Props) => {
             mah={400}
             sx={{ copy: { paddingTop: "20px" } }}
           >
-            {(form.values.value
-              ? JSON.stringify(form.values.value, null, 2)
-              : form.values.value) ?? "// Code will appear here"}
+            {safeJsonStringify(form.values.value) ?? "// Code will appear here"}
           </Prism>
         </Stack>
         <Group align="end">
