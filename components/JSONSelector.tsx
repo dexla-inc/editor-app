@@ -52,8 +52,8 @@ export const JSONSelector = ({ data, onSelectValue, name, type }: Props) => {
       {renderList({
         key: name,
         path: variableType ? "value" : "[0]",
-        value: variableType ? items[0].children : JSON.stringify(items),
-        children: variableType ? items[0].children : items,
+        value: variableType ? items[0]?.children : JSON.stringify(items),
+        children: variableType ? items[0]?.children : items,
       })}
     </List>
   );
