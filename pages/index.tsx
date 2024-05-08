@@ -53,7 +53,7 @@ export const getServerSideProps = async ({
   }
 
   // Check if user is logged in
-  const isLoggedIn = checkRefreshTokenExists(req.cookies["refreshToken"]);
+  const isLoggedIn = checkRefreshTokenExists(req.cookies["dexlaRefreshToken"]);
   const signInPageSlug = deploymentPage.project.redirects?.signInPageId;
 
   if (
