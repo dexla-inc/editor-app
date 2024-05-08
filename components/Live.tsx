@@ -8,7 +8,6 @@ import { useCallback, useMemo } from "react";
 import { RenderTreeFunc } from "@/types/component";
 import { prepareUserThemeLive } from "@/utils/prepareUserThemeLive";
 import { DeploymentPage } from "@/requests/deployments/types";
-import { ProjectResponse } from "@/requests/projects/types";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useThemeStore } from "@/stores/theme";
@@ -21,17 +20,19 @@ import { MantineThemeExtended } from "@/utils/types";
 import { safeJsonParse } from "@/utils/common";
 
 type Props = {
-  project: ProjectResponse;
   deploymentPage: DeploymentPage;
 };
 
 let theme: MantineThemeExtended | undefined;
 
-export const Live = ({ project, deploymentPage }: Props) => {
-  theme = theme === undefined ? prepareUserThemeLive(project.branding) : theme;
+export const Live = ({ deploymentPage }: Props) => {
+  theme =
+    theme === undefined ? prepareUserThemeLive(deploymentPage.branding) : theme;
 
-  const { data: variables } = useVariableListQuery(project.id);
-  const { data: endpoints } = useDataSourceEndpoints(project.id);
+  const projectId = deploymentPage.project.id;
+
+  const { data: variables } = useVariableListQuery(projectId);
+  const { data: endpoints } = useDataSourceEndpoints(projectId);
 
   const editorTree = useEditorTreeStore((state) => state.tree);
   const setEditorTree = useEditorTreeStore((state) => state.setTree);
@@ -69,8 +70,8 @@ export const Live = ({ project, deploymentPage }: Props) => {
   }, [deploymentPage]);
 
   useEffect(() => {
-    if (project && deploymentPage.id) {
-      setCurrentPageAndProjectIds(project.id, deploymentPage.id);
+    if (deploymentPage.id) {
+      setCurrentPageAndProjectIds(projectId, deploymentPage.id);
       setPreviewMode(true);
       setIsLive(true);
 
@@ -82,7 +83,7 @@ export const Live = ({ project, deploymentPage }: Props) => {
       loadFonts();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [project, deploymentPage.id]);
+  }, [projectId, deploymentPage.id]);
 
   useEffect(() => {
     if (variables) initializeVariableList(variables.results);
@@ -137,6 +138,8 @@ export const Live = ({ project, deploymentPage }: Props) => {
   }
 
   return (
-    <LiveWrapper project={project}>{renderTree(editorTree.root)}</LiveWrapper>
+    <LiveWrapper project={deploymentPage.project}>
+      {renderTree(editorTree.root)}
+    </LiveWrapper>
   );
 };

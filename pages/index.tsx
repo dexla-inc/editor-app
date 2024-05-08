@@ -48,7 +48,6 @@ export const getServerSideProps = async ({
       props: {
         dehydratedState: dehydrate(queryClient),
         isLive: true,
-        project,
       },
     };
   }
@@ -65,13 +64,11 @@ export const getServerSideProps = async ({
   ) {
     return {
       redirect: {
-        destination: `/${project.redirectSlug}`.replace("//", "/"),
+        destination: `/${signInPageSlug}`.replace("//", "/"),
         permanent: false,
       },
       props: {
         dehydratedState: dehydrate(queryClient),
-        project,
-        faviconUrl: project.faviconUrl,
         isLive: true,
         deploymentPage,
       },
@@ -81,8 +78,6 @@ export const getServerSideProps = async ({
   return {
     props: {
       dehydratedState: dehydrate(queryClient),
-      project,
-      faviconUrl: project.faviconUrl,
       isLive: true,
       deploymentPage,
     },
@@ -90,12 +85,10 @@ export const getServerSideProps = async ({
 };
 
 type Props = {
-  project: ProjectResponse;
-  faviconUrl?: string;
   deploymentPage: DeploymentPage;
 };
 
-const HomePage = ({ project, faviconUrl, deploymentPage }: Props) => {
+const HomePage = ({ deploymentPage }: Props) => {
   return (
     <>
       <Head>
@@ -104,10 +97,10 @@ const HomePage = ({ project, faviconUrl, deploymentPage }: Props) => {
         <link
           rel="icon"
           type="image/x-icon"
-          href={faviconUrl ?? "/favicon.ico"}
+          href={deploymentPage.project.faviconUrl ?? "/favicon.ico"}
         />
       </Head>
-      <Live project={project} deploymentPage={deploymentPage} />
+      <Live deploymentPage={deploymentPage} />
     </>
   );
 };
