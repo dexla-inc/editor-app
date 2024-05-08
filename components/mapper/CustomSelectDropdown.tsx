@@ -42,8 +42,16 @@ export const CustomDropdown = ({ children, ...props }: any) => {
   const component = useEditorTreeStore(
     (state) => state.componentMutableAttrs[props.id.split("-").at(0)],
   );
+
+  const isLive = useEditorTreeStore((state) => state.isLive);
+
   const isComponent =
     component?.props?.customText || component?.props?.customLinkText;
+
+  const customLinkUrl = component?.props?.customLinkUrl;
+  const id = customLinkUrl?.split("|")[0];
+  const slug = customLinkUrl?.split("|")[1];
+
   return (
     <MantineBox component={ScrollArea} {...props}>
       {children}
@@ -51,7 +59,7 @@ export const CustomDropdown = ({ children, ...props }: any) => {
         <FixedLink
           text={component?.props?.customText}
           link={component?.props?.customLinkText}
-          url={component?.props?.customLinkUrl}
+          url={isLive ? slug : id}
         />
       )}
     </MantineBox>

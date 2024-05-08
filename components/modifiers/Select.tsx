@@ -33,6 +33,7 @@ const Modifier = withModifier(({ selectedComponent }) => {
         clearable: selectedComponent?.props?.clearable,
         searchable: selectedComponent?.props?.searchable,
         multiSelect: selectedComponent?.props?.multiSelect,
+        customerFooter: selectedComponent?.props?.customerFooter || false,
         customText: selectedComponent?.props?.customText,
         customLinkText: selectedComponent?.props?.customLinkText,
         customLinkType: selectedComponent?.props?.customLinkType,
@@ -151,23 +152,34 @@ const Modifier = withModifier(({ selectedComponent }) => {
             });
           }}
         />
-        <TextInput
-          label="Custom Text"
-          size="xs"
-          {...form.getInputProps("customText")}
-          onChange={(e) => {
-            setFieldValue("customText", e.target.value);
+        <SegmentedControlYesNo
+          label="Custom Footer"
+          {...form.getInputProps("customerFooter")}
+          onChange={(value) => {
+            setFieldValue("customerFooter", value);
           }}
         />
-        <TextInput
-          label="Custom Link Description"
-          size="xs"
-          {...form.getInputProps("customLinkText")}
-          onChange={(e) => {
-            setFieldValue("customLinkText", e.target.value);
-          }}
-        />
-        <UrlOrPageSelector form={form} />
+        {selectedComponent?.props?.customerFooter && (
+          <Stack bg="black" p="xs" spacing="xs" sx={{ borderRadius: 4 }}>
+            <TextInput
+              label="Custom Text"
+              size="xs"
+              {...form.getInputProps("customText")}
+              onChange={(e) => {
+                setFieldValue("customText", e.target.value);
+              }}
+            />
+            <TextInput
+              label="Custom Link Description"
+              size="xs"
+              {...form.getInputProps("customLinkText")}
+              onChange={(e) => {
+                setFieldValue("customLinkText", e.target.value);
+              }}
+            />
+            <UrlOrPageSelector form={form} />
+          </Stack>
+        )}
       </Stack>
     </form>
   );
