@@ -1,4 +1,3 @@
-import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { Component, ComponentStructure } from "@/utils/editor";
 import crawl from "tree-crawl";

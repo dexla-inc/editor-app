@@ -1,7 +1,6 @@
 import { jsonStructure as accordionItemSchema } from "@/components/mapper/structure/AccordionItem";
 import { jsonStructure as tabSchema } from "@/components/mapper/structure/Tab";
 import { jsonStructure as tabsPanelSchema } from "@/components/mapper/structure/TabsPanel";
-import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { structureMapper } from "@/utils/componentMapper";
 import {

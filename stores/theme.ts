@@ -1,6 +1,6 @@
 import { defaultTheme } from "@/utils/branding";
 import { getColorFromTheme } from "@/utils/editor";
-import { MantineThemeExtended } from "@/utils/types";
+import { MantineThemeExtended } from "@/types/types";
 import { NotificationProps, showNotification } from "@mantine/notifications";
 import merge from "lodash.merge";
 import { create } from "zustand";

@@ -1,4 +1,4 @@
-import { PromptParams } from "@/utils/prompt-types";
+import { PromptParams } from "@/types/prompt-types";
 
 export const getThemeScreenshotPrompt = ({ description }: PromptParams) => `
   You are a Styling Brand Generator System (STGS). 
