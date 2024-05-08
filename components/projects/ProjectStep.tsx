@@ -11,7 +11,7 @@ import { UploadMultipleResponse } from "@/requests/storage/types";
 import { PatchParams } from "@/requests/types";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { LoadingStore, NextStepperClickEvent } from "@/types/dashboardTypes";
-import { ProjectTypes } from "@/utils/projectTypes";
+import { ProjectTypes } from "@/types/projectTypes";
 import { Group, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { Dispatch, SetStateAction } from "react";
