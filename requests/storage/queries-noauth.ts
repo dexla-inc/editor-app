@@ -4,12 +4,12 @@ import {
 } from "@/requests/storage/types";
 import { getWithoutAuth, postWithoutAuth } from "@/utils/apiNoAuth";
 import { FileWithPath } from "@mantine/dropzone";
-import { post } from "@/utils/api";
 
 export const uploadFile = async (
   projectId: string,
   file: File | File[] | FileWithPath | FileWithPath[],
   isMultiple: boolean = false,
+  internal: boolean = false,
 ) => {
   let url = `/projects/${projectId}/storage/internal?isMultiple=${isMultiple}`;
 
@@ -17,10 +17,11 @@ export const uploadFile = async (
   if (Array.isArray(file)) file.forEach((f) => formData.append("file", f));
   else formData.append("file", file);
 
-  return (await postWithoutAuth<UploadMultipleResponse | UploadResponse>(
-    url,
-    formData,
-  )) as UploadMultipleResponse | UploadResponse;
+  const response = (await postWithoutAuth<
+    UploadMultipleResponse | UploadResponse
+  >(url, formData)) as UploadMultipleResponse | UploadResponse;
+
+  return response;
 };
 
 export const getFile = async (projectId: string, name: string) => {
@@ -38,5 +39,3 @@ export const getAllFiles = async (projectId: string) => {
 
   return response;
 };
-
-//const getCacheTag = (projectId: string) => `/projects/${projectId}/storage`;
