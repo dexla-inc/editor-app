@@ -34,7 +34,7 @@ export const useDataSourceStore = create<DataSourceState>()(
         authState: {},
         getAuthState: () => {
           const { accessToken, expiresAt, additionalInfo } = get().authState;
-          const refreshToken = Cookies.get("refreshToken");
+          const refreshToken = Cookies.get("dexlaRefreshToken");
           return { accessToken, expiresAt, refreshToken, additionalInfo };
         },
         setAuthTokens: (response) => {
@@ -53,7 +53,7 @@ export const useDataSourceStore = create<DataSourceState>()(
             {},
           );
 
-          Cookies.set("refreshToken", refreshToken, {
+          Cookies.set("dexlaRefreshToken", refreshToken, {
             expires: expirySeconds / 60 / 60 / 24,
           });
 
@@ -65,13 +65,21 @@ export const useDataSourceStore = create<DataSourceState>()(
         },
         hasTokenExpired: () => {
           const expiresAt = get().authState.expiresAt;
+
           if (expiresAt) {
-            return Date.now() > expiresAt;
+            const now = Date.now();
+            console.log(
+              "hasTokenExpired",
+              expiresAt,
+              now,
+              expiresAt && now > expiresAt,
+            );
+            return now > expiresAt;
           }
           return true;
         },
         refreshAccessToken: async (dataSourceId: string) => {
-          const refreshToken = Cookies.get("refreshToken");
+          const refreshToken = Cookies.get("dexlaRefreshToken");
 
           if (!refreshToken || refreshToken === "undefined") {
             return;
@@ -85,9 +93,8 @@ export const useDataSourceStore = create<DataSourceState>()(
           if (accessToken && !hasTokenExpired()) {
             return;
           }
-
-          const url = apiAuthConfig?.authConfigurations[dataSourceId]
-            .refreshTokenUrl as string;
+          const authConfig = apiAuthConfig?.authConfigurations[dataSourceId];
+          const url = authConfig?.refreshTokenUrl as string;
 
           const response = await fetch(url, {
             method: "POST",
@@ -99,10 +106,12 @@ export const useDataSourceStore = create<DataSourceState>()(
           });
 
           const data = await response.json();
-          setAuthTokens(data);
+
+          const mergedAuthConfig = { ...data, ...authConfig };
+          setAuthTokens(mergedAuthConfig);
         },
         clearAuthTokens: () => {
-          Cookies.remove("refreshToken");
+          Cookies.remove("dexlaRefreshToken");
 
           set({
             authState: {
