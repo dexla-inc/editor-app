@@ -23,8 +23,8 @@ async function doFetchWithoutAuth<Type>({
         method,
         headers: {
           "Content-Type": "application/json",
+          ...headers,
         },
-        ...headers,
         ...(body ? { body: JSON.stringify(body) } : {}),
       });
 
@@ -58,10 +58,12 @@ export async function getWithoutAuth<Type>(
 export async function postWithoutAuth<Type>(
   url: FetchType["url"],
   body: FetchType["body"],
+  headers: FetchType["headers"],
 ): Promise<Type | ReadableStream<Uint8Array> | null> {
   return doFetchWithoutAuth<Type | ReadableStream<Uint8Array> | null>({
     url,
     method: "POST",
     body,
+    headers,
   });
 }

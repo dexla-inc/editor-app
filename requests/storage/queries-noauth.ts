@@ -19,7 +19,9 @@ export const uploadFile = async (
 
   const response = (await postWithoutAuth<
     UploadMultipleResponse | UploadResponse
-  >(url, formData)) as UploadMultipleResponse | UploadResponse;
+  >(url, formData, { "Content-Type": "multipart/form-data" })) as
+    | UploadMultipleResponse
+    | UploadResponse;
 
   return response;
 };

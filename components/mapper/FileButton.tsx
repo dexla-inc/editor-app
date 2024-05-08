@@ -12,8 +12,9 @@ import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useShallow } from "zustand/react/shallow";
 import { useInputValue } from "@/hooks/components/useInputValue";
-import { uploadFile } from "@/requests/storage/queries-noauth";
+
 import { UploadMultipleResponse } from "@/requests/storage/types";
+import { uploadFile } from "@/requests/storage/mutations";
 
 type Props = EditableComponentMapper & FileButtonProps;
 
