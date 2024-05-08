@@ -10,7 +10,7 @@ import { RegionTypes } from "@/requests/projects/types";
 import { ThemeResponse } from "@/requests/themes/types";
 import { useAppStore } from "@/stores/app";
 import { usePropelAuthStore } from "@/stores/propelAuth";
-import { StepperDetailsType } from "@/utils/projectTypes";
+import { StepperDetailsType } from "@/types/projectTypes";
 import { Container, Stack, Stepper, Title } from "@mantine/core";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
