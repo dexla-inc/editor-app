@@ -2,7 +2,7 @@ import {
   UploadMultipleResponse,
   UploadResponse,
 } from "@/requests/storage/types";
-import { getWithoutAuth } from "@/utils/apiNoAuth";
+import { getWithoutAuth, postWithoutAuth } from "@/utils/apiNoAuth";
 import { FileWithPath } from "@mantine/dropzone";
 import { post } from "@/utils/api";
 
@@ -17,15 +17,10 @@ export const uploadFile = async (
   if (Array.isArray(file)) file.forEach((f) => formData.append("file", f));
   else formData.append("file", file);
 
-  const response = (await post<UploadMultipleResponse | UploadResponse>(
+  return (await postWithoutAuth<UploadMultipleResponse | UploadResponse>(
     url,
     formData,
   )) as UploadMultipleResponse | UploadResponse;
-
-  // const cacheTag = getCacheTag(projectId);
-  // await evictCache(cacheTag);
-
-  return response;
 };
 
 export const getFile = async (projectId: string, name: string) => {
