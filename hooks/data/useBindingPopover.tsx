@@ -12,7 +12,6 @@ import { useRouter } from "next/router";
 import { useDataSourceStore } from "@/stores/datasource";
 import { pick } from "next/dist/lib/pick";
 import { useInputsStore } from "@/stores/inputs";
-import { Component } from "@/utils/editor";
 import { useShallow } from "zustand/react/shallow";
 import { ContextType } from "@/types/dataBinding";
 import { selectedComponentIdSelector } from "@/utils/componentSelectors";
@@ -42,26 +41,6 @@ const setEntityString = ({ selectedEntityId, entity }: BindType) => {
   const [entityKey, entityId] = selectedEntityId.split(".");
   const path = !entityId ? "" : `.${entityId}`;
   return `${entity}['${entityKey}']${path}`;
-};
-
-const valueSerializer = (component: Component, value: any) => {
-  const defaultFileProps = {
-    name: "string",
-    size: "number",
-    type: "string",
-    lastModified: "number",
-  };
-  value = value ?? [defaultFileProps];
-
-  const pickFileProps = (file: File) =>
-    pick(file, ["name", "size", "type", "lastModified"]);
-
-  // File handling
-  if (["FileButton", "FileUpload"].includes(component.name)) {
-    return value.map(pickFileProps);
-  }
-
-  return value;
 };
 
 export const useBindingPopover = ({ isPageAction }: Props) => {
@@ -101,7 +80,7 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
             id: componentGroupId,
             name: description,
             description,
-            value: valueSerializer(c, value),
+            value,
           };
           acc[componentGroupId] = value;
 

@@ -4,7 +4,6 @@ import {
 } from "@/requests/storage/types";
 import { del, post } from "@/utils/api";
 import { FileWithPath } from "@mantine/dropzone";
-import { evictCache } from "@/requests/cache/queries-noauth";
 
 export const uploadFile = async (
   projectId: string,
@@ -17,15 +16,10 @@ export const uploadFile = async (
   if (Array.isArray(file)) file.forEach((f) => formData.append("file", f));
   else formData.append("file", file);
 
-  const response = (await post<UploadMultipleResponse | UploadResponse>(
+  return (await post<UploadMultipleResponse | UploadResponse>(
     url,
     formData,
   )) as UploadMultipleResponse | UploadResponse;
-
-  // const cacheTag = getCacheTag(projectId);
-  // await evictCache(cacheTag);
-
-  return response;
 };
 
 export const deleteFile = async (projectId: string, name: string) => {
