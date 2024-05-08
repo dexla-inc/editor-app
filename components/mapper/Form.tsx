@@ -6,7 +6,7 @@ import {
   EditableComponentMapper,
   getAllComponentsByName,
 } from "@/utils/editor";
-import { FlexProps, Flex as MantineFlex } from "@mantine/core";
+import { FlexProps, LoadingOverlay, Flex as MantineFlex } from "@mantine/core";
 import { FormEvent, forwardRef, memo } from "react";
 import { useInputsStore } from "@/stores/inputs";
 import { useShallow } from "zustand/react/shallow";
@@ -116,6 +116,7 @@ const FormComponent = forwardRef(
         pos="relative"
       >
         {renderData({ renderTree, shareableContent })}
+        <LoadingOverlay visible={loading} zIndex={1000} radius="sm" />
       </MantineFlex>
     );
   },
