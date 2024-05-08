@@ -8,7 +8,7 @@ import { useThemeStore } from "@/stores/theme";
 import { inputSizes } from "@/utils/defaultSizes";
 import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { SegmentedControl, Stack, TextInput } from "@mantine/core";
+import { Card, Paper, SegmentedControl, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import {
   IconArrowBarDown,
@@ -18,6 +18,8 @@ import {
 import merge from "lodash.merge";
 import { useEffect } from "react";
 import { ThemeColorSelector } from "../ThemeColorSelector";
+import { SegmentedControlInput } from "../SegmentedControlInput";
+import { SegmentedControlYesNo } from "../SegmentedControlYesNo";
 
 const Modifier = withModifier(({ selectedComponent }) => {
   const theme = useThemeStore((state) => state.theme);
@@ -31,6 +33,7 @@ const Modifier = withModifier(({ selectedComponent }) => {
         iconName: selectedComponent?.props?.iconName,
         data: selectedComponent?.props?.data,
         withAsterisk: selectedComponent?.props?.withAsterisk,
+        customerFooter: selectedComponent?.props?.customerFooter || false,
         customText: selectedComponent?.props?.customText,
         customLinkText: selectedComponent?.props?.customLinkText,
         customLinkType: selectedComponent?.props?.customLinkType,
@@ -121,23 +124,34 @@ const Modifier = withModifier(({ selectedComponent }) => {
             });
           }}
         />
-        <TextInput
-          label="Custom Text"
-          size="xs"
-          {...form.getInputProps("customText")}
-          onChange={(e) => {
-            setFieldValue("customText", e.target.value);
+        <SegmentedControlYesNo
+          label="Custom Footer"
+          {...form.getInputProps("customerFooter")}
+          onChange={(value) => {
+            setFieldValue("customerFooter", value);
           }}
         />
-        <TextInput
-          label="Custom Link Description"
-          size="xs"
-          {...form.getInputProps("customLinkText")}
-          onChange={(e) => {
-            setFieldValue("customLinkText", e.target.value);
-          }}
-        />
-        <UrlOrPageSelector form={form} />
+        {selectedComponent?.props?.customerFooter && (
+          <Stack bg="black" p="xs" spacing="xs" sx={{ borderRadius: 4 }}>
+            <TextInput
+              label="Custom Text"
+              size="xs"
+              {...form.getInputProps("customText")}
+              onChange={(e) => {
+                setFieldValue("customText", e.target.value);
+              }}
+            />
+            <TextInput
+              label="Custom Link Description"
+              size="xs"
+              {...form.getInputProps("customLinkText")}
+              onChange={(e) => {
+                setFieldValue("customLinkText", e.target.value);
+              }}
+            />
+            <UrlOrPageSelector form={form} />
+          </Stack>
+        )}
       </Stack>
     </form>
   );
