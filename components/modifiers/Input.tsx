@@ -3,7 +3,7 @@ import { SegmentedControlSizes } from "@/components/SegmentedControlSizes";
 import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
 import { withModifier } from "@/hoc/withModifier";
 import { useThemeStore } from "@/stores/theme";
-import { INPUT_TYPES_DATA } from "@/utils/dashboardTypes";
+import { INPUT_TYPES_DATA } from "@/types/dashboardTypes";
 import { inputSizes } from "@/utils/defaultSizes";
 import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";

@@ -1,5 +1,5 @@
 import { DataSourceParams } from "@/requests/datasources/types";
-import { isSwaggerFile, isWebsite } from "@/utils/dashboardTypes";
+import { isSwaggerFile, isWebsite } from "@/types/dashboardTypes";
 import { Loader, TextInput } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 

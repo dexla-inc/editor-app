@@ -2,7 +2,7 @@ import AuthenticationApiKey from "@/components/datasources/AuthenticationApiKey"
 import AuthenticationBearer from "@/components/datasources/AuthenticationBearer";
 import { ExampleResponseDropdown } from "@/components/datasources/AuthenticationInputs";
 import { RequestBody } from "@/requests/datasources/types";
-import { DataSourceStepperProps } from "@/utils/dashboardTypes";
+import { DataSourceStepperProps } from "@/types/dashboardTypes";
 import { Stack } from "@mantine/core";
 
 interface AuthenticationStepProps extends DataSourceStepperProps {

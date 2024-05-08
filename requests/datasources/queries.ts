@@ -1,6 +1,6 @@
 import { DataSourceResponse } from "@/requests/datasources/types";
 import { get } from "@/utils/api";
-import { buildQueryString } from "@/utils/dashboardTypes";
+import { buildQueryString } from "@/types/dashboardTypes";
 import { evictCache } from "@/requests/cache/queries-noauth";
 
 export const getSwagger = async (

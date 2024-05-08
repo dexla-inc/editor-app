@@ -2,7 +2,7 @@ import { Icon } from "@/components/Icon";
 import NavigationAvatarFooter from "@/components/NavigationAvatarFooter";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { HEADER_HEIGHT, ICON_SIZE, NAVBAR_WIDTH } from "@/utils/config";
-import { NavbarTypes } from "@/utils/dashboardTypes";
+import { NavbarTypes } from "@/types/dashboardTypes";
 import { Box, Button, Menu, NavLink, Navbar, ScrollArea } from "@mantine/core";
 import { useLogoutFunction } from "@propelauth/react";
 import { IconArrowLeft, IconLogout, IconSettings } from "@tabler/icons-react";

@@ -1,7 +1,7 @@
 import { Logo } from "@/components/Logo";
 
 import { ASIDE_WIDTH, HEADER_HEIGHT, NAVBAR_WIDTH } from "@/utils/config";
-import { NavbarTypes } from "@/utils/dashboardTypes";
+import { NavbarTypes } from "@/types/dashboardTypes";
 import {
   AppShell,
   AppShellProps,

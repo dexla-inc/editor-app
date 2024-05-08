@@ -1,6 +1,6 @@
 import DexlaStepper from "@/components/DexlaStepper";
 import StepperContent from "@/components/datasources/StepperContent";
-import { StepperStepProps } from "@/utils/dashboardTypes";
+import { StepperStepProps } from "@/types/dashboardTypes";
 import { Container, Stack, Title } from "@mantine/core";
 import { useState } from "react";
 

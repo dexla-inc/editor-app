@@ -7,7 +7,7 @@ import {
   PageStateResponse,
 } from "@/requests/pages/types";
 import { getWithoutAuth } from "@/utils/apiNoAuth";
-import { buildQueryString } from "@/utils/dashboardTypes";
+import { buildQueryString } from "@/types/dashboardTypes";
 import { PagingResponse } from "../types";
 
 export const getPageList = async (projectId: string, params?: PageParams) => {

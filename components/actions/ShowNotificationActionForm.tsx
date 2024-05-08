@@ -1,7 +1,7 @@
 import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 import { useEditorStore } from "@/stores/editor";
 import { ActionFormProps, ShowNotificationAction } from "@/utils/actions";
-import { ApiType } from "@/utils/dashboardTypes";
+import { ApiType } from "@/types/dashboardTypes";
 import { Stack } from "@mantine/core";
 import React from "react";
 import { ThemeColorSelector } from "../ThemeColorSelector";

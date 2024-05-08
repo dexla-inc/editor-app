@@ -1,5 +1,5 @@
 import { RegionTypes } from "@/requests/projects/types";
-import { regionTypeFlags, regionTypes } from "@/utils/dashboardTypes";
+import { regionTypeFlags, regionTypes } from "@/types/dashboardTypes";
 import { Avatar, Group, Paper, Select, SelectProps, Text } from "@mantine/core";
 import { forwardRef } from "react";
 

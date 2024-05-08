@@ -4,7 +4,7 @@ import {
 } from "@/requests/logicflows/types";
 import { PagingResponse } from "@/requests/types";
 import { getWithoutAuth } from "@/utils/apiNoAuth";
-import { buildQueryString } from "@/utils/dashboardTypes";
+import { buildQueryString } from "@/types/dashboardTypes";
 
 export const listLogicFlows = async (
   projectId: string,

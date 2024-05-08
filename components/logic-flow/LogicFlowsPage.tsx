@@ -12,7 +12,7 @@ import { actionMapper } from "@/utils/actions";
 import { LOGICFLOW_BACKGROUND } from "@/utils/branding";
 import { decodeSchema, encodeSchema } from "@/utils/compression";
 import { ASIDE_WIDTH, HEADER_HEIGHT } from "@/utils/config";
-import { convertToPatchParams } from "@/utils/dashboardTypes";
+import { convertToPatchParams } from "@/types/dashboardTypes";
 import { nodesData } from "@/utils/logicFlows";
 import { removeKeysRecursive } from "@/utils/removeKeys";
 import {

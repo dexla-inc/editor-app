@@ -10,7 +10,7 @@ import { uploadFile } from "@/requests/storage/mutations";
 import { UploadMultipleResponse } from "@/requests/storage/types";
 import { PatchParams } from "@/requests/types";
 import { usePropelAuthStore } from "@/stores/propelAuth";
-import { LoadingStore, NextStepperClickEvent } from "@/utils/dashboardTypes";
+import { LoadingStore, NextStepperClickEvent } from "@/types/dashboardTypes";
 import { ProjectTypes } from "@/utils/projectTypes";
 import { Group, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";

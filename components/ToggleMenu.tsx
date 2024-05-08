@@ -1,5 +1,5 @@
 import { BORDER_COLOR } from "@/utils/branding";
-import { ToggleMenuItem as ToggleMenuItemType } from "@/utils/dashboardTypes";
+import { ToggleMenuItem as ToggleMenuItemType } from "@/types/dashboardTypes";
 import { Box, Menu, rem, useMantineTheme } from "@mantine/core";
 import { forwardRef } from "react";
 

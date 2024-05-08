@@ -19,7 +19,7 @@ import { MethodTypes } from "@/requests/types";
 import { useAppStore } from "@/stores/app";
 import { BORDER_COLOR } from "@/utils/branding";
 import { ICON_DELETE } from "@/utils/config";
-import { ApiType } from "@/utils/dashboardTypes";
+import { ApiType } from "@/types/dashboardTypes";
 import {
   ActionIcon,
   Button,
