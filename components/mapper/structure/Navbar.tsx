@@ -3,7 +3,7 @@ import { PageResponse } from "@/requests/pages/types";
 import { defaultTheme } from "@/utils/branding";
 import { ComponentStructure, getColorFromTheme } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { MantineThemeExtended } from "@/utils/types";
+import { MantineThemeExtended } from "@/types/types";
 import merge from "lodash.merge";
 import { nanoid } from "nanoid";
 

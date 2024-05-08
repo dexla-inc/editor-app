@@ -15,7 +15,7 @@ import { nanoid } from "nanoid";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { CSSProperties } from "react";
 import crawl from "tree-crawl";
-import { MantineThemeExtended } from "./types";
+import { MantineThemeExtended } from "../types/types";
 import { DataType, ValueProps } from "@/types/dataBinding";
 import { RenderTreeFunc } from "@/types/component";
 import { PagingResponse } from "@/requests/types";

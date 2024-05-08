@@ -1,5 +1,5 @@
-import { PromptParams } from "@/utils/prompt-types";
-import { MantineThemeExtended } from "@/utils/types";
+import { PromptParams } from "@/types/prompt-types";
+import { MantineThemeExtended } from "@/types/types";
 
 export const getTemplatePrompt = ({
   pageName,

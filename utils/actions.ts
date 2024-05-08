@@ -25,7 +25,7 @@ import { readDataFromStream } from "@/utils/api";
 import { isObject, safeJsonParse } from "@/utils/common";
 import { Component, getColorFromTheme } from "@/utils/editor";
 import { executeFlow } from "@/utils/logicFlows";
-import { ArrayMethods } from "@/utils/types";
+import { ArrayMethods } from "@/types/types";
 import { UseFormReturnType } from "@mantine/form";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";

@@ -1,6 +1,6 @@
 import { useThemeStore } from "@/stores/theme";
 import { EditableComponentMapper, getColorFromTheme } from "@/utils/editor";
-import { MantineThemeExtended } from "@/utils/types";
+import { MantineThemeExtended } from "@/types/types";
 import { ApexOptions } from "apexcharts";
 import get from "lodash.get";
 import merge from "lodash.merge";
