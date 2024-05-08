@@ -2,7 +2,7 @@ import { Draggable } from "@/components/Draggable";
 import { useEditorStore } from "@/stores/editor";
 import { useThemeStore } from "@/stores/theme";
 import { structureMapper } from "@/utils/componentMapper";
-import { toSpaced } from "@/utils/dashboardTypes";
+import { toSpaced } from "@/types/dashboardTypes";
 import { Box, Text } from "@mantine/core";
 import { useEffect, useState } from "react";
 

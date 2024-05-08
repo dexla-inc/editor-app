@@ -1,5 +1,5 @@
 import { PagingParams } from "@/requests/types";
-import { TeamStatus, UserRoles } from "@/utils/dashboardTypes";
+import { TeamStatus, UserRoles } from "@/types/dashboardTypes";
 
 export type TeamResponse = {
   id: string;

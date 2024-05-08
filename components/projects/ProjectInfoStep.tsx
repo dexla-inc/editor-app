@@ -7,7 +7,7 @@ import {
   LoadingStore,
   PreviousStepperClickEvent,
   convertToPatchParams,
-} from "@/utils/dashboardTypes";
+} from "@/types/dashboardTypes";
 import { Button, Divider, Flex, Group, Stack, TextInput } from "@mantine/core";
 import { useRouter } from "next/router";
 

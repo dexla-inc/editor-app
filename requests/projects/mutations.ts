@@ -2,7 +2,7 @@ import { ProjectParams, ProjectResponse } from "@/requests/projects/types";
 import { PatchParams } from "@/requests/types";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { del, patch, post } from "@/utils/api";
-import { buildQueryString } from "@/utils/dashboardTypes";
+import { buildQueryString } from "@/types/dashboardTypes";
 import { evictCache } from "@/requests/cache/queries-noauth";
 
 export const createProject = async (

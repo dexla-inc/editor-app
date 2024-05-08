@@ -2,7 +2,7 @@ import { useProjectQuery } from "@/hooks/editor/reactQuery/useProjectQuery";
 import { patchProject } from "@/requests/projects/mutations";
 import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { convertToPatchParams } from "@/utils/dashboardTypes";
+import { convertToPatchParams } from "@/types/dashboardTypes";
 import { Button, Select, Stack, Title } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useEffect, useState } from "react";

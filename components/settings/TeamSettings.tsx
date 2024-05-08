@@ -5,7 +5,7 @@ import { InviteTeamParams, UserResponse } from "@/requests/teams/types";
 import { useAppStore } from "@/stores/app";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
-import { UserRoles, snakeToSpacedText } from "@/utils/dashboardTypes";
+import { UserRoles, snakeToSpacedText } from "@/types/dashboardTypes";
 import {
   Button,
   Container,

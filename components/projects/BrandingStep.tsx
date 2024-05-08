@@ -15,7 +15,7 @@ import {
   PreviousStepperClickEvent,
   fonts,
   isWebsite,
-} from "@/utils/dashboardTypes";
+} from "@/types/dashboardTypes";
 import { Component } from "@/utils/editor";
 import {
   Anchor,

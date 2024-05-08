@@ -1,7 +1,7 @@
 import { useProjectQuery } from "@/hooks/editor/reactQuery/useProjectQuery";
 import { patchProject } from "@/requests/projects/mutations";
 import { decodeSchema, encodeSchema } from "@/utils/compression";
-import { convertToPatchParams } from "@/utils/dashboardTypes";
+import { convertToPatchParams } from "@/types/dashboardTypes";
 import { Button, Card, Stack, Text, useMantineTheme } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { Editor } from "@monaco-editor/react";

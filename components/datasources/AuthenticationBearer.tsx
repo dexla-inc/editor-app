@@ -16,7 +16,7 @@ import TextInputComponent from "@/components/datasources/TextInputComponent";
 import { useDataSourceEndpoints } from "@/hooks/editor/reactQuery/useDataSourceEndpoints";
 import { RequestBody } from "@/requests/datasources/types";
 import { useDataSourceStore } from "@/stores/datasource";
-import { DataSourceStepperProps } from "@/utils/dashboardTypes";
+import { DataSourceStepperProps } from "@/types/dashboardTypes";
 import {
   Anchor,
   Button,

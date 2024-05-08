@@ -2,7 +2,7 @@ import { IconModal } from "@/components/IconModal";
 import { GRAY_COLOR } from "@/utils/branding";
 import { ActionIcon, Box, Flex, Text, Tooltip } from "@mantine/core";
 import { Icon } from "./Icon";
-import { toSpaced } from "@/utils/dashboardTypes";
+import { toSpaced } from "@/types/dashboardTypes";
 
 type Props = {
   topLabel: string;

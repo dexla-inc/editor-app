@@ -14,7 +14,7 @@ import {
   NextStepperClickEvent,
   PreviousStepperClickEvent,
   StepperState,
-} from "@/utils/dashboardTypes";
+} from "@/types/dashboardTypes";
 import { Stack } from "@mantine/core";
 import { useState } from "react";
 

@@ -2,7 +2,7 @@ import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput"
 import { Endpoint } from "@/requests/datasources/types";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
-import { ApiType } from "@/utils/dashboardTypes";
+import { ApiType } from "@/types/dashboardTypes";
 import { Stack, Title } from "@mantine/core";
 import React from "react";
 

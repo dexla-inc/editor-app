@@ -1,7 +1,7 @@
 import { BrandingAITheme } from "@/requests/projects/types";
 import { ThemeResponse } from "@/requests/themes/types";
 import { del, post } from "@/utils/api";
-import { buildQueryString } from "@/utils/dashboardTypes";
+import { buildQueryString } from "@/types/dashboardTypes";
 
 export type SaveThemeProps = {
   params: ThemeResponse;

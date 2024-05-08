@@ -1,5 +1,5 @@
 import { ThemeResponse } from "@/requests/themes/types";
-import { UserRoles } from "@/utils/dashboardTypes";
+import { UserRoles } from "@/types/dashboardTypes";
 import { ProjectTypes } from "@/utils/projectTypes";
 
 export type RegionTypes = "FRANCE_CENTRAL" | "US_CENTRAL" | "UK_SOUTH";
