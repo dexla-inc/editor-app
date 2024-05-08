@@ -7,12 +7,3 @@ export const queryClient = new QueryClient({
     },
   },
 });
-
-export const queryClientOfflineFirst = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false,
-      networkMode: "offlineFirst",
-    },
-  },
-});

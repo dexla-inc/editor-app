@@ -1,7 +1,7 @@
 import { TemplateResponse } from "@/requests/templates/types";
 import { PagingParams, PagingResponse } from "@/requests/types";
 import { getWithoutAuth } from "@/utils/apiNoAuth";
-import { buildQueryString } from "@/utils/dashboardTypes";
+import { buildQueryString } from "@/types/dashboardTypes";
 
 export const listTiles = async (id: string, params?: PagingParams) => {
   let url = `/templates/${id}/tiles`;

@@ -16,7 +16,7 @@ import {
   LoadingStore,
   NextStepperClickEvent,
   PreviousStepperClickEvent,
-} from "@/utils/dashboardTypes";
+} from "@/types/dashboardTypes";
 import { Divider, Group, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useRouter } from "next/router";

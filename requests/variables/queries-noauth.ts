@@ -4,7 +4,7 @@ import {
   VariableResponse,
 } from "@/requests/variables/types";
 import { getWithoutAuth } from "@/utils/apiNoAuth";
-import { buildQueryString } from "@/utils/dashboardTypes";
+import { buildQueryString } from "@/types/dashboardTypes";
 
 export const listVariables = async (
   projectId: string,

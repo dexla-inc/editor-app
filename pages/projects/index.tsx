@@ -9,7 +9,7 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { ICON_SIZE } from "@/utils/config";
-import { generateId } from "@/utils/dashboardTypes";
+import { generateId } from "@/types/dashboardTypes";
 import {
   Container,
   Flex,

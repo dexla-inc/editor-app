@@ -7,7 +7,7 @@ import { BrandingAITheme } from "@/requests/projects/types";
 import { PagingResponse } from "@/requests/types";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { baseURL, get } from "@/utils/api";
-import { MantineThemeExtended } from "@/utils/types";
+import { MantineThemeExtended } from "@/types/types";
 import {
   EventSourceMessage,
   fetchEventSource,

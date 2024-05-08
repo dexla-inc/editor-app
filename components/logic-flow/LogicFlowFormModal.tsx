@@ -6,7 +6,7 @@ import { LogicFlowParams } from "@/requests/logicflows/types";
 import { useAppStore } from "@/stores/app";
 import { initialEdges, initialNodes, useFlowStore } from "@/stores/flow";
 import { encodeSchema } from "@/utils/compression";
-import { convertToPatchParams } from "@/utils/dashboardTypes";
+import { convertToPatchParams } from "@/types/dashboardTypes";
 import { Button, Modal, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";

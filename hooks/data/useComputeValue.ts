@@ -210,7 +210,10 @@ export const useComputeValue = ({
           `components\\[(\\/\\* [\\S\\s]* \\*\\/)?\\s?'${key}'\\]`,
           "g",
         );
-        result = result.replaceAll(regex, `'${inputs[key]}'`);
+        let replacer = inputs[key];
+        replacer =
+          typeof replacer !== "string" ? JSON.stringify(replacer) : replacer;
+        result = result.replaceAll(regex, replacer);
       });
 
       actionKeys.forEach((key) => {

@@ -12,7 +12,6 @@ import { useRouter } from "next/router";
 import { useDataSourceStore } from "@/stores/datasource";
 import { pick } from "next/dist/lib/pick";
 import { useInputsStore } from "@/stores/inputs";
-import { Component } from "@/utils/editor";
 import { useShallow } from "zustand/react/shallow";
 import { ContextType } from "@/types/dataBinding";
 import { selectedComponentIdSelector } from "@/utils/componentSelectors";
@@ -63,6 +62,7 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
   const auth = useDataSourceStore((state) => state.getAuthState());
   const inputsStore = useInputsStore((state) => state.inputValues);
   const event = useEventData();
+
   const components = useEditorTreeStore(
     useShallow((state) =>
       Object.entries(inputsStore).reduce(
@@ -80,6 +80,7 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
             id: componentGroupId,
             name: description,
             description,
+            value,
           };
           acc[componentGroupId] = value;
 
@@ -210,8 +211,16 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
   const getEntityEditorValue = ({ selectedEntityId, entity }: BindType) => {
     const entityHandlers = {
       auth: () => setEntityString({ selectedEntityId, entity }),
-      components: () =>
-        `${entity}[/* ${components?.list[selectedEntityId].description} */'${selectedEntityId}']`,
+      components: () => {
+        try {
+          const parsed = JSON.parse(selectedEntityId);
+          return `${entity}[/* ${components?.list[parsed.id].description} */ '${
+            parsed.id
+          }']${parsed.path.replace("value", "")}`;
+        } catch {
+          return `${entity}[/* ${components?.list[selectedEntityId].description} */'${selectedEntityId}']`;
+        }
+      },
       actions: () => {
         const parsed = JSON.parse(selectedEntityId);
         return `${entity}[/* ${actions?.list[parsed.id].name} */ '${

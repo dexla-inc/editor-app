@@ -1,4 +1,4 @@
-import { DexlaStepperProps } from "@/utils/dashboardTypes";
+import { DexlaStepperProps } from "@/types/dashboardTypes";
 import { Stepper } from "@mantine/core";
 
 export default function DexlaStepper({

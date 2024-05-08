@@ -1,6 +1,6 @@
 import { useEditorStore } from "@/stores/editor";
 import { ICON_SIZE } from "@/utils/config";
-import { LoadingStore } from "@/utils/dashboardTypes";
+import { LoadingStore } from "@/types/dashboardTypes";
 import { Button } from "@mantine/core";
 import { IconArrowUpRight } from "@tabler/icons-react";
 import { useRouter } from "next/router";

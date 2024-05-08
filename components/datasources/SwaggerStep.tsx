@@ -9,7 +9,7 @@ import { DataSourceParams, Endpoint } from "@/requests/datasources/types";
 import {
   areValuesEqual,
   DataSourceStepperWithoutPreviousProps,
-} from "@/utils/dashboardTypes";
+} from "@/types/dashboardTypes";
 import { Anchor, Divider, Flex, Group, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import Image from "next/image";

@@ -8,7 +8,6 @@ import Head from "next/head";
 import { dehydrate } from "@tanstack/react-query";
 import { getDeploymentPage } from "@/requests/deployments/queries-noauth";
 import { queryClient } from "@/utils/reactQuery";
-import { ProjectResponse } from "@/requests/projects/types";
 
 export const getServerSideProps = async ({
   req,

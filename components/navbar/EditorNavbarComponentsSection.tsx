@@ -12,7 +12,7 @@ import {
 } from "@/utils/componentMapper";
 import { decodeSchema } from "@/utils/compression";
 import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
-import { toSpaced } from "@/utils/dashboardTypes";
+import { toSpaced } from "@/types/dashboardTypes";
 import { Component } from "@/utils/editor";
 import createCache from "@emotion/cache";
 import {

@@ -4,7 +4,7 @@ import { ProjectResponse } from "@/requests/projects/types";
 import { useAppStore } from "@/stores/app";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { THIN_DARK_OUTLINE, THIN_GRAY_OUTLINE } from "@/utils/branding";
-import { regionTypeFlags } from "@/utils/dashboardTypes";
+import { regionTypeFlags } from "@/types/dashboardTypes";
 import {
   Avatar,
   Box,

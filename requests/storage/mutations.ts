@@ -12,7 +12,7 @@ export const uploadFile = async (
   isMultiple: boolean = false,
   internal: boolean = false,
 ) => {
-  let url = `/projects/${projectId}/storage?isMultiple=${isMultiple}?internal=${true}`;
+  let url = `/projects/${projectId}/storage?isMultiple=${isMultiple}`;
 
   const formData = new FormData();
   if (Array.isArray(file)) file.forEach((f) => formData.append("file", f));

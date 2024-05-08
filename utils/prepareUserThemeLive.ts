@@ -1,5 +1,5 @@
 import { defaultTheme } from "@/utils/branding";
-import { MantineThemeExtended } from "@/utils/types";
+import { MantineThemeExtended } from "@/types/types";
 import { ThemeResponse } from "@/requests/themes/types";
 
 export const prepareUserThemeLive = (projectBranding: ThemeResponse) => {

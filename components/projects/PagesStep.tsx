@@ -16,7 +16,7 @@ import { ICON_SIZE } from "@/utils/config";
 import {
   NextStepperClickEvent,
   PreviousStepperClickEvent,
-} from "@/utils/dashboardTypes";
+} from "@/types/dashboardTypes";
 import {
   ActionIcon,
   Button,

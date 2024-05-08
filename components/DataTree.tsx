@@ -1,5 +1,5 @@
 import { JSONSelector } from "@/components/JSONSelector";
-import { jsonInString, safeJsonParse } from "@/utils/common";
+import { isObjectOrArray, jsonInString, safeJsonParse } from "@/utils/common";
 import { Button, Flex, ScrollArea, Stack } from "@mantine/core";
 import { useMemo } from "react";
 import DataItemValuePreview from "./DataItemValuePreview";
@@ -52,6 +52,24 @@ const DataItem = ({ onClick, item, onItemSelection, type }: DataItemProps) => {
     );
   }
   if (type === "components") {
+    if (isObjectOrArray(item.value)) {
+      return (
+        <JSONSelector
+          type="components"
+          name={item.description}
+          data={item.value}
+          onSelectValue={(selected) => {
+            onItemSelection(
+              `${JSON.stringify({
+                id: item?.id,
+                path: selected.path,
+              })}`,
+            );
+          }}
+        />
+      );
+    }
+
     return <DataItemButton item={item} onClick={onClick} />;
   }
   if (["auth", "browser", "event", "item"].includes(type!)) {

@@ -54,3 +54,14 @@ export async function getWithoutAuth<Type>(
     init,
   });
 }
+
+export async function postWithoutAuth<Type>(
+  url: FetchType["url"],
+  body: FetchType["body"],
+): Promise<Type | ReadableStream<Uint8Array> | null> {
+  return doFetchWithoutAuth<Type | ReadableStream<Uint8Array> | null>({
+    url,
+    method: "POST",
+    body,
+  });
+}

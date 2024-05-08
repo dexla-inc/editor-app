@@ -1,6 +1,6 @@
 import { PagingParams } from "@/requests/types";
 import { Action } from "@/utils/actions";
-import { AppTypes } from "@/utils/dashboardTypes";
+import { AppTypes } from "@/types/dashboardTypes";
 
 export type PageAIResponse = {
   name: string;

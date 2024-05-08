@@ -1,7 +1,7 @@
 import { useUserConfigStore } from "@/stores/userConfig";
 import { ValueProps } from "@/types/dataBinding";
 import { splitValueAndUnit } from "@/utils/splitValueAndUnit";
-import { MantineThemeExtended } from "@/utils/types";
+import { MantineThemeExtended } from "@/types/types";
 import {
   CSSObject,
   DEFAULT_THEME,

@@ -3,7 +3,7 @@ import { useProjectQuery } from "@/hooks/editor/reactQuery/useProjectQuery";
 import { patchProject } from "@/requests/projects/mutations";
 import { ProjectUpdateParams, RegionTypes } from "@/requests/projects/types";
 import { useAppStore } from "@/stores/app";
-import { convertToPatchParams } from "@/utils/dashboardTypes";
+import { convertToPatchParams } from "@/types/dashboardTypes";
 import {
   Button,
   Container,

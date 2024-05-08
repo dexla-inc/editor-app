@@ -4,7 +4,7 @@ import { FieldType } from "@/components/data/forms/StaticFormFieldsBuilder";
 import { VariableSelect } from "@/components/variables/VariableSelect";
 import { FrontEndTypes } from "@/requests/variables/types";
 import { ActionFormProps, ChangeVariableAction } from "@/utils/actions";
-import { ArrayMethods } from "@/utils/types";
+import { ArrayMethods } from "@/types/types";
 import { Select, Stack } from "@mantine/core";
 
 type Props = ActionFormProps<Omit<ChangeVariableAction, "name">>;

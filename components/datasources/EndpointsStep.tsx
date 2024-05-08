@@ -8,7 +8,7 @@ import {
   AuthenticationSchemeLabels,
   RequestBody,
 } from "@/requests/datasources/types";
-import { DataSourceStepperWithoutNextProps } from "@/utils/dashboardTypes";
+import { DataSourceStepperWithoutNextProps } from "@/types/dashboardTypes";
 import {
   Col,
   Divider,
