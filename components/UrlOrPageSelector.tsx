@@ -64,7 +64,7 @@ export const UrlOrPageSelector = ({ form }: Props) => {
           onChange={setFieldValue}
           data={pages.map((page) => ({
             label: page.title,
-            value: page.id,
+            value: `${page.id}|${page.slug}`,
           }))}
         />
       )}
