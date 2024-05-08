@@ -10,7 +10,7 @@ import { useShallow } from "zustand/react/shallow";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useInputValue } from "@/hooks/components/useInputValue";
 import { UploadMultipleResponse } from "@/requests/storage/types";
-import { uploadFile } from "@/requests/storage/queries-noauth";
+import { uploadFile } from "@/requests/storage/mutations";
 
 type Props = EditableComponentMapper & DropzoneProps;
 
