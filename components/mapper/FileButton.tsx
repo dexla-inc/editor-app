@@ -12,8 +12,24 @@ import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useShallow } from "zustand/react/shallow";
 import { useInputValue } from "@/hooks/components/useInputValue";
+import { uploadFile } from "@/requests/storage/queries-noauth";
+import { UploadMultipleResponse } from "@/requests/storage/types";
 
 type Props = EditableComponentMapper & FileButtonProps;
+
+type FileValue = {
+  url: string;
+  extension: string;
+  name: string;
+  size: number;
+};
+
+const defaultFileProps = {
+  url: "string",
+  extension: "string",
+  name: "string",
+  size: 0,
+};
 
 export const FileButtonComponent = forwardRef(
   ({ component, shareableContent, ...props }: Props, ref) => {
@@ -27,23 +43,39 @@ export const FileButtonComponent = forwardRef(
       ref,
     );
     const { name: nameValue } = component.onLoad;
+    const projectId = useEditorTreeStore((state) => state.currentProjectId)!;
 
     const { inputStyle } = useBrandingStyles();
     const customStyle = merge(inputStyle, style);
 
-    const [value, setValue] = useInputValue<File | File[]>(
+    const componentValue = component?.onLoad?.value ?? [defaultFileProps];
+
+    const [, setValue] = useInputValue<FileValue | FileValue[]>(
       {
-        value: component.onLoad?.value,
+        value: componentValue,
       },
       props.id!,
     );
 
-    const handleChange = (newValue: File | File[]) => {
+    const handleChange = async (newValue: File | File[]) => {
       if (!isPreviewMode) return;
       newValue = Array.isArray(newValue) ? newValue : [newValue];
 
-      setValue(newValue);
-      triggers?.onChange?.({ target: { files: newValue } });
+      const response = (await uploadFile(
+        projectId,
+        newValue,
+        true,
+      )) as UploadMultipleResponse;
+
+      const formattedValue = newValue.map((file, index) => ({
+        url: response?.files[index]?.url,
+        extension: file.name.split(".")?.at(-1) ?? "",
+        name: file.name,
+        size: file.size,
+      }));
+
+      setValue(formattedValue);
+      triggers?.onChange?.({ target: { files: formattedValue } });
     };
 
     return (

@@ -9,8 +9,24 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 import { useShallow } from "zustand/react/shallow";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useInputValue } from "@/hooks/components/useInputValue";
+import { UploadMultipleResponse } from "@/requests/storage/types";
+import { uploadFile } from "@/requests/storage/queries-noauth";
 
 type Props = EditableComponentMapper & DropzoneProps;
+
+type FileValue = {
+  url: string;
+  extension: string;
+  name: string;
+  size: number;
+};
+
+const defaultFileProps = {
+  url: "string",
+  extension: "string",
+  name: "string",
+  size: 0,
+};
 
 const FileUploadComponent = ({
   renderTree,
@@ -24,20 +40,36 @@ const FileUploadComponent = ({
   const { children, triggers, ...componentProps } = component.props as any;
   const { dashedBorderStyle } = useBrandingStyles();
   const { onChange, ...otherTriggers } = triggers || {};
+  const projectId = useEditorTreeStore((state) => state.currentProjectId)!;
 
-  const [, setValue] = useInputValue<File | File[]>(
+  const componentValue = component?.onLoad?.value ?? [defaultFileProps];
+
+  const [, setValue] = useInputValue<FileValue | FileValue[]>(
     {
-      value: component?.onLoad?.value,
+      value: componentValue,
     },
     props.id!,
   );
 
   const defaultTriggers = {
-    onDrop: (newValue: File | File[]) => {
+    onDrop: async (newValue: File | File[]) => {
       newValue = Array.isArray(newValue) ? newValue : [newValue];
 
-      setValue(newValue);
-      onChange?.({ target: { files: newValue } });
+      const response = (await uploadFile(
+        projectId,
+        newValue,
+        true,
+      )) as UploadMultipleResponse;
+
+      const formattedValue = newValue.map((file, index) => ({
+        url: response?.files[index]?.url,
+        extension: file.name.split(".")?.at(-1) ?? "",
+        name: file.name,
+        size: file.size,
+      }));
+
+      setValue(formattedValue);
+      onChange?.({ target: { files: formattedValue } });
     },
   };
 
