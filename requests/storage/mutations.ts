@@ -10,9 +10,8 @@ export const uploadFile = async (
   projectId: string,
   file: File | File[] | FileWithPath | FileWithPath[],
   isMultiple: boolean = false,
-  internal: boolean = false,
 ) => {
-  let url = `/projects/${projectId}/storage?isMultiple=${isMultiple}?internal=${true}`;
+  let url = `/projects/${projectId}/storage?isMultiple=${isMultiple}`;
 
   const formData = new FormData();
   if (Array.isArray(file)) file.forEach((f) => formData.append("file", f));
@@ -23,8 +22,8 @@ export const uploadFile = async (
     formData,
   )) as UploadMultipleResponse | UploadResponse;
 
-  const cacheTag = getCacheTag(projectId);
-  await evictCache(cacheTag);
+  // const cacheTag = getCacheTag(projectId);
+  // await evictCache(cacheTag);
 
   return response;
 };
@@ -34,10 +33,10 @@ export const deleteFile = async (projectId: string, name: string) => {
 
   const response = (await del<any>(url)) as any;
 
-  const cacheTag = getCacheTag(projectId);
-  await evictCache(cacheTag);
+  // const cacheTag = getCacheTag(projectId);
+  // await evictCache(cacheTag);
 
   return response;
 };
 
-const getCacheTag = (projectId: string) => `/projects/${projectId}/storage`;
+//const getCacheTag = (projectId: string) => `/projects/${projectId}/storage`;
