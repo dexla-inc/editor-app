@@ -49,19 +49,6 @@ export const withComponentWrapper = <T extends Record<string, any>>(
       shareableContent,
     });
 
-    // Commenting out as liveblocks doesn't work properly since detachment.
-    // const selectedByOther = useEditorTreeStore(
-    //   useShallow((state) => {
-    //     const other = state.liveblocks?.others?.find(({ presence }: any) => {
-    //       return presence.selectedComponentIds?.includes(componentTree.id);
-    //     });
-
-    //     if (!other) return null;
-
-    //     return CURSOR_COLORS[other.connectionId % CURSOR_COLORS.length];
-    //   }),
-    // )!;
-
     const hasTooltip = !!component?.props?.tooltip;
     const initiallyLoading = component?.props?.initiallyLoading;
     const Wrapper = hasTooltip
@@ -100,7 +87,6 @@ export const withComponentWrapper = <T extends Record<string, any>>(
     const { isPicking, droppable, tealOutline } = useEditorShadows({
       componentId: componentTree.id!,
       isSelected: false,
-      //selectedByOther,
     });
 
     const childStyles = useComputeChildStyles({

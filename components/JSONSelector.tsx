@@ -134,7 +134,6 @@ const ListItem = ({
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      console.log({ item });
                       onSelectValue?.(item);
                     }}
                   >

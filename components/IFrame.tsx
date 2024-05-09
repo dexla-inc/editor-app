@@ -1,5 +1,6 @@
 import { useUserTheme } from "@/hooks/editor/useUserTheme";
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { HEADER_HEIGHT, NAVBAR_MIN_WIDTH, NAVBAR_WIDTH } from "@/utils/config";
 import createCache from "@emotion/cache";
@@ -13,7 +14,8 @@ import {
   Stack,
   Text,
 } from "@mantine/core";
-import { useEffect, useState } from "react";
+import throttle from "lodash.throttle";
+import { useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
 type Props = {
@@ -23,6 +25,7 @@ type Props = {
 export const IFrame = ({ children, projectId, ...props }: Props) => {
   const [contentRef, setContentRef] = useState<HTMLIFrameElement>();
   const setIframeWindow = useEditorStore((state) => state.setIframeWindow);
+  //const setCursor = useEditorTreeStore((state) => state.setCursor);
   const navbarWidth = useUserConfigStore((state) => state.navbarWidth);
   const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
   const [isLoading, setIsLoading] = useState(true);
@@ -111,6 +114,16 @@ export const IFrame = ({ children, projectId, ...props }: Props) => {
       style={styles}
       {...props}
       allow="clipboard-read; clipboard-write"
+      // TODO: get this back - turn it off for now as it causes every child component to re render
+      // onPointerMove={(event) => {
+      //   event.preventDefault();
+
+      //   setCursor({
+      //     x: Math.round(event.clientX),
+      //     y: Math.round(event.clientY),
+      //   });
+      // }}
+      //onPointerLeave={() => setCursor(undefined)}
     >
       {mountNode &&
         insertionTarget &&
