@@ -5,11 +5,10 @@ import {
 import { getWithoutAuth, postWithoutAuth } from "@/utils/apiNoAuth";
 import { FileWithPath } from "@mantine/dropzone";
 
-export const uploadFile = async (
+export const uploadFileInternal = async (
   projectId: string,
   file: File | File[] | FileWithPath | FileWithPath[],
   isMultiple: boolean = false,
-  internal: boolean = false,
 ) => {
   let url = `/projects/${projectId}/storage/internal?isMultiple=${isMultiple}`;
 
@@ -19,9 +18,7 @@ export const uploadFile = async (
 
   const response = (await postWithoutAuth<
     UploadMultipleResponse | UploadResponse
-  >(url, formData, { "Content-Type": "multipart/form-data" })) as
-    | UploadMultipleResponse
-    | UploadResponse;
+  >(url, formData)) as UploadMultipleResponse | UploadResponse;
 
   return response;
 };
