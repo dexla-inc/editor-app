@@ -14,7 +14,7 @@ import { useShallow } from "zustand/react/shallow";
 import { useInputValue } from "@/hooks/components/useInputValue";
 
 import { UploadMultipleResponse } from "@/requests/storage/types";
-import { uploadFile } from "@/requests/storage/mutations";
+import { uploadFileInternal } from "@/requests/storage/queries-noauth";
 
 type Props = EditableComponentMapper & FileButtonProps;
 
@@ -62,7 +62,7 @@ export const FileButtonComponent = forwardRef(
       if (!isPreviewMode) return;
       newValue = Array.isArray(newValue) ? newValue : [newValue];
 
-      const response = (await uploadFile(
+      const response = (await uploadFileInternal(
         projectId,
         newValue,
         true,
