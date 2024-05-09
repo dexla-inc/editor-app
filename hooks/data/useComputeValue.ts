@@ -119,47 +119,45 @@ export const useComputeValue = ({
     });
 
     return {
-      variableKeys,
-      componentKeys,
-      actionKeys,
-      browserKeys,
-      authKeys,
-      itemKeys,
+      variableKeys: [...new Set(variableKeys)],
+      componentKeys: [...new Set(componentKeys)],
+      actionKeys: [...new Set(actionKeys)],
+      browserKeys: [...new Set(browserKeys)],
+      authKeys: [...new Set(authKeys)],
+      itemKeys: [...new Set(itemKeys)],
     };
   }, [onLoad, valuePropsPaths]);
 
-  const variables = useVariableStore(
-    useShallow((state) =>
-      variableKeys.reduce((acc, key) => {
-        const variable = state.variableList.find((v) => v.id === key);
-        const variableValue =
-          variable?.value ?? variable?.defaultValue ?? undefined;
-        const variableHandler = {
-          TEXT: () => `\`${variableValue}\``,
-          BOOLEAN: () =>
-            typeof variableValue === "boolean"
-              ? variableValue
-              : safeJsonParse(variableValue),
-          NUMBER: () => safeJsonParse(variableValue),
-          OBJECT: () => variableValue,
-          ARRAY: () => variableValue,
-        };
-
-        if (variable) {
-          const value =
-            variableHandler[
-              variable.type as keyof typeof variableHandler
-            ]?.() ?? `undefined`;
-
-          return {
-            ...acc,
-            [key]: value,
-          };
-        }
-
+  const variables = useVariableStore((state) =>
+    state.variableList.reduce((acc, variable) => {
+      const key = variableKeys.find(
+        (variableKey) => variableKey === variable.id,
+      );
+      if (!key) {
         return acc;
-      }, {}),
-    ),
+      }
+      const variableValue =
+        variable?.value ?? variable?.defaultValue ?? undefined;
+      const variableHandler = {
+        TEXT: () => `\`${variableValue}\``,
+        BOOLEAN: () =>
+          typeof variableValue === "boolean"
+            ? variableValue
+            : safeJsonParse(variableValue),
+        NUMBER: () => safeJsonParse(variableValue),
+        OBJECT: () => variableValue,
+        ARRAY: () => variableValue,
+      };
+
+      const value =
+        variableHandler[variable.type as keyof typeof variableHandler]?.() ??
+        `undefined`;
+
+      return {
+        ...acc,
+        [key]: value,
+      };
+    }, {}),
   ) as RecordStringAny;
 
   const inputs = useInputsStore(
