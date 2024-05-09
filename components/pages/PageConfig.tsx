@@ -236,7 +236,7 @@ export default function PageConfig({ page, setPage }: Props) {
           }}
           onFocus={(event) => {
             if (form.values.slug) return;
-            const newSlug = slugify(form.values.title);
+            const newSlug = slugify(form.values.title).toLowerCase();
             setSlug(newSlug);
             form.setFieldValue("slug", newSlug);
             form.setTouched({ slug: true });
