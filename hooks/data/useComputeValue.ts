@@ -128,37 +128,37 @@ export const useComputeValue = ({
     };
   }, [onLoad, valuePropsPaths]);
 
-  const variables = useVariableStore((state) =>
-    state.variableList.reduce((acc, variable) => {
-      const key = variableKeys.find(
-        (variableKey) => variableKey === variable.id,
-      );
-      if (!key) {
-        return acc;
-      }
-      const variableValue =
-        variable?.value ?? variable?.defaultValue ?? undefined;
-      const variableHandler = {
-        TEXT: () => `\`${variableValue}\``,
-        BOOLEAN: () =>
-          typeof variableValue === "boolean"
-            ? variableValue
-            : safeJsonParse(variableValue),
-        NUMBER: () => safeJsonParse(variableValue),
-        OBJECT: () => variableValue,
-        ARRAY: () => variableValue,
-      };
-
-      const value =
-        variableHandler[variable.type as keyof typeof variableHandler]?.() ??
-        `undefined`;
-
-      return {
-        ...acc,
-        [key]: value,
-      };
-    }, {}),
+  const rawVariables = useVariableStore(
+    useShallow((state) => pick(state.variableList, variableKeys)),
   ) as RecordStringAny;
+
+  const variables: RecordStringAny = useMemo(
+    () =>
+      Object.entries(rawVariables).reduce((acc, [key, variable]) => {
+        const variableValue =
+          variable?.value ?? variable?.defaultValue ?? undefined;
+        const variableHandler = {
+          TEXT: () => `\`${variableValue}\``, // Template literals for text
+          BOOLEAN: () =>
+            typeof variableValue === "boolean"
+              ? variableValue
+              : safeJsonParse(variableValue),
+          NUMBER: () => safeJsonParse(variableValue), // Parse number safely
+          OBJECT: () => variableValue,
+          ARRAY: () => variableValue,
+        };
+
+        const value =
+          variableHandler[variable.type as keyof typeof variableHandler]?.() ??
+          "undefined";
+
+        return {
+          ...acc,
+          [key]: value,
+        };
+      }, {}),
+    [rawVariables],
+  );
 
   const inputs = useInputsStore(
     useShallow((state) => pick(state.inputValues, componentKeys)),

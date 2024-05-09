@@ -13,7 +13,9 @@ export const VariableSelect = ({
   setVariableType,
   ...props
 }: Props) => {
-  const variables = useVariableStore((state) => state.variableList);
+  const variables = useVariableStore((state) =>
+    Object.values(state.variableList),
+  );
   const variableSelectData = (variables ?? []).map((variable) => {
     return {
       value: variable.id,

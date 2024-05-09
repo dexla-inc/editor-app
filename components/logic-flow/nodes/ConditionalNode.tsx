@@ -38,7 +38,9 @@ type NodeFormType = {
 export const NodeForm = ({ form }: NodeFormType) => {
   const selectedNode = useFlowStore((state) => state.selectedNode);
   const isUpdating = useFlowStore((state) => state.isUpdating);
-  const variableList = useVariableStore((state) => state.variableList);
+  const variableList = useVariableStore((state) =>
+    Object.values(state.variableList),
+  );
 
   return (
     <Stack>

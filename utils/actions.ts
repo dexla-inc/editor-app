@@ -807,9 +807,9 @@ export const useChangeVariableAction = async ({
   action,
   computeValue,
 }: ChangeVariableActionParams) => {
-  const variable = useVariableStore
-    .getState()
-    .variableList.find((v) => v.id === action.variableId);
+  const variable = Object.values(useVariableStore.getState().variableList).find(
+    (v) => v.id === action.variableId,
+  );
 
   if (!variable) {
     return;
