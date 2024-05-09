@@ -64,12 +64,6 @@ export const ModalDrawerFormBuilder = ({
           {...form.getInputProps("titleTag")}
           onChange={(value) => onChange("titleTag", value)}
         />
-        <SizeSelector
-          label="Size"
-          showFullscreen
-          {...form.getInputProps("size")}
-          onChange={(value) => onChange("size", value as string)}
-        />
         {children && children({ form, onChange })}
         <SegmentedControlYesNo
           label="Include Header"

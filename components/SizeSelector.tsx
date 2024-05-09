@@ -13,6 +13,23 @@ interface CustomSelectItemProps {
   description: string;
 }
 
+const fullLabels: Record<MantineSize, string> = {
+  xxs: "Extra Extra Small",
+  xs: "Extra Small",
+  sm: "Small",
+  md: "Medium",
+  lg: "Large",
+  xl: "Extra Large",
+};
+
+const defaultFullLabels: Record<MantineSize, string> = {
+  xs: fullLabels.xs,
+  sm: fullLabels.sm,
+  md: fullLabels.md,
+  lg: fullLabels.lg,
+  xl: fullLabels.xl,
+};
+
 const CustomSelectItem: React.FC<CustomSelectItemProps> = ({
   label,
   description,
@@ -26,19 +43,12 @@ const CustomSelectItem: React.FC<CustomSelectItemProps> = ({
   </Box>
 );
 
-const mantineSizes = [
-  { label: "Extra Small", value: "xs", description: "" },
-  { label: "Small", value: "sm", description: "" },
-  { label: "Medium", value: "md", description: "" },
-  { label: "Large", value: "lg", description: "" },
-  { label: "Extra Large", value: "xl", description: "" },
-];
-
 type Props = {
   showNone?: boolean;
   showFullscreen?: boolean;
   data?: Array<{ label: string; value: string }>;
   sizing?: Record<MantineSize, string>;
+  showFullLabel?: boolean;
 } & Omit<SelectProps, "data">;
 
 export const SizeSelector = ({
@@ -46,38 +56,49 @@ export const SizeSelector = ({
   showFullscreen = false,
   label = "Size",
   sizing,
+  showFullLabel,
   ...props
 }: Props) => {
   const defaultData = useMemo(() => {
-    let newData = [...mantineSizes] as SelectItem[];
+    let newData: SelectItem[] = [];
+
+    if (sizing) {
+      newData = Object.entries(sizing).map(([size, description]) => ({
+        label: showFullLabel
+          ? fullLabels[size] || size
+          : size.charAt(0).toUpperCase() + size.slice(1),
+        value: size,
+        description: description,
+      }));
+    } else {
+      newData = Object.keys(defaultFullLabels).map((size) => ({
+        label: showFullLabel
+          ? fullLabels[size]
+          : size.charAt(0).toUpperCase() + size.slice(1),
+        value: size,
+        description: showFullLabel
+          ? undefined
+          : size.charAt(0).toUpperCase() + size.slice(1),
+      }));
+    }
 
     if (showFullscreen) {
       newData.push({
         label: "Fullscreen",
         value: "fullscreen",
-        description: sizing ? "Full screen" : "",
       });
     }
 
     if (showNone) {
-      newData.push({
+      newData.unshift({
         label: "None",
         value: "0",
-        description: sizing ? "0px" : "",
+        description: "0px",
       });
     }
 
-    if (sizing) {
-      const sizingItems = Object.entries(sizing).map(([size, description]) => ({
-        label: size.toUpperCase(),
-        value: size,
-        description: description,
-      }));
-      newData = newData.concat(sizingItems);
-    }
-
     return newData;
-  }, [showNone, showFullscreen, sizing]);
+  }, [sizing, showFullscreen, showNone, showFullLabel]);
 
   return (
     <Select
