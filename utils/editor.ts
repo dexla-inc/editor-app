@@ -109,8 +109,8 @@ export const replaceIdsDeeply = (treeRoot: ComponentStructure) => {
     treeRoot,
     async (node) => {
       const newId = nanoid();
-      const nodeAttrs = cloneDeep(componentMutableAttrs[node.id!]);
 
+      const nodeAttrs = cloneDeep(componentMutableAttrs[node.id!]);
       nodeAttrs.id = newId;
 
       // if targetId is equal to the current pointer node, update that parent targetId with the new id of the current node

@@ -296,13 +296,9 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                   state.currentTreeComponentsStates?.[lastComponentId] ??
                   "default";
 
-                const copiedComponentMutableAttrs = cloneDeep(
-                  state.componentMutableAttrs,
-                );
-
                 componentIds.forEach((id) => {
-                  copiedComponentMutableAttrs[id] = updateTreeComponentAttrs(
-                    copiedComponentMutableAttrs[id] ?? {},
+                  state.componentMutableAttrs[id] = updateTreeComponentAttrs(
+                    cloneDeep(state.componentMutableAttrs[id] ?? {}),
                     attrs,
                     currentState,
                   );
@@ -327,9 +323,8 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                 }
 
                 // Return the new state with the updated componentMutableAttrs
-
                 return {
-                  componentMutableAttrs: copiedComponentMutableAttrs,
+                  componentMutableAttrs: state.componentMutableAttrs,
                 };
               },
               false,
@@ -475,10 +470,9 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
       client,
       // comment this out to disable multiplayer and see if that fix the state loss issue
       // Adding this back in causes SortableTreeItem to error
-      storageMapping: {
-        tree: true,
-        componentMutableAttrs: true,
-      },
+      // storageMapping: {
+      //   tree: true,
+      // },
       presenceMapping: {
         currentUser: true,
         cursor: true,

@@ -17,7 +17,6 @@ type Props = {
 };
 
 const EditorCanvasComponent = ({ projectId }: Props) => {
-  console.log("EditorCanvasComponent");
   const editorTree = useEditorTreeStore((state) => state.tree);
   useEditorHotkeys();
   useEditorHotkeysUndoRedo();
@@ -80,6 +79,15 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
           overflow: "hidden",
         }}
         p={0}
+        // TODO: get this back - turn it off for now
+        // onPointerMove={(event) => {
+        //   event.preventDefault();
+        //   setCursor({
+        //     x: Math.round(event.clientX),
+        //     y: Math.round(event.clientY),
+        //   });
+        // }}
+        // onPointerLeave={() => setCursor(undefined)}
       >
         <IFrame projectId={projectId}>{renderTree(editorTree.root)}</IFrame>
         {isCustomComponentModalOpen && (

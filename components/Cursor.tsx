@@ -1,5 +1,3 @@
-import { gapSizes } from "@/utils/defaultSizes";
-
 type Props = {
   color: string;
   x: number;
