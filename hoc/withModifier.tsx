@@ -3,8 +3,7 @@ import cloneDeep from "lodash.clonedeep";
 import get from "lodash.get";
 import merge from "lodash.merge";
 import set from "lodash.set";
-
-import { ComponentType, useMemo } from "react";
+import { ComponentType } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useShallow } from "zustand/react/shallow";
 import {

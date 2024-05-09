@@ -68,12 +68,6 @@ export const useDataSourceStore = create<DataSourceState>()(
 
           if (expiresAt) {
             const now = Date.now();
-            console.log(
-              "hasTokenExpired",
-              expiresAt,
-              now,
-              expiresAt && now > expiresAt,
-            );
             return now > expiresAt;
           }
           return true;
