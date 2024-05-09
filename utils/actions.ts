@@ -786,11 +786,6 @@ const updateVariableArray = ({
   newValue,
   path,
 }: UpdateVariableArrayParams) => {
-  // const _value = variable.value ?? variable.defaultValue;
-  // let value =
-  //   typeof _value === "string" ? safeJsonParse(_value ?? "[]") : _value ?? [];
-  // newValue = typeof newValue === "string" ? safeJsonParse(newValue) : newValue;
-
   if (method) {
     currentValue = arrayActions[method]({
       value: currentValue,
@@ -815,7 +810,11 @@ export const useChangeVariableAction = async ({
     return;
   }
 
-  const currentValue = safeJsonParse(variable.value ?? variable.defaultValue);
+  const variableValue = variable.value ?? variable.defaultValue;
+  const currentValue =
+    typeof variableValue === "string"
+      ? safeJsonParse(variableValue)
+      : variableValue;
 
   const setVariable = useVariableStore.getState().setVariable;
   const index = computeValue<number>({ value: action.index });
