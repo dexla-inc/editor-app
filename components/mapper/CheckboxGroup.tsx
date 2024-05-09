@@ -2,14 +2,13 @@ import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { EditableComponentMapper } from "@/utils/editor";
 import { Checkbox as MantineCheckbox, CheckboxGroupProps } from "@mantine/core";
 import merge from "lodash.merge";
-import { forwardRef, memo, useEffect, useState } from "react";
+import { forwardRef, memo } from "react";
 import { useInputValue } from "@/hooks/components/useInputValue";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useShallow } from "zustand/react/shallow";
 import { gapSizes } from "@/utils/defaultSizes";
 import { useRenderData } from "@/hooks/components/useRenderData";
 import { pick } from "next/dist/lib/pick";
-import { omit } from "next/dist/shared/lib/router/utils/omit";
 
 type Props = EditableComponentMapper & CheckboxGroupProps;
 
@@ -30,7 +29,7 @@ const CheckboxGroupComponent = forwardRef(
 
     const gapSize = gapSizes[gap ?? "sm"];
 
-    const [, setInputStore] = useInputValue<string[]>(
+    const [value, setInputStore] = useInputValue<string[]>(
       {
         value: component?.onLoad?.value ?? [],
       },
@@ -42,7 +41,7 @@ const CheckboxGroupComponent = forwardRef(
     const defaultTriggers = isPreviewMode
       ? {
           onChange: (val: string[]) => {
-            setValue(val);
+            setInputStore(val);
             onChange?.({ target: { value: val } });
           },
         }
@@ -50,13 +49,6 @@ const CheckboxGroupComponent = forwardRef(
     const customStyle = merge({}, defaultStyle, props.style);
 
     const rootStyleProps = ["flexWrap", "flexDirection"];
-
-    const [value, setValue] = useState<string[]>([]);
-
-    useEffect(() => {
-      setInputStore(value);
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [value]);
 
     const { renderData } = useRenderData({ component });
 
