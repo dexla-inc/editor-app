@@ -181,6 +181,7 @@ const Modifier = withModifier(({ selectedComponent }) => {
         <SizeSelector
           label="Gap"
           sizing={gapSizes}
+          showFullLabel
           {...form.getInputProps("gap")}
           onChange={(value) => {
             form.setFieldValue("gap", value as string);
