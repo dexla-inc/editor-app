@@ -11,6 +11,7 @@ import { CustomComponentModal } from "@/components/CustomComponentModal";
 import { useUserConfigStore } from "@/stores/userConfig";
 import useEditorHotkeysUndoRedo from "@/hooks/editor/useEditorHotkeysUndoRedo";
 import { RenderTreeFunc } from "@/types/component";
+import { useShallow } from "zustand/react/shallow";
 
 type Props = {
   projectId: string;
@@ -65,7 +66,9 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
     });
   };
 
+  console.log("editorTree?.root?.children", editorTree?.root?.children);
   if ((editorTree?.root?.children ?? [])?.length === 0) {
+    console.log("null");
     return null;
   }
 

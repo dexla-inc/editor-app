@@ -207,7 +207,10 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                     newComponentMutableAttrs,
                   ),
                 };
-
+                console.log(
+                  "setTree",
+                  options?.onLoad ? tree : state.pageLoadTree,
+                );
                 return newState;
               },
               false,
