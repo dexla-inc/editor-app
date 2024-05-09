@@ -10,7 +10,7 @@ import { useShallow } from "zustand/react/shallow";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useInputValue } from "@/hooks/components/useInputValue";
 import { UploadMultipleResponse } from "@/requests/storage/types";
-import { uploadFile } from "@/requests/storage/queries-noauth";
+import { uploadFileInternal } from "@/requests/storage/queries-noauth";
 
 type Props = EditableComponentMapper & DropzoneProps;
 
@@ -55,7 +55,7 @@ const FileUploadComponent = ({
     onDrop: async (newValue: File | File[]) => {
       newValue = Array.isArray(newValue) ? newValue : [newValue];
 
-      const response = (await uploadFile(
+      const response = (await uploadFileInternal(
         projectId,
         newValue,
         true,

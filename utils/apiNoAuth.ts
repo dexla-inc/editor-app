@@ -18,14 +18,19 @@ async function doFetchWithoutAuth<Type>({
   return new Promise(async (resolve, reject) => {
     let response = null;
     try {
+      const isFormData = body instanceof FormData;
+      let contentType;
+      if (!isFormData) {
+        contentType = "application/json";
+      }
       response = await fetch(`${baseURL}${url}`, {
         ...init,
         method,
         headers: {
-          "Content-Type": "application/json",
+          ...(contentType ? { "Content-Type": contentType } : {}),
+          ...headers,
         },
-        ...headers,
-        ...(body ? { body: JSON.stringify(body) } : {}),
+        ...(body ? { body: isFormData ? body : JSON.stringify(body) } : {}),
       });
 
       const json = await response?.json?.();
@@ -58,10 +63,12 @@ export async function getWithoutAuth<Type>(
 export async function postWithoutAuth<Type>(
   url: FetchType["url"],
   body: FetchType["body"],
+  headers?: FetchType["headers"],
 ): Promise<Type | ReadableStream<Uint8Array> | null> {
   return doFetchWithoutAuth<Type | ReadableStream<Uint8Array> | null>({
     url,
     method: "POST",
     body,
+    headers,
   });
 }

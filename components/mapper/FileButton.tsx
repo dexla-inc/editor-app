@@ -12,8 +12,9 @@ import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useShallow } from "zustand/react/shallow";
 import { useInputValue } from "@/hooks/components/useInputValue";
-import { uploadFile } from "@/requests/storage/queries-noauth";
+
 import { UploadMultipleResponse } from "@/requests/storage/types";
+import { uploadFileInternal } from "@/requests/storage/queries-noauth";
 
 type Props = EditableComponentMapper & FileButtonProps;
 
@@ -61,7 +62,7 @@ export const FileButtonComponent = forwardRef(
       if (!isPreviewMode) return;
       newValue = Array.isArray(newValue) ? newValue : [newValue];
 
-      const response = (await uploadFile(
+      const response = (await uploadFileInternal(
         projectId,
         newValue,
         true,
