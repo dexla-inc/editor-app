@@ -53,7 +53,6 @@ export const GridColumn = ({
   );
 
   const isParentGridDirectionColumn = parent?.props?.gridDirection === "column";
-  console.log("isPreviewModeGridColumn", isPreviewMode);
 
   return (
     <>
