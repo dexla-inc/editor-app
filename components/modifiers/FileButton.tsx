@@ -11,7 +11,6 @@ const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm();
 
   useEffect(() => {
-    console.log("accept", selectedComponent.props?.accept);
     form.setValues(
       merge({}, requiredModifiers.fileButton, {
         accept: selectedComponent.props?.accept,
@@ -51,7 +50,6 @@ const Modifier = withModifier(({ selectedComponent }) => {
           ]}
           {...form.getInputProps("accept")}
           onChange={(value) => {
-            console.log("getInputProps", value);
             form.setFieldValue("accept", value);
             debouncedTreeComponentAttrsUpdate({
               attrs: { props: { accept: value } },
