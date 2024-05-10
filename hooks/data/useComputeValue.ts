@@ -62,9 +62,7 @@ export const useComputeValue = ({
   onLoad = {},
 }: UseComputeValue) => {
   onLoad = cloneDeep(onLoad);
-  if (Object.keys(onLoad).length) {
-    console.log(onLoad);
-  }
+
   const browser = useRouter();
   const valuePropsPaths = useMemo(() => {
     return findValuePropsPaths(onLoad);
@@ -288,7 +286,6 @@ export const useComputeValue = ({
       boundCode: (fieldValue: ValueProps) => {
         try {
           const boundCode = transformBoundCode(fieldValue.boundCode ?? "");
-          console.log(boundCode);
           return autoRunJavascriptCode(boundCode);
         } catch {
           return;
