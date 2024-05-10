@@ -297,8 +297,11 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                   "default";
 
                 componentIds.forEach((id) => {
+                  const clonedAttrs = cloneDeep(
+                    state.componentMutableAttrs[id] ?? {},
+                  );
                   state.componentMutableAttrs[id] = updateTreeComponentAttrs(
-                    cloneDeep(state.componentMutableAttrs[id] ?? {}),
+                    clonedAttrs,
                     attrs,
                     currentState,
                   );
