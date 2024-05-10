@@ -13,8 +13,12 @@ export const CardComponent = forwardRef(
   ({ renderTree, shareableContent, component, ...props }: Props, ref) => {
     const theme = useThemeStore((state) => state.theme);
 
-    const { dataType, data, triggers, ...componentProps } =
-      component?.props ?? {};
+    const {
+      dataType = "static",
+      data,
+      triggers,
+      ...componentProps
+    } = component?.props ?? {};
 
     const gapPx = convertSizeToPx(component?.props?.gap, "gap");
     const cardStylingProps = getCardStyling(

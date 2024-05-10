@@ -20,8 +20,14 @@ const FormComponent = forwardRef(
       useShallow((state) => state.isPreviewMode || state.isLive),
     );
 
-    const { children, triggers, loading, dataType, gap, ...componentProps } =
-      component.props as any;
+    const {
+      children,
+      triggers,
+      loading,
+      dataType = "static",
+      gap,
+      ...componentProps
+    } = component.props as any;
     const { onSubmit, ...otherTriggers } = triggers || {};
     const { style, ...otherProps } = props as any;
     const gapPx = convertSizeToPx(gap, "gap");
