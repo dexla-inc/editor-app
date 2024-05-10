@@ -102,7 +102,7 @@ const AutocompleteComponent = forwardRef(
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [itemSubmitted]);
-    console.log({ data });
+
     return (
       <MantineAutocomplete
         ref={ref}
