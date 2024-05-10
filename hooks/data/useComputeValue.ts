@@ -143,7 +143,7 @@ export const useComputeValue = ({
             typeof variableValue === "boolean"
               ? variableValue
               : safeJsonParse(variableValue),
-          NUMBER: () => safeJsonParse(variableValue), // Parse number safely
+          NUMBER: () => safeJsonParse(variableValue),
           OBJECT: () => variableValue,
           ARRAY: () => variableValue,
         };

@@ -71,7 +71,8 @@ export const getProjectType = (href: string): UrlType => {
   }
 };
 
-export function safeJsonParse<T>(str: string) {
+export function safeJsonParse(str: any) {
+  if (typeof str !== "string") return str;
   try {
     return JSON.parse(str);
   } catch (e) {
