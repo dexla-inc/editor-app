@@ -38,7 +38,9 @@ type Props = {
 };
 
 export const VariableForm = ({ variableId }: Props) => {
-  const variableList = useVariableStore((state) => state.variableList);
+  const variableList = useVariableStore((state) =>
+    Object.values(state.variableList),
+  );
   const setVariable = useVariableStore((state) => state.setVariable);
   const variable = variableList.find((v) => v.id === variableId);
   const [selectedType, setSelectedType] = useState(variable?.type ?? "TEXT");

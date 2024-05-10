@@ -31,7 +31,9 @@ export const useDataBinding = () => {
       },
     };
 
-    const variablesList = useVariableStore.getState().variableList;
+    const variablesList = Object.values(
+      useVariableStore.getState().variableList,
+    );
     const auth = useDataSourceStore.getState().getAuthState();
 
     const components = Object.entries(

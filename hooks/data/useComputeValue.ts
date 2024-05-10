@@ -119,48 +119,46 @@ export const useComputeValue = ({
     });
 
     return {
-      variableKeys,
-      componentKeys,
-      actionKeys,
-      browserKeys,
-      authKeys,
-      itemKeys,
+      variableKeys: [...new Set(variableKeys)],
+      componentKeys: [...new Set(componentKeys)],
+      actionKeys: [...new Set(actionKeys)],
+      browserKeys: [...new Set(browserKeys)],
+      authKeys: [...new Set(authKeys)],
+      itemKeys: [...new Set(itemKeys)],
     };
   }, [onLoad, valuePropsPaths]);
 
-  const variables = useVariableStore(
-    useShallow((state) =>
-      variableKeys.reduce((acc, key) => {
-        const variable = state.variableList.find((v) => v.id === key);
+  const rawVariables = useVariableStore(
+    useShallow((state) => pick(state.variableList, variableKeys)),
+  ) as RecordStringAny;
+
+  const variables: RecordStringAny = useMemo(
+    () =>
+      Object.entries(rawVariables).reduce((acc, [key, variable]) => {
         const variableValue =
           variable?.value ?? variable?.defaultValue ?? undefined;
         const variableHandler = {
-          TEXT: () => `\`${variableValue}\``,
+          TEXT: () => `\`${variableValue}\``, // Template literals for text
           BOOLEAN: () =>
             typeof variableValue === "boolean"
               ? variableValue
               : safeJsonParse(variableValue),
-          NUMBER: () => safeJsonParse(variableValue),
+          NUMBER: () => safeJsonParse(variableValue), // Parse number safely
           OBJECT: () => variableValue,
           ARRAY: () => variableValue,
         };
 
-        if (variable) {
-          const value =
-            variableHandler[
-              variable.type as keyof typeof variableHandler
-            ]?.() ?? `undefined`;
+        const value =
+          variableHandler[variable.type as keyof typeof variableHandler]?.() ??
+          "undefined";
 
-          return {
-            ...acc,
-            [key]: value,
-          };
-        }
-
-        return acc;
+        return {
+          ...acc,
+          [key]: value,
+        };
       }, {}),
-    ),
-  ) as RecordStringAny;
+    [rawVariables],
+  );
 
   const inputs = useInputsStore(
     useShallow((state) => pick(state.inputValues, componentKeys)),

@@ -57,7 +57,9 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
     (p) => p.id === activePage?.id,
   )?.actions;
   const relatedComponentsData = useShareableContent({ endpoints: endpoints! });
-  const variablesList = useVariableStore((state) => state.variableList);
+  const variablesList = useVariableStore((state) =>
+    Object.values(state.variableList),
+  );
   const browser = useRouter();
   const auth = useDataSourceStore((state) => state.getAuthState());
   const inputsStore = useInputsStore((state) => state.inputValues);

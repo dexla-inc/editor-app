@@ -7,11 +7,11 @@ type VariableStoreParams = VariableResponse & {
 };
 
 type VariablesState = {
-  variableList: Array<VariableStoreParams>;
+  resetVariable: (variableId: string) => void;
   initializeVariableList: (variableList: Array<VariableResponse>) => void;
   setVariable: (variable: Partial<VariableStoreParams>) => void;
   deleteVariable: (variableId: string) => void;
-  resetVariable: (variableId: string) => void;
+  variableList: Record<string, VariableStoreParams>;
 };
 
 export const useVariableStore = create<VariablesState>()(
@@ -21,12 +21,20 @@ export const useVariableStore = create<VariablesState>()(
         resetVariable: (variableId) => {
           set(
             (state) => {
-              const newVariableList = state.variableList.map((variable) => {
-                if (variable.id === variableId) {
-                  return { ...variable, value: variable.defaultValue };
-                }
-                return variable;
-              });
+              const newVariableList = Object.keys(state.variableList).reduce(
+                (acc, key) => {
+                  if (key === variableId) {
+                    acc[key] = {
+                      ...state.variableList[key],
+                      value: state.variableList[key].defaultValue,
+                    };
+                  } else {
+                    acc[key] = state.variableList[key];
+                  }
+                  return acc;
+                },
+                {} as Record<string, VariableStoreParams>,
+              );
 
               return { variableList: newVariableList };
             },
@@ -35,21 +43,20 @@ export const useVariableStore = create<VariablesState>()(
           );
         },
 
-        variableList: [] as Array<VariableStoreParams>,
         initializeVariableList: (variableList) => {
-          const newVariableList: Array<VariableStoreParams> = variableList
-            .map((variable) => {
-              const existingVariable = get().variableList.find(
-                (v) => v.id === variable.id,
-              );
-              return {
-                ...variable,
-                value: variable.isGlobal
-                  ? existingVariable?.value ?? null
-                  : variable.defaultValue,
-              };
-            })
-            .sort((a, b) => a.name.localeCompare(b.name));
+          const newVariableList: Record<string, VariableStoreParams> =
+            variableList.reduce(
+              (acc, variable) => {
+                acc[variable.id] = {
+                  ...variable,
+                  value: variable.isGlobal
+                    ? get().variableList[variable.id]?.value ?? null
+                    : variable.defaultValue,
+                };
+                return acc;
+              },
+              {} as Record<string, VariableStoreParams>,
+            );
 
           set(
             { variableList: newVariableList },
@@ -57,25 +64,21 @@ export const useVariableStore = create<VariablesState>()(
             "variables/initializeVariableList",
           );
         },
-        setVariable: (variable: Partial<VariableStoreParams>) => {
+        setVariable: (variable) => {
+          const variableId = variable?.id ?? "";
           set(
             (state) => {
-              const index = state.variableList.findIndex(
-                (item) => item.id === variable.id,
-              );
-              let newVariableList = [...state.variableList];
-
-              if (index >= 0) {
-                newVariableList[index] = {
-                  ...newVariableList[index],
+              const newVariableList = { ...state.variableList };
+              if (variableId in newVariableList) {
+                newVariableList[variableId] = {
+                  ...newVariableList[variableId],
                   ...variable,
                 };
               } else if (variable.id) {
-                const newVariable: VariableStoreParams = {
+                newVariableList[variable.id] = {
                   ...(variable as VariableStoreParams),
                   value: variable.value ?? variable.defaultValue,
                 };
-                newVariableList = [...newVariableList, newVariable];
               }
 
               return { variableList: newVariableList };
@@ -85,24 +88,20 @@ export const useVariableStore = create<VariablesState>()(
           );
         },
         deleteVariable: (variableId) => {
-          const _variableList = get().variableList;
-          const index = _variableList.findIndex(
-            (item) => item.id === variableId,
+          const newVariableList = { ...get().variableList };
+          delete newVariableList[variableId];
+          set(
+            { variableList: newVariableList },
+            false,
+            "variables/deleteVariable",
           );
-          if (index >= 0) {
-            _variableList.splice(index, 1);
-            set(
-              { variableList: [..._variableList] },
-              false,
-              "variables/deleteVariable",
-            );
-          }
         },
+        variableList: {},
       }),
       {
         name: "variables-storage",
         partialize: (state) => ({
-          variableList: state.variableList
+          variableList: Object.values(state.variableList)
             ?.filter((v) => v.isGlobal)
             ?.map(({ id, value, isGlobal }) => ({ id, value, isGlobal })),
         }),
