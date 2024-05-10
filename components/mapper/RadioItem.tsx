@@ -28,7 +28,7 @@ const RadioItemComponent = forwardRef<HTMLInputElement, Props>(
     } = component.props as any;
 
     const { value = defaultValue } = component.onLoad ?? {};
-    const { value: parentValue, isInsideGroup = false } = shareableContent;
+    const { value: parentValue } = shareableContent;
     const checked = parentValue === String(value);
 
     return (
@@ -50,7 +50,6 @@ const RadioItemComponent = forwardRef<HTMLInputElement, Props>(
           </div>
         }
         value={value}
-        checked={checked}
         styles={{
           inner: { display: "none" },
           label: {

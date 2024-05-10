@@ -48,8 +48,7 @@ export const useDataBinding = () => {
       boundCode: string,
       ctx?: ComputeValuePropCtx,
     ): T | undefined => {
-      const { actions, event } = ctx ?? {};
-      const item = shareableContent;
+      const { actions, event, item = shareableContent } = ctx ?? {};
 
       try {
         const result = eval(`(function () { ${boundCode} })`)();
