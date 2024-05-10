@@ -13,8 +13,12 @@ type Props = EditableComponentMapper & TableProps;
 
 export const TableComponent = forwardRef(
   ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
-    const { children, triggers, dataType, ...componentProps } =
-      component.props as any;
+    const {
+      children,
+      triggers,
+      dataType = "static",
+      ...componentProps
+    } = component.props as any;
     const { onLoad } = component;
 
     const { data } = useEndpoint({

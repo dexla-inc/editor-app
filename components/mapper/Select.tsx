@@ -26,7 +26,7 @@ const SelectComponent = forwardRef(
       children,
       triggers,
       loading,
-      dataType,
+      dataType = "static",
       bg,
       size,
       textColor,

@@ -11,6 +11,7 @@ import merge from "lodash.merge";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { forwardRef, memo, useCallback, useEffect, useState } from "react";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import isEmpty from "lodash.isempty";
 
 type Props = EditableComponentMapper & {
   onClick?: (e: any) => void;
@@ -49,6 +50,7 @@ const GoogleMapPluginComponent = forwardRef<GoogleMap, Props>(
       centerLng,
       markers,
     } = component.onLoad;
+
     const zoom = Number(zoomValue);
     const center = {
       lat: centerLat ?? defaultCenter.lat,
@@ -128,14 +130,17 @@ const GoogleMapPluginComponent = forwardRef<GoogleMap, Props>(
 
     const validMarkers = Array.isArray(markersParsed)
       ? markersParsed.filter((marker) => {
-          const isValidLat =
-            typeof marker.position.lat === "number" &&
-            !isNaN(marker.position.lat);
-          const isValidLng =
-            typeof marker.position.lng === "number" &&
-            !isNaN(marker.position.lng);
-          if (!isValidLat || !isValidLng) {
-            console.error("Invalid marker position:", marker);
+          const isValidId = !isEmpty(marker.id);
+          const isValidLat = !isEmpty(Number(marker.position.lat));
+          const isValidLng = !isEmpty(Number(marker.position.lng));
+          if (isValidLat || isValidLng || isValidId) {
+            console.error(
+              `Component: ${component.description} - Invalid marker position:`,
+              marker,
+              isValidId,
+              isValidLat,
+              isValidLng,
+            );
             return false;
           }
           return true;
@@ -152,8 +157,7 @@ const GoogleMapPluginComponent = forwardRef<GoogleMap, Props>(
         );
         map.fitBounds(bounds);
       },
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      [center, markersParsed, zoom],
+      [validMarkers],
     );
 
     useEffect(() => {
@@ -164,7 +168,7 @@ const GoogleMapPluginComponent = forwardRef<GoogleMap, Props>(
       }, MAP_SCRIPT_DELAY_DURATION);
     }, [zoom, map]);
 
-    const unMount = useCallback((map: any) => {
+    const unMount = useCallback(() => {
       setMap(null);
     }, []);
 
@@ -205,7 +209,7 @@ const GoogleMapPluginComponent = forwardRef<GoogleMap, Props>(
           }}
           zoom={zoom}
         >
-          {markersParsed?.map?.(({ id, name, position }) => (
+          {validMarkers?.map?.(({ id, name, position }) => (
             <Marker
               key={id}
               position={position}
