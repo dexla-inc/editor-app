@@ -2,9 +2,13 @@ import { ComponentToBindWrapper } from "@/components/ComponentToBindWrapper";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { ValueProps } from "@/types/dataBinding";
 import {
+  Button,
+  Flex,
+  Group,
   NumberInput,
   NumberInputProps,
   SegmentedControlProps,
+  SelectProps,
   Stack,
   Text,
   TextInput,
@@ -15,6 +19,8 @@ import { SegmentedControlYesNo } from "./SegmentedControlYesNo";
 import { TopLabel } from "./TopLabel";
 import { FieldType } from "./data/forms/StaticFormFieldsBuilder";
 import { SegmentedControlInput } from "./SegmentedControlInput";
+import { Icon } from "@/components/Icon";
+import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
 
 // Need to extend input props depending on fieldType
 type BaseProps = {
@@ -28,6 +34,7 @@ type BaseProps = {
   decimalPlaces?: number;
   isPageAction?: boolean;
   useTrueOrFalseStrings?: boolean;
+  form: any;
 };
 
 // Define a helper type for the conditional props extension
@@ -52,6 +59,7 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
   fieldType = "text",
   decimalPlaces,
   isPageAction,
+  form,
   ...props
 }: ComponentToBindFromInputProps<T>) => {
   const commonProps = {
@@ -143,6 +151,56 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
             }}
             {...commonProps}
           />
+        </Stack>
+      ) : fieldType === "options" ? (
+        <Stack>
+          <Flex justify="space-between" gap="xl" mt="0.5rem">
+            <Button
+              type="button"
+              compact
+              onClick={() => {
+                form.insertListItem("onLoad.data.static", {
+                  label: "",
+                  value: "",
+                });
+              }}
+              variant="default"
+              sx={{ marginRight: 0 }}
+              leftIcon={<Icon name="IconPlus" size={ICON_SIZE} />}
+            >
+              Add
+            </Button>
+          </Flex>
+          <Flex direction="column" gap="10px">
+            {(form.values.onLoad.data.static ?? [])?.map(
+              (_: SelectProps, index: number) => {
+                return (
+                  <Group key={index} style={{ flexWrap: "nowrap" }}>
+                    <TextInput
+                      size="xs"
+                      placeholder="label"
+                      {...form.getInputProps(`props.data.${index}.label`)}
+                      style={{ width: "50%" }}
+                    />
+                    <TextInput
+                      size="xs"
+                      placeholder="value"
+                      {...form.getInputProps(`props.data.${index}.value`)}
+                      style={{ width: "50%" }}
+                    />
+
+                    <Icon
+                      name={ICON_DELETE}
+                      onClick={() => {
+                        form.removeListItem("onLoad.data.static", index);
+                      }}
+                      style={{ cursor: "pointer" }}
+                    />
+                  </Group>
+                );
+              },
+            )}
+          </Flex>
         </Stack>
       ) : (
         <Stack w="100%">

@@ -80,9 +80,9 @@ const SelectComponent = forwardRef(
         }));
       }
     }
-
+    console.log(component.onLoad);
     if (dataType === "static") {
-      data = component.props?.data ?? [];
+      data = component.onLoad?.data ?? [];
     }
 
     const rootStyleProps = ["display", "width", "minHeight", "minWidth"];

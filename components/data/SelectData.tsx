@@ -1,9 +1,9 @@
 import { DynamicSettings } from "@/components/data/forms/DynamicSettings";
-import { SelectOptionsForm } from "@/components/data/forms/static/SelectOptionsForm";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { SegmentedControl, Select, Stack, Text, Title } from "@mantine/core";
 import { DataProps, DataType } from "@/types/dataBinding";
 import { StaticFormFieldsBuilder } from "@/components/data/forms/StaticFormFieldsBuilder";
+import { FormFieldsBuilder } from "@/components/data/forms/FormFieldsBuilder";
 
 export const SelectData = ({ component, endpoints, dataType }: DataProps) => {
   const updateTreeComponentAttrs = useEditorTreeStore(
@@ -28,7 +28,14 @@ export const SelectData = ({ component, endpoints, dataType }: DataProps) => {
         }
       />
       {dataType === "static" && (
-        <SelectOptionsForm component={component} endpoints={endpoints} />
+        <FormFieldsBuilder
+          fields={[
+            { name: "data", label: "Options", type: "options" },
+            { name: "value", label: "Value", type: "text" },
+          ]}
+          component={component}
+          endpoints={endpoints!}
+        />
       )}
       {dataType === "dynamic" && (
         <DynamicSettings
