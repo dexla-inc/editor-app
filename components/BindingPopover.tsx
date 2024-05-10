@@ -97,7 +97,7 @@ export default function BindingPopover({
   //   [value?.boundCode],
   // );
 
-  const currentValue = computeValue<string>({ value }, { actions });
+  const currentValue = computeValue<string>({ value }, { actions, item });
   const entitiesDataTreeList: Array<{
     entity: ContextType;
     dataItems: any;

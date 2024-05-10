@@ -23,6 +23,7 @@ import { DateInputData as DateInput } from "@/components/data/DateInputData";
 import {
   TextInputData as Textarea,
   TextInputData as Input,
+  TextInputData as RadioItem,
 } from "@/components/data/TextInputData";
 import {
   CheckboxData as Checkbox,
@@ -60,7 +61,7 @@ export const dataMapper = {
   CheckboxItem: Checkbox,
   CheckboxGroup,
   Radio: Input,
-  RadioItem: Input,
+  RadioItem,
   Textarea,
   Image,
   Container,

@@ -62,7 +62,9 @@ export const useComputeValue = ({
   onLoad = {},
 }: UseComputeValue) => {
   onLoad = cloneDeep(onLoad);
-
+  if (Object.keys(onLoad).length) {
+    console.log(onLoad);
+  }
   const browser = useRouter();
   const valuePropsPaths = useMemo(() => {
     return findValuePropsPaths(onLoad);
@@ -208,9 +210,8 @@ export const useComputeValue = ({
           `components\\[(\\/\\* [\\S\\s]* \\*\\/)?\\s?'${key}'\\]`,
           "g",
         );
-        let replacer = inputs[key];
-        replacer =
-          typeof replacer !== "string" ? JSON.stringify(replacer) : replacer;
+        let replacer = JSON.stringify(inputs[key]);
+
         result = result.replaceAll(regex, replacer);
       });
 
@@ -287,6 +288,7 @@ export const useComputeValue = ({
       boundCode: (fieldValue: ValueProps) => {
         try {
           const boundCode = transformBoundCode(fieldValue.boundCode ?? "");
+          console.log(boundCode);
           return autoRunJavascriptCode(boundCode);
         } catch {
           return;
