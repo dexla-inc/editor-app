@@ -458,6 +458,13 @@ export const updateTreeComponentAttrs = (
     });
   }
 
+  // Handle default properties, ensuring arrays are replaced, not merged such as multi select accept modifiers
+  Object.entries(alwaysDefaultProps).forEach(([key, value]) => {
+    if (component.props && Array.isArray(value)) {
+      component.props[key] = value;
+    }
+  });
+
   // attributes we want to deep merge
   merge(component, { props: alwaysDefaultProps });
   merge(component, { onLoad: attrs.onLoad });
