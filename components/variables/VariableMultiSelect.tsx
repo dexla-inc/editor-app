@@ -1,13 +1,13 @@
 import { FrontEndTypes, VariableResponse } from "@/requests/variables/types";
 import { useVariableStore } from "@/stores/variables";
-import { Select, SelectProps } from "@mantine/core";
+import { MultiSelect, MultiSelectProps } from "@mantine/core";
 
-type Props = Omit<SelectProps, "data"> & {
+type Props = Omit<MultiSelectProps, "data"> & {
   required?: boolean;
   setVariableType: (type: FrontEndTypes) => void;
 };
 
-export const VariableSelect = ({ setVariableType, ...props }: Props) => {
+export const VariableMultiSelect = ({ setVariableType, ...props }: Props) => {
   const variables = useVariableStore((state) =>
     Object.values(state.variableList),
   );
@@ -19,24 +19,20 @@ export const VariableSelect = ({ setVariableType, ...props }: Props) => {
     };
   });
 
-  const onSelectChange = (value: string) => {
-    const selectedItem = variableSelectData.find(
-      (item) => item.value === value,
-    );
-    props.onChange?.(value);
-    if (selectedItem) {
-      setVariableType(selectedItem?.type);
-    }
+  const onSelectChange = (values: string[]) => {
+    props.onChange?.(values);
   };
 
   return (
-    <Select
+    <MultiSelect
       size="xs"
-      label="Variable"
+      label="Variables"
       {...props}
       data={variableSelectData}
       onChange={onSelectChange}
       searchable
+      clearable
+      nothingFound="No variables found"
     />
   );
 };

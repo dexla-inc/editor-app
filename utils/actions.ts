@@ -203,6 +203,8 @@ export interface ChangeVariableAction extends BaseAction {
 export interface ResetVariableAction extends BaseAction {
   name: "resetVariable";
   variableId: string;
+  variableIds: string[];
+  multiple: boolean;
 }
 
 export type ActionType =
@@ -846,7 +848,11 @@ export const useResetVariableAction = async ({
 }: ResetVariableActionParams) => {
   const resetVariable = useVariableStore.getState().resetVariable;
 
-  resetVariable(action.variableId);
+  if (action.multiple) {
+    action.variableIds.forEach((id) => resetVariable(id));
+  } else {
+    resetVariable(action.variableId);
+  }
 };
 
 export function showSequentialActionButton(actionName: string) {
