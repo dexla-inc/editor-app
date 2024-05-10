@@ -819,7 +819,8 @@ export const useChangeVariableAction = async ({
   const setVariable = useVariableStore.getState().setVariable;
   const index = computeValue<number>({ value: action.index });
   const path = computeValue<string>({ value: action.path });
-  let newValue = safeJsonParse(computeValue({ value: action.value }));
+  const computedValue = computeValue({ value: action.value });
+  let newValue = safeJsonParse(computedValue);
 
   if (action.variableType === "ARRAY") {
     newValue = updateVariableArray({
