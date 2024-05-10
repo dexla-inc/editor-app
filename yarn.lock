@@ -896,25 +896,25 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@liveblocks/client@1.10.3", "@liveblocks/client@^1.10.2":
-  version "1.10.3"
-  resolved "https://registry.npmjs.org/@liveblocks/client/-/client-1.10.3.tgz"
-  integrity sha512-IiinTqGAZJ3zLUga4kzarKGnCJ8BTWBOaeyjB5sIvWFMV364+qtUwjB3mFVoS3g4VzU5DzfMxIoLkEuusCTceg==
+"@liveblocks/client@1.12.0", "@liveblocks/client@^1.12.0":
+  version "1.12.0"
+  resolved "https://registry.yarnpkg.com/@liveblocks/client/-/client-1.12.0.tgz#d1ba315668eebe7c87acf326244b662e6772cd67"
+  integrity sha512-TL4sPbWBlrGF7UXLNx2RYuZi/Z51jXALMFAdaWkYE0Qz7mMwxTVSyjPVR7ZXVuqdSo0CTQ1rpPyZeqcoUDtEoQ==
   dependencies:
-    "@liveblocks/core" "1.10.3"
+    "@liveblocks/core" "1.12.0"
 
-"@liveblocks/core@1.10.3":
-  version "1.10.3"
-  resolved "https://registry.npmjs.org/@liveblocks/core/-/core-1.10.3.tgz"
-  integrity sha512-SZnmITU3PFTYeqf+zXALU+9rFDTP5JUxcVWGlEgPtvmTiJ7U+FfXm3CWMKBkGtUejdjZpChjQC/wer9ArEGOzA==
+"@liveblocks/core@1.12.0":
+  version "1.12.0"
+  resolved "https://registry.yarnpkg.com/@liveblocks/core/-/core-1.12.0.tgz#6183edc14f763304d15eca372f2c9adfe83c3945"
+  integrity sha512-cPuVZwSh+EBnJL8DA999h4QDNSlOMFyxHPPHm9qVBf9Cl+NY7/Bg3cyKFiHOki6g7y8dQj8No2tpnAHWdqqalA==
 
-"@liveblocks/zustand@^1.10.2":
-  version "1.10.3"
-  resolved "https://registry.npmjs.org/@liveblocks/zustand/-/zustand-1.10.3.tgz"
-  integrity sha512-qRg9h21DPQK5qHfu7t4AZokpK/U3nAgeGVtvzibKg+6+dQ3h7f7F6OeJPULm7yh46qsuxthoezfyZBQ5cgjS7A==
+"@liveblocks/zustand@^1.12.0":
+  version "1.12.0"
+  resolved "https://registry.yarnpkg.com/@liveblocks/zustand/-/zustand-1.12.0.tgz#cfa1b196816c45f7674991ba7f74e3e81647bb57"
+  integrity sha512-AlzYLKOEFftc5iOydYwpOWIJQVgbg2IT+8CtxTXJPTRlUf6R0imIctc2YXkB0/5ZPndEjxQ0dOQa/RgHDh3NkQ==
   dependencies:
-    "@liveblocks/client" "1.10.3"
-    "@liveblocks/core" "1.10.3"
+    "@liveblocks/client" "1.12.0"
+    "@liveblocks/core" "1.12.0"
 
 "@mantine/core@^6.0.21":
   version "6.0.21"

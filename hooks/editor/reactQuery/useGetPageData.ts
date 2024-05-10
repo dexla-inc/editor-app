@@ -22,6 +22,7 @@ type Props = {
 };
 
 export const useGetPageData = ({ projectId, pageId }: Props) => {
+  console.log("useGetPageData");
   const { startLoading, stopLoading, setIsLoading } = useAppStore((state) => ({
     startLoading: state.startLoading,
     stopLoading: state.stopLoading,
@@ -98,9 +99,11 @@ export const useGetPageData = ({ projectId, pageId }: Props) => {
     }
   };
 
-  useQuery({
+  const { isFetched } = useQuery({
     queryKey: ["page-state", projectId, pageId, history.state.as],
     queryFn: async ({ signal }) => await getPageData({ signal }),
     enabled: !!projectId && !!pageId,
   });
+
+  return { isFetched };
 };

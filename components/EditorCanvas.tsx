@@ -11,12 +11,14 @@ import { CustomComponentModal } from "@/components/CustomComponentModal";
 import { useUserConfigStore } from "@/stores/userConfig";
 import useEditorHotkeysUndoRedo from "@/hooks/editor/useEditorHotkeysUndoRedo";
 import { RenderTreeFunc } from "@/types/component";
+import { useShallow } from "zustand/react/shallow";
 
 type Props = {
   projectId: string;
 };
 
 const EditorCanvasComponent = ({ projectId }: Props) => {
+  console.log("EditorCanvasComponent");
   const editorTree = useEditorTreeStore((state) => state.tree);
   useEditorHotkeys();
   useEditorHotkeysUndoRedo();
@@ -65,7 +67,9 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
     });
   };
 
+  console.log("editorTree?.root?.children", editorTree?.root?.children);
   if ((editorTree?.root?.children ?? [])?.length === 0) {
+    console.log("null");
     return null;
   }
 
@@ -79,15 +83,6 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
           overflow: "hidden",
         }}
         p={0}
-        // TODO: get this back - turn it off for now
-        // onPointerMove={(event) => {
-        //   event.preventDefault();
-        //   setCursor({
-        //     x: Math.round(event.clientX),
-        //     y: Math.round(event.clientY),
-        //   });
-        // }}
-        // onPointerLeave={() => setCursor(undefined)}
       >
         <IFrame projectId={projectId}>{renderTree(editorTree.root)}</IFrame>
         {isCustomComponentModalOpen && (

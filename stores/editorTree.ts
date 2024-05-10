@@ -207,7 +207,10 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                     newComponentMutableAttrs,
                   ),
                 };
-
+                console.log(
+                  "setTree",
+                  options?.onLoad ? tree : state.pageLoadTree,
+                );
                 return newState;
               },
               false,
@@ -296,9 +299,13 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                   state.currentTreeComponentsStates?.[lastComponentId] ??
                   "default";
 
+                const copiedComponentMutableAttrs = cloneDeep(
+                  state.componentMutableAttrs,
+                );
+
                 componentIds.forEach((id) => {
-                  state.componentMutableAttrs[id] = updateTreeComponentAttrs(
-                    cloneDeep(state.componentMutableAttrs[id] ?? {}),
+                  copiedComponentMutableAttrs[id] = updateTreeComponentAttrs(
+                    copiedComponentMutableAttrs[id] ?? {},
                     attrs,
                     currentState,
                   );
@@ -323,8 +330,9 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                 }
 
                 // Return the new state with the updated componentMutableAttrs
+
                 return {
-                  componentMutableAttrs: state.componentMutableAttrs,
+                  componentMutableAttrs: copiedComponentMutableAttrs,
                 };
               },
               false,
@@ -470,9 +478,10 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
       client,
       // comment this out to disable multiplayer and see if that fix the state loss issue
       // Adding this back in causes SortableTreeItem to error
-      // storageMapping: {
-      //   tree: true,
-      // },
+      storageMapping: {
+        tree: true,
+        componentMutableAttrs: true,
+      },
       presenceMapping: {
         currentUser: true,
         cursor: true,

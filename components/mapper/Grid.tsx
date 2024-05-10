@@ -37,8 +37,7 @@ const GridComponent = forwardRef(
       if (prevGapValue !== gapValue) {
         calculateGridSizes();
       }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [gapValue, prevGapValue, setEditorTree]);
+    }, [gapValue, prevGapValue]); // setEditorTree
 
     return (
       <Box

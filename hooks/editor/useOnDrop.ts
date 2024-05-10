@@ -15,6 +15,7 @@ import {
   removeComponent,
   removeComponentFromParent,
 } from "@/utils/editor";
+import cloneDeep from "lodash.clonedeep";
 import { useCallback } from "react";
 
 const parseId = (_id: string) => {
@@ -40,19 +41,20 @@ export const useOnDrop = () => {
     (_droppedId: string, dropTarget: DropTarget) => {
       if (isResizing) return;
       // const droppedId = parseId(_droppedId ?? componentToAdd?.id);
+      const editorTreeCopy = cloneDeep(editorTree);
       const activeComponent = componentToAdd
         ? componentToAdd
         : useEditorTreeStore.getState().componentMutableAttrs[_droppedId];
       dropTarget.id = parseId(dropTarget.id);
       const activeComponentTree = getComponentTreeById(
-        editorTree.root,
+        editorTreeCopy.root,
         activeComponent.id!,
       );
 
       let targetComponent =
         useEditorTreeStore.getState().componentMutableAttrs[dropTarget.id];
       const targetParentComponentTree = getComponentParent(
-        editorTree.root as ComponentStructure,
+        editorTreeCopy.root as ComponentStructure,
         dropTarget.id,
       );
       const isParentContentWrapper =
@@ -63,14 +65,14 @@ export const useOnDrop = () => {
       if (!isMoving && activeComponent.id && componentToAdd && isDroppable) {
         if (componentToAdd.name === "Grid") {
           handleGridComponentAddition(
-            editorTree.root as ComponentStructure,
+            editorTreeCopy.root as ComponentStructure,
             dropTarget,
             targetComponent,
             componentToAdd,
           );
         } else {
           handleComponentAddition(
-            editorTree.root as ComponentStructure,
+            editorTreeCopy.root as ComponentStructure,
             dropTarget,
             targetComponent,
             componentToAdd,
@@ -78,19 +80,19 @@ export const useOnDrop = () => {
         }
       } else if (dropTarget.id !== "root" && isDroppable) {
         if (activeComponent?.name === "Grid") {
-          const isDopopingInVerticalAxis =
+          const isDroppingInVerticalAxis =
             dropTarget.edge === "top" || dropTarget.edge === "bottom";
           let useParentInstead = false;
           if (
             isMoving &&
-            isDopopingInVerticalAxis &&
+            isDroppingInVerticalAxis &&
             targetComponent?.name === "GridColumn"
           ) {
             useParentInstead = true;
           }
 
           handleGridReorderingOrMoving(
-            editorTree.root as ComponentStructure,
+            editorTreeCopy.root as ComponentStructure,
             activeComponent,
             targetComponent,
             dropTarget,
@@ -98,7 +100,7 @@ export const useOnDrop = () => {
           );
         } else {
           handleReorderingOrMoving(
-            editorTree.root as ComponentStructure,
+            editorTreeCopy.root as ComponentStructure,
             activeComponent,
             targetComponent,
             dropTarget,
@@ -106,13 +108,13 @@ export const useOnDrop = () => {
         }
       } else if (isDroppable) {
         handleRootDrop(
-          editorTree.root as ComponentStructure,
+          editorTreeCopy.root as ComponentStructure,
           activeComponent,
           dropTarget,
         );
       }
 
-      setEditorTree(editorTree as EditorTreeCopy);
+      setEditorTree(editorTreeCopy as EditorTreeCopy);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
