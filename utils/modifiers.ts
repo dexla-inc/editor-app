@@ -241,6 +241,7 @@ export const requiredModifiers: RequiredModifiers = {
       width: "100%",
     },
     bg: "White.6",
+    maxDropdownHeight: "150px",
   },
   autocomplete: {
     placeholder: "Autocomplete",
