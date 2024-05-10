@@ -68,6 +68,8 @@ export const useEditorHotkeys = () => {
           parentTree?.id!,
         );
 
+        // Moving this line fixed deleting in liveblocks. It used to be above setEditorTree(editorTreeCopy, {
+        const editorTreeCopy = cloneDeep(editorTree);
         if (
           selectedComponentId === "content-wrapper" ||
           selectedComponentId === "main-content"
@@ -82,7 +84,7 @@ export const useEditorHotkeys = () => {
           return;
         }
         removeComponent(
-          editorTree.root as ComponentStructure,
+          editorTreeCopy.root as ComponentStructure,
           selectedComponentId,
         );
         if (
@@ -91,20 +93,22 @@ export const useEditorHotkeys = () => {
           parentTree?.children?.length === 0
         ) {
           removeComponent(
-            editorTree.root as ComponentStructure,
+            editorTreeCopy.root as ComponentStructure,
             parentTree.id!,
           );
         }
-        deleteComponentMutableAttr(selectedComponentId);
+
         if (targetModal) {
           setSelectedComponentIds(() => [targetModal.id!]);
         } else {
           setSelectedComponentIds(() => []);
         }
-        const editorTreeCopy = cloneDeep(editorTree);
+
         setEditorTree(editorTreeCopy, {
           action: `Removed ${comp?.name}`,
         });
+
+        deleteComponentMutableAttr(selectedComponentId);
       });
     }
   }, [
