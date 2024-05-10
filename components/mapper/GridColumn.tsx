@@ -17,6 +17,7 @@ const GridColumnComponent = forwardRef(
     const isPreviewMode = useEditorTreeStore(
       useShallow((state) => state.isPreviewMode || state.isLive),
     );
+
     // @ts-ignore
     const { gap, ...componentProps } = component.props;
     const gapPx = convertSizeToPx(gap as MantineSize, "gap");

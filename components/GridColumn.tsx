@@ -9,12 +9,12 @@ import { calculateGridSizes } from "@/utils/grid";
 import { Box, Text, px, useMantineTheme } from "@mantine/core";
 import { Resizable } from "re-resizable";
 import { PropsWithChildren, useMemo, useState } from "react";
+import { useShallow } from "zustand/react/shallow";
 
 export const GridColumn = ({
   children,
   style: gridColumnStyles,
   span,
-  isPreviewMode,
   ...props
 }: PropsWithChildren<any>) => {
   const { flexWrap, ...style } = gridColumnStyles;
@@ -27,6 +27,9 @@ export const GridColumn = ({
   const [initialWidth, setInitialWidth] = useState(0);
   const [initialSpan, setInitialSpan] = useState(0);
   const [initialNextSiblingSpan, setInitialNextSiblingSpan] = useState(0);
+  const isPreviewMode = useEditorTreeStore(
+    useShallow((state) => state.isPreviewMode || state.isLive),
+  );
 
   const parent = useMemo(() => {
     const editorTree = useEditorTreeStore.getState().tree as EditorTreeCopy;
@@ -43,12 +46,6 @@ export const GridColumn = ({
   const isOnlyChild = siblings.length === 1;
   const isDirectionHorizontal = style?.gridAutoFlow === "column";
 
-  // useEffect(() => {
-  //   if (columnSpans[props.id] === undefined) {
-  //     setColumnSpan(props.id, span);
-  //   }
-  // }, [columnSpans, props.id, setColumnSpan, span]);
-
   const handleOffset = px(
     Object.keys(theme.spacing).includes(parent?.props?.gap)
       ? theme.spacing[parent?.props?.gap ?? "xs"]
@@ -56,6 +53,7 @@ export const GridColumn = ({
   );
 
   const isParentGridDirectionColumn = parent?.props?.gridDirection === "column";
+  console.log("isPreviewModeGridColumn", isPreviewMode);
 
   return (
     <>
