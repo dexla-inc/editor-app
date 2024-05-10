@@ -31,6 +31,7 @@ const SelectComponent = forwardRef(
       size,
       textColor,
       multiSelect,
+      maxDropdownHeight,
       ...componentProps
     } = component.props as any;
 
@@ -119,7 +120,7 @@ const SelectComponent = forwardRef(
           values: { height: "inherit" },
         }}
         withinPortal={false}
-        maxDropdownHeight={150}
+        maxDropdownHeight={maxDropdownHeight}
         data={data}
         {...(component.props?.customText
           ? {

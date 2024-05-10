@@ -18,6 +18,7 @@ import {
 import merge from "lodash.merge";
 import { useEffect } from "react";
 import { ThemeColorSelector } from "../ThemeColorSelector";
+import { UnitInput } from "../UnitInput";
 
 const Modifier = withModifier(({ selectedComponent }) => {
   const theme = useThemeStore((state) => state.theme);
@@ -39,6 +40,8 @@ const Modifier = withModifier(({ selectedComponent }) => {
         customLinkType: selectedComponent?.props?.customLinkType,
         customLinkUrl: selectedComponent?.props?.customLinkUrl,
         dropdownPosition: selectedComponent?.props?.dropdownPosition,
+        maxDropdownHeight:
+          selectedComponent?.props?.maxDropdownHeight ?? "auto",
         bg: selectedComponent?.props?.bg,
       }),
     );
@@ -147,6 +150,24 @@ const Modifier = withModifier(({ selectedComponent }) => {
               attrs: {
                 props: {
                   bg: value,
+                },
+              },
+            });
+          }}
+        />
+        <UnitInput
+          label="Dropdown Max Height"
+          {...form.getInputProps("maxDropdownHeight")}
+          options={[
+            { value: "px", label: "PX" },
+            { value: "auto", label: "auto" },
+          ]}
+          onChange={(value) => {
+            form.setFieldValue("maxDropdownHeight", value as string);
+            debouncedTreeComponentAttrsUpdate({
+              attrs: {
+                props: {
+                  maxDropdownHeight: value,
                 },
               },
             });
