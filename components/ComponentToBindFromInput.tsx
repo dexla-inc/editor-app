@@ -1,5 +1,4 @@
 import { ComponentToBindWrapper } from "@/components/ComponentToBindWrapper";
-import { useEditorStore } from "@/stores/editor";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { ValueProps } from "@/types/dataBinding";
 import {
@@ -57,6 +56,7 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
 }: ComponentToBindFromInputProps<T>) => {
   const commonProps = {
     ...AUTOCOMPLETE_OFF_PROPS,
+    ...props,
   };
 
   return (
@@ -68,7 +68,6 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
     >
       {["number", "integer"].includes(fieldType) ? (
         <NumberInput
-          {...commonProps}
           placeholder={placeholder}
           value={value?.static ? parseFloatExtension(value?.static) : ""}
           onChange={(val) =>
@@ -78,7 +77,6 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
               static: val.toString(),
             })
           }
-          {...props}
           precision={decimalPlaces}
           parser={(value) =>
             value ? parseFloatExtension(value).toString() : ""
@@ -86,11 +84,11 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
           formatter={(value) =>
             value ? parseFloatExtension(value).toString() : ""
           }
+          {...commonProps}
         />
       ) : fieldType === "boolean" ? (
         <Stack w="100%">
           <SegmentedControlInput
-            {...commonProps}
             value={value?.static ?? ""}
             onChange={(val) =>
               onChange({
@@ -104,12 +102,11 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
               { label: "False", value: "false" },
               { label: "-", value: "" },
             ]}
-            {...props}
+            {...commonProps}
           />
         </Stack>
       ) : fieldType === "yesno" ? (
         <SegmentedControlYesNo
-          {...commonProps}
           value={value?.static}
           onChange={(val) =>
             onChange({
@@ -119,7 +116,7 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
             })
           }
           w="100%"
-          {...props}
+          {...commonProps}
         />
       ) : fieldType === "array" ? (
         <Stack w="100%" spacing={0}>
@@ -136,7 +133,6 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
             )
           }
           <MonacoEditorJson
-            {...commonProps}
             value={value?.static?.toString() || (props.defaultValue as string)}
             onChange={(val: any) => {
               onChange({
@@ -145,13 +141,12 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
                 static: val,
               });
             }}
-            {...props}
+            {...commonProps}
           />
         </Stack>
       ) : (
         <Stack w="100%">
           <TextInput
-            {...commonProps}
             placeholder={placeholder}
             value={value?.static}
             type={fieldType}
@@ -162,7 +157,7 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
                 static: e.currentTarget.value,
               })
             }
-            {...props}
+            {...commonProps}
           />
         </Stack>
       )}

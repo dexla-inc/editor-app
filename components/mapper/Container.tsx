@@ -16,8 +16,12 @@ export const ContainerComponent = forwardRef<HTMLDivElement, Props>(
       (state) => state.isPreviewMode || state.isLive,
     );
 
-    const { dataType, data, triggers, ...componentProps } =
-      component?.props ?? {};
+    const {
+      dataType = "static",
+      data,
+      triggers,
+      ...componentProps
+    } = component?.props ?? {};
 
     const defaultBorder = setComponentBorder(props.style, isPreviewMode);
     const gapPx = convertSizeToPx(component?.props?.gap, "gap");

@@ -24,7 +24,7 @@ const AutocompleteComponent = forwardRef(
       children,
       triggers,
       loading,
-      dataType,
+      dataType = "static",
       bg,
       textColor,
       iconName,

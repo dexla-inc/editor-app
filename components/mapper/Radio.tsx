@@ -23,7 +23,7 @@ const RadioComponent = forwardRef(
       alignItems: "center",
     };
 
-    const [value, setValue] = useInputValue(
+    const [value, setValue] = useInputValue<string>(
       {
         value: component?.onLoad?.value ?? "",
       },

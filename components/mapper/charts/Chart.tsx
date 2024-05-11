@@ -33,7 +33,7 @@ export const Chart = ({ component, ...props }: Props) => {
     labelColor,
     foreColor,
     triggers,
-    dataType,
+    dataType = "static",
     ...componentProps
   } = component.props as any;
 
