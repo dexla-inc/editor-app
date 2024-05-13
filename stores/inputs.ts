@@ -4,6 +4,7 @@ import { devtools } from "zustand/middleware";
 type InputsState = {
   inputValues: Record<string, any>;
   setInputValue: (id: string, value: any) => void;
+  resetInputValues: () => void;
 };
 
 export const useInputsStore = create<InputsState>()(
@@ -16,6 +17,8 @@ export const useInputsStore = create<InputsState>()(
           false,
           "setInputValue",
         ),
+      resetInputValues: () =>
+        set(() => ({ inputValues: {} }), false, "resetInputValues"),
     }),
     {
       name: "Inputs Store",
