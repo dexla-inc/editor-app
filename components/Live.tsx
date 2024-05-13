@@ -18,6 +18,7 @@ import { useVariableListQuery } from "@/hooks/editor/reactQuery/useVariableListQ
 import { useDataSourceEndpoints } from "@/hooks/editor/reactQuery/useDataSourceEndpoints";
 import { MantineThemeExtended } from "@/types/types";
 import { safeJsonParse } from "@/utils/common";
+import { useInputsStore } from "@/stores/inputs";
 
 type Props = {
   deploymentPage: DeploymentPage;
@@ -50,6 +51,7 @@ export const Live = ({ deploymentPage }: Props) => {
   );
   const setPreviewMode = useEditorTreeStore((state) => state.setPreviewMode);
   const setTheme = useThemeStore((state) => state.setTheme);
+  const resetInputValues = useInputsStore((state) => state.resetInputValues);
 
   useEffect(() => {
     if (theme) setTheme(theme);
@@ -74,6 +76,7 @@ export const Live = ({ deploymentPage }: Props) => {
       setCurrentPageAndProjectIds(projectId, deploymentPage.id);
       setPreviewMode(true);
       setIsLive(true);
+      resetInputValues();
 
       const loadFonts = async () => {
         if (theme)
