@@ -13,6 +13,7 @@ import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 type StateProps = {
   bg?: string | undefined;
   textColor?: string | undefined;
+  placeholderColor?: string | undefined;
   isTransparentBackground?: boolean;
 };
 
@@ -40,12 +41,15 @@ const createStateUpdateObject = (
 export const useChangeState = ({
   bg,
   textColor,
+  placeholderColor,
   isTransparentBackground,
 }: StateProps) => {
   const theme = useThemeStore((state) => state.theme);
   const defaultBg = isTransparentBackground ? "transparent" : "white";
   const backgroundColor = getColorFromTheme(theme, bg) ?? defaultBg;
   const color = getColorFromTheme(theme, textColor) ?? "black";
+  const _placeholderColor =
+    getColorFromTheme(theme, placeholderColor) ?? "black";
 
   const currentState = useEditorTreeStore((state) => {
     const selectedComponentId = selectedComponentIdSelector(state);
@@ -91,5 +95,6 @@ export const useChangeState = ({
     color,
     backgroundColor,
     setBackgroundColor,
+    placeholderColor: _placeholderColor,
   };
 };
