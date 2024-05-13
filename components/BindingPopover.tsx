@@ -235,6 +235,7 @@ export default function BindingPopover({
               onClick={onChangeDataTypeAsBoundCode}
               variant="default"
               tabIndex={-1}
+              ml="xs"
             >
               <IconPlugConnected size={ICON_SIZE} />
             </ActionIcon>
@@ -244,6 +245,7 @@ export default function BindingPopover({
             onClick={onChangeDataTypeAsBoundCode}
             size="xs"
             tabIndex={-1}
+            ml="xs"
           >
             <IconExternalLink size={ICON_SIZE} />
           </ActionIcon>
