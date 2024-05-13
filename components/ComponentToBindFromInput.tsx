@@ -34,7 +34,7 @@ type BaseProps = {
   decimalPlaces?: number;
   isPageAction?: boolean;
   useTrueOrFalseStrings?: boolean;
-  form: any;
+  form?: any;
 };
 
 // Define a helper type for the conditional props extension
@@ -153,8 +153,8 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
           />
         </Stack>
       ) : fieldType === "options" ? (
-        <Stack>
-          <Flex justify="space-between" gap="xl" mt="0.5rem">
+        <Stack style={{ gap: 0 }}>
+          <div>
             <Button
               type="button"
               compact
@@ -170,8 +170,9 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
             >
               Add
             </Button>
-          </Flex>
-          <Flex direction="column" gap="10px">
+          </div>
+
+          <Flex direction="column" gap="10px" mt="10px">
             {(form.values.onLoad.data.static ?? [])?.map(
               (_: SelectProps, index: number) => {
                 return (
@@ -179,13 +180,17 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
                     <TextInput
                       size="xs"
                       placeholder="label"
-                      {...form.getInputProps(`props.data.${index}.label`)}
+                      {...form.getInputProps(
+                        `onLoad.data.static.${index}.label`,
+                      )}
                       style={{ width: "50%" }}
                     />
                     <TextInput
                       size="xs"
                       placeholder="value"
-                      {...form.getInputProps(`props.data.${index}.value`)}
+                      {...form.getInputProps(
+                        `onLoad.data.static.${index}.value`,
+                      )}
                       style={{ width: "50%" }}
                     />
 

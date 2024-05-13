@@ -80,7 +80,7 @@ const SelectComponent = forwardRef(
         }));
       }
     }
-    console.log(component.onLoad);
+
     if (dataType === "static") {
       data = component.onLoad?.data ?? [];
     }
