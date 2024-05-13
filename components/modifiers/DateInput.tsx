@@ -58,6 +58,20 @@ const Modifier = withModifier(({ selectedComponent }) => {
             });
           }}
         />
+        <SegmentedControlYesNo
+          label="Required"
+          {...form.getInputProps("withAsterisk")}
+          onChange={(value) => {
+            form.setFieldValue("withAsterisk", value);
+            debouncedTreeComponentAttrsUpdate({
+              attrs: {
+                props: {
+                  withAsterisk: value,
+                },
+              },
+            });
+          }}
+        />
         <ThemeColorSelector
           label="Background Color"
           {...form.getInputProps("bg")}
