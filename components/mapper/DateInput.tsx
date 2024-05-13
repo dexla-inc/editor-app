@@ -63,6 +63,8 @@ const DateInputComponent = ({
     if (Array.isArray(value)) {
       if (value.length === 2 && value[0] && value[1]) {
         formattedValue = getNewDate(value, valueFormatValue);
+      } else if (value[0] === null && value[1] === null) {
+        formattedValue = getNewDate(value, valueFormatValue);
       } else {
         console.warn("Incomplete date range:", value);
         return;
