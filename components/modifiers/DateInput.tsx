@@ -19,6 +19,7 @@ const Modifier = withModifier(({ selectedComponent }) => {
     form.setValues(
       merge({}, requiredModifiers.dateInput, {
         placeholder: selectedComponent?.props?.placeholder,
+        placeholderColor: selectedComponent?.props?.placeholderColor,
         description: selectedComponent?.props?.description,
         radius: selectedComponent?.props?.radius,
         size: selectedComponent?.props?.size,
@@ -95,6 +96,20 @@ const Modifier = withModifier(({ selectedComponent }) => {
               attrs: {
                 props: {
                   textColor: value,
+                },
+              },
+            });
+          }}
+        />
+        <ThemeColorSelector
+          label="Placeholder Color"
+          {...form.getInputProps("placeholderColor")}
+          onChange={(value: string) => {
+            form.setFieldValue("placeholderColor", value);
+            debouncedTreeComponentAttrsUpdate({
+              attrs: {
+                props: {
+                  placeholderColor: value,
                 },
               },
             });

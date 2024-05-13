@@ -423,6 +423,7 @@ export const requiredModifiers: RequiredModifiers = {
     iconPosition: "left",
     color: "Neutral.6",
     bg: "White.6",
+    placeholderColor: "Neutral.8",
   },
   chart: {
     chartColors: [

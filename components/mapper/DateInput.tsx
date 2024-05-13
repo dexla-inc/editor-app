@@ -30,10 +30,15 @@ const DateInputComponent = ({
     styles,
     bg,
     textColor,
+    placeholderColor,
     ...componentProps
   } = component.props as any;
   const { borderStyle, inputStyle } = useBrandingStyles();
-  const { color, backgroundColor } = useChangeState({ bg, textColor });
+  const {
+    color,
+    backgroundColor,
+    placeholderColor: _placeholderColor,
+  } = useChangeState({ bg, textColor, placeholderColor });
 
   const customStyle = merge({}, borderStyle, inputStyle, props.style);
   const isPositionLeft =
@@ -99,6 +104,9 @@ const DateInputComponent = ({
           },
           icon: {
             color,
+          },
+          placeholder: {
+            color: `${_placeholderColor}!important`,
           },
         }}
       >
