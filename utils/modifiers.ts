@@ -225,7 +225,7 @@ export const requiredModifiers: RequiredModifiers = {
     label: "A label",
     icon: "",
     dropdownPosition: "flip",
-    withAsterisk: "false",
+    withAsterisk: false,
     clearable: false,
     searchable: false,
     dataType: "static",
