@@ -166,6 +166,13 @@ export function ProjectItemMenu({
               Datasource
             </Menu.Item>
             <Menu.Item
+              icon={<Icon name="IconUsers" size={ICON_SIZE} />}
+              component={Link}
+              href={`/projects/${projectId}/settings/team?name=${projectFriendlyName}`}
+            >
+              Team
+            </Menu.Item>
+            <Menu.Item
               icon={<Icon name="IconWorldWww" size={ICON_SIZE} />}
               component={Link}
               href={`/projects/${projectId}/settings/domain?name=${projectFriendlyName}`}

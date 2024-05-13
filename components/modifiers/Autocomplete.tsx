@@ -8,7 +8,7 @@ import { useThemeStore } from "@/stores/theme";
 import { inputSizes } from "@/utils/defaultSizes";
 import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { Card, Paper, SegmentedControl, Stack, TextInput } from "@mantine/core";
+import { SegmentedControl, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import {
   IconArrowBarDown,
@@ -18,7 +18,6 @@ import {
 import merge from "lodash.merge";
 import { useEffect } from "react";
 import { ThemeColorSelector } from "../ThemeColorSelector";
-import { SegmentedControlInput } from "../SegmentedControlInput";
 import { SegmentedControlYesNo } from "../SegmentedControlYesNo";
 
 const Modifier = withModifier(({ selectedComponent }) => {
@@ -72,6 +71,20 @@ const Modifier = withModifier(({ selectedComponent }) => {
                 props: {
                   size: value,
                   style: { height: inputSizes[value] },
+                },
+              },
+            });
+          }}
+        />
+        <SegmentedControlYesNo
+          label="Required"
+          {...form.getInputProps("withAsterisk")}
+          onChange={(value) => {
+            form.setFieldValue("withAsterisk", value);
+            debouncedTreeComponentAttrsUpdate({
+              attrs: {
+                props: {
+                  withAsterisk: value,
                 },
               },
             });

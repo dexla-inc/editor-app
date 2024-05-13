@@ -1007,6 +1007,7 @@ export const componentMapper: ComponentMapper = {
     modifiers: ["select", "spacing", "size", "border", "effects"],
     actionTriggers: ["onChange", "onSearchChange"],
     sequentialTriggers: ["onSuccess", "onError"],
+    isValidatable: true,
   },
   Input: {
     Component: (props) => <Input {...props} />,
@@ -1064,6 +1065,7 @@ export const componentMapper: ComponentMapper = {
     modifiers: ["autocomplete", "spacing", "size", "border", "effects"],
     actionTriggers: ["onItemSubmit", "onChange"],
     sequentialTriggers: ["onSuccess", "onError"],
+    isValidatable: true,
   },
   Progress: {
     Component: (props) => <Progress {...props} />,
@@ -1148,18 +1150,21 @@ export const componentMapper: ComponentMapper = {
     ],
     actionTriggers: ["onChange"],
     sequentialTriggers: ["onSuccess", "onError"],
+    isValidatable: true,
   },
   CheckboxGroup: {
     Component: (props) => <CheckboxGroup {...props} />,
     modifiers: ["checkbox", "layout", "spacing", "size", "border", "effects"],
     actionTriggers: ["onChange", "onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
+    isValidatable: true,
   },
   Checkbox: {
     Component: (props) => <Checkbox {...props} />,
     modifiers: ["checkbox", "spacing", "size", "border", "effects"],
     actionTriggers: ["onChange", "onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
+    isValidatable: true,
   },
   CheckboxItem: {
     Component: (props) => <CheckboxItem {...props} />,
@@ -1173,12 +1178,14 @@ export const componentMapper: ComponentMapper = {
     ],
     actionTriggers: [],
     sequentialTriggers: ["onSuccess", "onError"],
+    isValidatable: true,
   },
   Switch: {
     Component: (props) => <Switch {...props} />,
     modifiers: ["spacing", "size", "border", "effects"],
     actionTriggers: ["onChange", "onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
+    isValidatable: true,
   },
   RadioItem: {
     Component: (props) => <RadioItem {...props} />,
@@ -1191,6 +1198,7 @@ export const componentMapper: ComponentMapper = {
     modifiers: ["radio", "spacing", "size", "border", "effects"],
     actionTriggers: ["onChange", "onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
+    isValidatable: true,
   },
   Rating: {
     Component: (props) => <Rating {...props} />,
