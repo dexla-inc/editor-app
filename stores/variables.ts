@@ -42,7 +42,6 @@ export const useVariableStore = create<VariablesState>()(
             "variables/resetVariable",
           );
         },
-
         initializeVariableList: (variableList) => {
           const newVariableList: Record<string, VariableStoreParams> =
             variableList.reduce(
@@ -57,7 +56,6 @@ export const useVariableStore = create<VariablesState>()(
               },
               {} as Record<string, VariableStoreParams>,
             );
-
           set(
             { variableList: newVariableList },
             false,
@@ -103,7 +101,13 @@ export const useVariableStore = create<VariablesState>()(
         partialize: (state) => ({
           variableList: Object.values(state.variableList)
             ?.filter((v) => v.isGlobal)
-            ?.map(({ id, value, isGlobal }) => ({ id, value, isGlobal })),
+            ?.reduce(
+              (acc, { id, value, isGlobal }) => ({
+                ...acc,
+                [id]: { id, value, isGlobal },
+              }),
+              {},
+            ),
         }),
       },
     ),
