@@ -65,7 +65,7 @@ export const useEndpoint = ({
   const isEnabled = !!endpoint && dataType === "dynamic" && enabled;
 
   const { data, isLoading } = useQuery(
-    [fetchUrl, headers, JSON.stringify(requestBody), accessToken],
+    [fetchUrl, accessToken, headers, cleanParameter, body],
     apiCall,
     {
       select: (response) => {
@@ -74,6 +74,7 @@ export const useEndpoint = ({
       staleTime: staleTime * 1000 * 60,
       enabled: isEnabled,
       networkMode: "offlineFirst",
+      retry: false,
     },
   );
 
