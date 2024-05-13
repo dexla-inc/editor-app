@@ -11,6 +11,7 @@ import { Global } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { Navbar } from "@/components/navbar/Navbar";
 import { Aside } from "@/components/aside/Aside";
+import { useInputsStore } from "@/stores/inputs";
 
 type Props = {
   projectId: string;
@@ -28,6 +29,7 @@ const Editor = ({ projectId, pageId }: Props) => {
   const setPageLoadTimestamp = useEditorTreeStore(
     (state) => state.setPageLoadTimestamp,
   );
+  const resetInputValues = useInputsStore((state) => state.resetInputValues);
 
   useGetPageData({ projectId, pageId });
   const [roomEntered, setRoomEntered] = useState(false);
@@ -35,6 +37,7 @@ const Editor = ({ projectId, pageId }: Props) => {
   useEffect(() => {
     setCurrentPageAndProjectIds(projectId, pageId);
     setPageLoadTimestamp(Date.now());
+    resetInputValues();
 
     if (pageId && !roomEntered) {
       liveblocks.enterRoom(pageId);
