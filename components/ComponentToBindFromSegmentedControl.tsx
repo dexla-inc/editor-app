@@ -21,7 +21,6 @@ export const ComponentToBindFromSegmentedControl = ({
       onChange={onChange}
     >
       <Stack>
-        <TopLabel text={rest?.label!} />
         <SegmentedControl
           value={value?.static}
           size="xs"

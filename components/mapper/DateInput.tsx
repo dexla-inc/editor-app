@@ -2,6 +2,7 @@ import { Icon } from "@/components/Icon";
 import { useBrandingStyles } from "@/hooks/editor/useBrandingStyles";
 import { EditableComponentMapper } from "@/utils/editor";
 import {
+  DatePicker,
   DatePickerInputProps,
   DatePickerInput as MantineDatePickerInput,
 } from "@mantine/dates";
@@ -75,7 +76,7 @@ const DateInputComponent = ({
     setValue(formattedValue ?? "");
   };
 
-  const dateInputValue = setDate(value, typeValue, valueFormatValue);
+  //const dateInputValue = setDate(value, typeValue, valueFormatValue);
 
   return (
     <>
@@ -87,7 +88,8 @@ const DateInputComponent = ({
         {...componentProps}
         type={typeValue}
         valueFormat={valueFormatValue}
-        value={dateInputValue}
+        // TODO: Added binding value
+        // value={value}
         {...restTriggers}
         onChange={handleChange}
         style={{}}
@@ -116,6 +118,18 @@ const DateInputComponent = ({
             )
           : children?.toString()}
       </MantineDatePickerInput>
+
+      {/* <MantineDatePickerInput
+      valueFormat="YYYY MMM DD"
+      type="range"
+      label="Pick date"
+      placeholder="Pick date"
+      mx="auto"
+      maw={400}
+      valueFormat={valueFormatValue}
+      value={dateInputValue}
+      onChange={handleChange}
+    /> */}
     </>
   );
 };

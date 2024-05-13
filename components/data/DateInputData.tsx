@@ -14,16 +14,17 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 import { useComponentStates } from "@/hooks/editor/useComponentStates";
 import { ValueProps } from "@/types/dataBinding";
 import merge from "lodash.merge";
+import { FormFieldsBuilder } from "./forms/FormFieldsBuilder";
+
+const fields = [
+  {
+    name: "value",
+    label: "Value",
+    type: "date",
+  },
+];
 
 export const DateInputData = ({ component, endpoints }: DataProps) => {
-  const fields = [
-    {
-      name: "value",
-      label: "Value",
-      type: "date",
-    },
-  ];
-
   const hasParentComponentData = useEditorTreeStore(
     (state) => state.selectedComponentIds?.at(-1)?.includes("-related-"),
   );
@@ -110,7 +111,8 @@ export const DateInputData = ({ component, endpoints }: DataProps) => {
           { label: "MM DD YYYY", value: "MM DD YYYY" },
           { label: "DD MMM", value: "DD MMM" },
           { label: "DD MMM YY", value: "DD MMM YY" },
-          // { label: "DD-DD MMM, YYYY", value: "DD-DD MMM, YYYY" },
+          { label: "YYYY-MM-DD", value: "YYYY-MM-DD" },
+          { label: "YYYY-MMM-DD", value: "YYYY-MMM-DD" },
         ]}
         placeholder="Select format"
         {...form.getInputProps("onLoad.valueFormat")}
@@ -157,6 +159,11 @@ export const DateInputData = ({ component, endpoints }: DataProps) => {
             </Group>
           );
         })}
+        {/* <FormFieldsBuilder
+        fields={fields}
+        component={component}
+        endpoints={endpoints!}
+      /> */}
         <VisibilityModifier form={form} />
         <ComponentToBindFromSelect
           size="xs"
