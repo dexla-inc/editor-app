@@ -20,7 +20,8 @@ export const useInputValue = <T = string,>(
   );
 
   useEffect(() => {
-    customSetInputValue(value);
+    customSetInputValue(inputValue ?? value);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [customSetInputValue, value]);
 
   return [inputValue, customSetInputValue] as const;
