@@ -19,7 +19,6 @@ import {
   Component,
   ComponentTree,
   debouncedTreeComponentAttrsUpdate,
-  getComponentTreeById,
 } from "@/utils/editor";
 import {
   ActionIcon,
@@ -134,19 +133,15 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
       id: string,
     ) => {
       if (id !== "root") {
-        const editorTreeRoot = useEditorTreeStore.getState().tree
-          .root as ComponentTree;
-        const componentTree = getComponentTreeById(editorTreeRoot, id);
+        const comp =
+          iframeWindow?.document?.querySelector(`[data-id^="${id}"]`) ??
+          iframeWindow?.document?.querySelector(`[id^="${id}"]`);
 
-        let newId = id;
-        if (!componentTree) {
-          const comp =
-            iframeWindow?.document?.querySelector(`[data-id^="${id}"]`) ??
-            iframeWindow?.document?.querySelector(`[id^="${id}"]`);
-
-          newId =
-            comp?.getAttribute("data-id") ?? comp?.getAttribute("id")! ?? id;
-        }
+        const newId = (
+          comp?.getAttribute("data-id") ??
+          comp?.getAttribute("id")! ??
+          id
+        ).replace(/-(title|target)$/, "");
 
         if (e.ctrlKey || e.metaKey) {
           setSelectedComponentIds((prev) => {

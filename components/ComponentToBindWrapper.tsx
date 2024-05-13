@@ -37,9 +37,8 @@ export const ComponentToBindWrapper = ({
     <Stack spacing={0} w="100%">
       {label && <TopLabel text={label} required />}
       <Flex
-        mih={50}
-        align="end"
-        gap="xs"
+        align="start"
+        // gap="xs"
         pos="relative"
         style={{ flexGrow: 1, minHeight: 0 }}
         w="100%"

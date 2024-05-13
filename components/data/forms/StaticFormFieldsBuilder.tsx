@@ -10,6 +10,7 @@ export type FieldType =
   | "unit"
   | "yesno"
   | "integer"
+  | "options"
   | Lowercase<FrontEndTypes>;
 
 type StaticFormFieldsBuilderProps = {
@@ -38,6 +39,7 @@ export const StaticFormFieldsBuilder = ({
       fieldType={field.type}
       decimalPlaces={field.decimalPlaces}
       {...form.getInputProps(`onLoad.${field.name}`)}
+      form={form}
     />
   );
 };
