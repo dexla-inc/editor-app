@@ -26,7 +26,6 @@ const CheckboxItemComponent = forwardRef<HTMLInputElement, Props>(
           label: { width: "100%" },
           root: { gap: "10px", alignItems: "flex-start" },
         }}
-        wrapperProps={{ "data-id": props.id }}
         label={null}
         value={optionValue}
         ref={ref}

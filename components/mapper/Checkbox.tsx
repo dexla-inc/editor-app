@@ -82,7 +82,6 @@ const CheckboxComponent = forwardRef<HTMLInputElement, Props>(
           props.onClick?.(e);
           triggers?.onClick?.(e);
         }}
-        wrapperProps={{ "data-id": component.id }}
       />
     );
   },
