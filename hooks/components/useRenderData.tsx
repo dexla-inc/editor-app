@@ -61,11 +61,6 @@ export const useRenderData = ({ component }: UseRenderDataProps) => {
         ...shareableContent,
         // if data is undefined, we don't want to overwrite the data passed by a parent that is sharing data
         ...(data && { data, parentSuffix }),
-        // This is used to store the data of the repeating component index
-        relatedComponentsData: {
-          ...(shareableContent?.relatedComponentsData ?? {}),
-          ...(data && { [currentComponentGroupId]: data }),
-        },
       });
     };
 
