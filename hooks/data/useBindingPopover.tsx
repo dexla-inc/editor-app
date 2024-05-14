@@ -70,13 +70,8 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
       Object.entries(inputsStore).reduce(
         (acc, [componentGroupId, value]) => {
           const [componentId, groupId] = componentGroupId.split("-related-");
-          const index = Number(groupId?.split("__")?.at(-1));
-          const c = state.componentMutableAttrs[componentId];
-
-          let description = c?.description;
-          if (!isNaN(index)) {
-            description = `${description} [${index}]`;
-          }
+          const { description } =
+            state.componentMutableAttrs[componentId] ?? {};
 
           acc.list[componentGroupId] = {
             id: componentGroupId,
