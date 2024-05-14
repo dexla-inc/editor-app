@@ -23,7 +23,6 @@ import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import cloneDeep from "lodash.clonedeep";
 import setObj from "lodash.set";
-import isEqual from "lodash.isequal";
 
 const client = createClient({
   publicApiKey: process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY ?? "",
@@ -134,8 +133,6 @@ export type EditorTreeState = {
   ) => void;
   isSaving: boolean;
   setIsSaving: (value: boolean) => void;
-  relatedComponentsData: any;
-  setRelatedComponentsData: any;
 };
 
 const updatePageStateFunc = async (
@@ -460,27 +457,6 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
             ),
           setPageLoadTree: (pageLoadTree) =>
             set({ pageLoadTree }, false, "editorTree/setPageLoadTree"),
-          setRelatedComponentsData: ({ id, data }: any) =>
-            set(
-              (state) => {
-                if (
-                  JSON.stringify(state.relatedComponentsData[id]) !==
-                  JSON.stringify(data)
-                ) {
-                  return {
-                    relatedComponentsData: {
-                      ...state.relatedComponentsData,
-                      [id]: data,
-                    },
-                  };
-                }
-
-                return { relatedComponentsData: state.relatedComponentsData };
-              },
-              false,
-              "editorTree/setRelatedComponentsData",
-            ),
-          relatedComponentsData: {},
         }),
         {
           name: "editor-tree-config",

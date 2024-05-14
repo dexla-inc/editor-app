@@ -59,7 +59,7 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
       onLoad: onLoadValues,
     },
   });
-
+  console.log(form.values);
   useEffect(() => {
     if (form.isTouched()) {
       debouncedTreeComponentAttrsUpdate({ attrs: form.values });

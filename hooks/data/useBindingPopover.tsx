@@ -56,7 +56,7 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
   const pageActions = pageListQuery?.results?.find(
     (p) => p.id === activePage?.id,
   )?.actions;
-  const relatedComponentsData = useShareableContent({});
+  const relatedComponentsData = useShareableContent({ endpoints: endpoints! });
   const variablesList = useVariableStore((state) =>
     Object.values(state.variableList),
   );

@@ -19,6 +19,7 @@ export type Modifiers =
   | "modal"
   | "boxShadow"
   | "checkbox"
+  | "checkboxGroup"
   | "table"
   | "radio"
   | "stepper"
@@ -290,6 +291,14 @@ export const requiredModifiers: RequiredModifiers = {
     checked: false,
     withAsterisk: false,
     labelSpacing: "0",
+    size: "sm",
+  },
+  checkboxGroup: {
+    label: "A label",
+    withAsterisk: false,
+    labelSpacing: "0",
+    workLikeRadio: false,
+    size: "sm",
   },
   table: {
     dataType: "dynamic",

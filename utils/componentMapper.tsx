@@ -1154,7 +1154,14 @@ export const componentMapper: ComponentMapper = {
   },
   CheckboxGroup: {
     Component: (props) => <CheckboxGroup {...props} />,
-    modifiers: ["checkbox", "layout", "spacing", "size", "border", "effects"],
+    modifiers: [
+      "checkboxGroup",
+      "layout",
+      "spacing",
+      "size",
+      "border",
+      "effects",
+    ],
     actionTriggers: ["onChange", "onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
     isValidatable: true,
