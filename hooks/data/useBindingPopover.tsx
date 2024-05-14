@@ -16,8 +16,6 @@ import { useShallow } from "zustand/react/shallow";
 import { ContextType } from "@/types/dataBinding";
 import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 import { useShareableContent } from "@/hooks/data/useShareableContent";
-import { relatedKeys } from "@/utils/data";
-import cloneDeep from "lodash.clonedeep";
 import { useEventData } from "@/hooks/data/useEventData";
 
 type BindType = {
@@ -56,7 +54,7 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
   const pageActions = pageListQuery?.results?.find(
     (p) => p.id === activePage?.id,
   )?.actions;
-  const relatedComponentsData = useShareableContent({});
+  const { item } = useShareableContent({});
   const variablesList = useVariableStore((state) =>
     Object.values(state.variableList),
   );
@@ -189,21 +187,6 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
       }
     });
   }
-
-  const relatedComponentsDataList = Object.entries(relatedComponentsData);
-  const itemData = relatedComponentsDataList?.at(-1);
-
-  const item = cloneDeep(relatedComponentsDataList)
-    ?.reverse()
-    .reduce(
-      (acc, [key, value], i) => {
-        acc[relatedKeys[i]] = value;
-        return acc;
-      },
-      {
-        index: itemData?.[0]?.split("__")?.[1],
-      } as any,
-    );
 
   const getEntityEditorValue = ({ selectedEntityId, entity }: BindType) => {
     const entityHandlers = {
