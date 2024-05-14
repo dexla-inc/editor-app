@@ -20,9 +20,8 @@ type DynamicFormFieldsBuilderProps = {
 export const DynamicFormFieldsBuilder = ({
   form,
   field,
-  endpoints,
 }: DynamicFormFieldsBuilderProps) => {
-  const relatedComponentsData = useShareableContent({ endpoints });
+  const relatedComponentsData = useShareableContent({});
   const parentDataComponent = Object.values(relatedComponentsData).at(-1);
 
   return (
