@@ -848,7 +848,7 @@ export const useResetVariableAction = async ({
 }: ResetVariableActionParams) => {
   const resetVariable = useVariableStore.getState().resetVariable;
 
-  action.variableIds.forEach((id) => resetVariable(id));
+  action.variableIds?.forEach((id) => resetVariable(id));
 };
 
 export function showSequentialActionButton(actionName: string) {
