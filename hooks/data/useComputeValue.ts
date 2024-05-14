@@ -10,7 +10,7 @@ import cloneDeep from "lodash.clonedeep";
 import { useInputsStore } from "@/stores/inputs";
 import { useShallow } from "zustand/react/shallow";
 import { pick } from "next/dist/lib/pick";
-import { relatedKeys } from "@/utils/data";
+import { useShareableContent } from "@/hooks/data/useShareableContent";
 
 type NextRouterKeys = keyof NextRouter;
 type RecordStringAny = Record<string, any>;
@@ -25,6 +25,7 @@ const itemPattern = /item\[\s*(?:\/\*[\s\S]*?\*\/\s*)?'(.*?)'\s*\]/g;
 type UseComputeValue = {
   shareableContent?: Record<string, unknown>;
   onLoad: any;
+  componentId?: string;
 };
 
 const autoRunJavascriptCode = (boundCode: string) => {
@@ -60,6 +61,7 @@ const findValuePropsPaths = (obj: any, prefix = ""): string[] => {
 export const useComputeValue = ({
   shareableContent,
   onLoad = {},
+  componentId = "",
 }: UseComputeValue) => {
   onLoad = cloneDeep(onLoad);
 
@@ -67,23 +69,7 @@ export const useComputeValue = ({
   const valuePropsPaths = useMemo(() => {
     return findValuePropsPaths(onLoad);
   }, [onLoad]);
-
-  const relatedComponentsDataList = Object.entries(
-    shareableContent?.relatedComponentsData ?? {},
-  );
-  const itemData = relatedComponentsDataList?.at(-1);
-
-  const item = cloneDeep(relatedComponentsDataList)
-    ?.reverse()
-    .reduce(
-      (acc, [key, value], i) => {
-        acc[relatedKeys[i]] = value;
-        return acc;
-      },
-      {
-        index: itemData?.[0]?.split("__")?.[1],
-      } as any,
-    );
+  const { item } = useShareableContent({ componentId });
 
   const {
     variableKeys,
