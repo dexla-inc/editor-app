@@ -23,6 +23,7 @@ export default function ApiInfoFormNew() {
       baseUrl: "",
       authenticationScheme: "NONE",
       environment: "Production",
+      type: "API",
     },
     validate: {
       baseUrl: validateBaseUrl,

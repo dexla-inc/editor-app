@@ -56,6 +56,7 @@ export default function BasicDetailsStep({
       baseUrl: dataSource?.baseUrl || "",
       environment: dataSource?.environment || "",
       authenticationScheme: dataSource?.authenticationScheme || "NONE",
+      type: "API",
     },
     validate: {
       baseUrl: (value) => validateBaseUrl(value),
