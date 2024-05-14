@@ -40,7 +40,7 @@ export const ComponentToBindWrapper = ({
         align="start"
         // gap="xs"
         pos="relative"
-        style={{ flexGrow: 1, minHeight: 0 }}
+        style={{ flexGrow: 1, minHeight: 0, alignItems: "self-end" }}
         w="100%"
       >
         {value?.dataType === "boundCode" ? (

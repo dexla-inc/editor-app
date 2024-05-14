@@ -3,7 +3,6 @@ import {
   DataSourceParams,
   DataSourceResponse,
 } from "@/requests/datasources/types";
-import { useEditorStore } from "@/stores/editor";
 import { validateBaseUrl, validateName } from "@/utils/validation";
 import { Button, Flex, Select, Stack, TextInput, Title } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -62,9 +61,11 @@ export const DataSourceForm = ({ datasource }: Props) => {
       environment: datasource.environment,
       authenticationScheme: datasource.authenticationScheme,
       authValue: datasource.authValue,
+      apiKey: datasource.apiKey,
+      type: datasource.type,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [datasource]);
 
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
@@ -73,6 +74,15 @@ export const DataSourceForm = ({ datasource }: Props) => {
       </Flex>
       <Stack>
         <SegmentedControlInput
+          label="Type"
+          data={[
+            { value: "API", label: "API" },
+            { value: "SWAGGER", label: "Swagger" },
+            { value: "SUPABASE", label: "Supabase" },
+          ]}
+          {...form.getInputProps("type")}
+        />
+        <SegmentedControlInput
           label="Environment"
           data={[
             { value: "Staging", label: "Staging" },
@@ -80,11 +90,13 @@ export const DataSourceForm = ({ datasource }: Props) => {
           ]}
           {...form.getInputProps("environment")}
         />
-        <SwaggerURLInputRevised
-          datasourceId={datasource.id}
-          updated={datasource.updated}
-          {...form.getInputProps("swaggerUrl")}
-        />
+        {form.values.type === "SWAGGER" && (
+          <SwaggerURLInputRevised
+            datasourceId={datasource.id}
+            updated={datasource.updated}
+            {...form.getInputProps("swaggerUrl")}
+          />
+        )}
         <TextInput
           label="API Description"
           placeholder="Internal API"
@@ -109,6 +121,14 @@ export const DataSourceForm = ({ datasource }: Props) => {
             form.setFieldValue("authenticationScheme", value as any);
           }}
         />
+        {form.values.type === "SUPABASE" && (
+          <TextInput
+            label="API Key"
+            description="(Optional)"
+            placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6Ikp..."
+            {...form.getInputProps("apiKey")}
+          />
+        )}
         {/* Need to add access and refresh token config */}
         <Button type="submit" loading={isLoading}>
           Save

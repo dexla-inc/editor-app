@@ -634,13 +634,13 @@ export const useApiCallAction = async (
 
         refreshAccessToken(endpoint.dataSourceId);
 
-        responseJson = await performFetch(
-          fetchUrl,
-          endpoint,
-          header,
-          body ?? {},
-          authHeaderKey,
-        );
+      // responseJson = await performFetch(
+      //   fetchUrl,
+      //   endpoint,
+      //   header,
+      //   body ?? {},
+      //   authHeaderKey,
+      // );
     }
 
     setActionsResponses(actionId, {
@@ -852,7 +852,7 @@ export const useResetVariableAction = async ({
 };
 
 export function showSequentialActionButton(actionName: string) {
-  return actionName === "apiCall" || actionName === "changeVariable";
+  return ["apiCall", "changeVariable", "resetVariable"].includes(actionName);
 }
 
 export const actionMapper = {

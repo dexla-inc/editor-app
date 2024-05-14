@@ -22,12 +22,6 @@ export const EndpointRequestInputs = ({
   const accessToken = useDataSourceStore(
     (state) => state.authState.accessToken,
   );
-  const setPickingComponentToBindTo = useEditorStore(
-    (state) => state.setPickingComponentToBindTo,
-  );
-  const setComponentToBind = useEditorStore(
-    (state) => state.setComponentToBind,
-  );
 
   return (
     <Stack spacing={2}>
@@ -83,10 +77,6 @@ export const EndpointRequestInputs = ({
                         { required: param.required }
                       : {})}
                     {...additionalProps}
-                    onPickComponent={() => {
-                      setPickingComponentToBindTo(undefined);
-                      setComponentToBind(undefined);
-                    }}
                     isPageAction={isPageAction}
                     {...form.getInputProps(field)}
                   />

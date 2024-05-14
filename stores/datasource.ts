@@ -45,7 +45,7 @@ export const useDataSourceStore = create<DataSourceState>()(
 
           const additionalInfo = Object.keys(response).reduce(
             (acc: any, key) => {
-              if (!keysToExclude.includes(key)) {
+              if (!keysToExcludeForMetadata.includes(key)) {
                 acc[key] = response[key];
               }
               return acc;
@@ -90,13 +90,26 @@ export const useDataSourceStore = create<DataSourceState>()(
           const authConfig = apiAuthConfig?.authConfigurations[dataSourceId];
           const url = authConfig?.refreshTokenUrl as string;
 
-          const response = await fetch(url, {
+          const refreshTokenProperty =
+            authConfig?.refreshTokenProperty as string;
+          const headers: Record<string, string> = {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          };
+
+          let finalUrl = url;
+
+          if (authConfig?.dataType === "SUPABASE") {
+            headers["apiKey"] = authConfig?.apiKey as string;
+            finalUrl += "?grant_type=refresh_token";
+          }
+
+          const response = await fetch(finalUrl, {
             method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${accessToken}`,
-            },
-            body: JSON.stringify({ refresh: refreshToken }),
+            headers: headers,
+            body: JSON.stringify({
+              [refreshTokenProperty ?? "refresh"]: refreshToken,
+            }),
           });
 
           const data = await response.json();
@@ -196,7 +209,7 @@ export const useDataSourceStore = create<DataSourceState>()(
   ),
 );
 
-const keysToExclude = [
+const keysToExcludeForMetadata = [
   "accessTokenProperty",
   "refreshTokenProperty",
   "expiryTokenProperty",
@@ -208,4 +221,6 @@ const keysToExclude = [
   "refresh",
   "access_token",
   "refresh_token",
+  "apiKey",
+  "dataType",
 ];
