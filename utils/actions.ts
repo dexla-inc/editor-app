@@ -634,13 +634,13 @@ export const useApiCallAction = async (
 
         refreshAccessToken(endpoint.dataSourceId);
 
-      // responseJson = await performFetch(
-      //   fetchUrl,
-      //   endpoint,
-      //   header,
-      //   body ?? {},
-      //   authHeaderKey,
-      // );
+        responseJson = await performFetch(
+          fetchUrl,
+          endpoint,
+          header,
+          body ?? {},
+          authHeaderKey,
+        );
     }
 
     setActionsResponses(actionId, {
