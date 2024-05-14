@@ -36,6 +36,9 @@ const ButtonIconModifier = dynamic(
 const CheckboxModifier = dynamic(
   () => import("@/components/modifiers/Checkbox"),
 );
+const CheckboxGroupModifier = dynamic(
+  () => import("@/components/modifiers/CheckboxGroup"),
+);
 const CountdownButtonModifier = dynamic(
   () => import("@/components/modifiers/CountdownButton"),
 );
@@ -117,6 +120,7 @@ export const modifierSectionMapper: SectionsMapper = {
   modal: { Modifier: ModalModifier, icon: "IconBoxModel" },
   boxShadow: { Modifier: BoxShadowModifier, icon: "IconShadow" },
   checkbox: { Modifier: CheckboxModifier, icon: "IconCheckbox" },
+  checkboxGroup: { Modifier: CheckboxGroupModifier, icon: "IconListCheck" },
   table: { Modifier: TableModifier, icon: "IconTable" },
   radio: { Modifier: RadioModifier, icon: "IconRadio" },
   drawer: { Modifier: DrawerModifier, icon: "IconLayoutSidebarLeftCollapse" },
