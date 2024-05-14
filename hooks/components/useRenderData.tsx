@@ -26,6 +26,9 @@ export const useRenderData = ({ component }: UseRenderDataProps) => {
   );
   const { dataType = "static" } = component?.props!;
   const { data: staticData } = component.onLoad!;
+  const setRelatedComponentsData = useEditorTreeStore(
+    (state) => state.setRelatedComponentsData,
+  );
 
   const { data: dynamicData, isLoading } = useEndpoint({
     onLoad: component.onLoad,
@@ -42,6 +45,10 @@ export const useRenderData = ({ component }: UseRenderDataProps) => {
       parentSuffix,
       currentComponentGroupId,
     }: RenderComponentProps) => {
+      // WARNING: If you redux devtools is failing, you might want to comment this line
+      // doing this so I can use parent component data in the binding popover
+      setRelatedComponentsData({ id: currentComponentGroupId, data });
+
       return renderTree(child, {
         ...shareableContent,
         // if data is undefined, we don't want to overwrite the data passed by a parent that is sharing data
