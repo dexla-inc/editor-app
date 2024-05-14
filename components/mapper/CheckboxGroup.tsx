@@ -24,8 +24,15 @@ const CheckboxGroupComponent = forwardRef(
     const isPreviewMode = useEditorTreeStore(
       useShallow((state) => state.isPreviewMode || state.isLive),
     );
-    const { style, children, triggers, styles, gap, ...componentProps } =
-      component.props as any;
+    const {
+      style,
+      children,
+      triggers,
+      styles,
+      gap,
+      workLikeRadio,
+      ...componentProps
+    } = component.props as any;
 
     const gapSize = gapSizes[gap ?? "sm"];
 
@@ -41,6 +48,9 @@ const CheckboxGroupComponent = forwardRef(
     const defaultTriggers = isPreviewMode
       ? {
           onChange: (val: string[]) => {
+            if (workLikeRadio && val.length > 1) {
+              val = [val[val.length - 1]];
+            }
             setInputStore(val);
             onChange?.({ target: { value: val } });
           },

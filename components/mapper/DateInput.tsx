@@ -2,7 +2,6 @@ import { Icon } from "@/components/Icon";
 import { useBrandingStyles } from "@/hooks/editor/useBrandingStyles";
 import { EditableComponentMapper } from "@/utils/editor";
 import {
-  DatePicker,
   DatePickerInputProps,
   DatePickerInput as MantineDatePickerInput,
 } from "@mantine/dates";
@@ -13,7 +12,7 @@ import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { useChangeState } from "@/hooks/components/useChangeState";
 import { useInputValue } from "@/hooks/components/useInputValue";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { getNewDate, setDate } from "@/utils/date";
+import { getNewDate } from "@/utils/date";
 
 type Props = EditableComponentMapper & DatePickerInputProps;
 
@@ -120,18 +119,6 @@ const DateInputComponent = ({
             )
           : children?.toString()}
       </MantineDatePickerInput>
-
-      {/* <MantineDatePickerInput
-      valueFormat="YYYY MMM DD"
-      type="range"
-      label="Pick date"
-      placeholder="Pick date"
-      mx="auto"
-      maw={400}
-      valueFormat={valueFormatValue}
-      value={dateInputValue}
-      onChange={handleChange}
-    /> */}
     </>
   );
 };
