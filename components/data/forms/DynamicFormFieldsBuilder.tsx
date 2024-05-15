@@ -8,7 +8,7 @@ import { useShareableContent } from "@/hooks/data/useShareableContent";
 type DynamicFormFieldsBuilderProps = {
   form: any;
   component: Component;
-  endpoints: PagingResponse<Endpoint>;
+  endpoints: Endpoint[];
   field: {
     name: string;
     label: string;

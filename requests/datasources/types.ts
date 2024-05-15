@@ -1,8 +1,16 @@
 import { MethodTypes, PagingParams } from "@/requests/types";
+import { ApiType } from "@/types/dashboardTypes";
 
-export type DataSourceTypes = "API" | "AIRTABLE" | "GRAPH_QL";
+export type DataSourceTypes =
+  | "API"
+  | "AIRTABLE"
+  | "GRAPH_QL"
+  | "SWAGGER"
+  | "SUPABASE";
 
 export interface DataSourcesListParams extends PagingParams {
+  datasourceId?: string;
+  include?: string; // Supported params are: endpoints,auth
   type?: string;
 }
 
@@ -15,12 +23,14 @@ export interface DataSourceEndpointsListParams extends PagingParams {
 export type SwaggerParams = { swaggerUrl: string };
 
 export type DataSourceParams = {
+  type: DataSourceTypes;
   name?: string;
   baseUrl?: string;
   authenticationScheme?: AuthenticationSchemes;
   environment?: string;
   swaggerUrl?: string;
   authValue?: string;
+  apiKey?: string;
 };
 
 export interface DataSourceResponse {
@@ -36,6 +46,9 @@ export interface DataSourceResponse {
   changedEndpoints?: Endpoint[];
   deletedEndpoints?: Endpoint[];
   authValue?: string;
+  apiKey?: string;
+  endpoints?: Endpoint[];
+  auth?: DataSourceAuthResponse;
 }
 
 export interface ErrorResponse extends Error {
@@ -146,6 +159,8 @@ export type DataSourceAuthResponse = {
   accessTokenProperty?: string;
   refreshTokenProperty?: string;
   expiryTokenProperty?: string;
+  apiKey?: string;
+  dataType?: "SWAGGER" | "API" | "SUPABASE";
 };
 
 export type ApiFromAI = Pick<
@@ -172,4 +187,36 @@ export type ApiEndpointFromAI = Pick<
   | "isServerRequest"
 > & {
   url?: string | null;
+};
+
+type Defaults = {
+  header: Header;
+  parameter: Parameter;
+  body: RequestBody;
+};
+
+export const defaultApiRequest: {
+  [K in keyof Defaults as ApiType]: Defaults[K];
+} = {
+  header: {
+    required: false,
+    name: "",
+    type: "string",
+    description: null,
+    value: null,
+  },
+  parameter: {
+    location: "Query",
+    required: false,
+    name: "",
+    type: "string",
+    description: null,
+    value: null,
+  },
+  body: {
+    name: "",
+    type: "string",
+    description: null,
+    value: null,
+  },
 };

@@ -34,6 +34,7 @@ export default function SwaggerStep({
   const form = useForm<DataSourceParams>({
     initialValues: {
       swaggerUrl: dataSource?.swaggerUrl || "",
+      type: "SWAGGER",
     },
     validate: {
       swaggerUrl: (value) => validateSwaggerUrl(value),

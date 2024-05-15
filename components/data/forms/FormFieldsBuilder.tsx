@@ -7,7 +7,6 @@ import {
 } from "@/components/data/forms/StaticFormFieldsBuilder";
 import { useComponentStates } from "@/hooks/editor/useComponentStates";
 import { Endpoint } from "@/requests/datasources/types";
-import { PagingResponse } from "@/requests/types";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { ICON_SIZE } from "@/utils/config";
 import { Component, debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
@@ -27,7 +26,7 @@ type Props = {
     additionalComponent?: JSX.Element;
     decimalPlaces?: number;
   }>;
-  endpoints: PagingResponse<Endpoint>;
+  endpoints: Endpoint[];
   component: Component;
 };
 

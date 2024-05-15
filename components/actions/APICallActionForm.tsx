@@ -1,7 +1,6 @@
 import EmptyDatasourcesPlaceholder from "@/components/datasources/EmptyDatasourcesPlaceholder";
 import { EndpointRequestInputs } from "@/components/EndpointRequestInputs";
 import { EndpointSelect } from "@/components/EndpointSelect";
-import { useDataSourceEndpoints } from "@/hooks/editor/reactQuery/useDataSourceEndpoints";
 import {
   ActionFormProps,
   APICallAction,
@@ -12,6 +11,7 @@ import { useRouter } from "next/router";
 import { SegmentedControlInput } from "../SegmentedControlInput";
 import { SegmentedControlYesNo } from "../SegmentedControlYesNo";
 import { useEffect } from "react";
+import { useEndpoints } from "@/hooks/editor/reactQuery/useDataSourcesEndpoints";
 
 type Props = ActionFormProps<Omit<APICallAction, "name" | "datasource">>;
 
@@ -19,9 +19,9 @@ export const APICallActionForm = ({ form, isPageAction }: Props) => {
   const router = useRouter();
   const projectId = router.query.id as string;
 
-  const { data: endpoints } = useDataSourceEndpoints(projectId);
+  const { endpoints } = useEndpoints(projectId as string);
 
-  const selectedEndpoint = endpoints?.results?.find(
+  const selectedEndpoint = endpoints?.find(
     (e) => e.id === form.values.endpoint,
   );
 
@@ -45,7 +45,7 @@ export const APICallActionForm = ({ form, isPageAction }: Props) => {
     }
   }, [selectedEndpoint]);
 
-  return endpoints && endpoints.results.length > 0 ? (
+  return endpoints && endpoints.length > 0 ? (
     <>
       <Stack spacing="xs">
         <EndpointSelect {...form.getInputProps("endpoint")} />

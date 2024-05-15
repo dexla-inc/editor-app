@@ -28,6 +28,7 @@ export default function AuthenticationApiKey({
     validateInputOnBlur: true,
     initialValues: {
       authValue: undefined,
+      type: "API",
     },
     validate: {
       authValue: (value) =>

@@ -1,7 +1,5 @@
-import { useDataSourceEndpoints } from "@/hooks/editor/reactQuery/useDataSourceEndpoints";
 import { useDataSources } from "@/hooks/editor/reactQuery/useDataSources";
 import { getSwagger } from "@/requests/datasources/queries";
-import { useEditorStore } from "@/stores/editor";
 import {
   Flex,
   Loader,
@@ -29,16 +27,13 @@ export const SwaggerURLInputRevised = ({
   ) as string;
   const [isLoading, setIsLoading] = useState(false);
   const lastUpdated = new Date(updated).toLocaleString();
-  const { invalidate: invalidateDataSourceEndpoints } =
-    useDataSourceEndpoints(projectId);
-  const { invalidate: invalidateDataSources } = useDataSources(projectId);
+  const { invalidate: invalidate } = useDataSources(projectId);
 
   const refetchSwagger = async () => {
     try {
       setIsLoading(true);
       await getSwagger(projectId, datasourceId, props.value as string);
-      invalidateDataSources();
-      invalidateDataSourceEndpoints();
+      invalidate();
     } catch (e) {
       console.error(e);
     } finally {

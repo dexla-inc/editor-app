@@ -1,9 +1,9 @@
-import { useDataSourceEndpoints } from "@/hooks/editor/reactQuery/useDataSourceEndpoints";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { dataMapper } from "@/utils/dataMapper";
 import { Stack } from "@mantine/core";
 import { useShallow } from "zustand/react/shallow";
 import { selectedComponentIdSelector } from "@/utils/componentSelectors";
+import { useEndpoints } from "@/hooks/editor/reactQuery/useDataSourcesEndpoints";
 
 export const Data = () => {
   const component = useEditorTreeStore(
@@ -13,7 +13,7 @@ export const Data = () => {
     }),
   );
   const projectId = useEditorTreeStore((state) => state.currentProjectId);
-  const { data: endpoints } = useDataSourceEndpoints(projectId);
+  const { endpoints } = useEndpoints(projectId as string);
 
   const DataSection = dataMapper[component?.name as keyof typeof dataMapper];
 
