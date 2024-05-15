@@ -159,7 +159,7 @@ export const useComputeValue = ({
         (acc, key) => ({
           ...acc,
           // @ts-ignore
-          [key]: state.getAuthState(projectId)[key],
+          [key]: state.getAuthState(projectId)?.[key] || {},
         }),
         {},
       ),
