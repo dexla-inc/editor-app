@@ -158,6 +158,7 @@ export const useComputeValue = ({
       authKeys.reduce(
         (acc, key) => ({
           ...acc,
+          // @ts-ignore
           [key]: state.getAuthState(projectId)?.[key] || {},
         }),
         {},
