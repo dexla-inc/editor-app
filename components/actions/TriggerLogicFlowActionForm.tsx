@@ -1,4 +1,4 @@
-import { useFlowsQuery } from "@/hooks/reactQuery/useFlowsQuery";
+import { useFlowsQuery } from "@/hooks/editor/reactQuery/useFlowsQuery";
 import { LogicFlowResponse } from "@/requests/logicflows/types";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { ActionFormProps, TriggerLogicFlowAction } from "@/utils/actions";

@@ -3,7 +3,7 @@ import { Logo } from "@/components/Logo";
 import { OtherAvatars } from "@/components/OtherAvatars";
 import { Group, Tooltip } from "@mantine/core";
 import Link from "next/link";
-import { useProjectQuery } from "@/hooks/reactQuery/useProjectQuery";
+import { useProjectQuery } from "@/hooks/editor/reactQuery/useProjectQuery";
 
 type Props = {
   projectId: string;

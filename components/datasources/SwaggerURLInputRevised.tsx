@@ -1,4 +1,4 @@
-import { useDataSources } from "@/hooks/reactQuery/useDataSources";
+import { useDataSources } from "@/hooks/editor/reactQuery/useDataSources";
 import { getSwagger } from "@/requests/datasources/queries";
 import {
   Flex,

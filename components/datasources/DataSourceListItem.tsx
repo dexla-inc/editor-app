@@ -1,5 +1,5 @@
 import { DataSourceEndpoint } from "@/components/datasources/DataSourceEndpoint";
-import { useEndpoints } from "@/hooks/reactQuery/useDataSourcesEndpoints";
+import { useEndpoints } from "@/hooks/editor/reactQuery/useDataSourcesEndpoints";
 import { Endpoint } from "@/requests/datasources/types";
 import { Button, Stack } from "@mantine/core";
 import { useState } from "react";

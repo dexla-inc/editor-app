@@ -1,4 +1,4 @@
-import { usePageStateHistory } from "@/hooks/reactQuery/usePageStateHistory";
+import { usePageStateHistory } from "@/hooks/editor/reactQuery/usePageStateHistory";
 import { LARGE_ICON_SIZE } from "@/utils/config";
 import { LoadingOverlay, Stack, Text } from "@mantine/core";
 import { DateInput } from "@mantine/dates";

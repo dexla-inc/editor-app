@@ -14,11 +14,11 @@ import { useThemeStore } from "@/stores/theme";
 import { useVariableStore } from "@/stores/variables";
 import { initializeFonts } from "@/utils/webfontloader";
 import { useEffect } from "react";
-import { useVariableListQuery } from "@/hooks/reactQuery/useVariableListQuery";
+import { useVariableListQuery } from "@/hooks/editor/reactQuery/useVariableListQuery";
 import { MantineThemeExtended } from "@/types/types";
 import { safeJsonParse } from "@/utils/common";
 import { useInputsStore } from "@/stores/inputs";
-import { useDataSources } from "@/hooks/reactQuery/useDataSources";
+import { useDataSources } from "@/hooks/editor/reactQuery/useDataSources";
 
 type Props = {
   deploymentPage: DeploymentPage;

@@ -1,6 +1,6 @@
 import { AddNewDataSourceEndpoint } from "@/components/datasources/AddNewDataSourceEndpoint";
 import { DataSourceEndpoint } from "@/components/datasources/DataSourceEndpoint";
-import { useEndpoints } from "@/hooks/reactQuery/useDataSourcesEndpoints";
+import { useEndpoints } from "@/hooks/editor/reactQuery/useDataSourcesEndpoints";
 import { Title } from "@mantine/core";
 
 type DataSourceEndpointListProps = {

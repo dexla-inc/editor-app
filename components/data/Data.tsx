@@ -3,7 +3,7 @@ import { dataMapper } from "@/utils/dataMapper";
 import { Stack } from "@mantine/core";
 import { useShallow } from "zustand/react/shallow";
 import { selectedComponentIdSelector } from "@/utils/componentSelectors";
-import { useEndpoints } from "@/hooks/reactQuery/useDataSourcesEndpoints";
+import { useEndpoints } from "@/hooks/editor/reactQuery/useDataSourcesEndpoints";
 
 export const Data = () => {
   const component = useEditorTreeStore(

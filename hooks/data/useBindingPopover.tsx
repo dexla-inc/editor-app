@@ -4,7 +4,7 @@ import { NodeData } from "@/components/logic-flow/nodes/CustomNode";
 import { safeJsonParse } from "@/utils/common";
 import merge from "lodash.merge";
 import { Action, APICallAction } from "@/utils/actions";
-import { usePageListQuery } from "@/hooks/reactQuery/usePageListQuery";
+import { usePageListQuery } from "@/hooks/editor/reactQuery/usePageListQuery";
 import { useEditorStore } from "@/stores/editor";
 import { useVariableStore } from "@/stores/variables";
 import { useRouter } from "next/router";
@@ -16,7 +16,7 @@ import { ContextType } from "@/types/dataBinding";
 import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 import { useShareableContent } from "@/hooks/data/useShareableContent";
 import { useEventData } from "@/hooks/data/useEventData";
-import { useEndpoints } from "../reactQuery/useDataSourcesEndpoints";
+import { useEndpoints } from "../editor/reactQuery/useDataSourcesEndpoints";
 
 type BindType = {
   selectedEntityId: string;

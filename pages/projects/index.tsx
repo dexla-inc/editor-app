@@ -1,8 +1,8 @@
 import { DashboardShell } from "@/components/DashboardShell";
 import IconTitleDescriptionButton from "@/components/projects/NewProjectButton";
 import { ProjectItem } from "@/components/projects/ProjectItem";
-import { useProjectListQuery } from "@/hooks/reactQuery/useProjectListQuery";
-import { useProjectMutatation } from "@/hooks/reactQuery/useProjectMutation";
+import { useProjectListQuery } from "@/hooks/editor/reactQuery/useProjectListQuery";
+import { useProjectMutatation } from "@/hooks/editor/reactQuery/useProjectMutation";
 import { createProject } from "@/requests/projects/mutations";
 import { useAppStore } from "@/stores/app";
 import { useEditorTreeStore } from "@/stores/editorTree";

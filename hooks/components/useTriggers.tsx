@@ -5,9 +5,9 @@ import { Component } from "@/utils/editor";
 import { Router } from "next/router";
 import { ChangeEvent, useMemo } from "react";
 import { useDataBinding } from "@/hooks/data/useDataBinding";
-import { useFlowsQuery } from "@/hooks/reactQuery/useFlowsQuery";
+import { useFlowsQuery } from "@/hooks/editor/reactQuery/useFlowsQuery";
 import { ComputeValueProps } from "@/types/dataBinding";
-import { useEndpoints } from "../reactQuery/useDataSourcesEndpoints";
+import { useEndpoints } from "../editor/reactQuery/useDataSourcesEndpoints";
 
 const nonDefaultActionTriggers = ["onSuccess", "onError"];
 

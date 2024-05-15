@@ -1,6 +1,6 @@
 import { Icon } from "@/components/Icon";
 import { buttonHoverStyles } from "@/components/styles/buttonHoverStyles";
-import { usePageListQuery } from "@/hooks/reactQuery/usePageListQuery";
+import { usePageListQuery } from "@/hooks/editor/reactQuery/usePageListQuery";
 import { PageResponse } from "@/requests/pages/types";
 import { deleteProject } from "@/requests/projects/mutations";
 import { usePropelAuthStore } from "@/stores/propelAuth";

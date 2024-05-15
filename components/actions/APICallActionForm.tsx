@@ -11,7 +11,7 @@ import { useRouter } from "next/router";
 import { SegmentedControlInput } from "../SegmentedControlInput";
 import { SegmentedControlYesNo } from "../SegmentedControlYesNo";
 import { useEffect } from "react";
-import { useEndpoints } from "@/hooks/reactQuery/useDataSourcesEndpoints";
+import { useEndpoints } from "@/hooks/editor/reactQuery/useDataSourcesEndpoints";
 
 type Props = ActionFormProps<Omit<APICallAction, "name" | "datasource">>;
 

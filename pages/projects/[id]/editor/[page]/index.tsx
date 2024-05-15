@@ -4,9 +4,9 @@ import { GetServerSidePropsContext } from "next";
 import { useEffect } from "react";
 import { useVariableStore } from "@/stores/variables";
 import { useDataSourceStore } from "@/stores/datasource";
-import { useVariableListQuery } from "@/hooks/reactQuery/useVariableListQuery";
+import { useVariableListQuery } from "@/hooks/editor/reactQuery/useVariableListQuery";
 import { useRouter } from "next/router";
-import { useDataSources } from "@/hooks/reactQuery/useDataSources";
+import { useDataSources } from "@/hooks/editor/reactQuery/useDataSources";
 
 export const getServerSideProps = async ({}: GetServerSidePropsContext) => {
   return { props: {} };
