@@ -1,7 +1,6 @@
 import { ErrorAlert, SuccessAlert } from "@/components/Alerts";
 import { getDataSourceAuth } from "@/requests/datasources/queries-noauth";
 import {
-  DataSourceAuthListResponse,
   DataSourceAuthResponse,
   RequestBody,
 } from "@/requests/datasources/types";
@@ -79,8 +78,7 @@ export const TestUserLogin = ({
   return (
     <Stack spacing="xs" py="xl">
       <Title order={4}>Test Account Login</Title>
-      {!dataSourceAuthConfig?.authConfigurations[dataSourceId || ""]
-        ?.accessTokenUrl && (
+      {!dataSourceAuthConfig?.[dataSourceId || ""]?.accessTokenUrl && (
         <ErrorAlert
           title="Set up your login URL"
           text="You need to set up your login URL in the data source settings before you can test your login."

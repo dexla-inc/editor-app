@@ -147,9 +147,9 @@ export const AuthenticationSchemeLabels: Record<AuthenticationSchemes, string> =
     API_KEY: "API Key",
   };
 
-// export type DataSourceAuthListResponse = {
-//   authConfigurations: Record<string, Omit<DataSourceAuthResponse, "type">>;
-// };
+export type DataSourceAuthListResponse = {
+  authConfigurations: Record<string, Omit<DataSourceAuthResponse, "type">>;
+};
 
 export type DataSourceAuthResponse = {
   type: AuthenticationSchemes;
