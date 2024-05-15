@@ -164,7 +164,7 @@ export const useDataSourceStore = create<DataSourceState>()(
           >((acc, dataSourceResponse) => {
             if (dataSourceResponse.auth) {
               const { type, ...authDetails } = dataSourceResponse.auth;
-              acc[projectId] = authDetails;
+              acc[dataSourceResponse.id] = authDetails;
             }
             return acc;
           }, {});
