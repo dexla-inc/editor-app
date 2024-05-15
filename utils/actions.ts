@@ -580,6 +580,8 @@ export const useApiCallAction = async (
     useEditorTreeStore.getState().updateTreeComponentAttrs;
   const setActionsResponse = useEditorStore.getState().setActionsResponse;
 
+  const projectId = useEditorTreeStore.getState().currentProjectId as string;
+
   if (entity?.props && action.showLoader) {
     setLoadingState(entity.id!, true, updateTreeComponentAttrs);
   }
@@ -588,8 +590,7 @@ export const useApiCallAction = async (
 
   try {
     const accessToken =
-      useDataSourceStore.getState().authState[endpoint.dataSourceId]
-        ?.accessToken;
+      useDataSourceStore.getState().authState?.[projectId]?.accessToken;
 
     const { url, header, body } = prepareRequestData(
       action,
@@ -610,11 +611,11 @@ export const useApiCallAction = async (
       case "login":
         responseJson = await performFetch(url, endpoint, header, body);
         const apiAuthConfig = useDataSourceStore.getState().apiAuthConfig;
-        const authConfig = apiAuthConfig?.[endpoint.dataSourceId];
+        const authConfig = apiAuthConfig?.[projectId];
         const mergedAuthConfig = { ...responseJson, ...authConfig };
         const setAuthTokens = useDataSourceStore.getState().setAuthTokens;
 
-        setAuthTokens(endpoint.dataSourceId, mergedAuthConfig);
+        setAuthTokens(projectId, mergedAuthConfig);
         break;
       case "logout":
         responseJson = await performFetch(
@@ -627,14 +628,14 @@ export const useApiCallAction = async (
 
         const clearAuthTokens = useDataSourceStore.getState().clearAuthTokens;
 
-        clearAuthTokens(endpoint.dataSourceId);
+        clearAuthTokens(projectId);
 
         break;
       default:
         const refreshAccessToken =
           useDataSourceStore.getState().refreshAccessToken;
 
-        refreshAccessToken(endpoint.dataSourceId);
+        refreshAccessToken(projectId);
 
         responseJson = await performFetch(
           fetchUrl,

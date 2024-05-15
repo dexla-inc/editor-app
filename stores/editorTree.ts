@@ -23,7 +23,6 @@ import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import cloneDeep from "lodash.clonedeep";
 import setObj from "lodash.set";
-import isEqual from "lodash.isequal";
 
 const client = createClient({
   publicApiKey: process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY ?? "",
