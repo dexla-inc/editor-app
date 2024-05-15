@@ -97,7 +97,7 @@ export const Live = ({ deploymentPage }: Props) => {
   useEffect(() => {
     if (datasources) {
       // const endpoints = datasources.results.flatMap((ds) => ds.endpoints);
-      setApiAuthConfig(datasources);
+      setApiAuthConfig(projectId, datasources);
     }
   }, [datasources, setApiAuthConfig]);
 

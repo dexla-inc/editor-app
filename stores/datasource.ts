@@ -1,28 +1,33 @@
 import {
-  DataSourceAuthListResponse,
   DataSourceAuthResponse,
   DataSourceResponse,
 } from "@/requests/datasources/types";
 import { PagingResponse } from "@/requests/types";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
+import Cookies from "js-cookie";
 
 export type AuthState = {
   accessToken?: string;
-  refreshToken?: string;
   expiresAt?: number;
   additionalInfo?: Record<string, any>;
 };
 
 type DataSourceState = {
   apiAuthConfig?: Record<string, Omit<DataSourceAuthResponse, "type">>;
-  clearApiAuthConfig: (dataSourceId: string) => void;
-  setApiAuthConfig: (data: PagingResponse<DataSourceResponse>) => void;
-  hasTokenExpired: (dataSourceId: string) => boolean;
-  refreshAccessToken: (dataSourceId: string) => Promise<void>;
-  setAuthTokens: (dataSourceId: string, response: any) => void;
-  clearAuthTokens: (dataSourceId: string) => void;
+  clearApiAuthConfig: (projectId: string) => void;
+  setApiAuthConfig: (
+    projectId: string,
+    data: PagingResponse<DataSourceResponse>,
+  ) => void;
+  hasTokenExpired: (projectId: string) => boolean;
+  refreshAccessToken: (projectId: string) => Promise<void>;
+  setAuthTokens: (projectId: string, response: any) => void;
+  clearAuthTokens: (projectId: string) => void;
   authState: Record<string, AuthState>;
+  getAuthState: (
+    projectId: string,
+  ) => (AuthState & { refreshToken?: string }) | null;
 };
 
 export const useDataSourceStore = create<DataSourceState>()(
@@ -31,7 +36,27 @@ export const useDataSourceStore = create<DataSourceState>()(
       (set, get) => ({
         apiAuthConfig: undefined,
         authState: {},
-        setAuthTokens: (dataSourceId, response) => {
+        getAuthState: (projectId: string) => {
+          const authInfo = get().authState[projectId];
+          if (!authInfo) {
+            console.error(`No auth state found for projectId: ${projectId}`);
+            return null; // Return null if no auth state is found
+          }
+
+          // Safely extract values, considering they might be undefined
+          const { accessToken, expiresAt, additionalInfo } = authInfo;
+
+          // Get the refresh token from cookies safely
+          const refreshToken = Cookies.get(projectId);
+
+          return {
+            accessToken, // May be undefined, which is acceptable in this structured return
+            expiresAt, // May be undefined
+            refreshToken, // May be undefined, depending on the cookie presence
+            additionalInfo, // May be undefined
+          };
+        },
+        setAuthTokens: (projectId, response) => {
           const accessToken = response[response.accessTokenProperty];
           const refreshToken = response[response.refreshTokenProperty];
           const expirySeconds = response[response.expiryTokenProperty];
@@ -45,10 +70,12 @@ export const useDataSourceStore = create<DataSourceState>()(
             return acc;
           }, {});
 
+          Cookies.set(projectId, refreshToken);
+
           const currentAuthState = get().authState;
           const newAuthState = {
             ...currentAuthState,
-            [dataSourceId]: {
+            [projectId]: {
               accessToken,
               refreshToken,
               expiresAt,
@@ -58,8 +85,8 @@ export const useDataSourceStore = create<DataSourceState>()(
 
           set({ authState: newAuthState });
         },
-        hasTokenExpired: (dataSourceId: string) => {
-          const expiresAt = get().authState[dataSourceId]?.expiresAt;
+        hasTokenExpired: (projectId: string) => {
+          const expiresAt = get().authState[projectId]?.expiresAt;
 
           if (expiresAt) {
             const now = Date.now();
@@ -67,9 +94,9 @@ export const useDataSourceStore = create<DataSourceState>()(
           }
           return true;
         },
-        refreshAccessToken: async (dataSourceId: string) => {
-          const authState = get().authState[dataSourceId];
-          const refreshToken = authState?.refreshToken;
+        refreshAccessToken: async (projectId: string) => {
+          const authState = get().authState;
+          const refreshToken = Cookies.get(projectId);
 
           if (!refreshToken || refreshToken === "undefined") {
             return;
@@ -80,11 +107,11 @@ export const useDataSourceStore = create<DataSourceState>()(
           const hasTokenExpired = get().hasTokenExpired;
           const setAuthTokens = get().setAuthTokens;
 
-          if (accessToken && !hasTokenExpired(dataSourceId)) {
+          if (accessToken && !hasTokenExpired(projectId)) {
             return;
           }
 
-          const authConfig = apiAuthConfig?.[dataSourceId];
+          const authConfig = apiAuthConfig?.[projectId];
           const url = authConfig?.refreshTokenUrl as string;
 
           const refreshTokenProperty =
@@ -114,27 +141,30 @@ export const useDataSourceStore = create<DataSourceState>()(
           if (!response.ok) return;
 
           const mergedAuthConfig = { ...data, ...authConfig };
-          setAuthTokens(dataSourceId, mergedAuthConfig);
+          setAuthTokens(projectId, mergedAuthConfig);
         },
-        clearAuthTokens: (dataSourceId: string) => {
+        clearAuthTokens: (projectId: string) => {
+          Cookies.remove(projectId);
           set({
             authState: {
-              [dataSourceId]: {
+              [projectId]: {
                 accessToken: undefined,
-                refreshToken: undefined,
                 expiresAt: undefined,
                 additionalInfo: undefined,
               },
             },
           });
         },
-        setApiAuthConfig: (data: PagingResponse<DataSourceResponse>) => {
+        setApiAuthConfig: (
+          projectId: string,
+          data: PagingResponse<DataSourceResponse>,
+        ) => {
           const apiAuthConfig = data.results.reduce<
             Record<string, Omit<DataSourceAuthResponse, "type">>
           >((acc, dataSourceResponse) => {
             if (dataSourceResponse.auth) {
               const { type, ...authDetails } = dataSourceResponse.auth;
-              acc[dataSourceResponse.id] = authDetails;
+              acc[projectId] = authDetails;
             }
             return acc;
           }, {});
@@ -154,6 +184,11 @@ export const useDataSourceStore = create<DataSourceState>()(
         partialize: (state: DataSourceState) => ({
           apiAuthConfig: state.apiAuthConfig,
           authState: state.authState,
+          // authState: {
+          //   accessToken: state.authState.accessToken,
+          //   expiresAt: state.authState.expiresAt,
+          //   additionalInfo: state.authState.additionalInfo,
+          // },
         }),
       },
     ),

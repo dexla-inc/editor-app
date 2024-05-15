@@ -1,7 +1,7 @@
 import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 import { Endpoint } from "@/requests/datasources/types";
 import { useDataSourceStore } from "@/stores/datasource";
-import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { ApiType } from "@/types/dashboardTypes";
 import { Stack, Title } from "@mantine/core";
 import React from "react";
@@ -19,8 +19,11 @@ export const EndpointRequestInputs = ({
   formType = "actions",
   isPageAction,
 }: Props) => {
-  const authState = useDataSourceStore((state) => state.authState);
-  const accessToken = authState?.[selectedEndpoint?.id ?? ""]?.accessToken;
+  const projectId = useEditorTreeStore(
+    (state) => state.currentProjectId,
+  ) as string;
+  const getAuthState = useDataSourceStore((state) => state.getAuthState);
+  const accessToken = getAuthState(projectId)?.accessToken;
 
   return (
     <Stack spacing={2}>

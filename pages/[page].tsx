@@ -37,6 +37,9 @@ export const getServerSideProps = async ({
     ),
   ]);
 
+  //if(!deploymentPage.project)
+  // Redirect to dexla page to save it hasn't been deployed
+
   const notFoundPageslug = deploymentPage.project.redirects?.notFoundPageId;
   // Check if page exists
   if (!deploymentPage.id) {
@@ -55,8 +58,9 @@ export const getServerSideProps = async ({
     };
   }
 
-  // Check if user is logged in
-  const isLoggedIn = checkRefreshTokenExists(req.cookies["dexlaRefreshToken"]);
+  // Check if user is logged in via cookies
+  const cookie = req.cookies[project.id];
+  const isLoggedIn = checkRefreshTokenExists(cookie);
   const signInPageSlug = deploymentPage.project.redirects?.signInPageId;
 
   if (

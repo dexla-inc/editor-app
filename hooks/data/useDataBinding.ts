@@ -10,6 +10,7 @@ import {
 } from "@/types/dataBinding";
 import { safeJsonParse } from "@/utils/common";
 import { useInputsStore } from "@/stores/inputs";
+import { useEditorTreeStore } from "@/stores/editorTree";
 
 export const useDataBinding = () => {
   const browser = useRouter();
@@ -34,7 +35,10 @@ export const useDataBinding = () => {
     const variablesList = Object.values(
       useVariableStore.getState().variableList,
     );
-    const auth = useDataSourceStore.getState().authState;
+
+    const projectId = useEditorTreeStore.getState().currentProjectId as string;
+
+    const auth = useDataSourceStore.getState().getAuthState(projectId);
 
     const components = Object.entries(
       useInputsStore.getState().inputValues,
