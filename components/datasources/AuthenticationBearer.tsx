@@ -13,7 +13,6 @@ import {
   validateTokenProperty,
 } from "@/components/datasources/AuthenticationInputs";
 import TextInputComponent from "@/components/datasources/TextInputComponent";
-import { useDataSourceEndpoints } from "@/hooks/editor/reactQuery/useDataSourceEndpoints";
 import { RequestBody } from "@/requests/datasources/types";
 import { useDataSourceStore } from "@/stores/datasource";
 import { DataSourceStepperProps } from "@/types/dashboardTypes";
@@ -30,6 +29,7 @@ import { useForm } from "@mantine/form";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { InformationAlert } from "../Alerts";
+import { useEndpoints } from "@/hooks/reactQuery/useDataSourcesEndpoints";
 
 export interface BearerTokenAuthenticationProps extends DataSourceStepperProps {
   loginEndpointId: string | null;
@@ -88,10 +88,7 @@ export default function AuthenticationBearer({
   const clearApiAuthConfig = useDataSourceStore(
     (state) => state.clearApiAuthConfig,
   );
-  const { data: endpoints, invalidate } = useDataSourceEndpoints(
-    projectId,
-    dataSource?.id,
-  );
+  const { endpoints, invalidate } = useEndpoints(projectId, dataSource?.id);
   // May need to filter by dataSourceId
 
   const form = useForm<AuthenticationBearerTokenParams>({
@@ -112,12 +109,12 @@ export default function AuthenticationBearer({
   });
   const postEndpoints = filterAndMapEndpoints(
     dataSource?.id ?? "",
-    endpoints?.results,
+    endpoints,
     "POST",
   );
   const getEndpoints = filterAndMapEndpoints(
     dataSource?.id ?? "",
-    endpoints?.results,
+    endpoints,
     "GET",
   );
 
@@ -181,7 +178,7 @@ export default function AuthenticationBearer({
         );
       }
 
-      clearApiAuthConfig();
+      clearApiAuthConfig(dataSource.id);
       invalidate();
 
       nextStep && nextStep();
@@ -275,9 +272,9 @@ export default function AuthenticationBearer({
 
   useEffect(() => {
     if (fromPage && endpoints) {
-      const loginEndpoint = getAuthEndpoint("ACCESS", endpoints?.results);
-      const refreshEndpoint = getAuthEndpoint("REFRESH", endpoints?.results);
-      const userEndpoint = getAuthEndpoint("USER", endpoints?.results);
+      const loginEndpoint = getAuthEndpoint("ACCESS", endpoints);
+      const refreshEndpoint = getAuthEndpoint("REFRESH", endpoints);
+      const userEndpoint = getAuthEndpoint("USER", endpoints);
 
       loginEndpoint?.id && setLoginEndpoint(loginEndpoint.id);
       refreshEndpoint?.id && setRefreshEndpoint(refreshEndpoint.id);
@@ -308,11 +305,11 @@ export default function AuthenticationBearer({
       onSubmit={form.onSubmit(onSubmit)}
       onError={(error) => console.error(error)}
     >
-      {endpoints?.results && endpoints.results.length === 0 ? (
+      {endpoints && endpoints.length === 0 ? (
         <InformationAlert text="Add your login API endpoints first then configure this." />
       ) : (
         <Stack pb={fromPage ? "lg" : 100}>
-          {endpoints?.results && endpoints.results.length > 0 ? (
+          {endpoints && endpoints.length > 0 ? (
             <>
               <Select
                 label="Login Endpoint (POST)"
@@ -399,7 +396,7 @@ export default function AuthenticationBearer({
               />
             </>
           )}
-          {endpoints?.results && loginEndpointId ? (
+          {endpoints && loginEndpointId ? (
             <Select
               label="Access token property"
               description="The property name of the access token in the response"
@@ -429,7 +426,7 @@ export default function AuthenticationBearer({
               required={!!loginEndpointId}
             />
           )}
-          {endpoints?.results && refreshEndpointId ? (
+          {endpoints && refreshEndpointId ? (
             <Select
               label="Refresh token property"
               description="The property name of the refresh token in the response"
@@ -459,7 +456,7 @@ export default function AuthenticationBearer({
               required={!!refreshEndpointId}
             />
           )}
-          {endpoints?.results && loginEndpointId ? (
+          {endpoints && loginEndpointId ? (
             <Select
               label="Access token expiry property"
               description="The property name of the expiry of the access token in the response"

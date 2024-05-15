@@ -1,7 +1,7 @@
 import { MonacoEditorJson } from "@/components/MonacoEditorJson";
 import { SegmentedControlInput } from "@/components/SegmentedControlInput";
 import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
-import { useVariableMutation } from "@/hooks/editor/reactQuery/useVariable";
+import { useVariableMutation } from "@/hooks/reactQuery/useVariable";
 import {
   FrontEndTypes,
   VariableTypesOptions,

@@ -1,5 +1,5 @@
 import { AssetsTextInput } from "@/components/AssetsTextInput";
-import { useProjectQuery } from "@/hooks/editor/reactQuery/useProjectQuery";
+import { useProjectQuery } from "@/hooks/reactQuery/useProjectQuery";
 import { patchProject } from "@/requests/projects/mutations";
 import { PatchParams } from "@/requests/types";
 import { useEditorStore } from "@/stores/editor";

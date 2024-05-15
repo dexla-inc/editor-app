@@ -14,11 +14,11 @@ import { useThemeStore } from "@/stores/theme";
 import { useVariableStore } from "@/stores/variables";
 import { initializeFonts } from "@/utils/webfontloader";
 import { useEffect } from "react";
-import { useVariableListQuery } from "@/hooks/editor/reactQuery/useVariableListQuery";
-import { useDataSourceEndpoints } from "@/hooks/editor/reactQuery/useDataSourceEndpoints";
+import { useVariableListQuery } from "@/hooks/reactQuery/useVariableListQuery";
 import { MantineThemeExtended } from "@/types/types";
 import { safeJsonParse } from "@/utils/common";
 import { useInputsStore } from "@/stores/inputs";
+import { useDataSources } from "@/hooks/reactQuery/useDataSources";
 
 type Props = {
   deploymentPage: DeploymentPage;
@@ -33,7 +33,8 @@ export const Live = ({ deploymentPage }: Props) => {
   const projectId = deploymentPage.project.id;
 
   const { data: variables } = useVariableListQuery(projectId);
-  const { data: endpoints } = useDataSourceEndpoints(projectId);
+  const { data: datasources } = useDataSources(projectId);
+  const endpoints = datasources?.results.flatMap((ds) => ds.endpoints);
 
   const editorTree = useEditorTreeStore((state) => state.tree);
   const setEditorTree = useEditorTreeStore((state) => state.setTree);
@@ -94,11 +95,11 @@ export const Live = ({ deploymentPage }: Props) => {
   }, [variables, deploymentPage.id]); // deploymentpage.id is used to reinitialize non global variables
 
   useEffect(() => {
-    if (endpoints) {
-      setApiAuthConfig(endpoints.results);
+    if (datasources) {
+      // const endpoints = datasources.results.flatMap((ds) => ds.endpoints);
+      setApiAuthConfig(datasources);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [endpoints]);
+  }, [datasources, setApiAuthConfig]);
 
   const renderTree: RenderTreeFunc = useCallback(
     (componentTree: ComponentTree, shareableContent = {}) => {

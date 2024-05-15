@@ -1,7 +1,7 @@
 import { WarningAlert } from "@/components/Alerts";
 import EmptyDatasourcesPlaceholder from "@/components/datasources/EmptyDatasourcesPlaceholder";
 import PaneHeading from "@/components/navbar/PaneHeading";
-import { useDataSources } from "@/hooks/editor/reactQuery/useDataSources";
+import { useDataSources } from "@/hooks/reactQuery/useDataSources";
 import { DataSourceResponse } from "@/requests/datasources/types";
 import { Select, Stack, Text } from "@mantine/core";
 import Link from "next/link";

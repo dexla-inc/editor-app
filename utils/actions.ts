@@ -9,6 +9,7 @@ import { TriggerLogicFlowActionForm } from "@/components/actions/TriggerLogicFlo
 import { transpile } from "typescript";
 import { ChangeVariableActionForm } from "@/components/actions/ChangeVariableActionForm";
 import {
+  DataSourceAuthListResponse,
   DataSourceAuthResponse,
   DataSourceResponse,
   Endpoint,
@@ -586,7 +587,9 @@ export const useApiCallAction = async (
   const endpoint = endpointResults?.find((e) => e.id === action.endpoint)!;
 
   try {
-    const accessToken = useDataSourceStore.getState().authState.accessToken;
+    const accessToken =
+      useDataSourceStore.getState().authState[endpoint.dataSourceId]
+        ?.accessToken;
 
     const { url, header, body } = prepareRequestData(
       action,
@@ -607,12 +610,11 @@ export const useApiCallAction = async (
       case "login":
         responseJson = await performFetch(url, endpoint, header, body);
         const apiAuthConfig = useDataSourceStore.getState().apiAuthConfig;
-        const authConfig =
-          apiAuthConfig?.authConfigurations[endpoint.dataSourceId];
+        const authConfig = apiAuthConfig?.[endpoint.dataSourceId];
         const mergedAuthConfig = { ...responseJson, ...authConfig };
         const setAuthTokens = useDataSourceStore.getState().setAuthTokens;
 
-        setAuthTokens(mergedAuthConfig);
+        setAuthTokens(endpoint.dataSourceId, mergedAuthConfig);
         break;
       case "logout":
         responseJson = await performFetch(
@@ -625,7 +627,7 @@ export const useApiCallAction = async (
 
         const clearAuthTokens = useDataSourceStore.getState().clearAuthTokens;
 
-        clearAuthTokens();
+        clearAuthTokens(endpoint.dataSourceId);
 
         break;
       default:

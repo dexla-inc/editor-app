@@ -10,7 +10,7 @@ import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
 import { UnitInput } from "@/components/UnitInput";
 import { SelectFont } from "@/components/navbar/EditorNavbarThemesSection/SelectFont";
 import { TypographyModal } from "@/components/navbar/EditorNavbarThemesSection/TypographyModal";
-import { useProjectQuery } from "@/hooks/editor/reactQuery/useProjectQuery";
+import { useProjectQuery } from "@/hooks/reactQuery/useProjectQuery";
 import { CardStyle } from "@/requests/projects/types";
 import { saveTheme } from "@/requests/themes/mutations";
 import { ThemeResponse } from "@/requests/themes/types";

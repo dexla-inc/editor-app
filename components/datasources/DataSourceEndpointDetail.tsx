@@ -1,6 +1,5 @@
 import { WarningAlert } from "@/components/Alerts";
 import { Icon } from "@/components/Icon";
-import { useDataSourceEndpoints } from "@/hooks/editor/reactQuery/useDataSourceEndpoints";
 import {
   createDataSourceEndpoint,
   deleteDataSourceEndpoint,
@@ -40,6 +39,7 @@ import { useEffect, useReducer, useState } from "react";
 import { MonacoEditorJson } from "../MonacoEditorJson";
 import { safeJsonParse } from "@/utils/common";
 import { AddRequestInput } from "./AddRequestInput";
+import { useEndpoints } from "@/hooks/reactQuery/useDataSourcesEndpoints";
 
 const MethodTypeArray: MethodTypes[] = [
   "GET",
@@ -126,7 +126,7 @@ export const DataSourceEndpointDetail = ({
   const [warningMessage, setWarningMessage] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<string | null>("example");
   const [activeBodyType, setActiveBodyType] = useState<"raw" | "fields">("raw");
-  const { invalidate } = useDataSourceEndpoints(projectId);
+  const { invalidate } = useEndpoints(projectId);
 
   useEffect(() => {
     // Reset the state by dispatching an action or directly setting it

@@ -2,7 +2,7 @@ import { useEditorStore } from "@/stores/editor";
 import { useThemeStore } from "@/stores/theme";
 import { defaultTheme } from "@/utils/branding";
 import { useEffect, useState } from "react";
-import { useProjectQuery } from "@/hooks/editor/reactQuery/useProjectQuery";
+import { useProjectQuery } from "@/hooks/reactQuery/useProjectQuery";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { MantineThemeExtended } from "@/types/types";
 

@@ -1,5 +1,5 @@
 import AssetImageItem from "@/components/storage/AssetImageItem";
-import { useStorageQuery } from "@/hooks/editor/reactQuery/useStorageQuery";
+import { useStorageQuery } from "@/hooks/reactQuery/useStorageQuery";
 import { deleteFile } from "@/requests/storage/mutations";
 import { LARGE_ICON_SIZE } from "@/utils/config";
 import { Stack, Text } from "@mantine/core";

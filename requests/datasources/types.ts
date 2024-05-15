@@ -9,6 +9,8 @@ export type DataSourceTypes =
   | "SUPABASE";
 
 export interface DataSourcesListParams extends PagingParams {
+  datasourceId?: string;
+  include?: string; // Supported params are: endpoints,auth
   type?: string;
 }
 
@@ -45,6 +47,8 @@ export interface DataSourceResponse {
   deletedEndpoints?: Endpoint[];
   authValue?: string;
   apiKey?: string;
+  endpoints?: Endpoint[];
+  auth?: DataSourceAuthResponse;
 }
 
 export interface ErrorResponse extends Error {

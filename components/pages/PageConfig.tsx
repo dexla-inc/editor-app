@@ -1,6 +1,6 @@
 import { ActionIconDefault } from "@/components/ActionIconDefault";
 import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
-import { usePageListQuery } from "@/hooks/editor/reactQuery/usePageListQuery";
+import { usePageListQuery } from "@/hooks/reactQuery/usePageListQuery";
 import { createPage, deletePage, updatePage } from "@/requests/pages/mutations";
 import { PageBody, PageResponse } from "@/requests/pages/types";
 import { useAppStore } from "@/stores/app";

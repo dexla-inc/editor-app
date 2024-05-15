@@ -1,6 +1,6 @@
 import { AddNewDataSourceEndpoint } from "@/components/datasources/AddNewDataSourceEndpoint";
 import { DataSourceEndpoint } from "@/components/datasources/DataSourceEndpoint";
-import { useDataSourceEndpoints } from "@/hooks/editor/reactQuery/useDataSourceEndpoints";
+import { useEndpoints } from "@/hooks/reactQuery/useDataSourcesEndpoints";
 import { Title } from "@mantine/core";
 
 type DataSourceEndpointListProps = {
@@ -14,13 +14,13 @@ export const DataSourceEndpointList = ({
   dataSourceId,
   baseUrl,
 }: DataSourceEndpointListProps) => {
-  const { data: endpoints } = useDataSourceEndpoints(projectId);
+  const { endpoints } = useEndpoints(projectId);
 
   return (
     <>
       <Title order={5}>API Endpoints</Title>
       <AddNewDataSourceEndpoint baseUrl={baseUrl} dataSourceId={dataSourceId} />
-      {endpoints?.results
+      {endpoints
         .filter((e) => e.dataSourceId == dataSourceId)
         .map((endpoint) => {
           return (

@@ -1,7 +1,7 @@
 import { ActionIconDefault } from "@/components/ActionIconDefault";
 import { Icon } from "@/components/Icon";
-import { usePageListQuery } from "@/hooks/editor/reactQuery/usePageListQuery";
-import { useProjectQuery } from "@/hooks/editor/reactQuery/useProjectQuery";
+import { usePageListQuery } from "@/hooks/reactQuery/usePageListQuery";
+import { useProjectQuery } from "@/hooks/reactQuery/useProjectQuery";
 import { createDeployment } from "@/requests/deployments/mutations";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";

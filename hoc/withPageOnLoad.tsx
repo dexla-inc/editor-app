@@ -3,7 +3,7 @@ import { Router, useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { PageResponse } from "@/requests/pages/types";
 import { ProjectResponse } from "@/requests/projects/types";
-import { usePageQuery } from "@/hooks/editor/reactQuery/usePageQuery";
+import { usePageQuery } from "@/hooks/reactQuery/usePageQuery";
 
 // Props from server side
 type Props = {

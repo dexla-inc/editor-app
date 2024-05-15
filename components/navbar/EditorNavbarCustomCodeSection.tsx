@@ -1,4 +1,4 @@
-import { useProjectQuery } from "@/hooks/editor/reactQuery/useProjectQuery";
+import { useProjectQuery } from "@/hooks/reactQuery/useProjectQuery";
 import { patchProject } from "@/requests/projects/mutations";
 import { decodeSchema, encodeSchema } from "@/utils/compression";
 import { convertToPatchParams } from "@/types/dashboardTypes";

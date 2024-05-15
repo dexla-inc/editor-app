@@ -1,6 +1,6 @@
 import { EndpointExampleResponsePreview } from "@/components/EndpointExampleResponsePreview";
 import { colors } from "@/components/datasources/DataSourceEndpoint";
-import { useDataSourceEndpoints } from "@/hooks/editor/reactQuery/useDataSourceEndpoints";
+import { useEndpoints } from "@/hooks/reactQuery/useDataSourcesEndpoints";
 import { Endpoint } from "@/requests/datasources/types";
 import { MethodTypes } from "@/requests/types";
 import { useEditorTreeStore } from "@/stores/editorTree";
@@ -47,24 +47,27 @@ export const EndpointSelect = ({
   ...props
 }: EndpointSelectProps) => {
   const projectId = useEditorTreeStore((state) => state.currentProjectId);
-  const { data: endpoints } = useDataSourceEndpoints(projectId);
+  const { endpoints } = useEndpoints(projectId as string);
   const [selectedEndpoint, setSelectedEndpoint] = useState<Endpoint>();
 
   const selectData = useMemo(() => {
     return (
-      endpoints?.results
-        ?.filter((f) => !isOnLoad || (isOnLoad && f.methodType === "GET"))
+      endpoints
+        ?.filter(
+          (endpoint) =>
+            !isOnLoad || (isOnLoad && endpoint.methodType === "GET"),
+        )
         .map((endpoint) => ({
           label: `${endpoint.relativeUrl} | ${endpoint.description}`,
           value: endpoint.id,
           method: endpoint.methodType,
-        })) ?? []
+        })) ?? ([] as SelectItemProps[])
     );
   }, [endpoints, isOnLoad]);
 
   const handleChange = useCallback(
     (selectedValue: string) => {
-      const endpoint = endpoints?.results?.find((e) => e.id === selectedValue);
+      const endpoint = endpoints.find((e) => e.id === selectedValue);
       setSelectedEndpoint(endpoint);
 
       if (props.onChange) {
@@ -72,15 +75,15 @@ export const EndpointSelect = ({
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [endpoints?.results, props.onChange],
+    [endpoints, props.onChange],
   );
 
   useEffect(() => {
-    if (endpoints?.results) {
-      const foundEndpoint = endpoints.results.find((e) => e.id === value);
+    if (endpoints) {
+      const foundEndpoint = endpoints.find((e) => e.id === value);
       setSelectedEndpoint(foundEndpoint);
     }
-  }, [endpoints?.results, value]);
+  }, [endpoints, value]);
 
   return (
     <>

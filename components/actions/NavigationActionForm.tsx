@@ -9,7 +9,7 @@ import {
   TextInput,
 } from "@mantine/core";
 import { SegmentedControlYesNo } from "../SegmentedControlYesNo";
-import { usePageListQuery } from "@/hooks/editor/reactQuery/usePageListQuery";
+import { usePageListQuery } from "@/hooks/reactQuery/usePageListQuery";
 import { useRouter } from "next/router";
 import { ActionIconDefault } from "../ActionIconDefault";
 import { ComponentToBindFromInput } from "../ComponentToBindFromInput";

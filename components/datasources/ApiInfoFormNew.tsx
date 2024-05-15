@@ -2,7 +2,6 @@ import {
   validateBaseUrl,
   validateName,
 } from "@/components/datasources/BasicDetailsInputs";
-import { useDataSourceEndpoints } from "@/hooks/editor/reactQuery/useDataSourceEndpoints";
 import { createDataSource } from "@/requests/datasources/mutations";
 import { DataSourceParams } from "@/requests/datasources/types";
 import { useAppStore } from "@/stores/app";

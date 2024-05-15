@@ -1,12 +1,12 @@
 import Editor from "@/components/Editor";
 import { withPageOnLoad } from "@/hoc/withPageOnLoad";
 import { GetServerSidePropsContext } from "next";
-import { memo, useEffect } from "react";
+import { useEffect } from "react";
 import { useVariableStore } from "@/stores/variables";
 import { useDataSourceStore } from "@/stores/datasource";
-import { useVariableListQuery } from "@/hooks/editor/reactQuery/useVariableListQuery";
-import { useDataSourceEndpoints } from "@/hooks/editor/reactQuery/useDataSourceEndpoints";
+import { useVariableListQuery } from "@/hooks/reactQuery/useVariableListQuery";
 import { useRouter } from "next/router";
+import { useDataSources } from "@/hooks/reactQuery/useDataSources";
 
 export const getServerSideProps = async ({}: GetServerSidePropsContext) => {
   return { props: {} };
@@ -24,8 +24,9 @@ const PageEditor = () => {
   const setApiAuthConfig = useDataSourceStore(
     (state) => state.setApiAuthConfig,
   );
+  // setDatasourceAuthConfig
   const { data: variables } = useVariableListQuery(projectId);
-  const { data: endpoints } = useDataSourceEndpoints(projectId);
+  const { data: datasources } = useDataSources(projectId);
 
   useEffect(() => {
     if (variables) {
@@ -35,10 +36,11 @@ const PageEditor = () => {
   }, [variables, pageId]); // pageId is used to reinitialize non global variables
 
   useEffect(() => {
-    if (endpoints) {
-      setApiAuthConfig(endpoints.results);
+    if (datasources) {
+      // const endpoints = datasources.results.flatMap((ds) => ds.endpoints);
+      setApiAuthConfig(datasources);
     }
-  }, [endpoints, setApiAuthConfig]);
+  }, [datasources, setApiAuthConfig]);
 
   return <Editor pageId={pageId} projectId={projectId} />;
 };

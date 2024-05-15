@@ -19,9 +19,8 @@ export const EndpointRequestInputs = ({
   formType = "actions",
   isPageAction,
 }: Props) => {
-  const accessToken = useDataSourceStore(
-    (state) => state.authState.accessToken,
-  );
+  const authState = useDataSourceStore((state) => state.authState);
+  const accessToken = authState?.[selectedEndpoint?.id ?? ""]?.accessToken;
 
   return (
     <Stack spacing={2}>

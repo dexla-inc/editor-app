@@ -1,8 +1,6 @@
 import { DataSourceEndpoint } from "@/components/datasources/DataSourceEndpoint";
-import { useDataSourceEndpoints } from "@/hooks/editor/reactQuery/useDataSourceEndpoints";
-import { getDataSourceEndpoints } from "@/requests/datasources/queries-noauth";
+import { useEndpoints } from "@/hooks/reactQuery/useDataSourcesEndpoints";
 import { Endpoint } from "@/requests/datasources/types";
-import { PagingResponse } from "@/requests/types";
 import { Button, Stack } from "@mantine/core";
 import { useState } from "react";
 
@@ -19,11 +17,11 @@ export const DataSourceListItem = ({
   id,
   baseUrl,
 }: DataSourceItemProps) => {
-  const [endpoints, setEndpoints] = useState<Endpoint[]>();
-  const { data } = useDataSourceEndpoints(projectId);
+  const [dataSourceEndpoints, setEndpoints] = useState<Endpoint[]>();
+  const { endpoints } = useEndpoints(projectId, id);
 
   const onClick = async () => {
-    const result = data?.results.filter((d) => d.id === id);
+    const result = endpoints.filter((d) => d.id === id);
     setEndpoints(result);
   };
 
@@ -33,7 +31,7 @@ export const DataSourceListItem = ({
         {name}
       </Button>
       <Stack>
-        {endpoints?.map((endpoint) => {
+        {dataSourceEndpoints?.map((endpoint) => {
           return (
             <DataSourceEndpoint
               baseUrl={baseUrl}

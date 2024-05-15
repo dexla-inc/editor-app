@@ -1,4 +1,3 @@
-import { useDataSourceEndpoints } from "@/hooks/editor/reactQuery/useDataSourceEndpoints";
 import { PageResponse } from "@/requests/pages/types";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { Action, ActionTrigger, actionMapper } from "@/utils/actions";
@@ -6,8 +5,9 @@ import { Component } from "@/utils/editor";
 import { Router } from "next/router";
 import { ChangeEvent, useMemo } from "react";
 import { useDataBinding } from "@/hooks/data/useDataBinding";
-import { useFlowsQuery } from "@/hooks/editor/reactQuery/useFlowsQuery";
+import { useFlowsQuery } from "@/hooks/reactQuery/useFlowsQuery";
 import { ComputeValueProps } from "@/types/dataBinding";
+import { useEndpoints } from "../reactQuery/useDataSourcesEndpoints";
 
 const nonDefaultActionTriggers = ["onSuccess", "onError"];
 
@@ -29,8 +29,7 @@ export const useTriggers = ({
   const updateTreeComponentAttrs =
     useEditorTreeStore.getState().updateTreeComponentAttrs;
   const { computeValue } = useDataBinding();
-  const { data: endpoints, isFetched: endpointsIsFetched } =
-    useDataSourceEndpoints(currentProjectId);
+  const { endpoints, isFetched } = useEndpoints(currentProjectId as string);
   const { data: logicFlows, isFetched: logicFlowsIsFetched } =
     useFlowsQuery(currentProjectId);
 
@@ -40,7 +39,7 @@ export const useTriggers = ({
   };
 
   const triggers = useMemo(() => {
-    if (!endpointsIsFetched || !logicFlowsIsFetched) {
+    if (!isFetched || !logicFlowsIsFetched) {
       return {} as Record<ActionTrigger, any>;
     }
 
@@ -73,7 +72,7 @@ export const useTriggers = ({
               actionResponses,
               setActionsResponses,
               event: e,
-              endpointResults: endpoints?.results ?? [],
+              endpointResults: endpoints ?? [],
               entity,
               flowsList: logicFlows?.results ?? [],
             });
@@ -82,13 +81,13 @@ export const useTriggers = ({
       },
       {} as Record<ActionTrigger, any>,
     );
-  }, [
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
     actionResponses,
-    endpoints?.results,
-    endpointsIsFetched,
+    endpoints,
     entity,
-    logicFlows,
+    isFetched,
+    logicFlows?.results,
     logicFlowsIsFetched,
     router,
     shareableContent,

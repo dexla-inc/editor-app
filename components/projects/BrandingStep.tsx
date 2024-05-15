@@ -1,7 +1,7 @@
 import BackButton from "@/components/BackButton";
 import { ColorSelector } from "@/components/ColorSelector";
 import NextButton from "@/components/NextButton";
-import { useProjectQuery } from "@/hooks/editor/reactQuery/useProjectQuery";
+import { useProjectQuery } from "@/hooks/reactQuery/useProjectQuery";
 import { generateThemeFromScreenshot } from "@/requests/ai/queries";
 import { saveBasicTheme, saveTheme } from "@/requests/themes/mutations";
 import { Color, ThemeResponse } from "@/requests/themes/types";
