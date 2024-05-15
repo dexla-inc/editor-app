@@ -2,6 +2,7 @@ import { ErrorAlert, SuccessAlert } from "@/components/Alerts";
 import { getDataSourceAuth } from "@/requests/datasources/queries-noauth";
 import {
   DataSourceAuthListResponse,
+  DataSourceAuthResponse,
   RequestBody,
 } from "@/requests/datasources/types";
 import { useDataSourceStore } from "@/stores/datasource";
@@ -30,7 +31,7 @@ export const TestUserLogin = ({
   );
 
   const [dataSourceAuthConfig, setDataSourceAuthConfig] =
-    useState<DataSourceAuthListResponse>();
+    useState<Record<string, Omit<DataSourceAuthResponse, "type">>>();
 
   useEffect(() => {
     const fetchDataSourceAuthConfig = async () => {
@@ -44,8 +45,7 @@ export const TestUserLogin = ({
 
   const handleLoginClick = async () => {
     const loginUrl =
-      dataSourceAuthConfig?.authConfigurations[dataSourceId || ""]
-        .accessTokenUrl ?? "";
+      dataSourceAuthConfig?.[dataSourceId || ""].accessTokenUrl ?? "";
 
     const response = await fetch(loginUrl, {
       method: "POST",

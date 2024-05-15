@@ -83,6 +83,7 @@ export const useDataSourceStore = create<DataSourceState>()(
           if (accessToken && !hasTokenExpired(dataSourceId)) {
             return;
           }
+
           const authConfig = apiAuthConfig?.[dataSourceId];
           const url = authConfig?.refreshTokenUrl as string;
 
@@ -110,6 +111,8 @@ export const useDataSourceStore = create<DataSourceState>()(
 
           const data = await response.json();
 
+          if (!response.ok) return;
+
           const mergedAuthConfig = { ...data, ...authConfig };
           setAuthTokens(dataSourceId, mergedAuthConfig);
         },
@@ -126,17 +129,15 @@ export const useDataSourceStore = create<DataSourceState>()(
           });
         },
         setApiAuthConfig: (data: PagingResponse<DataSourceResponse>) => {
-          const apiAuthConfig = data.results.reduce<DataSourceAuthListResponse>(
-            (acc, dataSourceResponse) => {
-              if (dataSourceResponse.auth) {
-                const { type, ...authDetails } = dataSourceResponse.auth;
-                // @ts-ignore
-                acc[dataSourceResponse.id] = authDetails;
-              }
-              return acc;
-            },
-            { authConfigurations: {} },
-          );
+          const apiAuthConfig = data.results.reduce<
+            Record<string, Omit<DataSourceAuthResponse, "type">>
+          >((acc, dataSourceResponse) => {
+            if (dataSourceResponse.auth) {
+              const { type, ...authDetails } = dataSourceResponse.auth;
+              acc[dataSourceResponse.id] = authDetails;
+            }
+            return acc;
+          }, {});
 
           set({ apiAuthConfig });
         },
