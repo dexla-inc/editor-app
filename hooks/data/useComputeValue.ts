@@ -11,6 +11,7 @@ import { useInputsStore } from "@/stores/inputs";
 import { useShallow } from "zustand/react/shallow";
 import { pick } from "next/dist/lib/pick";
 import { useShareableContent } from "@/hooks/data/useShareableContent";
+import { useEditorTreeStore } from "@/stores/editorTree";
 
 type NextRouterKeys = keyof NextRouter;
 type RecordStringAny = Record<string, any>;
@@ -150,13 +151,15 @@ export const useComputeValue = ({
     useShallow((state) => pick(state.inputValues, componentKeys)),
   ) as RecordStringAny;
 
+  const projectId = useEditorTreeStore.getState().currentProjectId as string;
+
   const auth = useDataSourceStore(
     useShallow((state) =>
       authKeys.reduce(
         (acc, key) => ({
           ...acc,
           // @ts-ignore
-          [key]: state.authState[key],
+          [key]: state.getAuthState(projectId)[key],
         }),
         {},
       ),

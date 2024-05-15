@@ -25,7 +25,9 @@ type DataSourceState = {
   setAuthTokens: (projectId: string, response: any) => void;
   clearAuthTokens: (projectId: string) => void;
   authState: Record<string, AuthState>;
-  getAuthState: (projectId: string) => AuthState & { refreshToken?: string };
+  getAuthState: (
+    projectId: string,
+  ) => (AuthState & { refreshToken?: string }) | null;
 };
 
 export const useDataSourceStore = create<DataSourceState>()(
@@ -35,10 +37,24 @@ export const useDataSourceStore = create<DataSourceState>()(
         apiAuthConfig: undefined,
         authState: {},
         getAuthState: (projectId: string) => {
-          const { accessToken, expiresAt, additionalInfo } =
-            get().authState[projectId];
+          const authInfo = get().authState[projectId];
+          if (!authInfo) {
+            console.error(`No auth state found for projectId: ${projectId}`);
+            return null; // Return null if no auth state is found
+          }
+
+          // Safely extract values, considering they might be undefined
+          const { accessToken, expiresAt, additionalInfo } = authInfo;
+
+          // Get the refresh token from cookies safely
           const refreshToken = Cookies.get(projectId);
-          return { accessToken, expiresAt, refreshToken, additionalInfo };
+
+          return {
+            accessToken, // May be undefined, which is acceptable in this structured return
+            expiresAt, // May be undefined
+            refreshToken, // May be undefined, depending on the cookie presence
+            additionalInfo, // May be undefined
+          };
         },
         setAuthTokens: (projectId, response) => {
           const accessToken = response[response.accessTokenProperty];
