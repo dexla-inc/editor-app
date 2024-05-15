@@ -22,7 +22,7 @@ export const useEndpoint = ({
   enabled = true,
   includeExampleResponse = false,
 }: UseEndpointProps) => {
-  const authState = useDataSourceStore((state) => state.authState);
+  const authState = useDataSourceStore((state) => state.getAuthState);
 
   const {
     endpointId,
@@ -31,10 +31,12 @@ export const useEndpoint = ({
     binds: { parameter = {}, header = {}, body = {} } = {},
   } = onLoad ?? {};
 
-  const projectId = useEditorTreeStore((state) => state.currentProjectId);
+  const projectId = useEditorTreeStore(
+    (state) => state.currentProjectId,
+  ) as string;
   const { endpoints } = useEndpoints(projectId as string);
   const endpoint = endpoints?.find((e) => e.id === endpointId);
-  const accessToken = authState?.[endpoint?.dataSourceId ?? ""]?.accessToken;
+  const accessToken = authState(projectId)?.accessToken;
   const apiUrl = `${endpoint?.baseUrl}/${endpoint?.relativeUrl}`;
   const requestBody = endpoint ? { ...parameter, ...body } : {};
   const headers = endpoint ? { ...header } : {};

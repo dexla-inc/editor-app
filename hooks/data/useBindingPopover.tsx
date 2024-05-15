@@ -59,7 +59,7 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
     Object.values(state.variableList),
   );
   const browser = useRouter();
-  const auth = useDataSourceStore((state) => state.authState);
+  const getAuthState = useDataSourceStore((state) => state.getAuthState);
   const inputsStore = useInputsStore((state) => state.inputValues);
   const event = useEventData();
 
@@ -227,7 +227,7 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
 
   return {
     actions,
-    auth,
+    auth: getAuthState(projectId),
     browserList,
     components,
     variables,
