@@ -1,6 +1,5 @@
 import { WarningAlert } from "@/components/Alerts";
 import { Icon } from "@/components/Icon";
-import { useDataSourceEndpoints } from "@/hooks/editor/reactQuery/useDataSourceEndpoints";
 import {
   createDataSourceEndpoint,
   deleteDataSourceEndpoint,
@@ -14,6 +13,7 @@ import {
   MediaTypes,
   Parameter,
   RequestBody,
+  defaultApiRequest,
 } from "@/requests/datasources/types";
 import { MethodTypes } from "@/requests/types";
 import { useAppStore } from "@/stores/app";
@@ -31,15 +31,15 @@ import {
   Switch,
   Tabs,
   TextInput,
-  Title,
   Tooltip,
-  useMantineTheme,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import debounce from "lodash.debounce";
 import { useEffect, useReducer, useState } from "react";
 import { MonacoEditorJson } from "../MonacoEditorJson";
 import { safeJsonParse } from "@/utils/common";
+import { AddRequestInput } from "./AddRequestInput";
+import { useEndpoints } from "@/hooks/editor/reactQuery/useDataSourcesEndpoints";
 
 const MethodTypeArray: MethodTypes[] = [
   "GET",
@@ -59,7 +59,7 @@ const MediaTypeArray: MediaTypes[] = [
 ];
 const MethodTypesWithRequestBody: MethodTypes[] = ["POST", "PATCH", "PUT"];
 
-function getTitle(parameter: any) {
+export function getTitle(parameter: any) {
   switch (parameter.apiType) {
     case "header":
       return "Headers";
@@ -69,36 +69,6 @@ function getTitle(parameter: any) {
       return "Parameters";
   }
 }
-
-type Defaults = {
-  header: Header;
-  parameter: Parameter;
-  body: RequestBody;
-};
-
-const defaultConfig: { [K in keyof Defaults as ApiType]: Defaults[K] } = {
-  header: {
-    required: false,
-    name: "",
-    type: "string",
-    description: null,
-    value: null,
-  },
-  parameter: {
-    location: "Query",
-    required: false,
-    name: "",
-    type: "string",
-    description: null,
-    value: null,
-  },
-  body: {
-    name: "",
-    type: "string",
-    description: null,
-    value: null,
-  },
-};
 
 const apiTypeToStateKey: Record<ApiType, keyof EndpointParams> = {
   header: "headers",
@@ -156,7 +126,7 @@ export const DataSourceEndpointDetail = ({
   const [warningMessage, setWarningMessage] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<string | null>("example");
   const [activeBodyType, setActiveBodyType] = useState<"raw" | "fields">("raw");
-  const { invalidate } = useDataSourceEndpoints(projectId);
+  const { invalidate } = useEndpoints(projectId);
 
   useEffect(() => {
     // Reset the state by dispatching an action or directly setting it
@@ -268,7 +238,7 @@ export const DataSourceEndpointDetail = ({
   };
 
   const handleAddNew = (apiType: ApiType) => {
-    const newItem = { ...defaultConfig[apiType], apiType };
+    const newItem = { ...defaultApiRequest[apiType], apiType };
     dispatch({ type: "ADD_NEW", payload: { apiType, newItem } });
   };
 
@@ -578,7 +548,7 @@ export const DataSourceEndpointDetail = ({
           />
         </Flex>
 
-        <AddNewSection apiType="header" handleAddNew={handleAddNew} />
+        <AddRequestInput apiType="header" onClick={handleAddNew} />
 
         {state.headers.map((item, index) => (
           <Flex key={index} align="center" gap="md">
@@ -633,7 +603,7 @@ export const DataSourceEndpointDetail = ({
           </Flex>
         ))}
 
-        <AddNewSection apiType="parameter" handleAddNew={handleAddNew} />
+        <AddRequestInput apiType="parameter" onClick={handleAddNew} />
 
         {state.parameters.map((item, index) => (
           <Flex key={index} align="center" gap="md">
@@ -692,9 +662,9 @@ export const DataSourceEndpointDetail = ({
 
         {showRequestBody && (
           <>
-            <AddNewSection
+            <AddRequestInput
               apiType="body"
-              handleAddNew={handleAddNew}
+              onClick={handleAddNew}
               bodyType={activeBodyType}
             />
 
@@ -860,31 +830,3 @@ export const DataSourceEndpointDetail = ({
     </form>
   );
 };
-
-type AddNewSectionProps = {
-  apiType: ApiType;
-  handleAddNew: (apiType: ApiType) => void;
-  bodyType?: "raw" | "fields";
-};
-
-const AddNewSection = ({
-  apiType,
-  handleAddNew,
-  bodyType,
-}: AddNewSectionProps) => (
-  <Flex align="center" gap="sm">
-    <Tooltip label={`Add new ${apiType}`}>
-      <ActionIcon
-        variant="filled"
-        radius="xl"
-        color="indigo"
-        onClick={() => handleAddNew(apiType)}
-        disabled={bodyType === "raw"}
-      >
-        <Icon name="IconPlus" />
-      </ActionIcon>
-    </Tooltip>
-
-    <Title order={6}>{getTitle({ apiType })}</Title>
-  </Flex>
-);

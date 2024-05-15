@@ -1,4 +1,3 @@
-import { useDataSourceEndpoints } from "@/hooks/editor/reactQuery/useDataSourceEndpoints";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { getUrl, performFetch } from "@/utils/actions";
@@ -7,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import get from "lodash.get";
 import { DataType } from "@/types/dataBinding";
 import { removeEmpty } from "@/utils/common";
+import { useEndpoints } from "../editor/reactQuery/useDataSourcesEndpoints";
 
 type UseEndpointProps = {
   dataType: DataType;
@@ -22,9 +22,7 @@ export const useEndpoint = ({
   enabled = true,
   includeExampleResponse = false,
 }: UseEndpointProps) => {
-  const accessToken = useDataSourceStore(
-    (state) => state.authState.accessToken,
-  );
+  const authState = useDataSourceStore((state) => state.authState);
 
   const {
     endpointId,
@@ -34,8 +32,9 @@ export const useEndpoint = ({
   } = onLoad ?? {};
 
   const projectId = useEditorTreeStore((state) => state.currentProjectId);
-  const { data: endpoints } = useDataSourceEndpoints(projectId);
-  const endpoint = endpoints?.results?.find((e) => e.id === endpointId);
+  const { endpoints } = useEndpoints(projectId as string);
+  const endpoint = endpoints?.find((e) => e.id === endpointId);
+  const accessToken = authState?.[endpoint?.dataSourceId ?? ""]?.accessToken;
   const apiUrl = `${endpoint?.baseUrl}/${endpoint?.relativeUrl}`;
   const requestBody = endpoint ? { ...parameter, ...body } : {};
   const headers = endpoint ? { ...header } : {};

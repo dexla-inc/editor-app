@@ -1,28 +1,28 @@
 import {
   DataSourceAuthListResponse,
   DataSourceAuthResponse,
-  Endpoint,
+  DataSourceResponse,
 } from "@/requests/datasources/types";
-import Cookies from "js-cookie";
+import { PagingResponse } from "@/requests/types";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
 export type AuthState = {
   accessToken?: string;
+  refreshToken?: string;
   expiresAt?: number;
   additionalInfo?: Record<string, any>;
 };
 
 type DataSourceState = {
-  apiAuthConfig?: DataSourceAuthListResponse;
-  clearApiAuthConfig: () => void;
-  setApiAuthConfig: (endpoints: Endpoint[]) => void;
-  hasTokenExpired: () => boolean;
+  apiAuthConfig?: Record<string, Omit<DataSourceAuthResponse, "type">>;
+  clearApiAuthConfig: (dataSourceId: string) => void;
+  setApiAuthConfig: (data: PagingResponse<DataSourceResponse>) => void;
+  hasTokenExpired: (dataSourceId: string) => boolean;
   refreshAccessToken: (dataSourceId: string) => Promise<void>;
-  setAuthTokens: (response: any) => void;
-  clearAuthTokens: () => void;
-  authState: AuthState;
-  getAuthState: () => AuthState & { refreshToken?: string };
+  setAuthTokens: (dataSourceId: string, response: any) => void;
+  clearAuthTokens: (dataSourceId: string) => void;
+  authState: Record<string, AuthState>;
 };
 
 export const useDataSourceStore = create<DataSourceState>()(
@@ -30,41 +30,36 @@ export const useDataSourceStore = create<DataSourceState>()(
     persist(
       (set, get) => ({
         apiAuthConfig: undefined,
-        endpoints: undefined,
         authState: {},
-        getAuthState: () => {
-          const { accessToken, expiresAt, additionalInfo } = get().authState;
-          const refreshToken = Cookies.get("dexlaRefreshToken");
-          return { accessToken, expiresAt, refreshToken, additionalInfo };
-        },
-        setAuthTokens: (response) => {
+        setAuthTokens: (dataSourceId, response) => {
           const accessToken = response[response.accessTokenProperty];
           const refreshToken = response[response.refreshTokenProperty];
           const expirySeconds = response[response.expiryTokenProperty];
           const expiresAt = Date.now() + expirySeconds * 1000;
 
-          const additionalInfo = Object.keys(response).reduce(
-            (acc: any, key) => {
-              if (!keysToExclude.includes(key)) {
-                acc[key] = response[key];
-              }
-              return acc;
+          const additionalInfo = Object.keys(response).reduce((acc, key) => {
+            if (!keysToExcludeForMetadata.includes(key)) {
+              // @ts-ignore
+              acc[key] = response[key];
+            }
+            return acc;
+          }, {});
+
+          const currentAuthState = get().authState;
+          const newAuthState = {
+            ...currentAuthState,
+            [dataSourceId]: {
+              accessToken,
+              refreshToken,
+              expiresAt,
+              additionalInfo,
             },
-            {},
-          );
+          };
 
-          Cookies.set("dexlaRefreshToken", refreshToken, {
-            expires: expirySeconds / 60 / 60 / 24,
-          });
-
-          set(
-            { authState: { accessToken, expiresAt, additionalInfo } },
-            false,
-            "datasource/setAuthTokens",
-          );
+          set({ authState: newAuthState });
         },
-        hasTokenExpired: () => {
-          const expiresAt = get().authState.expiresAt;
+        hasTokenExpired: (dataSourceId: string) => {
+          const expiresAt = get().authState[dataSourceId]?.expiresAt;
 
           if (expiresAt) {
             const now = Date.now();
@@ -73,105 +68,79 @@ export const useDataSourceStore = create<DataSourceState>()(
           return true;
         },
         refreshAccessToken: async (dataSourceId: string) => {
-          const refreshToken = Cookies.get("dexlaRefreshToken");
+          const authState = get().authState[dataSourceId];
+          const refreshToken = authState?.refreshToken;
 
           if (!refreshToken || refreshToken === "undefined") {
             return;
           }
 
-          const accessToken = get().authState.accessToken;
+          const accessToken = authState?.accessToken;
           const apiAuthConfig = get().apiAuthConfig;
           const hasTokenExpired = get().hasTokenExpired;
           const setAuthTokens = get().setAuthTokens;
 
-          if (accessToken && !hasTokenExpired()) {
+          if (accessToken && !hasTokenExpired(dataSourceId)) {
             return;
           }
-          const authConfig = apiAuthConfig?.authConfigurations[dataSourceId];
+
+          const authConfig = apiAuthConfig?.[dataSourceId];
           const url = authConfig?.refreshTokenUrl as string;
 
-          const response = await fetch(url, {
+          const refreshTokenProperty =
+            authConfig?.refreshTokenProperty as string;
+          const headers: Record<string, string> = {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          };
+
+          let finalUrl = url;
+
+          if (authConfig?.dataType === "SUPABASE") {
+            headers["apiKey"] = authConfig?.apiKey as string;
+            finalUrl += "?grant_type=refresh_token";
+          }
+
+          const response = await fetch(finalUrl, {
             method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${accessToken}`,
-            },
-            body: JSON.stringify({ refresh: refreshToken }),
+            headers: headers,
+            body: JSON.stringify({
+              [refreshTokenProperty ?? "refresh"]: refreshToken,
+            }),
           });
 
           const data = await response.json();
 
-          const mergedAuthConfig = { ...data, ...authConfig };
-          setAuthTokens(mergedAuthConfig);
-        },
-        clearAuthTokens: () => {
-          Cookies.remove("dexlaRefreshToken");
+          if (!response.ok) return;
 
+          const mergedAuthConfig = { ...data, ...authConfig };
+          setAuthTokens(dataSourceId, mergedAuthConfig);
+        },
+        clearAuthTokens: (dataSourceId: string) => {
           set({
             authState: {
-              accessToken: undefined,
-              expiresAt: undefined,
+              [dataSourceId]: {
+                accessToken: undefined,
+                refreshToken: undefined,
+                expiresAt: undefined,
+                additionalInfo: undefined,
+              },
             },
           });
         },
-        setApiAuthConfig: (endpoints) => {
-          const authConfigurations: Record<
-            string,
-            Omit<DataSourceAuthResponse, "type">
-          > = endpoints
-            .filter(
-              (f) =>
-                f.authentication.endpointType === "ACCESS" ||
-                f.authentication.endpointType === "REFRESH" ||
-                f.authentication.endpointType === "USER",
-            )
-            .reduce<Record<string, Omit<DataSourceAuthResponse, "type">>>(
-              (acc, endpoint) => {
-                const { dataSourceId, authentication, url } = endpoint;
+        setApiAuthConfig: (data: PagingResponse<DataSourceResponse>) => {
+          const apiAuthConfig = data.results.reduce<
+            Record<string, Omit<DataSourceAuthResponse, "type">>
+          >((acc, dataSourceResponse) => {
+            if (dataSourceResponse.auth) {
+              const { type, ...authDetails } = dataSourceResponse.auth;
+              acc[dataSourceResponse.id] = authDetails;
+            }
+            return acc;
+          }, {});
 
-                if (!acc[dataSourceId]) {
-                  acc[dataSourceId] = {
-                    accessTokenUrl: undefined,
-                    refreshTokenUrl: undefined,
-                    userEndpointUrl: undefined,
-                    accessTokenProperty: undefined,
-                    refreshTokenProperty: undefined,
-                    expiryTokenProperty: undefined,
-                  };
-                }
-
-                switch (authentication.endpointType) {
-                  case "ACCESS":
-                    acc[dataSourceId].accessTokenUrl = url ?? undefined;
-                    acc[dataSourceId].accessTokenProperty =
-                      authentication.tokenKey;
-                    acc[dataSourceId].expiryTokenProperty =
-                      authentication.tokenSecondaryKey;
-                    break;
-                  case "REFRESH":
-                    acc[dataSourceId].refreshTokenUrl = url ?? undefined;
-                    acc[dataSourceId].refreshTokenProperty =
-                      authentication.tokenKey;
-                    break;
-                  case "USER":
-                    acc[dataSourceId].userEndpointUrl = url ?? undefined;
-                    break;
-                  default:
-                    // Handle other types or ignore
-                    break;
-                }
-
-                return acc;
-              },
-              {},
-            );
-
-          const apiAuthConfig: DataSourceAuthListResponse = {
-            authConfigurations,
-          };
           set({ apiAuthConfig });
         },
-
         clearApiAuthConfig: () => {
           set(
             { apiAuthConfig: undefined },
@@ -184,11 +153,7 @@ export const useDataSourceStore = create<DataSourceState>()(
         name: "datasource",
         partialize: (state: DataSourceState) => ({
           apiAuthConfig: state.apiAuthConfig,
-          authState: {
-            accessToken: state.authState.accessToken,
-            expiresAt: state.authState.expiresAt,
-            additionalInfo: state.authState.additionalInfo,
-          },
+          authState: state.authState,
         }),
       },
     ),
@@ -196,7 +161,7 @@ export const useDataSourceStore = create<DataSourceState>()(
   ),
 );
 
-const keysToExclude = [
+const keysToExcludeForMetadata = [
   "accessTokenProperty",
   "refreshTokenProperty",
   "expiryTokenProperty",
@@ -208,4 +173,7 @@ const keysToExclude = [
   "refresh",
   "access_token",
   "refresh_token",
+  "apiKey",
+  "dataType",
+  "trackingId",
 ];

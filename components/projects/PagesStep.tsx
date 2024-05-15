@@ -139,6 +139,7 @@ export default function PagesStep({
         name: "Example API",
         baseUrl,
         environment: "staging",
+        type: "API",
       });
 
       const projectResponse = await fetch(`/api/project/${projectId}`, {

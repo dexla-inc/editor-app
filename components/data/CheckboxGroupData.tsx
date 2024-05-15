@@ -10,7 +10,7 @@ import { DataType } from "@/types/dataBinding";
 
 export type DataProps = {
   component: Component;
-  endpoints: PagingResponse<Endpoint> | undefined;
+  endpoints: Endpoint[] | undefined;
   dataType: DataType;
 };
 

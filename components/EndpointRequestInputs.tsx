@@ -19,15 +19,8 @@ export const EndpointRequestInputs = ({
   formType = "actions",
   isPageAction,
 }: Props) => {
-  const accessToken = useDataSourceStore(
-    (state) => state.authState.accessToken,
-  );
-  const setPickingComponentToBindTo = useEditorStore(
-    (state) => state.setPickingComponentToBindTo,
-  );
-  const setComponentToBind = useEditorStore(
-    (state) => state.setComponentToBind,
-  );
+  const authState = useDataSourceStore((state) => state.authState);
+  const accessToken = authState?.[selectedEndpoint?.id ?? ""]?.accessToken;
 
   return (
     <Stack spacing={2}>
@@ -83,10 +76,6 @@ export const EndpointRequestInputs = ({
                         { required: param.required }
                       : {})}
                     {...additionalProps}
-                    onPickComponent={() => {
-                      setPickingComponentToBindTo(undefined);
-                      setComponentToBind(undefined);
-                    }}
                     isPageAction={isPageAction}
                     {...form.getInputProps(field)}
                   />

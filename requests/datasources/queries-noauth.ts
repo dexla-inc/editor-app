@@ -11,11 +11,18 @@ import { buildQueryString } from "@/types/dashboardTypes";
 
 export const getDataSources = async (
   projectId: string,
-  { type, search, offset, limit }: DataSourcesListParams,
+  { datasourceId, include, type, search, offset, limit }: DataSourcesListParams,
 ) => {
   let url = `/projects/${projectId}/datasources`;
 
-  url += buildQueryString({ type, search, offset, limit });
+  url += buildQueryString({
+    datasourceId,
+    include,
+    type,
+    search,
+    offset,
+    limit,
+  });
 
   const response = (await getWithoutAuth<PagingResponse<DataSourceResponse>>(
     url,

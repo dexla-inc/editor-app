@@ -19,7 +19,7 @@ import { DataType } from "@/types/dataBinding";
 
 type Props = {
   component: Component;
-  endpoints: PagingResponse<Endpoint>;
+  endpoints: Endpoint[];
   customProps?: Record<string, any>;
   children?: (props: any) => JSX.Element;
   onSave?: (component: Component, form: any) => Promise<any>;
@@ -40,7 +40,7 @@ export const DynamicSettings = ({
   const [initiallyOpened, setInitiallyOpened] = useState(true);
   const [selectedEndpoint, setSelectedEndpoint] = useState<
     Endpoint | undefined
-  >(endpoints?.results?.find((e) => e.id === component.onLoad?.endpointId));
+  >(endpoints?.find((e) => e.id === component.onLoad?.endpointId));
   const { getObjectAndArrayKeys } = useData();
 
   const exampleResponse = safeJsonParse(
@@ -139,7 +139,7 @@ export const DynamicSettings = ({
               attrs: { onLoad: { value: { static: "", dataType: "static" } } },
             });
             setSelectedEndpoint(
-              endpoints?.results?.find((e) => e.id === selected) as Endpoint,
+              endpoints?.find((e) => e.id === selected) as Endpoint,
             );
           }}
         />

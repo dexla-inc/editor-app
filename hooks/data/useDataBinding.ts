@@ -34,7 +34,7 @@ export const useDataBinding = () => {
     const variablesList = Object.values(
       useVariableStore.getState().variableList,
     );
-    const auth = useDataSourceStore.getState().getAuthState();
+    const auth = useDataSourceStore.getState().authState;
 
     const components = Object.entries(
       useInputsStore.getState().inputValues,

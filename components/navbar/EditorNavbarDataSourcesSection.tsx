@@ -8,7 +8,6 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { DataSourceForm } from "../datasources/DataSourceForm";
-import { ProjectSettings } from "../datasources/ProjectSettings";
 
 export const EditorNavbarDataSourcesSection = () => {
   const router = useRouter();
@@ -20,7 +19,9 @@ export const EditorNavbarDataSourcesSection = () => {
   const { data: dataSources } = useDataSources(projectId);
 
   const onNameChange = (value: string) => {
-    setDatasource(dataSources?.results.find((ds) => ds.name === value));
+    const datasource = dataSources?.results.find((ds) => ds.id === value);
+    setDatasource(datasource);
+    setDatasourceId(value);
   };
 
   useEffect(() => {
@@ -30,11 +31,6 @@ export const EditorNavbarDataSourcesSection = () => {
       setDatasource(dataSources.results[0]);
     }
   }, [dataSources?.results]);
-
-  useEffect(() => {
-    if (datasource) {
-    }
-  }, [datasource]);
 
   return (
     <Stack p="xs" pr={0} spacing={0}>

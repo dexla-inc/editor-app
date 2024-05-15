@@ -4,7 +4,6 @@ import { NodeData } from "@/components/logic-flow/nodes/CustomNode";
 import { safeJsonParse } from "@/utils/common";
 import merge from "lodash.merge";
 import { Action, APICallAction } from "@/utils/actions";
-import { useDataSourceEndpoints } from "@/hooks/editor/reactQuery/useDataSourceEndpoints";
 import { usePageListQuery } from "@/hooks/editor/reactQuery/usePageListQuery";
 import { useEditorStore } from "@/stores/editor";
 import { useVariableStore } from "@/stores/variables";
@@ -17,6 +16,7 @@ import { ContextType } from "@/types/dataBinding";
 import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 import { useShareableContent } from "@/hooks/data/useShareableContent";
 import { useEventData } from "@/hooks/data/useEventData";
+import { useEndpoints } from "../editor/reactQuery/useDataSourcesEndpoints";
 
 type BindType = {
   selectedEntityId: string;
@@ -49,7 +49,7 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
   });
   const nodes = useNodes<NodeData>();
   const projectId = useEditorTreeStore((state) => state.currentProjectId ?? "");
-  const { data: endpoints } = useDataSourceEndpoints(projectId);
+  const { endpoints } = useEndpoints(projectId);
   const { data: pageListQuery } = usePageListQuery(projectId, null);
   const pageActions = pageListQuery?.results?.find(
     (p) => p.id === activePage?.id,
@@ -59,7 +59,7 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
     Object.values(state.variableList),
   );
   const browser = useRouter();
-  const auth = useDataSourceStore((state) => state.getAuthState());
+  const auth = useDataSourceStore((state) => state.authState);
   const inputsStore = useInputsStore((state) => state.inputValues);
   const event = useEventData();
 
@@ -140,7 +140,7 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
       }
 
       if (actionType === "apiCall" && endpointId) {
-        const endpoint = endpoints?.results.find((e) => e.id === endpointId);
+        const endpoint = endpoints.find((e) => e.id === endpointId);
 
         const successExampleResponse = safeJsonParse(
           endpoint?.exampleResponse ?? "",
