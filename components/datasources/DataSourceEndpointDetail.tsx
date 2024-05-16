@@ -37,7 +37,7 @@ import { useForm } from "@mantine/form";
 import debounce from "lodash.debounce";
 import { useEffect, useReducer, useState } from "react";
 import { MonacoEditorJson } from "../MonacoEditorJson";
-import { safeJsonParse } from "@/utils/common";
+import { safeJsonParse, toBase64 } from "@/utils/common";
 import { AddRequestInput } from "./AddRequestInput";
 import { useEndpoints } from "@/hooks/editor/reactQuery/useDataSourcesEndpoints";
 
@@ -386,7 +386,7 @@ export const DataSourceEndpointDetail = ({
 
       // Use the Next.js API route as a proxy if isServerRequest is true
       const fetchUrl = state.isServerRequest
-        ? `/api/proxy?targetUrl=${encodeURIComponent(apiUrl)}`
+        ? `/api/proxy?targetUrl=${toBase64(url)}`
         : apiUrl;
 
       const response = await fetch(fetchUrl, {

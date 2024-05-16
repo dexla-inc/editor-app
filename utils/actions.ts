@@ -23,7 +23,7 @@ import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useVariableStore } from "@/stores/variables";
 import { readDataFromStream } from "@/utils/api";
-import { isObject, safeJsonParse } from "@/utils/common";
+import { toBase64, isObject, safeJsonParse } from "@/utils/common";
 import { Component, getColorFromTheme } from "@/utils/editor";
 import { executeFlow } from "@/utils/logicFlows";
 import { ArrayMethods } from "@/types/types";
@@ -34,8 +34,6 @@ import { Router } from "next/router";
 import { ComputeValueProps, ValueProps } from "@/types/dataBinding";
 import { ResetVariableActionForm } from "@/components/actions/ResetVariableActionForm";
 import { useThemeStore } from "@/stores/theme";
-import set from "lodash.set";
-import cloneDeep from "lodash.clonedeep";
 
 const triggers = [
   "onClick",
@@ -604,7 +602,7 @@ export const useApiCallAction = async (
     const authHeaderKey = accessToken ? "Bearer " + accessToken : "";
 
     const fetchUrl = endpoint?.isServerRequest
-      ? `/api/proxy?targetUrl=${encodeURIComponent(url)}`
+      ? `/api/proxy?targetUrl=${toBase64(url)}`
       : url;
 
     switch (action.authType) {

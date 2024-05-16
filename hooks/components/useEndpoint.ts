@@ -5,7 +5,7 @@ import { DEFAULT_STALE_TIME } from "@/utils/config";
 import { useQuery } from "@tanstack/react-query";
 import get from "lodash.get";
 import { DataType } from "@/types/dataBinding";
-import { removeEmpty } from "@/utils/common";
+import { removeEmpty, toBase64 } from "@/utils/common";
 import { useEndpoints } from "../editor/reactQuery/useDataSourcesEndpoints";
 
 type UseEndpointProps = {
@@ -45,7 +45,7 @@ export const useEndpoint = ({
     ? getUrl(Object.keys(cleanParameter), apiUrl, cleanParameter)
     : "";
   const fetchUrl = endpoint?.isServerRequest
-    ? `/api/proxy?targetUrl=${encodeURIComponent(url)}`
+    ? `/api/proxy?targetUrl=${toBase64(url)}`
     : url;
 
   const apiCall = async () => {

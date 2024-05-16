@@ -97,7 +97,9 @@ export const IconModal = ({ onIconSelect }: Props) => {
           <Input
             placeholder="Search icons"
             value={searchQuery}
-            onChange={(event) => setSearchQuery(event.target.value)}
+            onChange={(event) => {
+              return setSearchQuery(event.target.value ?? "");
+            }}
           />
           <Grid
             gutter={theme.spacing.md}
