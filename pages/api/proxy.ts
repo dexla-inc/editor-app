@@ -1,3 +1,4 @@
+import { fromBase64 } from "@/utils/common";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
@@ -7,6 +8,11 @@ export default async function handler(
   // Construct the URL dynamically based on query params from the client request
   const { targetUrl } = req.query;
 
+  if (!targetUrl) {
+    res.status(400).json({ error: "Missing targetUrl" });
+    return;
+  }
+
   const validHeaders = [
     "accept",
     "content-type",
@@ -14,6 +20,8 @@ export default async function handler(
     "user-agent",
     "authorization",
   ];
+
+  const decodedUrl = fromBase64(targetUrl as string);
 
   const headers: Record<string, string> = {};
   Object.entries(req.headers).forEach(([key, value]) => {
@@ -33,7 +41,7 @@ export default async function handler(
   }
 
   try {
-    const response = await fetch(targetUrl as string, fetchOptions);
+    const response = await fetch(decodedUrl as string, fetchOptions);
 
     if (response.ok) {
       const data = await response.json();
