@@ -1,6 +1,7 @@
 import { getPage } from "@/requests/pages/queries-noauth";
 import { PageResponse } from "@/requests/pages/types";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
+import { queryClient } from "@/utils/reactQuery";
 
 const cacheTime = 30 * 60 * 1000; // 30 minutes
 
@@ -9,8 +10,6 @@ export const usePageQuery = (
   pageId: string,
   isEnabled = true,
 ) => {
-  const queryClient = useQueryClient();
-
   const queryKey = ["page", projectId, pageId];
 
   const queryResult = useQuery<PageResponse, Error>({
