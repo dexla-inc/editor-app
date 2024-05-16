@@ -1,10 +1,7 @@
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useShallow } from "zustand/react/shallow";
 import { pick } from "next/dist/lib/pick";
-import cloneDeep from "lodash.clonedeep";
-import { relatedKeys } from "@/utils/data";
-import { useMemo } from "react";
-import isEmpty from "lodash.isempty";
+import { useDataTransformers } from "@/hooks/data/useDataTransformers";
 
 type UseShareableContentProps = {
   componentId?: string;
@@ -13,6 +10,8 @@ type UseShareableContentProps = {
 export const useShareableContent = ({
   componentId,
 }: UseShareableContentProps) => {
+  const { itemTransformer } = useDataTransformers();
+
   const relatedComponentsData = useEditorTreeStore(
     useShallow((state) => {
       const [, parentIdsGroup] =
@@ -24,27 +23,7 @@ export const useShareableContent = ({
     }),
   );
 
-  const item = useMemo(() => {
-    const relatedComponentsDataList = Object.entries(
-      relatedComponentsData,
-    ).filter(([, value]) => !isEmpty(value));
-    const itemData = relatedComponentsDataList?.at(-1);
-    const currentIndex = itemData?.[0]?.split("__")?.[1];
-
-    return cloneDeep(relatedComponentsDataList)
-      ?.reverse()
-      .reduce(
-        (acc, [key, value], i) => {
-          acc[relatedKeys[i]] = value;
-          return acc;
-        },
-        {
-          ...(currentIndex !== undefined && {
-            index: currentIndex,
-          }),
-        } as any,
-      );
-  }, [relatedComponentsData]);
+  const item = itemTransformer(relatedComponentsData);
 
   return { relatedComponentsData, item };
 };
