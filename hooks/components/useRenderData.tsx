@@ -2,7 +2,8 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 import { useShallow } from "zustand/react/shallow";
 import { Component, ComponentTree } from "@/utils/editor";
 import { useEndpoint } from "@/hooks/components/useEndpoint";
-import { LoadingOverlay, Skeleton } from "@mantine/core";
+import { Skeleton } from "@mantine/core";
+import isEmpty from "lodash.isempty";
 
 type UseRenderDataProps = {
   component: Component & ComponentTree;
@@ -60,8 +61,8 @@ export const useRenderData = ({ component }: UseRenderDataProps) => {
 
       return renderTree(child, {
         ...shareableContent,
-        // if data is undefined, we don't want to overwrite the data passed by a parent that is sharing data
-        ...(data && { data, parentSuffix }),
+        // if data is empty, we don't want to overwrite the data passed by a parent that is sharing data
+        ...(!isEmpty(data) && { data, parentSuffix }),
       });
     };
 
