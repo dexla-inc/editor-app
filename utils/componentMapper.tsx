@@ -470,28 +470,28 @@ export const structureMapper: StructureMapper = {
     category: "Typography",
     icon: <IconHeading size={ICON_SIZE} />,
   },
-  Table: {
-    structure: (props: any) => TableStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Table"
-        icon={<IconTable size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Data Display",
-    icon: <IconTable size={ICON_SIZE} />,
-  },
-  TableCell: {
-    structure: (props: any) => TableCellStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="TableCell"
-        icon={<IconTable size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Data Display",
-    icon: <IconTable size={ICON_SIZE} />,
-  },
+  // Table: {
+  //   structure: (props: any) => TableStructure.jsonStructure(props),
+  //   Draggable: () => (
+  //     <DraggableComponent
+  //       id="Table"
+  //       icon={<IconTable size={LARGE_ICON_SIZE} />}
+  //     />
+  //   ),
+  //   category: "Data Display",
+  //   icon: <IconTable size={ICON_SIZE} />,
+  // },
+  // TableCell: {
+  //   structure: (props: any) => TableCellStructure.jsonStructure(props),
+  //   Draggable: () => (
+  //     <DraggableComponent
+  //       id="TableCell"
+  //       icon={<IconTable size={LARGE_ICON_SIZE} />}
+  //     />
+  //   ),
+  //   category: "Data Display",
+  //   icon: <IconTable size={ICON_SIZE} />,
+  // },
   Icon: {
     structure: (props: any) => IconStructure.jsonStructure(props),
     Draggable: () => (
@@ -1073,49 +1073,49 @@ export const componentMapper: ComponentMapper = {
     actionTriggers: ["onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
-  Table: {
-    Component: (props) => <Table {...props} />,
-    modifiers: ["table", "spacing", "size", "border", "effects"],
-    actionTriggers: [
-      "onRowClick",
-      "onRowHover",
-      "onRowSelect",
-      "onRowExpand",
-      "onSort",
-      "onFilterApplied",
-    ],
-    sequentialTriggers: ["onSuccess", "onError"],
-  },
-  TableHead: {
-    Component: (props) => <TableHead {...props} />,
-    modifiers: [],
-    actionTriggers: [],
-    sequentialTriggers: [],
-  },
-  TableBody: {
-    Component: (props) => <TableBody {...props} />,
-    modifiers: [],
-    actionTriggers: [],
-    sequentialTriggers: [],
-  },
-  TableRow: {
-    Component: (props) => <TableRow {...props} />,
-    modifiers: ["size"],
-    actionTriggers: [],
-    sequentialTriggers: [],
-  },
-  TableCell: {
-    Component: (props) => <TableCell {...props} />,
-    modifiers: [],
-    actionTriggers: [],
-    sequentialTriggers: [],
-  },
-  TableHeaderCell: {
-    Component: (props) => <TableHeaderCell {...props} />,
-    modifiers: [],
-    actionTriggers: [],
-    sequentialTriggers: [],
-  },
+  // Table: {
+  //   Component: (props) => <Table {...props} />,
+  //   modifiers: ["table", "spacing", "size", "border", "effects"],
+  //   actionTriggers: [
+  //     "onRowClick",
+  //     "onRowHover",
+  //     "onRowSelect",
+  //     "onRowExpand",
+  //     "onSort",
+  //     "onFilterApplied",
+  //   ],
+  //   sequentialTriggers: ["onSuccess", "onError"],
+  // },
+  // TableHead: {
+  //   Component: (props) => <TableHead {...props} />,
+  //   modifiers: [],
+  //   actionTriggers: [],
+  //   sequentialTriggers: [],
+  // },
+  // TableBody: {
+  //   Component: (props) => <TableBody {...props} />,
+  //   modifiers: [],
+  //   actionTriggers: [],
+  //   sequentialTriggers: [],
+  // },
+  // TableRow: {
+  //   Component: (props) => <TableRow {...props} />,
+  //   modifiers: ["size"],
+  //   actionTriggers: [],
+  //   sequentialTriggers: [],
+  // },
+  // TableCell: {
+  //   Component: (props) => <TableCell {...props} />,
+  //   modifiers: [],
+  //   actionTriggers: [],
+  //   sequentialTriggers: [],
+  // },
+  // TableHeaderCell: {
+  //   Component: (props) => <TableHeaderCell {...props} />,
+  //   modifiers: [],
+  //   actionTriggers: [],
+  //   sequentialTriggers: [],
+  // },
   FileUpload: {
     Component: (props) => {
       return (

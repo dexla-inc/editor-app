@@ -2,7 +2,7 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 import { useShallow } from "zustand/react/shallow";
 import { Component, ComponentTree } from "@/utils/editor";
 import { useEndpoint } from "@/hooks/components/useEndpoint";
-import { LoadingOverlay } from "@mantine/core";
+import { LoadingOverlay, Skeleton } from "@mantine/core";
 
 type UseRenderDataProps = {
   component: Component & ComponentTree;
@@ -25,12 +25,13 @@ export const useRenderData = ({ component }: UseRenderDataProps) => {
     useShallow((state) => state.isPreviewMode || state.isLive),
   );
   const { dataType = "static" } = component?.props!;
-  const { data: staticData } = component.onLoad!;
+  const { data: staticData, skeletonMinHeight = 400 } = component.onLoad!;
+
   const setRelatedComponentsData = useEditorTreeStore(
     (state) => state.setRelatedComponentsData,
   );
 
-  const { data: dynamicData, isLoading } = useEndpoint({
+  const { data: dynamicData, initiallyLoading } = useEndpoint({
     onLoad: component.onLoad,
     dataType,
     includeExampleResponse: !isPreviewMode,
@@ -64,8 +65,8 @@ export const useRenderData = ({ component }: UseRenderDataProps) => {
       });
     };
 
-    if (isLoading) {
-      return <LoadingOverlay visible overlayBlur={2} />;
+    if (initiallyLoading) {
+      return <Skeleton mih={skeletonMinHeight} p="xl" />;
     }
 
     if (Array.isArray(data)) {
@@ -106,5 +107,6 @@ export const useRenderData = ({ component }: UseRenderDataProps) => {
 
   return {
     renderData,
+    initiallyLoading,
   };
 };
