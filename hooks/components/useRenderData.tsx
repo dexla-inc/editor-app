@@ -67,7 +67,7 @@ export const useRenderData = ({ component }: UseRenderDataProps) => {
     };
 
     if (initiallyLoading) {
-      return <Skeleton mih={skeletonMinHeight} p="xl" />;
+      return <Skeleton mih={skeletonMinHeight} p="xl" w="100%" />;
     }
 
     if (Array.isArray(data)) {
