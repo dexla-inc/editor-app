@@ -10,6 +10,7 @@ import { decodeSchema } from "@/utils/compression";
 import startCase from "lodash.startcase";
 import { getOutgoers, Node, NodeProps } from "reactflow";
 import { safeJsonParse } from "@/utils/common";
+import { HandledApiError, UnhandledApiError } from "@/utils/actions";
 
 const {
   ConnectionCreatorNode,
@@ -79,11 +80,19 @@ const run = async (state: FlowData, params: any) => {
   const initialErrorNode = state.nodes.find(
     (n) => n.id === "start-node-error",
   ) as Node;
+  const initialUnhandledErrorNode = state.nodes.find(
+    (n) => n.id === "start-node-unhandled-error",
+  ) as Node;
 
   const compute = async () => {
     let nextNodes = getOutgoers(initialNode!, state.nodes, state.edges);
     let nextErrorNodes = getOutgoers(
       initialErrorNode!,
+      state.nodes,
+      state.edges,
+    );
+    let nextUnhandledErrorNodes = getOutgoers(
+      initialUnhandledErrorNode!,
       state.nodes,
       state.edges,
     );
@@ -103,8 +112,14 @@ const run = async (state: FlowData, params: any) => {
         await computeNode?.(nextNode, params);
 
         nextNodes = getOutgoers(nextNode, state.nodes, state.edges);
-      } catch {
-        nextNodes = nextErrorNodes;
+      } catch (e) {
+        if (e instanceof HandledApiError) {
+          nextNodes = nextErrorNodes;
+        }
+
+        if (e instanceof UnhandledApiError) {
+          nextNodes = nextUnhandledErrorNodes;
+        }
       }
     }
   };

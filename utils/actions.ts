@@ -36,6 +36,20 @@ import { useThemeStore } from "@/stores/theme";
 import { queryClient } from "./reactQuery";
 import { RefreshAPICallActionForm } from "@/components/actions/RefreshAPICallActionForm";
 
+export class HandledApiError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "HandledError";
+  }
+}
+
+export class UnhandledApiError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "UnhandledError";
+  }
+}
+
 const triggers = [
   "onClick",
   "onHover",
@@ -540,10 +554,10 @@ export async function performFetch(
       if (includeExampleResponse) {
         return safeJsonParse(endpoint?.exampleResponse || "");
       }
-      throw new Error(errorBody);
+      throw new HandledApiError(errorBody);
     } else if (response.status >= 500) {
       console.error(errorBody);
-      throw new Error(errorBody);
+      throw new UnhandledApiError(errorBody);
     }
   }
 
@@ -602,8 +616,8 @@ export const useApiCallAction = async (
 
   const endpoint = endpointResults?.find((e) => e.id === action.endpoint)!;
 
-    const accessToken = useDataSourceStore.getState().getAuthState(projectId)
-        ?.accessToken;
+  const accessToken = useDataSourceStore.getState().getAuthState(projectId)
+    ?.accessToken;
 
   const { url, header, body } = prepareRequestData(
     action,
@@ -660,10 +674,6 @@ export const useApiCallAction = async (
         );
     }
     return responseJson;
-  } catch (error) {
-    if (error instanceof Error) {
-      throw new Error(error.message);
-    }
   } finally {
     setLoadingState(entity.id!, false);
   }

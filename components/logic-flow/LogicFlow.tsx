@@ -18,9 +18,11 @@ import ReactFlow, {
   getOutgoers,
   useReactFlow,
   Panel,
+  Edge,
 } from "reactflow";
 import "reactflow/dist/style.css";
 import { SegmentedControl } from "@mantine/core";
+import camelCase from "lodash.camelcase";
 
 const selector = (state: FlowState) => ({
   nodes: state.nodes,
@@ -39,6 +41,49 @@ type FlowProps = {
   wrapperRef: MutableRefObject<HTMLDivElement | null>;
 };
 
+function findConnectedNodes(
+  startNodeId: string,
+  nodes: Node[],
+  edges: Edge[],
+  isHidden: boolean,
+): Node[] {
+  // Initialize an empty set to keep track of visited node IDs
+  const visited = new Set();
+
+  // Helper function to perform depth-first search (DFS)
+  function dfs(currentNodeId: string) {
+    // If the node ID is already visited, return
+    if (visited.has(currentNodeId)) return;
+
+    // Mark the current node ID as visited
+    visited.add(currentNodeId);
+
+    // Find the current node by its ID
+    const currentNode = nodes.find((node) => node.id === currentNodeId);
+    if (!currentNode) return;
+
+    // Get all outgoers (connected nodes) from the current node
+    const outgoers = getOutgoers(currentNode, nodes, edges);
+
+    // Recursively visit all outgoers
+    outgoers.forEach((outgoer) => {
+      dfs(outgoer.id);
+    });
+  }
+
+  // Start DFS from the given node ID
+  dfs(startNodeId);
+
+  // Return an array of connected nodes
+  return Array.from(visited).reduce((acc: Node[], id) => {
+    const node = nodes.find((n) => n.id === id);
+    if (node) {
+      acc.push({ ...node, hidden: isHidden });
+    }
+    return acc;
+  }, []);
+}
+
 export const LogicFlow = ({ wrapperRef }: FlowProps) => {
   const {
     nodes,
@@ -52,6 +97,11 @@ export const LogicFlow = ({ wrapperRef }: FlowProps) => {
   const { setEdges, setNodes } = useReactFlow();
   const rect = wrapperRef.current?.getBoundingClientRect();
   const defaultViewport = { zoom: 2, x: (rect?.width ?? 1000) / 2, y: 150 };
+  const tabs = [
+    { label: "Default", value: "start-node" },
+    { label: "Handled Error", value: "start-node-error" },
+    { label: "Unhandled Error", value: "start-node-unhandled-error" },
+  ];
 
   const onNodesDelete = useCallback(
     (deleted: Node[]) => {
@@ -99,42 +149,41 @@ export const LogicFlow = ({ wrapperRef }: FlowProps) => {
     [nodes, edges],
   );
 
-  const toggleFlowVisibility = (isDefaultFlow: boolean) => {
+  const onActivateVisibility = (tab: string) => {
     const updatedEdges = [...edges];
-    let { startNodeFlow = [], startNodeFlowError } = nodes.reduce(
-      (acc, node) => {
-        if (node.id === "start-node") {
-          acc.startNodeFlow = [node, ...getOutgoers(node, nodes, edges)];
-        }
 
-        if (node.id === "start-node-error") {
-          acc.startNodeFlowError = [node, ...getOutgoers(node, nodes, edges)];
-        }
+    const flows = tabs.reduce(
+      (acc, { value }) => {
+        acc[camelCase(value) + "Flow"] = findConnectedNodes(
+          value,
+          nodes,
+          edges,
+          value !== tab,
+        );
         return acc;
       },
-      { startNodeFlow: [], startNodeFlowError: [] } as Record<
-        "startNodeFlow" | "startNodeFlowError",
-        Node[]
-      >,
+      {} as Record<string, Node[]>,
     );
 
-    if (!startNodeFlowError.length) {
+    const selectedFlow = camelCase(tab) + "Flow";
+
+    if (!flows[selectedFlow].length) {
       const newConnectionCreatorNodeIdError = nanoid();
-      // add error node
-      startNodeFlowError = [
+
+      flows[selectedFlow] = [
         {
-          id: "start-node-error",
+          id: selectedFlow,
           type: "startNode",
           data: {
             label: "Start",
-            description: "The starting point of an error flow",
+            description: "The starting point of a flow",
             inputs: [],
             outputs: [{ id: nanoid(), name: "Initial Trigger" }],
           },
           position: { x: 0, y: 0 },
           deletable: false,
           draggable: false,
-          hidden: true,
+          hidden: false,
         },
         {
           id: newConnectionCreatorNodeIdError,
@@ -145,30 +194,19 @@ export const LogicFlow = ({ wrapperRef }: FlowProps) => {
           },
           position: { x: 17.5, y: 80 },
           deletable: false,
-          hidden: true,
+          hidden: false,
         },
       ];
 
       updatedEdges.push({
         id: nanoid(),
-        source: "start-node-error",
+        source: selectedFlow,
         target: newConnectionCreatorNodeIdError,
         type: "straight",
       });
     }
 
-    let visibleFlow = startNodeFlow;
-    let hiddenFlow = startNodeFlowError;
-
-    if (!isDefaultFlow) {
-      visibleFlow = startNodeFlowError;
-      hiddenFlow = startNodeFlow;
-    }
-
-    visibleFlow = visibleFlow.map((node) => ({ ...node, hidden: false }));
-    hiddenFlow = hiddenFlow.map((node) => ({ ...node, hidden: true }));
-
-    setNodes([...visibleFlow, ...hiddenFlow]);
+    setNodes(Object.values(flows).flat());
     setEdges(updatedEdges);
   };
 
@@ -201,17 +239,8 @@ export const LogicFlow = ({ wrapperRef }: FlowProps) => {
       <Panel position="top-center">
         <SegmentedControl
           size="md"
-          data={[
-            { label: "Default", value: "default" },
-            { label: "Error", value: "error" },
-          ]}
-          onChange={(value) => {
-            if (value === "error") {
-              toggleFlowVisibility(false);
-            } else {
-              toggleFlowVisibility(true);
-            }
-          }}
+          data={tabs}
+          onChange={onActivateVisibility}
         />
       </Panel>
     </ReactFlow>

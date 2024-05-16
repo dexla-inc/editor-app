@@ -2307,10 +2307,10 @@
   resolved "https://registry.npmjs.org/@types/json5/-/json5-0.0.29.tgz"
   integrity sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==
 
-"@types/lodash.camelcase@^4.3.8":
-  version "4.3.8"
-  resolved "https://registry.npmjs.org/@types/lodash.camelcase/-/lodash.camelcase-4.3.8.tgz"
-  integrity sha512-jwsvMuU3ntB7w3a4L/oLW24qpBE9fobU5O/uCYWQctlvEOoWkXEgw/fkpY+onmT37IOQMVcVW9UiJ33CZE70ug==
+"@types/lodash.camelcase@^4.3.9":
+  version "4.3.9"
+  resolved "https://registry.yarnpkg.com/@types/lodash.camelcase/-/lodash.camelcase-4.3.9.tgz#da7b65013d6914fecb8759d5220a6ca9b658ee23"
+  integrity sha512-ys9/hGBfsKxzmFI8hckII40V0ASQ83UM2pxfQRghHAwekhH4/jWtjz/3/9YDy7ZpUd/H0k2STSqmPR28dnj7Zg==
   dependencies:
     "@types/lodash" "*"
 
@@ -6065,7 +6065,7 @@ locate-path@^6.0.0:
 
 lodash.camelcase@^4.3.0:
   version "4.3.0"
-  resolved "https://registry.npmjs.org/lodash.camelcase/-/lodash.camelcase-4.3.0.tgz"
+  resolved "https://registry.yarnpkg.com/lodash.camelcase/-/lodash.camelcase-4.3.0.tgz#b28aa6288a2b9fc651035c7711f65ab6190331a6"
   integrity sha512-TwuEnCnxbc3rAvhf/LbG7tJUDzhqXyFnv3dtzLOPgCG/hODL7WFnsbwktkD7yUV0RrreP/l1PALq/YSg6VvjlA==
 
 lodash.clonedeep@^4.5.0:
