@@ -28,7 +28,7 @@ export const useTriggers = ({
     useEditorTreeStore((state) => state.currentProjectId) ?? projectId;
   const updateTreeComponentAttrs =
     useEditorTreeStore.getState().updateTreeComponentAttrs;
-  const { computeValue } = useDataBinding();
+  const { computeValue } = useDataBinding(entity?.id);
   const { endpoints, isFetched } = useEndpoints(currentProjectId as string);
   const { data: logicFlows, isFetched: logicFlowsIsFetched } =
     useFlowsQuery(currentProjectId);
