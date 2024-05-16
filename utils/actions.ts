@@ -34,6 +34,8 @@ import { Router } from "next/router";
 import { ComputeValueProps, ValueProps } from "@/types/dataBinding";
 import { ResetVariableActionForm } from "@/components/actions/ResetVariableActionForm";
 import { useThemeStore } from "@/stores/theme";
+import { queryClient } from "./reactQuery";
+import { RefreshAPICallActionForm } from "@/components/actions/RefreshAPICallActionForm";
 
 const triggers = [
   "onClick",
@@ -84,6 +86,7 @@ export const actions: ActionInfo[] = [
   { name: "triggerLogicFlow", group: "Data & Logic", icon: "IconFlow" },
   { name: "changeVariable", group: "Data & Logic", icon: "IconVariable" },
   { name: "resetVariable", group: "Data & Logic", icon: "IconVariableOff" },
+  { name: "refreshApiCall", group: "Data & Logic", icon: "IconRefreshDot" },
   { name: "changeState", group: "Design", icon: "IconTransform" },
   { name: "navigateToPage", group: "Navigation", icon: "IconFileInvoice" },
   { name: "goToUrl", group: "Navigation", icon: "IconLink" },
@@ -157,6 +160,11 @@ export interface ChangeStateAction extends BaseAction {
 }
 
 export type EndpointAuthType = "authenticated" | "login" | "logout";
+
+export interface RefreshAPICallAction extends BaseAction {
+  name: "refreshApiCall";
+  endpoint: string;
+}
 
 export interface APICallAction extends BaseAction {
   name: "apiCall";
@@ -375,6 +383,11 @@ export type APICallActionParams = ActionParams & {
   endpointResults: Endpoint[];
 };
 
+export type RefreshApiCallActionParams = ActionParams & {
+  action: RefreshAPICallAction;
+  endpointResults: Endpoint[];
+};
+
 export const getUrl = (
   keys: string[],
   apiUrl: string,
@@ -560,6 +573,22 @@ const setLoadingState = (
     componentIds: [componentId],
     attrs: { props: { loading: isLoading } },
   });
+};
+
+export const useRefreshApiCallAction = async (
+  props: RefreshApiCallActionParams,
+): Promise<any> => {
+  const { action, endpointResults } = props;
+
+  const endpoint = endpointResults?.find((e) => e.id === action.endpoint)!;
+
+  const queryKey = endpoint?.id;
+
+  console.log("refreshApiCallAction", queryKey);
+
+  if (queryKey) {
+    queryClient.invalidateQueries({ queryKey: [queryKey] });
+  }
 };
 
 export const useApiCallAction = async (
@@ -880,6 +909,11 @@ export const actionMapper = {
       runInEditMode: true,
       queryStrings: [],
     },
+  },
+  refreshApiCall: {
+    action: useRefreshApiCallAction,
+    form: RefreshAPICallActionForm,
+    defaultValues: {},
   },
   apiCall: {
     action: useApiCallAction,

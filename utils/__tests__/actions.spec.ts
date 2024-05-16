@@ -9,6 +9,7 @@ describe("code snippet", () => {
       { name: "apiCall", group: "Data & Logic", icon: "IconApi" },
       { name: "changeVariable", group: "Data & Logic" },
       { name: "triggerLogicFlow", group: "Data & Logic", icon: "IconFlow" },
+      { name: "refreshApiCall", group: "Data & Logic", icon: "IconRefreshDot" },
       { name: "changeState", group: "Design", icon: "IconTransform" },
       { name: "changeVisibility", group: "Design", icon: "IconEyeOff" },
       { name: "navigateToPage", group: "Navigation", icon: "IconFileInvoice" },
