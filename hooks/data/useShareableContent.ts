@@ -20,17 +20,18 @@ export const useShareableContent = ({
           "-related-",
         ) || [];
       const relatedComponentIds = parentIdsGroup?.split("--") ?? [];
-      return Object.entries(
-        pick(state.relatedComponentsData, relatedComponentIds),
-      ).filter(([, value]) => !isEmpty(value));
+      return pick(state.relatedComponentsData, relatedComponentIds);
     }),
   );
 
   const item = useMemo(() => {
-    const itemData = relatedComponentsData?.at(-1);
+    const relatedComponentsDataList = Object.entries(
+      relatedComponentsData,
+    ).filter(([, value]) => !isEmpty(value));
+    const itemData = relatedComponentsDataList?.at(-1);
     const currentIndex = itemData?.[0]?.split("__")?.[1];
 
-    return cloneDeep(relatedComponentsData)
+    return cloneDeep(relatedComponentsDataList)
       ?.reverse()
       .reduce(
         (acc, [key, value], i) => {
