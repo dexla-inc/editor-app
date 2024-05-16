@@ -1,4 +1,4 @@
-import { getPage, getPageList } from "@/requests/pages/queries-noauth";
+import { getPage } from "@/requests/pages/queries-noauth";
 import { PageResponse } from "@/requests/pages/types";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -24,5 +24,9 @@ export const usePageQuery = (
     queryClient.invalidateQueries(queryKey);
   };
 
-  return { ...queryResult, invalidate };
+  const refetch = () => {
+    queryClient.refetchQueries(queryKey);
+  };
+
+  return { ...queryResult, invalidate, refetch };
 };
