@@ -79,5 +79,9 @@ export const useEndpoint = ({
     },
   );
 
-  return { data, isLoading: isLoading && isEnabled };
+  return {
+    data,
+    isLoading: isLoading && isEnabled,
+    initiallyLoading: isLoading && isEnabled,
+  };
 };
