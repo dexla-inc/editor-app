@@ -11,9 +11,11 @@ import {
 import { safeJsonParse } from "@/utils/common";
 import { useInputsStore } from "@/stores/inputs";
 import { useEditorTreeStore } from "@/stores/editorTree";
+import { useDataTransformers } from "@/hooks/data/useDataTransformers";
 
-export const useDataBinding = () => {
+export const useDataBinding = (componentId = "") => {
   const browser = useRouter();
+  const { itemTransformer } = useDataTransformers();
   const computeValue: ComputeValueProps = (
     { value, shareableContent, staticFallback },
     ctx,
@@ -32,6 +34,8 @@ export const useDataBinding = () => {
       },
     };
 
+    const [, parentIdsGroup] = componentId?.split("-related-") || [];
+    const relatedComponentIds = parentIdsGroup?.split("--") ?? [];
     const variablesList = Object.values(
       useVariableStore.getState().variableList,
     );
@@ -52,7 +56,7 @@ export const useDataBinding = () => {
       boundCode: string,
       ctx?: ComputeValuePropCtx,
     ): T | undefined => {
-      const { actions, event, item = shareableContent } = ctx ?? {};
+      const { actions, event } = ctx ?? {};
 
       try {
         const result = eval(`(function () { ${boundCode} })`)();
@@ -89,6 +93,12 @@ export const useDataBinding = () => {
     const browserList = Array.of(
       pick(browser, ["asPath", "basePath", "pathname", "query", "route"]),
     );
+
+    const relatedComponentsData = pick(
+      useEditorTreeStore.getState().relatedComponentsData,
+      relatedComponentIds,
+    );
+    const item = itemTransformer(relatedComponentsData);
 
     if (value === undefined) return staticFallback || "";
     let dataType = value?.dataType ?? "static";
