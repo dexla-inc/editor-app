@@ -1,5 +1,4 @@
 import { Endpoint } from "@/requests/datasources/types";
-import { PagingResponse } from "@/requests/types";
 import { extractKeys } from "@/utils/data";
 import { Component } from "@/utils/editor";
 import { Select } from "@mantine/core";
@@ -22,7 +21,9 @@ export const DynamicFormFieldsBuilder = ({
   field,
 }: DynamicFormFieldsBuilderProps) => {
   const { relatedComponentsData } = useShareableContent({});
-  const parentDataComponent = Object.values(relatedComponentsData).at(-1);
+  // last position from relatedComponentsData mean the last parent data being shared and position 1 is the actual value
+  // as relatedComponentsData is an Object.entries()
+  const parentDataComponent = relatedComponentsData.at(-1)?.[1];
 
   return (
     <Select
