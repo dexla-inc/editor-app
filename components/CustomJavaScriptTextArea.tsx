@@ -17,6 +17,37 @@ type JsProps = {
 
 const RETURN_ERROR_CODE = 1108;
 
+// Typing configuration to prevent the editor to understand our variables as unknown
+const customTypes = `
+declare var variables: {
+  [key: string]: any;
+};
+
+declare var browser: {
+  [key: string]: any;
+};
+
+declare var components: {
+  [key: string]: any;
+};
+
+declare var actions: {
+  [key: string]: any;
+};
+
+declare var item: {
+  [key: string]: any;
+};
+
+declare var auth: {
+  [key: string]: any;
+};
+
+declare var event: {
+  [key: string]: any;
+};
+`;
+
 export function CustomJavaScriptTextArea({
   language: defaultLanguage,
   value = "",
@@ -98,6 +129,12 @@ export function CustomJavaScriptTextArea({
           diagnosticCodesToIgnore: [RETURN_ERROR_CODE],
         });
 
+        monaco.languages.typescript.typescriptDefaults.addExtraLib(
+          customTypes,
+          "customTypes.d.ts",
+        );
+
+        // Auto-completion configuration
         setCompletionDisposable(
           monaco.languages.registerCompletionItemProvider("typescript", {
             provideCompletionItems: () => {
@@ -105,7 +142,7 @@ export function CustomJavaScriptTextArea({
                 suggestions: [
                   ...Object.entries(variables).map(([id, variable]) => ({
                     label: `variables[${variable.name}]`,
-                    kind: monaco.languages.CompletionItemKind.Variable,
+                    kind: monaco.languages.CompletionItemKind.Keyword,
                     insertText: `variables[/* ${variable.name} */'${id}']`,
                   })),
                   ...Object.entries(

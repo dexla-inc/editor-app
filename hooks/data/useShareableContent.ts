@@ -4,6 +4,7 @@ import { pick } from "next/dist/lib/pick";
 import cloneDeep from "lodash.clonedeep";
 import { relatedKeys } from "@/utils/data";
 import { useMemo } from "react";
+import isEmpty from "lodash.isempty";
 
 type UseShareableContentProps = {
   componentId?: string;
@@ -24,8 +25,11 @@ export const useShareableContent = ({
   );
 
   const item = useMemo(() => {
-    const relatedComponentsDataList = Object.entries(relatedComponentsData);
+    const relatedComponentsDataList = Object.entries(
+      relatedComponentsData,
+    ).filter(([, value]) => !isEmpty(value));
     const itemData = relatedComponentsDataList?.at(-1);
+    const currentIndex = itemData?.[0]?.split("__")?.[1];
 
     return cloneDeep(relatedComponentsDataList)
       ?.reverse()
@@ -35,7 +39,9 @@ export const useShareableContent = ({
           return acc;
         },
         {
-          index: itemData?.[0]?.split("__")?.[1],
+          ...(currentIndex !== undefined && {
+            index: currentIndex,
+          }),
         } as any,
       );
   }, [relatedComponentsData]);
