@@ -1,6 +1,12 @@
 import { PageResponse } from "@/requests/pages/types";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { Action, ActionTrigger, actionMapper } from "@/utils/actions";
+import {
+  Action,
+  ActionTrigger,
+  actionMapper,
+  handleSuccess,
+  handleError,
+} from "@/utils/actions";
 import { Component } from "@/utils/editor";
 import { Router } from "next/router";
 import { ChangeEvent, useMemo } from "react";
@@ -8,6 +14,8 @@ import { useDataBinding } from "@/hooks/data/useDataBinding";
 import { useFlowsQuery } from "@/hooks/editor/reactQuery/useFlowsQuery";
 import { ComputeValueProps } from "@/types/dataBinding";
 import { useEndpoints } from "../editor/reactQuery/useDataSourcesEndpoints";
+import { useEditorStore } from "@/stores/editor";
+import { safeJsonParse } from "@/utils/common";
 
 const nonDefaultActionTriggers = ["onSuccess", "onError"];
 
@@ -32,6 +40,7 @@ export const useTriggers = ({
   const { endpoints, isFetched } = useEndpoints(currentProjectId as string);
   const { data: logicFlows, isFetched: logicFlowsIsFetched } =
     useFlowsQuery(currentProjectId);
+  const setActionsResponse = useEditorStore.getState().setActionsResponse;
 
   const actionResponses: Record<string, any> = {};
   const setActionsResponses = (actionId: string, response: any) => {
@@ -63,7 +72,7 @@ export const useTriggers = ({
                 },
               );
 
-            return actionMapper[action.action.name].action({
+            const props = {
               // @ts-ignore
               action: action.action,
               actionId: action.id,
@@ -75,7 +84,49 @@ export const useTriggers = ({
               endpointResults: endpoints ?? [],
               entity,
               flowsList: logicFlows?.results ?? [],
-            });
+            };
+
+            try {
+              const responseJson =
+                // @ts-ignore
+                await actionMapper[action.action.name].action(props);
+
+              setActionsResponses(action.id, {
+                success: responseJson,
+                status: "success",
+              });
+              setActionsResponse(action.id, {
+                success: responseJson,
+                status: "success",
+                list: {
+                  id: action.id,
+                  name: action.action.name,
+                  success: responseJson,
+                },
+              });
+
+              // @ts-ignore
+              await handleSuccess(props);
+            } catch (error) {
+              if (error instanceof Error) {
+                setActionsResponses(action.id, {
+                  error: safeJsonParse(error.message),
+                  status: "error",
+                });
+                setActionsResponse(action.id, {
+                  error: safeJsonParse(error.message),
+                  status: "error",
+                  list: {
+                    id: action.id,
+                    name: action.action.name,
+                    error: error.message,
+                  },
+                });
+              }
+
+              // @ts-ignore
+              await handleError(props);
+            }
           },
         };
       },

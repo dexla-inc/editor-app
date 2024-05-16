@@ -76,24 +76,36 @@ const getNextNode = (
 
 const run = async (state: FlowData, params: any) => {
   const initialNode = state.nodes.find((n) => n.id === "start-node") as Node;
+  const initialErrorNode = state.nodes.find(
+    (n) => n.id === "start-node-error",
+  ) as Node;
 
   const compute = async () => {
     let nextNodes = getOutgoers(initialNode!, state.nodes, state.edges);
+    let nextErrorNodes = getOutgoers(
+      initialErrorNode!,
+      state.nodes,
+      state.edges,
+    );
 
     while (nextNodes.length) {
       let nextNode = nextNodes[0];
-      if (nextNode.type === "booleanNode") {
-        const nodeToTrigger = getNextNode(state, nextNode, params);
-        if (nodeToTrigger) {
-          nextNode = nodeToTrigger;
+      try {
+        if (nextNode.type === "booleanNode") {
+          const nodeToTrigger = getNextNode(state, nextNode, params);
+          if (nodeToTrigger) {
+            nextNode = nodeToTrigger;
+          }
         }
+
+        const computeNode = computeNodeMapper[nextNode?.type!];
+
+        await computeNode?.(nextNode, params);
+
+        nextNodes = getOutgoers(nextNode, state.nodes, state.edges);
+      } catch {
+        nextNodes = nextErrorNodes;
       }
-
-      const computeNode = computeNodeMapper[nextNode?.type!];
-
-      await computeNode?.(nextNode, params);
-
-      nextNodes = getOutgoers(nextNode, state.nodes, state.edges);
     }
   };
 
