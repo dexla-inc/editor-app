@@ -7,6 +7,7 @@ import PageConfig from "./PageConfig";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useEditorStore } from "@/stores/editor";
 import { queryClient } from "@/utils/reactQuery";
+import { usePageQuery } from "@/hooks/editor/reactQuery/usePageQuery";
 
 type PageDetailPaneProps = {
   page?: PageResponse | null | undefined;
@@ -21,24 +22,12 @@ export default function PageDetailPane({ page, setPage }: PageDetailPaneProps) {
     (state) => state.updatePageResponse,
   );
 
-  const queryKey = ["pages", projectId, null];
+  const { refetch } = usePageQuery(projectId, page?.id as string);
 
   const onUpdatePage = async (values: any) => {
     setPage(values);
     const result = await updatePage(values, projectId, page?.id as string);
-
-    queryClient.setQueryData(queryKey, (oldData?: PageListResponse) => {
-      if (!oldData || !oldData.results) {
-        return { results: [result] };
-      }
-
-      return {
-        ...oldData,
-        results: oldData.results.map((p) =>
-          p.id === page?.id ? { ...p, ...result } : p,
-        ),
-      };
-    });
+    refetch();
 
     updatePageResponse(result);
   };
