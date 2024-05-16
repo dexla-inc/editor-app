@@ -34,7 +34,6 @@ const autoRunJavascriptCode = (boundCode: string) => {
     const result = new Function(boundCode)();
     return result;
   } catch (error: any) {
-    console.error(error);
     return;
   }
 };
