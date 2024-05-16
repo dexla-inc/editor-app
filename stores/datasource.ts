@@ -70,7 +70,9 @@ export const useDataSourceStore = create<DataSourceState>()(
             return acc;
           }, {});
 
-          Cookies.set(projectId, refreshToken);
+          Cookies.set(projectId, refreshToken, {
+            expires: 31,
+          });
 
           const currentAuthState = get().authState;
           const newAuthState = {
