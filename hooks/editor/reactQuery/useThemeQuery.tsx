@@ -1,12 +1,11 @@
 import { getTheme } from "@/requests/themes/queries-noauth";
 import { ThemeResponse } from "@/requests/themes/types";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
+import { queryClient } from "@/utils/reactQuery";
 
 const cacheTime = 30 * 60 * 1000; // 30 minutes
 
 export const useGetThemeQuery = (projectId: string) => {
-  const queryClient = useQueryClient();
-
   const queryKey = ["theme", projectId];
 
   const queryResult = useQuery<ThemeResponse, Error>({

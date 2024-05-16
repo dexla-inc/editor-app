@@ -1,5 +1,6 @@
 import { getComponentList } from "@/requests/components/queries-noauth";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
+import { queryClient } from "@/utils/reactQuery";
 
 const cacheTime = 30 * 60 * 1000; // 60 minutes
 
@@ -18,7 +19,6 @@ export const useCustomComponentList = (
     networkMode: "offlineFirst",
   });
 
-  const queryClient = useQueryClient();
   const invalidate = () => {
     queryClient.invalidateQueries(queryKey);
   };
