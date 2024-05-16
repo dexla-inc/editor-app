@@ -46,8 +46,8 @@ export const useRenderData = ({ component }: UseRenderDataProps) => {
       parentSuffix,
       currentComponentGroupId,
     }: RenderComponentProps) => {
-      // WARNING: If you redux devtools is failing, you might want to comment this line
-      // doing this so I can use parent component data in the binding popover
+      // WARNING: If your redux devtools is failing, you might want to comment this if statement
+      // It populates all parent rendered data, so I can use it in other places, like the binding popover
       if (
         JSON.stringify(
           useEditorTreeStore.getState().relatedComponentsData[
