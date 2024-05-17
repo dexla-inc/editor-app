@@ -14,17 +14,20 @@ export type AuthState = {
 };
 
 type DataSourceState = {
-  apiAuthConfig?: Record<string, Omit<DataSourceAuthResponse, "type">>;
+  apiAuthConfig?: Record<string, Omit<DataSourceAuthResponse, "type">>; // datasourceId -> authConfig
   clearApiAuthConfig: (projectId: string) => void;
   setApiAuthConfig: (
     projectId: string,
     data: PagingResponse<DataSourceResponse>,
   ) => void;
   hasTokenExpired: (projectId: string) => boolean;
-  refreshAccessToken: (projectId: string) => Promise<void>;
+  refreshAccessToken: (
+    projectId: string,
+    dataSourceId: string,
+  ) => Promise<void>;
   setAuthTokens: (projectId: string, response: any) => void;
   clearAuthTokens: (projectId: string) => void;
-  authState: Record<string, AuthState>;
+  authState: Record<string, AuthState>; // projectId -> authState
   getAuthState: (
     projectId: string,
   ) => (AuthState & { refreshToken?: string }) | null;
@@ -74,18 +77,17 @@ export const useDataSourceStore = create<DataSourceState>()(
             expires: 31,
           });
 
-          const currentAuthState = get().authState;
-          const newAuthState = {
-            ...currentAuthState,
-            [projectId]: {
-              accessToken,
-              refreshToken,
-              expiresAt,
-              additionalInfo,
+          set((state) => ({
+            authState: {
+              ...state.authState,
+              [projectId]: {
+                accessToken,
+                refreshToken,
+                expiresAt,
+                additionalInfo,
+              },
             },
-          };
-
-          set({ authState: newAuthState });
+          }));
         },
         hasTokenExpired: (projectId: string) => {
           const expiresAt = get().authState[projectId]?.expiresAt;
@@ -96,54 +98,63 @@ export const useDataSourceStore = create<DataSourceState>()(
           }
           return true;
         },
-        refreshAccessToken: async (projectId: string) => {
-          const authState = get().authState;
-          const refreshToken = Cookies.get(projectId);
+        refreshAccessToken: async (projectId: string, dataSourceId: string) => {
+          try {
+            const authState = get().authState[projectId];
+            const refreshToken = Cookies.get(projectId);
 
-          if (!refreshToken || refreshToken === "undefined") {
-            return;
+            if (!refreshToken || refreshToken === "undefined") {
+              return;
+            }
+
+            const accessToken = authState?.accessToken;
+            const state = get();
+            const apiAuthConfig = state.apiAuthConfig?.[dataSourceId];
+            const hasTokenExpired = state.hasTokenExpired;
+            const setAuthTokens = state.setAuthTokens;
+
+            if (accessToken && !hasTokenExpired(projectId)) {
+              return;
+            }
+
+            if (!apiAuthConfig) {
+              console.error(`No auth config found for projectId: ${projectId}`);
+              return;
+            }
+            const url = apiAuthConfig.refreshTokenUrl as string;
+
+            const refreshTokenProperty =
+              apiAuthConfig.refreshTokenProperty as string;
+            const headers: Record<string, string> = {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${accessToken}`,
+            };
+
+            let finalUrl = url;
+
+            if (apiAuthConfig.dataType === "SUPABASE") {
+              headers["apiKey"] = apiAuthConfig.apiKey as string;
+              finalUrl += "?grant_type=refresh_token";
+            }
+
+            const response = await fetch(finalUrl, {
+              method: "POST",
+              headers: headers,
+              body: JSON.stringify({
+                [refreshTokenProperty ?? "refresh"]: refreshToken,
+              }),
+            });
+
+            if (!response.ok) return;
+
+            const data = await response.json();
+            const mergedAuthConfig = { ...data, ...apiAuthConfig };
+            setAuthTokens(projectId, mergedAuthConfig);
+            return data;
+          } catch (error) {
+            console.error("Failed to parse JSON:", error);
+            return null;
           }
-
-          const accessToken = authState?.accessToken;
-          const apiAuthConfig = get().apiAuthConfig;
-          const hasTokenExpired = get().hasTokenExpired;
-          const setAuthTokens = get().setAuthTokens;
-
-          if (accessToken && !hasTokenExpired(projectId)) {
-            return;
-          }
-
-          const authConfig = apiAuthConfig?.[projectId];
-          const url = authConfig?.refreshTokenUrl as string;
-
-          const refreshTokenProperty =
-            authConfig?.refreshTokenProperty as string;
-          const headers: Record<string, string> = {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-          };
-
-          let finalUrl = url;
-
-          if (authConfig?.dataType === "SUPABASE") {
-            headers["apiKey"] = authConfig?.apiKey as string;
-            finalUrl += "?grant_type=refresh_token";
-          }
-
-          const response = await fetch(finalUrl, {
-            method: "POST",
-            headers: headers,
-            body: JSON.stringify({
-              [refreshTokenProperty ?? "refresh"]: refreshToken,
-            }),
-          });
-
-          const data = await response.json();
-
-          if (!response.ok) return;
-
-          const mergedAuthConfig = { ...data, ...authConfig };
-          setAuthTokens(projectId, mergedAuthConfig);
         },
         clearAuthTokens: (projectId: string) => {
           Cookies.remove(projectId);

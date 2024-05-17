@@ -662,7 +662,7 @@ export const useApiCallAction = async (
         const refreshAccessToken =
           useDataSourceStore.getState().refreshAccessToken;
 
-        refreshAccessToken(projectId);
+        refreshAccessToken(projectId, endpoint?.dataSourceId as string);
 
         responseJson = await performFetch(
           fetchUrl,
