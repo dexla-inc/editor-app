@@ -24,7 +24,7 @@ const PageEditor = () => {
   const setApiAuthConfig = useDataSourceStore(
     (state) => state.setApiAuthConfig,
   );
-  // setDatasourceAuthConfig
+
   const { data: variables } = useVariableListQuery(projectId);
   const { data: datasources } = useDataSources(projectId);
 
@@ -33,11 +33,10 @@ const PageEditor = () => {
       initializeVariableList(variables.results);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [variables, pageId]); // pageId is used to reinitialize non global variables
+  }, [variables, pageId]); // DO NOT REMOVE: pageId is used to reinitialize non global variables
 
   useEffect(() => {
     if (datasources) {
-      // const endpoints = datasources.results.flatMap((ds) => ds.endpoints);
       setApiAuthConfig(projectId, datasources);
     }
   }, [datasources, setApiAuthConfig]);
