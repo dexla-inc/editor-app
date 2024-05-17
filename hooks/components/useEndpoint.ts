@@ -51,6 +51,10 @@ export const useEndpoint = ({
   const apiCall = async () => {
     const authHeaderKey = accessToken ? "Bearer " + accessToken : "";
 
+    const refreshAccessToken = useDataSourceStore.getState().refreshAccessToken;
+
+    refreshAccessToken(projectId, endpoint?.dataSourceId as string);
+
     return performFetch(
       fetchUrl,
       endpoint,
