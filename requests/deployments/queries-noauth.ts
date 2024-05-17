@@ -3,7 +3,7 @@ import {
   DeploymentResponse,
 } from "@/requests/deployments/types";
 import { PagingResponse } from "@/requests/types";
-import { getWithoutAuth } from "@/utils/apiNoAuth";
+import { getWithoutAuth } from "@/utils/apiLive";
 
 export const getDeploymentPages = async (projectId: string) => {
   const response = (await getWithoutAuth<PagingResponse<DeploymentPage>>(

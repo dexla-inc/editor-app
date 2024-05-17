@@ -1,5 +1,5 @@
 import { ProjectResponse } from "@/requests/projects/types";
-import { getWithoutAuth } from "@/utils/apiNoAuth";
+import { getWithoutAuth } from "@/utils/apiLive";
 
 export type ProjectListResponse = {
   results: ProjectResponse[];

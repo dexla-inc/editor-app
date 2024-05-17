@@ -6,7 +6,7 @@ import {
   Endpoint,
 } from "@/requests/datasources/types";
 import { PagingResponse } from "@/requests/types";
-import { getWithoutAuth } from "@/utils/apiNoAuth";
+import { getWithoutAuth } from "@/utils/apiLive";
 import { buildQueryString } from "@/types/dashboardTypes";
 
 export const getDataSources = async (

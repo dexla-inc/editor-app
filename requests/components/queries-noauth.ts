@@ -1,5 +1,5 @@
 import { CustomComponentResponse } from "@/requests/components/types";
-import { getWithoutAuth } from "@/utils/apiNoAuth";
+import { getWithoutAuth } from "@/utils/apiLive";
 
 type CustomComponentListResponse = {
   results: CustomComponentResponse[];
