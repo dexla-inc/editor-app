@@ -6,7 +6,7 @@ import {
   PageStateHistoryResponse,
   PageStateResponse,
 } from "@/requests/pages/types";
-import { getWithoutAuth } from "@/utils/apiNoAuth";
+import { getWithoutAuth } from "@/utils/apiLive";
 import { buildQueryString } from "@/types/dashboardTypes";
 import { PagingResponse } from "../types";
 

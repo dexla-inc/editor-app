@@ -2,7 +2,7 @@ import {
   UploadMultipleResponse,
   UploadResponse,
 } from "@/requests/storage/types";
-import { getWithoutAuth, postWithoutAuth } from "@/utils/apiNoAuth";
+import { getWithoutAuth, postWithoutAuth } from "@/utils/apiLive";
 import { FileWithPath } from "@mantine/dropzone";
 
 export const uploadFileInternal = async (
