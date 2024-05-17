@@ -1,4 +1,4 @@
-import { MethodTypes, PagingParams } from "@/requests/types";
+import { IResponse, MethodTypes, PagingParams } from "@/requests/types";
 import { ApiType } from "@/types/dashboardTypes";
 
 export type DataSourceTypes =
@@ -51,9 +51,8 @@ export interface DataSourceResponse {
   auth?: DataSourceAuthResponse;
 }
 
-export interface ErrorResponse extends Error {
+export interface ErrorResponse extends Error, IResponse {
   message: string;
-  trackingId: string;
   errors: ErrorDetail[];
 }
 

@@ -2,10 +2,9 @@ import { Live } from "@/components/Live";
 import { withPageOnLoad } from "@/hoc/withPageOnLoad";
 import { getDeploymentPage } from "@/requests/deployments/queries-noauth";
 import { DeploymentPage } from "@/requests/deployments/types";
-import { getProject } from "@/requests/projects/queries-noauth";
-import { ProjectResponse } from "@/requests/projects/types";
 import { queryClient } from "@/utils/reactQuery";
 import { checkRefreshTokenExists } from "@/utils/serverside";
+import { Stopwatch } from "@/utils/stopwatch";
 import { dehydrate } from "@tanstack/react-query";
 import { GetServerSidePropsContext } from "next";
 import Head from "next/head";
@@ -16,9 +15,24 @@ export const getServerSideProps = async ({
   query,
 }: GetServerSidePropsContext) => {
   const url = req.headers.host as string;
-  const project = await getProject(url, true);
+  const currentSlug = query.page as string;
+  const timer = Stopwatch.StartNew();
+  console.log(
+    "Before getDeploymentPage",
+    timer.getElapsedMilliseconds(),
+    url,
+    currentSlug,
+  );
+  const deploymentPage = await getDeploymentPage(url, currentSlug);
+  console.log(
+    "After getDeploymentPage",
+    timer.getElapsedMilliseconds(),
+    url,
+    currentSlug,
+    `trackingId: ${deploymentPage.trackingId}`,
+  );
 
-  if (!project.id) {
+  if (!deploymentPage.projectId) {
     return {
       redirect: {
         destination: "/projects",
@@ -28,19 +42,11 @@ export const getServerSideProps = async ({
     };
   }
 
-  const currentSlug = query.page as string;
-
-  const [deploymentPage] = await Promise.all([
-    getDeploymentPage(project.id, currentSlug),
-    queryClient.prefetchQuery(["project", project.id], () =>
-      Promise.resolve(project),
-    ),
-  ]);
-
   //if(!deploymentPage.project)
   // Redirect to dexla page to save it hasn't been deployed
 
   const notFoundPageslug = deploymentPage.project.redirects?.notFoundPageId;
+
   // Check if page exists
   if (!deploymentPage.id) {
     return {
@@ -53,15 +59,20 @@ export const getServerSideProps = async ({
       props: {
         dehydratedState: dehydrate(queryClient),
         isLive: true,
-        project,
+        project: deploymentPage.project,
       },
     };
   }
 
   // Check if user is logged in via cookies
-  const cookie = req.cookies[project.id];
+  const cookie = req.cookies[deploymentPage.projectId];
   const isLoggedIn = checkRefreshTokenExists(cookie);
   const signInPageSlug = deploymentPage.project.redirects?.signInPageId;
+  console.log(
+    "After signInPageSlug",
+    timer.getElapsedMilliseconds(),
+    `trackingId: ${deploymentPage.trackingId}`,
+  );
 
   if (
     !isLoggedIn &&
@@ -76,14 +87,16 @@ export const getServerSideProps = async ({
       },
       props: {
         dehydratedState: dehydrate(queryClient),
-        faviconUrl: project.faviconUrl,
         isLive: true,
-        project,
         deploymentPage,
       },
     };
   }
-
+  console.log(
+    "Before entering app",
+    timer.getElapsedMilliseconds(),
+    `trackingId: ${deploymentPage.trackingId}`,
+  );
   return {
     props: {
       dehydratedState: dehydrate(queryClient),

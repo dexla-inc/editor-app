@@ -4,10 +4,13 @@ export type PagingParams = {
   limit?: number;
 };
 
-export interface PagingResponse<T> {
+export interface IResponse {
+  trackingId?: string; // This is a unique identifier for the request
+}
+
+export interface PagingResponse<T> extends IResponse {
   results: Array<T>;
   paging: PagingModel;
-  trackingId: string;
 }
 
 interface PagingModel {
@@ -24,9 +27,8 @@ export type PatchParams = {
   value: any;
 };
 
-export type CreatedResponse = {
+export type CreatedResponse = IResponse & {
   id: string;
-  trackingId: string;
 };
 
 export type SuccessResponse = Omit<CreatedResponse, "id">;

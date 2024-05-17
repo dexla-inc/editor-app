@@ -1,4 +1,4 @@
-import { PagingParams } from "@/requests/types";
+import { IResponse, PagingParams } from "@/requests/types";
 import { Action } from "@/utils/actions";
 import { AppTypes } from "@/types/dashboardTypes";
 
@@ -46,8 +46,7 @@ export type PageBody = {
   actions?: Action[];
 };
 
-export type PagesResponse = {
-  trackingId: string;
+export type PagesResponse = IResponse & {
   homePageId: string;
   [key: string]: any;
 };

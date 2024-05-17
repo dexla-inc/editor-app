@@ -1,5 +1,6 @@
 import { CardStyle, FocusRing, LoaderType } from "@/requests/projects/types";
 import { MantineSize } from "@mantine/core";
+import { IResponse } from "../types";
 
 export type ThemeQueryParams = {
   websiteUrl?: string;
@@ -23,9 +24,8 @@ export type ThemeMutationParams = {
   theme: "LIGHT" | "DARK";
 };
 
-export interface ThemeResponse extends ThemeMutationParams {
+export interface ThemeResponse extends ThemeMutationParams, IResponse {
   id?: string;
-  trackingId?: string;
   websiteUrl?: string;
 }
 
