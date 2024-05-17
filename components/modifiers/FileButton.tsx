@@ -33,21 +33,33 @@ const Modifier = withModifier(({ selectedComponent }) => {
           clearable
           data={[
             { label: "All Files", value: "*/*" },
-            { label: "Image", value: "image/*" },
-            { label: "PDF", value: ".pdf" },
-            { label: "Word Document", value: ".docx" },
-            { label: "XLSX Excel Worksheet", value: ".xlsx" },
-            { label: "XLS Excel Worksheet", value: ".xls" },
-            { label: "PowerPoint Presentation", value: ".pptx" },
-            { label: "Text File", value: ".txt" },
-            { label: "CSV File", value: ".csv" },
-            { label: "JPEG Image", value: ".jpeg" },
-            { label: "PNG Image", value: ".png" },
-            { label: "GIF Image", value: ".gif" },
-            { label: "MP4 Video", value: ".mp4" },
-            { label: "MP3 Audio", value: ".mp3" },
-            { label: "JavaScript File", value: ".js" },
-            { label: "HTML File", value: ".html" },
+            { label: "All Image", value: "image/*" },
+            { label: "PDF", value: "application/pdf" },
+            {
+              label: "Word Document",
+              value:
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            },
+            {
+              label: "XLSX Excel Worksheet",
+              value:
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            },
+            { label: "XLS Excel Worksheet", value: "application/vnd.ms-excel" },
+            {
+              label: "PowerPoint Presentation",
+              value:
+                "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            },
+            { label: "Text File", value: "text/plain" },
+            { label: "CSV File", value: "text/csv" },
+            { label: "JPEG Image", value: "image/jpeg" },
+            { label: "PNG Image", value: "image/png" },
+            { label: "GIF Image", value: "image/gif" },
+            { label: "MP4 Video", value: "video/mp4" },
+            { label: "MP3 Audio", value: "audio/mpeg" },
+            { label: "JavaScript File", value: "application/javascript" },
+            { label: "HTML File", value: "text/html" },
           ]}
           {...form.getInputProps("accept")}
           onChange={(value) => {
