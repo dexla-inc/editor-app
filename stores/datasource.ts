@@ -97,7 +97,7 @@ export const useDataSourceStore = create<DataSourceState>()(
           return true;
         },
         refreshAccessToken: async (projectId: string) => {
-          const authState = get().authState;
+          const authState = get().authState[projectId];
           const refreshToken = Cookies.get(projectId);
 
           if (!refreshToken || refreshToken === "undefined") {
