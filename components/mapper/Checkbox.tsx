@@ -11,6 +11,7 @@ import { useInputValue } from "@/hooks/components/useInputValue";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useShallow } from "zustand/react/shallow";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { safeJsonParse } from "@/utils/common";
 
 // This is needed as CheckboxProps omits the ref prop
 interface CheckboxProps extends MantineCheckboxProps {
@@ -35,7 +36,7 @@ const CheckboxComponent = forwardRef<HTMLInputElement, Props>(
 
     const [value, setValue] = useInputValue<boolean>(
       {
-        value: component?.onLoad?.value ?? false,
+        value: safeJsonParse(component?.onLoad?.value) ?? false,
       },
       props.id!,
     );
@@ -73,7 +74,7 @@ const CheckboxComponent = forwardRef<HTMLInputElement, Props>(
           },
         }}
         label={label}
-        checked={Boolean(value)}
+        checked={safeJsonParse(value)}
         value={optionValue}
         {...triggers}
         onChange={handleInputChange}
