@@ -1,18 +1,20 @@
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useThemeStore } from "@/stores/theme";
 import {
-  Anchor as MantineAnchor,
   Box as MantineBox,
   Group as MantineGroup,
   Text as MantineText,
   ScrollArea,
 } from "@mantine/core";
+import Link from "next/link";
 
-type LinkProps = { text: string; link: string; url: string };
+type LinkProps = { text: string; link: string; url: string; isLive: boolean };
 
-const FixedLink = ({ text, link, url }: LinkProps) => {
+const FixedLink = ({ text, link, url, isLive }: LinkProps) => {
   const theme = useThemeStore((state) => state.theme);
+  const projectId = useEditorTreeStore((state) => state.currentProjectId);
   const fontSize = theme.fonts.find((font) => font.tag === "P")?.fontSize;
+
   return (
     <MantineGroup
       noWrap
@@ -25,14 +27,13 @@ const FixedLink = ({ text, link, url }: LinkProps) => {
     >
       {text && <MantineText size={fontSize}>{text}</MantineText>}
       {link && (
-        <MantineAnchor
+        <Link
           href={url}
-          target="_blank"
-          variant="link"
-          size={fontSize}
+          as={!isLive ? `/projects/${projectId}/editor/${url}` : url}
+          style={{ fontSize: fontSize, color: theme.colors.Primary[6] }}
         >
           {link}
-        </MantineAnchor>
+        </Link>
       )}
     </MantineGroup>
   );
@@ -60,6 +61,7 @@ export const CustomDropdown = ({ children, ...props }: any) => {
           text={component?.props?.customText}
           link={component?.props?.customLinkText}
           url={isLive ? slug : id}
+          isLive={isLive}
         />
       )}
     </MantineBox>
