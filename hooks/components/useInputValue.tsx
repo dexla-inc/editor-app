@@ -13,7 +13,6 @@ export const useInputValue = <T = string,>(
 
   const customSetInputValue = useCallback(
     (newValue: T) => {
-      // if (newValue === inputValue) return;
       setInputValue(componentId, newValue);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
