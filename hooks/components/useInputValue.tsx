@@ -20,7 +20,9 @@ export const useInputValue = <T = string,>(
   );
 
   useEffect(() => {
-    customSetInputValue(value);
+    if (typeof value !== "boolean" && !value) {
+      customSetInputValue(inputValue);
+    } else customSetInputValue(value);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [customSetInputValue, value]);
 
