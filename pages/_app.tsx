@@ -21,7 +21,6 @@ import { ReactFlowProvider } from "reactflow";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { MantineGlobal } from "@/components/MantineGlobal";
 import { queryClient } from "@/utils/reactQuery";
-import { useInitialiseLive } from "@/hooks/editor/useInitialiseLive";
 
 // If loading a variable font, you don't need to specify the font weight
 const inter = Inter({
@@ -42,10 +41,6 @@ const nodeEnv = process.env.NODE_ENV;
 export default function App(props: AppProps) {
   const { Component, pageProps } = props;
   const isLive = pageProps.isLive;
-  useInitialiseLive({
-    projectId: pageProps.id,
-    pageId: pageProps.page?.id,
-  });
 
   const isDarkTheme = useUserConfigStore((state) => state.isDarkTheme);
   const [loadTagManager, setLoadTagManager] = useState(false);

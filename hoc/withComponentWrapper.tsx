@@ -17,10 +17,46 @@ import { Component } from "@/utils/editor";
 import { Router, useRouter } from "next/router";
 import merge from "lodash.merge";
 
+export const withComponentVisibility = <T extends Record<string, any>>(
+  Component: ComponentType<T>,
+) => {
+  const ComponentVisibilityWrapper = (props: WithComponentWrapperProps) => {
+    const { component: componentTree, shareableContent } = props;
+    let id = componentTree.id;
+    if (shareableContent?.parentSuffix !== undefined) {
+      id = `${componentTree.id}-related-${shareableContent?.parentSuffix}`;
+    }
+
+    const isVisible = useEditorTreeStore(
+      useShallow(
+        (state) =>
+          state.componentMutableAttrs[componentTree.id!]?.onLoad?.isVisible ??
+          true,
+      ),
+    );
+
+    const computedOnLoad = useComputeValue({
+      onLoad: { isVisible },
+      shareableContent,
+      componentId: id,
+    });
+
+    if (!computedOnLoad.isVisible) {
+      return null;
+    }
+
+    // @ts-ignore
+    return <Component {...props} id={id} />;
+  };
+
+  return ComponentVisibilityWrapper;
+};
+
 export const withComponentWrapper = <T extends Record<string, any>>(
   Component: ComponentType<T>,
 ) => {
   const ComponentWrapper = ({
+    id,
     component: componentTree,
     renderTree,
     shareableContent,
@@ -28,11 +64,6 @@ export const withComponentWrapper = <T extends Record<string, any>>(
     const isEditorMode = useEditorTreeStore(
       (state) => !state.isPreviewMode && !state.isLive,
     );
-
-    let id = componentTree.id;
-    if (shareableContent?.parentSuffix !== undefined) {
-      id = `${componentTree.id}-related-${shareableContent?.parentSuffix}`;
-    }
 
     const isSelected = useEditorTreeStore(
       useShallow((state) => state.selectedComponentIds?.includes(id!)),
@@ -112,9 +143,6 @@ export const withComponentWrapper = <T extends Record<string, any>>(
 
     const handleClick = useEditorClickHandler(id!, isPicking);
 
-    const { isVisible = true } = computedOnLoad;
-    if (!isVisible) return null;
-
     const componentToolboxProps = {
       id,
       name: component.name,
@@ -165,5 +193,5 @@ export const withComponentWrapper = <T extends Record<string, any>>(
     );
   };
 
-  return ComponentWrapper;
+  return withComponentVisibility(ComponentWrapper);
 };

@@ -6,6 +6,7 @@ export type RenderTreeFunc = (
 ) => any;
 
 export type WithComponentWrapperProps = {
+  id?: string;
   component: ComponentTree;
   renderTree: RenderTreeFunc;
   shareableContent?: any;
