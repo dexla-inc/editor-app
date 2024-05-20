@@ -1,6 +1,6 @@
 import { updatePageState } from "@/requests/pages/mutations";
 import { PageStateParams } from "@/requests/pages/types";
-import { emptyEditorTree } from "@/utils/common";
+import { cloneObject, emptyEditorTree } from "@/utils/common";
 import { encodeSchema } from "@/utils/compression";
 import { GRID_SIZE } from "@/utils/config";
 import {
@@ -21,7 +21,6 @@ import debounce from "lodash.debounce";
 import merge from "lodash.merge";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
-import cloneDeep from "lodash.clonedeep";
 import setObj from "lodash.set";
 
 const client = createClient({
@@ -299,7 +298,7 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                   "default";
 
                 componentIds.forEach((id) => {
-                  const clonedAttrs = cloneDeep(
+                  const clonedAttrs = cloneObject(
                     state.componentMutableAttrs[id] ?? {},
                   );
                   state.componentMutableAttrs[id] = updateTreeComponentAttrs(
@@ -339,7 +338,7 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
           resetComponentsState: (componentIds, stateToBeRemoved) => {
             set((state) => {
               componentIds.forEach((id) => {
-                state.componentMutableAttrs[id] = cloneDeep(
+                state.componentMutableAttrs[id] = cloneObject(
                   state.componentMutableAttrs[id] ?? {},
                 );
                 setObj(

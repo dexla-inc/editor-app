@@ -4,11 +4,9 @@ import { GRAY_OUTLINE } from "@/utils/branding";
 import { GRID_SIZE } from "@/utils/config";
 import { calculateGridSizes } from "@/utils/grid";
 import { CSSObject } from "@mantine/core";
-import cloneDeep from "lodash.clonedeep";
 import debounce from "lodash.debounce";
 import every from "lodash.every";
 import get from "lodash.get";
-import isEmpty from "lodash.isempty";
 import merge from "lodash.merge";
 import pickBy from "lodash.pickby";
 import { nanoid } from "nanoid";
@@ -18,12 +16,11 @@ import crawl from "tree-crawl";
 import { MantineThemeExtended } from "../types/types";
 import { DataType, ValueProps } from "@/types/dataBinding";
 import { RenderTreeFunc } from "@/types/component";
-import { PagingResponse } from "@/requests/types";
-import { Endpoint } from "@/requests/datasources/types";
 import {
   selectedComponentIdSelector,
   selectedComponentIdsSelector,
 } from "@/utils/componentSelectors";
+import { cloneObject } from "@/utils/common";
 
 export type ComponentStructure = {
   children?: ComponentStructure[];
@@ -110,7 +107,7 @@ export const replaceIdsDeeply = (treeRoot: ComponentStructure) => {
     async (node) => {
       const newId = nanoid();
 
-      const nodeAttrs = cloneDeep(componentMutableAttrs[node.id!]);
+      const nodeAttrs = cloneObject(componentMutableAttrs[node.id!]);
       nodeAttrs.id = newId;
 
       // if targetId is equal to the current pointer node, update that parent targetId with the new id of the current node
@@ -640,7 +637,7 @@ export const addComponent = (
   isPasteAction?: boolean,
   isDuplicateAction?: boolean,
 ): string => {
-  const copyComponentToAdd = cloneDeep(componentToAdd);
+  const copyComponentToAdd = cloneObject(componentToAdd);
   let copyComponentToAddId = copyComponentToAdd.id;
   if (isPasteAction) {
     replaceIdsDeeply(copyComponentToAdd);
