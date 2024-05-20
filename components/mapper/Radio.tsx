@@ -57,7 +57,7 @@ const RadioComponent = forwardRef(
         value={value}
         label={undefined}
       >
-        <Group>
+        <Group grow w="100%">
           {component?.children?.map((child) =>
             renderTree(child, {
               ...shareableContent,
