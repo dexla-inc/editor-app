@@ -268,7 +268,7 @@ export const useComputeValue = ({
         );
       },
       static: (fieldValue: ValueProps) => {
-        return get(fieldValue, "static");
+        return fieldValue?.static ?? undefined;
       },
       boundCode: (fieldValue: ValueProps) => {
         try {

@@ -25,7 +25,7 @@ export const useDataBinding = (componentId = "") => {
         return get(shareableContent, `data.${value?.dynamic}`, value?.dynamic);
       },
       static: function (value: ValueProps) {
-        return get(value, "static", staticFallback);
+        return value?.static ?? staticFallback;
       },
       boundCode: function (value: ValueProps) {
         let boundCode = value?.boundCode?.trim() ?? "";
