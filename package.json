@@ -57,7 +57,6 @@
     "history": "^5.3.0",
     "js-cookie": "^3.0.5",
     "lodash.camelcase": "^4.3.0",
-    "lodash.clonedeep": "^4.5.0",
     "lodash.debounce": "^4.0.8",
     "lodash.every": "^4.6.0",
     "lodash.get": "^4.4.2",

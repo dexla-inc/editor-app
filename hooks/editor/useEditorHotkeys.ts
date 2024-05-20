@@ -13,12 +13,12 @@ import {
   removeComponent,
 } from "@/utils/editor";
 import { useHotkeys } from "@mantine/hooks";
-import cloneDeep from "lodash.clonedeep";
 import { useCallback } from "react";
 import {
   selectedComponentIdSelector,
   selectedComponentIdsSelector,
 } from "@/utils/componentSelectors";
+import { cloneObject } from "@/utils/common";
 
 export const useEditorHotkeys = () => {
   const editorTree = useEditorTreeStore((state) => state.tree);
@@ -101,7 +101,7 @@ export const useEditorHotkeys = () => {
         } else {
           setSelectedComponentIds(() => []);
         }
-        const editorTreeCopy = cloneDeep(editorTree);
+        const editorTreeCopy = cloneObject(editorTree);
         setEditorTree(editorTreeCopy, {
           action: `Removed ${comp?.name}`,
         });
@@ -177,7 +177,7 @@ export const useEditorHotkeys = () => {
       isAllowedSibling ||
       isAllowedGridMatch;
 
-    const editorTreeCopy = cloneDeep(editorTree) as EditorTreeCopy;
+    const editorTreeCopy = cloneObject(editorTree) as EditorTreeCopy;
 
     if (addAsSiblingFlag) {
       const parentComponentTree = getComponentParent(

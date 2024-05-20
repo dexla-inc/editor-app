@@ -1,7 +1,6 @@
 import { FileWithPath } from "@mantine/dropzone";
 import { requiredModifiers } from "./modifiers";
 import { GRID_SIZE } from "./config";
-import { empty } from "@prisma/client/runtime/library";
 
 export const convertToBase64 = (file: FileWithPath): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -312,3 +311,7 @@ function emptyArray(value: any): boolean {
 function emptyObject(value: any): boolean {
   return isObject(value) && Object.keys(value).length === 0;
 }
+
+export const cloneObject = <T extends object>(obj: T): T => {
+  return JSON.parse(JSON.stringify(obj)) as T;
+};
