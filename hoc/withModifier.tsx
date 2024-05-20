@@ -1,5 +1,4 @@
 import { Component } from "@/utils/editor";
-import cloneDeep from "lodash.clonedeep";
 import get from "lodash.get";
 import merge from "lodash.merge";
 import set from "lodash.set";
@@ -11,6 +10,7 @@ import {
   selectedComponentIdSelector,
   selectedComponentIdsSelector,
 } from "@/utils/componentSelectors";
+import { cloneObject } from "@/utils/common";
 
 type WithModifier = {
   selectedComponent: Component;
@@ -26,7 +26,7 @@ function getObjectPaths(obj: any, parentKey = ""): string[] {
 }
 
 function findIntersectedKeyValues(objects: Component[]) {
-  const updatedObject = cloneDeep(objects[0]);
+  const updatedObject = cloneObject(objects[0]);
   const mergedObject = merge({}, ...objects);
   const paths = getObjectPaths(mergedObject);
 

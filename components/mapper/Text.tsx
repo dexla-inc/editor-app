@@ -14,6 +14,8 @@ const TextComponent = forwardRef(
       component.id as string,
       ref,
     );
+
+    console.log("Text", contentEditableProps);
     const { triggers, hideIfDataIsEmpty, variable, text, ...componentProps } =
       component.props as any;
     const { children: childrenValue = component.props?.children } =

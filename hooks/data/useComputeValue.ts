@@ -5,8 +5,7 @@ import { useCallback, useMemo } from "react";
 import get from "lodash.get";
 import { ValueProps } from "@/types/dataBinding";
 import set from "lodash.set";
-import { safeJsonParse } from "@/utils/common";
-import cloneDeep from "lodash.clonedeep";
+import { cloneObject, safeJsonParse } from "@/utils/common";
 import { useInputsStore } from "@/stores/inputs";
 import { useShallow } from "zustand/react/shallow";
 import { pick } from "next/dist/lib/pick";
@@ -63,7 +62,7 @@ export const useComputeValue = ({
   onLoad = {},
   componentId = "",
 }: UseComputeValue) => {
-  onLoad = cloneDeep(onLoad);
+  onLoad = cloneObject(onLoad);
 
   const browser = useRouter();
   const valuePropsPaths = useMemo(() => {
