@@ -65,9 +65,9 @@ export const useComputeValue = ({
   onLoad = cloneObject(onLoad);
 
   const browser = useRouter();
-  const valuePropsPaths = useMemo(() => {
-    return findValuePropsPaths(onLoad);
-  }, [onLoad]);
+
+  // TODO: PERFORMANCE BUG! useMemo was not neccessary if we are cloning onLoad because the dependency onLoad will always be a new object
+  const valuePropsPaths = findValuePropsPaths(onLoad);
   const { item } = useShareableContent({ componentId });
 
   const {
@@ -176,84 +176,42 @@ export const useComputeValue = ({
     {},
   );
 
+  // TODO: Perforformance Bug! We are compiling regular expressions inside the loop, compile them once outside the loop and reuse them.
+  // TODO: Perforformance Bug! JSON stringify operations are costly. Avoid them if the value is already a string.
   const transformBoundCode = useCallback(
-    (boundCode: string) => {
+    (boundCode: string): string => {
       let result = boundCode;
-      variableKeys.forEach((key) => {
-        const regex = new RegExp(
-          `variables\\[(\\/\\* [\\S\\s]* \\*\\/)?\\s?'${key}'\\]`,
-          "g",
-        );
-        let replacer = variables[key];
-        replacer =
-          typeof replacer !== "string" ? JSON.stringify(replacer) : replacer;
-        result = result.replaceAll(regex, replacer);
-      });
 
-      componentKeys.forEach((key) => {
-        const regex = new RegExp(
-          `components\\[(\\/\\* [\\S\\s]* \\*\\/)?\\s?'${key}'\\]`,
-          "g",
-        );
-        let replacer = JSON.stringify(inputs[key]);
+      const variablePatterns = compileRegexPatterns(variableKeys, "variables");
+      const componentPatterns = compileRegexPatterns(
+        componentKeys,
+        "components",
+      );
+      const actionPatterns = compileRegexPatterns(actionKeys, "actions");
+      const browserPatterns = compileRegexPatterns(browserKeys, "browser");
+      const authPatterns = compileRegexPatterns(authKeys, "auth");
+      const itemPatterns = compileRegexPatterns(itemKeys, "item");
 
-        result = result.replaceAll(regex, replacer);
-      });
-
-      actionKeys.forEach((key) => {
-        const regex = new RegExp(
-          `actions\\[(\\/\\* [\\S\\s]* \\*\\/)?\\s?'${key}'\\]`,
-          "g",
-        );
-        result = result.replaceAll(regex, `'${inputs[key]}'`);
-      });
-
-      browserKeys.forEach((key: NextRouterKeys) => {
-        const regex = new RegExp(
-          `browser\\[(\\/\\* [\\S\\s]* \\*\\/)?\\s?'${key}'\\]`,
-          "g",
-        );
-        let replacer = browserValues[key];
-        replacer =
-          typeof replacer !== "string" ? JSON.stringify(replacer) : replacer;
-        result = result.replaceAll(regex, replacer);
-      });
-
-      authKeys.forEach((key) => {
-        const regex = new RegExp(
-          `auth\\[(\\/\\* [\\S\\s]* \\*\\/)?\\s?'${key}'\\]`,
-          "g",
-        );
-        let replacer = auth[key];
-        replacer =
-          typeof replacer !== "string" ? JSON.stringify(replacer) : replacer;
-        result = result.replaceAll(regex, replacer);
-      });
-
-      itemKeys.forEach((key) => {
-        const regex = new RegExp(
-          `item\\[(\\/\\* [\\S\\s]* \\*\\/)?\\s?'${key}'\\]`,
-          "g",
-        );
-        let replacer = itemValues[key];
-        replacer =
-          typeof replacer !== "string" ? JSON.stringify(replacer) : replacer;
-        result = result.replaceAll(regex, replacer);
-      });
+      result = replacePatterns(result, variablePatterns, variables);
+      result = replacePatterns(result, componentPatterns, inputs);
+      result = replacePatterns(result, actionPatterns, inputs);
+      result = replacePatterns(result, browserPatterns, browserValues);
+      result = replacePatterns(result, authPatterns, auth);
+      result = replacePatterns(result, itemPatterns, itemValues);
 
       return result;
     },
     [
-      actionKeys,
-      auth,
-      authKeys,
-      browserKeys,
-      browserValues,
-      componentKeys,
-      inputs,
       variableKeys,
-      variables,
+      componentKeys,
+      actionKeys,
+      browserKeys,
+      authKeys,
       itemKeys,
+      variables,
+      inputs,
+      browserValues,
+      auth,
       itemValues,
     ],
   );
@@ -282,6 +240,8 @@ export const useComputeValue = ({
     [shareableContent, transformBoundCode],
   );
 
+  // TODO: PERFORMANCE BUG! useMemo is not neccessary if we are cloning onLoad because the dependency onLoad will
+  // always be a new object
   return useMemo(
     () =>
       valuePropsPaths.reduce(
@@ -299,10 +259,40 @@ export const useComputeValue = ({
         },
         onLoad as Record<string, any>,
       ),
-    [onLoad, valueHandlers, valuePropsPaths],
+    [valueHandlers, valuePropsPaths],
   );
 };
 
 function extractKeysFromPattern(pattern: RegExp, boundCode: any) {
   return [...boundCode.matchAll(pattern)].map((match) => match[1]);
 }
+
+const compileRegexPatterns = (keys: string[], prefix: string): Pattern[] => {
+  return keys.map((key) => ({
+    key,
+    regex: new RegExp(
+      `${prefix}\\[(\\/\\* [\\S\\s]* \\*\\/)?\\s?'${key}'\\]`,
+      "g",
+    ),
+  }));
+};
+
+const replacePatterns = (
+  result: string,
+  patterns: Pattern[],
+  values: Record<string, any>,
+): string => {
+  patterns.forEach(({ key, regex }) => {
+    let replacer = values[key];
+    if (typeof replacer !== "string") {
+      replacer = JSON.stringify(replacer);
+    }
+    result = result.replace(regex, replacer);
+  });
+  return result;
+};
+
+type Pattern = {
+  key: string;
+  regex: RegExp;
+};
