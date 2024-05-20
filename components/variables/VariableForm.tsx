@@ -160,6 +160,17 @@ export const VariableForm = ({ variableId }: Props) => {
           disabled={!!variableId}
         />
         {DefaultValueInput()}
+        <Group align="end">
+          <SegmentedControlYesNo
+            label="Is Global"
+            {...form.getInputProps("isGlobal")}
+            w={100}
+          />
+          <Text size="xs" mb={2} color="dimmed" maw={270}>
+            If a variable is global, the value will not change when navigating
+            between pages.
+          </Text>
+        </Group>
         <Stack spacing={2}>
           <TopLabel text="Current Value" size="sm" />
           <Prism
@@ -174,17 +185,7 @@ export const VariableForm = ({ variableId }: Props) => {
             {safeJsonStringify(form.values.value) ?? "// Code will appear here"}
           </Prism>
         </Stack>
-        <Group align="end">
-          <SegmentedControlYesNo
-            label="Is Global"
-            {...form.getInputProps("isGlobal")}
-            w={100}
-          />
-          <Text size="xs" mb={2} color="dimmed" maw={270}>
-            If a variable is global, the value will not change when navigating
-            between pages.
-          </Text>
-        </Group>
+
         <Button
           type="submit"
           loading={
