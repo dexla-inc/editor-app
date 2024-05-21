@@ -12,7 +12,7 @@ import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { useChangeState } from "@/hooks/components/useChangeState";
 import { useInputValue } from "@/hooks/components/useInputValue";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { getNewDate } from "@/utils/date";
+import { getNewDate, setDate } from "@/utils/date";
 
 type Props = EditableComponentMapper & DatePickerInputProps;
 
@@ -53,6 +53,7 @@ const DateInputComponent = ({
     },
     props.id!,
   );
+
   const { onChange, ...restTriggers } = triggers || {};
 
   const handleChange = (value: Date | Date[] | null) => {
@@ -77,7 +78,7 @@ const DateInputComponent = ({
     setValue(formattedValue ?? "");
   };
 
-  //const dateInputValue = setDate(value, typeValue, valueFormatValue);
+  const dateInputValue = setDate(value, typeValue, valueFormatValue);
 
   return (
     <>
@@ -89,8 +90,7 @@ const DateInputComponent = ({
         {...componentProps}
         type={typeValue}
         valueFormat={valueFormatValue}
-        // TODO: Added binding value
-        // value={value}
+        value={dateInputValue}
         {...restTriggers}
         onChange={handleChange}
         style={{}}
