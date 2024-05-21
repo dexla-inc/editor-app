@@ -129,7 +129,7 @@ export const withComponentWrapper = <T extends Record<string, any>>(
       triggers,
     );
 
-    const { isPicking, droppable, tealOutline } = useEditorShadows({
+    const { droppable, tealOutline } = useEditorShadows({
       componentId: componentTree.id!,
       isSelected: false,
       //selectedByOther,
@@ -141,7 +141,7 @@ export const withComponentWrapper = <T extends Record<string, any>>(
       isEditorMode,
     });
 
-    const handleClick = useEditorClickHandler(id!, isPicking);
+    const handleClick = useEditorClickHandler(id!);
 
     const componentToolboxProps = {
       id,

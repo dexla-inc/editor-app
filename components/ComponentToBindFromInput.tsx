@@ -25,7 +25,6 @@ import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
 // Need to extend input props depending on fieldType
 type BaseProps = {
   fieldType?: FieldType;
-  onPickComponent?: () => void;
   value: ValueProps;
   onChange: (value: ValueProps) => void;
   placeholder?: string;
@@ -51,7 +50,6 @@ type ComponentToBindFromInputProps<T extends FieldType | undefined> =
   BaseProps & ExtendedPropsByFieldType<T>;
 
 export const ComponentToBindFromInput = <T extends FieldType | undefined>({
-  onPickComponent,
   placeholder = "",
   label = "Component to bind",
   value,

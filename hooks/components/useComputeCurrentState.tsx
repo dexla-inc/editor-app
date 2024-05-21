@@ -1,5 +1,6 @@
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useMemo } from "react";
+import { useShallow } from "zustand/react/shallow";
 
 // It decides which state to use based on the current mode
 // If editorMode, it should use the state in currentTreeComponentsStates, this way we can preview the component states while editing
@@ -14,7 +15,9 @@ export const useComputeCurrentState = (
   );
 
   const editorComponentState = useEditorTreeStore(
-    (state) => state.currentTreeComponentsStates?.[componentId] ?? "default",
+    useShallow(
+      (state) => state.currentTreeComponentsStates?.[componentId] ?? "default",
+    ),
   );
 
   // if parent state is set, we want it both in editor and preview mode
