@@ -28,5 +28,6 @@ export const jsonStructure = (props?: any): ComponentStructure => {
       dataType: "static",
     },
     ...(props?.children && { children: props.children }),
+    ...(props?.states && { states: props.states }),
   };
 };
