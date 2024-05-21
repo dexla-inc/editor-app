@@ -23,58 +23,67 @@ import {
   Box,
   Button,
   Group,
-  Header,
+  Header as MantineHeader,
   Tooltip,
 } from "@mantine/core";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import { ErrorBoundary } from "react-error-boundary";
 import { useEditorTreeStore } from "../stores/editorTree";
 import PageSelector from "./PageSelector";
+import { Navbar } from "@/components/navbar/Navbar";
+import { Aside } from "@/components/aside/Aside";
+import { memo } from "react";
 
-export const Shell = ({ children, navbar, aside }: AppShellProps) => {
-  const router = useRouter();
-  const projectId = router.query.id as string;
+const HeaderComponent = ({ projectId }: { projectId: string }) => {
   const isDexlaAdmin = usePropelAuthStore((state) => state.isDexlaAdmin);
 
+  return (
+    <MantineHeader height={HEADER_HEIGHT} sx={{ zIndex: 110 }}>
+      <Group h={HEADER_HEIGHT} px="xs" align="center" position="apart">
+        <DashboardRedirector projectId={projectId} />
+        <Group noWrap position="right" spacing="xs">
+          {/* <LanguageSelector /> */}
+          <PageSelector />
+          {isDexlaAdmin && <AddGridButton />}
+          {isDexlaAdmin && <SaveTemplateButton />}
+          {isDexlaAdmin && <AIChatHistoryButton projectId={projectId} />}
+          <OpenLogicFlowsButton />
+          <VariablesButton projectId={projectId} />
+          <ChangeHistoryPopover />
+          <EditorPreviewModeToggle />
+          <Tooltip label="Invite team">
+            <Button
+              component={Link}
+              href={`/projects/${projectId}/settings/team`}
+              leftIcon={<Icon name="IconUserPlus" size={ICON_SIZE} />}
+              compact
+              variant="default"
+              target="_blank"
+            >
+              Invite
+            </Button>
+          </Tooltip>
+          <DeployButton />
+          <ChangeThemeButton />
+        </Group>
+      </Group>
+    </MantineHeader>
+  );
+};
+
+const Header = memo(HeaderComponent);
+
+export const ShellComponent = ({
+  children,
+  projectId,
+}: AppShellProps & { projectId: string }) => {
   return (
     <AppShell
       fixed
       padding={0}
-      header={
-        <Header height={HEADER_HEIGHT} sx={{ zIndex: 110 }}>
-          <Group h={HEADER_HEIGHT} px="xs" align="center" position="apart">
-            <DashboardRedirector projectId={projectId} />
-            <Group noWrap position="right" spacing="xs">
-              {/* <LanguageSelector /> */}
-              <PageSelector />
-              {isDexlaAdmin && <AddGridButton />}
-              {isDexlaAdmin && <SaveTemplateButton />}
-              {isDexlaAdmin && <AIChatHistoryButton projectId={projectId} />}
-              <OpenLogicFlowsButton />
-              <VariablesButton projectId={projectId} />
-              <ChangeHistoryPopover />
-              <EditorPreviewModeToggle />
-              <Tooltip label="Invite team">
-                <Button
-                  component={Link}
-                  href={`/projects/${projectId}/settings/team`}
-                  leftIcon={<Icon name="IconUserPlus" size={ICON_SIZE} />}
-                  compact
-                  variant="default"
-                  target="_blank"
-                >
-                  Invite
-                </Button>
-              </Tooltip>
-              <DeployButton />
-              <ChangeThemeButton />
-            </Group>
-          </Group>
-        </Header>
-      }
-      navbar={navbar}
-      aside={aside}
+      header={<Header projectId={projectId} />}
+      navbar={<Navbar />}
+      aside={<Aside />}
       styles={{
         main: {
           minHeight: "100vh",
@@ -112,3 +121,5 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
     </AppShell>
   );
 };
+
+export const Shell = memo(ShellComponent);

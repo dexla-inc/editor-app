@@ -1,6 +1,8 @@
 import { useEditorStore } from "@/stores/editor";
 import { Select } from "@mantine/core";
 import { useRouter } from "next/router";
+import { memo, useMemo } from "react";
+import { useShallow } from "zustand/react/shallow";
 
 const PageSelector = () => {
   const router = useRouter();
@@ -8,7 +10,11 @@ const PageSelector = () => {
     id: string;
     page: string;
   };
-  const pages = useEditorStore((state) => state.pages);
+  const pages = useEditorStore(
+    useShallow((state) =>
+      state.pages.map((page) => ({ value: page.id, label: page.title })),
+    ),
+  );
 
   const flexStyles = {
     display: "flex",
@@ -17,15 +23,20 @@ const PageSelector = () => {
     gap: "10px",
   };
 
+  const selectedPage = useMemo(
+    () => pages.find((page) => page.value === pageId)?.value || "",
+    [pages, pageId],
+  );
+
   return (
     <Select
       label="Page"
-      value={pages.find((page) => page.id === pageId)?.id || ""}
+      value={selectedPage}
       onChange={(value) =>
         router.push(`/projects/${projectId}/editor/${value}`)
       }
       size="xs"
-      data={pages.map((page) => ({ value: page.id, label: page.title }))}
+      data={pages}
       sx={{
         ...flexStyles,
         whiteSpace: "nowrap",
@@ -35,4 +46,4 @@ const PageSelector = () => {
   );
 };
 
-export default PageSelector;
+export default memo(PageSelector);

@@ -14,12 +14,10 @@ import {
   IconComponents,
   IconDatabase,
   IconFileInvoice,
-  IconHistory,
   IconLayoutDashboard,
   IconPhoto,
   IconSettings,
 } from "@tabler/icons-react";
-import { EditorHistorySection } from "./EditorHistorySection";
 import { useMemo } from "react";
 
 export type SectionId =

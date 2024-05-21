@@ -13,27 +13,30 @@ import {
   Tooltip,
 } from "@mantine/core";
 import { IconCheck, IconX } from "@tabler/icons-react";
-import { useState } from "react";
+import { memo, useState } from "react";
 import isEmpty from "lodash.isempty";
 import {
   selectedComponentIdSelector,
   selectedComponentIdsSelector,
 } from "@/utils/componentSelectors";
+import { useShallow } from "zustand/react/shallow";
 
 type Props = {
   componentName: string;
 };
 
-export const StateSelector = ({ componentName }: Props) => {
+export const StateSelectorComponent = ({ componentName }: Props) => {
   const [createState, setCreateState] = useState<undefined | string>(undefined);
   const excludeComponentsForState = ["Text", "Title"];
 
-  const currentState = useEditorTreeStore((state) => {
-    const selectedComponentId = selectedComponentIdSelector(state);
-    return (
-      state.currentTreeComponentsStates?.[selectedComponentId!] ?? "default"
-    );
-  });
+  const currentState = useEditorTreeStore(
+    useShallow((state) => {
+      const selectedComponentId = selectedComponentIdSelector(state);
+      return (
+        state.currentTreeComponentsStates?.[selectedComponentId!] ?? "default"
+      );
+    }),
+  );
   const setTreeComponentCurrentState = useEditorTreeStore(
     (state) => state.setTreeComponentCurrentState,
   );
@@ -156,3 +159,5 @@ export const StateSelector = ({ componentName }: Props) => {
     )
   );
 };
+
+export const StateSelector = memo(StateSelectorComponent);
