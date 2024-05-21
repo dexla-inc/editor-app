@@ -14,7 +14,6 @@ import { useThemeStore } from "@/stores/theme";
 import { useVariableStore } from "@/stores/variables";
 import { initializeFonts } from "@/utils/webfontloader";
 import { useEffect } from "react";
-import { useVariableListQuery } from "@/hooks/editor/reactQuery/useVariableListQuery";
 import { MantineThemeExtended } from "@/types/types";
 import { safeJsonParse } from "@/utils/common";
 import { useInputsStore } from "@/stores/inputs";
@@ -32,9 +31,7 @@ export const Live = ({ deploymentPage }: Props) => {
 
   const projectId = deploymentPage.project.id;
 
-  const { data: variables } = useVariableListQuery(projectId);
   const { data: datasources } = useDataSources(projectId);
-  const endpoints = datasources?.results.flatMap((ds) => ds.endpoints);
 
   const editorTree = useEditorTreeStore((state) => state.tree);
   const setEditorTree = useEditorTreeStore((state) => state.setTree);
@@ -70,36 +67,38 @@ export const Live = ({ deploymentPage }: Props) => {
       setIsLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [deploymentPage]);
+  }, [deploymentPage?.pageState]);
+
+  const loadFonts = useCallback(() => {
+    if (theme?.fontFamily && theme?.headings?.fontFamily)
+      initializeFonts(theme.fontFamily, theme.headings.fontFamily);
+  }, []);
 
   useEffect(() => {
     if (deploymentPage.id) {
       setCurrentPageAndProjectIds(projectId, deploymentPage.id);
       setPreviewMode(true);
       setIsLive(true);
-      resetInputValues();
 
-      const loadFonts = async () => {
-        if (theme)
-          await initializeFonts(theme.fontFamily, theme.headings.fontFamily);
-      };
+      resetInputValues();
 
       loadFonts();
     }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projectId, deploymentPage.id, loadFonts]);
+
+  useEffect(() => {
+    initializeVariableList(projectId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId, deploymentPage.id]);
 
   useEffect(() => {
-    if (variables) initializeVariableList(variables.results);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [variables, deploymentPage.id]); // deploymentpage.id is used to reinitialize non global variables
-
-  useEffect(() => {
     if (datasources) {
-      // const endpoints = datasources.results.flatMap((ds) => ds.endpoints);
       setApiAuthConfig(projectId, datasources);
     }
-  }, [datasources, setApiAuthConfig]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [datasources]);
 
   const renderTree: RenderTreeFunc = useCallback(
     (componentTree: ComponentTree, shareableContent = {}) => {

@@ -1,15 +1,8 @@
-import { ComponentToBind, useEditorStore } from "@/stores/editor";
 import { useCallback } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useComponentContextMenu } from "@/hooks/components/useComponentContextMenu";
 
-export const useEditorClickHandler = (
-  componentId: string,
-  isPicking?: ComponentToBind,
-) => {
-  const setComponentToBind = useEditorStore(
-    (state) => state.setComponentToBind,
-  );
+export const useEditorClickHandler = (componentId: string) => {
   const setSelectedComponentIds = useEditorTreeStore(
     (state) => state.setSelectedComponentIds,
   );
@@ -19,29 +12,19 @@ export const useEditorClickHandler = (
     (e: any) => {
       e.stopPropagation?.();
 
-      if (isPicking) {
-        setComponentToBind(componentId);
+      if (e.ctrlKey || e.metaKey) {
+        setSelectedComponentIds((prev) => {
+          if (prev.includes(componentId)) {
+            return prev.filter((p) => p !== componentId);
+          }
+          return [...prev, componentId];
+        });
       } else {
-        if (e.ctrlKey || e.metaKey) {
-          setSelectedComponentIds((prev) => {
-            if (prev.includes(componentId)) {
-              return prev.filter((p) => p !== componentId);
-            }
-            return [...prev, componentId];
-          });
-        } else {
-          setSelectedComponentIds(() => [componentId]);
-        }
+        setSelectedComponentIds(() => [componentId]);
       }
 
       forceDestroyContextMenu();
     },
-    [
-      forceDestroyContextMenu,
-      componentId,
-      isPicking,
-      setComponentToBind,
-      setSelectedComponentIds,
-    ],
+    [forceDestroyContextMenu, componentId, setSelectedComponentIds],
   );
 };
