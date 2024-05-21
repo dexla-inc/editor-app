@@ -12,9 +12,10 @@ import Head from "next/head";
 // TODO: Backend changes so we only make one API call or two light API calls for getting project and deployment page.
 export const getServerSideProps = async ({
   req,
+  query,
 }: GetServerSidePropsContext) => {
   const url = req.headers.host as string;
-  const currentSlug = "/";
+  const currentSlug = (query?.page as string) ?? "/";
   const timer = Stopwatch.StartNew();
   console.log(
     "Before getDeploymentPage",
@@ -63,7 +64,7 @@ export const getServerSideProps = async ({
     };
   }
 
-  // Check if user is logged in
+  // Check if user is logged in via cookies
   const cookie = req.cookies[deploymentPage.projectId];
   const isLoggedIn = checkRefreshTokenExists(cookie);
   const signInPageSlug = deploymentPage.project.redirects?.signInPageId;
@@ -109,7 +110,7 @@ type Props = {
   deploymentPage: DeploymentPage;
 };
 
-const HomePage = ({ deploymentPage }: Props) => {
+function LivePage({ deploymentPage }: Props) {
   return (
     <>
       <Head>
@@ -124,6 +125,6 @@ const HomePage = ({ deploymentPage }: Props) => {
       <Live deploymentPage={deploymentPage} />
     </>
   );
-};
+}
 
-export default withPageOnLoad(HomePage, { isLive: true });
+export default withPageOnLoad(LivePage, { isLive: true });
