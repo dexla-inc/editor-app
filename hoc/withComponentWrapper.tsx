@@ -16,41 +16,7 @@ import { WithComponentWrapperProps } from "@/types/component";
 import { Component } from "@/utils/editor";
 import { Router, useRouter } from "next/router";
 import merge from "lodash.merge";
-
-export const withComponentVisibility = <T extends Record<string, any>>(
-  Component: ComponentType<T>,
-) => {
-  const ComponentVisibilityWrapper = (props: WithComponentWrapperProps) => {
-    const { component: componentTree, shareableContent } = props;
-    let id = componentTree.id;
-    if (shareableContent?.parentSuffix !== undefined) {
-      id = `${componentTree.id}-related-${shareableContent?.parentSuffix}`;
-    }
-
-    const isVisible = useEditorTreeStore(
-      useShallow(
-        (state) =>
-          state.componentMutableAttrs[componentTree.id!]?.onLoad?.isVisible ??
-          true,
-      ),
-    );
-
-    const computedOnLoad = useComputeValue({
-      onLoad: { isVisible },
-      shareableContent,
-      componentId: id,
-    });
-
-    if (!computedOnLoad.isVisible) {
-      return null;
-    }
-
-    // @ts-ignore
-    return <Component {...props} id={id} />;
-  };
-
-  return ComponentVisibilityWrapper;
-};
+import { withComponentVisibility } from "@/hoc/withComponentVisibility";
 
 export const withComponentWrapper = <T extends Record<string, any>>(
   Component: ComponentType<T>,

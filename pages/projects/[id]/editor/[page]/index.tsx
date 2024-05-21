@@ -23,7 +23,7 @@ const PageEditor = () => {
   const setApiAuthConfig = useDataSourceStore(
     (state) => state.setApiAuthConfig,
   );
-  console.log("editor");
+
   const { data: datasources } = useDataSources(projectId);
 
   useEffect(() => {
