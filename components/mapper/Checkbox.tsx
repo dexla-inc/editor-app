@@ -49,11 +49,8 @@ const CheckboxComponent = forwardRef<HTMLInputElement, Props>(
       triggers?.onChange?.(e);
     };
 
-    const defaultTriggers = isPreviewMode
-      ? isInsideGroup
-        ? {}
-        : { onChange: handleInputChange }
-      : {};
+    const defaultTriggers =
+      isPreviewMode && !isInsideGroup ? { onChange: handleInputChange } : {};
 
     return (
       <MantineCheckbox
