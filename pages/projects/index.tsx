@@ -24,17 +24,19 @@ import debounce from "lodash.debounce";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { useCreateTemplateProject } from "@/hooks/editor/useCreateTemplateProject";
 
 export default function Projects() {
   const router = useRouter();
   const [search, setSearch] = useState<string>("");
-  const debouncedSearch = debounce((query) => setSearch(query), 400);
+  const debouncedSearch = debounce((query) => setSearch(query), 100);
   const user = usePropelAuthStore((state) => state.user);
   const company = usePropelAuthStore((state) => state.activeCompany);
 
   const manuallyCreatedProjectId = generateId();
 
   const startLoading = useAppStore((state) => state.startLoading);
+
   const { setPageCancelled } = useUserConfigStore((state) => ({
     setPageCancelled: state.setPageCancelled,
   }));
@@ -47,8 +49,9 @@ export default function Projects() {
 
   const { data: projectsQuery, invalidate } = useProjectListQuery(
     company.orgId,
-    search,
   );
+
+  useCreateTemplateProject(company.orgId);
 
   const { mutate } = useProjectMutatation();
 
@@ -58,6 +61,10 @@ export default function Projects() {
   const sharedProjects = projectsQuery?.results.filter(
     (project) => !project.isOwner,
   );
+  const [filteredOwnedProjects, setFilteredOwnedProjects] =
+    useState(ownedProjects);
+  const [filteredSharedProjects, setFilteredSharedProjects] =
+    useState(sharedProjects);
 
   const createEmptyProject = async () => {
     startLoading({
@@ -79,35 +86,25 @@ export default function Projects() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // TODO: Add this back when so we get rid of InitializeVariables.ts
-  // useVariableListQuery({ onSuccess: initializeVariableList });
+  useEffect(() => {
+    if (projectsQuery?.results) {
+      setFilteredOwnedProjects(
+        ownedProjects?.filter((project) =>
+          project.friendlyName.toLowerCase().includes(search.toLowerCase()),
+        ),
+      );
+      setFilteredSharedProjects(
+        sharedProjects?.filter((project) =>
+          project.friendlyName.toLowerCase().includes(search.toLowerCase()),
+        ),
+      );
+    }
+  }, [search, projectsQuery]);
 
   // useEffect(() => {
   //   if (!user) {
   //     return;
   //   }
-
-  //   const intercomSettings = {
-  //     app_id: "co2c3gri",
-  //     email: user.email,
-  //     user_id: user.userId,
-  //     name: user.firstName + " " + user.lastName,
-  //     created_at: user.createdAt,
-  //     avatar: {
-  //       type: "avatar",
-  //       image_url: user.pictureUrl,
-  //     },
-  //     company: {
-  //       id: company.orgId,
-  //       name: company.orgName,
-  //       plan: "free",
-  //       monthly_spend: 0,
-  //     },
-  //   };
-
-  //   window.dataLayer = window.dataLayer || [];
-  //   window.dataLayer.push(intercomSettings);
-  // }, [user, company]);
 
   return (
     <DashboardShell>
@@ -158,15 +155,15 @@ export default function Projects() {
             />
           )}
           {/* <TeamInvitations /> */}
-          {ownedProjects && ownedProjects.length > 0 && (
+          {filteredOwnedProjects && filteredOwnedProjects.length > 0 && (
             <>
-              {ownedProjects.length > 0 &&
-                sharedProjects &&
-                sharedProjects.length > 0 && (
+              {filteredOwnedProjects.length > 0 &&
+                filteredSharedProjects &&
+                filteredSharedProjects.length > 0 && (
                   <Title order={4}>My Projects</Title>
                 )}
               <Grid>
-                {ownedProjects.map((project) => (
+                {filteredOwnedProjects.map((project) => (
                   <ProjectItem
                     key={project.id}
                     project={project}
@@ -177,12 +174,12 @@ export default function Projects() {
               </Grid>
             </>
           )}
-          {sharedProjects && sharedProjects.length > 0 && (
+          {filteredSharedProjects && filteredSharedProjects.length > 0 && (
             <>
               <Title order={4}>Shared With Me</Title>
               <Grid>
-                {sharedProjects &&
-                  sharedProjects.map((project) => (
+                {filteredSharedProjects &&
+                  filteredSharedProjects.map((project) => (
                     <ProjectItem
                       key={project.id}
                       project={project}
