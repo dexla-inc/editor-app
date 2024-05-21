@@ -1,6 +1,7 @@
 import { VariableResponse } from "@/requests/variables/types";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
+import { listVariables } from "@/requests/variables/queries-noauth";
 
 type VariableStoreParams = VariableResponse & {
   value?: any | null;
@@ -8,7 +9,7 @@ type VariableStoreParams = VariableResponse & {
 
 type VariablesState = {
   resetVariable: (variableId: string) => void;
-  initializeVariableList: (variableList: Array<VariableResponse>) => void;
+  initializeVariableList: (projectId: string) => Promise<void>;
   setVariable: (variable: Partial<VariableStoreParams>) => void;
   deleteVariable: (variableId: string) => void;
   variableList: Record<string, VariableStoreParams>;
@@ -42,9 +43,10 @@ export const useVariableStore = create<VariablesState>()(
             "variables/resetVariable",
           );
         },
-        initializeVariableList: (variableList) => {
+        initializeVariableList: async (projectId) => {
+          const variableList = await listVariables(projectId);
           const newVariableList: Record<string, VariableStoreParams> =
-            variableList.reduce(
+            variableList.results.reduce(
               (acc, variable) => {
                 acc[variable.id] = {
                   ...variable,
@@ -62,6 +64,7 @@ export const useVariableStore = create<VariablesState>()(
             "variables/initializeVariableList",
           );
         },
+
         setVariable: (variable) => {
           const variableId = variable?.id ?? "";
           set(

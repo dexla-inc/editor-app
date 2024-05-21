@@ -83,9 +83,6 @@ export const QueryStringsForm = ({
               //       nPrev[index].value = componentToBindId;
               //       return nPrev;
               //     });
-              //
-              //     setPickingComponentToBindTo(undefined);
-              //     setComponentToBind(undefined);
               //   }}
               // />
               company.orgName == "Dexla" && key == "type" ? (

@@ -1,7 +1,6 @@
 import { Live } from "@/components/Live";
 import { withPageOnLoad } from "@/hoc/withPageOnLoad";
 import { DeploymentPage } from "@/requests/deployments/types";
-import { getProject } from "@/requests/projects/queries-noauth";
 import { checkRefreshTokenExists } from "@/utils/serverside";
 import { GetServerSidePropsContext } from "next";
 import Head from "next/head";

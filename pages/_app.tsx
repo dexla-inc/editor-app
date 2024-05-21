@@ -21,7 +21,6 @@ import { ReactFlowProvider } from "reactflow";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { MantineGlobal } from "@/components/MantineGlobal";
 import { queryClient } from "@/utils/reactQuery";
-import { useInitialiseLive } from "@/hooks/editor/useInitialiseLive";
 
 // If loading a variable font, you don't need to specify the font weight
 const inter = Inter({
@@ -42,10 +41,6 @@ const nodeEnv = process.env.NODE_ENV;
 export default function App(props: AppProps) {
   const { Component, pageProps } = props;
   const isLive = pageProps.isLive;
-  useInitialiseLive({
-    projectId: pageProps.id,
-    pageId: pageProps.page?.id,
-  });
 
   const isDarkTheme = useUserConfigStore((state) => state.isDarkTheme);
   const [loadTagManager, setLoadTagManager] = useState(false);
@@ -70,57 +65,57 @@ export default function App(props: AppProps) {
       theme={isDarkTheme ? darkTheme : theme}
       emotionCache={cache}
     >
-      <ContextMenuProvider>
-        <AuthProvider isLive={isLive}>
-          {!isLive && (
-            <>
-              <ProgressBar color={theme.colors.teal[6]} />
-              <InstantiatePropelAuthStore />
-            </>
-          )}
-          <Head>
-            <title>Editor</title>
-            <meta name="description" content="Dexla Editor" />
-            <meta
-              name="viewport"
-              content="width=device-width, initial-scale=1, maximum-scale=1"
-            />
+      <AuthProvider isLive={isLive}>
+        {!isLive && (
+          <>
+            <ProgressBar color={theme.colors.teal[6]} />
+            <InstantiatePropelAuthStore />
+          </>
+        )}
+        <Head>
+          <title>Editor</title>
+          <meta name="description" content="Dexla Editor" />
+          <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, maximum-scale=1"
+          />
 
-            <link
-              rel="icon"
-              type="image/x-icon"
-              href={isLive ? "" : "/favicon.ico"}
-            />
-          </Head>
+          <link
+            rel="icon"
+            type="image/x-icon"
+            href={isLive ? "" : "/favicon.ico"}
+          />
+        </Head>
 
-          {/* Google Tag Manager */}
-          {loadTagManager && (
-            <Script id="google-analytics" strategy="afterInteractive">
-              {`
+        {/* Google Tag Manager */}
+        {loadTagManager && (
+          <Script id="google-analytics" strategy="afterInteractive">
+            {`
             (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
             new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
             j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
           })(window,document,'script','dataLayer','${GTM_ID}');
         `}
-            </Script>
-          )}
-          {/* End Google Tag Manager */}
-          {loadTagManager && (
-            <noscript>
-              <iframe
-                src={`https://www.googletagmanager.com/ns.html?id='${GTM_ID}'`}
-                height="0"
-                width="0"
-                style={{ display: "none", visibility: "hidden" }}
-              ></iframe>
-            </noscript>
-          )}
-          <main className={inter.variable}>
-            <QueryClientProvider client={queryClient}>
-              <ReactQueryDevtools initialIsOpen={false} />
-              <Hydrate state={pageProps.dehydratedState}>
-                <Notifications />
+          </Script>
+        )}
+        {/* End Google Tag Manager */}
+        {loadTagManager && (
+          <noscript>
+            <iframe
+              src={`https://www.googletagmanager.com/ns.html?id='${GTM_ID}'`}
+              height="0"
+              width="0"
+              style={{ display: "none", visibility: "hidden" }}
+            ></iframe>
+          </noscript>
+        )}
+        <main className={inter.variable}>
+          <QueryClientProvider client={queryClient}>
+            <ReactQueryDevtools initialIsOpen={false} />
+            <Hydrate state={pageProps.dehydratedState}>
+              <Notifications />
+              <ContextMenuProvider>
                 <MantineGlobal isLive={isLive} />
                 <ReactFlowProvider>
                   <ModalsProvider
@@ -129,12 +124,12 @@ export default function App(props: AppProps) {
                     <Component {...pageProps} />
                   </ModalsProvider>
                 </ReactFlowProvider>
-              </Hydrate>
-            </QueryClientProvider>
-            <SpeedInsights />
-          </main>
-        </AuthProvider>
-      </ContextMenuProvider>
+              </ContextMenuProvider>
+            </Hydrate>
+          </QueryClientProvider>
+          <SpeedInsights />
+        </main>
+      </AuthProvider>
     </MantineProvider>
   );
 }

@@ -4,7 +4,6 @@ import { GetServerSidePropsContext } from "next";
 import { useEffect } from "react";
 import { useVariableStore } from "@/stores/variables";
 import { useDataSourceStore } from "@/stores/datasource";
-import { useVariableListQuery } from "@/hooks/editor/reactQuery/useVariableListQuery";
 import { useRouter } from "next/router";
 import { useDataSources } from "@/hooks/editor/reactQuery/useDataSources";
 
@@ -25,21 +24,18 @@ const PageEditor = () => {
     (state) => state.setApiAuthConfig,
   );
 
-  const { data: variables } = useVariableListQuery(projectId);
   const { data: datasources } = useDataSources(projectId);
 
   useEffect(() => {
-    if (variables) {
-      initializeVariableList(variables.results);
-    }
+    initializeVariableList(projectId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [variables, pageId]); // DO NOT REMOVE: pageId is used to reinitialize non global variables
+  }, [projectId, pageId]); // DO NOT REMOVE: pageId is used to reinitialize non global variables
 
   useEffect(() => {
     if (datasources) {
       setApiAuthConfig(projectId, datasources);
     }
-  }, [datasources, setApiAuthConfig]);
+  }, [datasources, setApiAuthConfig, projectId]);
 
   return <Editor pageId={pageId} projectId={projectId} />;
 };

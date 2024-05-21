@@ -16,11 +16,13 @@ import { WithComponentWrapperProps } from "@/types/component";
 import { Component } from "@/utils/editor";
 import { Router, useRouter } from "next/router";
 import merge from "lodash.merge";
+import { withComponentVisibility } from "@/hoc/withComponentVisibility";
 
 export const withComponentWrapper = <T extends Record<string, any>>(
   Component: ComponentType<T>,
 ) => {
   const ComponentWrapper = ({
+    id,
     component: componentTree,
     renderTree,
     shareableContent,
@@ -28,11 +30,6 @@ export const withComponentWrapper = <T extends Record<string, any>>(
     const isEditorMode = useEditorTreeStore(
       (state) => !state.isPreviewMode && !state.isLive,
     );
-
-    let id = componentTree.id;
-    if (shareableContent?.parentSuffix !== undefined) {
-      id = `${componentTree.id}-related-${shareableContent?.parentSuffix}`;
-    }
 
     const isSelected = useEditorTreeStore(
       useShallow((state) => state.selectedComponentIds?.includes(id!)),
@@ -98,7 +95,7 @@ export const withComponentWrapper = <T extends Record<string, any>>(
       triggers,
     );
 
-    const { isPicking, droppable, tealOutline } = useEditorShadows({
+    const { droppable, tealOutline } = useEditorShadows({
       componentId: componentTree.id!,
       isSelected: false,
       //selectedByOther,
@@ -110,10 +107,7 @@ export const withComponentWrapper = <T extends Record<string, any>>(
       isEditorMode,
     });
 
-    const handleClick = useEditorClickHandler(id!, isPicking);
-
-    const { isVisible = true } = computedOnLoad;
-    if (!isVisible) return null;
+    const handleClick = useEditorClickHandler(id!);
 
     const componentToolboxProps = {
       id,
@@ -165,5 +159,5 @@ export const withComponentWrapper = <T extends Record<string, any>>(
     );
   };
 
-  return ComponentWrapper;
+  return withComponentVisibility(ComponentWrapper);
 };

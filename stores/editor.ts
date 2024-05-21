@@ -7,11 +7,6 @@ import { devtools } from "zustand/middleware";
 import merge from "lodash.merge";
 import { ActionsResponsesType } from "@/types/dataBinding";
 
-export type ComponentToBind = {
-  componentId: string;
-  onPick?: (props: any) => void;
-};
-
 export type OpenAction = {
   actionIds?: string[];
   componentId?: string;
@@ -35,9 +30,6 @@ export type EditorState = {
   activeTab?: SectionId;
   isStructureCollapsed: boolean;
   pages: PageResponse[];
-  pickingComponentToBindTo?: ComponentToBind;
-  pickingComponentToBindFrom?: ComponentToBind;
-  componentToBind?: string;
   copiedAction?: Action[];
   sequentialTo?: string;
   openAction?: OpenAction;
@@ -45,13 +37,6 @@ export type EditorState = {
   setCopiedProperties: (copiedProperties: ClipboardProps) => void;
   setOpenAction: (openAction: OpenAction) => void;
   setSequentialTo: (sequentialTo?: string) => void;
-  setPickingComponentToBindTo: (
-    pickingComponentToBindTo?: ComponentToBind,
-  ) => void;
-  setPickingComponentToBindFrom: (
-    pickingComponentToBindFrom?: ComponentToBind,
-  ) => void;
-  setComponentToBind: (componentToBind?: string) => void;
   setCopiedComponent: (copiedComponent?: ComponentTree) => void;
   setPages: (pages: PageResponse[]) => void;
   updatePageResponse: (page: PageResponse) => void;
@@ -126,32 +111,8 @@ export const useEditorStore = create<EditorState>()(
           false,
           "editor/updatePageResponse",
         ),
-      setPickingComponentToBindFrom: (pickingComponentToBindFrom) =>
-        set(
-          { pickingComponentToBindFrom },
-          false,
-          "editor/setPickingComponentToBindFrom",
-        ),
-      setPickingComponentToBindTo: (pickingComponentToBindTo) =>
-        set(
-          { pickingComponentToBindTo },
-          false,
-          "editor/setPickingComponentToBindTo",
-        ),
       setSequentialTo: (sequentialTo) =>
         set({ sequentialTo }, false, "editor/setSequentialTo"),
-      setComponentToBind: (componentToBind) => {
-        set(
-          (state) => {
-            componentToBind &&
-              state.pickingComponentToBindTo?.onPick &&
-              state.pickingComponentToBindTo?.onPick(componentToBind);
-            return { componentToBind };
-          },
-          false,
-          "editor/setComponentToBind",
-        );
-      },
       setCopiedComponent: (copiedComponent) =>
         set({ copiedComponent }, false, "editor/setCopiedComponent"),
 

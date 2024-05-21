@@ -1,5 +1,4 @@
 import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
-import { useEditorStore } from "@/stores/editor";
 import { ActionFormProps, ShowNotificationAction } from "@/utils/actions";
 import { ApiType } from "@/types/dashboardTypes";
 import { Stack } from "@mantine/core";
@@ -9,13 +8,6 @@ import { ThemeColorSelector } from "../ThemeColorSelector";
 type Props = ActionFormProps<Omit<ShowNotificationAction, "name">>;
 
 export const ShowNotificationActionForm = ({ form, isPageAction }: Props) => {
-  const setPickingComponentToBindTo = useEditorStore(
-    (state) => state.setPickingComponentToBindTo,
-  );
-  const setComponentToBind = useEditorStore(
-    (state) => state.setComponentToBind,
-  );
-
   return (
     <Stack spacing={2}>
       {[
@@ -32,10 +24,6 @@ export const ShowNotificationActionForm = ({ form, isPageAction }: Props) => {
           <React.Fragment key={title}>
             <ComponentToBindFromInput
               label={title}
-              onPickComponent={() => {
-                setPickingComponentToBindTo(undefined);
-                setComponentToBind(undefined);
-              }}
               isPageAction={isPageAction}
               {...form.getInputProps(name)}
             />
