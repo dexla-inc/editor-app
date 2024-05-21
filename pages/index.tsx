@@ -1,14 +1,15 @@
 import { Live } from "@/components/Live";
 import { withPageOnLoad } from "@/hoc/withPageOnLoad";
+import { getDeploymentPage } from "@/requests/deployments/queries-noauth";
 import { DeploymentPage } from "@/requests/deployments/types";
+import { queryClient } from "@/utils/reactQuery";
 import { checkRefreshTokenExists } from "@/utils/serverside";
+import { Stopwatch } from "@/utils/stopwatch";
+import { dehydrate } from "@tanstack/react-query";
 import { GetServerSidePropsContext } from "next";
 import Head from "next/head";
-import { dehydrate } from "@tanstack/react-query";
-import { getDeploymentPage } from "@/requests/deployments/queries-noauth";
-import { queryClient } from "@/utils/reactQuery";
-import { Stopwatch } from "@/utils/stopwatch";
 
+// TODO: Backend changes so we only make one API call or two light API calls for getting project and deployment page.
 export const getServerSideProps = async ({
   req,
 }: GetServerSidePropsContext) => {
@@ -40,7 +41,11 @@ export const getServerSideProps = async ({
     };
   }
 
+  //if(!deploymentPage.project)
+  // Redirect to dexla page to save it hasn't been deployed
+
   const notFoundPageslug = deploymentPage.project.redirects?.notFoundPageId;
+
   // Check if page exists
   if (!deploymentPage.id) {
     return {
@@ -53,6 +58,7 @@ export const getServerSideProps = async ({
       props: {
         dehydratedState: dehydrate(queryClient),
         isLive: true,
+        project: deploymentPage.project,
       },
     };
   }

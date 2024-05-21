@@ -18,6 +18,7 @@ import { MantineThemeExtended } from "@/types/types";
 import { safeJsonParse } from "@/utils/common";
 import { useInputsStore } from "@/stores/inputs";
 import { useDataSources } from "@/hooks/editor/reactQuery/useDataSources";
+import { useVariableListQuery } from "@/hooks/editor/reactQuery/useVariableListQuery";
 
 type Props = {
   deploymentPage: DeploymentPage;
@@ -32,6 +33,7 @@ export const Live = ({ deploymentPage }: Props) => {
   const projectId = deploymentPage.project.id;
 
   const { data: datasources } = useDataSources(projectId);
+  const { data: variables } = useVariableListQuery(projectId);
 
   const editorTree = useEditorTreeStore((state) => state.tree);
   const setEditorTree = useEditorTreeStore((state) => state.setTree);
@@ -89,9 +91,9 @@ export const Live = ({ deploymentPage }: Props) => {
   }, [projectId, deploymentPage.id, loadFonts]);
 
   useEffect(() => {
-    initializeVariableList(projectId);
+    if (variables) initializeVariableList(variables.results);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [projectId, deploymentPage.id]);
+  }, [variables, deploymentPage.id]);
 
   useEffect(() => {
     if (datasources) {

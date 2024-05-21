@@ -152,7 +152,7 @@ export const withComponentWrapper = <T extends Record<string, any>>(
         >
           <Component {...props} />
         </Wrapper>
-        {isSelected && isEditorMode && (
+        {isSelected && isEditorMode && component.description !== "Body" && (
           <ComponentToolbox component={componentToolboxProps} />
         )}
       </>
