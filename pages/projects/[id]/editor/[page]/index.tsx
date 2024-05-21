@@ -6,6 +6,7 @@ import { useVariableStore } from "@/stores/variables";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useRouter } from "next/router";
 import { useDataSources } from "@/hooks/editor/reactQuery/useDataSources";
+import { useVariableListQuery } from "@/hooks/editor/reactQuery/useVariableListQuery";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { LoadingOverlay } from "@mantine/core";
 import UnauthorisedPage from "@/components/UnauthorisedPage";
@@ -32,6 +33,7 @@ const PageEditor = () => {
   >("loading");
 
   const { data: datasources } = useDataSources(projectId);
+  const { data: variables } = useVariableListQuery(projectId);
   const checkHasAccess = usePropelAuthStore((state) => state.checkHasAccess);
 
   useEffect(() => {
@@ -44,10 +46,11 @@ const PageEditor = () => {
   }, [projectId, checkHasAccess]);
 
   useEffect(() => {
-    if (status === "authorised") initializeVariableList(projectId);
+    if (status === "authorised" && variables)
+      initializeVariableList(variables.results);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [projectId, pageId, status]); // DO NOT REMOVE: pageId is used to reinitialize non global variables
+  }, [variables, pageId, status]);
 
   useEffect(() => {
     if (datasources) {
