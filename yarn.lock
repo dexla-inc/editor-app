@@ -1206,17 +1206,17 @@
   dependencies:
     "@prisma/debug" "5.11.0"
 
-"@propelauth/javascript@^2.0.15":
-  version "2.0.15"
-  resolved "https://registry.yarnpkg.com/@propelauth/javascript/-/javascript-2.0.15.tgz#c6d2cdd484289b06bde7125ac00990923de965fa"
-  integrity sha512-/9Z/MCPnW20jtBdXXORtZx29eTlnlX7rg+CgTT1rLPQSCf97G/SSZtSDYMFHJXO6BhgMuyHz8uIqVzui77n7kQ==
+"@propelauth/javascript@^2.0.17":
+  version "2.0.17"
+  resolved "https://registry.yarnpkg.com/@propelauth/javascript/-/javascript-2.0.17.tgz#090b4ce1eafebdb836089b47b50bcca4c36c39a7"
+  integrity sha512-oXnsNSaYPP5+6bhcC+ewhaai23LDO+Wng+63+eynYEDvbCzLWJa0EzpGZr/CCyeY33Q4iStAAng/sC15Pk5QMA==
 
-"@propelauth/react@^2.0.20":
-  version "2.0.20"
-  resolved "https://registry.yarnpkg.com/@propelauth/react/-/react-2.0.20.tgz#ae89b40f5f372a82f5723ae297543da5e2051368"
-  integrity sha512-78vOaiZk5jb4sXBIkTXwPMmlYdC1peUBQfT9gvMSoVtwMUe8kDbP/PL58xd6MxsRQ+T6VFSbbgechy9HTGa/3Q==
+"@propelauth/react@^2.0.22":
+  version "2.0.22"
+  resolved "https://registry.yarnpkg.com/@propelauth/react/-/react-2.0.22.tgz#294a8726a4a5d80b509d5fc9f650a54642758eea"
+  integrity sha512-tai+3s7FP7Goh4VFy0zkhffQhLG58Z/lFjIncVadW2ASyp998xxjOQXBh5wmymyT78Ra4al4rd72MZ4RmBlsZA==
   dependencies:
-    "@propelauth/javascript" "^2.0.15"
+    "@propelauth/javascript" "^2.0.17"
     hoist-non-react-statics "^3.3.2"
     utility-types "^3.10.0"
 

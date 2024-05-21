@@ -12,6 +12,7 @@ type AuthState = {
   userPermissions: string[];
   setActiveCompany: (companyId: string) => void;
   initializeAuth: (authInfo: WithAuthInfoProps) => Promise<void>;
+  checkHasAccess: (projectId: string) => boolean;
 };
 
 export const usePropelAuthStore = create<AuthState>()(
@@ -42,10 +43,13 @@ export const usePropelAuthStore = create<AuthState>()(
       },
       initializeAuth: async (authInfo: WithAuthInfoProps) => {
         const companies = authInfo?.orgHelper?.getOrgs() || [];
+
         const activeCompanyId = get().activeCompanyId;
         const activeCompany =
           companies.find((company) => company.orgId === activeCompanyId) ||
           companies[0];
+
+        console.log("activeCompany", activeCompany);
 
         set({
           accessToken: authInfo?.accessToken || "",
@@ -57,6 +61,13 @@ export const usePropelAuthStore = create<AuthState>()(
             activeCompany?.userAssignedRole?.includes("DEXLA_ADMIN") || false,
           userPermissions: activeCompany?.userPermissions || [],
         });
+      },
+      checkHasAccess: (projectId: string) => {
+        const activeCompany = get().activeCompany;
+        const allowedProjectIds = activeCompany.orgMetadata["projectIds"]
+          ?.toString()
+          .split(",");
+        return allowedProjectIds?.includes(projectId);
       },
     }),
     {
