@@ -3,8 +3,9 @@ import { Box, ScrollArea } from "@mantine/core";
 import EditorAsideSections from "@/components/aside/EditorAsideSections";
 import { Aside as MantineAside } from "@mantine/core";
 import { useEditorTreeStore } from "@/stores/editorTree";
+import { memo } from "react";
 
-export const Aside = () => {
+export const AsideComponent = () => {
   const isPreviewMode = useEditorTreeStore((state) => state.isPreviewMode);
 
   if (isPreviewMode) return undefined;
@@ -24,3 +25,5 @@ export const Aside = () => {
     </MantineAside>
   );
 };
+
+export const Aside = memo(AsideComponent);

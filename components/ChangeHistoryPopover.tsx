@@ -29,12 +29,12 @@ const convertTimestampToTimeTaken = (timestamp: number) => {
 
 export const ChangeHistoryPopover: FC = () => {
   usePreventNavigationOnSaving();
-  const pageId = useEditorTreeStore((state) => state.currentPageId);
+  // const pageId = useEditorTreeStore((state) => state.currentPageId);
   //const editorTree = useEditorTreeStore((state) => state.tree);
-  const currentProjectId = useEditorTreeStore(
-    (state) => state.currentProjectId,
-  );
-  const setIsSaving = useEditorStore((state) => state.setIsSaving);
+  // const currentProjectId = useEditorTreeStore(
+  //   (state) => state.currentProjectId,
+  // );
+  // const setIsSaving = useEditorStore((state) => state.setIsSaving);
 
   // TODO: Turning off for now, will need to revisit
   // const { changeHistory, pastStates, undo, redo, futureStates } =

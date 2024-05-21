@@ -14,7 +14,7 @@ import {
   Text,
 } from "@mantine/core";
 import intersection from "lodash.intersection";
-import { useEffect } from "react";
+import { memo, useEffect } from "react";
 import { useEditorTreeStore } from "../../stores/editorTree";
 import { ActionsTab, Data, modifierSectionMapper } from "./dynamicModifiers";
 import { useShallow } from "zustand/react/shallow";
@@ -142,4 +142,4 @@ const EditorAsideSections = () => {
   );
 };
 
-export default EditorAsideSections;
+export default memo(EditorAsideSections);

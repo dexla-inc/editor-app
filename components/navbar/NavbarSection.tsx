@@ -34,13 +34,13 @@ import {
 } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import startCase from "lodash.startcase";
-import { PropsWithChildren, useEffect } from "react";
+import { memo, PropsWithChildren, useEffect } from "react";
 
 type Props = {
   sections: Sections;
 };
 
-export const NavbarSection = ({
+export const NavbarSectionComponent = ({
   children,
   sections,
 }: PropsWithChildren<Props>) => {
@@ -229,3 +229,5 @@ export const NavbarSection = ({
     </Group>
   );
 };
+
+export const NavbarSection = memo(NavbarSectionComponent);
