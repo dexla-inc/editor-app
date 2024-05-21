@@ -55,6 +55,7 @@ const RadioItemComponent = forwardRef<HTMLInputElement, Props>(
           label: {
             padding: 0,
           },
+          labelWrapper: { width: "100%" },
         }}
       />
     );
