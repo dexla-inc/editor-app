@@ -18,9 +18,6 @@ export const createProject = async (
     params,
   )) as ProjectResponse;
 
-  const projectCacheTag = getProjectCacheTag();
-  await evictCache(projectCacheTag);
-
   return response;
 };
 
@@ -68,5 +65,4 @@ export const deleteProject = async (id: string) => {
   return response;
 };
 
-const getProjectCacheTag = () => `/projects`;
 const getCacheTag = (projectId: string) => `/projects/${projectId}`;
