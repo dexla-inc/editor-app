@@ -200,14 +200,14 @@ export const EditorNavbarThemesSection =
                 key={`color-${name}`}
                 friendlyName={friendlyName}
                 hex={hex}
-                isDefault={form.values.colors[index].isDefault}
+                isDefault={form.values.colors[index]?.isDefault ?? false}
                 onValueChange={(value) => {
                   form.setFieldValue(
                     `colors.${index}.friendlyName`,
                     value.friendlyName,
                   );
                   form.setFieldValue(`colors.${index}.hex`, value.hex);
-                  if (!form.values.colors[index].isDefault) {
+                  if (!form.values.colors[index]?.isDefault) {
                     form.setFieldValue(
                       `colors.${index}.name`,
                       value.friendlyName,
@@ -215,7 +215,7 @@ export const EditorNavbarThemesSection =
                   }
                 }}
                 deleteColor={() => {
-                  if (!form.values.colors[index].isDefault) {
+                  if (!form.values.colors[index]?.isDefault) {
                     form.removeListItem("colors", index);
                   }
                 }}
