@@ -10,7 +10,7 @@ import { convertToPatchParams } from "@/types/dashboardTypes";
 import { Button, Modal, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export const LogicFlowFormModal = () => {

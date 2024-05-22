@@ -7,7 +7,7 @@ import {
   EndpointAuthType,
 } from "@/utils/actions";
 import { Stack } from "@mantine/core";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { SegmentedControlInput } from "../SegmentedControlInput";
 import { SegmentedControlYesNo } from "../SegmentedControlYesNo";
 import { useEffect } from "react";

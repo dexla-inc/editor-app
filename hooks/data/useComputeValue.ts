@@ -1,5 +1,6 @@
 import { useVariableStore } from "@/stores/variables";
-import { NextRouter, useRouter } from "next/router";
+import { NextRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useCallback, useMemo } from "react";
 import get from "lodash.get";

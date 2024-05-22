@@ -1,3 +1,5 @@
+"use client";
+
 import { LiveWrapper } from "@/components/LiveWrapper";
 import { useAppStore } from "@/stores/app";
 import { componentMapper } from "@/utils/componentMapper";

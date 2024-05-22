@@ -1,5 +1,6 @@
 import { useTriggers } from "@/hooks/components/useTriggers";
-import { Router, useRouter } from "next/router";
+import { NextRouter, Router } from "next/router";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { PageResponse } from "@/requests/pages/types";
 import { ProjectResponse } from "@/requests/projects/types";
@@ -34,7 +35,7 @@ export const withPageOnLoad = (
     const { onPageLoad } = useTriggers({
       // @ts-ignore
       entity: page,
-      router: router as Router,
+      router: router,
       projectId: props.project?.id || projectId,
     });
 

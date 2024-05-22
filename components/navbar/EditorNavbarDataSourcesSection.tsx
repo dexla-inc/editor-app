@@ -5,7 +5,7 @@ import { useDataSources } from "@/hooks/editor/reactQuery/useDataSources";
 import { DataSourceResponse } from "@/requests/datasources/types";
 import { Select, Stack, Text } from "@mantine/core";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { DataSourceForm } from "../datasources/DataSourceForm";
 

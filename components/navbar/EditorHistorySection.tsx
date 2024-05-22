@@ -2,7 +2,7 @@ import { usePageStateHistory } from "@/hooks/editor/reactQuery/usePageStateHisto
 import { LARGE_ICON_SIZE } from "@/utils/config";
 import { LoadingOverlay, Stack, Text } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { Icon } from "../Icon";
 import { rollbackPageState } from "@/requests/pages/mutations";

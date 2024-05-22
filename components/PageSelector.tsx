@@ -1,6 +1,6 @@
 import { useEditorStore } from "@/stores/editor";
 import { Select } from "@mantine/core";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { memo, useMemo } from "react";
 import { useShallow } from "zustand/react/shallow";
 

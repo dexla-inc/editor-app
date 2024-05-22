@@ -1,5 +1,5 @@
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
 
 const message = "You have unsaved changes. Are you sure you want to leave?";

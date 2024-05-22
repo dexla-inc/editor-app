@@ -3,7 +3,7 @@ import ApiInfoFormNew from "@/components/datasources/ApiInfoFormNew";
 import { SettingsTabHeader } from "@/components/settings/SettingsTabHeader";
 import { SettingsTabs } from "@/components/settings/SettingsTabs";
 import { Container, Stack, Tabs, Title } from "@mantine/core";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 export default function Settings() {
   const router = useRouter();

@@ -30,7 +30,7 @@ import { useMutation } from "@tanstack/react-query";
 import isEqual from "lodash.isequal";
 import startCase from "lodash.startcase";
 import { nanoid } from "nanoid";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef } from "react";
 import { useUpdateNodeInternals } from "reactflow";
 import { safeJsonParse } from "@/utils/common";

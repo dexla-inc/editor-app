@@ -19,7 +19,7 @@ import {
 } from "@/types/dashboardTypes";
 import { Divider, Group, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 export interface BasicDetailsStepProps
   extends LoadingStore,

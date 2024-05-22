@@ -1,11 +1,8 @@
 import { DashboardShell } from "@/components/DashboardShell";
 import TeamSettings from "@/components/settings/TeamSettings";
-import { useRouter } from "next/router";
+import { PageProps } from "@/types/app";
 
-export default function Team() {
-  const router = useRouter();
-  const { id, name } = router.query as { id: string; name: string };
-
+export default function Team({ params: { id } }: PageProps) {
   return (
     <DashboardShell>
       <TeamSettings projectId={id} />

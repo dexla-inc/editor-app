@@ -3,7 +3,7 @@ import { ICON_SIZE } from "@/utils/config";
 import { LoadingStore } from "@/types/dashboardTypes";
 import { Button } from "@mantine/core";
 import { IconArrowUpRight } from "@tabler/icons-react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 interface EndpointsButtonProps extends LoadingStore {
   projectId: string;

@@ -12,10 +12,10 @@ import { useAppStore } from "@/stores/app";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { StepperDetailsType } from "@/types/projectTypes";
 import { Container, Stack, Stepper, Title } from "@mantine/core";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { PageProps } from "@/types/app";
 
-export default function New() {
+export default function New({ params: { id: projectId } }: PageProps) {
   const [activeStep, setActiveStep] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const startLoading = useAppStore((state) => state.startLoading);
@@ -28,9 +28,7 @@ export default function New() {
     setActiveStep((current) => (current > 0 ? current - 1 : current));
   const router = useRouter();
 
-  const projectId =
-    (router.query.id as string) || (router.query.projectId as string);
-  const projectIdFromQuery = router.query.projectId;
+  const projectIdFromQuery = projectId;
   const { data: project } = useProjectQuery(projectId);
 
   const [description, setDescription] = useState("");

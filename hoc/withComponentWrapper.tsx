@@ -14,7 +14,8 @@ import { useEditorClickHandler } from "@/hooks/components/useEditorClickHandler"
 import { ComponentToolbox } from "@/components/ComponentToolbox";
 import { WithComponentWrapperProps } from "@/types/component";
 import { Component } from "@/utils/editor";
-import { Router, useRouter } from "next/router";
+import { Router } from "next/router";
+import { useRouter } from "next/navigation";
 import merge from "lodash.merge";
 import { withComponentVisibility } from "@/hoc/withComponentVisibility";
 

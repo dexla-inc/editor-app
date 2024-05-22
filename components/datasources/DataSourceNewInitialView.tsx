@@ -1,6 +1,6 @@
 import MantineStyledButton from "@/components/datasources/DataSourceOptionButton";
 import { Container, Flex, Title } from "@mantine/core";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 export default function DataSourceNewInitialView() {
   const router = useRouter();

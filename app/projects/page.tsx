@@ -19,17 +19,17 @@ import {
   Title,
   Tooltip,
 } from "@mantine/core";
-import { IconSearch } from "@tabler/icons-react";
-import debounce from "lodash.debounce";
+// import { IconSearch } from "@tabler/icons-react";
+// import debounce from "lodash.debounce";
 import Link from "next/link";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+// import { useRouter } from "next/navigation";
+// import { useEffect, useState } from "react";
 import { useCreateTemplateProject } from "@/hooks/editor/useCreateTemplateProject";
 
 export default function Projects() {
-  const router = useRouter();
-  const [search, setSearch] = useState<string>("");
-  const debouncedSearch = debounce((query) => setSearch(query), 100);
+  // const router = useRouter();
+  // const [search, setSearch] = useState<string>("");
+  // const debouncedSearch = debounce((query) => setSearch(query), 100);
   const user = usePropelAuthStore((state) => state.user);
   const company = usePropelAuthStore((state) => state.activeCompany);
 
@@ -44,14 +44,14 @@ export default function Projects() {
   const resetTree = useEditorTreeStore((state) => state.resetTree);
 
   const goToEditor = async (projectId: string, pageId: string) => {
-    router.push(`/projects/${projectId}/editor/${pageId}`);
+    // router.push(`/projects/${projectId}/editor/${pageId}`);
   };
 
   const { data: projectsQuery, invalidate } = useProjectListQuery(
     company.orgId,
   );
 
-  useCreateTemplateProject(company.orgId);
+  // useCreateTemplateProject(company.orgId);
 
   const { mutate } = useProjectMutatation();
 
@@ -61,10 +61,10 @@ export default function Projects() {
   const sharedProjects = projectsQuery?.results.filter(
     (project) => !project.isOwner,
   );
-  const [filteredOwnedProjects, setFilteredOwnedProjects] =
-    useState(ownedProjects);
-  const [filteredSharedProjects, setFilteredSharedProjects] =
-    useState(sharedProjects);
+  // const [filteredOwnedProjects, setFilteredOwnedProjects] =
+  //   useState(ownedProjects);
+  // const [filteredSharedProjects, setFilteredSharedProjects] =
+  //   useState(sharedProjects);
 
   const createEmptyProject = async () => {
     startLoading({
@@ -78,119 +78,113 @@ export default function Projects() {
     invalidate();
     const url = `/projects/${project.id}/editor/${project.homePageId}`;
 
-    router.push(url);
+    // router.push(url);
   };
 
-  useEffect(() => {
-    resetTree();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    if (projectsQuery?.results) {
-      setFilteredOwnedProjects(
-        ownedProjects?.filter((project) =>
-          project.friendlyName.toLowerCase().includes(search.toLowerCase()),
-        ),
-      );
-      setFilteredSharedProjects(
-        sharedProjects?.filter((project) =>
-          project.friendlyName.toLowerCase().includes(search.toLowerCase()),
-        ),
-      );
-    }
-  }, [search, projectsQuery]);
-
   // useEffect(() => {
-  //   if (!user) {
-  //     return;
+  //   resetTree();
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
+  //
+  // useEffect(() => {
+  //   if (projectsQuery?.results) {
+  //     setFilteredOwnedProjects(
+  //       ownedProjects?.filter((project) =>
+  //         project.friendlyName.toLowerCase().includes(search.toLowerCase()),
+  //       ),
+  //     );
+  //     setFilteredSharedProjects(
+  //       sharedProjects?.filter((project) =>
+  //         project.friendlyName.toLowerCase().includes(search.toLowerCase()),
+  //       ),
+  //     );
   //   }
+  // }, [search, projectsQuery]);
 
   return (
-    <DashboardShell>
-      <Container py="xl" size="lg">
-        <Stack spacing="xl">
-          <Title>Welcome back, {user?.firstName}</Title>
-          <Flex>
-            {company.orgName !== "Dexla" ? (
-              <Flex gap="sm">
-                <Tooltip label="Coming soon">
-                  <Link
-                    href={`/projects/new?company=${company.orgId}&id=${manuallyCreatedProjectId}`}
-                  >
-                    <IconTitleDescriptionButton
-                      icon="IconSparkles"
-                      title="Create new project"
-                      description="Type what you want to build and customise. (Coming soon)"
-                      disabled
-                    />
-                  </Link>
-                </Tooltip>
-                <IconTitleDescriptionButton
-                  icon="IconSparkles"
-                  title="Create empty project"
-                  description="Start from scratch"
-                  onClick={createEmptyProject}
-                />
-              </Flex>
-            ) : (
-              <Tooltip label="You are unable to create new projects for Dexla">
-                <IconTitleDescriptionButton
-                  icon="IconSparkles"
-                  tooltip="This company is used for the Templates project only"
-                  title="Create new project"
-                  description="Type what you want to build and customise"
-                />
-              </Tooltip>
-            )}
-          </Flex>
-
-          {projectsQuery?.results && (
-            <TextInput
-              placeholder="Search a project"
-              icon={<IconSearch size={ICON_SIZE} />}
-              onChange={(event) => {
-                debouncedSearch(event.currentTarget.value);
-              }}
-            />
-          )}
-          {/* <TeamInvitations /> */}
-          {filteredOwnedProjects && filteredOwnedProjects.length > 0 && (
-            <>
-              {filteredOwnedProjects.length > 0 &&
-                filteredSharedProjects &&
-                filteredSharedProjects.length > 0 && (
-                  <Title order={4}>My Projects</Title>
-                )}
-              <Grid>
-                {filteredOwnedProjects.map((project) => (
-                  <ProjectItem
-                    key={project.id}
-                    project={project}
-                    goToEditor={goToEditor}
-                    onDeleteProject={mutate}
+    // <DashboardShell>
+    <Container py="xl" size="lg">
+      <Stack spacing="xl">
+        <Title>Welcome back, {user?.firstName}</Title>
+        <Flex>
+          {company.orgName !== "Dexla" ? (
+            <Flex gap="sm">
+              <Tooltip label="Coming soon">
+                <Link
+                  href={`/projects/new?company=${company.orgId}&id=${manuallyCreatedProjectId}`}
+                >
+                  <IconTitleDescriptionButton
+                    icon="IconSparkles"
+                    title="Create new project"
+                    description="Type what you want to build and customise. (Coming soon)"
+                    disabled
                   />
-                ))}
-              </Grid>
-            </>
+                </Link>
+              </Tooltip>
+              <IconTitleDescriptionButton
+                icon="IconSparkles"
+                title="Create empty project"
+                description="Start from scratch"
+                onClick={createEmptyProject}
+              />
+            </Flex>
+          ) : (
+            <Tooltip label="You are unable to create new projects for Dexla">
+              <IconTitleDescriptionButton
+                icon="IconSparkles"
+                tooltip="This company is used for the Templates project only"
+                title="Create new project"
+                description="Type what you want to build and customise"
+              />
+            </Tooltip>
           )}
-          {filteredSharedProjects && filteredSharedProjects.length > 0 && (
-            <>
-              <Title order={4}>Shared With Me</Title>
-              <Grid>
-                {filteredSharedProjects &&
-                  filteredSharedProjects.map((project) => (
-                    <ProjectItem
-                      key={project.id}
-                      project={project}
-                      goToEditor={goToEditor}
-                    />
-                  ))}
-              </Grid>
-            </>
-          )}
-        </Stack>
-      </Container>
-    </DashboardShell>
+        </Flex>
+
+        {/*{projectsQuery?.results && (*/}
+        {/*  <TextInput*/}
+        {/*    placeholder="Search a project"*/}
+        {/*    icon={<IconSearch size={ICON_SIZE} />}*/}
+        {/*    onChange={(event) => {*/}
+        {/*      debouncedSearch(event.currentTarget.value);*/}
+        {/*    }}*/}
+        {/*  />*/}
+        {/*)}*/}
+        {/*{filteredOwnedProjects && filteredOwnedProjects.length > 0 && (*/}
+        {/*  <>*/}
+        {/*    {filteredOwnedProjects.length > 0 &&*/}
+        {/*      filteredSharedProjects &&*/}
+        {/*      filteredSharedProjects.length > 0 && (*/}
+        {/*        <Title order={4}>My Projects</Title>*/}
+        {/*      )}*/}
+        {/*    <Grid>*/}
+        {/*      {filteredOwnedProjects.map((project) => (*/}
+        {/*        <ProjectItem*/}
+        {/*          key={project.id}*/}
+        {/*          project={project}*/}
+        {/*          goToEditor={goToEditor}*/}
+        {/*          onDeleteProject={mutate}*/}
+        {/*        />*/}
+        {/*      ))}*/}
+        {/*    </Grid>*/}
+        {/*  </>*/}
+        {/*)}*/}
+        {/*{filteredSharedProjects && filteredSharedProjects.length > 0 && (*/}
+        {/*  <>*/}
+        {/*    <Title order={4}>Shared With Me</Title>*/}
+        {/*    <Grid>*/}
+        {/*      {filteredSharedProjects &&*/}
+        {/*        filteredSharedProjects.map((project) => (*/}
+        {/*          <ProjectItem*/}
+        {/*            key={project.id}*/}
+        {/*            project={project}*/}
+        {/*            goToEditor={goToEditor}*/}
+        {/*          />*/}
+        {/*        ))}*/}
+        {/*    </Grid>*/}
+        {/*  </>*/}
+        {/*)}*/}
+      </Stack>
+    </Container>
+    // </DashboardShell>
   );
 }

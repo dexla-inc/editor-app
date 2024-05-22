@@ -10,7 +10,7 @@ import {
 } from "@mantine/core";
 import { SegmentedControlYesNo } from "../SegmentedControlYesNo";
 import { usePageListQuery } from "@/hooks/editor/reactQuery/usePageListQuery";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { ActionIconDefault } from "../ActionIconDefault";
 import { ComponentToBindFromInput } from "../ComponentToBindFromInput";
 import { ICON_DELETE, ICON_SIZE } from "@/utils/config";

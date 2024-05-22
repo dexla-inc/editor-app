@@ -15,7 +15,7 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { ProjectItemMenu } from "./ProjectItemMenu";
 import { useEditorTreeStore } from "@/stores/editorTree";

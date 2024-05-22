@@ -2,7 +2,7 @@ import { Icon } from "@/components/Icon";
 import { ICON_SIZE } from "@/utils/config";
 import { Tabs } from "@mantine/core";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 export const SettingsTabs = () => {
   const router = useRouter();

@@ -18,7 +18,7 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { TopLabel } from "../TopLabel";
 import { safeJsonParse, safeJsonStringify, toSnakeCase } from "@/utils/common";

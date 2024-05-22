@@ -4,7 +4,7 @@ import { usePageListQuery } from "@/hooks/editor/reactQuery/usePageListQuery";
 import { PageResponse } from "@/requests/pages/types";
 import { Stack } from "@mantine/core";
 import debounce from "lodash.debounce";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { useEditorStore } from "@/stores/editor";
 

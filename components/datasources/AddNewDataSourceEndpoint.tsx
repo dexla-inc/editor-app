@@ -2,7 +2,7 @@ import { Icon } from "@/components/Icon";
 import { DataSourceEndpointDetail } from "@/components/datasources/DataSourceEndpointDetail";
 import { EndpointParams } from "@/requests/datasources/types";
 import { Button, Group, Stack } from "@mantine/core";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export const AddNewDataSourceEndpoint = ({

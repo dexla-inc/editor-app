@@ -7,7 +7,7 @@ import { Action, APICallAction } from "@/utils/actions";
 import { usePageListQuery } from "@/hooks/editor/reactQuery/usePageListQuery";
 import { useEditorStore } from "@/stores/editor";
 import { useVariableStore } from "@/stores/variables";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useDataSourceStore } from "@/stores/datasource";
 import { pick } from "next/dist/lib/pick";
 import { useInputsStore } from "@/stores/inputs";

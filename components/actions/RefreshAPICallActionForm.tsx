@@ -2,7 +2,7 @@ import EmptyDatasourcesPlaceholder from "@/components/datasources/EmptyDatasourc
 import { EndpointSelect } from "@/components/EndpointSelect";
 import { ActionFormProps, RefreshAPICallAction } from "@/utils/actions";
 import { Stack } from "@mantine/core";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useEndpoints } from "@/hooks/editor/reactQuery/useDataSourcesEndpoints";
 
 type Props = ActionFormProps<Omit<RefreshAPICallAction, "name">>;

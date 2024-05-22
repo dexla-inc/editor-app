@@ -7,7 +7,7 @@ import { Box, Button, Menu, NavLink, Navbar, ScrollArea } from "@mantine/core";
 import { useLogoutFunction } from "@propelauth/react";
 import { IconArrowLeft, IconLogout, IconSettings } from "@tabler/icons-react";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 type DashboardNavbarProps = {
   isLoading?: boolean;

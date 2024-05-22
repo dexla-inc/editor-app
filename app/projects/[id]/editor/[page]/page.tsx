@@ -1,26 +1,15 @@
 import Editor from "@/components/Editor";
 import { withPageOnLoad } from "@/hoc/withPageOnLoad";
-import { GetServerSidePropsContext } from "next";
-import { useEffect, useState } from "react";
 import { useVariableStore } from "@/stores/variables";
 import { useDataSourceStore } from "@/stores/datasource";
-import { useRouter } from "next/router";
 import { useDataSources } from "@/hooks/editor/reactQuery/useDataSources";
 import { useVariableListQuery } from "@/hooks/editor/reactQuery/useVariableListQuery";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { LoadingOverlay } from "@mantine/core";
 import UnauthorisedPage from "@/components/UnauthorisedPage";
+import { PageProps } from "@/types/app";
 
-export const getServerSideProps = async ({}: GetServerSidePropsContext) => {
-  return { props: {} };
-};
-
-const PageEditor = () => {
-  const router = useRouter();
-  const { id: projectId, page: pageId } = router.query as {
-    id: string;
-    page: string;
-  };
+const PageEditor = ({ params: { id: projectId, page: pageId } }: PageProps) => {
   const initializeVariableList = useVariableStore(
     (state) => state.initializeVariableList,
   );
@@ -28,35 +17,35 @@ const PageEditor = () => {
     (state) => state.setApiAuthConfig,
   );
 
-  const [status, setStatus] = useState<
-    "loading" | "unauthorised" | "authorised"
-  >("loading");
+  // const [status, setStatus] = useState<
+  //   "loading" | "unauthorised" | "authorised"
+  // >("loading");
 
   const { data: datasources } = useDataSources(projectId);
   const { data: variables } = useVariableListQuery(projectId);
   const checkHasAccess = usePropelAuthStore((state) => state.checkHasAccess);
 
-  useEffect(() => {
-    const hasAccess = checkHasAccess(projectId);
-    if (hasAccess) {
-      setStatus("authorised");
-    } else {
-      setStatus("unauthorised");
-    }
-  }, [projectId, checkHasAccess]);
-
-  useEffect(() => {
-    if (status === "authorised" && variables)
-      initializeVariableList(variables.results);
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [variables, pageId, status]);
-
-  useEffect(() => {
-    if (datasources) {
-      setApiAuthConfig(projectId, datasources);
-    }
-  }, [datasources, setApiAuthConfig, projectId]);
+  // useEffect(() => {
+  //   const hasAccess = checkHasAccess(projectId);
+  //   if (hasAccess) {
+  //     setStatus("authorised");
+  //   } else {
+  //     setStatus("unauthorised");
+  //   }
+  // }, [projectId, checkHasAccess]);
+  //
+  // useEffect(() => {
+  //   if (status === "authorised" && variables)
+  //     initializeVariableList(variables.results);
+  //
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [variables, pageId, status]);
+  //
+  // useEffect(() => {
+  //   if (datasources) {
+  //     setApiAuthConfig(projectId, datasources);
+  //   }
+  // }, [datasources, setApiAuthConfig, projectId]);
 
   return status === "authorised" ? (
     <Editor projectId={projectId} pageId={pageId} />

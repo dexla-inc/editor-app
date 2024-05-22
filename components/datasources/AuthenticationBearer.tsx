@@ -26,7 +26,7 @@ import {
   Stack,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { InformationAlert } from "../Alerts";
 import { useEndpoints } from "@/hooks/editor/reactQuery/useDataSourcesEndpoints";

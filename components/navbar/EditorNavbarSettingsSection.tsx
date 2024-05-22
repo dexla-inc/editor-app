@@ -1,6 +1,6 @@
 import { SettingsButton } from "@/components/navbar/SettingsButtons";
 import { Stack } from "@mantine/core";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { ProjectSettings } from "../datasources/ProjectSettings";
 
 export const EditorNavbarSettingsSection = () => {

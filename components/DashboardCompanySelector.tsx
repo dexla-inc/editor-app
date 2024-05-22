@@ -2,7 +2,7 @@ import { Menu, Stack } from "@mantine/core";
 
 import DashboardCompanySelectorPopover from "@/components/DashboardCompanySelectorPopover";
 import { usePropelAuthStore } from "@/stores/propelAuth";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 export const DashboardCompanySelector = () => {
   const companies = usePropelAuthStore((state) => state.companies);

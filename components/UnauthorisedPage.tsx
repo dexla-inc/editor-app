@@ -1,5 +1,5 @@
 import { Title, Text, Button, Flex, Stack } from "@mantine/core";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 export default function UnauthorisedPage() {
   const router = useRouter();

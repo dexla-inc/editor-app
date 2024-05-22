@@ -3,7 +3,7 @@ import { SettingsTabHeader } from "@/components/settings/SettingsTabHeader";
 import { SettingsTabs } from "@/components/settings/SettingsTabs";
 import TeamSettings from "@/components/settings/TeamSettings";
 import { Tabs } from "@mantine/core";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 export default function Team() {
   const router = useRouter();

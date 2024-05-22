@@ -16,7 +16,7 @@ import { showNotification } from "@mantine/notifications";
 import { IconNewSection } from "@tabler/icons-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import merge from "lodash.merge";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 

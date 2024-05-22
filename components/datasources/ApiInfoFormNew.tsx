@@ -7,7 +7,7 @@ import { DataSourceParams } from "@/requests/datasources/types";
 import { useAppStore } from "@/stores/app";
 import { Box, Button, Flex, Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 export default function ApiInfoFormNew() {
   const router = useRouter();

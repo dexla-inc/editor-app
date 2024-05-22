@@ -5,7 +5,7 @@ import { convertToPatchParams } from "@/types/dashboardTypes";
 import { Button, Card, Stack, Text, useMantineTheme } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { Editor } from "@monaco-editor/react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { safeJsonParse } from "@/utils/common";
 
