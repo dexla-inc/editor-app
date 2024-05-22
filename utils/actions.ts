@@ -276,6 +276,8 @@ export const useNavigationAction = ({
     url += `?${queryStrings.join("&")}`;
   }
 
+  console.log("url", action.pageSlug, url, projectId, isLive);
+
   router.push(url);
 };
 
@@ -583,8 +585,6 @@ export const useRefreshApiCallAction = async (
   const endpoint = endpointResults?.find((e) => e.id === action.endpoint)!;
 
   const queryKey = endpoint?.id;
-
-  console.log("refreshApiCallAction", queryKey);
 
   if (queryKey) {
     queryClient.invalidateQueries({ queryKey: [queryKey] });
