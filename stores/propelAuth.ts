@@ -49,8 +49,6 @@ export const usePropelAuthStore = create<AuthState>()(
           companies.find((company) => company.orgId === activeCompanyId) ||
           companies[0];
 
-        console.log("activeCompany", activeCompany);
-
         set({
           accessToken: authInfo?.accessToken || "",
           user: authInfo?.user || ({} as User),

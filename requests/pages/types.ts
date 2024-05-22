@@ -46,6 +46,17 @@ export type PageBody = {
   actions?: Action[];
 };
 
+export type PageConfigProps = {
+  title: string;
+  slug: string;
+  authenticatedOnly: boolean;
+};
+
+export type PageActionProps = {
+  name?: string;
+  actions?: Action[];
+};
+
 export type PagesResponse = IResponse & {
   homePageId: string;
   [key: string]: any;

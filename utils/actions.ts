@@ -584,8 +584,6 @@ export const useRefreshApiCallAction = async (
 
   const queryKey = endpoint?.id;
 
-  console.log("refreshApiCallAction", queryKey);
-
   if (queryKey) {
     queryClient.invalidateQueries({ queryKey: [queryKey] });
   }
