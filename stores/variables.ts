@@ -9,7 +9,7 @@ type VariableStoreParams = VariableResponse & {
 
 type VariablesState = {
   resetVariable: (variableId: string) => void;
-  initializeVariableList: (projectId: string) => Promise<void>;
+  initializeVariableList: (variableList: Array<VariableResponse>) => void;
   setVariable: (variable: Partial<VariableStoreParams>) => void;
   deleteVariable: (variableId: string) => void;
   variableList: Record<string, VariableStoreParams>;
@@ -43,10 +43,9 @@ export const useVariableStore = create<VariablesState>()(
             "variables/resetVariable",
           );
         },
-        initializeVariableList: async (projectId) => {
-          const variableList = await listVariables(projectId);
+        initializeVariableList: async (variableList) => {
           const newVariableList: Record<string, VariableStoreParams> =
-            variableList.results.reduce(
+            variableList.reduce(
               (acc, variable) => {
                 acc[variable.id] = {
                   ...variable,

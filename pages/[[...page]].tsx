@@ -15,7 +15,7 @@ export const getServerSideProps = async ({
   query,
 }: GetServerSidePropsContext) => {
   const url = req.headers.host as string;
-  const currentSlug = query.page as string;
+  const currentSlug = (query?.page as string) ?? "/";
   const timer = Stopwatch.StartNew();
   console.log(
     "Before getDeploymentPage",

@@ -8,9 +8,7 @@ import { useUserConfigStore } from "@/stores/userConfig";
 import { globalStyles } from "@/utils/branding";
 import { CURSOR_COLORS } from "@/utils/config";
 import { Global } from "@mantine/core";
-import { useEffect, useState } from "react";
-import { Navbar } from "@/components/navbar/Navbar";
-import { Aside } from "@/components/aside/Aside";
+import { memo, useEffect, useState } from "react";
 import { useInputsStore } from "@/stores/inputs";
 
 type Props = {
@@ -61,7 +59,7 @@ const Editor = ({ projectId, pageId }: Props) => {
 
   return (
     <>
-      <Shell pos="relative" navbar={<Navbar />} aside={<Aside />}>
+      <Shell pos="relative" projectId={projectId}>
         <Global styles={globalStyles(isDarkTheme)} />
         <EditorCanvas projectId={projectId} />
       </Shell>
@@ -90,4 +88,4 @@ const Editor = ({ projectId, pageId }: Props) => {
   );
 };
 
-export default Editor;
+export default memo(Editor);

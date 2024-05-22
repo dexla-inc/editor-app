@@ -1,7 +1,7 @@
 import { Icon } from "@/components/Icon";
 import { ActionIcon, ActionIconProps, Tooltip } from "@mantine/core";
 import Link from "next/link";
-import { MouseEventHandler } from "react";
+import { memo, MouseEventHandler } from "react";
 
 type BaseProps = {
   iconName: string;
@@ -21,7 +21,7 @@ type LinkProps = {
 
 type Props = BaseProps & (ClickProps | LinkProps);
 
-export const ActionIconDefault = ({
+export const ActionIconDefaultComponent = ({
   iconName,
   tooltip,
   onClick,
@@ -54,3 +54,5 @@ export const ActionIconDefault = ({
     </Tooltip>
   );
 };
+
+export const ActionIconDefault = memo(ActionIconDefaultComponent);
