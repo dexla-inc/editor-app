@@ -80,7 +80,6 @@ export const getServerSideProps = async ({
   if (
     !isLoggedIn &&
     deploymentPage?.authenticatedOnly &&
-    signInPageSlug &&
     currentSlug !== signInPageSlug
   ) {
     return {

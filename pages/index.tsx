@@ -47,21 +47,21 @@ export const getServerSideProps = async ({
   const notFoundPageslug = deploymentPage.project.redirects?.notFoundPageId;
 
   // Check if page exists
-  if (!deploymentPage.id) {
-    return {
-      redirect: {
-        destination: notFoundPageslug
-          ? `/${notFoundPageslug}`
-          : "https://dexla.ai/404",
-        permanent: false,
-      },
-      props: {
-        dehydratedState: dehydrate(queryClient),
-        isLive: true,
-        project: deploymentPage.project,
-      },
-    };
-  }
+  // if (!deploymentPage.id) {
+  //   return {
+  //     redirect: {
+  //       destination: notFoundPageslug
+  //         ? `/${notFoundPageslug}`
+  //         : "https://dexla.ai/404",
+  //       permanent: false,
+  //     },
+  //     props: {
+  //       dehydratedState: dehydrate(queryClient),
+  //       isLive: true,
+  //       project: deploymentPage.project,
+  //     },
+  //   };
+  // }
 
   // Check if user is logged in
   const cookie = req.cookies[deploymentPage.projectId];
