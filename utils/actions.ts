@@ -276,8 +276,6 @@ export const useNavigationAction = ({
     url += `?${queryStrings.join("&")}`;
   }
 
-  console.log("url", action.pageSlug, url, projectId, isLive);
-
   router.push(url);
 };
 

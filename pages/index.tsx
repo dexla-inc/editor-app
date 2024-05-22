@@ -15,21 +15,7 @@ export const getServerSideProps = async ({
 }: GetServerSidePropsContext) => {
   const url = req.headers.host as string;
   const currentSlug = "/";
-  const timer = Stopwatch.StartNew();
-  console.log(
-    "Before getDeploymentPage",
-    timer.getElapsedMilliseconds(),
-    url,
-    currentSlug,
-  );
   const deploymentPage = await getDeploymentPage(url, currentSlug);
-  console.log(
-    "After getDeploymentPage",
-    timer.getElapsedMilliseconds(),
-    url,
-    currentSlug,
-    `trackingId: ${deploymentPage.trackingId}`,
-  );
 
   if (!deploymentPage.projectId) {
     return {
@@ -47,31 +33,26 @@ export const getServerSideProps = async ({
   const notFoundPageslug = deploymentPage.project.redirects?.notFoundPageId;
 
   // Check if page exists
-  // if (!deploymentPage.id) {
-  //   return {
-  //     redirect: {
-  //       destination: notFoundPageslug
-  //         ? `/${notFoundPageslug}`
-  //         : "https://dexla.ai/404",
-  //       permanent: false,
-  //     },
-  //     props: {
-  //       dehydratedState: dehydrate(queryClient),
-  //       isLive: true,
-  //       project: deploymentPage.project,
-  //     },
-  //   };
-  // }
+  if (!deploymentPage.id) {
+    return {
+      redirect: {
+        destination: notFoundPageslug
+          ? `/${notFoundPageslug}`
+          : "https://dexla.ai/404",
+        permanent: false,
+      },
+      props: {
+        dehydratedState: dehydrate(queryClient),
+        isLive: true,
+        project: deploymentPage.project,
+      },
+    };
+  }
 
   // Check if user is logged in
   const cookie = req.cookies[deploymentPage.projectId];
   const isLoggedIn = checkRefreshTokenExists(cookie);
   const signInPageSlug = deploymentPage.project.redirects?.signInPageId;
-  console.log(
-    "After signInPageSlug",
-    timer.getElapsedMilliseconds(),
-    `trackingId: ${deploymentPage.trackingId}`,
-  );
 
   if (
     !isLoggedIn &&
@@ -91,11 +72,7 @@ export const getServerSideProps = async ({
       },
     };
   }
-  console.log(
-    "Before entering app",
-    timer.getElapsedMilliseconds(),
-    `trackingId: ${deploymentPage.trackingId}`,
-  );
+
   return {
     props: {
       dehydratedState: dehydrate(queryClient),

@@ -54,7 +54,6 @@ export const ActionSettingsForm = ({
     });
 
     const patchParams = convertToPatchParams({ actions: updatedActions });
-    console.log("patchParams", patchParams);
 
     try {
       const result = await patchPage(projectId, page.id, patchParams);

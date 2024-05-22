@@ -7,6 +7,7 @@ import { evictCache } from "@/requests/cache/queries-noauth";
 
 export const createDeployment = async (
   projectId: string,
+  hostUrl: string,
   params: DeploymentParams,
 ) => {
   const response = (await post<DeploymentResponse>(
@@ -14,7 +15,8 @@ export const createDeployment = async (
     params,
   )) as DeploymentResponse;
 
-  const cacheTag = getCacheTag(projectId);
+  const cacheTag = getCacheTag(hostUrl);
+
   await evictCache(cacheTag);
 
   return response;
@@ -32,5 +34,5 @@ export const promoteDeployment = async (projectId: string) => {
   return response;
 };
 
-const getCacheTag = (projectId: string) =>
-  `/projects/${projectId}/deployments/page`;
+const getCacheTag = (hostUrl: string) =>
+  `/projects/${hostUrl}/deployments/page`;
