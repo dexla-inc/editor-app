@@ -54,5 +54,5 @@ export const useCreateTemplateProject = (orgId: string) => {
       createTemplateProject();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isFetched]);
+  }, [isFetched, orgId]);
 };
