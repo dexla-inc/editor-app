@@ -15,6 +15,7 @@ export const DeployButton = () => {
   const { id: projectId, page } = router.query as { id: string; page: string };
   const [customDomain, setCustomDomain] = useState("");
   const [deployUrl, setDeployUrl] = useState<URL>();
+  const [slug, setSlug] = useState<string>("");
 
   const { data: pageListQuery, isFetched } = usePageListQuery(projectId, null);
   const setPages = useEditorStore((state) => state.setPages);
@@ -40,17 +41,18 @@ export const DeployButton = () => {
   }, [project]);
 
   useEffect(() => {
-    if (isFetched) {
+    if (isFetched && page) {
       setPages(pageListQuery?.results!);
+      setSlug(pageListQuery?.results.find((p) => p.id === page)?.slug ?? "");
     }
-  }, [pageListQuery, isFetched, setPages]);
+  }, [pageListQuery, isFetched, setPages, page]);
 
   useEffect(() => {
-    if (projectId && page) {
-      const deployUrl = generateDeployLink(projectId, customDomain, page);
+    if (projectId && page && slug) {
+      const deployUrl = generateDeployLink(projectId, customDomain, slug);
       setDeployUrl(deployUrl);
     }
-  }, [projectId, customDomain, page]);
+  }, [projectId, customDomain, page, slug]);
 
   const handleDeploy = async (forceProduction: boolean) => {
     try {
@@ -122,12 +124,13 @@ const generateDeployLink = (
 ): URL => {
   const hostName = window?.location?.hostname ?? "";
   const domain = hostName ?? "";
-  const isLocalhost = domain.startsWith("localhost");
+  const isLocalhost = process.env.NEXT_PUBLIC_APP_ENVIRONMENT === "local";
   const baseDomain = isLocalhost
     ? `${domain}:3000`
     : customDomain || process.env.NEXT_PUBLIC_DEPLOYED_DOMAIN;
 
   const prefix = isLocalhost || !customDomain ? `${projectId}.` : "";
+
   return new URL(
     `${isLocalhost ? "http" : "https"}://${prefix}${baseDomain}/${
       slug === "/" ? "" : slug
