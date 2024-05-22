@@ -1,10 +1,16 @@
 import { ActionIconDefault } from "@/components/ActionIconDefault";
 import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
 import { usePageListQuery } from "@/hooks/editor/reactQuery/usePageListQuery";
-import { createPage, deletePage, updatePage } from "@/requests/pages/mutations";
-import { PageBody, PageResponse } from "@/requests/pages/types";
+import { createPage, deletePage, patchPage } from "@/requests/pages/mutations";
+import {
+  PageBody,
+  PageConfigProps,
+  PageParams,
+  PageResponse,
+} from "@/requests/pages/types";
 import { useAppStore } from "@/stores/app";
 import { useEditorTreeStore } from "@/stores/editorTree";
+import { convertToPatchParams } from "@/types/dashboardTypes";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
 import { Button, Group, Stack, TextInput } from "@mantine/core";
@@ -37,15 +43,11 @@ export default function PageConfig({ page, setPage }: Props) {
   //     : [],
   // );
 
-  const form = useForm<PageBody>({
+  const form = useForm<PageConfigProps>({
     initialValues: {
       title: "",
       slug: "",
-      isHome: false,
       authenticatedOnly: false,
-      hasNavigation: false,
-      copyFrom: undefined,
-      queryStrings: {},
     },
     validate: {
       title: (value) =>
@@ -96,7 +98,7 @@ export default function PageConfig({ page, setPage }: Props) {
     }
   };
 
-  const onSubmit = async (values: PageBody) => {
+  const onSubmit = async (values: PageConfigProps) => {
     try {
       setIsLoading(true);
       startLoading({
@@ -116,15 +118,18 @@ export default function PageConfig({ page, setPage }: Props) {
       form.validate();
       let pageId = page?.id;
       if (page?.id) {
-        await updatePage(values, projectId, page.id);
+        const patchParams = convertToPatchParams<PageConfigProps>(values);
+
+        const result = await patchPage(projectId, page.id, patchParams);
+        setPage({ ...result, id: pageId } as PageResponse);
       } else {
         const result = await createPage(values, projectId);
         pageId = result.id;
         router.push(`/projects/${projectId}/editor/${result.id}`);
         resetTree();
+        setPage({ ...values, id: pageId } as PageResponse);
       }
 
-      setPage({ ...values, id: pageId } as PageResponse);
       invalidate();
 
       stopLoading({

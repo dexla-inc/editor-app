@@ -1,15 +1,20 @@
 import {
   PageAIResponse,
   PageBody,
+  PageConfigProps,
   PageResponse,
   PageStateParams,
   PageStateResponse,
   PagesResponse,
 } from "@/requests/pages/types";
-import { del, post, put } from "@/utils/api";
+import { del, patch, post, put } from "@/utils/api";
 import { evictCache } from "../cache/queries-noauth";
+import { PatchParams } from "../types";
 
-export const createPage = async (params: PageBody, projectId: string) => {
+export const createPage = async (
+  params: PageConfigProps,
+  projectId: string,
+) => {
   const response = (await post<PageResponse>(
     `/projects/${projectId}/pages`,
     params,
@@ -30,6 +35,23 @@ export const updatePage = async (
     `/projects/${projectId}/pages/${pageId}`,
     params,
   )) as PageResponse;
+
+  const cacheTag = getCacheTag(projectId);
+  const pageCacheTag = getPageCacheTag(projectId, pageId);
+  await evictCache(cacheTag);
+  await evictCache(pageCacheTag);
+
+  return response;
+};
+
+export const patchPage = async (
+  projectId: string,
+  pageId: string,
+  params: PatchParams[],
+) => {
+  let url = `/projects/${projectId}/pages/${pageId}`;
+
+  const response = (await patch<PageResponse>(url, params)) as PageResponse;
 
   const cacheTag = getCacheTag(projectId);
   const pageCacheTag = getPageCacheTag(projectId, pageId);

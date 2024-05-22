@@ -9,19 +9,21 @@ import { nanoid } from "nanoid";
 import merge from "lodash.merge";
 import { PageResponse } from "@/requests/pages/types";
 import isEmpty from "lodash.isempty";
+import { patchPage } from "@/requests/pages/mutations";
+import { convertToPatchParams } from "@/types/dashboardTypes";
 
 type Props = {
   sequentialTo?: string;
-  onUpdatePage: (values: any) => Promise<any>;
   close: () => void;
   page: PageResponse;
+  setPage: (page: PageResponse) => void;
 };
 
 export const SelectActionForm = ({
   sequentialTo,
-  onUpdatePage,
   close,
   page,
+  setPage,
 }: Props) => {
   const triggers = {
     sequential: [
@@ -48,22 +50,29 @@ export const SelectActionForm = ({
   });
 
   useEffect(() => {
-    if (form.isTouched() && form.isDirty() && form.isValid()) {
-      const id = nanoid();
-      const updatedActions = (page.actions || [])?.concat({
-        id,
-        ...form.values,
-        ...(!!sequentialTo && { sequentialTo }),
-      });
-      const updatedPage = merge({}, page, { actions: updatedActions });
+    const updatePage = async () => {
+      if (form.isTouched() && form.isDirty() && form.isValid()) {
+        const id = nanoid();
+        const updatedActions = (page.actions || [])?.concat({
+          id,
+          ...form.values,
+          ...(!!sequentialTo && { sequentialTo }),
+        });
 
-      onUpdatePage(updatedPage).then(() => {
-        form.reset();
-        close();
-      });
-    }
+        const patchParams = convertToPatchParams({ actions: updatedActions });
+        const result = await patchPage(page.projectId, page.id, patchParams);
+        setPage(result);
+      }
+    };
+
+    updatePage();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.values]);
+
+  // onUpdatePage(updatedPage).then(() => {
+  //   form.reset();
+  //   close();
+  // });
 
   return (
     <>
