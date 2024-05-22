@@ -45,27 +45,27 @@ export const getServerSideProps = async ({
   }
 
   //if(!deploymentPage.project)
-  // Redirect to dexla page to save it hasn't been deployed
+  // Redirect to dexla page to say it hasn't been deployed
 
   const notFoundPageslug = deploymentPage.project.redirects?.notFoundPageId;
   console.log("deploymentPage", deploymentPage);
   // Check if page exists
-  if (!deploymentPage.id) {
-    console.log("404Redirect", notFoundPageslug);
-    return {
-      redirect: {
-        destination: notFoundPageslug
-          ? `/${notFoundPageslug}`
-          : "https://dexla.ai/404",
-        permanent: false,
-      },
-      props: {
-        dehydratedState: dehydrate(queryClient),
-        isLive: true,
-        project: deploymentPage.project,
-      },
-    };
-  }
+  // if (!deploymentPage.id) {
+  //   console.log("404Redirect", notFoundPageslug);
+  //   return {
+  //     redirect: {
+  //       destination: notFoundPageslug
+  //         ? `/${notFoundPageslug}`
+  //         : "https://dexla.ai/404",
+  //       permanent: false,
+  //     },
+  //     props: {
+  //       dehydratedState: dehydrate(queryClient),
+  //       isLive: true,
+  //       project: deploymentPage.project,
+  //     },
+  //   };
+  // }
 
   // Check if user is logged in via cookies
   const cookie = req.cookies[deploymentPage.projectId];
