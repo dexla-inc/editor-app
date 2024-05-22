@@ -13,7 +13,7 @@ import { useEffect, useState } from "react";
 type Unit = "px" | "rem" | "%" | "vh" | "vw" | "auto" | "fit-content";
 
 type Props = {
-  value?: string | "auto" | "fit-content";
+  value?: string | number | "auto" | "fit-content";
   onChange?: (value: string) => void;
   disabledUnits?: Unit[];
   options?: SelectItem[];
@@ -21,7 +21,7 @@ type Props = {
 };
 
 export const UnitInput = ({
-  value: fetchedValue = "",
+  value: inputValue,
   onChange,
   disabledUnits,
   options: customOptions,
@@ -29,6 +29,7 @@ export const UnitInput = ({
   ...props
 }: Props & Omit<NumberInputProps, "onChange">) => {
   const theme = useMantineTheme();
+  const fetchedValue = inputValue ? inputValue.toString() : "";
 
   const options = customOptions ?? [
     { value: "px", label: "PX" },
@@ -39,12 +40,19 @@ export const UnitInput = ({
     { value: "fit-content", label: "fit" },
   ];
 
+  const isNumeric = !isNaN(Number(fetchedValue));
   const isUnit =
-    fetchedValue && fetchedValue !== "auto" && fetchedValue !== "fit-content";
+    fetchedValue &&
+    !isNumeric &&
+    fetchedValue !== "auto" &&
+    fetchedValue !== "fit-content";
+  const defaultValueAndUnit: [number, Unit] = isNumeric
+    ? [Number(fetchedValue), "px"]
+    : [0, fetchedValue === "" ? "auto" : (fetchedValue as Unit)];
 
   const [splitValue, splitUnit] = isUnit
     ? splitValueAndUnit(fetchedValue) || [0, "auto"]
-    : [0, fetchedValue === "" ? "auto" : (fetchedValue as Unit)];
+    : defaultValueAndUnit;
 
   const [value, setValue] = useState<number | "auto" | "fit-content">();
   const [textValue, setTextValue] = useState<string>();

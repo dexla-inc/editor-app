@@ -12,25 +12,10 @@ import Head from "next/head";
 // TODO: Backend changes so we only make one API call or two light API calls for getting project and deployment page.
 export const getServerSideProps = async ({
   req,
-  query,
 }: GetServerSidePropsContext) => {
   const url = req.headers.host as string;
-  const currentSlug = (query?.page as string) ?? "/";
-  const timer = Stopwatch.StartNew();
-  console.log(
-    "Before getDeploymentPage",
-    timer.getElapsedMilliseconds(),
-    url,
-    currentSlug,
-  );
+  const currentSlug = "/";
   const deploymentPage = await getDeploymentPage(url, currentSlug);
-  console.log(
-    "After getDeploymentPage",
-    timer.getElapsedMilliseconds(),
-    url,
-    currentSlug,
-    `trackingId: ${deploymentPage.trackingId}`,
-  );
 
   if (!deploymentPage.projectId) {
     return {
@@ -64,15 +49,10 @@ export const getServerSideProps = async ({
     };
   }
 
-  // Check if user is logged in via cookies
+  // Check if user is logged in
   const cookie = req.cookies[deploymentPage.projectId];
   const isLoggedIn = checkRefreshTokenExists(cookie);
   const signInPageSlug = deploymentPage.project.redirects?.signInPageId;
-  console.log(
-    "After signInPageSlug",
-    timer.getElapsedMilliseconds(),
-    `trackingId: ${deploymentPage.trackingId}`,
-  );
 
   if (
     !isLoggedIn &&
@@ -92,11 +72,7 @@ export const getServerSideProps = async ({
       },
     };
   }
-  console.log(
-    "Before entering app",
-    timer.getElapsedMilliseconds(),
-    `trackingId: ${deploymentPage.trackingId}`,
-  );
+
   return {
     props: {
       dehydratedState: dehydrate(queryClient),
@@ -110,7 +86,7 @@ type Props = {
   deploymentPage: DeploymentPage;
 };
 
-function LivePage({ deploymentPage }: Props) {
+const HomePage = ({ deploymentPage }: Props) => {
   return (
     <>
       <Head>
@@ -125,6 +101,6 @@ function LivePage({ deploymentPage }: Props) {
       <Live deploymentPage={deploymentPage} />
     </>
   );
-}
+};
 
-export default withPageOnLoad(LivePage, { isLive: true });
+export default withPageOnLoad(HomePage, { isLive: true });
