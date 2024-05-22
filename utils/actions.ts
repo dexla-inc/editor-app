@@ -654,8 +654,10 @@ export const useApiCallAction = async (
         );
 
         const clearAuthTokens = useDataSourceStore.getState().clearAuthTokens;
+        const resetVariables = useVariableStore.getState().resetVariables;
 
         clearAuthTokens(projectId);
+        resetVariables();
 
         break;
       default:

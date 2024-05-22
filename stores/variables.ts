@@ -13,12 +13,13 @@ type VariablesState = {
   setVariable: (variable: Partial<VariableStoreParams>) => void;
   deleteVariable: (variableId: string) => void;
   variableList: Record<string, VariableStoreParams>;
+  resetVariables: () => void;
 };
 
 export const useVariableStore = create<VariablesState>()(
   devtools(
     persist(
-      (set, get) => ({
+      (set, get, store) => ({
         resetVariable: (variableId) => {
           set(
             (state) => {
@@ -95,6 +96,10 @@ export const useVariableStore = create<VariablesState>()(
             false,
             "variables/deleteVariable",
           );
+        },
+        resetVariables: () => {
+          store.persist.clearStorage();
+          set({ variableList: {} }, false, "variables/resetVariables");
         },
         variableList: {},
       }),
