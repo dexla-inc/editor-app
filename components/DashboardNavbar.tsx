@@ -24,6 +24,7 @@ export default function DashboardNavbar({
   const router = useRouter();
   const projectId = router.query.id as string;
   const user = usePropelAuthStore((state) => state.user);
+  const reset = usePropelAuthStore((state) => state.reset);
 
   return (
     <Navbar
@@ -98,6 +99,7 @@ export default function DashboardNavbar({
               onClick={() => {
                 setIsLoading(true);
                 logoutFn(true);
+                reset();
               }}
             >
               Logout
