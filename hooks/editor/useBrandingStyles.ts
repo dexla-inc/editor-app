@@ -11,7 +11,8 @@ export const useBrandingStyles = ({ tag = "P" }: Props = {}) => {
   const borderColor = getColorFromTheme(theme, "Border.6");
   // TODO: Need to be able to support multiple texts
   const textFont = theme.fonts?.find((font) => font.tag === tag);
-  const fontSize = textFont?.fontSize + "px";
+
+  const fontSize = textFont?.fontSize;
   const buttonFont = theme.fonts.find((font) => font.tag === "Button");
   const inputSize = inputSizes[theme.inputSize];
   const radiusSize = radiusSizes[theme.defaultRadius];

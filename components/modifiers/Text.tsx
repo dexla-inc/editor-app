@@ -72,8 +72,8 @@ const Modifier = withModifier(({ selectedComponent }) => {
     initialValues: merge({}, defaultTextValues, {
       ...(!isTitle && {
         fontTag: data.fontTag ?? defaultTextValues.fontTag,
-        fontWeight: data.style?.fontWeight ?? "normal",
-        fontStyle: data.style?.fontStyle ?? "normal",
+        // fontWeight: data.style?.fontWeight,
+        // fontStyle: data.style?.fontStyle,
       }),
       order: data.order?.toString() ?? defaultTextValues.order,
       color: data.color ?? defaultTextValues.color,
