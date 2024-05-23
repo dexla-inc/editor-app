@@ -7,11 +7,15 @@ import { useForm } from "@mantine/form";
 import { useEffect } from "react";
 import { ComponentToBindFromSelect } from "../ComponentToBindFromSelect";
 import merge from "lodash.merge";
+import { ComponentToBindFromInput } from "../ComponentToBindFromInput";
 
-export const CommonData = ({ component }: DataProps) => {
+export const CommonData = ({ component }: Pick<DataProps, "component">) => {
   const onLoadValues = merge(
     { currentState: { static: "default", dataType: "static" } },
     { isVisible: { static: true, dataType: "static" } },
+    {
+      tooltip: { static: component?.props?.tooltip ?? "", dataType: "static" },
+    },
     component?.onLoad,
   );
 
@@ -38,6 +42,10 @@ export const CommonData = ({ component }: DataProps) => {
         label="State"
         {...form.getInputProps(`onLoad.currentState`)}
         data={getComponentsStates()}
+      />
+      <ComponentToBindFromInput
+        {...form.getInputProps("onLoad.tooltip")}
+        label="Tooltip"
       />
     </Stack>
   );
