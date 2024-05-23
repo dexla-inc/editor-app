@@ -59,8 +59,8 @@ export const withComponentWrapper = <T extends Record<string, any>>(
     //     return CURSOR_COLORS[other.connectionId % CURSOR_COLORS.length];
     //   }),
     // )!;
-
-    const hasTooltip = !!component?.props?.tooltip;
+    const tooltip = component?.props?.tooltip ?? computedOnLoad?.tooltip;
+    const hasTooltip = !!tooltip;
     const initiallyLoading = component?.props?.initiallyLoading;
     const Wrapper = hasTooltip
       ? Tooltip
@@ -143,7 +143,7 @@ export const withComponentWrapper = <T extends Record<string, any>>(
         <Wrapper
           {...(hasTooltip
             ? {
-                label: component?.props?.tooltip,
+                label: tooltip,
                 color: component?.props?.tooltipColor,
                 position: component?.props?.tooltipPosition,
                 withArrow: true,
