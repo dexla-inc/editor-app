@@ -11,6 +11,7 @@ export const DashboardUserMenu = () => {
   const [isLoading, setIsLoading] = useState(false);
   const user = usePropelAuthStore((state) => state.user);
   const logoutFn = useLogoutFunction();
+  const reset = usePropelAuthStore((state) => state.reset);
 
   return (
     <Menu withArrow>
@@ -34,6 +35,7 @@ export const DashboardUserMenu = () => {
             onClick={() => {
               setIsLoading(true);
               logoutFn(true);
+              reset();
             }}
           >
             Logout

@@ -7,8 +7,8 @@ function InstantiatePropelAuthStore(props: WithAuthInfoProps) {
   const initializeAuth = usePropelAuthStore((state) => state.initializeAuth);
 
   useEffect(() => {
-    initializeAuth(props);
-  }, [initializeAuth, props]);
+    if (props.isLoggedIn) initializeAuth(props);
+  }, [initializeAuth, props, props.isLoggedIn]);
 
   return null;
 }
