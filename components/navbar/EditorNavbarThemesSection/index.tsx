@@ -144,7 +144,6 @@ export const EditorNavbarThemesSection =
     );
 
     const onSubmit = async (values: ThemeResponse) => {
-      console.log("values", values);
       mutate({ params: values, projectId: projectId });
     };
 
@@ -203,7 +202,6 @@ export const EditorNavbarThemesSection =
                 hex={hex}
                 isDefault={form.values.colors[index]?.isDefault ?? false}
                 onValueChange={(value) => {
-                  console.log("value", value);
                   form.setFieldValue(`colors.${index}.hex`, value.hex);
                   form.setFieldValue(
                     `colors.${index}.friendlyName`,

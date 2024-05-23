@@ -4,7 +4,7 @@ import { useContentEditable } from "@/hooks/components/useContentEditable";
 import { EditableComponentMapper } from "@/utils/editor";
 import { Text as MantineText, TextProps } from "@mantine/core";
 import merge from "lodash.merge";
-import { forwardRef, memo } from "react";
+import { forwardRef, memo, useMemo } from "react";
 
 type Props = EditableComponentMapper & TextProps;
 
@@ -14,14 +14,23 @@ const TextComponent = forwardRef(
       component.id as string,
       ref,
     );
-    const { triggers, hideIfDataIsEmpty, variable, text, ...componentProps } =
-      component.props as any;
+    const {
+      triggers,
+      hideIfDataIsEmpty,
+      variable,
+      text,
+      fontTag,
+      ...componentProps
+    } = component.props as any;
     const { children: childrenValue = component.props?.children } =
       component.onLoad;
     const { style, ...restProps } = props as any;
 
-    const { textStyle } = useBrandingStyles();
-    const customStyle = merge({}, textStyle, style);
+    const { textStyle } = useBrandingStyles({ tag: fontTag });
+    const customStyle = useMemo(
+      () => merge({}, style, textStyle),
+      [style, textStyle],
+    );
 
     return (
       <MantineText
