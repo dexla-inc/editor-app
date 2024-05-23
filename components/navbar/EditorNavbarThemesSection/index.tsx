@@ -215,9 +215,10 @@ export const EditorNavbarThemesSection =
                   }
                 }}
                 deleteColor={() => {
-                  if (!form.values.colors[index]?.isDefault) {
-                    form.removeListItem("colors", index);
-                  }
+                  const updatedColors = [...form.values.colors];
+                  updatedColors.splice(index, 1);
+                  form.setValues({ ...form.values, colors: updatedColors });
+                  setSearchResults(updatedColors);
                 }}
               />
             ))}
