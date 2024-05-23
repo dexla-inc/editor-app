@@ -3,8 +3,10 @@ import { useShallow } from "zustand/react/shallow";
 import { Component, ComponentTree } from "@/utils/editor";
 import { useEndpoint } from "@/hooks/components/useEndpoint";
 import { LoadingOverlay, Skeleton } from "@mantine/core";
+import { useEffect } from "react";
 
 type UseRenderDataProps = {
+  currentComponentGroupId: string;
   component: Component & ComponentTree;
 };
 
@@ -17,10 +19,12 @@ type RenderComponentProps = {
   child: ComponentTree;
   data: any;
   parentSuffix: string;
-  currentComponentGroupId: string;
 };
 
-export const useRenderData = ({ component }: UseRenderDataProps) => {
+export const useRenderData = ({
+  component,
+  currentComponentGroupId,
+}: UseRenderDataProps) => {
   const isPreviewMode = useEditorTreeStore(
     useShallow((state) => state.isPreviewMode || state.isLive),
   );
@@ -39,25 +43,25 @@ export const useRenderData = ({ component }: UseRenderDataProps) => {
 
   const data = dataType === "dynamic" ? dynamicData : staticData;
 
+  useEffect(() => {
+    if (
+      JSON.stringify(
+        useEditorTreeStore.getState().relatedComponentsData[
+          currentComponentGroupId
+        ],
+      ) !== JSON.stringify(data)
+    ) {
+      setRelatedComponentsData({ id: currentComponentGroupId, data });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]); // WARNING: we only want to listen to data changes
+
   const renderData = ({ renderTree, shareableContent }: RenderDataProps) => {
     const renderComponent = ({
       child,
       data,
       parentSuffix,
-      currentComponentGroupId,
     }: RenderComponentProps) => {
-      // WARNING: If your redux devtools is failing, you might want to comment this if statement
-      // It populates all parent rendered data, so I can use it in other places, like the binding popover
-      if (
-        JSON.stringify(
-          useEditorTreeStore.getState().relatedComponentsData[
-            currentComponentGroupId
-          ],
-        ) !== JSON.stringify(data)
-      ) {
-        setRelatedComponentsData({ id: currentComponentGroupId, data });
-      }
-
       return renderTree(child, {
         ...shareableContent,
         // if data is undefined, we don't want to overwrite the data passed by a parent that is sharing data
@@ -71,9 +75,9 @@ export const useRenderData = ({ component }: UseRenderDataProps) => {
 
     if (Array.isArray(data)) {
       return data.map((item: any, parentIndex: number) => {
-        // Build parentSuffix for the current component
-        const currentComponentGroupId = `${component.id}__${parentIndex}`;
-        let newParentSuffix = currentComponentGroupId;
+        let newParentSuffix = `${component.id}__${parentIndex}`;
+        // If parentSuffix is in shareableContent, that means there is a parent sharing data, and I want to build a new
+        // component id for the current one
         if (shareableContent?.parentSuffix) {
           newParentSuffix = `${shareableContent.parentSuffix}--${component.id}__${parentIndex}`;
         }
@@ -83,13 +87,13 @@ export const useRenderData = ({ component }: UseRenderDataProps) => {
             child,
             data: item,
             parentSuffix: newParentSuffix,
-            currentComponentGroupId,
           });
         });
       });
     } else {
       let newParentSuffix = component.id!;
-      // Build parentSuffix for the current component
+      // If parentSuffix is in shareableContent, that means there is a parent sharing data, and I want to build a new
+      // component id for the current one
       if (shareableContent?.parentSuffix) {
         newParentSuffix = `${shareableContent.parentSuffix}--${newParentSuffix}`;
       }
@@ -99,7 +103,6 @@ export const useRenderData = ({ component }: UseRenderDataProps) => {
           child,
           data,
           parentSuffix: newParentSuffix,
-          currentComponentGroupId: component.id!,
         });
       });
     }

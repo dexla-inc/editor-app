@@ -31,7 +31,10 @@ export const CardComponent = forwardRef(
       gap: gapPx,
     });
 
-    const { renderData } = useRenderData({ component });
+    const { renderData } = useRenderData({
+      component,
+      currentComponentGroupId: props.id,
+    });
 
     return (
       <MantineFlex
