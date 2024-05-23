@@ -5,8 +5,8 @@ import { useAppStore } from "@/stores/app";
 import { componentMapper } from "@/utils/componentMapper";
 import { decodeSchema } from "@/utils/compression";
 import { ComponentTree } from "@/utils/editor";
-import { Box } from "@mantine/core";
-import { useCallback } from "react";
+import { Box, LoadingOverlay } from "@mantine/core";
+import { memo, useCallback, useTransition } from "react";
 import { RenderTreeFunc } from "@/types/component";
 import { prepareUserThemeLive } from "@/utils/prepareUserThemeLive";
 import { DeploymentPage } from "@/requests/deployments/types";
@@ -24,15 +24,17 @@ import { useVariableListQuery } from "@/hooks/editor/reactQuery/useVariableListQ
 
 type Props = {
   deploymentPage: DeploymentPage;
+  pageState: any;
 };
 
 let theme: MantineThemeExtended | undefined;
 
-export const Live = ({ deploymentPage }: Props) => {
+export const LiveComponent = ({ deploymentPage, pageState }: Props) => {
   theme =
     theme === undefined ? prepareUserThemeLive(deploymentPage.branding) : theme;
 
   const projectId = deploymentPage.project.id;
+  const [isPending, startTransition] = useTransition();
 
   const { data: datasources } = useDataSources(projectId);
   const { data: variables } = useVariableListQuery(projectId);
@@ -47,11 +49,6 @@ export const Live = ({ deploymentPage }: Props) => {
   const setApiAuthConfig = useDataSourceStore(
     (state) => state.setApiAuthConfig,
   );
-  const setIsLive = useEditorTreeStore((state) => state.setIsLive);
-  const setCurrentPageAndProjectIds = useEditorTreeStore(
-    (state) => state.setCurrentPageAndProjectIds,
-  );
-  const setPreviewMode = useEditorTreeStore((state) => state.setPreviewMode);
   const setTheme = useThemeStore((state) => state.setTheme);
   const resetInputValues = useInputsStore((state) => state.resetInputValues);
 
@@ -62,35 +59,39 @@ export const Live = ({ deploymentPage }: Props) => {
 
   useEffect(() => {
     if (deploymentPage?.pageState) {
-      const decodedSchema = decodeSchema(deploymentPage.pageState);
-      const state = safeJsonParse(decodedSchema);
-      setEditorTree(state, {
-        onLoad: true,
-        action: "Initial State",
+      startTransition(() => {
+        setEditorTree(pageState, {
+          onLoad: true,
+          action: "Initial State",
+        });
+        setIsLoading(false);
       });
-      setIsLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [deploymentPage?.pageState]);
+  }, [pageState]);
 
-  const loadFonts = useCallback(() => {
-    if (theme?.fontFamily && theme?.headings?.fontFamily)
-      initializeFonts(theme.fontFamily, theme.headings.fontFamily);
-  }, []);
+  if (theme?.fontFamily && theme?.headings?.fontFamily) {
+    initializeFonts(theme.fontFamily, theme.headings.fontFamily);
+  }
 
   useEffect(() => {
     if (deploymentPage.id) {
-      setCurrentPageAndProjectIds(projectId, deploymentPage.id);
-      setPreviewMode(true);
-      setIsLive(true);
+      useEditorTreeStore.setState(
+        {
+          currentPageId: deploymentPage.id,
+          currentProjectId: projectId,
+          isLive: true,
+          isPreviewMode: true,
+        },
+        false,
+        "editorTree/setStartUp",
+      );
 
       resetInputValues();
-
-      loadFonts();
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [projectId, deploymentPage.id, loadFonts]);
+  }, [projectId, deploymentPage.id]);
 
   useEffect(() => {
     if (variables) initializeVariableList(variables.results);
@@ -146,7 +147,11 @@ export const Live = ({ deploymentPage }: Props) => {
 
   return (
     <LiveWrapper project={deploymentPage.project}>
+      {isPending.toString()}
+      <LoadingOverlay visible={isPending} />
       {renderTree(editorTree.root)}
     </LiveWrapper>
   );
 };
+
+export const Live = memo(LiveComponent);
