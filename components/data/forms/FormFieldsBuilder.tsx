@@ -3,7 +3,6 @@ import {
   FieldType,
   StaticFormFieldsBuilder,
 } from "@/components/data/forms/StaticFormFieldsBuilder";
-import { useComponentStates } from "@/hooks/editor/useComponentStates";
 import { Endpoint } from "@/requests/datasources/types";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { ICON_SIZE } from "@/utils/config";
@@ -33,8 +32,6 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
   const hasParentComponentData = useEditorTreeStore(
     (state) => state.selectedComponentIds?.at(-1)?.includes("-related-"),
   );
-  const { getComponentsStates } = useComponentStates();
-
   const onLoadFieldsStarter = fields.reduce(
     (acc, f) => {
       acc[f.name] = {

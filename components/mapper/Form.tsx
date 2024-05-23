@@ -107,6 +107,7 @@ const FormComponent = forwardRef(
     const { renderData } = useRenderData({
       component,
       currentComponentGroupId: props.id,
+      shareableContent,
     });
 
     return (
@@ -124,7 +125,7 @@ const FormComponent = forwardRef(
         {...otherTriggers}
         pos="relative"
       >
-        {renderData({ renderTree, shareableContent })}
+        {renderData({ renderTree })}
         <LoadingOverlay visible={loading} zIndex={1000} radius="sm" />
       </MantineFlex>
     );

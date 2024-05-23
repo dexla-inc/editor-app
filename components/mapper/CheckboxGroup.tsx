@@ -70,6 +70,11 @@ const CheckboxGroupComponent = forwardRef(
     const { renderData } = useRenderData({
       component,
       currentComponentGroupId: props.id,
+      shareableContent: {
+        ...shareableContent,
+        value,
+        isInsideGroup: true,
+      },
     });
 
     return (
@@ -95,11 +100,6 @@ const CheckboxGroupComponent = forwardRef(
         <Group {...checkboxWrapperProps} w="100%">
           {renderData({
             renderTree,
-            shareableContent: {
-              ...shareableContent,
-              value,
-              isInsideGroup: true,
-            },
           })}
         </Group>
       </MantineCheckbox.Group>

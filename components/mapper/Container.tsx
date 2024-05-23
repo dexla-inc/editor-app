@@ -32,6 +32,7 @@ export const ContainerComponent = forwardRef<HTMLDivElement, Props>(
     const { renderData } = useRenderData({
       component,
       currentComponentGroupId: props.id,
+      shareableContent,
     });
 
     return (
@@ -42,7 +43,7 @@ export const ContainerComponent = forwardRef<HTMLDivElement, Props>(
         {...triggers}
         {...componentProps}
       >
-        {renderData({ renderTree, shareableContent })}
+        {renderData({ renderTree })}
       </MantineFlex>
     );
   },
