@@ -12,6 +12,7 @@ import TagManager from "react-gtm-module";
 import Script from "next/script";
 import { MantineGlobal } from "@/components/MantineGlobal";
 import { ProgressBar } from "@/components/ProgressBar";
+import { useEditorTreeStore } from "@/stores/editorTree";
 
 const GTM_ID = "GTM-P3DVFXMS";
 const nodeEnv = process.env.NODE_ENV;
@@ -19,11 +20,12 @@ const nodeEnv = process.env.NODE_ENV;
 export const GlobalProviders = ({ children }: { children: ReactNode }) => {
   const isDarkTheme = useUserConfigStore((state: any) => state.isDarkTheme);
   const dehydratedState = dehydrate(queryClient);
+  const isLive = useEditorTreeStore((state) => state.isLive);
 
   const [loadTagManager, setLoadTagManager] = useState(false);
 
   useEffect(() => {
-    // setLoadTagManager(!isLive && nodeEnv !== "development");
+    setLoadTagManager(!isLive && nodeEnv !== "development");
 
     if (loadTagManager) {
       const tagManagerArgs = {

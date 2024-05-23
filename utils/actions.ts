@@ -36,6 +36,7 @@ import { ResetVariableActionForm } from "@/components/actions/ResetVariableActio
 import { useThemeStore } from "@/stores/theme";
 import { queryClient } from "./reactQuery";
 import { RefreshAPICallActionForm } from "@/components/actions/RefreshAPICallActionForm";
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 
 const triggers = [
   "onClick",
@@ -234,7 +235,7 @@ export type Action = {
 
 export type ActionParams = {
   actionId: string;
-  router: Router;
+  router: AppRouterInstance;
   setActionsResponses: any;
   computeValue: ComputeValueProps;
   event?: any;

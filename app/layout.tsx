@@ -15,27 +15,6 @@ declare global {
   }
 }
 
-export const metadata = {
-  title: "Editor",
-  description: "Dexla Editor",
-  viewport: "width=device-width, initial-scale=1, maximum-scale=1",
-};
-
-// <Head>
-//   <title>Editor</title>
-//   <meta name="description" content="Dexla Editor" />
-//   <meta
-//       name="viewport"
-//       content="width=device-width, initial-scale=1, maximum-scale=1"
-//   />
-//
-//   <link
-//       rel="icon"
-//       type="image/x-icon"
-//       href={isLive ? "" : "/favicon.ico"}
-//   />
-// </Head>
-
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">

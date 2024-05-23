@@ -1,16 +1,14 @@
 import { useTriggers } from "@/hooks/components/useTriggers";
-import { NextRouter, Router } from "next/router";
-import { useRouter } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { PageResponse } from "@/requests/pages/types";
-import { ProjectResponse } from "@/requests/projects/types";
 import { usePageQuery } from "@/hooks/editor/reactQuery/usePageQuery";
+import { DeploymentPage } from "@/requests/deployments/types";
+import { EditorTreeCopy } from "@/utils/editor";
 
 // Props from server side
 type Props = {
-  isLive: boolean;
-  deploymentPage: PageResponse;
-  project: ProjectResponse;
+  deploymentPage: DeploymentPage;
+  pageState: EditorTreeCopy;
 };
 
 export const withPageOnLoad = (
@@ -19,10 +17,11 @@ export const withPageOnLoad = (
 ) => {
   const PageOnLoadWrapper = (props: Props) => {
     const router = useRouter();
-    const { id: projectId, page: pageId } = router.query as {
+    const pathName = usePathname();
+    const { id: projectId, page: pageId } = useParams<{
       id: string;
       page: string;
-    };
+    }>();
 
     const { data: editorPage } = usePageQuery(
       projectId,
@@ -35,8 +34,8 @@ export const withPageOnLoad = (
     const { onPageLoad } = useTriggers({
       // @ts-ignore
       entity: page,
-      router: router,
-      projectId: props.project?.id || projectId,
+      router,
+      projectId: props.deploymentPage.project?.id || projectId,
     });
 
     const [actionTriggeredForPath, setActionTriggeredForPath] = useState("");
@@ -44,24 +43,18 @@ export const withPageOnLoad = (
     useEffect(() => {
       const triggerPageActions = async () => {
         const isPageValid =
-          page &&
-          (router.asPath.includes(page.id) ||
-            router.asPath.includes(page.slug));
+          page && (pathName.includes(page.id) || pathName.includes(page.slug));
         // TODO: Do not run when runInEditMode is false and the mode is editor.
         // TODO: Only the last action gets run
 
-        if (
-          isPageValid &&
-          onPageLoad &&
-          actionTriggeredForPath !== router.asPath
-        ) {
+        if (isPageValid && onPageLoad && actionTriggeredForPath !== pathName) {
           await onPageLoad?.();
-          setActionTriggeredForPath(router.asPath);
+          setActionTriggeredForPath(pathName);
         }
       };
 
       triggerPageActions();
-    }, [router.asPath, page?.id, onPageLoad, actionTriggeredForPath, page]);
+    }, [pathName, page?.id, onPageLoad, actionTriggeredForPath, page]);
 
     return <WrappedComponent {...props} />;
   };

@@ -3,10 +3,9 @@
 import { LiveWrapper } from "@/components/LiveWrapper";
 import { useAppStore } from "@/stores/app";
 import { componentMapper } from "@/utils/componentMapper";
-import { decodeSchema } from "@/utils/compression";
-import { ComponentTree } from "@/utils/editor";
+import { ComponentTree, EditorTreeCopy } from "@/utils/editor";
 import { Box, LoadingOverlay } from "@mantine/core";
-import { memo, useCallback, useTransition } from "react";
+import { useCallback, useTransition } from "react";
 import { RenderTreeFunc } from "@/types/component";
 import { prepareUserThemeLive } from "@/utils/prepareUserThemeLive";
 import { DeploymentPage } from "@/requests/deployments/types";
@@ -17,14 +16,14 @@ import { useVariableStore } from "@/stores/variables";
 import { initializeFonts } from "@/utils/webfontloader";
 import { useEffect } from "react";
 import { MantineThemeExtended } from "@/types/types";
-import { safeJsonParse } from "@/utils/common";
 import { useInputsStore } from "@/stores/inputs";
 import { useDataSources } from "@/hooks/editor/reactQuery/useDataSources";
 import { useVariableListQuery } from "@/hooks/editor/reactQuery/useVariableListQuery";
+import { withPageOnLoad } from "@/hoc/withPageOnLoad";
 
 type Props = {
   deploymentPage: DeploymentPage;
-  pageState: any;
+  pageState: EditorTreeCopy;
 };
 
 let theme: MantineThemeExtended | undefined;
@@ -154,4 +153,4 @@ export const LiveComponent = ({ deploymentPage, pageState }: Props) => {
   );
 };
 
-export const Live = memo(LiveComponent);
+export const Live = withPageOnLoad(LiveComponent, { isLive: true });
