@@ -16,6 +16,11 @@ export async function generateMetadata({ params: { page } }: PageProps) {
   return {
     title: deploymentPage.title,
     description: deploymentPage.title,
+    viewport: {
+      width: "device-width",
+      initialScale: 1,
+      maximumScale: 1,
+    },
     icons: {
       icon: deploymentPage.project.faviconUrl ?? "/favicon.ico",
     },

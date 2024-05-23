@@ -1,3 +1,5 @@
+"use client";
+
 import { Icon } from "@/components/Icon";
 import { inviteTeam } from "@/requests/teams/mutations";
 import { getTeamsList } from "@/requests/teams/queries";

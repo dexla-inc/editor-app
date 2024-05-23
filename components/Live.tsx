@@ -146,7 +146,6 @@ export const LiveComponent = ({ deploymentPage, pageState }: Props) => {
 
   return (
     <LiveWrapper project={deploymentPage.project}>
-      {isPending.toString()}
       <LoadingOverlay visible={isPending} />
       {renderTree(editorTree.root)}
     </LiveWrapper>
