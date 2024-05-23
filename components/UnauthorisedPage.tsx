@@ -21,7 +21,11 @@ export default function UnauthorisedPage() {
           Please contact your admin for access.
         </Text>
       </Stack>
-      <Button size="md" compact={false} onClick={() => router.push("/")}>
+      <Button
+        size="md"
+        compact={false}
+        onClick={() => router.push("/projects")}
+      >
         Back to home
       </Button>
     </Flex>
