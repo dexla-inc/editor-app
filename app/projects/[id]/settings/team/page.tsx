@@ -1,3 +1,5 @@
+"use client";
+
 import { DashboardShell } from "@/components/DashboardShell";
 import { SettingsTabHeader } from "@/components/settings/SettingsTabHeader";
 import { SettingsTabs } from "@/components/settings/SettingsTabs";

@@ -1,3 +1,5 @@
+"use client";
+
 import { DashboardShell } from "@/components/DashboardShell";
 import BrandingStep from "@/components/projects/BrandingStep";
 import PagesStep from "@/components/projects/PagesStep";
@@ -14,6 +16,7 @@ import { StepperDetailsType } from "@/types/projectTypes";
 import { Container, Stack, Stepper, Title } from "@mantine/core";
 import { useRouter } from "next/navigation";
 import { PageProps } from "@/types/app";
+import { useEffect, useState } from "react";
 
 export default function New({ params: { id: projectId } }: PageProps) {
   const [activeStep, setActiveStep] = useState(0);

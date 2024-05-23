@@ -1,3 +1,5 @@
+"use client";
+
 import { DashboardShell } from "@/components/DashboardShell";
 import DataSourceAddAPIWithAI from "@/components/datasources/DataSourceAddAPIWithAI";
 import { SettingsTabHeader } from "@/components/settings/SettingsTabHeader";

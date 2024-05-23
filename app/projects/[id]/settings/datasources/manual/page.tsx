@@ -1,3 +1,5 @@
+"use client";
+
 import { DashboardShell } from "@/components/DashboardShell";
 import ApiInfoFormNew from "@/components/datasources/ApiInfoFormNew";
 import { SettingsTabHeader } from "@/components/settings/SettingsTabHeader";

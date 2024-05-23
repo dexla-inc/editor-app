@@ -1,3 +1,5 @@
+"use client";
+
 import { DashboardShell } from "@/components/DashboardShell";
 import DataSourceAddSwagger from "@/components/datasources/DataSourceAddSwagger";
 import { SettingsTabHeader } from "@/components/settings/SettingsTabHeader";

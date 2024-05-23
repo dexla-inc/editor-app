@@ -1,3 +1,5 @@
+"use client";
+
 import { SuccessAlert } from "@/components/Alerts";
 import { DashboardShell } from "@/components/DashboardShell";
 import AuthenticationBearer from "@/components/datasources/AuthenticationBearer";

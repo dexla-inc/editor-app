@@ -1,3 +1,5 @@
+"use client";
+
 import { DashboardShell } from "@/components/DashboardShell";
 import DataSourceNewInitialView from "@/components/datasources/DataSourceNewInitialView";
 import { SettingsTabHeader } from "@/components/settings/SettingsTabHeader";
