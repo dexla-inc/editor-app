@@ -6,12 +6,16 @@ import { createDeployment } from "@/requests/deployments/mutations";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
 import { Button, Tooltip } from "@mantine/core";
+import { NextURL } from "next/dist/server/web/next-url";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export const DeployButton = () => {
   const router = useRouter();
   const { id: projectId, page } = router.query as { id: string; page: string };
+  const [customDomain, setCustomDomain] = useState("");
+  const [deployUrl, setDeployUrl] = useState<URL>();
+  const [slug, setSlug] = useState<string>("");
 
   const { data: pageListQuery, isFetched } = usePageListQuery(projectId, null);
   const setPages = useEditorStore((state) => state.setPages);
@@ -22,9 +26,33 @@ export const DeployButton = () => {
     isLoading: state.isLoading,
   }));
 
-  const [customDomain, setCustomDomain] = useState("");
-
   const { data: project } = useProjectQuery(projectId);
+
+  useEffect(() => {
+    if (project) {
+      const fullDomain = project.subDomain
+        ? `${project.subDomain}.${project.domain}`
+        : project.domain;
+
+      if (fullDomain) {
+        setCustomDomain(fullDomain);
+      }
+    }
+  }, [project]);
+
+  useEffect(() => {
+    if (isFetched && page) {
+      setPages(pageListQuery?.results!);
+      setSlug(pageListQuery?.results.find((p) => p.id === page)?.slug ?? "");
+    }
+  }, [pageListQuery, isFetched, setPages, page]);
+
+  useEffect(() => {
+    if (projectId && page && slug) {
+      const deployUrl = generateDeployLink(projectId, customDomain, slug);
+      setDeployUrl(deployUrl);
+    }
+  }, [projectId, customDomain, page, slug]);
 
   const handleDeploy = async (forceProduction: boolean) => {
     try {
@@ -33,7 +61,10 @@ export const DeployButton = () => {
         title: "Deploying",
         message: "Deploying your app...",
       });
-      await createDeployment(projectId, { forceProduction: forceProduction });
+
+      await createDeployment(projectId, deployUrl?.host ?? "", {
+        forceProduction: forceProduction,
+      });
       stopLoading({
         id: "deploy",
         title: "Deployed",
@@ -50,56 +81,15 @@ export const DeployButton = () => {
   };
 
   const openDeployLink = () => {
-    const hostName = window?.location?.hostname ?? "";
-
-    const domain = hostName ?? "";
-
-    const isLocalhost = domain.startsWith("localhost");
-
-    const baseDomain = isLocalhost
-      ? `${domain}:3000`
-      : customDomain
-      ? customDomain
-      : process.env.NEXT_PUBLIC_DEPLOYED_DOMAIN;
-
-    const prefix = isLocalhost || !customDomain ? `${projectId}.` : "";
-
-    const slug = pageListQuery?.results.find((p) => p.id === page)?.slug;
-
-    const deployLink = new URL(
-      `${isLocalhost ? "http" : "https"}://${prefix}${baseDomain}/${
-        slug === "/" ? "" : slug
-      }`,
-    );
-
-    // Validity check
     if (
-      deployLink.href.startsWith("http") ||
-      deployLink.href.startsWith("https")
+      deployUrl?.href.startsWith("http") ||
+      deployUrl?.href.startsWith("https")
     ) {
-      window?.open(deployLink.href, "_blank");
+      window?.open(deployUrl?.href, "_blank");
     } else {
-      console.error(`Invalid URL: ${deployLink.href}`);
+      console.error(`Invalid URL: ${deployUrl?.href}`);
     }
   };
-
-  useEffect(() => {
-    if (project) {
-      const fullDomain = project.subDomain
-        ? `${project.subDomain}.${project.domain}`
-        : project.domain;
-
-      if (fullDomain) {
-        setCustomDomain(fullDomain);
-      }
-    }
-  }, [project]);
-
-  useEffect(() => {
-    if (isFetched) {
-      setPages(pageListQuery?.results!);
-    }
-  }, [pageListQuery, isFetched, setPages]);
 
   return (
     <Button.Group>
@@ -124,5 +114,26 @@ export const DeployButton = () => {
         />
       </Tooltip>
     </Button.Group>
+  );
+};
+
+const generateDeployLink = (
+  projectId: string,
+  customDomain: string,
+  slug: string,
+): URL => {
+  const hostName = window?.location?.hostname ?? "";
+  const domain = hostName ?? "";
+  const isLocalhost = process.env.NEXT_PUBLIC_APP_ENVIRONMENT === "local";
+  const baseDomain = isLocalhost
+    ? `${domain}:3000`
+    : customDomain || process.env.NEXT_PUBLIC_DEPLOYED_DOMAIN;
+
+  const prefix = isLocalhost || !customDomain ? `${projectId}.` : "";
+
+  return new URL(
+    `${isLocalhost ? "http" : "https"}://${prefix}${baseDomain}/${
+      slug === "/" ? "" : slug
+    }`,
   );
 };

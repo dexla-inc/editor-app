@@ -2,15 +2,20 @@ import { createProject } from "@/requests/projects/mutations";
 import { useProjectListQuery } from "./reactQuery/useProjectListQuery";
 import { useEffect } from "react";
 import { useAppStore } from "@/stores/app";
+import { usePropelAuthStore } from "@/stores/propelAuth";
+import { useAuthInfo } from "@propelauth/react";
 
 export const useCreateTemplateProject = (orgId: string) => {
   const startLoading = useAppStore((state) => state.startLoading);
+
   const stopLoading = useAppStore((state) => state.stopLoading);
   const {
     data: projectsQuery,
     isFetched,
     invalidate,
   } = useProjectListQuery(orgId);
+
+  const auth = useAuthInfo();
 
   useEffect(() => {
     if (isFetched && projectsQuery?.results?.length === 0) {
@@ -25,7 +30,7 @@ export const useCreateTemplateProject = (orgId: string) => {
           const templateId = process.env
             .NEXT_PUBLIC_DEXLA_TEMPLATE_PROJECT_ID as string;
 
-          await createProject({
+          const result = await createProject({
             copyFrom: {
               id: templateId,
               type: "TEMPLATE",
@@ -33,6 +38,8 @@ export const useCreateTemplateProject = (orgId: string) => {
             friendlyName: "Starter Project",
             companyId: orgId,
           });
+
+          auth.refreshAuthInfo();
 
           invalidate();
         } catch (error: any) {
@@ -54,5 +61,5 @@ export const useCreateTemplateProject = (orgId: string) => {
       createTemplateProject();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isFetched]);
+  }, [isFetched, orgId]);
 };

@@ -1,8 +1,8 @@
 import { AssetsTextInput } from "@/components/AssetsTextInput";
 import { useProjectQuery } from "@/hooks/editor/reactQuery/useProjectQuery";
 import { patchProject } from "@/requests/projects/mutations";
+import { patchTheme } from "@/requests/themes/mutations";
 import { PatchParams } from "@/requests/types";
-import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import debounce from "lodash.debounce";
 import { useCallback, useEffect, useState } from "react";
@@ -25,7 +25,7 @@ export const FaviconUrl = () => {
         },
       ] as PatchParams[];
 
-      await patchProject(projectId, patchParams);
+      await patchTheme(projectId, patchParams);
     }, 500),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [projectId],
@@ -39,8 +39,8 @@ export const FaviconUrl = () => {
   };
 
   useEffect(() => {
-    if (project?.faviconUrl) {
-      setFaviconUrl(project.faviconUrl);
+    if (project?.branding?.faviconUrl) {
+      setFaviconUrl(project.branding.faviconUrl);
     }
   }, [project]);
 

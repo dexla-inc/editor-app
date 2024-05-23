@@ -2,15 +2,17 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 import { useShallow } from "zustand/react/shallow";
 import { Component, ComponentTree } from "@/utils/editor";
 import { useEndpoint } from "@/hooks/components/useEndpoint";
-import { LoadingOverlay, Skeleton } from "@mantine/core";
+import { Skeleton } from "@mantine/core";
+import { useEffect } from "react";
 
 type UseRenderDataProps = {
   component: Component & ComponentTree;
+  currentComponentGroupId: string;
+  shareableContent: any;
 };
 
 type RenderDataProps = {
   renderTree: any;
-  shareableContent: any;
 };
 
 type RenderComponentProps = {
@@ -20,7 +22,11 @@ type RenderComponentProps = {
   currentComponentGroupId: string;
 };
 
-export const useRenderData = ({ component }: UseRenderDataProps) => {
+export const useRenderData = ({
+  component,
+  currentComponentGroupId: test,
+  shareableContent,
+}: UseRenderDataProps) => {
   const isPreviewMode = useEditorTreeStore(
     useShallow((state) => state.isPreviewMode || state.isLive),
   );
@@ -39,29 +45,38 @@ export const useRenderData = ({ component }: UseRenderDataProps) => {
 
   const data = dataType === "dynamic" ? dynamicData : staticData;
 
-  const renderData = ({ renderTree, shareableContent }: RenderDataProps) => {
+  useEffect(() => {
+    const parentDataId = shareableContent?.parentDataId;
+    if (
+      parentDataId !== undefined &&
+      JSON.stringify(
+        useEditorTreeStore.getState().relatedComponentsData[parentDataId],
+      ) !== JSON.stringify(shareableContent?.data)
+    ) {
+      setRelatedComponentsData({
+        id: parentDataId,
+        data: shareableContent.data,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shareableContent?.data]); // WARNING: we only want to listen to shareableContent.data changes
+
+  const renderData = ({ renderTree }: RenderDataProps) => {
     const renderComponent = ({
       child,
       data,
       parentSuffix,
       currentComponentGroupId,
     }: RenderComponentProps) => {
-      // WARNING: If your redux devtools is failing, you might want to comment this if statement
-      // It populates all parent rendered data, so I can use it in other places, like the binding popover
-      if (
-        JSON.stringify(
-          useEditorTreeStore.getState().relatedComponentsData[
-            currentComponentGroupId
-          ],
-        ) !== JSON.stringify(data)
-      ) {
-        setRelatedComponentsData({ id: currentComponentGroupId, data });
-      }
-
       return renderTree(child, {
         ...shareableContent,
         // if data is undefined, we don't want to overwrite the data passed by a parent that is sharing data
-        ...(data && { data, parentSuffix }),
+        ...(data && {
+          data,
+          parentSuffix,
+          // this is the parentId that later is used to populate the Item context in the binding popover
+          parentDataId: currentComponentGroupId,
+        }),
       });
     };
 

@@ -7,7 +7,7 @@ const cacheTime = 30 * 60 * 1000; // 30 minutes
 
 export const usePageListQuery = (
   projectId: string,
-  search: string | null,
+  search?: string | null,
   isEnabled = true,
 ) => {
   const queryKey = ["pages", projectId, search];

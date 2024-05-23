@@ -584,8 +584,6 @@ export const useRefreshApiCallAction = async (
 
   const queryKey = endpoint?.id;
 
-  console.log("refreshApiCallAction", queryKey);
-
   if (queryKey) {
     queryClient.invalidateQueries({ queryKey: [queryKey] });
   }
@@ -654,8 +652,10 @@ export const useApiCallAction = async (
         );
 
         const clearAuthTokens = useDataSourceStore.getState().clearAuthTokens;
+        const resetVariables = useVariableStore.getState().resetVariables;
 
         clearAuthTokens(projectId);
+        resetVariables();
 
         break;
       default:

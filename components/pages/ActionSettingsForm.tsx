@@ -1,7 +1,9 @@
 import { Icon } from "@/components/Icon";
 import { ActionButtons } from "@/components/actions/ActionButtons";
 import { SelectActionForm } from "@/components/pages/SelectActionForm";
-import { PageResponse } from "@/requests/pages/types";
+import { patchPage } from "@/requests/pages/mutations";
+import { PageActionProps, PageResponse } from "@/requests/pages/types";
+import { convertToPatchParams } from "@/types/dashboardTypes";
 import { Action, showSequentialActionButton } from "@/utils/actions";
 import { Button, Divider, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -12,17 +14,19 @@ import { useEffect } from "react";
 type Props = {
   action: Action;
   page: PageResponse;
+  projectId: string;
   defaultValues: Record<string, any>;
   children?: (props: any) => JSX.Element;
-  onUpdatePage: (values: any) => Promise<any>;
+  setPage: (page?: PageResponse | null | undefined) => void;
 };
 
 export const ActionSettingsForm = ({
   action,
   page,
+  projectId,
   defaultValues,
+  setPage,
   children,
-  onUpdatePage,
 }: Props) => {
   const [addSequentialForm, { open: openSequential, close: closeSequential }] =
     useDisclosure(false);
@@ -48,10 +52,12 @@ export const ActionSettingsForm = ({
       }
       return a;
     });
-    const updatedPage = merge({}, page, { actions: updatedActions });
+
+    const patchParams = convertToPatchParams({ actions: updatedActions });
 
     try {
-      await onUpdatePage(updatedPage);
+      const result = await patchPage(projectId, page.id, patchParams);
+      setPage(result);
     } catch (error) {
       console.error(error);
     }
@@ -77,9 +83,9 @@ export const ActionSettingsForm = ({
           <Divider my="lg" label="Sequential Action" labelPosition="center" />
           <SelectActionForm
             page={page}
-            onUpdatePage={onUpdatePage}
             close={closeSequential}
             sequentialTo={action.id}
+            setPage={setPage}
           />
         </>
       )}

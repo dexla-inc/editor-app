@@ -308,7 +308,7 @@ export default function BrandingStep({
                     key={`color-${name}`}
                     friendlyName={friendlyName}
                     hex={hex}
-                    isDefault={themeResponse.colors[index].isDefault}
+                    isDefault={themeResponse.colors[index]?.isDefault ?? false}
                     onValueChange={(value) => {
                       setThemeResponse((prevThemeResponse) => {
                         if (!prevThemeResponse) {
@@ -319,7 +319,7 @@ export default function BrandingStep({
                           ...prevThemeResponse.colors[index],
                           friendlyName: value.friendlyName,
                           hex: value.hex,
-                          name: !prevThemeResponse.colors[index].isDefault
+                          name: !prevThemeResponse.colors[index]?.isDefault
                             ? value.friendlyName
                             : prevThemeResponse.colors[index].name,
                         };
