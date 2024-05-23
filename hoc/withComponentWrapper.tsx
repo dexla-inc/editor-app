@@ -1,5 +1,5 @@
 import { Skeleton, Tooltip } from "@mantine/core";
-import { ComponentType, Fragment } from "react";
+import { ComponentType, Fragment, useRef } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useShallow } from "zustand/react/shallow";
 import { useComputeCurrentState } from "@/hooks/components/useComputeCurrentState";
@@ -135,6 +135,8 @@ export const withComponentWrapper = <T extends Record<string, any>>(
       shareableContent,
     } as any;
 
+    const ref = useRef(null);
+
     return (
       <>
         {/* @ts-ignore */}
@@ -150,7 +152,7 @@ export const withComponentWrapper = <T extends Record<string, any>>(
             ? { visible: true }
             : {})}
         >
-          <Component {...props} />
+          <Component ref={ref} {...props} />
         </Wrapper>
         {isSelected && isEditorMode && component.description !== "Body" && (
           <ComponentToolbox component={componentToolboxProps} />
