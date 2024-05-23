@@ -131,10 +131,13 @@ export const useComponentContextMenu = () => {
           theme: editorTheme,
         }) as ComponentStructure;
 
+        const targetComponent =
+          useEditorTreeStore.getState().componentMutableAttrs[component.id!];
+
         updateTreeComponentAttrs({
           componentIds: [component.id],
           attrs: {
-            ...component,
+            ...targetComponent,
             props: structure.props,
             states: structure.states ?? {},
             onLoad: structure.onLoad ?? {},
