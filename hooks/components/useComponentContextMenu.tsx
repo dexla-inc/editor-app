@@ -25,10 +25,11 @@ import {
   IconContainer,
   IconCopy,
   IconForms,
+  IconRefresh,
   IconTrash,
 } from "@tabler/icons-react";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
-import { MouseEventHandler, useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { getComponentTreeById } from "@/utils/editor";
 
 const determinePasteTarget = (selectedId: string | undefined) => {
@@ -45,6 +46,10 @@ export const useComponentContextMenu = () => {
   const copiedProperties = useEditorStore((state) => state.copiedProperties);
   const setEditorTree = useEditorTreeStore((state) => state.setTree);
   const isPreviewMode = useEditorTreeStore((state) => state.isPreviewMode);
+  const updateTreeComponentAttrs = useEditorTreeStore(
+    (state) => state.updateTreeComponentAttrs,
+  );
+
   const setCopiedComponent = useEditorStore(
     (state) => state.setCopiedComponent,
   );
@@ -117,6 +122,29 @@ export const useComponentContextMenu = () => {
       }
     },
     [deleteComponentMutableAttr, setEditorTree],
+  );
+
+  const resetComponent = useCallback(
+    async (component: Component) => {
+      if (component.id && component.id !== "root") {
+        const structure = structureMapper[component.name].structure({
+          theme: editorTheme,
+        }) as ComponentStructure;
+
+        updateTreeComponentAttrs({
+          componentIds: [component.id],
+          attrs: {
+            ...component,
+            props: structure.props,
+            states: structure.states ?? {},
+            onLoad: structure.onLoad ?? {},
+            actions: structure.actions ?? [],
+          },
+          replaceAll: true,
+        });
+      }
+    },
+    [editorTheme, updateTreeComponentAttrs],
   );
 
   const duplicateComponent = useCallback(
@@ -263,6 +291,12 @@ export const useComponentContextMenu = () => {
                 onClick: () => pasteProperties(component),
               },
             ],
+          },
+          {
+            key: "reset",
+            icon: <IconRefresh size={16} />,
+            title: "Reset",
+            onClick: () => resetComponent(component),
           },
           {
             key: "delete",

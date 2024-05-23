@@ -90,6 +90,7 @@ export type EditorTreeState = {
     attrs: Partial<Component>;
     forceState?: string;
     save?: boolean;
+    replaceAll?: boolean;
   }) => Promise<void>;
   resetComponentsState: (
     componentIds: string[],
@@ -285,6 +286,7 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
             attrs,
             forceState,
             save = true,
+            replaceAll = false,
           }) => {
             set(
               (state: EditorTreeState) => {
@@ -301,11 +303,16 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                   const clonedAttrs = cloneObject(
                     state.componentMutableAttrs[id] ?? {},
                   );
-                  state.componentMutableAttrs[id] = updateTreeComponentAttrs(
-                    clonedAttrs,
-                    attrs,
-                    currentState,
-                  );
+
+                  const componentAttrs = replaceAll
+                    ? attrs
+                    : updateTreeComponentAttrs(
+                        clonedAttrs,
+                        attrs,
+                        currentState,
+                      );
+
+                  state.componentMutableAttrs[id] = componentAttrs as Component;
                 });
 
                 const treeWithRecoveredAttrs = recoverTreeComponentAttrs(

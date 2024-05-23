@@ -4,6 +4,8 @@ import { LoadingStore } from "@/types/dashboardTypes";
 import { Button } from "@mantine/core";
 import { IconArrowUpRight } from "@tabler/icons-react";
 import { useRouter } from "next/router";
+import { usePageListQuery } from "@/hooks/editor/reactQuery/usePageListQuery";
+import { usePageQuery } from "@/hooks/editor/reactQuery/usePageQuery";
 
 interface EndpointsButtonProps extends LoadingStore {
   projectId: string;
@@ -16,7 +18,7 @@ export default function EndpointsButton({
   projectId,
 }: EndpointsButtonProps) {
   const router = useRouter();
-  const pages = useEditorStore((state) => state.pages);
+  const { data: pageListQuery } = usePageListQuery(projectId);
 
   const goToEditor = async (projectId: string) => {
     startLoading({
@@ -25,7 +27,13 @@ export default function EndpointsButton({
       message: "Wait while the editor is loading",
     });
 
-    router.push(`/projects/${projectId}/editor/${pages[0].id}`);
+    const page =
+      pageListQuery?.results.find((p) => p.isHome === true) ||
+      pageListQuery?.results[0]!;
+
+    console.log("goToEditor", page);
+
+    router.push(`/projects/${projectId}/editor/${page.id}`);
   };
 
   return (
