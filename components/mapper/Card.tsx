@@ -34,6 +34,7 @@ export const CardComponent = forwardRef(
     const { renderData } = useRenderData({
       component,
       currentComponentGroupId: props.id,
+      shareableContent,
     });
 
     return (
@@ -44,7 +45,7 @@ export const CardComponent = forwardRef(
         {...triggers}
         {...componentProps}
       >
-        {renderData({ renderTree, shareableContent })}
+        {renderData({ renderTree })}
       </MantineFlex>
     );
   },
