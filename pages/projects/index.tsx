@@ -112,34 +112,37 @@ export default function Projects() {
         <Stack spacing="xl">
           <Title>Welcome back, {user?.firstName}</Title>
           <Flex>
-            <Flex gap="sm">
-              <Tooltip label="Coming soon">
-                <Link
-                  href={`/projects/new?company=${company.orgId}&id=${manuallyCreatedProjectId}`}
-                >
-                  <IconTitleDescriptionButton
-                    icon="IconSparkles"
-                    title="Create new project"
-                    description="Type what you want to build and customise. (Coming soon)"
-                    disabled
-                  />
-                </Link>
+            {company.orgName !== "Dexla" ? (
+              <Flex gap="sm">
+                <Tooltip label="Coming soon">
+                  <Link
+                    href={`/projects/new?company=${company.orgId}&id=${manuallyCreatedProjectId}`}
+                  >
+                    <IconTitleDescriptionButton
+                      icon="IconSparkles"
+                      title="Create new project"
+                      description="Type what you want to build and customise. (Coming soon)"
+                      disabled
+                    />
+                  </Link>
+                </Tooltip>
+                <IconTitleDescriptionButton
+                  icon="IconSparkles"
+                  title="Create empty project"
+                  description="Start from scratch"
+                  onClick={createEmptyProject}
+                />
+              </Flex>
+            ) : (
+              <Tooltip label="You are unable to create new projects for Dexla">
+                <IconTitleDescriptionButton
+                  icon="IconSparkles"
+                  tooltip="This company is used for the Templates project only"
+                  title="Create new project"
+                  description="Type what you want to build and customise"
+                />
               </Tooltip>
-              <IconTitleDescriptionButton
-                icon="IconSparkles"
-                title="Create empty project"
-                description="Start from scratch"
-                onClick={createEmptyProject}
-              />
-            </Flex>
-            <Tooltip label="You are unable to create new projects for Dexla">
-              <IconTitleDescriptionButton
-                icon="IconSparkles"
-                tooltip="This company is used for the Templates project only"
-                title="Create new project"
-                description="Type what you want to build and customise"
-              />
-            </Tooltip>
+            )}
           </Flex>
 
           {projectsQuery?.results && (
