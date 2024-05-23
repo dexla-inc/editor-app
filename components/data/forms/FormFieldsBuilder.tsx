@@ -1,5 +1,3 @@
-import { ComponentToBindFromSelect } from "@/components/ComponentToBindFromSelect";
-import { VisibilityModifier } from "@/components/data/VisibilityModifier";
 import { DynamicFormFieldsBuilder } from "@/components/data/forms/DynamicFormFieldsBuilder";
 import {
   FieldType,
@@ -16,7 +14,7 @@ import { IconPlug, IconPlugOff } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
 import { ValueProps } from "@/types/dataBinding";
-import { CommonData } from "../CommonData";
+import { CommonData } from "@/components/data/CommonData";
 
 type Props = {
   fields: Array<{

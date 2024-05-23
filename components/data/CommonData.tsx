@@ -5,9 +5,9 @@ import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useEffect } from "react";
-import { ComponentToBindFromSelect } from "../ComponentToBindFromSelect";
+import { ComponentToBindFromSelect } from "@/components/ComponentToBindFromSelect";
 import merge from "lodash.merge";
-import { ComponentToBindFromInput } from "../ComponentToBindFromInput";
+import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 
 export const CommonData = ({ component }: Pick<DataProps, "component">) => {
   const onLoadValues = merge(
