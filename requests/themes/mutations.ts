@@ -2,6 +2,7 @@ import { BrandingAITheme } from "@/requests/projects/types";
 import { ThemeResponse } from "@/requests/themes/types";
 import { del, post } from "@/utils/api";
 import { buildQueryString } from "@/types/dashboardTypes";
+import { evictCache } from "@/requests/cache/queries-noauth";
 
 export type SaveThemeProps = {
   params: ThemeResponse;
@@ -36,6 +37,9 @@ export async function saveTheme(
   let url = `/projects/${projectId}/themes`;
   url += buildQueryString({ websiteUrl });
 
+  const cacheTag = getCacheTag(projectId);
+  await evictCache(cacheTag);
+
   const response = (await post<ThemeResponse>(url, params)) as ThemeResponse;
 
   return response;
@@ -58,3 +62,5 @@ export const deleteTheme = async (id: string) => {
 
   return response;
 };
+
+const getCacheTag = (projectId: string) => `/projects/${projectId}`;
