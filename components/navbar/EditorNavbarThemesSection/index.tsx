@@ -144,6 +144,7 @@ export const EditorNavbarThemesSection =
     );
 
     const onSubmit = async (values: ThemeResponse) => {
+      console.log("values", values);
       mutate({ params: values, projectId: projectId });
     };
 
@@ -202,17 +203,19 @@ export const EditorNavbarThemesSection =
                 hex={hex}
                 isDefault={form.values.colors[index]?.isDefault ?? false}
                 onValueChange={(value) => {
+                  console.log("value", value);
+                  form.setFieldValue(`colors.${index}.hex`, value.hex);
                   form.setFieldValue(
                     `colors.${index}.friendlyName`,
                     value.friendlyName,
                   );
-                  form.setFieldValue(`colors.${index}.hex`, value.hex);
-                  if (!form.values.colors[index]?.isDefault) {
-                    form.setFieldValue(
-                      `colors.${index}.name`,
-                      value.friendlyName,
-                    );
-                  }
+
+                  if (form.values.colors[index]?.isDefault) return;
+
+                  form.setFieldValue(
+                    `colors.${index}.name`,
+                    value.friendlyName,
+                  );
                 }}
                 deleteColor={() => {
                   const updatedColors = [...form.values.colors];
@@ -229,15 +232,17 @@ export const EditorNavbarThemesSection =
               variant="outline"
               fullWidth
               compact
-              onClick={() =>
-                form.insertListItem("colors", {
+              onClick={() => {
+                const newColor = {
                   name: "",
                   friendlyName: "",
                   hex: "",
                   brightness: 0,
                   isDefault: false,
-                })
-              }
+                };
+                form.insertListItem("colors", newColor);
+                setSearchResults([...form.values.colors, newColor]);
+              }}
             >
               Add Color
             </Button>

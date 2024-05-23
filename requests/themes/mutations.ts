@@ -38,10 +38,10 @@ export async function saveTheme(
   let url = `/projects/${projectId}/themes`;
   url += buildQueryString({ websiteUrl });
 
+  const response = (await post<ThemeResponse>(url, params)) as ThemeResponse;
+
   const cacheTag = getCacheTag(projectId);
   await evictCache(cacheTag);
-
-  const response = (await post<ThemeResponse>(url, params)) as ThemeResponse;
 
   return response;
 }

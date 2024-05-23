@@ -40,7 +40,7 @@ export const ColorSelector = ({
   const debouncedOnChange = useCallback(
     debounce((nextValue) => {
       setFriendlyName(nextValue);
-    }, 10000),
+    }, 10),
     [debounce],
   );
 
@@ -136,7 +136,7 @@ export const ColorSelector = ({
             size={size ? "xs" : "sm"}
             style={{ width: "100%", borderLeft: "0px" }}
             radius="0px 4px 4px 0px"
-            defaultValue={friendlyName}
+            value={friendlyName}
             onBlur={() => debouncedOnChange.flush()}
             onChange={(event) => debouncedOnChange(event.target.value)}
             rightSection={
