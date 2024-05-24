@@ -26,7 +26,7 @@ export const ProjectSettings = () => {
     (state) => state.currentProjectId,
   ) as string;
 
-  const { data: project } = useProjectQuery(projectId);
+  const { data: project, invalidate } = useProjectQuery(projectId);
 
   const pages = useEditorStore((state) => state.pages);
   const [isLoading, setIsLoading] = useState(false);
@@ -39,6 +39,7 @@ export const ProjectSettings = () => {
       const patchParams = convertToPatchParams<Params>(values);
 
       await patchProject(projectId, patchParams);
+      invalidate();
     } catch (e) {
       console.error(e);
     } finally {
