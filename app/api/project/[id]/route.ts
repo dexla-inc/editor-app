@@ -1,11 +1,8 @@
 import { prisma } from "@/utils/prisma";
 
-export default async function handler(req: Request) {
+export async function GET(req: Request) {
   try {
-    const { query, method } = await req.json();
-    if (req.method !== "GET") {
-      throw new Error("Invalid method");
-    }
+    const { query } = await req.json();
 
     const { id } = query;
     const project = await prisma.project.findFirstOrThrow({

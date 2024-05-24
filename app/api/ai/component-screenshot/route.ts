@@ -8,7 +8,7 @@ import {
 import faker from "@faker-js/faker";
 import { ChatCompletionContentPart } from "openai/resources";
 
-export function callFakerFunction(funcString: string) {
+function callFakerFunction(funcString: string) {
   try {
     return new Function("faker", `return ${funcString};`)(faker);
   } catch (error) {
@@ -17,7 +17,7 @@ export function callFakerFunction(funcString: string) {
   }
 }
 
-export const callFakerFuncs = (obj: any): any => {
+const callFakerFuncs = (obj: any): any => {
   if (typeof obj === "string" && obj.startsWith("faker.")) {
     // Directly execute and return the result if the object itself is a faker string
     return callFakerFunction(obj);
@@ -40,12 +40,9 @@ export const callFakerFuncs = (obj: any): any => {
   return obj;
 };
 
-export default async function handler(req: Request) {
+export async function POST(req: Request) {
   try {
-    const { body, method } = await req.json();
-    if (method !== "POST") {
-      throw new Error("Invalid method");
-    }
+    const { body } = await req.json();
 
     const { description, image, theme } = body;
 

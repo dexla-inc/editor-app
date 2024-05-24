@@ -3,13 +3,9 @@ import { openai } from "@/utils/openai";
 import { prisma } from "@/utils/prisma";
 import { getPagePrompt, getPagesPrompt } from "@/utils/prompts";
 
-export default async function handler(req: Request) {
+export async function POST(req: Request) {
   try {
-    const { body, method } = await req.json();
-
-    if (method !== "POST") {
-      throw new Error("Invalid method");
-    }
+    const { body } = await req.json();
 
     const { projectId, pageCount, description, industry, excludedPages } = body;
     const project = await prisma.project.findFirstOrThrow({

@@ -1,6 +1,6 @@
 import { fromBase64 } from "@/utils/common";
 
-export default async function handler(req: Request) {
+async function handler(req: Request) {
   const { body, query, method, headers: reqHeaders } = await req.json();
   // Construct the URL dynamically based on query params from the client request
   const { targetUrl } = query;
@@ -52,3 +52,11 @@ export default async function handler(req: Request) {
     return Response.json({ error: error.message }, { status: 500 });
   }
 }
+
+export {
+  handler as GET,
+  handler as POST,
+  handler as PUT,
+  handler as DELETE,
+  handler as PATCH,
+};

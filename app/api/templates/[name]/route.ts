@@ -1,11 +1,8 @@
 import { getTemplate } from "@/requests/templates/queries-noauth";
 
-export default async function handler(req: Request) {
+export async function GET(req: Request) {
   try {
-    const { query, method } = await req.json();
-    if (req.method !== "GET") {
-      throw new Error("Invalid method");
-    }
+    const { query } = await req.json();
 
     const { name } = query;
 

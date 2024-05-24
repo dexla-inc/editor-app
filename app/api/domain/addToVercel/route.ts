@@ -1,11 +1,8 @@
 import { addDomainToVercel } from "@/utils/domains";
 
-export default async function handler(req: Request) {
+export async function POST(req: Request) {
   try {
-    const { body, method } = await req.json();
-    if (method !== "POST") {
-      throw new Error("Method not allowed");
-    }
+    const { body } = await req.json();
 
     const domain = body.domain as string;
 

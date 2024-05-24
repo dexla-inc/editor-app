@@ -3,12 +3,9 @@ import { openai } from "@/utils/openai";
 import { getComponentsPrompt } from "@/utils/prompts";
 
 // This needs to be a stream
-export default async function handler(req: Request) {
+export async function POST(req: Request) {
   try {
-    const { body, method, setHeader } = await req.json();
-    if (method !== "POST") {
-      throw new Error("Invalid method");
-    }
+    const { body, setHeader } = await req.json();
 
     // TODO: GET THIS BACK
     // setHeader("Content-Type", "text/event-stream");

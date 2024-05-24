@@ -4,12 +4,9 @@ import { openai } from "@/utils/openai";
 import { getThemeScreenshotPrompt } from "@/utils/prompts-theme";
 import { ChatCompletionContentPart } from "openai/resources";
 
-export default async function handler(req: Request) {
+export async function POST(req: Request) {
   try {
-    const { body, method } = await req.json();
-    if (method !== "POST") {
-      throw new Error("Invalid method");
-    }
+    const { body } = await req.json();
 
     const { description, image } = body;
 

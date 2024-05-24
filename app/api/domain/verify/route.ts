@@ -5,11 +5,8 @@ import {
   DomainVerificationStatusProps,
 } from "@/utils/domains";
 
-export default async function handler(req: Request) {
-  const { method, query } = await req.json();
-  if (method !== "GET") {
-    throw new Error("Method not allowed");
-  }
+export async function GET(req: Request) {
+  const { query } = await req.json();
 
   const domain = query.domain as string;
 

@@ -18,13 +18,10 @@ function callFakerFunction(funcString: string) {
   }
 }
 
-export default async function handler(req: Request) {
+export async function POST(req: Request) {
   try {
-    const { method, body } = await req.json();
+    const { body } = await req.json();
 
-    if (method !== "POST") {
-      throw new Error("Invalid method");
-    }
     // start a timer
     const timer = Stopwatch.StartNew();
 

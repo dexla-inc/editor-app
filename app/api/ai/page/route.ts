@@ -5,13 +5,9 @@ import { openai } from "@/utils/openai";
 import { prisma } from "@/utils/prisma";
 import { getPageGenerationPrompt } from "@/utils/prompts";
 
-export default async function handler(req: Request) {
+export async function POST(req: Request) {
   try {
     const { body } = await req.json();
-
-    if (req.method !== "POST") {
-      throw new Error("Invalid method");
-    }
 
     const { projectId, pageId } = body;
     const project = await prisma.project.findFirstOrThrow({

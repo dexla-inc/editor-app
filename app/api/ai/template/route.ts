@@ -5,12 +5,9 @@ import { GPT4_PREVIEW_MODEL } from "@/utils/config";
 import { openai } from "@/utils/openai";
 import { getTemplatePrompt } from "@/utils/prompts";
 
-export default async function handler(req: Request) {
+export async function POST(req: Request) {
   try {
-    const { body, method } = await req.json();
-    if (method !== "POST") {
-      throw new Error("Invalid method");
-    }
+    const { body } = await req.json();
 
     const { appDescription, appIndustry, pageDescription, pageName } = body;
 
