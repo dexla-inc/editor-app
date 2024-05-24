@@ -10,6 +10,7 @@ import { useVariableListQuery } from "@/hooks/editor/reactQuery/useVariableListQ
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { LoadingOverlay } from "@mantine/core";
 import UnauthorisedPage from "@/components/UnauthorisedPage";
+import useEditorHotkeysUndoRedo from "@/hooks/editor/useEditorHotkeysUndoRedo";
 
 export const getServerSideProps = async ({}: GetServerSidePropsContext) => {
   return { props: {} };
@@ -31,6 +32,9 @@ const PageEditor = () => {
   const [status, setStatus] = useState<
     "loading" | "unauthorised" | "authorised"
   >("loading");
+
+  console.log("index");
+  useEditorHotkeysUndoRedo();
 
   const { data: datasources } = useDataSources(projectId);
   const { data: variables } = useVariableListQuery(projectId);
