@@ -21,7 +21,7 @@ type Props = {
 };
 
 export const UnitInput = ({
-  value: inputValue,
+  value: fetchedValue = "",
   onChange,
   disabledUnits,
   options: customOptions,
@@ -29,7 +29,7 @@ export const UnitInput = ({
   ...props
 }: Props & Omit<NumberInputProps, "onChange">) => {
   const theme = useMantineTheme();
-  const fetchedValue = inputValue ? inputValue.toString() : "";
+  const isNumeric = typeof fetchedValue === "number";
 
   const options = customOptions ?? [
     { value: "px", label: "PX" },
@@ -40,14 +40,13 @@ export const UnitInput = ({
     { value: "fit-content", label: "fit" },
   ];
 
-  const isNumeric = !isNaN(Number(fetchedValue));
   const isUnit =
     fetchedValue &&
     !isNumeric &&
     fetchedValue !== "auto" &&
     fetchedValue !== "fit-content";
   const defaultValueAndUnit: [number, Unit] = isNumeric
-    ? [Number(fetchedValue), "px"]
+    ? [fetchedValue, "px"]
     : [0, fetchedValue === "" ? "auto" : (fetchedValue as Unit)];
 
   const [splitValue, splitUnit] = isUnit
@@ -91,7 +90,9 @@ export const UnitInput = ({
   }, [value, unit]);
 
   useEffect(() => {
-    if (fetchedValue) {
+    if (isNumeric) {
+      setTextValue("px");
+    } else if (fetchedValue) {
       switch (fetchedValue) {
         case "auto":
           setTextValue("auto");

@@ -67,7 +67,15 @@ const CheckboxGroupComponent = forwardRef(
 
     const rootStyleProps = ["flexWrap", "flexDirection"];
 
-    const { renderData } = useRenderData({ component });
+    const { renderData } = useRenderData({
+      component,
+      currentComponentGroupId: props.id,
+      shareableContent: {
+        ...shareableContent,
+        value,
+        isInsideGroup: true,
+      },
+    });
 
     return (
       <MantineCheckbox.Group
@@ -92,11 +100,6 @@ const CheckboxGroupComponent = forwardRef(
         <Group {...checkboxWrapperProps} w="100%">
           {renderData({
             renderTree,
-            shareableContent: {
-              ...shareableContent,
-              value,
-              isInsideGroup: true,
-            },
           })}
         </Group>
       </MantineCheckbox.Group>
