@@ -82,34 +82,37 @@ export const EditorNavbarThemesSection =
       queryFn: () => getGoogleFonts(),
     });
 
-    const { mutate } = useMutation(saveTheme, {
-      onMutate: () => {
-        startLoading({
-          id: "saving-brand",
-          title: "Saving Brand",
-          message: "Wait while your brand is being saved",
-        });
+    const { mutate } = useMutation({
+      mutationFn: saveTheme,
+      ...{
+        onMutate: () => {
+          startLoading({
+            id: "saving-brand",
+            title: "Saving Brand",
+            message: "Wait while your brand is being saved",
+          });
 
-        form.validate();
+          form.validate();
 
-        return {};
-      },
-      onError: (error) => {
-        console.error(error);
-        stopLoading({
-          id: "saving-brand",
-          title: "Saving Brand Failed",
-          message: "Validation failed",
-          isError: true,
-        });
-      },
-      onSuccess: () => {
-        refetch();
-        stopLoading({
-          id: "saving-brand",
-          title: "Brand Saved",
-          message: "The brand was saved successfully",
-        });
+          return {};
+        },
+        onError: (error) => {
+          console.error(error);
+          stopLoading({
+            id: "saving-brand",
+            title: "Saving Brand Failed",
+            message: "Validation failed",
+            isError: true,
+          });
+        },
+        onSuccess: () => {
+          refetch();
+          stopLoading({
+            id: "saving-brand",
+            title: "Brand Saved",
+            message: "The brand was saved successfully",
+          });
+        },
       },
     });
 

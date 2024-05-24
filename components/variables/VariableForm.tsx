@@ -188,8 +188,8 @@ export const VariableForm = ({ variableId }: Props) => {
         <Button
           type="submit"
           loading={
-            createVariablesMutation.isLoading ||
-            updateVariablesMutation.isLoading
+            createVariablesMutation.isPending ||
+            updateVariablesMutation.isPending
           }
           compact
         >

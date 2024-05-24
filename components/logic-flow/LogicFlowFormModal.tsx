@@ -44,7 +44,7 @@ export const LogicFlowFormModal = () => {
       );
     },
     onSettled: async () => {
-      await client.refetchQueries(["logic-flows", projectId]);
+      await client.refetchQueries({ queryKey: ["logic-flows", projectId] });
       setShowFormModal(false);
       stopLoading({
         id: "logic-flows",
@@ -69,13 +69,13 @@ export const LogicFlowFormModal = () => {
       });
     },
     onSettled: async (data, error) => {
-      await client.refetchQueries(["logic-flows", projectId]);
+      await client.refetchQueries({ queryKey: ["logic-flows", projectId] });
 
       if (!data?.id) {
         stopLoading({
           id: "logic-flows",
           title: "Oops",
-          message: (error as string) ?? "Something went wrong",
+          message: (error?.message as string) ?? "Something went wrong",
           isError: true,
         });
       } else {

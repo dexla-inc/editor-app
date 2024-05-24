@@ -31,7 +31,9 @@ export const useLogicFlows = () => {
             <ActionIcon
               onClick={async () => {
                 setSelectedTabView("list");
-                await client.refetchQueries(["logic-flows", projectId]);
+                await client.refetchQueries({
+                  queryKey: ["logic-flows", projectId],
+                });
               }}
             >
               <IconArrowBack />

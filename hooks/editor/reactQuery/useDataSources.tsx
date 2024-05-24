@@ -21,7 +21,7 @@ export const useDataSources = (
   });
 
   const invalidate = () => {
-    queryClient.invalidateQueries(queryKey);
+    queryClient.invalidateQueries({ queryKey });
   };
 
   return { ...queryResult, invalidate };

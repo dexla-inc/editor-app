@@ -2,7 +2,11 @@
 
 import { darkTheme, theme } from "@/utils/branding";
 import { cache } from "@/utils/emotionCache";
-import { dehydrate, Hydrate, QueryClientProvider } from "@tanstack/react-query";
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClientProvider,
+} from "@tanstack/react-query";
 import { queryClient } from "@/utils/reactQuery";
 import { MantineProvider } from "@mantine/core";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -68,10 +72,10 @@ export const GlobalProviders = ({ children }: { children: ReactNode }) => {
         </noscript>
       )}
       <QueryClientProvider client={queryClient}>
-        <Hydrate state={dehydratedState}>
+        <HydrationBoundary state={dehydratedState}>
           <MantineGlobal isLive />
           <ProgressBar>{children}</ProgressBar>
-        </Hydrate>
+        </HydrationBoundary>
       </QueryClientProvider>
       <SpeedInsights />
     </MantineProvider>

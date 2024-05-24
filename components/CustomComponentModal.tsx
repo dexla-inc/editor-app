@@ -33,29 +33,32 @@ export const CustomComponentModal = ({ isCustomComponentModalOpen }: Props) => {
 
   const activeCompany = usePropelAuthStore((state) => state.activeCompany);
 
-  const { mutate } = useMutation(upsertCustomComponent, {
-    onSettled: async (_, err) => {
-      if (err) {
-        console.error(err);
-        showNotification({
-          title: "Oops",
-          message:
-            "Something went wrong while trying to create the custom component.",
-          autoClose: true,
-          color: "red",
-          withBorder: true,
-        });
-      } else {
-        showNotification({
-          title: "Custom Component Saved",
-          message: "Your Custom Component was saved successfully.",
-          autoClose: true,
-          withBorder: true,
-        });
-        queryClient.invalidateQueries(["components"]);
-      }
+  const { mutate } = useMutation({
+    mutationFn: upsertCustomComponent,
+    ...{
+      onSettled: async (_, err) => {
+        if (err) {
+          console.error(err);
+          showNotification({
+            title: "Oops",
+            message:
+              "Something went wrong while trying to create the custom component.",
+            autoClose: true,
+            color: "red",
+            withBorder: true,
+          });
+        } else {
+          showNotification({
+            title: "Custom Component Saved",
+            message: "Your Custom Component was saved successfully.",
+            autoClose: true,
+            withBorder: true,
+          });
+          queryClient.invalidateQueries({ queryKey: ["components"] });
+        }
 
-      await setIsCustomComponentModalOpen(false);
+        await setIsCustomComponentModalOpen(false);
+      },
     },
   });
 

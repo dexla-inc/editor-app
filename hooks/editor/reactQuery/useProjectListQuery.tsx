@@ -16,7 +16,7 @@ export const useProjectListQuery = (orgId: string, search?: string) => {
   });
 
   const invalidate = () => {
-    queryClient.invalidateQueries(queryKey);
+    queryClient.invalidateQueries({ queryKey });
   };
 
   return { ...queryResult, invalidate };

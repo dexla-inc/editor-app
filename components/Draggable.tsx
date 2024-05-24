@@ -52,13 +52,16 @@ export const Draggable = ({
 
   const queryClient = useQueryClient();
 
-  const { mutate } = useMutation(deleteCustomComponent, {
-    onSettled(_, err) {
-      if (err) {
-        console.error(err);
-      }
+  const { mutate } = useMutation({
+    mutationFn: deleteCustomComponent,
+    ...{
+      onSettled(_, err) {
+        if (err) {
+          console.error(err);
+        }
 
-      queryClient.invalidateQueries(["components"]);
+        queryClient.invalidateQueries({ queryKey: ["components"] });
+      },
     },
   });
 

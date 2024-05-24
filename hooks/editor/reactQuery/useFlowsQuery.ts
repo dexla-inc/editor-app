@@ -10,12 +10,11 @@ export const useFlowsQuery = (projectId?: string) => {
   const queryResult = useQuery({
     queryKey: queryKey,
     queryFn: () => listLogicFlows(projectId as string),
-    staleTime: cacheTime,
-    enabled: !!projectId,
+    ...{ staleTime: cacheTime, enabled: !!projectId },
   });
 
   const invalidate = () => {
-    queryClient.invalidateQueries(queryKey);
+    queryClient.invalidateQueries({ queryKey });
   };
 
   return { ...queryResult, invalidate };
