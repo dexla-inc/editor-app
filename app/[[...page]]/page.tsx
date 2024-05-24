@@ -10,6 +10,10 @@ import { EditorTreeCopy } from "@/utils/editor";
 import { Viewport } from "next";
 
 export async function generateMetadata({ params: { page } }: PageProps) {
+  if (page?.includes?.("_next")) {
+    return {};
+  }
+
   const url = headers().get("host") as string;
   const currentSlug = (page?.at(0) as string) ?? "/";
   const deploymentPage = await getDeploymentPage(url, currentSlug);
@@ -30,6 +34,10 @@ const viewport: Viewport = {
 };
 
 async function LivePage({ params: { page } }: PageProps) {
+  if (page?.includes?.("_next")) {
+    return null;
+  }
+
   const url = headers().get("host") as string;
   const currentSlug = (page?.at(0) as string) ?? "/";
   const deploymentPage = await getDeploymentPage(url, currentSlug);
