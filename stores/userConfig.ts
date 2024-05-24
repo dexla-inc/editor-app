@@ -26,9 +26,11 @@ type UserConfigState = {
 
 const preloadState = () => {
   try {
-    const persistedState = localStorage.getItem("user-config");
-    if (persistedState) {
-      return JSON.parse(persistedState).state;
+    if (typeof window !== "undefined") {
+      const persistedState = localStorage.getItem("user-config");
+      if (persistedState) {
+        return JSON.parse(persistedState).state;
+      }
     }
   } catch (error) {
     console.error("Error loading user-config from localStorage", error);

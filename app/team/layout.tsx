@@ -1,14 +1,10 @@
 import { ReactNode } from "react";
 import { EditorProviders } from "@/app/editorProviders";
+import { Metadata, Viewport } from "next";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Editor",
   description: "Dexla Editor",
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 1,
-  },
   icons: {
     icon: "/favicon.ico",
   },

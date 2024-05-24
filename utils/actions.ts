@@ -9,7 +9,6 @@ import { TriggerLogicFlowActionForm } from "@/components/actions/TriggerLogicFlo
 import { transpile } from "typescript";
 import { ChangeVariableActionForm } from "@/components/actions/ChangeVariableActionForm";
 import {
-  DataSourceAuthListResponse,
   DataSourceAuthResponse,
   DataSourceResponse,
   Endpoint,
@@ -30,7 +29,6 @@ import { ArrayMethods } from "@/types/types";
 import { UseFormReturnType } from "@mantine/form";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
-import { Router } from "next/router";
 import { ComputeValueProps, ValueProps } from "@/types/dataBinding";
 import { ResetVariableActionForm } from "@/components/actions/ResetVariableActionForm";
 import { useThemeStore } from "@/stores/theme";

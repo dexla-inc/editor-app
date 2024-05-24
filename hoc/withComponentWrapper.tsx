@@ -85,7 +85,7 @@ export const withComponentWrapper = <T extends Record<string, any>>(
 
     const triggers = useTriggers({
       entity: { ...component, id },
-      router: router as Router,
+      router,
       shareableContent,
     });
 

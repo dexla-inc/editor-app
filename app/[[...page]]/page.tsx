@@ -7,6 +7,7 @@ import { decodeSchema } from "@/utils/compression";
 import { safeJsonParse } from "@/utils/common";
 import { redirect } from "next/navigation";
 import { EditorTreeCopy } from "@/utils/editor";
+import { Viewport } from "next";
 
 export async function generateMetadata({ params: { page } }: PageProps) {
   const url = headers().get("host") as string;
@@ -16,16 +17,17 @@ export async function generateMetadata({ params: { page } }: PageProps) {
   return {
     title: deploymentPage.title,
     description: deploymentPage.title,
-    viewport: {
-      width: "device-width",
-      initialScale: 1,
-      maximumScale: 1,
-    },
     icons: {
       icon: deploymentPage.project.faviconUrl ?? "/favicon.ico",
     },
   };
 }
+
+const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+};
 
 async function LivePage({ params: { page } }: PageProps) {
   const url = headers().get("host") as string;
