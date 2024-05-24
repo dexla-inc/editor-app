@@ -1,22 +1,19 @@
 import { addDomainToVercel } from "@/utils/domains";
-import type { NextApiRequest, NextApiResponse } from "next";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
+export default async function handler(req: Request) {
   try {
-    if (req.method !== "POST") {
+    const { body, method } = await req.json();
+    if (method !== "POST") {
       throw new Error("Method not allowed");
     }
 
-    const domain = req.body.domain as string;
+    const domain = body.domain as string;
 
     const response = await addDomainToVercel(domain);
 
-    res.status(200).json(response);
+    return Response.json(response, { status: 200 });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error });
+    return Response.json({ error }, { status: 500 });
   }
 }

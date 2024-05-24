@@ -1,23 +1,21 @@
 import { GPT4_PREVIEW_MODEL } from "@/utils/config";
 import { openai } from "@/utils/openai";
 import { getComponentsPrompt } from "@/utils/prompts";
-import { NextApiRequest, NextApiResponse } from "next";
 
 // This needs to be a stream
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<any>,
-) {
+export default async function handler(req: Request) {
   try {
-    if (req.method !== "POST") {
+    const { body, method, setHeader } = await req.json();
+    if (method !== "POST") {
       throw new Error("Invalid method");
     }
 
-    res.setHeader("Content-Type", "text/event-stream");
-    res.setHeader("Cache-Control", "no-cache");
-    res.setHeader("Connection", "keep-alive");
+    // TODO: GET THIS BACK
+    // setHeader("Content-Type", "text/event-stream");
+    // setHeader("Cache-Control", "no-cache");
+    // setHeader("Connection", "keep-alive");
 
-    const { description } = req.body;
+    const { description } = body;
 
     const chatStream = await openai.chat.completions.create({
       model: GPT4_PREVIEW_MODEL,
@@ -47,7 +45,7 @@ export default async function handler(
           messageBuilder += content.replace("\n", "");
           const completeMessage = messageBuilder;
 
-          res.write(`data: ${JSON.stringify(completeMessage)}\n\n`);
+          // res.write(`data: ${JSON.stringify(completeMessage)}\n\n`);
 
           messageBuilder = "";
         }
@@ -56,9 +54,9 @@ export default async function handler(
       }
     }
 
-    res.end();
+    // res.end();
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ error });
+    return Response.json({ error }, { status: 500 });
   }
 }

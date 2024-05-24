@@ -1,18 +1,15 @@
 import { cleanJson } from "@/utils/common";
 import { openai } from "@/utils/openai";
-import { NextApiRequest, NextApiResponse } from "next";
 import { ChatCompletionContentPart } from "openai/resources";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<any>,
-) {
+export default async function handler(req: Request) {
   try {
-    if (req.method !== "POST") {
+    const { body, method } = await req.json();
+    if (method !== "POST") {
       throw new Error("Invalid method");
     }
 
-    const { model, prompt, image } = req.body;
+    const { model, prompt, image } = body;
 
     const contentMessages = [
       {
@@ -46,10 +43,10 @@ export default async function handler(
     const cleanedJson = cleanJson(message.content);
     try {
       const content = JSON.parse(cleanedJson ?? "{}");
-      return res.status(200).json(content);
+      return Response.json(content, { status: 200 });
     } catch (error) {
       // If parsing as JSON fails, return the response as text
-      return res.status(200).send(message.content || ""); // Return content as text or an empty string
+      return Response.json(message.content || "", { status: 200 }); // Return content as text or an empty string
     }
 
     // const stream = OpenAIStream(response);
@@ -58,6 +55,6 @@ export default async function handler(
     // return streamResponse;
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ error });
+    return Response.json({ error }, { status: 500 });
   }
 }

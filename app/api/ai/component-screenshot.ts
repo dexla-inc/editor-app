@@ -6,7 +6,6 @@ import {
   getComponentsJsonPrompt,
 } from "@/utils/prompts";
 import faker from "@faker-js/faker";
-import { NextApiRequest, NextApiResponse } from "next";
 import { ChatCompletionContentPart } from "openai/resources";
 
 export function callFakerFunction(funcString: string) {
@@ -41,16 +40,14 @@ export const callFakerFuncs = (obj: any): any => {
   return obj;
 };
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<any>,
-) {
+export default async function handler(req: Request) {
   try {
-    if (req.method !== "POST") {
+    const { body, method } = await req.json();
+    if (method !== "POST") {
       throw new Error("Invalid method");
     }
 
-    const { description, image, theme } = req.body;
+    const { description, image, theme } = body;
 
     const isPromptWithScreenshot = image as boolean;
 
@@ -96,12 +93,12 @@ export default async function handler(
       const content = JSON.parse(cleanedJson ?? "{}");
       const resultWithFakerValues = callFakerFuncs(content);
 
-      return res.status(200).json(resultWithFakerValues);
+      return Response.json(resultWithFakerValues, { status: 200 });
     } catch (error) {
-      return res.status(200).send(cleanedJson || "");
+      return Response.json(cleanedJson, { status: 200 });
     }
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ error });
+    return Response.json({ error }, { status: 500 });
   }
 }

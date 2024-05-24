@@ -4,18 +4,15 @@ import { cleanJson, safeJsonParse } from "@/utils/common";
 import { GPT4_PREVIEW_MODEL } from "@/utils/config";
 import { openai } from "@/utils/openai";
 import { getTemplatePrompt } from "@/utils/prompts";
-import { NextApiRequest, NextApiResponse } from "next";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<any>,
-) {
+export default async function handler(req: Request) {
   try {
-    if (req.method !== "POST") {
+    const { body, method } = await req.json();
+    if (method !== "POST") {
       throw new Error("Invalid method");
     }
 
-    const { appDescription, appIndustry, pageDescription, pageName } = req.body;
+    const { appDescription, appIndustry, pageDescription, pageName } = body;
 
     const templates = await listTemplates();
 
@@ -50,8 +47,8 @@ export default async function handler(
     const cleanedJson = cleanJson(message.content);
     const content = safeJsonParse(cleanedJson ?? "{}");
 
-    return res.status(200).json(content);
+    return Response.json(content, { status: 200 });
   } catch (error) {
-    return res.status(500).json({ error });
+    return Response.json({ error }, { status: 500 });
   }
 }

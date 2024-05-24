@@ -1,24 +1,21 @@
 import { getTemplate } from "@/requests/templates/queries-noauth";
-import { NextApiRequest, NextApiResponse } from "next";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<any>,
-) {
+export default async function handler(req: Request) {
   try {
+    const { query, method } = await req.json();
     if (req.method !== "GET") {
       throw new Error("Invalid method");
     }
 
-    const { name } = req.query;
+    const { name } = query;
 
     const includeTiles = false;
 
     const template = await getTemplate(name as string, includeTiles);
 
-    return res.status(200).json(template);
+    return Response.json(template, { status: 200 });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ error });
+    return Response.json({ error }, { status: 500 });
   }
 }

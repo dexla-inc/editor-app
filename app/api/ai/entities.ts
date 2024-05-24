@@ -6,7 +6,6 @@ import { Stopwatch } from "@/utils/stopwatch";
 import { faker } from "@faker-js/faker";
 import random from "lodash.random";
 import sampleSize from "lodash.samplesize";
-import { NextApiRequest, NextApiResponse } from "next";
 
 function callFakerFunction(funcString: string) {
   try {
@@ -19,12 +18,11 @@ function callFakerFunction(funcString: string) {
   }
 }
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<any>,
-) {
+export default async function handler(req: Request) {
   try {
-    if (req.method !== "POST") {
+    const { method, body } = await req.json();
+
+    if (method !== "POST") {
       throw new Error("Invalid method");
     }
     // start a timer
@@ -36,7 +34,7 @@ export default async function handler(
       appIndustry: string;
       accessToken: string;
       timer: Stopwatch;
-    } = req.body;
+    } = body;
 
     const { appDescription, appIndustry, ...restData } = data;
 
@@ -189,9 +187,9 @@ export default async function handler(
       },
     });
 
-    return res.status(200).json({ id: data.id });
+    return Response.json({ id: data.id }, { status: 200 });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ error });
+    return Response.json({ error }, { status: 500 });
   }
 }

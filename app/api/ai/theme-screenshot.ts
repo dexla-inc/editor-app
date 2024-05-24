@@ -2,19 +2,16 @@ import { cleanJson } from "@/utils/common";
 import { GPT4_VISION_MODEL } from "@/utils/config";
 import { openai } from "@/utils/openai";
 import { getThemeScreenshotPrompt } from "@/utils/prompts-theme";
-import { NextApiRequest, NextApiResponse } from "next";
 import { ChatCompletionContentPart } from "openai/resources";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<any>,
-) {
+export default async function handler(req: Request) {
   try {
-    if (req.method !== "POST") {
+    const { body, method } = await req.json();
+    if (method !== "POST") {
       throw new Error("Invalid method");
     }
 
-    const { description, image } = req.body;
+    const { description, image } = body;
 
     const prompt = getThemeScreenshotPrompt({ description });
 
@@ -52,12 +49,12 @@ export default async function handler(
     try {
       const content = JSON.parse(cleanedJson ?? "{}");
 
-      return res.status(200).json(content);
+      return Response.json(content, { status: 200 });
     } catch (error) {
-      return res.status(200).send(cleanedJson || "");
+      return Response.json(cleanedJson, { status: 200 });
     }
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ error });
+    return Response.json({ error }, { status: 500 });
   }
 }

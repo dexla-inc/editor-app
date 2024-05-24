@@ -4,17 +4,14 @@ import {
   verifyDomain,
   DomainVerificationStatusProps,
 } from "@/utils/domains";
-import type { NextApiRequest, NextApiResponse } from "next";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
-  if (req.method !== "GET") {
+export default async function handler(req: Request) {
+  const { method, query } = await req.json();
+  if (method !== "GET") {
     throw new Error("Method not allowed");
   }
 
-  const domain = req.query.domain as string;
+  const domain = query.domain as string;
 
   let status: DomainVerificationStatusProps = "Valid Configuration";
 
@@ -46,8 +43,11 @@ export default async function handler(
     status = "Valid Configuration";
   }
 
-  res.status(200).json({
-    status,
-    domainJson,
-  });
+  return Response.json(
+    {
+      status,
+      domainJson,
+    },
+    { status: 200 },
+  );
 }
