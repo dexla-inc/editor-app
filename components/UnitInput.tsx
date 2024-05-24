@@ -90,7 +90,9 @@ export const UnitInput = ({
   }, [value, unit]);
 
   useEffect(() => {
-    if (fetchedValue) {
+    if (isNumeric) {
+      setTextValue("px");
+    } else if (fetchedValue) {
       switch (fetchedValue) {
         case "auto":
           setTextValue("auto");
