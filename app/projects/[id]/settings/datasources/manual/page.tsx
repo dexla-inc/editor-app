@@ -5,12 +5,12 @@ import ApiInfoFormNew from "@/components/datasources/ApiInfoFormNew";
 import { SettingsTabHeader } from "@/components/settings/SettingsTabHeader";
 import { SettingsTabs } from "@/components/settings/SettingsTabs";
 import { Container, Stack, Tabs, Title } from "@mantine/core";
-import { useRouter } from "next/navigation";
+import { useOldRouter } from "@/hooks/data/useOldRouter";
 
 export default function Settings() {
-  const router = useRouter();
-
-  const { name } = router.query as { id: string; name: string };
+  const {
+    query: { name },
+  } = useOldRouter();
 
   return (
     <DashboardShell>

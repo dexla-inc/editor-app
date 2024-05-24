@@ -5,12 +5,12 @@ import DataSourceAddSwagger from "@/components/datasources/DataSourceAddSwagger"
 import { SettingsTabHeader } from "@/components/settings/SettingsTabHeader";
 import { SettingsTabs } from "@/components/settings/SettingsTabs";
 import { Tabs } from "@mantine/core";
-import { useRouter } from "next/navigation";
+import { useOldRouter } from "@/hooks/data/useOldRouter";
 
 export default function Settings() {
-  const router = useRouter();
-
-  const name = router.query.name as string;
+  const {
+    query: { name },
+  } = useOldRouter();
 
   return (
     <DashboardShell>

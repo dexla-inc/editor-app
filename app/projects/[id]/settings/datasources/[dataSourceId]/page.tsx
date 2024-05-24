@@ -45,20 +45,16 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconRefresh } from "@tabler/icons-react";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useOldRouter } from "@/hooks/data/useOldRouter";
 
 export default function DataSourcePage() {
-  const router = useRouter();
+  const {
+    query: { id, name, dataSourceId, type },
+  } = useOldRouter();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
-  const { id, name, dataSourceId, type } = router.query as {
-    id: string;
-    name: string;
-    dataSourceId: string;
-    type: string;
-  };
 
   const [dataSource, setDataSource] = useState<DataSourceResponse>(
     {} as DataSourceResponse,

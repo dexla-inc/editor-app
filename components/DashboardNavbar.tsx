@@ -59,7 +59,7 @@ export default function DashboardNavbar({
                   href={`/projects/${projectId}/settings`}
                   icon={<Icon name="IconSettings" size={ICON_SIZE} />}
                   variant="subtle"
-                  active={pathname === "/projects/[id]/settings"}
+                  active={pathname.endsWith("/settings")}
                   py={12}
                 />
                 <NavLink
@@ -68,9 +68,7 @@ export default function DashboardNavbar({
                   href={`/projects/${projectId}/settings/datasources`}
                   variant="subtle"
                   icon={<Icon name="IconDatabase" size={ICON_SIZE} />}
-                  active={pathname.startsWith(
-                    "/projects/[id]/settings/datasources",
-                  )}
+                  active={pathname.endsWith("/datasources")}
                   py={12}
                 />
               </NavLink>

@@ -2,8 +2,8 @@ import { useMantineTheme } from "@mantine/core";
 import Editor from "@monaco-editor/react";
 import debounce from "lodash.debounce";
 import { pick } from "next/dist/lib/pick";
-import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useOldRouter } from "@/hooks/data/useOldRouter";
 
 type JsProps = {
   language: "javascript" | "typescript" | "json";
@@ -58,7 +58,7 @@ export function CustomJavaScriptTextArea({
   selectedItem,
 }: JsProps) {
   const monacoRef = useRef<any>(null);
-  const browser = useRouter();
+  const browser = useOldRouter();
 
   const theme = useMantineTheme();
 
@@ -145,19 +145,13 @@ export function CustomJavaScriptTextArea({
                     kind: monaco.languages.CompletionItemKind.Keyword,
                     insertText: `variables[/* ${variable.name} */'${id}']`,
                   })),
-                  ...Object.entries(
-                    pick(browser, [
-                      "asPath",
-                      "basePath",
-                      "pathname",
-                      "query",
-                      "route",
-                    ]),
-                  ).map(([key]) => ({
-                    label: `browser[${key}]`,
-                    kind: monaco.languages.CompletionItemKind.Variable,
-                    insertText: `browser['${key}']`,
-                  })),
+                  ...Object.entries(pick(browser, ["asPath", "query"])).map(
+                    ([key]) => ({
+                      label: `browser[${key}]`,
+                      kind: monaco.languages.CompletionItemKind.Variable,
+                      insertText: `browser['${key}']`,
+                    }),
+                  ),
                   ...Object.entries(components).map(([id, component]) => ({
                     label: `components[${component.description}]`,
                     kind: monaco.languages.CompletionItemKind.Variable,

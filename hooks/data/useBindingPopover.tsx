@@ -7,7 +7,6 @@ import { Action, APICallAction } from "@/utils/actions";
 import { usePageListQuery } from "@/hooks/editor/reactQuery/usePageListQuery";
 import { useEditorStore } from "@/stores/editor";
 import { useVariableStore } from "@/stores/variables";
-import { useRouter } from "next/navigation";
 import { useDataSourceStore } from "@/stores/datasource";
 import { pick } from "next/dist/lib/pick";
 import { useInputsStore } from "@/stores/inputs";
@@ -17,6 +16,7 @@ import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 import { useShareableContent } from "@/hooks/data/useShareableContent";
 import { useEventData } from "@/hooks/data/useEventData";
 import { useEndpoints } from "../editor/reactQuery/useDataSourcesEndpoints";
+import { useOldRouter } from "@/hooks/data/useOldRouter";
 
 type BindType = {
   selectedEntityId: string;
@@ -58,7 +58,7 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
   const variablesList = useVariableStore((state) =>
     Object.values(state.variableList),
   );
-  const browser = useRouter();
+  const browser = useOldRouter();
   const getAuthState = useDataSourceStore((state) => state.getAuthState);
   const inputsStore = useInputsStore((state) => state.inputValues);
   const event = useEventData();
@@ -102,9 +102,7 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
     { list: {} } as any,
   );
 
-  const browserList = Array.of(
-    pick(browser, ["asPath", "basePath", "pathname", "query", "route"]),
-  );
+  const browserList = Array.of(pick(browser, ["asPath", "query"]));
 
   const actionsList = isPageAction ? pageActions : selectedComponentActions;
 

@@ -12,9 +12,10 @@ import { safeJsonParse } from "@/utils/common";
 import { useInputsStore } from "@/stores/inputs";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useDataTransformers } from "@/hooks/data/useDataTransformers";
+import { useOldRouter } from "@/hooks/data/useOldRouter";
 
 export const useDataBinding = (componentId = "") => {
-  const browser = useRouter();
+  const browser = useOldRouter();
   const { itemTransformer } = useDataTransformers();
   const computeValue: ComputeValueProps = (
     { value, shareableContent, staticFallback },
@@ -90,9 +91,7 @@ export const useDataBinding = (componentId = "") => {
       { list: {} } as any,
     );
 
-    const browserList = Array.of(
-      pick(browser, ["asPath", "basePath", "pathname", "query", "route"]),
-    );
+    const browserList = Array.of(pick(browser, ["asPath", "query"]));
 
     const relatedComponentsData = pick(
       useEditorTreeStore.getState().relatedComponentsData,

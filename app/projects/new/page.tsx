@@ -14,9 +14,9 @@ import { useAppStore } from "@/stores/app";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { StepperDetailsType } from "@/types/projectTypes";
 import { Container, Stack, Stepper, Title } from "@mantine/core";
-import { useRouter } from "next/navigation";
 import { PageProps } from "@/types/app";
 import { useEffect, useState } from "react";
+import { useOldRouter } from "@/hooks/data/useOldRouter";
 
 export default function New({ params: { id: projectId } }: PageProps) {
   const [activeStep, setActiveStep] = useState(0);
@@ -29,7 +29,9 @@ export default function New({ params: { id: projectId } }: PageProps) {
     setActiveStep((current) => (current < 3 ? current + 1 : current));
   const prevStep = () =>
     setActiveStep((current) => (current > 0 ? current - 1 : current));
-  const router = useRouter();
+  const {
+    query: { company, step: stepFromQuery },
+  } = useOldRouter();
 
   const projectIdFromQuery = projectId;
   const { data: project } = useProjectQuery(projectId);
@@ -46,8 +48,6 @@ export default function New({ params: { id: projectId } }: PageProps) {
   const [friendlyName, setFriendlyName] = useState(activeCompany.orgName);
   const [region, setRegion] = useState<RegionTypes>("US_CENTRAL");
 
-  const company = router.query.company as string;
-  const stepFromQuery = router.query.step;
   const { data: pageListQuery } = usePageListQuery(
     projectIdFromQuery as string,
     null,

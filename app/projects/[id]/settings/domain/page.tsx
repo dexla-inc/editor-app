@@ -5,10 +5,12 @@ import DomainSettings from "@/components/settings/DomainSettings";
 import { SettingsTabHeader } from "@/components/settings/SettingsTabHeader";
 import { SettingsTabs } from "@/components/settings/SettingsTabs";
 import { Tabs } from "@mantine/core";
-import { useRouter } from "next/navigation";
-import { PageProps } from "@/types/app";
+import { useOldRouter } from "@/hooks/data/useOldRouter";
 
-export default function Domain({ params: { id, name } }: PageProps) {
+export default function Domain() {
+  const {
+    query: { id, name },
+  } = useOldRouter();
   return (
     <DashboardShell>
       <SettingsTabHeader name={name} />
