@@ -16,6 +16,8 @@ export const getServerSideProps = async ({
 }: GetServerSidePropsContext) => {
   const url = req.headers.host as string;
   const currentSlug = query.page as string;
+  console.log("url", url);
+  console.log("currentSlug", currentSlug);
 
   const deploymentPage = await getDeploymentPage(url, currentSlug);
 
@@ -33,7 +35,7 @@ export const getServerSideProps = async ({
   // Redirect to dexla page to say it hasn't been deployed
 
   const notFoundPageslug = deploymentPage.project.redirects?.notFoundPageId;
-
+  console.log("deploymentPage", deploymentPage);
   // Check if page exists
   if (!deploymentPage.id) {
     return {
