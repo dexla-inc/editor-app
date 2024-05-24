@@ -32,6 +32,7 @@ export type EditableComponentMapper = {
   component: ComponentTree & Component;
   shareableContent?: any;
   style?: CSSObject & { display?: string | ValueProps };
+  theme: MantineThemeExtended;
 };
 
 type ComponentBase = {

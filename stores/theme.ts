@@ -5,6 +5,7 @@ import { NotificationProps, showNotification } from "@mantine/notifications";
 import merge from "lodash.merge";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
+import isEqual from "lodash.isequal";
 
 type ThemeState = {
   theme: MantineThemeExtended;
@@ -19,7 +20,9 @@ export const useThemeStore = create<ThemeState>()(
         theme: defaultTheme,
         setTheme: (theme) =>
           set(
-            (prev) => ({ theme: merge(prev.theme, theme) }),
+            (prev) => ({
+              theme: theme,
+            }),
             false,
             "theme/setTheme",
           ),

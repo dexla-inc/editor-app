@@ -11,7 +11,7 @@ import { convertSizeToPx } from "@/utils/defaultSizes";
 type Props = EditableComponentMapper & FlexProps;
 
 export const ContainerComponent = forwardRef<HTMLDivElement, Props>(
-  ({ renderTree, shareableContent, component, ...props }, ref) => {
+  ({ renderTree, shareableContent, component, theme, ...props }, ref) => {
     const isPreviewMode = useEditorTreeStore(
       (state) => state.isPreviewMode || state.isLive,
     );
@@ -28,6 +28,8 @@ export const ContainerComponent = forwardRef<HTMLDivElement, Props>(
     const customStyle = merge({ width: "100%" }, props.style, defaultBorder, {
       gap: gapPx,
     });
+
+    console.log(theme);
 
     const { renderData } = useRenderData({
       component,

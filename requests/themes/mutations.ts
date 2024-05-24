@@ -4,6 +4,8 @@ import { del, patch, post } from "@/utils/api";
 import { buildQueryString } from "@/types/dashboardTypes";
 import { evictCache } from "@/requests/cache/queries-noauth";
 import { PatchParams } from "../types";
+import { prepareUserThemeLive } from "@/utils/prepareUserThemeLive";
+import { useThemeStore } from "@/stores/theme";
 
 export type SaveThemeProps = {
   params: ThemeResponse;
@@ -39,6 +41,11 @@ export async function saveTheme(
   url += buildQueryString({ websiteUrl });
 
   const response = (await post<ThemeResponse>(url, params)) as ThemeResponse;
+
+  const theme = prepareUserThemeLive(response);
+
+  const setTheme = useThemeStore.getState().setTheme;
+  setTheme(theme);
 
   const cacheTag = getCacheTag(projectId);
   await evictCache(cacheTag);
