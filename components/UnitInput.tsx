@@ -29,7 +29,12 @@ export const UnitInput = ({
   ...props
 }: Props & Omit<NumberInputProps, "onChange">) => {
   const theme = useMantineTheme();
-  const fetchedValue = inputValue ? inputValue.toString() : "";
+  const isNumeric = typeof inputValue === "number";
+  const fetchedValue = inputValue
+    ? isNumeric
+      ? inputValue.toString()
+      : inputValue
+    : "";
 
   const options = customOptions ?? [
     { value: "px", label: "PX" },
@@ -40,7 +45,6 @@ export const UnitInput = ({
     { value: "fit-content", label: "fit" },
   ];
 
-  const isNumeric = !isNaN(Number(fetchedValue));
   const isUnit =
     fetchedValue &&
     !isNumeric &&
