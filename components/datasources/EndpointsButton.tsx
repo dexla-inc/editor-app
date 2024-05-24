@@ -14,7 +14,6 @@ interface EndpointsButtonProps extends LoadingStore {
 export default function EndpointsButton({
   isLoading,
   startLoading,
-  stopLoading,
   projectId,
 }: EndpointsButtonProps) {
   const router = useRouter();

@@ -16,7 +16,7 @@ import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
 import { Button, Group, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconArrowLeft } from "@tabler/icons-react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import slugify from "slugify";
 
@@ -30,7 +30,7 @@ export default function PageConfig({ page, setPage }: Props) {
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
   const router = useRouter();
-  const projectId = router.query.id as string;
+  const { id: projectId } = useParams<{ id: string }>();
   const [slug, setSlug] = useState("");
   const resetTree = useEditorTreeStore((state) => state.resetTree);
   const { invalidate } = usePageListQuery(projectId, null);

@@ -21,7 +21,7 @@ export const EditorProviders = ({ children }: { children: ReactNode }) => {
         <ContextMenuProvider>
           <ReactFlowProvider>
             <ModalsProvider modals={{ logicFlows: LogicFlowInitialModal }}>
-              <DashboardShell>{children}</DashboardShell>
+              {children}
             </ModalsProvider>
           </ReactFlowProvider>
         </ContextMenuProvider>

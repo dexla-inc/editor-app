@@ -10,7 +10,7 @@ import {
 } from "@mantine/core";
 import { SegmentedControlYesNo } from "../SegmentedControlYesNo";
 import { usePageListQuery } from "@/hooks/editor/reactQuery/usePageListQuery";
-import { useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { ActionIconDefault } from "../ActionIconDefault";
 import { ComponentToBindFromInput } from "../ComponentToBindFromInput";
 import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
@@ -19,8 +19,7 @@ import { Icon } from "../Icon";
 type Props = ActionFormProps<Omit<NavigationAction, "name">>;
 
 export const NavigationActionForm = ({ form, isPageAction }: Props) => {
-  const router = useRouter();
-  const projectId = router.query.id as string;
+  const { id: projectId } = useParams<{ id: string }>();
   const { data: pageListQuery } = usePageListQuery(projectId, null);
 
   const onClickAddQueryString = () => {

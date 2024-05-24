@@ -16,7 +16,7 @@ import { showNotification } from "@mantine/notifications";
 import { IconNewSection } from "@tabler/icons-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import merge from "lodash.merge";
-import { useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 
@@ -25,7 +25,7 @@ type Props = {
 };
 
 export const CustomComponentModal = ({ isCustomComponentModalOpen }: Props) => {
-  const router = useRouter();
+  const { id: projectId } = useParams();
   const queryClient = useQueryClient();
   const setIsCustomComponentModalOpen = useUserConfigStore(
     (state) => state.setIsCustomComponentModalOpen,
@@ -90,7 +90,7 @@ export const CustomComponentModal = ({ isCustomComponentModalOpen }: Props) => {
         content: encodeSchema(JSON.stringify(copy)) as string,
         type: values.scope === "global" ? values.type : copy?.name,
       },
-      projectId: router.query.id as string,
+      projectId: projectId as string,
       companyId: activeCompany.orgId,
     });
   };

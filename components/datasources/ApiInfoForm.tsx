@@ -8,7 +8,7 @@ import { ApiFromAI } from "@/requests/datasources/types";
 import { Button, Flex, Select, Stack, TextInput, Title } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 
 type Props = {
   api: ApiFromAI;
@@ -16,8 +16,7 @@ type Props = {
 };
 
 export default function ApiInfoForm({ api, title }: Props) {
-  const router = useRouter();
-  const projectId = router.query.id as string;
+  const { id: projectId } = useParams<{ id: string }>();
 
   const form = useForm<ApiFromAI>({
     validate: {

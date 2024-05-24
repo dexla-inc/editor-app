@@ -30,7 +30,7 @@ import { useMutation } from "@tanstack/react-query";
 import isEqual from "lodash.isequal";
 import startCase from "lodash.startcase";
 import { nanoid } from "nanoid";
-import { useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useCallback, useEffect, useRef } from "react";
 import { useUpdateNodeInternals } from "reactflow";
 import { safeJsonParse } from "@/utils/common";
@@ -40,8 +40,7 @@ type Props = {
 };
 
 export const LogicFlowsPage = ({ flow }: Props) => {
-  const router = useRouter();
-  const projectId = router.query.id as string;
+  const { id: projectId } = useParams<{ id: string }>();
   const reactFlowWrapper = useRef(null);
   const restoreFlow = useFlowStore((state) => state.restoreFlow);
   const selectedNode = useFlowStore((state) => state.selectedNode);

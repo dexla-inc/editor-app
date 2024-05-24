@@ -1,15 +1,12 @@
 import { useEditorStore } from "@/stores/editor";
 import { Select } from "@mantine/core";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { memo, useMemo } from "react";
 import { useShallow } from "zustand/react/shallow";
 
 const PageSelector = () => {
   const router = useRouter();
-  const { id: projectId, page: pageId } = router.query as {
-    id: string;
-    page: string;
-  };
+  const { id: projectId, page: pageId } = useParams();
   const pages = useEditorStore(
     useShallow((state) =>
       state.pages.map((page) => ({ value: page.id, label: page.title })),

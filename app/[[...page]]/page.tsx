@@ -58,7 +58,13 @@ async function LivePage({ params: { page } }: PageProps) {
     redirect(`/${signInPageSlug}`.replace("//", "/"));
   }
 
-  return <Live deploymentPage={deploymentPage} pageState={pageState} />;
+  return (
+    <Live
+      page={deploymentPage}
+      pageState={pageState}
+      projectId={deploymentPage?.project?.id}
+    />
+  );
 }
 
 export default LivePage;

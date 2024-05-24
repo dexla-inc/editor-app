@@ -18,10 +18,10 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useState } from "react";
 import { TopLabel } from "../TopLabel";
-import { safeJsonParse, safeJsonStringify, toSnakeCase } from "@/utils/common";
+import { safeJsonStringify, toSnakeCase } from "@/utils/common";
 import { Prism } from "@mantine/prism";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
 
@@ -44,8 +44,7 @@ export const VariableForm = ({ variableId }: Props) => {
   const setVariable = useVariableStore((state) => state.setVariable);
   const variable = variableList.find((v) => v.id === variableId);
   const [selectedType, setSelectedType] = useState(variable?.type ?? "TEXT");
-  const router = useRouter();
-  const projectId = router.query.id as string;
+  const { id: projectId } = useParams<{ id: string }>();
   const { createVariablesMutation, updateVariablesMutation } =
     useVariableMutation(projectId);
 

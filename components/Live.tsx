@@ -22,17 +22,16 @@ import { useVariableListQuery } from "@/hooks/editor/reactQuery/useVariableListQ
 import { withPageOnLoad } from "@/hoc/withPageOnLoad";
 
 type Props = {
-  deploymentPage: DeploymentPage;
+  page: DeploymentPage;
   pageState: EditorTreeCopy;
 };
 
 let theme: MantineThemeExtended | undefined;
 
-export const LiveComponent = ({ deploymentPage, pageState }: Props) => {
-  theme =
-    theme === undefined ? prepareUserThemeLive(deploymentPage.branding) : theme;
+export const LiveComponent = ({ page, pageState }: Props) => {
+  theme = theme === undefined ? prepareUserThemeLive(page.branding) : theme;
 
-  const projectId = deploymentPage.project.id;
+  const projectId = page.project.id;
   const [isPending, startTransition] = useTransition();
 
   const { data: datasources } = useDataSources(projectId);
@@ -57,7 +56,7 @@ export const LiveComponent = ({ deploymentPage, pageState }: Props) => {
   }, []);
 
   useEffect(() => {
-    if (deploymentPage?.pageState) {
+    if (page?.pageState) {
       startTransition(() => {
         setEditorTree(pageState, {
           onLoad: true,
@@ -74,10 +73,10 @@ export const LiveComponent = ({ deploymentPage, pageState }: Props) => {
   }
 
   useEffect(() => {
-    if (deploymentPage.id) {
+    if (page.id) {
       useEditorTreeStore.setState(
         {
-          currentPageId: deploymentPage.id,
+          currentPageId: page.id,
           currentProjectId: projectId,
           isLive: true,
           isPreviewMode: true,
@@ -90,12 +89,12 @@ export const LiveComponent = ({ deploymentPage, pageState }: Props) => {
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [projectId, deploymentPage.id]);
+  }, [projectId, page.id]);
 
   useEffect(() => {
     if (variables) initializeVariableList(variables.results);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [variables, deploymentPage.id]);
+  }, [variables, page.id]);
 
   useEffect(() => {
     if (datasources) {
@@ -145,11 +144,11 @@ export const LiveComponent = ({ deploymentPage, pageState }: Props) => {
   }
 
   return (
-    <LiveWrapper project={deploymentPage.project}>
+    <LiveWrapper project={page.project}>
       <LoadingOverlay visible={isPending} />
       {renderTree(editorTree.root)}
     </LiveWrapper>
   );
 };
 
-export const Live = withPageOnLoad(LiveComponent, { isLive: true });
+export const Live = withPageOnLoad<Props>(LiveComponent);

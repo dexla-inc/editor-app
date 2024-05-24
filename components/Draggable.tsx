@@ -13,7 +13,7 @@ import {
 } from "@mantine/core";
 import { IconTrash } from "@tabler/icons-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { PropsWithChildren, useCallback } from "react";
 
 type Props = {
@@ -30,7 +30,7 @@ export const Draggable = ({
   isDeletable,
   ...props
 }: PropsWithChildren<Props>) => {
-  const router = useRouter();
+  const { id: projectId } = useParams<{ id: string }>();
   const theme = useMantineTheme();
 
   const setComponentToAdd = useEditorStore((state) => state.setComponentToAdd);
@@ -90,7 +90,7 @@ export const Draggable = ({
                   e.preventDefault();
                   e.stopPropagation();
                   mutate({
-                    projectId: router.query.id as string,
+                    projectId,
                     companyId: activeCompany.orgId,
                     id,
                   });

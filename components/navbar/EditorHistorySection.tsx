@@ -2,7 +2,7 @@ import { usePageStateHistory } from "@/hooks/editor/reactQuery/usePageStateHisto
 import { LARGE_ICON_SIZE } from "@/utils/config";
 import { LoadingOverlay, Stack, Text } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
-import { useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { Icon } from "../Icon";
 import { rollbackPageState } from "@/requests/pages/mutations";
@@ -14,11 +14,10 @@ import { PageHistoryItem } from "./PageHistoryItem";
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 
 export const EditorHistorySection = () => {
-  const router = useRouter();
-  const { id: projectId, page: pageId } = router.query as {
+  const { id: projectId, page: pageId } = useParams<{
     id: string;
     page: string;
-  };
+  }>();
   const initialTimestamp = Date.now() - ONE_DAY_MS;
   const [date, setDate] = useState(new Date(initialTimestamp));
   const [timestamp, setTimestamp] = useState<number>(initialTimestamp);

@@ -1,5 +1,6 @@
+"use client";
+
 import Editor from "@/components/Editor";
-import { withPageOnLoad } from "@/hoc/withPageOnLoad";
 import { useVariableStore } from "@/stores/variables";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useDataSources } from "@/hooks/editor/reactQuery/useDataSources";
@@ -8,6 +9,8 @@ import { usePropelAuthStore } from "@/stores/propelAuth";
 import { LoadingOverlay } from "@mantine/core";
 import UnauthorisedPage from "@/components/UnauthorisedPage";
 import { PageProps } from "@/types/app";
+import { useEffect, useState } from "react";
+import { usePageQuery } from "@/hooks/editor/reactQuery/usePageQuery";
 
 const PageEditor = ({ params: { id: projectId, page: pageId } }: PageProps) => {
   const initializeVariableList = useVariableStore(
@@ -17,38 +20,40 @@ const PageEditor = ({ params: { id: projectId, page: pageId } }: PageProps) => {
     (state) => state.setApiAuthConfig,
   );
 
-  // const [status, setStatus] = useState<
-  //   "loading" | "unauthorised" | "authorised"
-  // >("loading");
+  const [status, setStatus] = useState<
+    "loading" | "unauthorised" | "authorised"
+  >("loading");
 
   const { data: datasources } = useDataSources(projectId);
   const { data: variables } = useVariableListQuery(projectId);
   const checkHasAccess = usePropelAuthStore((state) => state.checkHasAccess);
 
-  // useEffect(() => {
-  //   const hasAccess = checkHasAccess(projectId);
-  //   if (hasAccess) {
-  //     setStatus("authorised");
-  //   } else {
-  //     setStatus("unauthorised");
-  //   }
-  // }, [projectId, checkHasAccess]);
-  //
-  // useEffect(() => {
-  //   if (status === "authorised" && variables)
-  //     initializeVariableList(variables.results);
-  //
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [variables, pageId, status]);
-  //
-  // useEffect(() => {
-  //   if (datasources) {
-  //     setApiAuthConfig(projectId, datasources);
-  //   }
-  // }, [datasources, setApiAuthConfig, projectId]);
+  useEffect(() => {
+    const hasAccess = checkHasAccess(projectId);
+    if (hasAccess) {
+      setStatus("authorised");
+    } else {
+      setStatus("unauthorised");
+    }
+  }, [projectId, checkHasAccess]);
+
+  useEffect(() => {
+    if (status === "authorised" && variables)
+      initializeVariableList(variables.results);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [variables, pageId, status]);
+
+  useEffect(() => {
+    if (datasources) {
+      setApiAuthConfig(projectId, datasources);
+    }
+  }, [datasources, setApiAuthConfig, projectId]);
+
+  const { data: editorPage } = usePageQuery(projectId, pageId);
 
   return status === "authorised" ? (
-    <Editor projectId={projectId} pageId={pageId} />
+    <Editor page={editorPage!} projectId={projectId} pageId={pageId} />
   ) : status === "unauthorised" ? (
     <UnauthorisedPage />
   ) : (
@@ -56,4 +61,4 @@ const PageEditor = ({ params: { id: projectId, page: pageId } }: PageProps) => {
   );
 };
 
-export default withPageOnLoad(PageEditor, { isLive: false });
+export default PageEditor;

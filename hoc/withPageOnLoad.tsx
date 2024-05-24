@@ -1,41 +1,26 @@
 import { useTriggers } from "@/hooks/components/useTriggers";
-import { useParams, usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { usePageQuery } from "@/hooks/editor/reactQuery/usePageQuery";
 import { DeploymentPage } from "@/requests/deployments/types";
-import { EditorTreeCopy } from "@/utils/editor";
+import { PageResponse } from "@/requests/pages/types";
 
 // Props from server side
 type Props = {
-  deploymentPage: DeploymentPage;
-  pageState: EditorTreeCopy;
+  page?: DeploymentPage | PageResponse;
+  projectId: string;
 };
 
-export const withPageOnLoad = (
-  WrappedComponent: any,
-  config: { isLive?: boolean },
-) => {
-  const PageOnLoadWrapper = (props: Props) => {
+export const withPageOnLoad = <T extends {}>(WrappedComponent: any) => {
+  const PageOnLoadWrapper = (props: Props & T) => {
+    const { page, projectId } = props;
     const router = useRouter();
     const pathName = usePathname();
-    const { id: projectId, page: pageId } = useParams<{
-      id: string;
-      page: string;
-    }>();
-
-    const { data: editorPage } = usePageQuery(
-      projectId,
-      pageId,
-      !config.isLive,
-    );
-
-    const page = config.isLive ? props.deploymentPage : editorPage;
 
     const { onPageLoad } = useTriggers({
       // @ts-ignore
       entity: page,
       router,
-      projectId: props.deploymentPage.project?.id || projectId,
+      projectId: page?.project?.id || projectId,
     });
 
     const [actionTriggeredForPath, setActionTriggeredForPath] = useState("");

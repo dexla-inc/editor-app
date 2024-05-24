@@ -3,7 +3,7 @@ import { ICON_SIZE } from "@/utils/config";
 import { Button, Loader, NavLink, NavLinkProps } from "@mantine/core";
 import { IconPlus } from "@tabler/icons-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 
 type Props = {
@@ -18,8 +18,7 @@ export const DashboardNavLink = ({
   pathName,
   ...props
 }: Props) => {
-  const router = useRouter();
-  const { pathname } = router;
+  const pathname = usePathname();
   const [isLoading, setIsLoading] = useState(false);
   return (
     <NavLink

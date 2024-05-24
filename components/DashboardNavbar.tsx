@@ -7,7 +7,7 @@ import { Box, Button, Menu, NavLink, Navbar, ScrollArea } from "@mantine/core";
 import { useLogoutFunction } from "@propelauth/react";
 import { IconArrowLeft, IconLogout, IconSettings } from "@tabler/icons-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 
 type DashboardNavbarProps = {
   isLoading?: boolean;
@@ -21,8 +21,8 @@ export default function DashboardNavbar({
   navbarType,
 }: DashboardNavbarProps) {
   const logoutFn = useLogoutFunction();
-  const router = useRouter();
-  const projectId = router.query.id as string;
+  const pathname = usePathname();
+  const { id: projectId } = useParams<{ id: string }>();
   const user = usePropelAuthStore((state) => state.user);
   const reset = usePropelAuthStore((state) => state.reset);
 
@@ -59,7 +59,7 @@ export default function DashboardNavbar({
                   href={`/projects/${projectId}/settings`}
                   icon={<Icon name="IconSettings" size={ICON_SIZE} />}
                   variant="subtle"
-                  active={router.pathname === "/projects/[id]/settings"}
+                  active={pathname === "/projects/[id]/settings"}
                   py={12}
                 />
                 <NavLink
@@ -68,7 +68,7 @@ export default function DashboardNavbar({
                   href={`/projects/${projectId}/settings/datasources`}
                   variant="subtle"
                   icon={<Icon name="IconDatabase" size={ICON_SIZE} />}
-                  active={router.pathname.startsWith(
+                  active={pathname.startsWith(
                     "/projects/[id]/settings/datasources",
                   )}
                   py={12}

@@ -11,12 +11,11 @@ import {
   TextInput,
 } from "@mantine/core";
 import { IconSearch } from "@tabler/icons-react";
-import { useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useCallback, useState } from "react";
 
 export const AssetImageOverview = () => {
-  const router = useRouter();
-  const projectId = router.query.id as string;
+  const { id: projectId } = useParams<{ id: string }>();
   const [search, setSearch] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { invalidate } = useStorageQuery(projectId);

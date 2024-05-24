@@ -4,7 +4,7 @@ import { MethodTypes } from "@/requests/types";
 import { ICON_SIZE } from "@/utils/config";
 import { Box, Flex, Group, Text, UnstyledButton } from "@mantine/core";
 import { IconChevronDown, IconChevronRight } from "@tabler/icons-react";
-import { useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useState } from "react";
 
 export type ColorScheme = {
@@ -56,7 +56,7 @@ export const DataSourceEndpoint = ({
   opened: externalOpened,
   setOpened: externalSetOpened,
 }: DataSourceEndpointProps) => {
-  const router = useRouter();
+  const routeParams = useParams<{ dataSourceId: string }>();
   const [internalOpened, setInternalOpened] = useState<boolean>(false);
   const isOpened = externalOpened ?? internalOpened;
   const setOpened = externalSetOpened ?? setInternalOpened;
@@ -66,7 +66,7 @@ export const DataSourceEndpoint = ({
   };
 
   const actualDataSourceId =
-    dataSourceId ?? (router.query.dataSourceId as string);
+    dataSourceId ?? (routeParams.dataSourceId as string);
 
   return (
     <Box>

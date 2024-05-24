@@ -5,6 +5,7 @@ import { useEffect, useRef } from "react";
 const message = "You have unsaved changes. Are you sure you want to leave?";
 const errorMessage = "Abort route change. Please ignore this error.";
 
+// TODO: get this back: https://github.com/vercel/next.js/discussions/41934#discussioncomment-8996669
 export const usePreventNavigationOnSaving = () => {
   const router = useRouter();
   const isSaving = useEditorTreeStore((state) => state.isSaving);
@@ -29,7 +30,7 @@ export const usePreventNavigationOnSaving = () => {
       if (isSaving) {
         const leave = confirm(message);
         if (!leave) {
-          router.events.emit("routeChangeError");
+          // router.events.emit("routeChangeError");
           throw errorMessage;
         }
 
@@ -39,11 +40,12 @@ export const usePreventNavigationOnSaving = () => {
       }
     };
 
-    router.events.on("routeChangeStart", handleRouteChange);
+    // router.events.on("routeChangeStart", handleRouteChange);
 
     return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-      router.events.off("routeChangeStart", handleRouteChange);
+      // window.removeEventListener("beforeunload", handleBeforeUnload);
+      // router.events.off("routeChangeStart", handleRouteChange);
     };
-  }, [isSaving, router.events, resetTree]);
+    // }, [isSaving, router.events, resetTree]);
+  }, []);
 };

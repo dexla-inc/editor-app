@@ -1,10 +1,7 @@
 import { DashboardNavLink } from "@/components/DashboardNavLink";
 import { Stack, Text } from "@mantine/core";
-import { useRouter } from "next/navigation";
 
 export const DashboardNavLinks = () => {
-  const router = useRouter();
-
   return (
     <Stack>
       <Text size="xs" color="dimmed" px="md">

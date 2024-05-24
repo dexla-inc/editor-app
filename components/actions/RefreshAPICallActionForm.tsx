@@ -2,14 +2,13 @@ import EmptyDatasourcesPlaceholder from "@/components/datasources/EmptyDatasourc
 import { EndpointSelect } from "@/components/EndpointSelect";
 import { ActionFormProps, RefreshAPICallAction } from "@/utils/actions";
 import { Stack } from "@mantine/core";
-import { useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useEndpoints } from "@/hooks/editor/reactQuery/useDataSourcesEndpoints";
 
 type Props = ActionFormProps<Omit<RefreshAPICallAction, "name">>;
 
 export const RefreshAPICallActionForm = ({ form }: Props) => {
-  const router = useRouter();
-  const projectId = router.query.id as string;
+  const { id: projectId } = useParams<{ id: string }>();
 
   const { endpoints } = useEndpoints(projectId as string);
 

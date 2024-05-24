@@ -6,13 +6,11 @@ import { createDeployment } from "@/requests/deployments/mutations";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
 import { Button, Tooltip } from "@mantine/core";
-import { NextURL } from "next/dist/server/web/next-url";
-import { useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export const DeployButton = () => {
-  const router = useRouter();
-  const { id: projectId, page } = router.query as { id: string; page: string };
+  const { id: projectId, page } = useParams<{ id: string; page: string }>();
   const [customDomain, setCustomDomain] = useState("");
   const [deployUrl, setDeployUrl] = useState<URL>();
   const [slug, setSlug] = useState<string>("");

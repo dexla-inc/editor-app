@@ -26,7 +26,7 @@ import {
   Stack,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useEffect } from "react";
 import { InformationAlert } from "../Alerts";
 import { useEndpoints } from "@/hooks/editor/reactQuery/useDataSourcesEndpoints";
@@ -83,8 +83,7 @@ export default function AuthenticationBearer({
   setLoginRequestBody,
   fromPage,
 }: BearerTokenAuthenticationProps) {
-  const router = useRouter();
-  const projectId = router.query.id as string;
+  const { id: projectId } = useParams<{ id: string }>();
   const clearApiAuthConfig = useDataSourceStore(
     (state) => state.clearApiAuthConfig,
   );

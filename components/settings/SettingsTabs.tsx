@@ -2,11 +2,10 @@ import { Icon } from "@/components/Icon";
 import { ICON_SIZE } from "@/utils/config";
 import { Tabs } from "@mantine/core";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 
 export const SettingsTabs = () => {
-  const router = useRouter();
-  const { id, name } = router.query as { id: string; name: string };
+  const { id, name } = useParams<{ id: string; name: string }>();
 
   return (
     <Tabs.List>
