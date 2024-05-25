@@ -6,10 +6,8 @@ import { ContextMenuProvider } from "@/contexts/ContextMenuProvider";
 import { ReactFlowProvider } from "reactflow";
 import { ModalsProvider } from "@mantine/modals";
 import LogicFlowInitialModal from "@/components/logic-flow/LogicFlowInitialModal";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ReactNode } from "react";
 import InstantiatePropelAuthStore from "@/components/InstantiatePropelAuthStore";
-import { DashboardShell } from "@/components/DashboardShell";
 import InitialisePropelAuth from "@/components/InitialisePropelAuth";
 export const EditorProviders = ({ children }: { children: ReactNode }) => {
   return (
@@ -25,7 +23,6 @@ export const EditorProviders = ({ children }: { children: ReactNode }) => {
             </ModalsProvider>
           </ReactFlowProvider>
         </ContextMenuProvider>
-        <SpeedInsights />
       </InitialisePropelAuth>
     </>
   );

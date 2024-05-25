@@ -24,6 +24,7 @@ import {
 import { IconCircleCheck, IconCircleX } from "@tabler/icons-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { DashboardShell } from "@/components/DashboardShell";
 
 type Props = {
   projectId: string;
@@ -97,116 +98,118 @@ export default function TeamSettings({ projectId }: Props) {
   };
 
   return (
-    <Container py="xl">
-      <Stack spacing="xl">
-        <Flex justify="space-between">
-          <Title order={3}>Members</Title>
+    <DashboardShell>
+      <Container py="xl">
+        <Stack spacing="xl">
+          <Flex justify="space-between">
+            <Title order={3}>Members</Title>
 
-          {userPermissions.includes("propelauth::can_invite") && (
-            <Button
-              onClick={openInviteModal}
-              leftIcon={<Icon name="IconPlus" size={ICON_SIZE}></Icon>}
-              variant="default"
-              compact
-            >
-              Invite Member
-            </Button>
-          )}
-        </Flex>
-        <Table>
-          <thead>
-            <tr>
-              <th style={{ width: LARGE_ICON_SIZE }}></th>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Role</th>
-              <th>Enabled</th>
-              <th>Created At</th>
-            </tr>
-          </thead>
-          <tbody>
-            {teamList.map((user, index) => (
-              <tr key={index}>
-                <td>
-                  <Image
-                    src={user.pictureUrl}
-                    alt={user.firstName + " photo"}
-                    width={LARGE_ICON_SIZE}
-                    height={LARGE_ICON_SIZE}
-                    style={{
-                      borderRadius: "50%",
-                    }}
-                  />
-                </td>
-                <td>{user.firstName + " " + user.lastName}</td>
-                <td>{user.email}</td>
-                <td>{snakeToSpacedText(user.accessLevel)}</td>
-                <td>
-                  {user.enabled ? (
-                    <IconCircleCheck
-                      size={LARGE_ICON_SIZE}
-                      style={{ color: theme.colors.teal[6] }}
-                    />
-                  ) : (
-                    <IconCircleX
-                      size={LARGE_ICON_SIZE}
-                      style={{ color: "red" }}
-                    />
-                  )}
-                </td>
-                <td>{new Date(user.createdAt * 1000).toLocaleString()}</td>
+            {userPermissions.includes("propelauth::can_invite") && (
+              <Button
+                onClick={openInviteModal}
+                leftIcon={<Icon name="IconPlus" size={ICON_SIZE}></Icon>}
+                variant="default"
+                compact
+              >
+                Invite Member
+              </Button>
+            )}
+          </Flex>
+          <Table>
+            <thead>
+              <tr>
+                <th style={{ width: LARGE_ICON_SIZE }}></th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Enabled</th>
+                <th>Created At</th>
               </tr>
-            ))}
-          </tbody>
-        </Table>
-        {/* Change this over to use a table skeleton */}
-        <LoadingOverlay visible={isLoading} zIndex={1000} radius="sm" />
-      </Stack>
-      <Modal
-        opened={isInviteModalOpen}
-        onClose={closeInviteModal}
-        title="Invite User"
-      >
-        <Stack mb={80}>
-          <TextInput
-            label="Email"
-            placeholder="Enter email address"
-            value={email}
-            onChange={(event) => setEmail(event.currentTarget.value)}
-          ></TextInput>
-          <Select
-            label="Role"
-            data={[
-              {
-                value: "OWNER",
-                label: "Owner",
-              },
-              {
-                value: "ADMIN",
-                label: "Admin",
-              },
-              {
-                value: "MEMBER",
-                label: "Member",
-              },
-              {
-                value: "GUEST",
-                label: "Guest",
-              },
-            ]}
-            value={userRole}
-            onChange={(value: UserRoles) => setUserRole(value)}
-            dropdownPosition="bottom"
-          />
-          <Button
-            onClick={handleInvite}
-            loading={isLoading}
-            disabled={isLoading || email === ""}
-          >
-            Invite User
-          </Button>
+            </thead>
+            <tbody>
+              {teamList.map((user, index) => (
+                <tr key={index}>
+                  <td>
+                    <Image
+                      src={user.pictureUrl}
+                      alt={user.firstName + " photo"}
+                      width={LARGE_ICON_SIZE}
+                      height={LARGE_ICON_SIZE}
+                      style={{
+                        borderRadius: "50%",
+                      }}
+                    />
+                  </td>
+                  <td>{user.firstName + " " + user.lastName}</td>
+                  <td>{user.email}</td>
+                  <td>{snakeToSpacedText(user.accessLevel)}</td>
+                  <td>
+                    {user.enabled ? (
+                      <IconCircleCheck
+                        size={LARGE_ICON_SIZE}
+                        style={{ color: theme.colors.teal[6] }}
+                      />
+                    ) : (
+                      <IconCircleX
+                        size={LARGE_ICON_SIZE}
+                        style={{ color: "red" }}
+                      />
+                    )}
+                  </td>
+                  <td>{new Date(user.createdAt * 1000).toLocaleString()}</td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+          {/* Change this over to use a table skeleton */}
+          <LoadingOverlay visible={isLoading} zIndex={1000} radius="sm" />
         </Stack>
-      </Modal>
-    </Container>
+        <Modal
+          opened={isInviteModalOpen}
+          onClose={closeInviteModal}
+          title="Invite User"
+        >
+          <Stack mb={80}>
+            <TextInput
+              label="Email"
+              placeholder="Enter email address"
+              value={email}
+              onChange={(event) => setEmail(event.currentTarget.value)}
+            ></TextInput>
+            <Select
+              label="Role"
+              data={[
+                {
+                  value: "OWNER",
+                  label: "Owner",
+                },
+                {
+                  value: "ADMIN",
+                  label: "Admin",
+                },
+                {
+                  value: "MEMBER",
+                  label: "Member",
+                },
+                {
+                  value: "GUEST",
+                  label: "Guest",
+                },
+              ]}
+              value={userRole}
+              onChange={(value: UserRoles) => setUserRole(value)}
+              dropdownPosition="bottom"
+            />
+            <Button
+              onClick={handleInvite}
+              loading={isLoading}
+              disabled={isLoading || email === ""}
+            >
+              Invite User
+            </Button>
+          </Stack>
+        </Modal>
+      </Container>
+    </DashboardShell>
   );
 }
