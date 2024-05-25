@@ -8,9 +8,9 @@ import { cloneObject, safeJsonParse } from "@/utils/common";
 import { useInputsStore } from "@/stores/inputs";
 import { useShallow } from "zustand/react/shallow";
 import { pick } from "next/dist/lib/pick";
-import { useShareableContent } from "@/hooks/data/useShareableContent";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useOldRouter } from "@/hooks/data/useOldRouter";
+import { useDataTransformers } from "@/hooks/data/useDataTransformers";
 
 type NextRouterKeys = any;
 type RecordStringAny = Record<string, any>;
@@ -25,7 +25,6 @@ const itemPattern = /item\[\s*(?:\/\*[\s\S]*?\*\/\s*)?'(.*?)'\s*\]/g;
 type UseComputeValue = {
   shareableContent?: Record<string, unknown>;
   onLoad: any;
-  componentId?: string;
 };
 
 const autoRunJavascriptCode = (boundCode: string) => {
@@ -60,15 +59,16 @@ const findValuePropsPaths = (obj: any, prefix = ""): string[] => {
 export const useComputeValue = ({
   shareableContent,
   onLoad = {},
-  componentId = "",
 }: UseComputeValue) => {
+  const { itemTransformer } = useDataTransformers();
   onLoad = cloneObject(onLoad);
 
   const browser = useOldRouter();
   const valuePropsPaths = useMemo(() => {
     return findValuePropsPaths(onLoad);
   }, [onLoad]);
-  const { item } = useShareableContent({ componentId });
+
+  const item = itemTransformer(shareableContent?.relatedComponentsData ?? {});
 
   const {
     variableKeys,
