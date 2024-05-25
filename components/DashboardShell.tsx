@@ -1,3 +1,5 @@
+"use client";
+
 import { Logo } from "@/components/Logo";
 
 import { ASIDE_WIDTH, HEADER_HEIGHT, NAVBAR_WIDTH } from "@/utils/config";

@@ -8,12 +8,13 @@ import { useDataBinding } from "@/hooks/data/useDataBinding";
 import { useFlowsQuery } from "@/hooks/editor/reactQuery/useFlowsQuery";
 import { ComputeValueProps } from "@/types/dataBinding";
 import { useEndpoints } from "../editor/reactQuery/useDataSourcesEndpoints";
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 
 const nonDefaultActionTriggers = ["onSuccess", "onError"];
 
 type UseTriggersProps = {
   entity: Component | PageResponse;
-  router: Router;
+  router: AppRouterInstance;
   projectId?: string;
   shareableContent?: Record<string, any>;
 };

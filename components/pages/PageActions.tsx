@@ -9,8 +9,7 @@ import { Box, Button } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconArrowBadgeRight, IconBolt } from "@tabler/icons-react";
 import startCase from "lodash.startcase";
-import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useParams } from "next/navigation";
 
 type Props = {
   page?: PageResponse | null | undefined;
@@ -19,8 +18,7 @@ type Props = {
 
 export default function PageActions({ page, setPage }: Props) {
   const [addForm, { open, close }] = useDisclosure(false);
-  const router = useRouter();
-  const projectId = router.query.id as string;
+  const { id: projectId } = useParams<{ id: string }>();
 
   const removeAction = async (id: string) => {
     if (page) {

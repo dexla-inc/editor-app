@@ -1,10 +1,10 @@
 import { SettingsButton } from "@/components/navbar/SettingsButtons";
 import { Stack } from "@mantine/core";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { ProjectSettings } from "../datasources/ProjectSettings";
 
 export const EditorNavbarSettingsSection = () => {
-  const router = useRouter();
+  const { id: projectId } = useParams<{ id: string }>();
 
   const settings = (
     <Stack p="xs" pr={0} justify="space-between" sx={{ height: "89vh" }}>
@@ -15,17 +15,17 @@ export const EditorNavbarSettingsSection = () => {
         <SettingsButton
           iconName="IconSettings"
           text="General"
-          href={`/projects/${router.query.id}/settings`}
+          href={`/projects/${projectId}/settings`}
         />
         <SettingsButton
           iconName="IconDatabase"
           text="Data Sources"
-          href={`/projects/${router.query.id}/settings/datasources`}
+          href={`/projects/${projectId}/settings/datasources`}
         />
         <SettingsButton
           iconName="IconWorldWww"
           text="Domain"
-          href={`/projects/${router.query.id}/settings/domain`}
+          href={`/projects/${projectId}/settings/domain`}
         />
         {/* <SettingsButton
         iconName="IconLanguage"

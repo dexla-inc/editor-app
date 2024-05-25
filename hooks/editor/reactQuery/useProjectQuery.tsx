@@ -16,11 +16,11 @@ export const useProjectQuery = (projectId: string | undefined) => {
   });
 
   const refetch = () => {
-    queryClient.refetchQueries(queryKey);
+    queryClient.refetchQueries({ queryKey });
   };
 
   const invalidate = () => {
-    queryClient.invalidateQueries(queryKey);
+    queryClient.invalidateQueries({ queryKey });
   };
 
   return { ...queryResult, refetch, invalidate };

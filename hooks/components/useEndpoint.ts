@@ -69,10 +69,17 @@ export const useEndpoint = ({
 
   const isEnabled = !!endpoint && dataType === "dynamic" && enabled;
 
-  const { data, isLoading } = useQuery(
-    [endpointId, fetchUrl, accessToken, headers, cleanParameter, body],
-    apiCall,
-    {
+  const { data, isLoading } = useQuery({
+    queryKey: [
+      endpointId,
+      fetchUrl,
+      accessToken,
+      headers,
+      cleanParameter,
+      body,
+    ],
+    queryFn: apiCall,
+    ...{
       select: (response) => {
         return get(response, resultsKey, response);
       },
@@ -81,7 +88,7 @@ export const useEndpoint = ({
       networkMode: "offlineFirst",
       retry: false,
     },
-  );
+  });
 
   return {
     data,

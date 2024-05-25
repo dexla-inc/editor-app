@@ -102,6 +102,6 @@ export const useGetPageData = ({ projectId, pageId }: Props) => {
   useQuery({
     queryKey: ["page-state", projectId, pageId, history.state.as],
     queryFn: async ({ signal }) => await getPageData({ signal }),
-    enabled: !!projectId && !!pageId,
+    ...{ enabled: !!projectId && !!pageId },
   });
 };

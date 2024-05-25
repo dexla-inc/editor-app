@@ -15,7 +15,7 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { ProjectItemMenu } from "./ProjectItemMenu";
 import { useEditorTreeStore } from "@/stores/editorTree";
@@ -48,9 +48,10 @@ export function ProjectItem({
       message: "Wait while we load the editor for your project",
     });
 
-    const data = await queryClient.fetchQuery(["pages", project.id], () =>
-      getPageList(project.id),
-    );
+    const data = await queryClient.fetchQuery({
+      queryKey: ["pages", project.id],
+      queryFn: () => getPageList(project.id),
+    });
 
     const homePage = data.results.find((page) => page.isHome);
     let pageId = homePage?.id ?? data.results[0].id;

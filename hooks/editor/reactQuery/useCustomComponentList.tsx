@@ -14,13 +14,15 @@ export const useCustomComponentList = (
   const queryResult = useQuery({
     queryKey: queryKey,
     queryFn: () => getComponentList(projectId, companyId),
-    enabled: !!projectId && componentTypeToShow === "custom",
-    staleTime: cacheTime,
-    networkMode: "offlineFirst",
+    ...{
+      enabled: !!projectId && componentTypeToShow === "custom",
+      staleTime: cacheTime,
+      networkMode: "offlineFirst",
+    },
   });
 
   const invalidate = () => {
-    queryClient.invalidateQueries(queryKey);
+    queryClient.invalidateQueries({ queryKey });
   };
 
   return { ...queryResult, invalidate };

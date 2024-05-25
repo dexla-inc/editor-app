@@ -52,7 +52,7 @@ export const LogicFlowCard = ({ flow, onEdit, onClick }: FlowCardProps) => {
       return await deleteLogicFlow(projectId, flowId);
     },
     onSettled: async () => {
-      await client.refetchQueries(["logic-flows", projectId]);
+      await client.refetchQueries({ queryKey: ["logic-flows", projectId] });
     },
   });
 
@@ -62,7 +62,7 @@ export const LogicFlowCard = ({ flow, onEdit, onClick }: FlowCardProps) => {
       return createLogicFlow(projectId as string, values);
     },
     onSettled: async () => {
-      await client.refetchQueries(["logic-flows", projectId]);
+      await client.refetchQueries({ queryKey: ["logic-flows", projectId] });
     },
   });
 
@@ -104,7 +104,7 @@ export const LogicFlowCard = ({ flow, onEdit, onClick }: FlowCardProps) => {
       }}
     >
       <LoadingOverlay
-        visible={deleteFlow.isLoading || duplicateFlow.isLoading}
+        visible={deleteFlow.isPending || duplicateFlow.isPending}
         overlayBlur={2}
       />
       <Group position="apart" align="flex-start">

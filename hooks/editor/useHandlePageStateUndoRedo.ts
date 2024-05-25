@@ -1,13 +1,13 @@
 import { useEffect, useCallback } from "react";
-import { useRouter } from "next/router";
 import { useUndoRedo } from "./useUndoRedo";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { decodeSchema } from "@/utils/compression";
 import { getPageState } from "@/requests/pages/queries-noauth";
+import { useOldRouter } from "@/hooks/data/useOldRouter";
 
 export const useHandlePageStateUndoRedo = () => {
   const { historyCount, setCanRedo } = useUndoRedo();
-  const router = useRouter();
+  const router = useOldRouter();
   const { id: projectId, page: pageId } = router.query as {
     id: string;
     page: string;

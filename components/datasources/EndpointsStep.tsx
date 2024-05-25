@@ -19,7 +19,7 @@ import {
   Text,
   Title,
 } from "@mantine/core";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 
 interface AuthenticationStepParams extends DataSourceStepperWithoutNextProps {
   accessToken?: string | null;
@@ -37,7 +37,6 @@ export default function EndpointsStep({
   startLoading,
   stopLoading,
   dataSource,
-  setDataSource,
   loginEndpointLabel,
   refreshEndpointLabel,
   userEndpointLabel,
@@ -46,8 +45,7 @@ export default function EndpointsStep({
   expiryProperty,
   loginRequestBody,
 }: AuthenticationStepParams) {
-  const router = useRouter();
-  const projectId = router.query.id as string;
+  const { id: projectId } = useParams<{ id: string }>();
 
   return (
     <Stack mb={100}>

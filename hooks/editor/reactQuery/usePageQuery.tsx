@@ -20,11 +20,11 @@ export const usePageQuery = (
   });
 
   const invalidate = () => {
-    queryClient.invalidateQueries(queryKey);
+    queryClient.invalidateQueries({ queryKey });
   };
 
   const refetch = () => {
-    queryClient.refetchQueries(queryKey);
+    queryClient.refetchQueries({ queryKey });
   };
 
   return { ...queryResult, invalidate, refetch };

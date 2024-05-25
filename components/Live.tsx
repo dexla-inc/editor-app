@@ -1,10 +1,11 @@
+"use client";
+
 import { LiveWrapper } from "@/components/LiveWrapper";
 import { useAppStore } from "@/stores/app";
 import { componentMapper } from "@/utils/componentMapper";
-import { decodeSchema } from "@/utils/compression";
-import { ComponentTree } from "@/utils/editor";
-import { Box } from "@mantine/core";
-import { useCallback } from "react";
+import { ComponentTree, EditorTreeCopy } from "@/utils/editor";
+import { Box, LoadingOverlay } from "@mantine/core";
+import { useCallback, useTransition } from "react";
 import { RenderTreeFunc } from "@/types/component";
 import { prepareUserThemeLive } from "@/utils/prepareUserThemeLive";
 import { DeploymentPage } from "@/requests/deployments/types";
@@ -15,22 +16,23 @@ import { useVariableStore } from "@/stores/variables";
 import { initializeFonts } from "@/utils/webfontloader";
 import { useEffect } from "react";
 import { MantineThemeExtended } from "@/types/types";
-import { safeJsonParse } from "@/utils/common";
 import { useInputsStore } from "@/stores/inputs";
 import { useDataSources } from "@/hooks/editor/reactQuery/useDataSources";
 import { useVariableListQuery } from "@/hooks/editor/reactQuery/useVariableListQuery";
+import { withPageOnLoad } from "@/hoc/withPageOnLoad";
 
 type Props = {
-  deploymentPage: DeploymentPage;
+  page: DeploymentPage;
+  pageState: EditorTreeCopy;
 };
 
 let theme: MantineThemeExtended | undefined;
 
-export const Live = ({ deploymentPage }: Props) => {
-  theme =
-    theme === undefined ? prepareUserThemeLive(deploymentPage.branding) : theme;
+export const LiveComponent = ({ page, pageState }: Props) => {
+  theme = theme === undefined ? prepareUserThemeLive(page.branding) : theme;
 
-  const projectId = deploymentPage.project.id;
+  const projectId = page.project.id;
+  const [isPending, startTransition] = useTransition();
 
   const { data: datasources } = useDataSources(projectId);
   const { data: variables } = useVariableListQuery(projectId);
@@ -45,11 +47,6 @@ export const Live = ({ deploymentPage }: Props) => {
   const setApiAuthConfig = useDataSourceStore(
     (state) => state.setApiAuthConfig,
   );
-  const setIsLive = useEditorTreeStore((state) => state.setIsLive);
-  const setCurrentPageAndProjectIds = useEditorTreeStore(
-    (state) => state.setCurrentPageAndProjectIds,
-  );
-  const setPreviewMode = useEditorTreeStore((state) => state.setPreviewMode);
   const setTheme = useThemeStore((state) => state.setTheme);
   const resetInputValues = useInputsStore((state) => state.resetInputValues);
 
@@ -59,41 +56,45 @@ export const Live = ({ deploymentPage }: Props) => {
   }, []);
 
   useEffect(() => {
-    if (deploymentPage?.pageState) {
-      const decodedSchema = decodeSchema(deploymentPage.pageState);
-      const state = safeJsonParse(decodedSchema);
-      setEditorTree(state, {
-        onLoad: true,
-        action: "Initial State",
+    if (page?.pageState) {
+      startTransition(() => {
+        setEditorTree(pageState, {
+          onLoad: true,
+          action: "Initial State",
+        });
+        setIsLoading(false);
       });
-      setIsLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [deploymentPage?.pageState]);
+  }, [pageState]);
 
-  const loadFonts = useCallback(() => {
-    if (theme?.fontFamily && theme?.headings?.fontFamily)
-      initializeFonts(theme.fontFamily, theme.headings.fontFamily);
-  }, []);
+  if (theme?.fontFamily && theme?.headings?.fontFamily) {
+    initializeFonts(theme.fontFamily, theme.headings.fontFamily);
+  }
 
   useEffect(() => {
-    if (deploymentPage.id) {
-      setCurrentPageAndProjectIds(projectId, deploymentPage.id);
-      setPreviewMode(true);
-      setIsLive(true);
+    if (page.id) {
+      useEditorTreeStore.setState(
+        {
+          currentPageId: page.id,
+          currentProjectId: projectId,
+          isLive: true,
+          isPreviewMode: true,
+        },
+        false,
+        "editorTree/setStartUp",
+      );
 
       resetInputValues();
-
-      loadFonts();
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [projectId, deploymentPage.id, loadFonts]);
+  }, [projectId, page.id]);
 
   useEffect(() => {
     if (variables) initializeVariableList(variables.results);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [variables, deploymentPage.id]);
+  }, [variables, page.id]);
 
   useEffect(() => {
     if (datasources) {
@@ -143,8 +144,11 @@ export const Live = ({ deploymentPage }: Props) => {
   }
 
   return (
-    <LiveWrapper project={deploymentPage.project}>
+    <LiveWrapper project={page.project}>
+      <LoadingOverlay visible={isPending} />
       {renderTree(editorTree.root)}
     </LiveWrapper>
   );
 };
+
+export const Live = withPageOnLoad<Props>(LiveComponent);
