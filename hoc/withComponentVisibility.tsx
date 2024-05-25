@@ -25,7 +25,6 @@ export const withComponentVisibility = <T extends Record<string, any>>(
     const computedOnLoad = useComputeValue({
       onLoad: { isVisible },
       shareableContent,
-      componentId: id,
     });
 
     if (!computedOnLoad.isVisible) {

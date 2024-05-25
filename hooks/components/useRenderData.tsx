@@ -80,6 +80,11 @@ export const useRenderData = ({
           // this is the parentId that later is used to populate the Item context in the binding popover
           parentDataId: currentComponentGroupId,
         }),
+        // This is used by useComputeValue only in order to build the Item context
+        relatedComponentsData: {
+          ...(shareableContent?.relatedComponentsData ?? {}),
+          ...(data && { [currentComponentGroupId]: data }),
+        },
       });
     };
 
