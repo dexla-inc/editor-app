@@ -1,3 +1,4 @@
+import { usePreventNavigationOnSaving } from "@/hooks/editor/usePreventNavigationOnSaving";
 import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import {
@@ -21,6 +22,8 @@ const isSavingDisplay = {
 };
 
 export const SavingDisplay = forwardRef<HTMLDivElement>(({ ...props }, ref) => {
+  usePreventNavigationOnSaving();
+
   const isSaving = useEditorTreeStore((state) => state.isSaving);
 
   const saving = isSaving ? "saving" : "saved";

@@ -30,8 +30,6 @@ export default function EndpointsButton({
       pageListQuery?.results.find((p) => p.isHome === true) ||
       pageListQuery?.results[0]!;
 
-    console.log("goToEditor", page);
-
     router.push(`/projects/${projectId}/editor/${page.id}`);
   };
 

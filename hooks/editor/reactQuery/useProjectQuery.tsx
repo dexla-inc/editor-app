@@ -19,5 +19,9 @@ export const useProjectQuery = (projectId: string | undefined) => {
     queryClient.refetchQueries({ queryKey });
   };
 
-  return { ...queryResult, refetch };
+  const invalidate = () => {
+    queryClient.invalidateQueries(queryKey);
+  };
+
+  return { ...queryResult, refetch, invalidate };
 };

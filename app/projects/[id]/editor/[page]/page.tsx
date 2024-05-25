@@ -11,6 +11,7 @@ import UnauthorisedPage from "@/components/UnauthorisedPage";
 import { PageProps } from "@/types/app";
 import { useEffect, useState } from "react";
 import { usePageQuery } from "@/hooks/editor/reactQuery/usePageQuery";
+import useEditorHotkeysUndoRedo from "@/hooks/editor/useEditorHotkeysUndoRedo";
 
 const PageEditor = ({ params: { id: projectId, page: pageId } }: PageProps) => {
   const initializeVariableList = useVariableStore(
@@ -23,6 +24,8 @@ const PageEditor = ({ params: { id: projectId, page: pageId } }: PageProps) => {
   const [status, setStatus] = useState<
     "loading" | "unauthorised" | "authorised"
   >("loading");
+
+  useEditorHotkeysUndoRedo();
 
   const { data: datasources } = useDataSources(projectId);
   const { data: variables } = useVariableListQuery(projectId);
