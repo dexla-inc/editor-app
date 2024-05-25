@@ -37,8 +37,8 @@ export const useVariableMutation = (projectId: string) => {
     },
   });
 
-  const updateVariablesMutation = useMutation(
-    async ({ id, values }: { id: string; values: any }) => {
+  const updateVariablesMutation = useMutation({
+    mutationFn: async ({ id, values }: { id: string; values: any }) => {
       startLoading({
         id: "variable",
         title: "Saving",
@@ -48,7 +48,7 @@ export const useVariableMutation = (projectId: string) => {
         ...values,
       });
     },
-    {
+    ...{
       onSuccess: () => {
         stopLoading({
           id: "variable",
@@ -65,7 +65,7 @@ export const useVariableMutation = (projectId: string) => {
         });
       },
     },
-  );
+  });
 
   return {
     createVariablesMutation,

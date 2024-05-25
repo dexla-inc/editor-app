@@ -13,7 +13,7 @@ import {
 import { Anchor, Divider, Flex, Group, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import Image from "next/image";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 
 export default function SwaggerStep({
   nextStep,
@@ -27,9 +27,7 @@ export default function SwaggerStep({
 }: DataSourceStepperWithoutPreviousProps & {
   setEndpoints: (endpoints: Endpoint[]) => void;
 }) {
-  const router = useRouter();
-
-  const projectId = router.query.id as string;
+  const { id: projectId } = useParams<{ id: string }>();
 
   const form = useForm<DataSourceParams>({
     initialValues: {

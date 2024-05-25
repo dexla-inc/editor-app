@@ -10,6 +10,7 @@ import { CURSOR_COLORS } from "@/utils/config";
 import { Global } from "@mantine/core";
 import { memo, useEffect, useState } from "react";
 import { useInputsStore } from "@/stores/inputs";
+import { withPageOnLoad } from "@/hoc/withPageOnLoad";
 
 type Props = {
   projectId: string;
@@ -30,6 +31,7 @@ const Editor = ({ projectId, pageId }: Props) => {
   const resetInputValues = useInputsStore((state) => state.resetInputValues);
 
   useGetPageData({ projectId, pageId });
+
   const [roomEntered, setRoomEntered] = useState(false);
 
   useEffect(() => {
@@ -88,4 +90,4 @@ const Editor = ({ projectId, pageId }: Props) => {
   );
 };
 
-export default memo(Editor);
+export default withPageOnLoad<Props>(memo(Editor));

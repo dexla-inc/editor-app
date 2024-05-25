@@ -5,7 +5,7 @@ import { convertToPatchParams } from "@/types/dashboardTypes";
 import { Button, Card, Stack, Text, useMantineTheme } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { Editor } from "@monaco-editor/react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { safeJsonParse } from "@/utils/common";
 
@@ -25,8 +25,7 @@ const editorOptions = {
 };
 
 export const EditorNavbarCustomCodeSection = () => {
-  const router = useRouter();
-  const projectId = router.query.id as string;
+  const { id: projectId } = useParams<{ id: string }>();
   const [isSaving, setIsSaving] = useState(false);
   const { data: project, refetch } = useProjectQuery(projectId);
   const theme = useMantineTheme();

@@ -34,8 +34,7 @@ import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { IconArrowsMaximize, IconSearch } from "@tabler/icons-react";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import set from "lodash.set";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 type EditorNavbarThemesSectionProps = {
   isActive: boolean;
@@ -60,7 +59,7 @@ export const pixelMetrics = [
 
 export const EditorNavbarThemesSection =
   ({}: EditorNavbarThemesSectionProps) => {
-    const router = useRouter();
+    const { id: projectId } = useParams<{ id: string }>();
     const startLoading = useAppStore((state) => state.startLoading);
     const stopLoading = useAppStore((state) => state.stopLoading);
     const [currentFontIndex, setCurrentFontIndex] = useState<number>(0);
@@ -69,8 +68,6 @@ export const EditorNavbarThemesSection =
 
     const usersTheme = useThemeStore((state) => state.theme);
     const setUsersTheme = useThemeStore((state) => state.setTheme);
-
-    const projectId = router.query.id as string;
 
     const { data: project, refetch } = useProjectQuery(projectId);
     const userTheme = project?.branding;
@@ -85,34 +82,37 @@ export const EditorNavbarThemesSection =
       queryFn: () => getGoogleFonts(),
     });
 
-    const { mutate } = useMutation(saveTheme, {
-      onMutate: () => {
-        startLoading({
-          id: "saving-brand",
-          title: "Saving Brand",
-          message: "Wait while your brand is being saved",
-        });
+    const { mutate } = useMutation({
+      mutationFn: saveTheme,
+      ...{
+        onMutate: () => {
+          startLoading({
+            id: "saving-brand",
+            title: "Saving Brand",
+            message: "Wait while your brand is being saved",
+          });
 
-        form.validate();
+          form.validate();
 
-        return {};
-      },
-      onError: (error) => {
-        console.error(error);
-        stopLoading({
-          id: "saving-brand",
-          title: "Saving Brand Failed",
-          message: "Validation failed",
-          isError: true,
-        });
-      },
-      onSuccess: () => {
-        refetch();
-        stopLoading({
-          id: "saving-brand",
-          title: "Brand Saved",
-          message: "The brand was saved successfully",
-        });
+          return {};
+        },
+        onError: (error) => {
+          console.error(error);
+          stopLoading({
+            id: "saving-brand",
+            title: "Saving Brand Failed",
+            message: "Validation failed",
+            isError: true,
+          });
+        },
+        onSuccess: () => {
+          refetch();
+          stopLoading({
+            id: "saving-brand",
+            title: "Brand Saved",
+            message: "The brand was saved successfully",
+          });
+        },
       },
     });
 

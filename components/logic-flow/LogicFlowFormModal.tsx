@@ -10,11 +10,11 @@ import { convertToPatchParams } from "@/types/dashboardTypes";
 import { Button, Modal, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { useEffect } from "react";
 
 export const LogicFlowFormModal = () => {
-  const router = useRouter();
+  const { id: projectId } = useParams<{ id: string }>();
   const client = useQueryClient();
   const shouldShowFormModal = useFlowStore(
     (state) => state.shouldShowFormModal,
@@ -25,7 +25,6 @@ export const LogicFlowFormModal = () => {
   const stopLoading = useAppStore((state) => state.stopLoading);
   const setIsLoading = useAppStore((state) => state.setIsLoading);
   const isLoading = useAppStore((state) => state.isLoading);
-  const projectId = router.query.id as string;
 
   const form = useForm({
     initialValues: {
@@ -45,7 +44,7 @@ export const LogicFlowFormModal = () => {
       );
     },
     onSettled: async () => {
-      await client.refetchQueries(["logic-flows", projectId]);
+      await client.refetchQueries({ queryKey: ["logic-flows", projectId] });
       setShowFormModal(false);
       stopLoading({
         id: "logic-flows",
@@ -70,13 +69,13 @@ export const LogicFlowFormModal = () => {
       });
     },
     onSettled: async (data, error) => {
-      await client.refetchQueries(["logic-flows", projectId]);
+      await client.refetchQueries({ queryKey: ["logic-flows", projectId] });
 
       if (!data?.id) {
         stopLoading({
           id: "logic-flows",
           title: "Oops",
-          message: (error as string) ?? "Something went wrong",
+          message: (error?.message as string) ?? "Something went wrong",
           isError: true,
         });
       } else {

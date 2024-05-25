@@ -5,7 +5,7 @@ import { DataSourceParams } from "@/requests/datasources/types";
 import { DataSourceStepperProps } from "@/types/dashboardTypes";
 import { Divider, Group, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 
 interface AuthenticationStepProps extends DataSourceStepperProps {
   setAccessToken: (accessToken: string | null) => void;
@@ -21,8 +21,7 @@ export default function AuthenticationApiKey({
   dataSource,
   setAccessToken,
 }: AuthenticationStepProps) {
-  const router = useRouter();
-  const projectId = router.query.id as string;
+  const { id: projectId } = useParams<{ id: string }>();
 
   const form = useForm<DataSourceParams>({
     validateInputOnBlur: true,

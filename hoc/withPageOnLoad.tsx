@@ -1,41 +1,26 @@
 import { useTriggers } from "@/hooks/components/useTriggers";
-import { Router, useRouter } from "next/router";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { DeploymentPage } from "@/requests/deployments/types";
 import { PageResponse } from "@/requests/pages/types";
-import { ProjectResponse } from "@/requests/projects/types";
-import { usePageQuery } from "@/hooks/editor/reactQuery/usePageQuery";
 
 // Props from server side
 type Props = {
-  isLive: boolean;
-  deploymentPage: PageResponse;
-  project: ProjectResponse;
+  page?: DeploymentPage | PageResponse;
+  projectId: string;
 };
 
-export const withPageOnLoad = (
-  WrappedComponent: any,
-  config: { isLive?: boolean },
-) => {
-  const PageOnLoadWrapper = (props: Props) => {
+export const withPageOnLoad = <T extends {}>(WrappedComponent: any) => {
+  const PageOnLoadWrapper = (props: Props & T) => {
+    const { page, projectId } = props;
     const router = useRouter();
-    const { id: projectId, page: pageId } = router.query as {
-      id: string;
-      page: string;
-    };
-
-    const { data: editorPage } = usePageQuery(
-      projectId,
-      pageId,
-      !config.isLive,
-    );
-
-    const page = config.isLive ? props.deploymentPage : editorPage;
+    const pathName = usePathname();
 
     const { onPageLoad } = useTriggers({
       // @ts-ignore
       entity: page,
-      router: router as Router,
-      projectId: props.project?.id || projectId,
+      router,
+      projectId: page?.project?.id || projectId,
     });
 
     const [actionTriggeredForPath, setActionTriggeredForPath] = useState("");
@@ -43,24 +28,18 @@ export const withPageOnLoad = (
     useEffect(() => {
       const triggerPageActions = async () => {
         const isPageValid =
-          page &&
-          (router.asPath.includes(page.id) ||
-            router.asPath.includes(page.slug));
+          page && (pathName.includes(page.id) || pathName.includes(page.slug));
         // TODO: Do not run when runInEditMode is false and the mode is editor.
         // TODO: Only the last action gets run
 
-        if (
-          isPageValid &&
-          onPageLoad &&
-          actionTriggeredForPath !== router.asPath
-        ) {
+        if (isPageValid && onPageLoad && actionTriggeredForPath !== pathName) {
           await onPageLoad?.();
-          setActionTriggeredForPath(router.asPath);
+          setActionTriggeredForPath(pathName);
         }
       };
 
       triggerPageActions();
-    }, [router.asPath, page?.id, onPageLoad, actionTriggeredForPath, page]);
+    }, [pathName, page?.id, onPageLoad, actionTriggeredForPath, page]);
 
     return <WrappedComponent {...props} />;
   };

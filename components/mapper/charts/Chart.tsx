@@ -78,7 +78,7 @@ export const Chart = ({ component, ...props }: Props) => {
       } else {
         dataSeries = Object.entries(grouped).map(([name, items]) => ({
           name,
-          data: items.map((i) => i.value),
+          data: items.map((i: any) => i.value),
         }));
       }
 

@@ -1,5 +1,4 @@
 import { useVariableStore } from "@/stores/variables";
-import { NextRouter, useRouter } from "next/router";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useCallback, useMemo } from "react";
 import get from "lodash.get";
@@ -11,8 +10,9 @@ import { useShallow } from "zustand/react/shallow";
 import { pick } from "next/dist/lib/pick";
 import { useShareableContent } from "@/hooks/data/useShareableContent";
 import { useEditorTreeStore } from "@/stores/editorTree";
+import { useOldRouter } from "@/hooks/data/useOldRouter";
 
-type NextRouterKeys = keyof NextRouter;
+type NextRouterKeys = any;
 type RecordStringAny = Record<string, any>;
 
 const variablePattern = /variables\[\s*(?:\/\*[\s\S]*?\*\/\s*)?'(.*?)'\s*\]/g;
@@ -64,7 +64,7 @@ export const useComputeValue = ({
 }: UseComputeValue) => {
   onLoad = cloneObject(onLoad);
 
-  const browser = useRouter();
+  const browser = useOldRouter();
   const valuePropsPaths = useMemo(() => {
     return findValuePropsPaths(onLoad);
   }, [onLoad]);
@@ -166,6 +166,7 @@ export const useComputeValue = ({
 
   const browserValues: any = useMemo(() => {
     return browserKeys.reduce(
+      // @ts-ignore
       (acc, key) => ({ ...acc, [key]: browser[key] }),
       {},
     );

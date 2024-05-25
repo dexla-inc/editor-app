@@ -19,7 +19,7 @@ import {
 } from "@/types/dashboardTypes";
 import { Divider, Group, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 
 export interface BasicDetailsStepProps
   extends LoadingStore,
@@ -44,8 +44,7 @@ export default function BasicDetailsStep({
   authenticationScheme,
   setAuthenticationScheme,
 }: BasicDetailsStepProps) {
-  const router = useRouter();
-  const projectId = router.query.id as string;
+  const { id: projectId } = useParams<{ id: string }>();
   if (dataSource?.authenticationScheme) {
     setAuthenticationScheme(dataSource?.authenticationScheme);
   }

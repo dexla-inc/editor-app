@@ -20,7 +20,7 @@ export const usePageListQuery = (
   });
 
   const invalidate = () => {
-    queryClient.invalidateQueries(queryKey);
+    queryClient.invalidateQueries({ queryKey });
   };
 
   return { ...queryResult, invalidate };

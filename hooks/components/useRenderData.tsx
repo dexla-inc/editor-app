@@ -3,7 +3,7 @@ import { useShallow } from "zustand/react/shallow";
 import { Component, ComponentTree } from "@/utils/editor";
 import { useEndpoint } from "@/hooks/components/useEndpoint";
 import { Skeleton } from "@mantine/core";
-import { useEffect } from "react";
+import { useEffect, useTransition } from "react";
 
 type UseRenderDataProps = {
   component: Component & ComponentTree;
@@ -32,6 +32,7 @@ export const useRenderData = ({
   );
   const { dataType = "static" } = component?.props!;
   const { data: staticData, skeletonMinHeight = 400 } = component.onLoad!;
+  const [isPending, startTransition] = useTransition();
 
   const setRelatedComponentsData = useEditorTreeStore(
     (state) => state.setRelatedComponentsData,
@@ -53,9 +54,11 @@ export const useRenderData = ({
         useEditorTreeStore.getState().relatedComponentsData[parentDataId],
       ) !== JSON.stringify(shareableContent?.data)
     ) {
-      setRelatedComponentsData({
-        id: parentDataId,
-        data: shareableContent.data,
+      startTransition(() => {
+        setRelatedComponentsData({
+          id: parentDataId,
+          data: shareableContent.data,
+        });
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
