@@ -20,7 +20,7 @@ export const useProjectQuery = (projectId: string | undefined) => {
   };
 
   const invalidate = () => {
-    queryClient.invalidateQueries(queryKey);
+    queryClient.invalidateQueries({ queryKey });
   };
 
   return { ...queryResult, refetch, invalidate };
