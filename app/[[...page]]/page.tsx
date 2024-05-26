@@ -15,9 +15,12 @@ export async function generateMetadata({ params: { page } }: PageProps) {
   }
 
   const url = headers().get("host") as string;
-  const currentSlug = (page?.at(0) as string) ?? "/";
+  let currentSlug = (page?.at(0) as string) ?? "/";
+  if (currentSlug === "index") {
+    currentSlug = "/";
+  }
   const deploymentPage = await getDeploymentPage(url, currentSlug);
-console.log("deploymentPage", deploymentPage);
+  console.log("deploymentPage", deploymentPage);
   return {
     title: deploymentPage.title,
     description: deploymentPage.title,
@@ -38,8 +41,12 @@ async function LivePage({ params: { page } }: PageProps) {
     return null;
   }
   const url = headers().get("host") as string;
-  const currentSlug = (page?.at(0) as string) ?? "/";
   console.log("url", url);
+  
+  let currentSlug = (page?.at(0) as string) ?? "/";
+  if (currentSlug === "index") {
+    currentSlug = "/";
+  }
   console.log("currentSlug", currentSlug);
 
   const deploymentPage = await getDeploymentPage(url, currentSlug);
