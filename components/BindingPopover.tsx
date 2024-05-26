@@ -30,6 +30,8 @@ import { IconExternalLink, IconPlugConnected } from "@tabler/icons-react";
 import { useState } from "react";
 import { useDataBinding } from "@/hooks/data/useDataBinding";
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
+import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 
 const TAB_TEXT_SIZE = 11;
 const ML = 5;
@@ -55,7 +57,10 @@ export default function BindingPopover({
 }: Props) {
   const [tab, setTab] = useState<BindingTab>("components");
   const [filterKeyword, setFilterKeyword] = useState<string>("");
-  const { computeValue } = useDataBinding();
+  const selectedComponentId = useEditorTreeStore(
+    (state) => state.selectedComponentIds?.at(-1),
+  );
+  const { computeValue } = useDataBinding(selectedComponentId);
   const [selectedItem, setSelectedItem] = useState<string>();
   const asideSelectedTab = useEditorStore((state) => state.asideSelectedTab);
 

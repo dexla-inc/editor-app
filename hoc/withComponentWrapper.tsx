@@ -45,7 +45,6 @@ export const withComponentWrapper = <T extends Record<string, any>>(
     const computedOnLoad = useComputeValue({
       onLoad: component?.onLoad ?? {},
       shareableContent,
-      componentId: id,
     });
 
     // Commenting out as liveblocks doesn't work properly since detachment.
