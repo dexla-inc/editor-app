@@ -17,7 +17,7 @@ export async function generateMetadata({ params: { page } }: PageProps) {
   const url = headers().get("host") as string;
   const currentSlug = (page?.at(0) as string) ?? "/";
   const deploymentPage = await getDeploymentPage(url, currentSlug);
-
+console.log("deploymentPage", deploymentPage);
   return {
     title: deploymentPage.title,
     description: deploymentPage.title,
@@ -37,17 +37,20 @@ async function LivePage({ params: { page } }: PageProps) {
   if (page?.includes?.("_next")) {
     return null;
   }
-
   const url = headers().get("host") as string;
   const currentSlug = (page?.at(0) as string) ?? "/";
-  const deploymentPage = await getDeploymentPage(url, currentSlug);
-  const cookie = cookies().get(deploymentPage.projectId);
-  const isLoggedIn = checkRefreshTokenExists(cookie?.value);
-  const signInPageSlug = deploymentPage.project.redirects?.signInPageId;
+  console.log("url", url);
+  console.log("currentSlug", currentSlug);
 
+  const deploymentPage = await getDeploymentPage(url, currentSlug);
+  console.log("deploymentPage", deploymentPage);
   if (!deploymentPage.projectId) {
     redirect("/projects");
   }
+  const cookie = cookies().get(deploymentPage.projectId);
+  const isLoggedIn = checkRefreshTokenExists(cookie?.value);
+  const signInPageSlug = deploymentPage.project.redirects?.signInPageId;
+  console.log("signInPageSlug", signInPageSlug)
 
   const notFoundPageslug = deploymentPage.project.redirects?.notFoundPageId;
   if (!deploymentPage.id) {
@@ -62,7 +65,6 @@ async function LivePage({ params: { page } }: PageProps) {
   if (
     !isLoggedIn &&
     deploymentPage?.authenticatedOnly &&
-    signInPageSlug &&
     currentSlug !== signInPageSlug
   ) {
     redirect(`/${signInPageSlug}`.replace("//", "/"));
