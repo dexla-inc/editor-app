@@ -7,7 +7,6 @@ import { useEffect, useTransition } from "react";
 
 type UseRenderDataProps = {
   component: Component & ComponentTree;
-  currentComponentGroupId: string;
   shareableContent: any;
 };
 
@@ -24,7 +23,6 @@ type RenderComponentProps = {
 
 export const useRenderData = ({
   component,
-  currentComponentGroupId: test,
   shareableContent,
 }: UseRenderDataProps) => {
   const isPreviewMode = useEditorTreeStore(
@@ -32,7 +30,7 @@ export const useRenderData = ({
   );
   const { dataType = "static" } = component?.props!;
   const { data: staticData, skeletonMinHeight = 400 } = component.onLoad!;
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
 
   const setRelatedComponentsData = useEditorTreeStore(
     (state) => state.setRelatedComponentsData,

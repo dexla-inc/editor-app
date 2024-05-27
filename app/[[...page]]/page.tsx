@@ -8,6 +8,7 @@ import { safeJsonParse } from "@/utils/common";
 import { redirect } from "next/navigation";
 import { EditorTreeCopy } from "@/utils/editor";
 import { Viewport } from "next";
+import { Suspense } from "react";
 
 export async function generateMetadata({ params: { page } }: PageProps) {
   if (page?.includes?.("_next")) {
@@ -30,7 +31,7 @@ export async function generateMetadata({ params: { page } }: PageProps) {
   };
 }
 
-const viewport: Viewport = {
+export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
@@ -42,7 +43,7 @@ async function LivePage({ params: { page } }: PageProps) {
   }
   const url = headers().get("host") as string;
   console.log("url", url);
-  
+
   let currentSlug = (page?.at(0) as string) ?? "/";
   if (currentSlug === "index") {
     currentSlug = "/";
@@ -57,7 +58,7 @@ async function LivePage({ params: { page } }: PageProps) {
   const cookie = cookies().get(deploymentPage.projectId);
   const isLoggedIn = checkRefreshTokenExists(cookie?.value);
   const signInPageSlug = deploymentPage.project.redirects?.signInPageId;
-  console.log("signInPageSlug", signInPageSlug)
+  console.log("signInPageSlug", signInPageSlug);
 
   const notFoundPageslug = deploymentPage.project.redirects?.notFoundPageId;
   if (!deploymentPage.id) {
@@ -78,11 +79,13 @@ async function LivePage({ params: { page } }: PageProps) {
   }
 
   return (
-    <Live
-      page={deploymentPage}
-      pageState={pageState}
-      projectId={deploymentPage?.project?.id}
-    />
+    <Suspense>
+      <Live
+        page={deploymentPage}
+        pageState={pageState}
+        projectId={deploymentPage?.project?.id}
+      />
+    </Suspense>
   );
 }
 

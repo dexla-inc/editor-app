@@ -106,7 +106,6 @@ const FormComponent = forwardRef(
 
     const { renderData } = useRenderData({
       component,
-      currentComponentGroupId: props.id,
       shareableContent,
     });
 

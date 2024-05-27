@@ -15,7 +15,7 @@ const TitleComponent = forwardRef(
       ref,
     );
 
-    const { triggers, variable, order, ...componentProps } =
+    const { triggers, variable, order, hideIfDataIsEmpty, ...componentProps } =
       component.props as any;
     const { children: childrenValue = component.props?.children } =
       component?.onLoad || {};
