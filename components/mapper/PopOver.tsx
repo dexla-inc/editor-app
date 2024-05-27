@@ -27,7 +27,7 @@ const PopOverComponent = ({
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const isLive = useEditorTreeStore((state) => state.isLive);
 
-  const { targetId, loading, showInEditor, ...componentProps } =
+  const { targetId, loading, showInEditor, triggers, ...componentProps } =
     component.props as any;
 
   const { style, ...restProps } = props;
@@ -52,6 +52,7 @@ const PopOverComponent = ({
 
   return (
     <MantinePopOver
+      key={props.id}
       withinPortal
       trapFocus={false}
       {...(!isPreviewMode && showInEditor ? { opened: true } : {})}

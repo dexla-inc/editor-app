@@ -17,8 +17,15 @@ type Props = EditableComponentMapper & TextareaProps;
 
 const TextareaComponent = forwardRef(
   ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
-    const { children, triggers, loading, bg, textColor, ...componentProps } =
-      component.props as any;
+    const {
+      children,
+      triggers,
+      loading,
+      bg,
+      textColor,
+      hideIfDataIsEmpty,
+      ...componentProps
+    } = component.props as any;
     const { color, backgroundColor } = useChangeState({ bg, textColor });
     const { borderStyle, fontSizeStyle } = useBrandingStyles();
 

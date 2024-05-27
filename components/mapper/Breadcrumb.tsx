@@ -10,7 +10,7 @@ type Props = EditableComponentMapper & BreadcrumbsProps;
 
 const BreadcrumbComponent = forwardRef(
   ({ renderTree, shareableContent, component, ...props }: Props, ref) => {
-    const { children, ...componentProps } = component.props as any;
+    const { children, triggers, ...componentProps } = component.props as any;
 
     return (
       <MantineBreadcrumbs ref={ref} {...props} {...componentProps}>

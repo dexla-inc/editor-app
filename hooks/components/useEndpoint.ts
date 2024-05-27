@@ -38,7 +38,6 @@ export const useEndpoint = ({
   const endpoint = endpoints?.find((e) => e.id === endpointId);
   const accessToken = authState(projectId)?.accessToken;
   const apiUrl = `${endpoint?.baseUrl}/${endpoint?.relativeUrl}`;
-  const requestBody = endpoint ? { ...parameter, ...body } : {};
   const headers = endpoint ? { ...header } : {};
   const cleanParameter = removeEmpty(parameter);
   const url = endpoint

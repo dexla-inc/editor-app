@@ -33,7 +33,6 @@ export const CardComponent = forwardRef(
 
     const { renderData } = useRenderData({
       component,
-      currentComponentGroupId: props.id,
       shareableContent,
     });
 
