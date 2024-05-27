@@ -1,12 +1,23 @@
+import { NextRequest, NextResponse } from "next/server";
 import { fromBase64 } from "@/utils/common";
 
-async function handler(req: Request) {
-  const { body, query, method, headers: reqHeaders } = await req.json();
-  // Construct the URL dynamically based on query params from the client request
-  const { targetUrl } = query;
+async function handler(req: NextRequest) {
+  return handleRequest(req);
+}
+
+export {
+  handler as GET,
+  handler as POST,
+  handler as PUT,
+  handler as DELETE,
+  handler as PATCH,
+};
+
+async function handleRequest(req: NextRequest) {
+  const targetUrl = req.nextUrl.searchParams.get("targetUrl");
 
   if (!targetUrl) {
-    return Response.json({ error: "Missing targetUrl" }, { status: 400 });
+    return NextResponse.json({ error: "Missing targetUrl" }, { status: 400 });
   }
 
   const validHeaders = [
@@ -20,43 +31,35 @@ async function handler(req: Request) {
   const decodedUrl = fromBase64(targetUrl as string);
 
   const headers: Record<string, string> = {};
-  Object.entries(reqHeaders).forEach(([key, value]) => {
-    if (validHeaders.includes(key) && typeof value === "string") {
+  req.headers.forEach((value, key) => {
+    if (validHeaders.includes(key)) {
       headers[key] = value;
     }
   });
 
   const fetchOptions: RequestInit = {
-    method: method,
+    method: req.method,
     headers,
   };
 
   // Exclude body for GET and DELETE methods
-  if (method !== "GET" && method !== "DELETE" && body) {
-    fetchOptions.body = JSON.stringify(body);
+  if (req.method !== "GET" && req.method !== "DELETE" && req.body) {
+    fetchOptions.body = JSON.stringify(await req.json());
   }
 
   try {
-    const response = await fetch(decodedUrl as string, fetchOptions);
+    const response = await fetch(decodedUrl, fetchOptions);
 
     if (response.ok) {
       const data = await response.json();
-      return Response.json(data, { status: 200 });
+      return NextResponse.json(data, { status: 200 });
     } else {
       const error = await response.text();
       console.error("Error fetching data: ", error);
-      return Response.json({ error }, { status: response.status });
+      return NextResponse.json({ error }, { status: response.status });
     }
   } catch (error: any) {
     console.error("Fetch error: ", error.message);
-    return Response.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
-
-export {
-  handler as GET,
-  handler as POST,
-  handler as PUT,
-  handler as DELETE,
-  handler as PATCH,
-};
