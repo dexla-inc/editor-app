@@ -1,27 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { fromBase64 } from "@/utils/common";
 
-async function GET(req: NextRequest) {
+async function handler(req: NextRequest) {
   return handleRequest(req);
 }
 
-async function POST(req: NextRequest) {
-  return handleRequest(req);
-}
-
-async function PUT(req: NextRequest) {
-  return handleRequest(req);
-}
-
-async function DELETE(req: NextRequest) {
-  return handleRequest(req);
-}
-
-async function PATCH(req: NextRequest) {
-  return handleRequest(req);
-}
-
-export { GET, POST, PUT, DELETE, PATCH };
+export {
+  handler as GET,
+  handler as POST,
+  handler as PUT,
+  handler as DELETE,
+  handler as PATCH,
+};
 
 async function handleRequest(req: NextRequest) {
   const targetUrl = req.nextUrl.searchParams.get("targetUrl");
