@@ -69,7 +69,6 @@ const CheckboxGroupComponent = forwardRef(
 
     const { renderData } = useRenderData({
       component,
-      currentComponentGroupId: props.id,
       shareableContent: {
         ...shareableContent,
         value,

@@ -6,7 +6,6 @@ import { DebugActionForm } from "@/components/actions/DebugActionForm";
 import { GoToUrlForm } from "@/components/actions/GoToUrlForm";
 import { NavigationActionForm } from "@/components/actions/NavigationActionForm";
 import { TriggerLogicFlowActionForm } from "@/components/actions/TriggerLogicFlowActionForm";
-import { transpile } from "typescript";
 import { ChangeVariableActionForm } from "@/components/actions/ChangeVariableActionForm";
 import {
   DataSourceAuthResponse,
@@ -723,8 +722,7 @@ export const useChangeLanguageAction = ({
 
 // IMPORTANT: do not delete the variable data as it is used in the eval
 export const useCustomJavascriptAction = ({ action, data }: any) => {
-  const codeTranspiled = transpile(action.code);
-  return eval(codeTranspiled);
+  return new Function(action.code)();
 };
 
 export type ChangeVariableActionParams = ActionParams & {

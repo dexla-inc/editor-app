@@ -36,10 +36,15 @@ export const usePropsWithOverwrites = (
     }
   };
 
+  const omittingProps = ["showBorder"];
+  if (isEditorMode) {
+    omittingProps.push("error");
+  }
+
   return useMemo(() => {
     return merge(
       {},
-      isEditorMode ? omit(component.props ?? {}, ["error"]) : component.props,
+      omit(component.props ?? {}, omittingProps),
       component.languages?.[language],
       component.states?.[customCurrentState],
       {

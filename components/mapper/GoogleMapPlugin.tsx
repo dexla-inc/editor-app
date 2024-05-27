@@ -48,7 +48,7 @@ const GoogleMapPluginComponent = forwardRef<GoogleMap, Props>(
     const [activeMarkerId, setActiveMarkerId] = useState<string | null>(null);
     const [map, setMap] = useState<any | null>(null);
 
-    const { options, language, loading, fade, ...componentProps } =
+    const { options, language, loading, fade, triggers, ...componentProps } =
       component.props as GoogleMapProps;
     const {
       apiKey,

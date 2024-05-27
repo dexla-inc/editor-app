@@ -34,6 +34,7 @@ const TextComponent = forwardRef(
 
     return (
       <MantineText
+        key={props.id}
         {...contentEditableProps}
         {...restProps}
         {...componentProps}

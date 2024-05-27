@@ -1,11 +1,10 @@
 "use client";
 
 import { LiveWrapper } from "@/components/LiveWrapper";
-import { useAppStore } from "@/stores/app";
 import { componentMapper } from "@/utils/componentMapper";
 import { ComponentTree, EditorTreeCopy } from "@/utils/editor";
-import { Box, LoadingOverlay } from "@mantine/core";
-import { useCallback, useTransition } from "react";
+import { Box } from "@mantine/core";
+import { useCallback, useState } from "react";
 import { RenderTreeFunc } from "@/types/component";
 import { prepareUserThemeLive } from "@/utils/prepareUserThemeLive";
 import { DeploymentPage } from "@/requests/deployments/types";
@@ -32,15 +31,12 @@ export const LiveComponent = ({ page, pageState }: Props) => {
   theme = theme === undefined ? prepareUserThemeLive(page.branding) : theme;
 
   const projectId = page.project.id;
-  const [isPending, startTransition] = useTransition();
 
   const { data: datasources } = useDataSources(projectId);
   const { data: variables } = useVariableListQuery(projectId);
 
   const editorTree = useEditorTreeStore((state) => state.tree);
   const setEditorTree = useEditorTreeStore((state) => state.setTree);
-  const setIsLoading = useAppStore((state) => state.setIsLoading);
-  const isLoading = useAppStore((state) => state.isLoading);
   const initializeVariableList = useVariableStore(
     (state) => state.initializeVariableList,
   );
@@ -49,31 +45,19 @@ export const LiveComponent = ({ page, pageState }: Props) => {
   );
   const setTheme = useThemeStore((state) => state.setTheme);
   const resetInputValues = useInputsStore((state) => state.resetInputValues);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (theme) setTheme(theme);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    if (page?.pageState) {
-      startTransition(() => {
-        setEditorTree(pageState, {
-          onLoad: true,
-          action: "Initial State",
-        });
-        setIsLoading(false);
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pageState]);
-
   if (theme?.fontFamily && theme?.headings?.fontFamily) {
     initializeFonts(theme.fontFamily, theme.headings.fontFamily);
   }
 
   useEffect(() => {
-    if (page.id) {
+    if (page.id && projectId && pageState && isLoading) {
       useEditorTreeStore.setState(
         {
           currentPageId: page.id,
@@ -85,11 +69,17 @@ export const LiveComponent = ({ page, pageState }: Props) => {
         "editorTree/setStartUp",
       );
 
+      setEditorTree(pageState, {
+        onLoad: true,
+        action: "Initial State",
+      });
+      setIsLoading(false);
+
       resetInputValues();
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [projectId, page.id]);
+  }, [projectId, page.id, pageState, isLoading]);
 
   useEffect(() => {
     if (variables) initializeVariableList(variables.results);
@@ -145,7 +135,6 @@ export const LiveComponent = ({ page, pageState }: Props) => {
 
   return (
     <LiveWrapper project={page.project}>
-      <LoadingOverlay visible={isPending} />
       {renderTree(editorTree.root)}
     </LiveWrapper>
   );

@@ -20,6 +20,7 @@ const CheckboxItemComponent = forwardRef<HTMLInputElement, Props>(
 
     return (
       <MantineCheckbox
+        key={props.id}
         {...props}
         {...componentProps}
         styles={{
