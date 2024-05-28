@@ -3,6 +3,8 @@ import { EditableComponentMapper } from "@/utils/editor";
 import { Modal as MantineModal, ModalProps } from "@mantine/core";
 import { forwardRef, memo } from "react";
 import { ModalAndDrawerWrapper } from "@/components/mapper/ModalAndDrawerWrapper";
+import { convertSizeToPx } from "@/utils/defaultSizes";
+import merge from "lodash.merge";
 
 type Props = EditableComponentMapper & Omit<ModalProps, "opened">;
 
@@ -11,6 +13,8 @@ export const ModalComponent = forwardRef(
     { renderTree, component, style, shareableContent, ...props }: Props,
     ref,
   ) => {
+    const sizePx = convertSizeToPx(component?.props?.size, "modal");
+
     return (
       <ModalAndDrawerWrapper component={component}>
         {({
@@ -32,6 +36,7 @@ export const ModalComponent = forwardRef(
               lockScroll={false}
               target={target}
               {...sizeProps}
+              size={sizePx}
               {...props}
               {...componentProps}
               opened={isPreviewMode ? true : showInEditor}
