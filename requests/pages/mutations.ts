@@ -182,10 +182,11 @@ export const getPageState = async (
 export const getPageStateHistory = async (
   projectId: string,
   pageId: string,
-  timestamp: number,
+  offset: number,
+  limit: number,
 ) => {
   const response = (await get<PagingResponse<PageStateHistoryResponse>>(
-    `/projects/${projectId}/pages/${pageId}/state/history?timestamp=${timestamp}`,
+    `/projects/${projectId}/pages/${pageId}/state/history?offset=${offset}&limit=${limit}`,
   )) as PagingResponse<PageStateHistoryResponse>;
 
   return response;
