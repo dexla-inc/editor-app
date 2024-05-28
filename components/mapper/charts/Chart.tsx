@@ -59,6 +59,7 @@ export const Chart = ({ component, ...props }: Props) => {
   const _foreColor = getChartColor(theme, foreColor, "Secondary.5");
 
   const { data: response, isLoading } = useEndpoint({
+    componentId: component.id!,
     onLoad: component.onLoad,
     dataType,
   });
