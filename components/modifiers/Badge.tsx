@@ -10,6 +10,8 @@ import { SegmentedControl, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
 import { useEffect, useState } from "react";
+import { SegmentedControlSizes } from "../SegmentedControlSizes";
+import { badgeSizes } from "@/utils/defaultSizes";
 
 const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm();
@@ -43,7 +45,9 @@ const Modifier = withModifier(({ selectedComponent }) => {
   return (
     <form>
       <Stack spacing="xs">
-        <SizeSelector
+        <SegmentedControlSizes
+          label="Size"
+          sizing={badgeSizes}
           {...form.getInputProps("size")}
           onChange={(value) => {
             form.setFieldValue("size", value as string);
@@ -51,11 +55,11 @@ const Modifier = withModifier(({ selectedComponent }) => {
               attrs: {
                 props: {
                   size: value,
+                  style: { height: badgeSizes[value] },
                 },
               },
             });
           }}
-          showNone={false}
         />
         <SizeSelector
           label="Radius"

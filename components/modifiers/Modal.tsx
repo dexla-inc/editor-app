@@ -1,7 +1,8 @@
 import { withModifier } from "@/hoc/withModifier";
 import { ModalDrawerFormBuilder } from "@/components/modifiers/ModalDrawerFormBuilder";
-import { SizeSelector } from "../SizeSelector";
 import { Stack } from "@mantine/core";
+import { modalSizes } from "@/utils/defaultSizes";
+import { SegmentedControlSizes } from "../SegmentedControlSizes";
 
 const Modifier = withModifier(({ selectedComponent }) => {
   return (
@@ -9,11 +10,9 @@ const Modifier = withModifier(({ selectedComponent }) => {
       {({ form, onChange }) => {
         return (
           <Stack spacing={2}>
-            <SizeSelector
+            <SegmentedControlSizes
               label="Size"
-              showFullLabel
-              showFullscreen
-              showNone={false}
+              sizing={modalSizes}
               {...form.getInputProps("size")}
               onChange={(value) => onChange("size", value as string)}
             />

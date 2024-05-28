@@ -45,8 +45,6 @@ export const ChangeHistoryPopover: FC = () => {
     }
   };
 
-  // console.log("ChangeHistoryPopover")
-
   return (
     <Flex
       align="center"
