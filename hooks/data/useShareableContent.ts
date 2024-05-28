@@ -1,23 +1,21 @@
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useDataTransformers } from "@/hooks/data/useDataTransformers";
-import { useDataBinding } from "@/hooks/data/useDataBinding";
 import get from "lodash.get";
 import { cloneObject } from "@/utils/common";
 
 type UseShareableContentProps = {
   componentId?: string;
+  computeValue: any;
 };
 
 export const useShareableContent = ({
   componentId,
+  computeValue,
 }: UseShareableContentProps) => {
   const { itemTransformer } = useDataTransformers();
 
-  const selectedComponentId = useEditorTreeStore(
-    (state) => componentId ?? state.selectedComponentIds?.at(-1),
-  );
-
-  const { computeValue } = useDataBinding();
+  const selectedComponentId =
+    componentId ?? useEditorTreeStore.getState().selectedComponentIds?.at(-1);
 
   const [, parentIdsGroup] = selectedComponentId?.split("-related-") ?? [];
   const relatedComponentIds = parentIdsGroup?.split("--") ?? [];
