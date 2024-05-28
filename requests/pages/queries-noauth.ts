@@ -8,7 +8,7 @@ import {
 } from "@/requests/pages/types";
 import { getWithoutAuth } from "@/utils/apiLive";
 import { buildQueryString } from "@/types/dashboardTypes";
-import { PagingResponse } from "../types";
+import { PagingResponse } from "@/requests/types";
 
 export const getPageList = async (projectId: string, params?: PageParams) => {
   let url = `/projects/${projectId}/pages`;

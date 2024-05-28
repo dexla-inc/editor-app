@@ -2,7 +2,7 @@ import { useEffect, useCallback } from "react";
 import { useUndoRedo } from "./useUndoRedo";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { decodeSchema } from "@/utils/compression";
-import { getPageState } from "@/requests/pages/queries-noauth";
+import { getPageState } from "@/requests/pages/mutations";
 import { useOldRouter } from "@/hooks/data/useOldRouter";
 
 export const useHandlePageStateUndoRedo = () => {

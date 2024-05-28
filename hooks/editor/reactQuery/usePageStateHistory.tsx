@@ -1,4 +1,4 @@
-import { getPageStateHistory } from "@/requests/pages/queries-noauth";
+import { getPageStateHistory } from "@/requests/pages/mutations";
 import { PageStateHistoryResponse } from "@/requests/pages/types";
 import { PagingResponse } from "@/requests/types";
 import { queryClient } from "@/utils/reactQuery";

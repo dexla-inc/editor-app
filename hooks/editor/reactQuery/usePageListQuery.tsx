@@ -1,4 +1,4 @@
-import { getPageList } from "@/requests/pages/queries-noauth";
+import { getPageList } from "@/requests/pages/mutations";
 import { PageListResponse } from "@/requests/pages/types";
 import { useQuery } from "@tanstack/react-query";
 import { queryClient } from "@/utils/reactQuery";
