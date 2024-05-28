@@ -1,5 +1,5 @@
 import { buttonHoverStyles } from "@/components/styles/buttonHoverStyles";
-import { getPageList } from "@/requests/pages/queries-noauth";
+import { getPageList } from "@/requests/pages/mutations";
 import { ProjectResponse } from "@/requests/projects/types";
 import { useAppStore } from "@/stores/app";
 import { usePropelAuthStore } from "@/stores/propelAuth";

@@ -2,14 +2,18 @@ import {
   PageAIResponse,
   PageBody,
   PageConfigProps,
+  PageListResponse,
+  PageParams,
   PageResponse,
+  PageStateHistoryResponse,
   PageStateParams,
   PageStateResponse,
   PagesResponse,
 } from "@/requests/pages/types";
-import { del, patch, post, put } from "@/utils/api";
+import { del, patch, post, put, get } from "@/utils/api";
 import { evictCache } from "../cache/queries-noauth";
-import { PatchParams } from "../types";
+import { PagingResponse, PatchParams } from "@/requests/types";
+import { buildQueryString } from "@/types/dashboardTypes";
 
 export const createPage = async (
   params: PageConfigProps,
@@ -134,6 +138,56 @@ export const rollbackPageState = async (
 ) => {
   const url = `/projects/${projectId}/pages/${pageId}/state/history/${pageHistoryId}`;
   const response = (await post<any>(url, {})) as PageStateResponse;
+  return response;
+};
+
+export const getPageList = async (projectId: string, params?: PageParams) => {
+  let url = `/projects/${projectId}/pages`;
+  url += buildQueryString({ ...params });
+
+  const response = (await get<PageListResponse>(url)) as PageListResponse;
+
+  return response;
+};
+
+export const getPage = async (
+  projectId: string,
+  pageId: string,
+  headers = {},
+  init = {},
+) => {
+  const response = (await get<PageResponse>(
+    `/projects/${projectId}/pages/${pageId}`,
+    headers,
+  )) as PageResponse;
+
+  return response;
+};
+
+export const getPageState = async (
+  projectId: string,
+  pageId: string,
+  pageLoadTimestamp: number,
+  history: number | null,
+  init = {},
+) => {
+  const response = (await get<PageStateResponse>(
+    `/projects/${projectId}/pages/${pageId}/state?pageLoadTimestamp=${pageLoadTimestamp}&history=${history}`,
+    init,
+  )) as PageStateResponse;
+
+  return response;
+};
+
+export const getPageStateHistory = async (
+  projectId: string,
+  pageId: string,
+  timestamp: number,
+) => {
+  const response = (await get<PagingResponse<PageStateHistoryResponse>>(
+    `/projects/${projectId}/pages/${pageId}/state/history?timestamp=${timestamp}`,
+  )) as PagingResponse<PageStateHistoryResponse>;
+
   return response;
 };
 
