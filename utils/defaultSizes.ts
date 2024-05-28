@@ -37,14 +37,14 @@ const sizeDefinitions = {
     gap: "24px",
     radius: "16px",
     badge: "32px",
-    modal: "620px",
+    modal: "720px",
   },
   xl: {
     input: "60px",
     gap: "32px",
     radius: "32px",
     badge: "36px",
-    modal: "780px",
+    modal: "1000px",
   },
 } as Record<MantineSize, SizeDefinition>;
 
