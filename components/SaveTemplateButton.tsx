@@ -1,5 +1,5 @@
 import { ActionIconDefault } from "@/components/ActionIconDefault";
-import { getPage } from "@/requests/pages/queries-noauth";
+import { getPage } from "@/requests/pages/mutations";
 import { upsertTemplate } from "@/requests/templates/mutations";
 import { TemplateParams, TemplateTypes } from "@/requests/templates/types";
 import { upsertTile } from "@/requests/tiles/mutations";

@@ -1,4 +1,4 @@
-import { getPageStateHistory } from "@/requests/pages/queries-noauth";
+import { getPageStateHistory } from "@/requests/pages/mutations";
 import { PageStateHistoryResponse } from "@/requests/pages/types";
 import { PagingResponse } from "@/requests/types";
 import { queryClient } from "@/utils/reactQuery";
@@ -9,16 +9,17 @@ const cacheTime = 5 * 1000; // 5 seconds
 export const usePageStateHistory = (
   projectId: string,
   pageId: string,
-  timestamp: number,
+  offset: number,
+  limit: number,
 ) => {
-  const queryKey = ["page-state-history", projectId, pageId, timestamp];
+  const queryKey = ["page-state-history", projectId, pageId, offset, limit];
 
   const queryResult = useQuery<PagingResponse<PageStateHistoryResponse>, Error>(
     {
       queryKey: queryKey,
-      queryFn: () => getPageStateHistory(projectId, pageId, timestamp),
+      queryFn: () => getPageStateHistory(projectId, pageId, offset, limit),
       staleTime: cacheTime,
-      enabled: !!projectId && !!pageId && !!timestamp,
+      enabled: !!projectId && !!pageId,
     },
   );
 

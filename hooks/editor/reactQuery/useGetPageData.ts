@@ -1,4 +1,4 @@
-import { getPageState } from "@/requests/pages/queries-noauth";
+import { getPageState } from "@/requests/pages/mutations";
 import { useAppStore } from "@/stores/app";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useUserConfigStore } from "@/stores/userConfig";
