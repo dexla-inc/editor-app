@@ -71,12 +71,16 @@ const PopOverComponent = ({
     >
       {targetComponent && (
         <MantinePopOver.Target>
-          <Box id="popover-target">{renderTree(targetComponent)}</Box>
+          <Box id="popover-target">
+            {renderTree(targetComponent, shareableContent)}
+          </Box>
         </MantinePopOver.Target>
       )}
 
       <MantinePopOver.Dropdown w="auto">
-        {childrenWithoutTarget?.map((child) => renderTree(child))}
+        {childrenWithoutTarget?.map((child) =>
+          renderTree(child, shareableContent),
+        )}
       </MantinePopOver.Dropdown>
     </MantinePopOver>
   );
