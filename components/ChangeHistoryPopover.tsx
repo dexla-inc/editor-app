@@ -39,8 +39,7 @@ export const ChangeHistoryPopover: FC = () => {
     const pageLoadTree = useEditorTreeStore.getState().pageLoadTree;
     if (pageLoadTree) {
       setTree(pageLoadTree, {
-        action: "Original Tree",
-        skipSave: true,
+        action: "Back to initial state",
       });
     }
   };

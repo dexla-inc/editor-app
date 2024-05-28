@@ -26,3 +26,4 @@ export const CURSOR_COLORS = [
   "#7986CB",
 ];
 export const DEFAULT_STALE_TIME = 30;
+export const ONE_DAY_MS = 24 * 60 * 60 * 1000;
