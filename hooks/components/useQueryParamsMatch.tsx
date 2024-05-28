@@ -1,29 +1,27 @@
-import { useParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { ValueProps } from "@/types/dataBinding";
 import isEqual from "lodash.isequal";
-import { omit } from "next/dist/shared/lib/router/utils/omit";
-import { useComputeValue } from "../data/useComputeValue";
+import { useComputeValue } from "@/hooks/data/useComputeValue";
+import { useMemo } from "react";
 
 export const useQueryParamsMatch = (
   queryStrings?: Array<{ key: string; value: ValueProps }>,
 ) => {
-  const params = useParams();
+  const queryParams = useSearchParams();
 
-  const initialQueryStrings =
-    queryStrings?.reduce(
-      (acc, next) => {
-        acc[next.key] = next.value;
-        return acc;
-      },
-      {} as Record<string, ValueProps>,
-    ) || {};
+  const urlSearchParams = useMemo(
+    () =>
+      Array.from(queryParams.entries()).map(([key, value]) => ({
+        key,
+        value,
+      })),
+    [queryParams],
+  );
 
-  const computedQueryStrings = useComputeValue({ onLoad: initialQueryStrings });
-
+  const computedQueryStrings = useComputeValue({ onLoad: queryStrings });
   if (!queryStrings) {
     return true;
   }
 
-  const pageQueryStrings = omit(params, ["id", "page"]);
-  return isEqual(pageQueryStrings, computedQueryStrings);
+  return isEqual(urlSearchParams, computedQueryStrings);
 };
