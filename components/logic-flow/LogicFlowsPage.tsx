@@ -37,9 +37,10 @@ import { safeJsonParse } from "@/utils/common";
 
 type Props = {
   flow: LogicFlowResponse;
+  forceRenderId: string;
 };
 
-export const LogicFlowsPage = ({ flow }: Props) => {
+export const LogicFlowsPage = ({ flow, forceRenderId }: Props) => {
   const { id: projectId } = useParams<{ id: string }>();
   const reactFlowWrapper = useRef(null);
   const restoreFlow = useFlowStore((state) => state.restoreFlow);
@@ -271,7 +272,11 @@ export const LogicFlowsPage = ({ flow }: Props) => {
           backgroundColor: LOGICFLOW_BACKGROUND,
         }}
       >
-        <LogicFlow key={flow?.id} wrapperRef={reactFlowWrapper} />
+        <LogicFlow
+          key={flow?.id}
+          wrapperRef={reactFlowWrapper}
+          forceRenderId={forceRenderId}
+        />
       </Box>
     </LogicFlowShell>
   );

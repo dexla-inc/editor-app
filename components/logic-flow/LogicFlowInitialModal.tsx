@@ -20,6 +20,7 @@ import { ContextModalProps } from "@mantine/modals";
 import { IconSearch } from "@tabler/icons-react";
 import { GetServerSidePropsContext } from "next";
 import { useEffect, useState } from "react";
+import { nanoid } from "nanoid";
 
 export const getServerSideProps = async ({
   query,
@@ -51,6 +52,7 @@ export default function LogicFlowInitialModal({}: ContextModalProps) {
   }, [projectId, resetFlow]);
 
   const [flow, setFlow] = useState<LogicFlowResponse>();
+  const [forceRenderId, setForceRenderId] = useState<string>("");
   const [filter, setFilter] = useDebouncedState("", 100);
   const [filteredFlows, setFilteredFlows] = useState<LogicFlowResponse[]>([]);
 
@@ -108,6 +110,7 @@ export default function LogicFlowInitialModal({}: ContextModalProps) {
                   onClick={() => {
                     setSelectedTabView("flow");
                     setFlow(flow);
+                    setForceRenderId(nanoid());
                     setIsRestored(false);
                   }}
                 />
@@ -117,7 +120,7 @@ export default function LogicFlowInitialModal({}: ContextModalProps) {
         </LogicFlowShell>
       </Tabs.Panel>
       <Tabs.Panel value={"flow"}>
-        {flow && <LogicFlowsPage flow={flow} />}
+        {flow && <LogicFlowsPage flow={flow} forceRenderId={forceRenderId} />}
       </Tabs.Panel>
     </Tabs>
   );

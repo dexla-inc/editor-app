@@ -8,7 +8,7 @@ import {
 import { FlowState, useFlowStore } from "@/stores/flow";
 import { nodes as nodeTypes } from "@/utils/logicFlows";
 import { nanoid } from "nanoid";
-import { MutableRefObject, useCallback } from "react";
+import { MutableRefObject, useCallback, useEffect, useState } from "react";
 import ReactFlow, {
   Background,
   Controls,
@@ -39,6 +39,7 @@ const selector = (state: FlowState) => ({
 
 type FlowProps = {
   wrapperRef: MutableRefObject<HTMLDivElement | null>;
+  forceRenderId: string;
 };
 
 function findConnectedNodes(
@@ -84,7 +85,7 @@ function findConnectedNodes(
   }, []);
 }
 
-export const LogicFlow = ({ wrapperRef }: FlowProps) => {
+export const LogicFlow = ({ wrapperRef, forceRenderId }: FlowProps) => {
   const {
     nodes,
     edges,
@@ -95,6 +96,7 @@ export const LogicFlow = ({ wrapperRef }: FlowProps) => {
     setSelectedNode,
   } = useFlowStore(selector);
   const { setEdges, setNodes } = useReactFlow();
+  const [activeFlowTab, setActiveFlowTab] = useState("start-node");
   const rect = wrapperRef.current?.getBoundingClientRect();
   const defaultViewport = { zoom: 2, x: (rect?.width ?? 1000) / 2, y: 150 };
   const tabs = [
@@ -102,6 +104,11 @@ export const LogicFlow = ({ wrapperRef }: FlowProps) => {
     { label: "Handled Error", value: "start-node-error" },
     { label: "Unhandled Error", value: "start-node-unhandled-error" },
   ];
+
+  useEffect(() => {
+    onActivateVisibility("start-node");
+    setActiveFlowTab("start-node");
+  }, [forceRenderId]);
 
   const onNodesDelete = useCallback(
     (deleted: Node[]) => {
@@ -206,6 +213,7 @@ export const LogicFlow = ({ wrapperRef }: FlowProps) => {
       });
     }
 
+    setActiveFlowTab(tab);
     setNodes(Object.values(flows).flat());
     setEdges(updatedEdges);
   };
@@ -239,6 +247,7 @@ export const LogicFlow = ({ wrapperRef }: FlowProps) => {
       <Panel position="top-center">
         <SegmentedControl
           size="md"
+          value={activeFlowTab}
           data={tabs}
           onChange={onActivateVisibility}
         />
