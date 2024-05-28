@@ -10,6 +10,7 @@ export const withComponentVisibility = <T extends Record<string, any>>(
   const ComponentVisibilityWrapper = (props: WithComponentWrapperProps) => {
     const { component: componentTree, shareableContent } = props;
     let id = componentTree.id;
+
     if (shareableContent?.parentSuffix !== undefined) {
       id = `${componentTree.id}-related-${shareableContent?.parentSuffix}`;
     }

@@ -134,8 +134,8 @@ export type EditorTreeState = {
   ) => void;
   isSaving: boolean;
   setIsSaving: (value: boolean) => void;
-  relatedComponentsData: any;
-  setRelatedComponentsData: any;
+  relatedComponentsData: Record<string, any>;
+  setRelatedComponentsData: (props: Record<string, any>) => void;
 };
 
 const updatePageStateFunc = async (

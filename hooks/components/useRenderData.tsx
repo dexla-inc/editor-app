@@ -3,7 +3,6 @@ import { useShallow } from "zustand/react/shallow";
 import { Component, ComponentTree } from "@/utils/editor";
 import { useEndpoint } from "@/hooks/components/useEndpoint";
 import { Skeleton } from "@mantine/core";
-import { useEffect, useTransition } from "react";
 
 type UseRenderDataProps = {
   component: Component & ComponentTree;
@@ -30,37 +29,15 @@ export const useRenderData = ({
   );
   const { dataType = "static" } = component?.props!;
   const { data: staticData, skeletonMinHeight = 400 } = component.onLoad!;
-  const [, startTransition] = useTransition();
-
-  const setRelatedComponentsData = useEditorTreeStore(
-    (state) => state.setRelatedComponentsData,
-  );
 
   const { data: dynamicData, initiallyLoading } = useEndpoint({
+    componentId: component.id!,
     onLoad: component.onLoad,
     dataType,
     includeExampleResponse: !isPreviewMode,
   });
 
   const data = dataType === "dynamic" ? dynamicData : staticData;
-
-  useEffect(() => {
-    const parentDataId = shareableContent?.parentDataId;
-    if (
-      parentDataId !== undefined &&
-      JSON.stringify(
-        useEditorTreeStore.getState().relatedComponentsData[parentDataId],
-      ) !== JSON.stringify(shareableContent?.data)
-    ) {
-      startTransition(() => {
-        setRelatedComponentsData({
-          id: parentDataId,
-          data: shareableContent.data,
-        });
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [shareableContent?.data]); // WARNING: we only want to listen to shareableContent.data changes
 
   const renderData = ({ renderTree }: RenderDataProps) => {
     const renderComponent = ({
@@ -75,8 +52,6 @@ export const useRenderData = ({
         ...(data && {
           data,
           parentSuffix,
-          // this is the parentId that later is used to populate the Item context in the binding popover
-          parentDataId: currentComponentGroupId,
         }),
         // This is used by useComputeValue only in order to build the Item context
         relatedComponentsData: {
