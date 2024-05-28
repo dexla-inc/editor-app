@@ -10,7 +10,8 @@ import { SegmentedControl, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
 import { useEffect, useState } from "react";
-import { SegmentedControlSizes } from "../SegmentedControlSizes";
+import { FontSelector } from "@/components/FontSelector";
+import { SegmentedControlSizes } from "@/components/SegmentedControlSizes";
 import { badgeSizes } from "@/utils/defaultSizes";
 
 const Modifier = withModifier(({ selectedComponent }) => {
@@ -26,6 +27,7 @@ const Modifier = withModifier(({ selectedComponent }) => {
         radius: selectedComponent.props?.radius,
         color: selectedComponent.props?.color,
         bg: selectedComponent.props?.bg,
+        fontTag: selectedComponent.props?.fontTag ?? "P",
       }),
     );
 
@@ -75,6 +77,7 @@ const Modifier = withModifier(({ selectedComponent }) => {
             });
           }}
         />
+        <FontSelector {...form.getInputProps("fontTag")} form={form as any} />
         <ThemeColorSelector
           label="Color"
           {...form.getInputProps("color")}

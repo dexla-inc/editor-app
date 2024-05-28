@@ -1,10 +1,12 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useContentEditable } from "@/hooks/components/useContentEditable";
+import { useBrandingStyles } from "@/hooks/editor/useBrandingStyles";
 import { useThemeStore } from "@/stores/theme";
 import { DISABLED_HOVER } from "@/utils/branding";
 import { EditableComponentMapper, getColorFromTheme } from "@/utils/editor";
 import { BadgeProps, Badge as MantineBadge } from "@mantine/core";
 import merge from "lodash.merge";
+import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { forwardRef, memo } from "react";
 type Props = EditableComponentMapper & BadgeProps;
 
@@ -14,12 +16,21 @@ const BadgeComponent = forwardRef(
       component.id as string,
       ref,
     );
-    const { style, color, variable, triggers, ...componentProps } =
-      component.props as any;
-    const { children: childrenValue } = component.onLoad;
+    const {
+      style,
+      size,
+      fontTag,
+      color,
+      variable,
+      triggers,
+      ...componentProps
+    } = component.props as any;
+    const { children: childrenValue = componentProps?.children } =
+      component.onLoad;
+    const { badgeStyle } = useBrandingStyles({ tag: fontTag, size });
 
     const theme = useThemeStore((state) => state.theme);
-    const customStyle = merge({}, style, {
+    const customStyle = merge({}, badgeStyle, style, {
       color: getColorFromTheme(theme, color),
       textTransform: "none",
     });
@@ -29,8 +40,8 @@ const BadgeComponent = forwardRef(
         {...contentEditableProps}
         ref={ref}
         styles={{
-          inner: customStyle,
-          root: DISABLED_HOVER,
+          inner: omit(customStyle, ["height"]),
+          root: { height: customStyle?.height, ...DISABLED_HOVER },
         }}
         {...props}
         {...componentProps}

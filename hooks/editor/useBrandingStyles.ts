@@ -1,12 +1,13 @@
 import { useThemeStore } from "@/stores/theme";
-import { inputSizes, radiusSizes } from "@/utils/defaultSizes";
+import { inputSizes, radiusSizes, badgeSizes } from "@/utils/defaultSizes";
 import { getColorFromTheme } from "@/utils/editor";
 
 type Props = {
   tag?: string;
+  size?: string;
 };
 
-export const useBrandingStyles = ({ tag = "P" }: Props = {}) => {
+export const useBrandingStyles = ({ tag = "P", size = "md" }: Props = {}) => {
   const theme = useThemeStore((state) => state.theme);
   const borderColor = getColorFromTheme(theme, "Border.6");
   // TODO: Need to be able to support multiple texts
@@ -16,6 +17,7 @@ export const useBrandingStyles = ({ tag = "P" }: Props = {}) => {
   const buttonFont = theme.fonts.find((font) => font.tag === "Button");
   const inputSize = inputSizes[theme.inputSize];
   const radiusSize = radiusSizes[theme.defaultRadius];
+  const badgeSize = badgeSizes[size];
 
   const borderStyle = {
     borderRadius: radiusSize,
@@ -61,6 +63,17 @@ export const useBrandingStyles = ({ tag = "P" }: Props = {}) => {
     }),
   };
 
+  const badgeStyle = {
+    height: badgeSize,
+    borderRadius: radiusSize,
+    ...(textFont && {
+      fontSize: fontSize,
+      fontWeight: textFont?.fontWeight,
+      lineHeight: fontSize,
+      letterSpacing: textFont?.letterSpacing,
+    }),
+  };
+
   const textStyle = {
     ...(fontSize && {
       fontSize: fontSize,
@@ -96,6 +109,7 @@ export const useBrandingStyles = ({ tag = "P" }: Props = {}) => {
     titleStyle,
     avatarStyle,
     dashedBorderStyle,
+    badgeStyle,
   };
 };
 
