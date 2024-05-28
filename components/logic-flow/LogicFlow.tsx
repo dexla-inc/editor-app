@@ -161,25 +161,20 @@ export const LogicFlow = ({ wrapperRef, forceRenderId }: FlowProps) => {
 
     const flows = tabs.reduce(
       (acc, { value }) => {
-        acc[camelCase(value) + "Flow"] = findConnectedNodes(
-          value,
-          nodes,
-          edges,
-          value !== tab,
-        );
+        acc[value] = findConnectedNodes(value, nodes, edges, value !== tab);
         return acc;
       },
       {} as Record<string, Node[]>,
     );
 
-    const selectedFlow = camelCase(tab) + "Flow";
+    // const selectedFlow = camelCase(tab) + "Flow";
 
-    if (!flows[selectedFlow].length) {
+    if (!flows[tab].length) {
       const newConnectionCreatorNodeIdError = nanoid();
 
-      flows[selectedFlow] = [
+      flows[tab] = [
         {
-          id: selectedFlow,
+          id: tab,
           type: "startNode",
           data: {
             label: "Start",
@@ -207,7 +202,7 @@ export const LogicFlow = ({ wrapperRef, forceRenderId }: FlowProps) => {
 
       updatedEdges.push({
         id: nanoid(),
-        source: selectedFlow,
+        source: tab,
         target: newConnectionCreatorNodeIdError,
         type: "straight",
       });
