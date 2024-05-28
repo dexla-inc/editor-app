@@ -96,7 +96,7 @@ const CheckboxComponent = forwardRef<HTMLInputElement, Props>(
             </div>
           )
         }
-        checked={value}
+        {...(!isInsideGroup && { checked: value })}
         value={optionValue}
         {...triggers}
         {...defaultTriggers}

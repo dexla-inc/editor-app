@@ -9,6 +9,7 @@ import { removeEmpty, toBase64 } from "@/utils/common";
 import { useEndpoints } from "../editor/reactQuery/useDataSourcesEndpoints";
 
 type UseEndpointProps = {
+  componentId: string;
   dataType: DataType;
   onLoad?: any;
   forceEnabled?: boolean;
@@ -17,12 +18,16 @@ type UseEndpointProps = {
 };
 
 export const useEndpoint = ({
+  componentId,
   dataType,
   onLoad,
   enabled = true,
   includeExampleResponse = false,
 }: UseEndpointProps) => {
   const authState = useDataSourceStore((state) => state.getAuthState);
+  const setRelatedComponentsData = useEditorTreeStore(
+    (state) => state.setRelatedComponentsData,
+  );
 
   const {
     endpointId,
@@ -62,6 +67,8 @@ export const useEndpoint = ({
       authHeaderKey,
       includeExampleResponse,
     ).then((response) => {
+      setRelatedComponentsData({ id: componentId, data: response });
+
       return response;
     });
   };

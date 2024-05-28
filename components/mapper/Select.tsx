@@ -56,6 +56,7 @@ const SelectComponent = forwardRef(
     });
 
     const { data: response } = useEndpoint({
+      componentId: component.id!,
       onLoad: component.onLoad,
       dataType,
     });

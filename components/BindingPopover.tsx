@@ -90,18 +90,6 @@ export default function BindingPopover({
     onClose();
   };
 
-  // useEffect(
-  //   () => {
-  //     const isSingleAtSign = value?.boundCode === "@";
-  //     const isDoubleAtSign = value?.boundCode === "@@";
-  //     if (!isSingleAtSign && !isDoubleAtSign) return;
-  //     setTab(isSingleAtSign ? "components" : "variables");
-  //     onOpen();
-  //   },
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  //   [value?.boundCode],
-  // );
-
   const currentValue = computeValue<string>({ value }, { actions, item });
   const entitiesDataTreeList: Array<{
     entity: ContextType;
@@ -211,7 +199,7 @@ export default function BindingPopover({
   }
 
   // testing if item has a key other than "index" only, if it doesnt, it means it is not supposed to be an item component
-  if (Object.keys(item ?? {}).length > 1) {
+  if (Object.keys(item ?? {}).length > 0) {
     segmentedTabOptions.unshift({
       value: "item",
       label: (

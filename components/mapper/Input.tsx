@@ -162,7 +162,7 @@ const InputComponent = forwardRef(
                 {...restTriggers}
                 onChange={handleChange}
                 label={undefined}
-                wrapperProps={{ "data-id": component.id }}
+                wrapperProps={{ "data-id": id }}
               />
 
               <ActionIcon
@@ -198,7 +198,7 @@ const InputComponent = forwardRef(
             onChange={handleChange}
             rightSection={loading ? <InputLoader /> : null}
             label={undefined}
-            wrapperProps={{ "data-id": component.id }}
+            wrapperProps={{ "data-id": id }}
           />
         ) : type === "password" ? (
           <PasswordInput
@@ -250,7 +250,7 @@ const InputComponent = forwardRef(
               ) : null
             }
             label={undefined}
-            wrapperProps={{ "data-id": component.id }}
+            wrapperProps={{ "data-id": id }}
           />
         )}
       </>
