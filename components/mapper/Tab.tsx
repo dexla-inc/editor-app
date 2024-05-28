@@ -9,7 +9,7 @@ type Props = EditableComponentMapper & TabProps;
 
 const TabComponent = forwardRef(
   ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
-    const { children, icon, iconColor, ...componentProps } =
+    const { children, icon, iconColor, triggers, ...componentProps } =
       component.props as any;
     const theme = useThemeStore((state) => state.theme);
 

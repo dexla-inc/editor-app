@@ -7,7 +7,7 @@ import {
   EndpointAuthType,
 } from "@/utils/actions";
 import { Stack } from "@mantine/core";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { SegmentedControlInput } from "../SegmentedControlInput";
 import { SegmentedControlYesNo } from "../SegmentedControlYesNo";
 import { useEffect } from "react";
@@ -16,8 +16,7 @@ import { useEndpoints } from "@/hooks/editor/reactQuery/useDataSourcesEndpoints"
 type Props = ActionFormProps<Omit<APICallAction, "name" | "datasource">>;
 
 export const APICallActionForm = ({ form, isPageAction }: Props) => {
-  const router = useRouter();
-  const projectId = router.query.id as string;
+  const { id: projectId } = useParams<{ id: string }>();
 
   const { endpoints } = useEndpoints(projectId as string);
 

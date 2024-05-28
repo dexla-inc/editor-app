@@ -5,7 +5,7 @@ import { queryClient } from "@/utils/reactQuery";
 
 const cacheTime = 60 * 60 * 1000; // 30 minutes
 
-export const useProjectListQuery = (orgId: string, search: string) => {
+export const useProjectListQuery = (orgId: string, search?: string) => {
   const queryKey = ["projects", orgId, search];
 
   const queryResult = useQuery<ProjectListResponse, Error>({
@@ -16,7 +16,7 @@ export const useProjectListQuery = (orgId: string, search: string) => {
   });
 
   const invalidate = () => {
-    queryClient.invalidateQueries(queryKey);
+    queryClient.invalidateQueries({ queryKey });
   };
 
   return { ...queryResult, invalidate };

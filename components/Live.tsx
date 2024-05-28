@@ -1,10 +1,10 @@
+"use client";
+
 import { LiveWrapper } from "@/components/LiveWrapper";
-import { useAppStore } from "@/stores/app";
 import { componentMapper } from "@/utils/componentMapper";
-import { decodeSchema } from "@/utils/compression";
-import { ComponentTree } from "@/utils/editor";
+import { ComponentTree, EditorTreeCopy } from "@/utils/editor";
 import { Box } from "@mantine/core";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { RenderTreeFunc } from "@/types/component";
 import { prepareUserThemeLive } from "@/utils/prepareUserThemeLive";
 import { DeploymentPage } from "@/requests/deployments/types";
@@ -14,92 +14,84 @@ import { useThemeStore } from "@/stores/theme";
 import { useVariableStore } from "@/stores/variables";
 import { initializeFonts } from "@/utils/webfontloader";
 import { useEffect } from "react";
-import { useVariableListQuery } from "@/hooks/editor/reactQuery/useVariableListQuery";
 import { MantineThemeExtended } from "@/types/types";
-import { safeJsonParse } from "@/utils/common";
 import { useInputsStore } from "@/stores/inputs";
 import { useDataSources } from "@/hooks/editor/reactQuery/useDataSources";
+import { useVariableListQuery } from "@/hooks/editor/reactQuery/useVariableListQuery";
+import { withPageOnLoad } from "@/hoc/withPageOnLoad";
 
 type Props = {
-  deploymentPage: DeploymentPage;
+  page: DeploymentPage;
+  pageState: EditorTreeCopy;
 };
 
 let theme: MantineThemeExtended | undefined;
 
-export const Live = ({ deploymentPage }: Props) => {
-  theme =
-    theme === undefined ? prepareUserThemeLive(deploymentPage.branding) : theme;
+export const LiveComponent = ({ page, pageState }: Props) => {
+  theme = theme === undefined ? prepareUserThemeLive(page.branding) : theme;
 
-  const projectId = deploymentPage.project.id;
+  const projectId = page.project.id;
 
-  const { data: variables } = useVariableListQuery(projectId);
   const { data: datasources } = useDataSources(projectId);
-  const endpoints = datasources?.results.flatMap((ds) => ds.endpoints);
+  const { data: variables } = useVariableListQuery(projectId);
 
   const editorTree = useEditorTreeStore((state) => state.tree);
   const setEditorTree = useEditorTreeStore((state) => state.setTree);
-  const setIsLoading = useAppStore((state) => state.setIsLoading);
-  const isLoading = useAppStore((state) => state.isLoading);
   const initializeVariableList = useVariableStore(
     (state) => state.initializeVariableList,
   );
   const setApiAuthConfig = useDataSourceStore(
     (state) => state.setApiAuthConfig,
   );
-  const setIsLive = useEditorTreeStore((state) => state.setIsLive);
-  const setCurrentPageAndProjectIds = useEditorTreeStore(
-    (state) => state.setCurrentPageAndProjectIds,
-  );
-  const setPreviewMode = useEditorTreeStore((state) => state.setPreviewMode);
   const setTheme = useThemeStore((state) => state.setTheme);
   const resetInputValues = useInputsStore((state) => state.resetInputValues);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (theme) setTheme(theme);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  if (theme?.fontFamily && theme?.headings?.fontFamily) {
+    initializeFonts(theme.fontFamily, theme.headings.fontFamily);
+  }
+
   useEffect(() => {
-    if (deploymentPage?.pageState) {
-      const decodedSchema = decodeSchema(deploymentPage.pageState);
-      const state = safeJsonParse(decodedSchema);
-      setEditorTree(state, {
+    if (page.id && projectId && pageState && isLoading) {
+      useEditorTreeStore.setState(
+        {
+          currentPageId: page.id,
+          currentProjectId: projectId,
+          isLive: true,
+          isPreviewMode: true,
+        },
+        false,
+        "editorTree/setStartUp",
+      );
+
+      setEditorTree(pageState, {
         onLoad: true,
         action: "Initial State",
       });
       setIsLoading(false);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [deploymentPage]);
 
-  useEffect(() => {
-    if (deploymentPage.id) {
-      setCurrentPageAndProjectIds(projectId, deploymentPage.id);
-      setPreviewMode(true);
-      setIsLive(true);
       resetInputValues();
-
-      const loadFonts = async () => {
-        if (theme)
-          await initializeFonts(theme.fontFamily, theme.headings.fontFamily);
-      };
-
-      loadFonts();
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [projectId, deploymentPage.id]);
+  }, [projectId, page.id, pageState, isLoading]);
 
   useEffect(() => {
     if (variables) initializeVariableList(variables.results);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [variables, deploymentPage.id]); // deploymentpage.id is used to reinitialize non global variables
+  }, [variables, page.id]);
 
   useEffect(() => {
     if (datasources) {
-      // const endpoints = datasources.results.flatMap((ds) => ds.endpoints);
       setApiAuthConfig(projectId, datasources);
     }
-  }, [datasources, setApiAuthConfig]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [datasources]);
 
   const renderTree: RenderTreeFunc = useCallback(
     (componentTree: ComponentTree, shareableContent = {}) => {
@@ -142,8 +134,10 @@ export const Live = ({ deploymentPage }: Props) => {
   }
 
   return (
-    <LiveWrapper project={deploymentPage.project}>
+    <LiveWrapper project={page.project}>
       {renderTree(editorTree.root)}
     </LiveWrapper>
   );
 };
+
+export const Live = withPageOnLoad<Props>(LiveComponent);

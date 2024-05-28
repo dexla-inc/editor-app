@@ -13,7 +13,7 @@ export const jsonStructure = (props?: any): ComponentStructure => {
     props: {
       value: "new-tab",
       style: {
-        paddingTop: px(theme.spacing.xl),
+        paddingTop: `${px(theme.spacing.xl)}px`,
         width: "auto",
         height: "auto",
       },

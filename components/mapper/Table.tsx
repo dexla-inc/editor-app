@@ -22,6 +22,7 @@ export const TableComponent = forwardRef(
     const { onLoad } = component;
 
     const { data } = useEndpoint({
+      componentId: component.id!,
       onLoad,
       dataType,
     });

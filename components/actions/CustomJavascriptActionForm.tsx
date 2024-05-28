@@ -1,9 +1,7 @@
 import { ActionFormProps, CustomJavascriptAction } from "@/utils/actions";
-import { Button, Card, Flex, Stack, Text } from "@mantine/core";
-import Editor from "@monaco-editor/react";
+import { Button, Stack } from "@mantine/core";
 import { IconPlayerPlayFilled } from "@tabler/icons-react";
 import { useState } from "react";
-import { transpile } from "typescript";
 import { MonacoEditorJson } from "../MonacoEditorJson";
 
 type Props = ActionFormProps<Omit<CustomJavascriptAction, "name">>;
@@ -12,8 +10,8 @@ export const CustomJavascriptActionForm = ({ form }: Props) => {
   const [codeResult, setCodeResult] = useState<any>();
 
   const onClickRunCode = () => {
-    let result = transpile(form.values.code);
-    setCodeResult(eval(result));
+    let result = new Function(form.values.code)();
+    setCodeResult(result);
   };
 
   return (

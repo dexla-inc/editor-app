@@ -3,11 +3,14 @@ import { useThemeStore } from "@/stores/theme";
 import { EditableComponentMapper, getColorFromTheme } from "@/utils/editor";
 import { Box, BoxProps } from "@mantine/core";
 import merge from "lodash.merge";
-import { forwardRef, memo } from "react";
+import { ForwardedRef, forwardRef, memo } from "react";
 type Props = EditableComponentMapper & BoxProps;
 
 const NavbarComponent = forwardRef(
-  ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
+  (
+    { renderTree, component, shareableContent, ...props }: Props,
+    ref: ForwardedRef<any>,
+  ) => {
     const theme = useThemeStore((state) => state.theme);
 
     const { children, bg = "", ...componentProps } = component.props as any;
@@ -17,7 +20,7 @@ const NavbarComponent = forwardRef(
     merge(componentProps, { style: { ...props.style, backgroundColor } });
 
     return (
-      <Box display="grid" {...component.props} {...props}>
+      <Box display="grid" {...component.props} {...props} ref={ref}>
         {component.children &&
           component.children.length > 0 &&
           component.children?.map((child) =>

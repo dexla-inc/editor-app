@@ -16,8 +16,12 @@ export const useProjectQuery = (projectId: string | undefined) => {
   });
 
   const refetch = () => {
-    queryClient.refetchQueries(queryKey);
+    queryClient.refetchQueries({ queryKey });
   };
 
-  return { ...queryResult, refetch };
+  const invalidate = () => {
+    queryClient.invalidateQueries({ queryKey });
+  };
+
+  return { ...queryResult, refetch, invalidate };
 };

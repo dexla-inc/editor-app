@@ -9,7 +9,7 @@ import {
   convertToPatchParams,
 } from "@/types/dashboardTypes";
 import { Button, Divider, Flex, Group, Stack, TextInput } from "@mantine/core";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 interface ProjectInfoStepProps extends LoadingStore, PreviousStepperClickEvent {
   projectId: string;

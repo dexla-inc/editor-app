@@ -16,7 +16,7 @@ import {
 } from "@mantine/core";
 import { IconDots } from "@tabler/icons-react";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useOldRouter } from "@/hooks/data/useOldRouter";
 
 type DataSourceItemProps = {
   datasource: DataSourceResponse;
@@ -29,8 +29,9 @@ export function DataSourceItem({
   theme,
   onDelete,
 }: DataSourceItemProps) {
-  const router = useRouter();
-  const { id, name } = router.query as { id: string; name: string };
+  const {
+    query: { id, name },
+  } = useOldRouter();
 
   const deleteFn = async () => {
     await deleteDataSource(id, datasource.id);

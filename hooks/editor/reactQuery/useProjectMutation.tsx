@@ -6,16 +6,19 @@ export const useProjectMutatation = () => {
   const queryKey = ["projects"];
 
   const invalidate = () => {
-    queryClient.invalidateQueries(queryKey);
+    queryClient.invalidateQueries({ queryKey });
   };
 
-  const mutateResult = useMutation(deleteProject, {
-    onSettled(_, err) {
-      if (err) {
-        console.error(err);
-      }
+  const mutateResult = useMutation({
+    mutationFn: deleteProject,
+    ...{
+      onSettled(_, err) {
+        if (err) {
+          console.error(err);
+        }
 
-      invalidate();
+        invalidate();
+      },
     },
   });
 

@@ -1,6 +1,10 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { EditableComponentMapper } from "@/utils/editor";
-import { Checkbox as MantineCheckbox, CheckboxGroupProps } from "@mantine/core";
+import {
+  Checkbox as MantineCheckbox,
+  CheckboxGroupProps,
+  Group,
+} from "@mantine/core";
 import merge from "lodash.merge";
 import { forwardRef, memo } from "react";
 import { useInputValue } from "@/hooks/components/useInputValue";
@@ -57,10 +61,20 @@ const CheckboxGroupComponent = forwardRef(
         }
       : {};
     const customStyle = merge({}, defaultStyle, props.style);
+    const checkboxWrapperProps = workLikeRadio
+      ? { grow: true }
+      : { style: { justifyContent: "space-between" } };
 
     const rootStyleProps = ["flexWrap", "flexDirection"];
 
-    const { renderData } = useRenderData({ component });
+    const { renderData } = useRenderData({
+      component,
+      shareableContent: {
+        ...shareableContent,
+        value,
+        isInsideGroup: true,
+      },
+    });
 
     return (
       <MantineCheckbox.Group
@@ -79,10 +93,14 @@ const CheckboxGroupComponent = forwardRef(
           ...pick(customStyle, rootStyleProps),
         }}
         styles={{
-          label: { width: "100%" },
+          root: { width: customStyle?.width ?? "100%" },
         }}
       >
-        {renderData({ renderTree, shareableContent })}
+        <Group {...checkboxWrapperProps} w="100%">
+          {renderData({
+            renderTree,
+          })}
+        </Group>
       </MantineCheckbox.Group>
     );
   },

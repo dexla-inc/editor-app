@@ -1,13 +1,8 @@
-import { updatePage } from "@/requests/pages/mutations";
-import { PageListResponse, PageResponse } from "@/requests/pages/types";
+import { PageResponse } from "@/requests/pages/types";
 import { Box, SegmentedControl } from "@mantine/core";
 import { useState } from "react";
 import PageActions from "./PageActions";
 import PageConfig from "./PageConfig";
-import { useEditorTreeStore } from "@/stores/editorTree";
-import { useEditorStore } from "@/stores/editor";
-import { queryClient } from "@/utils/reactQuery";
-import { usePageQuery } from "@/hooks/editor/reactQuery/usePageQuery";
 
 type PageDetailPaneProps = {
   page?: PageResponse | null | undefined;
@@ -17,20 +12,6 @@ type PageDetailPaneProps = {
 type Tab = "config" | "actions";
 export default function PageDetailPane({ page, setPage }: PageDetailPaneProps) {
   const [tab, setTab] = useState<Tab>("config");
-  const projectId = useEditorTreeStore((state) => state.currentProjectId!);
-  const updatePageResponse = useEditorStore(
-    (state) => state.updatePageResponse,
-  );
-
-  const { refetch } = usePageQuery(projectId, page?.id as string);
-
-  const onUpdatePage = async (values: any) => {
-    setPage(values);
-    const result = await updatePage(values, projectId, page?.id as string);
-    refetch();
-
-    updatePageResponse(result);
-  };
 
   return (
     <Box p="xs" pr={0}>
@@ -54,7 +35,7 @@ export default function PageDetailPane({ page, setPage }: PageDetailPaneProps) {
       {tab === "config" ? (
         <PageConfig page={page} setPage={setPage} />
       ) : (
-        <PageActions page={page} onUpdatePage={onUpdatePage} />
+        <PageActions page={page} setPage={setPage} />
       )}
     </Box>
   );

@@ -1,31 +1,36 @@
 import { ActionSettingsForm } from "@/components/pages/ActionSettingsForm";
 import { SelectActionForm } from "@/components/pages/SelectActionForm";
 import { SidebarSection } from "@/components/pages/SidebarSection";
+import { patchPage } from "@/requests/pages/mutations";
 import { PageResponse } from "@/requests/pages/types";
+import { PatchParams } from "@/requests/types";
 import { Action, actionMapper } from "@/utils/actions";
 import { Box, Button } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconArrowBadgeRight, IconBolt } from "@tabler/icons-react";
 import startCase from "lodash.startcase";
+import { useParams } from "next/navigation";
 
 type Props = {
   page?: PageResponse | null | undefined;
-  onUpdatePage: (values: any) => Promise<any>;
+  setPage: (page?: PageResponse | null | undefined) => void;
 };
 
-export default function PageActions({ page, onUpdatePage }: Props) {
+export default function PageActions({ page, setPage }: Props) {
   const [addForm, { open, close }] = useDisclosure(false);
+  const { id: projectId } = useParams<{ id: string }>();
 
   const removeAction = async (id: string) => {
     if (page) {
-      const updatedActions =
-        page.actions?.filter(
-          (a: Action) => a.id !== id && a.sequentialTo !== id,
-        ) ?? [];
-
-      const pageUpdated = { ...page, actions: updatedActions };
-
-      await onUpdatePage(pageUpdated);
+      const patchParms = [
+        {
+          path: "actions",
+          op: "replace",
+          value: [],
+        },
+      ] as PatchParams[];
+      const result = await patchPage(page.projectId, page.id, patchParms);
+      setPage(result);
     }
   };
 
@@ -67,10 +72,11 @@ export default function PageActions({ page, onUpdatePage }: Props) {
               <ActionSettingsForm
                 action={sequentialAction}
                 page={page!}
+                projectId={projectId}
                 defaultValues={
                   actionMapper[sequentialActionName]?.defaultValues
                 }
-                onUpdatePage={onUpdatePage}
+                setPage={setPage}
               >
                 {({ form }) => (
                   <ActionForm
@@ -103,11 +109,7 @@ export default function PageActions({ page, onUpdatePage }: Props) {
         </Button>
       )}
       {addForm && (
-        <SelectActionForm
-          onUpdatePage={onUpdatePage}
-          close={close}
-          page={page!}
-        />
+        <SelectActionForm close={close} page={page!} setPage={setPage} />
       )}
 
       {page?.actions?.map((action) => {
@@ -128,8 +130,9 @@ export default function PageActions({ page, onUpdatePage }: Props) {
               <ActionSettingsForm
                 action={action}
                 page={page!}
+                projectId={projectId}
                 defaultValues={actionMapped.defaultValues}
-                onUpdatePage={onUpdatePage}
+                setPage={setPage}
               >
                 {({ form }) => {
                   const ActionForm = actionMapped.form;

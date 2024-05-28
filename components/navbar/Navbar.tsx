@@ -3,8 +3,9 @@ import { EditorNavbarSections } from "@/components/navbar/EditorNavbarSections";
 import { Navbar as MantineNavbar } from "@mantine/core";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useEditorStore } from "@/stores/editor";
+import { memo } from "react";
 
-export const Navbar = () => {
+export const NavbarComponent = () => {
   const isPreviewMode = useEditorTreeStore((state) => state.isPreviewMode);
   const isNavBarVisible = useEditorStore((state) => state.isNavBarVisible);
 
@@ -26,3 +27,5 @@ export const Navbar = () => {
     </MantineNavbar>
   );
 };
+
+export const Navbar = memo(NavbarComponent);

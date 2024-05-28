@@ -7,7 +7,7 @@ type Props = EditableComponentMapper & TabsProps;
 
 const TabsComponent = forwardRef(
   ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
-    const { children, ...componentProps } = component.props as any;
+    const { children, triggers, ...componentProps } = component.props as any;
 
     return (
       <MantineTabs ref={ref} {...props} {...componentProps} keepMounted={false}>

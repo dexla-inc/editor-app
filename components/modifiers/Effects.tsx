@@ -16,7 +16,6 @@ const Modifier = withModifier(({ selectedComponent }) => {
         cursor: selectedComponent.props?.style?.cursor,
         overflow: selectedComponent.props?.style?.overflow,
         opacity: selectedComponent.props?.style?.opacity,
-        tooltip: selectedComponent.props?.tooltip,
         javascriptCode: selectedComponent.props?.javascriptCode ?? "",
         display: selectedComponent.props?.style?.display,
         tooltipColor: selectedComponent.props?.tooltipColor,
@@ -88,19 +87,6 @@ const Modifier = withModifier(({ selectedComponent }) => {
             form.setFieldValue("opacity", value as number);
             debouncedTreeComponentAttrsUpdate({
               attrs: { props: { style: { opacity: value } } },
-            });
-          }}
-        />
-
-        <TextInput
-          label="Tooltip"
-          size="xs"
-          {...form.getInputProps("tooltip")}
-          onChange={(e) => {
-            const value = e.target.value;
-            form.setFieldValue("tooltip", value);
-            debouncedTreeComponentAttrsUpdate({
-              attrs: { props: { tooltip: value } },
             });
           }}
         />

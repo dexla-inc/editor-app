@@ -19,7 +19,7 @@ const GridColumnComponent = forwardRef(
     );
 
     // @ts-ignore
-    const { gap, ...componentProps } = component.props;
+    const { gap, triggers, ...componentProps } = component.props;
     const gapPx = convertSizeToPx(gap as MantineSize, "gap");
 
     const shouldRemoveBorder = isPreviewMode;
@@ -28,7 +28,7 @@ const GridColumnComponent = forwardRef(
     return (
       <GridColumnBase
         ref={ref}
-        key={`${component.id}-${componentProps.span}`}
+        key={`${props.id}-${componentProps.span}`}
         style={{
           ...stylesRest,
           gap: gapPx,
@@ -37,7 +37,6 @@ const GridColumnComponent = forwardRef(
         {...componentProps}
         {...props}
         id={component.id}
-        isPreviewMode
       >
         {component.children &&
           component.children.length > 0 &&

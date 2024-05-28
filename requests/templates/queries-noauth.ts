@@ -1,6 +1,6 @@
 import { TemplateResponse } from "@/requests/templates/types";
 import { PagingParams, PagingResponse } from "@/requests/types";
-import { getWithoutAuth } from "@/utils/apiNoAuth";
+import { getWithoutAuth } from "@/utils/apiLive";
 import { buildQueryString } from "@/types/dashboardTypes";
 
 export const listTemplates = async (params?: PagingParams) => {

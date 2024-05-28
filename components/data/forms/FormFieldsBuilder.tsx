@@ -1,11 +1,8 @@
-import { ComponentToBindFromSelect } from "@/components/ComponentToBindFromSelect";
-import { VisibilityModifier } from "@/components/data/VisibilityModifier";
 import { DynamicFormFieldsBuilder } from "@/components/data/forms/DynamicFormFieldsBuilder";
 import {
   FieldType,
   StaticFormFieldsBuilder,
 } from "@/components/data/forms/StaticFormFieldsBuilder";
-import { useComponentStates } from "@/hooks/editor/useComponentStates";
 import { Endpoint } from "@/requests/datasources/types";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { ICON_SIZE } from "@/utils/config";
@@ -16,6 +13,7 @@ import { IconPlug, IconPlugOff } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
 import { ValueProps } from "@/types/dataBinding";
+import { CommonData } from "@/components/data/CommonData";
 
 type Props = {
   fields: Array<{
@@ -34,8 +32,6 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
   const hasParentComponentData = useEditorTreeStore(
     (state) => state.selectedComponentIds?.at(-1)?.includes("-related-"),
   );
-  const { getComponentsStates } = useComponentStates();
-
   const onLoadFieldsStarter = fields.reduce(
     (acc, f) => {
       acc[f.name] = {
@@ -46,12 +42,7 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
     {} as Record<string, ValueProps>,
   );
 
-  const onLoadValues = merge(
-    { currentState: { static: "default", dataType: "static" } },
-    { isVisible: { static: true, dataType: "static" } },
-    onLoadFieldsStarter,
-    component?.onLoad,
-  );
+  const onLoadValues = merge(onLoadFieldsStarter, component?.onLoad);
 
   const form = useForm({
     initialValues: {
@@ -113,13 +104,7 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
           </Group>
         );
       })}
-      <VisibilityModifier form={form} />
-      <ComponentToBindFromSelect
-        size="xs"
-        label="State"
-        {...form.getInputProps(`onLoad.currentState`)}
-        data={getComponentsStates()}
-      />
+      <CommonData component={component} />
     </>
   );
 };

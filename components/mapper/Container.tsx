@@ -29,7 +29,10 @@ export const ContainerComponent = forwardRef<HTMLDivElement, Props>(
       gap: gapPx,
     });
 
-    const { renderData } = useRenderData({ component });
+    const { renderData } = useRenderData({
+      component,
+      shareableContent,
+    });
 
     return (
       <MantineFlex
@@ -38,8 +41,9 @@ export const ContainerComponent = forwardRef<HTMLDivElement, Props>(
         style={customStyle}
         {...triggers}
         {...componentProps}
+        key={props.id}
       >
-        {renderData({ renderTree, shareableContent })}
+        {renderData({ renderTree })}
       </MantineFlex>
     );
   },

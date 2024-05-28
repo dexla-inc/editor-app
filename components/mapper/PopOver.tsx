@@ -27,7 +27,7 @@ const PopOverComponent = ({
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const isLive = useEditorTreeStore((state) => state.isLive);
 
-  const { targetId, loading, showInEditor, ...componentProps } =
+  const { targetId, loading, showInEditor, triggers, ...componentProps } =
     component.props as any;
 
   const { style, ...restProps } = props;
@@ -52,6 +52,7 @@ const PopOverComponent = ({
 
   return (
     <MantinePopOver
+      key={props.id}
       withinPortal
       trapFocus={false}
       {...(!isPreviewMode && showInEditor ? { opened: true } : {})}
@@ -70,12 +71,16 @@ const PopOverComponent = ({
     >
       {targetComponent && (
         <MantinePopOver.Target>
-          <Box id="popover-target">{renderTree(targetComponent)}</Box>
+          <Box id="popover-target">
+            {renderTree(targetComponent, shareableContent)}
+          </Box>
         </MantinePopOver.Target>
       )}
 
       <MantinePopOver.Dropdown w="auto">
-        {childrenWithoutTarget?.map((child) => renderTree(child))}
+        {childrenWithoutTarget?.map((child) =>
+          renderTree(child, shareableContent),
+        )}
       </MantinePopOver.Dropdown>
     </MantinePopOver>
   );

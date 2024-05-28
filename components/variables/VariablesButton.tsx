@@ -3,13 +3,13 @@ import { VariableForm } from "@/components/variables/VariableForm";
 import { VariableList } from "@/components/variables/VariableList";
 import { ButtonProps, Modal, SegmentedControl, Stack } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { useState } from "react";
+import { memo, useState } from "react";
 
 type Props = ButtonProps & {
   projectId: string;
 };
 
-export const VariablesButton = ({ projectId }: Props) => {
+export const VariablesButtonComponent = ({ projectId }: Props) => {
   const [opened, modal] = useDisclosure(false);
   const [mode, setMode] = useState("list");
 
@@ -53,3 +53,5 @@ export const VariablesButton = ({ projectId }: Props) => {
     </>
   );
 };
+
+export const VariablesButton = memo(VariablesButtonComponent);

@@ -3,7 +3,7 @@ import {
   LogicFlowResponse,
 } from "@/requests/logicflows/types";
 import { PagingResponse } from "@/requests/types";
-import { getWithoutAuth } from "@/utils/apiNoAuth";
+import { getWithoutAuth } from "@/utils/apiLive";
 import { buildQueryString } from "@/types/dashboardTypes";
 
 export const listLogicFlows = async (

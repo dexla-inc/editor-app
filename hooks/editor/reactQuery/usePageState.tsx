@@ -1,4 +1,4 @@
-import { getPageState } from "@/requests/pages/queries-noauth";
+import { getPageState } from "@/requests/pages/mutations";
 import { PageStateResponse } from "@/requests/pages/types";
 import { useQuery } from "@tanstack/react-query";
 

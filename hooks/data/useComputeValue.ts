@@ -1,19 +1,18 @@
 import { useVariableStore } from "@/stores/variables";
-import { NextRouter, useRouter } from "next/router";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useCallback, useMemo } from "react";
 import get from "lodash.get";
 import { ValueProps } from "@/types/dataBinding";
 import set from "lodash.set";
-import { safeJsonParse } from "@/utils/common";
-import cloneDeep from "lodash.clonedeep";
+import { cloneObject, safeJsonParse } from "@/utils/common";
 import { useInputsStore } from "@/stores/inputs";
 import { useShallow } from "zustand/react/shallow";
 import { pick } from "next/dist/lib/pick";
-import { useShareableContent } from "@/hooks/data/useShareableContent";
 import { useEditorTreeStore } from "@/stores/editorTree";
+import { useOldRouter } from "@/hooks/data/useOldRouter";
+import { useDataTransformers } from "@/hooks/data/useDataTransformers";
 
-type NextRouterKeys = keyof NextRouter;
+type NextRouterKeys = any;
 type RecordStringAny = Record<string, any>;
 
 const variablePattern = /variables\[\s*(?:\/\*[\s\S]*?\*\/\s*)?'(.*?)'\s*\]/g;
@@ -26,7 +25,6 @@ const itemPattern = /item\[\s*(?:\/\*[\s\S]*?\*\/\s*)?'(.*?)'\s*\]/g;
 type UseComputeValue = {
   shareableContent?: Record<string, unknown>;
   onLoad: any;
-  componentId?: string;
 };
 
 const autoRunJavascriptCode = (boundCode: string) => {
@@ -61,15 +59,16 @@ const findValuePropsPaths = (obj: any, prefix = ""): string[] => {
 export const useComputeValue = ({
   shareableContent,
   onLoad = {},
-  componentId = "",
 }: UseComputeValue) => {
-  onLoad = cloneDeep(onLoad);
+  const { itemTransformer } = useDataTransformers();
+  onLoad = cloneObject(onLoad);
 
-  const browser = useRouter();
+  const browser = useOldRouter();
   const valuePropsPaths = useMemo(() => {
     return findValuePropsPaths(onLoad);
   }, [onLoad]);
-  const { item } = useShareableContent({ componentId });
+
+  const item = itemTransformer(shareableContent?.relatedComponentsData ?? {});
 
   const {
     variableKeys,
@@ -167,6 +166,7 @@ export const useComputeValue = ({
 
   const browserValues: any = useMemo(() => {
     return browserKeys.reduce(
+      // @ts-ignore
       (acc, key) => ({ ...acc, [key]: browser[key] }),
       {},
     );
@@ -269,7 +269,7 @@ export const useComputeValue = ({
         );
       },
       static: (fieldValue: ValueProps) => {
-        return get(fieldValue, "static");
+        return fieldValue?.static ?? undefined;
       },
       boundCode: (fieldValue: ValueProps) => {
         try {

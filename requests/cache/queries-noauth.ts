@@ -1,4 +1,4 @@
-import { getWithoutAuth } from "@/utils/apiNoAuth";
+import { getWithoutAuth } from "@/utils/apiLive";
 
 export const evictCache = async (relativeUrl: string) => {
   let url = `/cache/evict?tag=${relativeUrl}`;

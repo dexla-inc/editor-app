@@ -10,15 +10,19 @@ type AuthState = {
   activeCompanyId: string;
   activeCompany: OrgMemberInfo;
   userPermissions: string[];
+  authInfo: WithAuthInfoProps;
   setActiveCompany: (companyId: string) => void;
   initializeAuth: (authInfo: WithAuthInfoProps) => Promise<void>;
+  checkHasAccess: (projectId: string) => boolean;
+  reset: () => void;
 };
 
 export const usePropelAuthStore = create<AuthState>()(
   persist(
-    (set, get) => ({
+    (set, get, store) => ({
       accessToken: "",
       user: {} as User,
+      authInfo: {} as WithAuthInfoProps,
       companies: [],
       isDexlaAdmin: false,
       activeCompanyId: "",
@@ -42,20 +46,47 @@ export const usePropelAuthStore = create<AuthState>()(
       },
       initializeAuth: async (authInfo: WithAuthInfoProps) => {
         const companies = authInfo?.orgHelper?.getOrgs() || [];
-        const activeCompanyId = get().activeCompanyId;
+        const { activeCompanyId } = get();
+
         const activeCompany =
           companies.find((company) => company.orgId === activeCompanyId) ||
           companies[0];
 
         set({
+          authInfo,
           accessToken: authInfo?.accessToken || "",
           user: authInfo?.user || ({} as User),
           companies: companies,
           activeCompany,
-          activeCompanyId: activeCompanyId || activeCompany?.orgId || "",
+          activeCompanyId: activeCompany?.orgId,
           isDexlaAdmin:
             activeCompany?.userAssignedRole?.includes("DEXLA_ADMIN") || false,
           userPermissions: activeCompany?.userPermissions || [],
+        });
+      },
+      checkHasAccess: (projectId: string) => {
+        const { authInfo, activeCompanyId } = get();
+        const companies = authInfo?.orgHelper?.getOrgs() || [];
+
+        const activeCompany =
+          companies.find((company) => company.orgId === activeCompanyId) ||
+          companies[0];
+
+        const allowedProjectIds = activeCompany.orgMetadata["projectIds"]
+          ?.toString()
+          .split(",");
+        return allowedProjectIds?.includes(projectId);
+      },
+      reset: () => {
+        store.persist.clearStorage();
+        set({
+          accessToken: "",
+          user: {} as User,
+          companies: [],
+          isDexlaAdmin: false,
+          activeCompanyId: "",
+          activeCompany: {} as OrgMemberInfo,
+          userPermissions: [],
         });
       },
     }),

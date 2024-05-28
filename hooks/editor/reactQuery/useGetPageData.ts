@@ -1,8 +1,8 @@
-import { getPageState } from "@/requests/pages/queries-noauth";
+import { getPageState } from "@/requests/pages/mutations";
 import { useAppStore } from "@/stores/app";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useUserConfigStore } from "@/stores/userConfig";
-import { emptyEditorTree, safeJsonParse } from "@/utils/common";
+import { cloneObject, emptyEditorTree, safeJsonParse } from "@/utils/common";
 import { decodeSchema } from "@/utils/compression";
 import { useQuery } from "@tanstack/react-query";
 
@@ -70,12 +70,13 @@ export const useGetPageData = ({ projectId, pageId }: Props) => {
       } else if (page.state) {
         const decodedSchema = decodeSchema(page.state);
         const parsedTree = safeJsonParse(decodedSchema);
-        setPageLoadTree(parsedTree);
         setEditorTree(parsedTree, {
           onLoad: true,
           action: "Initial State",
         });
+        const initialTree = cloneObject(parsedTree);
 
+        setPageLoadTree(initialTree);
         setIsLoading(false);
         return safeJsonParse(decodedSchema);
       } else {
@@ -101,6 +102,6 @@ export const useGetPageData = ({ projectId, pageId }: Props) => {
   useQuery({
     queryKey: ["page-state", projectId, pageId, history.state.as],
     queryFn: async ({ signal }) => await getPageData({ signal }),
-    enabled: !!projectId && !!pageId,
+    ...{ enabled: !!projectId && !!pageId },
   });
 };

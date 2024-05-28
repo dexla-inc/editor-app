@@ -1,12 +1,10 @@
 import { useDroppable } from "@/hooks/editor/useDroppable";
 import { useOnDrop } from "@/hooks/editor/useOnDrop";
-import { ComponentToBind, useEditorStore } from "@/stores/editor";
+import { useEditorStore } from "@/stores/editor";
 import {
   GREEN_BASE_SHADOW,
   GREEN_COLOR,
-  ORANGE_BASE_SHADOW,
   THIN_GREEN_BASE_SHADOW,
-  THIN_ORANGE_BASE_SHADOW,
 } from "@/utils/branding";
 import { DROP_INDICATOR_WIDTH } from "@/utils/config";
 import { useMemo } from "react";
@@ -23,13 +21,8 @@ export const useEditorShadows = ({
   isSelected,
   selectedByOther,
 }: Props) => {
-  const isPreviewMode = useEditorTreeStore((state) => state.isPreviewMode);
   const isEditorMode = useEditorTreeStore(
-    (state) => !isPreviewMode && !state.isLive,
-  );
-  const isPicking = useEditorStore(
-    (state) =>
-      state.pickingComponentToBindFrom || state.pickingComponentToBindTo,
+    (state) => !state.isPreviewMode && !state.isLive,
   );
   const isOver = useEditorStore(
     (state) => state.currentTargetId === componentId,
@@ -37,14 +30,10 @@ export const useEditorShadows = ({
   const onDrop = useOnDrop();
 
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
-  const baseShadow = isPicking
-    ? ORANGE_BASE_SHADOW
-    : selectedByOther
+  const baseShadow = selectedByOther
     ? `inset 0 0 0 2px ${selectedByOther}`
     : GREEN_BASE_SHADOW;
-  const thinBaseShadow = isPicking
-    ? THIN_ORANGE_BASE_SHADOW
-    : THIN_GREEN_BASE_SHADOW;
+  const thinBaseShadow = THIN_GREEN_BASE_SHADOW;
   const { edge, ...droppable } = useDroppable({
     id: componentId,
     onDrop,
@@ -114,14 +103,12 @@ export const useEditorShadows = ({
 
   if (!isEditorMode) {
     return {
-      isPicking: {} as ComponentToBind,
       droppable: {},
       tealOutline: {},
     };
   }
 
   return {
-    isPicking,
     droppable,
     tealOutline,
   };

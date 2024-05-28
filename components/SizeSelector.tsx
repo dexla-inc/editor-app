@@ -47,7 +47,7 @@ type Props = {
   showNone?: boolean;
   showFullscreen?: boolean;
   data?: Array<{ label: string; value: string }>;
-  sizing?: Record<MantineSize, string>;
+  sizing?: Record<MantineSize, string | undefined>;
   showFullLabel?: boolean;
 } & Omit<SelectProps, "data">;
 

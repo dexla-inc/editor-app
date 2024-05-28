@@ -1,5 +1,5 @@
 import { ThemeResponse } from "@/requests/themes/types";
-import { UserRoles } from "@/types/dashboardTypes";
+import { AppTypes, UserRoles } from "@/types/dashboardTypes";
 import { ProjectTypes } from "@/types/projectTypes";
 
 export type RegionTypes = "FRANCE_CENTRAL" | "US_CENTRAL" | "UK_SOUTH";
@@ -12,6 +12,10 @@ export interface ProjectParams extends ProjectUpdateParams {
   industry?: string;
   similarCompany?: string;
   customCode?: string;
+  copyFrom?: {
+    id: string;
+    type: AppTypes;
+  };
 }
 
 export type ProjectUpdateParams = {

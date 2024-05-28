@@ -1,16 +1,23 @@
 import { ActionIconDefault } from "@/components/ActionIconDefault";
 import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
 import { usePageListQuery } from "@/hooks/editor/reactQuery/usePageListQuery";
-import { createPage, deletePage, updatePage } from "@/requests/pages/mutations";
-import { PageBody, PageResponse } from "@/requests/pages/types";
+import { useProjectQuery } from "@/hooks/editor/reactQuery/useProjectQuery";
+import { createPage, deletePage, patchPage } from "@/requests/pages/mutations";
+import {
+  PageBody,
+  PageConfigProps,
+  PageParams,
+  PageResponse,
+} from "@/requests/pages/types";
 import { useAppStore } from "@/stores/app";
 import { useEditorTreeStore } from "@/stores/editorTree";
+import { convertToPatchParams } from "@/types/dashboardTypes";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
-import { Button, Group, Stack, TextInput } from "@mantine/core";
+import { Button, Group, Stack, TextInput, Tooltip } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconArrowLeft } from "@tabler/icons-react";
-import { useRouter } from "next/router";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import slugify from "slugify";
 
@@ -24,28 +31,17 @@ export default function PageConfig({ page, setPage }: Props) {
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
   const router = useRouter();
-  const projectId = router.query.id as string;
+  const { id: projectId } = useParams<{ id: string }>();
   const [slug, setSlug] = useState("");
   const resetTree = useEditorTreeStore((state) => state.resetTree);
   const { invalidate } = usePageListQuery(projectId, null);
-  // const queryStringState = useState(
-  //   page?.queryStrings
-  //     ? Object.entries(page?.queryStrings || {}).map(([key, value]) => ({
-  //         key,
-  //         value,
-  //       }))
-  //     : [],
-  // );
+  const { data: project } = useProjectQuery(projectId);
 
-  const form = useForm<PageBody>({
+  const form = useForm<PageConfigProps>({
     initialValues: {
       title: "",
       slug: "",
-      isHome: false,
       authenticatedOnly: false,
-      hasNavigation: false,
-      copyFrom: undefined,
-      queryStrings: {},
     },
     validate: {
       title: (value) =>
@@ -96,7 +92,7 @@ export default function PageConfig({ page, setPage }: Props) {
     }
   };
 
-  const onSubmit = async (values: PageBody) => {
+  const onSubmit = async (values: PageConfigProps) => {
     try {
       setIsLoading(true);
       startLoading({
@@ -116,15 +112,18 @@ export default function PageConfig({ page, setPage }: Props) {
       form.validate();
       let pageId = page?.id;
       if (page?.id) {
-        await updatePage(values, projectId, page.id);
+        const patchParams = convertToPatchParams<PageConfigProps>(values);
+
+        const result = await patchPage(projectId, page.id, patchParams);
+        setPage({ ...result, id: pageId } as PageResponse);
       } else {
         const result = await createPage(values, projectId);
         pageId = result.id;
         router.push(`/projects/${projectId}/editor/${result.id}`);
         resetTree();
+        setPage({ ...values, id: pageId } as PageResponse);
       }
 
-      setPage({ ...values, id: pageId } as PageResponse);
       invalidate();
 
       stopLoading({
@@ -244,10 +243,19 @@ export default function PageConfig({ page, setPage }: Props) {
           size="xs"
         />
 
-        <SegmentedControlYesNo
-          label="Authenticated Only"
-          {...form.getInputProps("authenticatedOnly")}
-        />
+        <Tooltip
+          label="Set sign-in page in settings"
+          // @ts-ignore
+          disabled={project?.redirects?.signInPageId}
+        >
+          <Stack>
+            <SegmentedControlYesNo
+              label="Authenticated Only"
+              {...form.getInputProps("authenticatedOnly")}
+              disabled={!project?.redirects?.signInPageId}
+            />
+          </Stack>
+        </Tooltip>
 
         {/* <QueryStringsForm queryStringState={queryStringState} /> */}
 

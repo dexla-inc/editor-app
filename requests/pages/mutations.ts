@@ -1,15 +1,24 @@
 import {
   PageAIResponse,
   PageBody,
+  PageConfigProps,
+  PageListResponse,
+  PageParams,
   PageResponse,
+  PageStateHistoryResponse,
   PageStateParams,
   PageStateResponse,
   PagesResponse,
 } from "@/requests/pages/types";
-import { del, post, put } from "@/utils/api";
+import { del, patch, post, put, get } from "@/utils/api";
 import { evictCache } from "../cache/queries-noauth";
+import { PagingResponse, PatchParams } from "@/requests/types";
+import { buildQueryString } from "@/types/dashboardTypes";
 
-export const createPage = async (params: PageBody, projectId: string) => {
+export const createPage = async (
+  params: PageConfigProps,
+  projectId: string,
+) => {
   const response = (await post<PageResponse>(
     `/projects/${projectId}/pages`,
     params,
@@ -30,6 +39,23 @@ export const updatePage = async (
     `/projects/${projectId}/pages/${pageId}`,
     params,
   )) as PageResponse;
+
+  const cacheTag = getCacheTag(projectId);
+  const pageCacheTag = getPageCacheTag(projectId, pageId);
+  await evictCache(cacheTag);
+  await evictCache(pageCacheTag);
+
+  return response;
+};
+
+export const patchPage = async (
+  projectId: string,
+  pageId: string,
+  params: PatchParams[],
+) => {
+  let url = `/projects/${projectId}/pages/${pageId}`;
+
+  const response = (await patch<PageResponse>(url, params)) as PageResponse;
 
   const cacheTag = getCacheTag(projectId);
   const pageCacheTag = getPageCacheTag(projectId, pageId);
@@ -82,15 +108,16 @@ export const createPageList = async (
 // Page is empty in dev
 export const updatePageState = async (
   state: PageStateParams["state"],
+  description: PageStateParams["description"],
   projectId: string,
   pageId: string,
   pageLoadTimestamp: number | undefined,
   history: number | null,
-  //description: PageStateParams["description"],
 ) => {
   const url = `/projects/${projectId}/pages/${pageId}/state?pageLoadTimestamp=${pageLoadTimestamp}&history=${history}`;
   const response = (await put<any>(url, {
     state,
+    description,
   })) as any;
   return response;
 };
@@ -111,6 +138,56 @@ export const rollbackPageState = async (
 ) => {
   const url = `/projects/${projectId}/pages/${pageId}/state/history/${pageHistoryId}`;
   const response = (await post<any>(url, {})) as PageStateResponse;
+  return response;
+};
+
+export const getPageList = async (projectId: string, params?: PageParams) => {
+  let url = `/projects/${projectId}/pages`;
+  url += buildQueryString({ ...params });
+
+  const response = (await get<PageListResponse>(url)) as PageListResponse;
+
+  return response;
+};
+
+export const getPage = async (
+  projectId: string,
+  pageId: string,
+  headers = {},
+  init = {},
+) => {
+  const response = (await get<PageResponse>(
+    `/projects/${projectId}/pages/${pageId}`,
+    headers,
+  )) as PageResponse;
+
+  return response;
+};
+
+export const getPageState = async (
+  projectId: string,
+  pageId: string,
+  pageLoadTimestamp: number,
+  history: number | null,
+  init = {},
+) => {
+  const response = (await get<PageStateResponse>(
+    `/projects/${projectId}/pages/${pageId}/state?pageLoadTimestamp=${pageLoadTimestamp}&history=${history}`,
+    init,
+  )) as PageStateResponse;
+
+  return response;
+};
+
+export const getPageStateHistory = async (
+  projectId: string,
+  pageId: string,
+  timestamp: number,
+) => {
+  const response = (await get<PagingResponse<PageStateHistoryResponse>>(
+    `/projects/${projectId}/pages/${pageId}/state/history?timestamp=${timestamp}`,
+  )) as PagingResponse<PageStateHistoryResponse>;
+
   return response;
 };
 

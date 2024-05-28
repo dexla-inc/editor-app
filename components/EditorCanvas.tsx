@@ -19,7 +19,7 @@ type Props = {
 const EditorCanvasComponent = ({ projectId }: Props) => {
   const editorTree = useEditorTreeStore((state) => state.tree);
   useEditorHotkeys();
-  useEditorHotkeysUndoRedo();
+
   const [canvasRef] = useAutoAnimate();
   const isCustomComponentModalOpen = useUserConfigStore(
     (state) => state.isCustomComponentModalOpen,

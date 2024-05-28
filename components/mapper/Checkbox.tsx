@@ -11,6 +11,7 @@ import { useInputValue } from "@/hooks/components/useInputValue";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useShallow } from "zustand/react/shallow";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { safeJsonParse } from "@/utils/common";
 
 // This is needed as CheckboxProps omits the ref prop
 interface CheckboxProps extends MantineCheckboxProps {
@@ -23,7 +24,7 @@ const CheckboxComponent = forwardRef<HTMLInputElement, Props>(
     const isPreviewMode = useEditorTreeStore(
       useShallow((state) => state.isPreviewMode || state.isLive),
     );
-    const { label, triggers, bg, textColor, ...componentProps } =
+    const { triggers, bg, textColor, ...componentProps } =
       component.props as any;
     const { optionValue } = component?.onLoad ?? {};
     const { color, backgroundColor } = useChangeState({ bg, textColor });
@@ -35,20 +36,21 @@ const CheckboxComponent = forwardRef<HTMLInputElement, Props>(
 
     const [value, setValue] = useInputValue<boolean>(
       {
-        value: component?.onLoad?.value ?? false,
+        value: safeJsonParse(component?.onLoad?.value) ?? false,
       },
       props.id!,
     );
+    const checked = shareableContent?.value?.includes(optionValue);
+    const isInsideGroup = shareableContent?.isInsideGroup;
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-      if (!isPreviewMode) {
-        e.preventDefault();
-        return;
-      }
       const newValue = e.target.checked;
       setValue(newValue);
       triggers?.onChange?.(e);
     };
+
+    const defaultTriggers =
+      isPreviewMode && !isInsideGroup ? { onChange: handleInputChange } : {};
 
     return (
       <MantineCheckbox
@@ -71,12 +73,33 @@ const CheckboxComponent = forwardRef<HTMLInputElement, Props>(
             minHeight: "-webkit-fill-available",
             minWidth: "-webkit-fill-available",
           },
+          ...(isInsideGroup && {
+            inner: { display: "none" },
+            label: {
+              padding: 0,
+            },
+            labelWrapper: { width: "100%" },
+          }),
         }}
-        label={label}
-        checked={Boolean(value)}
+        {...(!isPreviewMode && { wrapperProps: { "data-id": component.id } })}
+        label={
+          isInsideGroup && (
+            <div {...(isPreviewMode && { id: component.id })} {...triggers}>
+              {component.children?.map((child) =>
+                renderTree(child, {
+                  ...shareableContent,
+                  ...(checked && {
+                    parentState: "checked",
+                  }),
+                }),
+              )}
+            </div>
+          )
+        }
+        {...(!isInsideGroup && { checked: value })}
         value={optionValue}
         {...triggers}
-        onChange={handleInputChange}
+        {...defaultTriggers}
         onClick={(e) => {
           e.stopPropagation();
           props.onClick?.(e);

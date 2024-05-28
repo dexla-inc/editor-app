@@ -9,7 +9,14 @@ import {
 } from "@react-google-maps/api";
 import merge from "lodash.merge";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
-import { forwardRef, memo, useCallback, useEffect, useState } from "react";
+import {
+  forwardRef,
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import isEmpty from "lodash.isempty";
 
@@ -41,7 +48,7 @@ const GoogleMapPluginComponent = forwardRef<GoogleMap, Props>(
     const [activeMarkerId, setActiveMarkerId] = useState<string | null>(null);
     const [map, setMap] = useState<any | null>(null);
 
-    const { options, language, loading, fade, ...componentProps } =
+    const { options, language, loading, fade, triggers, ...componentProps } =
       component.props as GoogleMapProps;
     const {
       apiKey,
@@ -125,27 +132,28 @@ const GoogleMapPluginComponent = forwardRef<GoogleMap, Props>(
       setActiveMarkerId(null);
     };
 
-    const markersParsed =
-      (safeJsonParse(markers) as MarkerItem[] | undefined) ?? [];
-
-    const validMarkers = Array.isArray(markersParsed)
-      ? markersParsed.filter((marker) => {
-          const isValidId = !isEmpty(marker.id);
-          const isValidLat = !isEmpty(Number(marker.position.lat));
-          const isValidLng = !isEmpty(Number(marker.position.lng));
-          if (isValidLat || isValidLng || isValidId) {
-            console.error(
-              `Component: ${component.description} - Invalid marker position:`,
-              marker,
-              isValidId,
-              isValidLat,
-              isValidLng,
-            );
-            return false;
-          }
-          return true;
-        })
-      : [];
+    const validMarkers = useMemo(() => {
+      const markersParsed =
+        (safeJsonParse(markers) as MarkerItem[] | undefined) ?? [];
+      return Array.isArray(markersParsed)
+        ? markersParsed.filter((marker) => {
+            const isValidId = !isEmpty(marker.id);
+            const isValidLat = !isEmpty(Number(marker.position.lat));
+            const isValidLng = !isEmpty(Number(marker.position.lng));
+            if (isValidLat || isValidLng || isValidId) {
+              console.error(
+                `Component: ${component.description} - Invalid marker position:`,
+                marker,
+                isValidId,
+                isValidLat,
+                isValidLng,
+              );
+              return false;
+            }
+            return true;
+          })
+        : [];
+    }, [component.description, markers]);
 
     const gmOnLoad = useCallback(
       (map: google.maps.Map) => {

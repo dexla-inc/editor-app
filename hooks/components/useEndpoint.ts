@@ -9,6 +9,7 @@ import { removeEmpty, toBase64 } from "@/utils/common";
 import { useEndpoints } from "../editor/reactQuery/useDataSourcesEndpoints";
 
 type UseEndpointProps = {
+  componentId: string;
   dataType: DataType;
   onLoad?: any;
   forceEnabled?: boolean;
@@ -17,12 +18,16 @@ type UseEndpointProps = {
 };
 
 export const useEndpoint = ({
+  componentId,
   dataType,
   onLoad,
   enabled = true,
   includeExampleResponse = false,
 }: UseEndpointProps) => {
   const authState = useDataSourceStore((state) => state.getAuthState);
+  const setRelatedComponentsData = useEditorTreeStore(
+    (state) => state.setRelatedComponentsData,
+  );
 
   const {
     endpointId,
@@ -38,7 +43,6 @@ export const useEndpoint = ({
   const endpoint = endpoints?.find((e) => e.id === endpointId);
   const accessToken = authState(projectId)?.accessToken;
   const apiUrl = `${endpoint?.baseUrl}/${endpoint?.relativeUrl}`;
-  const requestBody = endpoint ? { ...parameter, ...body } : {};
   const headers = endpoint ? { ...header } : {};
   const cleanParameter = removeEmpty(parameter);
   const url = endpoint
@@ -51,6 +55,10 @@ export const useEndpoint = ({
   const apiCall = async () => {
     const authHeaderKey = accessToken ? "Bearer " + accessToken : "";
 
+    const refreshAccessToken = useDataSourceStore.getState().refreshAccessToken;
+
+    refreshAccessToken(projectId, endpoint?.dataSourceId as string);
+
     return performFetch(
       fetchUrl,
       endpoint,
@@ -59,16 +67,25 @@ export const useEndpoint = ({
       authHeaderKey,
       includeExampleResponse,
     ).then((response) => {
+      setRelatedComponentsData({ id: componentId, data: response });
+
       return response;
     });
   };
 
   const isEnabled = !!endpoint && dataType === "dynamic" && enabled;
 
-  const { data, isLoading } = useQuery(
-    [endpointId, fetchUrl, accessToken, headers, cleanParameter, body],
-    apiCall,
-    {
+  const { data, isLoading } = useQuery({
+    queryKey: [
+      endpointId,
+      fetchUrl,
+      accessToken,
+      headers,
+      cleanParameter,
+      body,
+    ],
+    queryFn: apiCall,
+    ...{
       select: (response) => {
         return get(response, resultsKey, response);
       },
@@ -77,7 +94,7 @@ export const useEndpoint = ({
       networkMode: "offlineFirst",
       retry: false,
     },
-  );
+  });
 
   return {
     data,

@@ -2,15 +2,15 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 import { useShallow } from "zustand/react/shallow";
 import { Component, ComponentTree } from "@/utils/editor";
 import { useEndpoint } from "@/hooks/components/useEndpoint";
-import { LoadingOverlay, Skeleton } from "@mantine/core";
+import { Skeleton } from "@mantine/core";
 
 type UseRenderDataProps = {
   component: Component & ComponentTree;
+  shareableContent: any;
 };
 
 type RenderDataProps = {
   renderTree: any;
-  shareableContent: any;
 };
 
 type RenderComponentProps = {
@@ -20,18 +20,18 @@ type RenderComponentProps = {
   currentComponentGroupId: string;
 };
 
-export const useRenderData = ({ component }: UseRenderDataProps) => {
+export const useRenderData = ({
+  component,
+  shareableContent,
+}: UseRenderDataProps) => {
   const isPreviewMode = useEditorTreeStore(
     useShallow((state) => state.isPreviewMode || state.isLive),
   );
   const { dataType = "static" } = component?.props!;
   const { data: staticData, skeletonMinHeight = 400 } = component.onLoad!;
 
-  const setRelatedComponentsData = useEditorTreeStore(
-    (state) => state.setRelatedComponentsData,
-  );
-
   const { data: dynamicData, initiallyLoading } = useEndpoint({
+    componentId: component.id!,
     onLoad: component.onLoad,
     dataType,
     includeExampleResponse: !isPreviewMode,
@@ -39,29 +39,25 @@ export const useRenderData = ({ component }: UseRenderDataProps) => {
 
   const data = dataType === "dynamic" ? dynamicData : staticData;
 
-  const renderData = ({ renderTree, shareableContent }: RenderDataProps) => {
+  const renderData = ({ renderTree }: RenderDataProps) => {
     const renderComponent = ({
       child,
       data,
       parentSuffix,
       currentComponentGroupId,
     }: RenderComponentProps) => {
-      // WARNING: If your redux devtools is failing, you might want to comment this if statement
-      // It populates all parent rendered data, so I can use it in other places, like the binding popover
-      if (
-        JSON.stringify(
-          useEditorTreeStore.getState().relatedComponentsData[
-            currentComponentGroupId
-          ],
-        ) !== JSON.stringify(data)
-      ) {
-        setRelatedComponentsData({ id: currentComponentGroupId, data });
-      }
-
       return renderTree(child, {
         ...shareableContent,
         // if data is undefined, we don't want to overwrite the data passed by a parent that is sharing data
-        ...(data && { data, parentSuffix }),
+        ...(data && {
+          data,
+          parentSuffix,
+        }),
+        // This is used by useComputeValue only in order to build the Item context
+        relatedComponentsData: {
+          ...(shareableContent?.relatedComponentsData ?? {}),
+          ...(data && { [currentComponentGroupId]: data }),
+        },
       });
     };
 

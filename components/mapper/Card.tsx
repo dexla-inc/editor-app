@@ -31,7 +31,10 @@ export const CardComponent = forwardRef(
       gap: gapPx,
     });
 
-    const { renderData } = useRenderData({ component });
+    const { renderData } = useRenderData({
+      component,
+      shareableContent,
+    });
 
     return (
       <MantineFlex
@@ -41,7 +44,7 @@ export const CardComponent = forwardRef(
         {...triggers}
         {...componentProps}
       >
-        {renderData({ renderTree, shareableContent })}
+        {renderData({ renderTree })}
       </MantineFlex>
     );
   },

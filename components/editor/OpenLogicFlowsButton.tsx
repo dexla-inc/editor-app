@@ -1,6 +1,7 @@
 import { ActionIconDefault } from "@/components/ActionIconDefault";
 import { useLogicFlows } from "@/hooks/logic-flow/useLogicFlows";
 import { useEditorTreeStore } from "@/stores/editorTree";
+import { memo } from "react";
 
 const OpenLogicFlowsButton = () => {
   const { openLogicFlowsModal } = useLogicFlows();
@@ -22,4 +23,4 @@ const OpenLogicFlowsButton = () => {
   );
 };
 
-export default OpenLogicFlowsButton;
+export default memo(OpenLogicFlowsButton);

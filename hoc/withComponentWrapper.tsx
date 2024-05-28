@@ -1,5 +1,5 @@
 import { Skeleton, Tooltip } from "@mantine/core";
-import { ComponentType, Fragment } from "react";
+import { ComponentType, Fragment, useRef } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useShallow } from "zustand/react/shallow";
 import { useComputeCurrentState } from "@/hooks/components/useComputeCurrentState";
@@ -14,13 +14,16 @@ import { useEditorClickHandler } from "@/hooks/components/useEditorClickHandler"
 import { ComponentToolbox } from "@/components/ComponentToolbox";
 import { WithComponentWrapperProps } from "@/types/component";
 import { Component } from "@/utils/editor";
-import { Router, useRouter } from "next/router";
+import { Router } from "next/router";
+import { useRouter } from "next/navigation";
 import merge from "lodash.merge";
+import { withComponentVisibility } from "@/hoc/withComponentVisibility";
 
 export const withComponentWrapper = <T extends Record<string, any>>(
   Component: ComponentType<T>,
 ) => {
   const ComponentWrapper = ({
+    id,
     component: componentTree,
     renderTree,
     shareableContent,
@@ -28,11 +31,6 @@ export const withComponentWrapper = <T extends Record<string, any>>(
     const isEditorMode = useEditorTreeStore(
       (state) => !state.isPreviewMode && !state.isLive,
     );
-
-    let id = componentTree.id;
-    if (shareableContent?.parentSuffix !== undefined) {
-      id = `${componentTree.id}-related-${shareableContent?.parentSuffix}`;
-    }
 
     const isSelected = useEditorTreeStore(
       useShallow((state) => state.selectedComponentIds?.includes(id!)),
@@ -47,7 +45,6 @@ export const withComponentWrapper = <T extends Record<string, any>>(
     const computedOnLoad = useComputeValue({
       onLoad: component?.onLoad ?? {},
       shareableContent,
-      componentId: id,
     });
 
     // Commenting out as liveblocks doesn't work properly since detachment.
@@ -62,8 +59,8 @@ export const withComponentWrapper = <T extends Record<string, any>>(
     //     return CURSOR_COLORS[other.connectionId % CURSOR_COLORS.length];
     //   }),
     // )!;
-
-    const hasTooltip = !!component?.props?.tooltip;
+    const tooltip = component?.props?.tooltip ?? computedOnLoad?.tooltip;
+    const hasTooltip = !!tooltip;
     const initiallyLoading = component?.props?.initiallyLoading;
     const Wrapper = hasTooltip
       ? Tooltip
@@ -87,7 +84,7 @@ export const withComponentWrapper = <T extends Record<string, any>>(
 
     const triggers = useTriggers({
       entity: { ...component, id },
-      router: router as Router,
+      router,
       shareableContent,
     });
 
@@ -98,7 +95,7 @@ export const withComponentWrapper = <T extends Record<string, any>>(
       triggers,
     );
 
-    const { isPicking, droppable, tealOutline } = useEditorShadows({
+    const { droppable, tealOutline } = useEditorShadows({
       componentId: componentTree.id!,
       isSelected: false,
       //selectedByOther,
@@ -110,10 +107,7 @@ export const withComponentWrapper = <T extends Record<string, any>>(
       isEditorMode,
     });
 
-    const handleClick = useEditorClickHandler(id!, isPicking);
-
-    const { isVisible = true } = computedOnLoad;
-    if (!isVisible) return null;
+    const handleClick = useEditorClickHandler(id!);
 
     const componentToolboxProps = {
       id,
@@ -141,13 +135,15 @@ export const withComponentWrapper = <T extends Record<string, any>>(
       shareableContent,
     } as any;
 
+    const ref = useRef(null);
+
     return (
       <>
         {/* @ts-ignore */}
         <Wrapper
           {...(hasTooltip
             ? {
-                label: component?.props?.tooltip,
+                label: tooltip,
                 color: component?.props?.tooltipColor,
                 position: component?.props?.tooltipPosition,
                 withArrow: true,
@@ -156,14 +152,14 @@ export const withComponentWrapper = <T extends Record<string, any>>(
             ? { visible: true }
             : {})}
         >
-          <Component {...props} />
+          <Component ref={ref} {...props} />
         </Wrapper>
-        {isSelected && isEditorMode && (
+        {isSelected && isEditorMode && component.description !== "Body" && (
           <ComponentToolbox component={componentToolboxProps} />
         )}
       </>
     );
   };
 
-  return ComponentWrapper;
+  return withComponentVisibility(ComponentWrapper);
 };

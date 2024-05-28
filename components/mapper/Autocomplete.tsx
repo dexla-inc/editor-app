@@ -49,6 +49,7 @@ const AutocompleteComponent = forwardRef(
     });
 
     const { data: response, isLoading } = useEndpoint({
+      componentId: component.id!,
       onLoad: component.onLoad,
       dataType,
       enabled: !!value,

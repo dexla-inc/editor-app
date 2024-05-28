@@ -6,7 +6,6 @@ import { DebugActionForm } from "@/components/actions/DebugActionForm";
 import { GoToUrlForm } from "@/components/actions/GoToUrlForm";
 import { NavigationActionForm } from "@/components/actions/NavigationActionForm";
 import { TriggerLogicFlowActionForm } from "@/components/actions/TriggerLogicFlowActionForm";
-import { transpile } from "typescript";
 import { ChangeVariableActionForm } from "@/components/actions/ChangeVariableActionForm";
 import {
   DataSourceAuthResponse,
@@ -29,12 +28,12 @@ import { ArrayMethods } from "@/types/types";
 import { UseFormReturnType } from "@mantine/form";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
-import { Router } from "next/router";
 import { ComputeValueProps, ValueProps } from "@/types/dataBinding";
 import { ResetVariableActionForm } from "@/components/actions/ResetVariableActionForm";
 import { useThemeStore } from "@/stores/theme";
 import { queryClient } from "./reactQuery";
 import { RefreshAPICallActionForm } from "@/components/actions/RefreshAPICallActionForm";
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 
 export class HandledApiError extends Error {
   constructor(message: string) {
@@ -247,7 +246,7 @@ export type Action = {
 
 export type ActionParams = {
   actionId: string;
-  router: Router;
+  router: AppRouterInstance;
   setActionsResponses: any;
   computeValue: ComputeValueProps;
   event?: any;
@@ -596,8 +595,6 @@ export const useRefreshApiCallAction = async (
 
   const queryKey = endpoint?.id;
 
-  console.log("refreshApiCallAction", queryKey);
-
   if (queryKey) {
     queryClient.invalidateQueries({ queryKey: [queryKey] });
   }
@@ -655,15 +652,17 @@ export const useApiCallAction = async (
         );
 
         const clearAuthTokens = useDataSourceStore.getState().clearAuthTokens;
+        const resetVariables = useVariableStore.getState().resetVariables;
 
         clearAuthTokens(projectId);
+        resetVariables();
 
         break;
       default:
         const refreshAccessToken =
           useDataSourceStore.getState().refreshAccessToken;
 
-        refreshAccessToken(projectId);
+        refreshAccessToken(projectId, endpoint?.dataSourceId as string);
 
         responseJson = await performFetch(
           fetchUrl,
@@ -688,8 +687,7 @@ export const useChangeLanguageAction = ({
 
 // IMPORTANT: do not delete the variable data as it is used in the eval
 export const useCustomJavascriptAction = ({ action, data }: any) => {
-  const codeTranspiled = transpile(action.code);
-  return eval(codeTranspiled);
+  return new Function(action.code)();
 };
 
 export type ChangeVariableActionParams = ActionParams & {

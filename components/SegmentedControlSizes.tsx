@@ -11,17 +11,19 @@ import { useMemo } from "react";
 
 interface Props extends Omit<SegmentedControlProps, "data"> {
   label: string;
-  sizing: Record<MantineSize, string>;
+  sizing: Record<MantineSize, string | undefined>;
   includeZero?: boolean;
   includeFull?: boolean;
 }
 
-function formatSizing(sizing: Record<MantineSize, string>) {
-  return Object.entries(sizing).map(([key, value]) => ({
-    label: key.toUpperCase(),
-    value: key,
-    tooltip: value,
-  }));
+function formatSizing(sizing: Record<MantineSize, string | undefined>) {
+  return Object.entries(sizing)
+    .filter(([_, value]) => value !== undefined)
+    .map(([key, value]) => ({
+      label: key.toUpperCase(),
+      value: key,
+      tooltip: value,
+    }));
 }
 
 export const SegmentedControlSizes = ({

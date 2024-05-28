@@ -13,7 +13,7 @@ import { useEffect, useState } from "react";
 type Unit = "px" | "rem" | "%" | "vh" | "vw" | "auto" | "fit-content";
 
 type Props = {
-  value?: string | "auto" | "fit-content";
+  value?: string | number | "auto" | "fit-content";
   onChange?: (value: string) => void;
   disabledUnits?: Unit[];
   options?: SelectItem[];
@@ -29,6 +29,7 @@ export const UnitInput = ({
   ...props
 }: Props & Omit<NumberInputProps, "onChange">) => {
   const theme = useMantineTheme();
+  const isNumeric = typeof fetchedValue === "number";
 
   const options = customOptions ?? [
     { value: "px", label: "PX" },
@@ -40,11 +41,17 @@ export const UnitInput = ({
   ];
 
   const isUnit =
-    fetchedValue && fetchedValue !== "auto" && fetchedValue !== "fit-content";
+    fetchedValue &&
+    !isNumeric &&
+    fetchedValue !== "auto" &&
+    fetchedValue !== "fit-content";
+  const defaultValueAndUnit: [number, Unit] = isNumeric
+    ? [fetchedValue, "px"]
+    : [0, fetchedValue === "" ? "auto" : (fetchedValue as Unit)];
 
   const [splitValue, splitUnit] = isUnit
     ? splitValueAndUnit(fetchedValue) || [0, "auto"]
-    : [0, fetchedValue === "" ? "auto" : (fetchedValue as Unit)];
+    : defaultValueAndUnit;
 
   const [value, setValue] = useState<number | "auto" | "fit-content">();
   const [textValue, setTextValue] = useState<string>();
@@ -83,7 +90,9 @@ export const UnitInput = ({
   }, [value, unit]);
 
   useEffect(() => {
-    if (fetchedValue) {
+    if (isNumeric) {
+      setTextValue("px");
+    } else if (fetchedValue) {
       switch (fetchedValue) {
         case "auto":
           setTextValue("auto");

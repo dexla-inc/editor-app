@@ -17,7 +17,7 @@ export const useAutomationsQuery = (projectId: string, opened: boolean) => {
   });
 
   const refetch = () => {
-    queryClient.refetchQueries(queryKey);
+    queryClient.refetchQueries({ queryKey });
   };
 
   return { ...queryResult, refetch };

@@ -30,6 +30,8 @@ import { IconExternalLink, IconPlugConnected } from "@tabler/icons-react";
 import { useState } from "react";
 import { useDataBinding } from "@/hooks/data/useDataBinding";
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
+import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 
 const TAB_TEXT_SIZE = 11;
 const ML = 5;
@@ -55,7 +57,10 @@ export default function BindingPopover({
 }: Props) {
   const [tab, setTab] = useState<BindingTab>("components");
   const [filterKeyword, setFilterKeyword] = useState<string>("");
-  const { computeValue } = useDataBinding();
+  const selectedComponentId = useEditorTreeStore(
+    (state) => state.selectedComponentIds?.at(-1),
+  );
+  const { computeValue } = useDataBinding(selectedComponentId);
   const [selectedItem, setSelectedItem] = useState<string>();
   const asideSelectedTab = useEditorStore((state) => state.asideSelectedTab);
 
@@ -84,18 +89,6 @@ export default function BindingPopover({
     });
     onClose();
   };
-
-  // useEffect(
-  //   () => {
-  //     const isSingleAtSign = value?.boundCode === "@";
-  //     const isDoubleAtSign = value?.boundCode === "@@";
-  //     if (!isSingleAtSign && !isDoubleAtSign) return;
-  //     setTab(isSingleAtSign ? "components" : "variables");
-  //     onOpen();
-  //   },
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  //   [value?.boundCode],
-  // );
 
   const currentValue = computeValue<string>({ value }, { actions, item });
   const entitiesDataTreeList: Array<{
@@ -206,7 +199,7 @@ export default function BindingPopover({
   }
 
   // testing if item has a key other than "index" only, if it doesnt, it means it is not supposed to be an item component
-  if (Object.keys(item ?? {}).length > 1) {
+  if (Object.keys(item ?? {}).length > 0) {
     segmentedTabOptions.unshift({
       value: "item",
       label: (

@@ -3,7 +3,7 @@ import {
   VariablePagingParams,
   VariableResponse,
 } from "@/requests/variables/types";
-import { getWithoutAuth } from "@/utils/apiNoAuth";
+import { getWithoutAuth } from "@/utils/apiLive";
 import { buildQueryString } from "@/types/dashboardTypes";
 
 export const listVariables = async (

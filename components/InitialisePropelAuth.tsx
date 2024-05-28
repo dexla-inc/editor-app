@@ -1,4 +1,3 @@
-import { LoadingOverlay } from "@mantine/core";
 import { RedirectToLogin, RequiredAuthProvider } from "@propelauth/react";
 import { PropsWithChildren } from "react";
 
@@ -9,7 +8,8 @@ export default function InitialisePropelAuth({ children }: PropsWithChildren) {
   return (
     <RequiredAuthProvider
       authUrl={authUrl}
-      displayWhileLoading={<LoadingOverlay visible overlayBlur={2} />}
+      // TODO: GET THIS BACK
+      // displayWhileLoading={<LoadingOverlay visible overlayBlur={2} />}
       displayIfLoggedOut={
         <RedirectToLogin postLoginRedirectUrl={authRedirectUrl} />
       }

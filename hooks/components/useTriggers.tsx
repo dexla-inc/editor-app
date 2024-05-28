@@ -14,6 +14,7 @@ import { useDataBinding } from "@/hooks/data/useDataBinding";
 import { useFlowsQuery } from "@/hooks/editor/reactQuery/useFlowsQuery";
 import { ComputeValueProps } from "@/types/dataBinding";
 import { useEndpoints } from "../editor/reactQuery/useDataSourcesEndpoints";
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { useEditorStore } from "@/stores/editor";
 import { safeJsonParse } from "@/utils/common";
 
@@ -21,7 +22,7 @@ const nonDefaultActionTriggers = ["onSuccess", "onError"];
 
 type UseTriggersProps = {
   entity: Component | PageResponse;
-  router: Router;
+  router: AppRouterInstance;
   projectId?: string;
   shareableContent?: Record<string, any>;
 };
@@ -64,7 +65,7 @@ export const useTriggers = ({
           ...acc,
           [action.trigger]: async (e: any) => {
             const customComputeValue: ComputeValueProps = (args) =>
-              computeValue(
+              computeValue<any>(
                 { ...args, shareableContent },
                 {
                   actions: { ...actionResponses },

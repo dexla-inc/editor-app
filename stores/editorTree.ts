@@ -1,6 +1,6 @@
 import { updatePageState } from "@/requests/pages/mutations";
 import { PageStateParams } from "@/requests/pages/types";
-import { emptyEditorTree } from "@/utils/common";
+import { cloneObject, emptyEditorTree } from "@/utils/common";
 import { encodeSchema } from "@/utils/compression";
 import { GRID_SIZE } from "@/utils/config";
 import {
@@ -21,7 +21,6 @@ import debounce from "lodash.debounce";
 import merge from "lodash.merge";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
-import cloneDeep from "lodash.clonedeep";
 import setObj from "lodash.set";
 
 const client = createClient({
@@ -91,6 +90,7 @@ export type EditorTreeState = {
     attrs: Partial<Component>;
     forceState?: string;
     save?: boolean;
+    replaceAll?: boolean;
   }) => Promise<void>;
   resetComponentsState: (
     componentIds: string[],
@@ -100,6 +100,7 @@ export type EditorTreeState = {
   setHistoryCount: (count: number | null) => void;
   pageLoadTree?: EditorTree;
   setPageLoadTree: (tree: EditorTree) => void;
+  pageLoadComponentMutableAttrs?: Record<string, Component>;
   pageLoadTimestamp: number;
   setPageLoadTimestamp: (value: number | null) => void;
   currentUser?: User;
@@ -133,12 +134,13 @@ export type EditorTreeState = {
   ) => void;
   isSaving: boolean;
   setIsSaving: (value: boolean) => void;
-  relatedComponentsData: any;
-  setRelatedComponentsData: any;
+  relatedComponentsData: Record<string, any>;
+  setRelatedComponentsData: (props: Record<string, any>) => void;
 };
 
 const updatePageStateFunc = async (
   state: PageStateParams["state"],
+  description: PageStateParams["description"],
   projectId: string,
   pageId: string,
   setIsSaving: (value: boolean) => void,
@@ -150,6 +152,7 @@ const updatePageStateFunc = async (
     setIsSaving(true);
     await updatePageState(
       state,
+      description,
       projectId,
       pageId,
       pageLoadTimestamp,
@@ -173,7 +176,6 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
           setTree: (tree, options) => {
             set(
               (state: EditorTreeState) => {
-                // TODO: Look into why the previous history appears when refreshing page
                 if (
                   !options?.onLoad &&
                   !state.isPreviewMode &&
@@ -182,6 +184,7 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                 ) {
                   debouncedUpdatePageState(
                     encodeSchema(JSON.stringify(tree)),
+                    options?.action ?? "Generic change",
                     state.currentProjectId ?? "",
                     state.currentPageId ?? "",
                     state.setIsSaving,
@@ -208,7 +211,16 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                     state.componentMutableAttrs,
                     newComponentMutableAttrs,
                   ),
+                  pageLoadComponentMutableAttrs: options?.onLoad
+                    ? merge(
+                        {},
+                        state.pageLoadComponentMutableAttrs,
+                        newComponentMutableAttrs,
+                      )
+                    : state.pageLoadComponentMutableAttrs,
                 };
+
+                // also set the pageLoadComponentMutableAttrs if it's an onLoad with componentMutableAttrs
 
                 return newState;
               },
@@ -260,6 +272,7 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                         ]),
                       ),
                     ),
+                    "children change",
                     state.currentProjectId ?? "",
                     state.currentPageId ?? "",
                     state.setIsSaving,
@@ -286,6 +299,7 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
             attrs,
             forceState,
             save = true,
+            replaceAll = false,
           }) => {
             set(
               (state: EditorTreeState) => {
@@ -299,14 +313,19 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                   "default";
 
                 componentIds.forEach((id) => {
-                  const clonedAttrs = cloneDeep(
+                  const clonedAttrs = cloneObject(
                     state.componentMutableAttrs[id] ?? {},
                   );
-                  state.componentMutableAttrs[id] = updateTreeComponentAttrs(
-                    clonedAttrs,
-                    attrs,
-                    currentState,
-                  );
+
+                  const componentAttrs = replaceAll
+                    ? attrs
+                    : updateTreeComponentAttrs(
+                        clonedAttrs,
+                        attrs,
+                        currentState,
+                      );
+
+                  state.componentMutableAttrs[id] = componentAttrs as Component;
                 });
 
                 const treeWithRecoveredAttrs = recoverTreeComponentAttrs(
@@ -320,6 +339,7 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                         removeKeysRecursive(treeWithRecoveredAttrs, ["error"]),
                       ),
                     ),
+                    "Attribute change",
                     state.currentProjectId ?? "",
                     state.currentPageId ?? "",
                     state.setIsSaving,
@@ -339,7 +359,7 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
           resetComponentsState: (componentIds, stateToBeRemoved) => {
             set((state) => {
               componentIds.forEach((id) => {
-                state.componentMutableAttrs[id] = cloneDeep(
+                state.componentMutableAttrs[id] = cloneObject(
                   state.componentMutableAttrs[id] ?? {},
                 );
                 setObj(
@@ -360,6 +380,7 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                       removeKeysRecursive(treeWithRecoveredAttrs, ["error"]),
                     ),
                   ),
+                  "Reset component",
                   state.currentProjectId ?? "",
                   state.currentPageId ?? "",
                   state.setIsSaving,
@@ -458,7 +479,7 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
               "editorTree/setPageLoadTimestamp",
             ),
           setPageLoadTree: (pageLoadTree) =>
-            set({ pageLoadTree }, false, "editorTree/setPageLoadTree"),
+            set({ pageLoadTree }, true, "editorTree/setPageLoadTree"),
           setRelatedComponentsData: ({ id, data }: any) =>
             set(
               (state) => ({

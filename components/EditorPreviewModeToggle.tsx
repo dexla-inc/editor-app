@@ -3,8 +3,9 @@ import { useUserConfigStore } from "@/stores/userConfig";
 import { ICON_SIZE, NAVBAR_MIN_WIDTH, NAVBAR_WIDTH } from "@/utils/config";
 import { Group, Switch, Tooltip, useMantineTheme } from "@mantine/core";
 import { IconBrush, IconEye } from "@tabler/icons-react";
+import { memo } from "react";
 
-export const EditorPreviewModeToggle = () => {
+export const EditorPreviewModeToggleComponent = () => {
   const theme = useMantineTheme();
   const isPreviewMode = useEditorTreeStore((state) => state.isPreviewMode);
   const setPreviewModeEditor = useEditorTreeStore(
@@ -38,3 +39,5 @@ export const EditorPreviewModeToggle = () => {
     </Tooltip>
   );
 };
+
+export const EditorPreviewModeToggle = memo(EditorPreviewModeToggleComponent);

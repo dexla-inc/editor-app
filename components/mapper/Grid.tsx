@@ -14,8 +14,14 @@ const GridComponent = forwardRef(
   ({ renderTree, component, shareableContent, ...props }: GridProps, ref) => {
     const theme = useMantineTheme();
     const setEditorTree = useEditorTreeStore((state) => state.setTree);
-    const { gridSize, gridDirection, navbarWidth, gap, ...componentProps } =
-      component.props!;
+    const {
+      gridSize,
+      gridDirection,
+      navbarWidth,
+      gap,
+      triggers,
+      ...componentProps
+    } = component.props!;
 
     const isColumns = gridDirection === "column";
     const defaultGridTemplate = `repeat(${gridSize ?? GRID_SIZE}, 1fr)`;

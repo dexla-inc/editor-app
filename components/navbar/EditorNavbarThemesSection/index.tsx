@@ -34,8 +34,7 @@ import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { IconArrowsMaximize, IconSearch } from "@tabler/icons-react";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import set from "lodash.set";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 type EditorNavbarThemesSectionProps = {
   isActive: boolean;
@@ -54,13 +53,13 @@ export const fontWeightLabels = {
 };
 
 export const pixelMetrics = [
-  0, 8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40,
-  42, 44, 46, 48, 54, 60, 66, 72,
+  0, 8, 9, 10, 11, 12, 13, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38,
+  40, 42, 44, 46, 48, 54, 60, 66, 72,
 ].map((num) => `${num}px`);
 
 export const EditorNavbarThemesSection =
   ({}: EditorNavbarThemesSectionProps) => {
-    const router = useRouter();
+    const { id: projectId } = useParams<{ id: string }>();
     const startLoading = useAppStore((state) => state.startLoading);
     const stopLoading = useAppStore((state) => state.stopLoading);
     const [currentFontIndex, setCurrentFontIndex] = useState<number>(0);
@@ -69,8 +68,6 @@ export const EditorNavbarThemesSection =
 
     const usersTheme = useThemeStore((state) => state.theme);
     const setUsersTheme = useThemeStore((state) => state.setTheme);
-
-    const projectId = router.query.id as string;
 
     const { data: project, refetch } = useProjectQuery(projectId);
     const userTheme = project?.branding;
@@ -85,34 +82,37 @@ export const EditorNavbarThemesSection =
       queryFn: () => getGoogleFonts(),
     });
 
-    const { mutate } = useMutation(saveTheme, {
-      onMutate: () => {
-        startLoading({
-          id: "saving-brand",
-          title: "Saving Brand",
-          message: "Wait while your brand is being saved",
-        });
+    const { mutate } = useMutation({
+      mutationFn: saveTheme,
+      ...{
+        onMutate: () => {
+          startLoading({
+            id: "saving-brand",
+            title: "Saving Brand",
+            message: "Wait while your brand is being saved",
+          });
 
-        form.validate();
+          form.validate();
 
-        return {};
-      },
-      onError: (error) => {
-        console.error(error);
-        stopLoading({
-          id: "saving-brand",
-          title: "Saving Brand Failed",
-          message: "Validation failed",
-          isError: true,
-        });
-      },
-      onSuccess: () => {
-        refetch();
-        stopLoading({
-          id: "saving-brand",
-          title: "Brand Saved",
-          message: "The brand was saved successfully",
-        });
+          return {};
+        },
+        onError: (error) => {
+          console.error(error);
+          stopLoading({
+            id: "saving-brand",
+            title: "Saving Brand Failed",
+            message: "Validation failed",
+            isError: true,
+          });
+        },
+        onSuccess: () => {
+          refetch();
+          stopLoading({
+            id: "saving-brand",
+            title: "Brand Saved",
+            message: "The brand was saved successfully",
+          });
+        },
       },
     });
 
@@ -200,24 +200,26 @@ export const EditorNavbarThemesSection =
                 key={`color-${name}`}
                 friendlyName={friendlyName}
                 hex={hex}
-                isDefault={form.values.colors[index].isDefault}
+                isDefault={form.values.colors[index]?.isDefault ?? false}
                 onValueChange={(value) => {
+                  form.setFieldValue(`colors.${index}.hex`, value.hex);
                   form.setFieldValue(
                     `colors.${index}.friendlyName`,
                     value.friendlyName,
                   );
-                  form.setFieldValue(`colors.${index}.hex`, value.hex);
-                  if (!form.values.colors[index].isDefault) {
-                    form.setFieldValue(
-                      `colors.${index}.name`,
-                      value.friendlyName,
-                    );
-                  }
+
+                  if (form.values.colors[index]?.isDefault) return;
+
+                  form.setFieldValue(
+                    `colors.${index}.name`,
+                    value.friendlyName,
+                  );
                 }}
                 deleteColor={() => {
-                  if (!form.values.colors[index].isDefault) {
-                    form.removeListItem("colors", index);
-                  }
+                  const updatedColors = [...form.values.colors];
+                  updatedColors.splice(index, 1);
+                  form.setValues({ ...form.values, colors: updatedColors });
+                  setSearchResults(updatedColors);
                 }}
               />
             ))}
@@ -228,15 +230,17 @@ export const EditorNavbarThemesSection =
               variant="outline"
               fullWidth
               compact
-              onClick={() =>
-                form.insertListItem("colors", {
+              onClick={() => {
+                const newColor = {
                   name: "",
                   friendlyName: "",
                   hex: "",
                   brightness: 0,
                   isDefault: false,
-                })
-              }
+                };
+                form.insertListItem("colors", newColor);
+                setSearchResults([...form.values.colors, newColor]);
+              }}
             >
               Add Color
             </Button>

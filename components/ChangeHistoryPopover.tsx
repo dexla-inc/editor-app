@@ -1,16 +1,16 @@
 import { SavingDisplay } from "@/components/SavingDisplay";
-import { usePreventNavigationOnSaving } from "@/hooks/editor/usePreventNavigationOnSaving";
-import { useEditorStore } from "@/stores/editor";
-import { useEditorTreeStore } from "@/stores/editorTree";
 import {
   DARK_MODE,
   GRAY_WHITE_COLOR,
   THIN_DARK_OUTLINE,
   THIN_GRAY_OUTLINE,
 } from "@/utils/branding";
-import { Flex, Popover, useMantineTheme } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import { FC } from "react";
+import { Button, Flex, Popover, Text, UnstyledButton } from "@mantine/core";
+import { FC, useState } from "react";
+import { ActionIconDefault } from "./ActionIconDefault";
+import { useUndoRedo } from "@/hooks/editor/useUndoRedo";
+import Link from "next/link";
+import { useEditorTreeStore } from "@/stores/editorTree";
 
 const convertTimestampToTimeTaken = (timestamp: number) => {
   const now = Date.now();
@@ -28,59 +28,22 @@ const convertTimestampToTimeTaken = (timestamp: number) => {
 };
 
 export const ChangeHistoryPopover: FC = () => {
-  usePreventNavigationOnSaving();
-  const pageId = useEditorTreeStore((state) => state.currentPageId);
-  //const editorTree = useEditorTreeStore((state) => state.tree);
-  const currentProjectId = useEditorTreeStore(
-    (state) => state.currentProjectId,
-  );
-  const setIsSaving = useEditorStore((state) => state.setIsSaving);
+  const { undo, redo, historyCount } = useUndoRedo();
+  const [opened, setOpened] = useState(false);
+  const setTree = useEditorTreeStore((state) => state.setTree);
 
-  // TODO: Turning off for now, will need to revisit
-  // const { changeHistory, pastStates, undo, redo, futureStates } =
-  //   useTemporalStore((state) => ({
-  //     changeHistory: [
-  //       ...state.pastStates,
-  //       {
-  //         tree: {
-  //           name: tree.name,
-  //           timestamp: tree.timestamp,
-  //         },
-  //       },
-  //       ...state.futureStates,
-  //     ].reduce(
-  //       (acc, { tree }, index) => {
-  //         return index === 0
-  //           ? acc
-  //           : acc.concat({
-  //               name: tree?.name,
-  //               timestamp: tree?.timestamp,
-  //             });
-  //       },
-  //       [] as Array<{
-  //         name?: string;
-  //         timestamp?: number;
-  //       }>,
-  //     ),
-  //     pastStates: state.pastStates,
-  //     futureStates: state.futureStates,
-  //     undo: state.undo,
-  //     redo: state.redo,
-  //   }));
+  const open = () => setOpened(true);
+  const close = () => setOpened(false);
 
-  const [opened, { close, open }] = useDisclosure(false);
-  const theme = useMantineTheme();
-
-  // const handlePageStateChange = (
-  //   operation: (steps?: number | undefined) => void,
-  // ) => {
-  //   operation();
-  //   debouncedUpdatePageState(
-  //     encodeSchema(JSON.stringify(tree)),
-  //     currentProjectId ?? "",
-  //     pageId ?? "",
-  //   );
-  // };
+  const initialTree = () => {
+    const pageLoadTree = useEditorTreeStore.getState().pageLoadTree;
+    if (pageLoadTree) {
+      setTree(pageLoadTree, {
+        action: "Original Tree",
+        skipSave: true,
+      });
+    }
+  };
 
   return (
     <Flex
@@ -94,109 +57,52 @@ export const ChangeHistoryPopover: FC = () => {
         background: theme.colorScheme === "dark" ? DARK_MODE : GRAY_WHITE_COLOR,
       })}
     >
-      {/* <Button.Group>
+      <Button.Group>
         <ActionIconDefault
           iconName="IconArrowBackUp"
           tooltip="Undo"
-          onClick={() => handlePageStateChange(undo)}
-          disabled={pastStates.length < 2}
+          onClick={undo}
+          // @ts-ignore
+          disabled={historyCount && historyCount > 0}
           size="sm"
           radius={"4px 0px 0px 4px"}
         />
         <ActionIconDefault
           iconName="IconArrowForwardUp"
           tooltip="Redo"
-          onClick={() => handlePageStateChange(redo)}
-          disabled={futureStates.length === 0}
+          onClick={redo}
+          disabled={historyCount === null || historyCount === 0}
           radius={"0px 4px 4px 0px"}
           size="sm"
         />
-      </Button.Group> */}
-      <div onMouseEnter={open} onMouseLeave={close}>
-        <Popover
-          width={200}
-          position="bottom"
-          withArrow
-          shadow="md"
-          radius="md"
-          opened={opened}
-          withinPortal
-          offset={0}
-        >
+      </Button.Group>
+      <div
+        onMouseEnter={open}
+        onMouseLeave={(e) => {
+          // Check if the related target (the element the pointer is moving to) is within the popover dropdown
+          if (
+            e.relatedTarget &&
+            (e.relatedTarget as HTMLElement).closest(".popover-dropdown")
+          ) {
+            return;
+          }
+          close();
+        }}
+      >
+        <Popover position="bottom" withArrow shadow="md" opened={opened}>
           <Popover.Target>
             <SavingDisplay />
           </Popover.Target>
-          {/* <Popover.Dropdown
-            sx={{
-              display: changeHistory.length ? "block" : "none",
-              padding: "10px 5px",
-              width: "auto!important",
-            }}
+          <Popover.Dropdown
+            className="popover-dropdown"
+            onMouseEnter={open}
+            onMouseLeave={close}
+            sx={{ pointerEvents: "auto", padding: 4 }}
           >
-            <List
-              listStyleType="none"
-              p={0}
-              m={0}
-              mah={200}
-              style={{
-                overflowY: "auto",
-              }}
-            >
-              {changeHistory
-                .map((item: any, index: number) => {
-                  const currentHistoryIndex = pastStates.length - 1;
-                  const isCurrentHistory = currentHistoryIndex === index;
-                  const isDarkTheme = theme.colorScheme === "dark";
-
-                  let color;
-                  if (isCurrentHistory) {
-                    color = isDarkTheme ? "indigo" : "gray";
-                  } else {
-                    color = isDarkTheme ? GRAY_COLOR : theme.colors.dark[9];
-                  }
-                  return (
-                    <List.Item
-                      px={3}
-                      sx={(theme) => ({
-                        cursor: "pointer",
-                        "&:hover": {
-                          background:
-                            theme.colorScheme === "dark"
-                              ? DARK_COLOR
-                              : GRAY_WHITE_COLOR,
-                        },
-                      })}
-                      key={index}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        const newChangeHistoryIndex =
-                          currentHistoryIndex - index;
-
-                        newChangeHistoryIndex >= 0
-                          ? handlePageStateChange(() =>
-                              undo(newChangeHistoryIndex),
-                            )
-                          : handlePageStateChange(() =>
-                              redo(Math.abs(newChangeHistoryIndex)),
-                            );
-                      }}
-                    >
-                      <Text component="span" size="sm" color={color}>
-                        {item.name}
-                      </Text>
-                      <Text component="span" size="xs" color={color}>
-                        (
-                        {convertTimestampToTimeTaken(
-                          item.timestamp || Date.now(),
-                        )}
-                        )
-                      </Text>
-                    </List.Item>
-                  );
-                })
-                .reverse()}
-            </List>
-          </Popover.Dropdown> */}
+            <Button variant="link" size="xs" onClick={initialTree}>
+              Back to initial state
+            </Button>
+          </Popover.Dropdown>
         </Popover>
       </div>
     </Flex>

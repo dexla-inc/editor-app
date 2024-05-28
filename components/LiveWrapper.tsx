@@ -1,4 +1,3 @@
-import { ProgressBar } from "@/components/ProgressBar";
 import { useCustomCode } from "@/hooks/editor/useCustomCode";
 import { ProjectResponse } from "@/requests/projects/types";
 import { useThemeStore } from "@/stores/theme";
@@ -25,7 +24,6 @@ export const LiveWrapper = ({ children, project, ...props }: Props) => {
         }}
         p={0}
       >
-        <ProgressBar color={theme.colors.Primary[6]} />
         <Box id="iframe-content">{children}</Box>
       </Box>
     </MantineProvider>

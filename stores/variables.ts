@@ -1,6 +1,7 @@
 import { VariableResponse } from "@/requests/variables/types";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
+import { listVariables } from "@/requests/variables/queries-noauth";
 
 type VariableStoreParams = VariableResponse & {
   value?: any | null;
@@ -12,12 +13,13 @@ type VariablesState = {
   setVariable: (variable: Partial<VariableStoreParams>) => void;
   deleteVariable: (variableId: string) => void;
   variableList: Record<string, VariableStoreParams>;
+  resetVariables: () => void;
 };
 
 export const useVariableStore = create<VariablesState>()(
   devtools(
     persist(
-      (set, get) => ({
+      (set, get, store) => ({
         resetVariable: (variableId) => {
           set(
             (state) => {
@@ -42,7 +44,7 @@ export const useVariableStore = create<VariablesState>()(
             "variables/resetVariable",
           );
         },
-        initializeVariableList: (variableList) => {
+        initializeVariableList: async (variableList) => {
           const newVariableList: Record<string, VariableStoreParams> =
             variableList.reduce(
               (acc, variable) => {
@@ -62,6 +64,7 @@ export const useVariableStore = create<VariablesState>()(
             "variables/initializeVariableList",
           );
         },
+
         setVariable: (variable) => {
           const variableId = variable?.id ?? "";
           set(
@@ -93,6 +96,10 @@ export const useVariableStore = create<VariablesState>()(
             false,
             "variables/deleteVariable",
           );
+        },
+        resetVariables: () => {
+          store.persist.clearStorage();
+          set({ variableList: {} }, false, "variables/resetVariables");
         },
         variableList: {},
       }),

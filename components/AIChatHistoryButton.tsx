@@ -18,7 +18,7 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import { Prism } from "@mantine/prism";
 import { IconJson, IconToml } from "@tabler/icons-react";
-import { useState } from "react";
+import { memo, useState } from "react";
 
 type Props = {
   projectId: string;
@@ -27,7 +27,7 @@ type Props = {
 
 type ContentOpenedType = { [id: string]: boolean };
 
-export const AIChatHistoryButton = ({ projectId }: Props) => {
+export const AIChatHistoryButtonComponent = ({ projectId }: Props) => {
   const [opened, { open, close }] = useDisclosure(false);
   const theme = useMantineTheme();
   const [contentOpened, setContentOpened] = useState<ContentOpenedType>({});
@@ -168,3 +168,5 @@ export const AIChatHistoryButton = ({ projectId }: Props) => {
     </>
   );
 };
+
+export const AIChatHistoryButton = memo(AIChatHistoryButtonComponent);
