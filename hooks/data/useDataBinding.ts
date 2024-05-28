@@ -1,26 +1,26 @@
 import { useVariableStore } from "@/stores/variables";
-import { useRouter } from "next/navigation";
 import { useDataSourceStore } from "@/stores/datasource";
 import { pick } from "next/dist/lib/pick";
 import get from "lodash.get";
 import {
   ComputeValuePropCtx,
-  ComputeValueProps,
+  GetValueProps,
   ValueProps,
 } from "@/types/dataBinding";
 import { safeJsonParse } from "@/utils/common";
 import { useInputsStore } from "@/stores/inputs";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { useDataTransformers } from "@/hooks/data/useDataTransformers";
 import { useOldRouter } from "@/hooks/data/useOldRouter";
+import { useShareableContent } from "@/hooks/data/useShareableContent";
 
 export const useDataBinding = (componentId = "") => {
   const browser = useOldRouter();
-  const { itemTransformer } = useDataTransformers();
-  const computeValue: ComputeValueProps = (
-    { value, shareableContent, staticFallback },
-    ctx,
-  ) => {
+  const { item } = useShareableContent({ componentId, computeValue });
+
+  function computeValue<T>(
+    { value, shareableContent, staticFallback }: GetValueProps,
+    ctx: ComputeValuePropCtx,
+  ): T | string {
     const valueHandlers = {
       dynamic: function (value: ValueProps) {
         return get(shareableContent, `data.${value?.dynamic}`, value?.dynamic);
@@ -35,8 +35,6 @@ export const useDataBinding = (componentId = "") => {
       },
     };
 
-    const [, parentIdsGroup] = componentId?.split("-related-") || [];
-    const relatedComponentIds = parentIdsGroup?.split("--") ?? [];
     const variablesList = Object.values(
       useVariableStore.getState().variableList,
     );
@@ -93,19 +91,13 @@ export const useDataBinding = (componentId = "") => {
 
     const browserList = Array.of(pick(browser, ["asPath", "query"]));
 
-    const relatedComponentsData = pick(
-      useEditorTreeStore.getState().relatedComponentsData,
-      relatedComponentIds,
-    );
-    const item = itemTransformer(relatedComponentsData);
-
     if (value === undefined) return staticFallback || "";
     let dataType = value?.dataType ?? "static";
 
     const result = valueHandlers[dataType](value);
 
     return result;
-  };
+  }
 
   return { computeValue };
 };

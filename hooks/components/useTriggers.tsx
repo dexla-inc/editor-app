@@ -56,7 +56,7 @@ export const useTriggers = ({
           ...acc,
           [action.trigger]: async (e: any) => {
             const customComputeValue: ComputeValueProps = (args) =>
-              computeValue(
+              computeValue<any>(
                 { ...args, shareableContent },
                 {
                   actions: { ...actionResponses },

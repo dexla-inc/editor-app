@@ -4,6 +4,7 @@ import { extractKeys } from "@/utils/data";
 import { Component } from "@/utils/editor";
 import { Select } from "@mantine/core";
 import { useShareableContent } from "@/hooks/data/useShareableContent";
+import { useDataBinding } from "@/hooks/data/useDataBinding";
 
 type DynamicFormFieldsBuilderProps = {
   form: any;
@@ -21,7 +22,8 @@ export const DynamicFormFieldsBuilder = ({
   form,
   field,
 }: DynamicFormFieldsBuilderProps) => {
-  const { relatedComponentsData } = useShareableContent({});
+  const { computeValue } = useDataBinding();
+  const { relatedComponentsData } = useShareableContent({ computeValue });
   const parentDataComponent = Object.values(relatedComponentsData).at(-1);
 
   return (

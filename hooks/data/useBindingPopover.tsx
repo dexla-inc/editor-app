@@ -17,6 +17,7 @@ import { useShareableContent } from "@/hooks/data/useShareableContent";
 import { useEventData } from "@/hooks/data/useEventData";
 import { useEndpoints } from "../editor/reactQuery/useDataSourcesEndpoints";
 import { useOldRouter } from "@/hooks/data/useOldRouter";
+import { useDataBinding } from "@/hooks/data/useDataBinding";
 
 type BindType = {
   selectedEntityId: string;
@@ -54,7 +55,8 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
   const pageActions = pageListQuery?.results?.find(
     (p) => p.id === activePage?.id,
   )?.actions;
-  const { item } = useShareableContent({});
+  const { computeValue } = useDataBinding();
+  const { item } = useShareableContent({ computeValue });
   const variablesList = useVariableStore((state) =>
     Object.values(state.variableList),
   );
