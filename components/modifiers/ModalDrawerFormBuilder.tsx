@@ -42,6 +42,22 @@ export const ModalDrawerFormBuilder = ({
   return (
     <form>
       <Stack spacing="xs">
+        <SegmentedControlYesNo
+          label="Include Title"
+          {...form.getInputProps("withCloseButton")}
+          onChange={(value) => {
+            form.setFieldValue("withCloseButton", value);
+            debouncedTreeComponentAttrsUpdate({
+              attrs: {
+                props: {
+                  withCloseButton: value,
+                  // Only want to do this if false
+                  ...(value === false && { title: " " }),
+                },
+              },
+            });
+          }}
+        />
         <TextInput
           label="Title"
           size="xs"
@@ -65,22 +81,6 @@ export const ModalDrawerFormBuilder = ({
           onChange={(value) => onChange("titleTag", value)}
         />
         {children && children({ form, onChange })}
-        <SegmentedControlYesNo
-          label="Include Header"
-          {...form.getInputProps("withCloseButton")}
-          onChange={(value) => {
-            form.setFieldValue("withCloseButton", value);
-            debouncedTreeComponentAttrsUpdate({
-              attrs: {
-                props: {
-                  withCloseButton: value,
-                  // Only want to do this if false
-                  ...(value === false && { title: " " }),
-                },
-              },
-            });
-          }}
-        />
       </Stack>
     </form>
   );
