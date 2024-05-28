@@ -33,6 +33,16 @@ export type DeploymentPage = IResponse & {
   branding: ThemeResponse;
 };
 
+export type DeploymentPageHistory = IResponse & {
+  id: string;
+  title: string;
+  slug: string;
+  authenticatedOnly: boolean;
+  authenticatedUserRole?: string;
+  pageId: string;
+  created: number;
+};
+
 export type DeploymentPageParams = {
   page: string;
 };
