@@ -313,5 +313,6 @@ function emptyObject(value: any): boolean {
 }
 
 export const cloneObject = <T extends object>(obj: T): T => {
+  if (!obj) return obj;
   return JSON.parse(JSON.stringify(obj)) as T;
 };
