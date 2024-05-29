@@ -77,7 +77,11 @@ const Modifier = withModifier(({ selectedComponent }) => {
             });
           }}
         />
-        <FontSelector {...form.getInputProps("fontTag")} form={form as any} />
+        <FontSelector
+          label="Font tag"
+          {...form.getInputProps("fontTag")}
+          form={form as any}
+        />
         <ThemeColorSelector
           label="Color"
           {...form.getInputProps("color")}
