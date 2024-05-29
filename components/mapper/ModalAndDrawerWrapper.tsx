@@ -3,7 +3,13 @@ import { useBrandingStyles } from "@/hooks/editor/useBrandingStyles";
 import { useShallow } from "zustand/react/shallow";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useEditorStore } from "@/stores/editor";
-import { Component, ComponentTree } from "@/utils/editor";
+import {
+  Component,
+  ComponentTree,
+  getAllComponentsByName,
+} from "@/utils/editor";
+import { structureMapper } from "@/utils/componentMapper";
+import { useInputsStore } from "@/stores/inputs";
 
 type Props = {
   component: ComponentTree & Component;
@@ -39,6 +45,20 @@ export const ModalAndDrawerWrapper = ({ component, children }: Props) => {
       };
 
   const handleClose = () => {
+    const inputsComponentsList = Object.entries(structureMapper).reduce(
+      (acc, [key, value]) => {
+        if (value.category === "Input") {
+          acc.push(key);
+        }
+        return acc;
+      },
+      [] as string[],
+    );
+    const inputFieldComponentIds = getAllComponentsByName(
+      component,
+      inputsComponentsList,
+    ).map((c) => c.id!);
+
     const isVisibleBound = onLoad.isVisible.dataType === "boundCode";
     const resetVariable = useVariableStore.getState().resetVariable;
     if (isVisibleBound) {
@@ -50,6 +70,7 @@ export const ModalAndDrawerWrapper = ({ component, children }: Props) => {
         resetVariable(variable);
       });
     }
+    useInputsStore.getState().resetInputValues(inputFieldComponentIds);
   };
   return (
     <>
