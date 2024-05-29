@@ -10,6 +10,7 @@ import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
 import { UnitInput } from "@/components/UnitInput";
 import { SelectFont } from "@/components/navbar/EditorNavbarThemesSection/SelectFont";
 import { TypographyModal } from "@/components/navbar/EditorNavbarThemesSection/TypographyModal";
+import { useGoogleFontsQuery } from "@/hooks/editor/reactQuery/useGoogleFontsQuery";
 import { useProjectQuery } from "@/hooks/editor/reactQuery/useProjectQuery";
 import { CardStyle } from "@/requests/projects/types";
 import { saveTheme } from "@/requests/themes/mutations";
@@ -18,7 +19,7 @@ import { useAppStore } from "@/stores/app";
 import { useThemeStore } from "@/stores/theme";
 import { ICON_SIZE, INPUT_SIZE } from "@/utils/config";
 import { gapSizes, inputSizes, radiusSizes } from "@/utils/defaultSizes";
-import { getGoogleFonts } from "@/utils/googleFonts";
+import { getGoogleFonts } from "@/utils/getGoogleFonts";
 import { useGoogleFonts } from "@flyyer/use-googlefonts";
 import {
   ActionIcon,
@@ -40,17 +41,17 @@ type EditorNavbarThemesSectionProps = {
   isActive: boolean;
 };
 
-export const fontWeightLabels = {
-  100: "Thin",
-  200: "Extra Light",
-  300: "Light",
-  400: "Regular",
-  500: "Medium",
-  600: "Semi Bold",
-  700: "Bold",
-  800: "Extra Bold",
-  900: "Black",
-};
+// export const fontWeightLabels = {
+//   100: "Thin",
+//   200: "Extra Light",
+//   300: "Light",
+//   400: "Regular",
+//   500: "Medium",
+//   600: "Semi Bold",
+//   700: "Bold",
+//   800: "Extra Bold",
+//   900: "Black",
+// };
 
 export const pixelMetrics = [
   0, 8, 9, 10, 11, 12, 13, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38,
@@ -76,11 +77,6 @@ export const EditorNavbarThemesSection =
       if (userTheme) form.setValues(userTheme);
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [userTheme]);
-
-    const { data: googleFontsData = [] } = useQuery({
-      queryKey: ["fonts"],
-      queryFn: () => getGoogleFonts(),
-    });
 
     const { mutate } = useMutation({
       mutationFn: saveTheme,
@@ -137,30 +133,59 @@ export const EditorNavbarThemesSection =
       validate: {},
     });
 
+    const { data: googleFontsData = [] } = useGoogleFontsQuery();
+
     useGoogleFonts(
       [form.values.defaultFont, form.values.fonts[0]?.fontFamily]
         .filter(Boolean)
-        .map((family) => ({ family: family ?? "", styles: ["100...900"] })),
+        .map((family) => ({
+          family: family ?? "",
+          styles: [
+            "100",
+            "100italic",
+            "200",
+            "200italic",
+            "300",
+            "300italic",
+            "regular",
+            "italic",
+            "500",
+            "500italic",
+            "600",
+            "600italic",
+            "700",
+            "700italic",
+            "800",
+            "800italic",
+            "900",
+            "900italic",
+          ],
+        })),
     );
 
-    const onSubmit = async (values: ThemeResponse) => {
-      mutate({ params: values, projectId: projectId });
-    };
-
-    const selectedTagFontWeights =
+    // Create a font weight list of the selected font family
+    const weightsList =
       googleFontsData
         .find(
           (f: any) =>
             f.family === form.values.fonts[currentFontIndex]?.fontFamily,
         )
-        ?.variants?.filter((v: string) => !isNaN(Number(v))) || [];
+        ?.weights?.map((weight: string) => ({
+          value: weight,
+          label: weight,
+        })) || [];
 
-    const weightsList = selectedTagFontWeights.map(
-      (v: keyof typeof fontWeightLabels) => ({
-        label: fontWeightLabels[v],
-        value: v,
-      }),
-    );
+    const onSubmit = async (values: ThemeResponse) => {
+      mutate({ params: values, projectId: projectId });
+    };
+
+    // const selectedTagFontWeights =
+    //   googleFontsData
+    //     .find(
+    //       (f: any) =>
+    //         f.family === form.values.fonts[currentFontIndex]?.fontFamily,
+    //     )
+    //     ?.variants?.filter((v: string) => !isNaN(Number(v))) || [];
 
     const [searchResults, setSearchResults] = useState(
       form.values?.colors ?? [],
@@ -172,7 +197,7 @@ export const EditorNavbarThemesSection =
           controls={{ opened, close }}
           form={form}
           onSubmit={form.onSubmit(onSubmit)}
-          weightsList={weightsList}
+          currentFontIndex={currentFontIndex}
         />
         <Stack spacing="xl" p="xs" pr={0}>
           <Stack spacing={4}>
