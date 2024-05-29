@@ -28,7 +28,7 @@ export const useInputValue = <T = string,>(
 
     customSetInputValue(newValue);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [customSetInputValue, value, inputValue]);
+  }, [customSetInputValue, value]);
 
   return [inputValue, customSetInputValue] as const;
 };
