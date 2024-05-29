@@ -2,6 +2,7 @@ import { useUserTheme } from "@/hooks/editor/useUserTheme";
 import { useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { HEADER_HEIGHT, NAVBAR_MIN_WIDTH, NAVBAR_WIDTH } from "@/utils/config";
+import { initializeFonts } from "@/utils/webfontloader";
 import createCache from "@emotion/cache";
 import {
   Box,
@@ -31,6 +32,12 @@ export const IFrame = ({ children, projectId, ...props }: Props) => {
   const w = contentRef?.contentWindow;
   const mountNode = w?.document.body;
   const insertionTarget = w?.document.head;
+
+  useEffect(() => {
+    if (theme?.fontFamily && theme?.headings?.fontFamily) {
+      initializeFonts(theme.fontFamily, theme.headings.fontFamily);
+    }
+  }, [theme]);
 
   useEffect(() => {
     mountNode?.setAttribute(
