@@ -20,7 +20,7 @@ export const useInputValue = <T = string,>(
   );
 
   useEffect(() => {
-    let newValue = value || inputValue;
+    let newValue = value ?? inputValue;
 
     if (typeof value === "object" && inputValue) {
       newValue = inputValue;
