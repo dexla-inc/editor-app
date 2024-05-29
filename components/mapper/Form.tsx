@@ -1,6 +1,6 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { componentMapper } from "@/utils/componentMapper";
+import { structureMapper } from "@/utils/componentMapper";
 import { convertSizeToPx } from "@/utils/defaultSizes";
 import {
   EditableComponentMapper,
@@ -47,9 +47,9 @@ const FormComponent = forwardRef(
 
       const inputValues = useInputsStore.getState().inputValues;
 
-      const validatableComponentsList = Object.entries(componentMapper).reduce(
+      const inputsComponentsList = Object.entries(structureMapper).reduce(
         (acc, [key, value]) => {
-          if (value.isValidatable) {
+          if (value.category === "Input") {
             acc.push(key);
           }
           return acc;
@@ -59,7 +59,7 @@ const FormComponent = forwardRef(
 
       const formFieldComponents = getAllComponentsByName(
         component,
-        validatableComponentsList,
+        inputsComponentsList,
       );
 
       const submitButtonComponents = getAllComponentsByName(
