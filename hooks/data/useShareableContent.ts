@@ -34,7 +34,7 @@ export const useShareableContent = ({
 
         acc[groupId] = get(
           parentData,
-          `${node?.onLoad?.resultsKey}[0]`,
+          `${node?.onLoad?.resultsKey}[${index}]`,
           parentData,
         );
         shareableContent = cloneObject(acc[groupId]);
