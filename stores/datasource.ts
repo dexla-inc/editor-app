@@ -74,7 +74,7 @@ export const useDataSourceStore = create<DataSourceState>()(
           }, {});
 
           Cookies.set(projectId, refreshToken, {
-            expires: 31,
+            expires: 7,
           });
 
           set((state) => ({
