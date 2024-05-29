@@ -19,6 +19,8 @@ export const useHandlePageStateUndoRedo = () => {
 
   const handlePageState = useCallback(async () => {
     try {
+      if (historyCount === null) return;
+
       const pageState = await getPageState(
         projectId,
         pageId,
