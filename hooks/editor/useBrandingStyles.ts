@@ -69,7 +69,7 @@ export const useBrandingStyles = ({ tag = "P", size = "md" }: Props = {}) => {
     ...(textFont && {
       fontSize: fontSize,
       fontWeight: textFont?.fontWeight,
-      lineHeight: fontSize,
+      lineHeight: textFont?.lineHeight,
       letterSpacing: textFont?.letterSpacing,
     }),
   };
