@@ -98,22 +98,23 @@ export const PasswordInputWrapper = ({
   const isPreviewMode = useEditorTreeStore(
     useShallow((state) => state.isPreviewMode || state.isLive),
   );
+  const sanitizedValue = value ?? "";
   const requirements = fetchRequirements(testParameters);
-  const strength = getStrength(value, requirements);
+  const strength = getStrength(sanitizedValue, requirements);
   const checks = requirements.map((requirement: any, index: number) => (
     <PasswordRequirement
       key={index}
       label={requirement.label}
-      meets={requirement.re.test(value)}
+      meets={requirement.re.test(sanitizedValue)}
     />
   ));
-  const bars = Array(4)
+  const bars = Array(requirements.length)
     .fill(0)
     .map((_, index) => (
       <Progress
         styles={{ bar: { transitionDuration: "0ms" } }}
         value={
-          value && value.length > 0 && index === 0
+          sanitizedValue.length > 0 && index === 0
             ? 100
             : strength >= ((index + 1) / 4) * 100
             ? 100
