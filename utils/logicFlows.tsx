@@ -10,6 +10,7 @@ import { decodeSchema } from "@/utils/compression";
 import startCase from "lodash.startcase";
 import { getOutgoers, Node, NodeProps } from "reactflow";
 import { safeJsonParse } from "@/utils/common";
+import { HandledApiError, UnhandledApiError } from "@/utils/actions";
 
 const {
   ConnectionCreatorNode,
@@ -76,24 +77,50 @@ const getNextNode = (
 
 const run = async (state: FlowData, params: any) => {
   const initialNode = state.nodes.find((n) => n.id === "start-node") as Node;
+  const initialErrorNode = state.nodes.find(
+    (n) => n.id === "start-node-error",
+  ) as Node;
+  const initialUnhandledErrorNode = state.nodes.find(
+    (n) => n.id === "start-node-unhandled-error",
+  ) as Node;
 
   const compute = async () => {
     let nextNodes = getOutgoers(initialNode!, state.nodes, state.edges);
+    let nextErrorNodes = getOutgoers(
+      initialErrorNode!,
+      state.nodes,
+      state.edges,
+    );
+    let nextUnhandledErrorNodes = getOutgoers(
+      initialUnhandledErrorNode!,
+      state.nodes,
+      state.edges,
+    );
 
     while (nextNodes.length) {
       let nextNode = nextNodes[0];
-      if (nextNode.type === "booleanNode") {
-        const nodeToTrigger = getNextNode(state, nextNode, params);
-        if (nodeToTrigger) {
-          nextNode = nodeToTrigger;
+      try {
+        if (nextNode.type === "booleanNode") {
+          const nodeToTrigger = getNextNode(state, nextNode, params);
+          if (nodeToTrigger) {
+            nextNode = nodeToTrigger;
+          }
+        }
+
+        const computeNode = computeNodeMapper[nextNode?.type!];
+
+        await computeNode?.(nextNode, params);
+
+        nextNodes = getOutgoers(nextNode, state.nodes, state.edges);
+      } catch (e) {
+        if (e instanceof HandledApiError) {
+          nextNodes = nextErrorNodes;
+        }
+
+        if (e instanceof UnhandledApiError) {
+          nextNodes = nextUnhandledErrorNodes;
         }
       }
-
-      const computeNode = computeNodeMapper[nextNode?.type!];
-
-      await computeNode?.(nextNode, params);
-
-      nextNodes = getOutgoers(nextNode, state.nodes, state.edges);
     }
   };
 

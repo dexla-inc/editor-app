@@ -19,6 +19,7 @@ const NavigationAvatarFooter = forwardRef<
   HTMLDivElement,
   NavigationAvatarFooterProps
 >((props, ref) => {
+  const { email, firstName, lastName, pictureUrl, ...restProps } = props ?? {};
   return (
     <Box
       ref={ref}
@@ -27,7 +28,7 @@ const NavigationAvatarFooter = forwardRef<
         borderTop:
           theme.colorScheme === "dark" ? THIN_DARK_OUTLINE : THIN_GRAY_OUTLINE,
       })}
-      {...props}
+      {...restProps}
     >
       <UnstyledButton
         sx={(theme) => ({
@@ -47,21 +48,18 @@ const NavigationAvatarFooter = forwardRef<
         px="sm"
         py={4}
       >
-        {(props.firstName ||
-          props.lastName ||
-          props.email ||
-          props.pictureUrl) && (
+        {(firstName || lastName || email || pictureUrl) && (
           <Flex py="xs" align="center" gap="xs">
-            <Avatar src={props?.pictureUrl} radius="xl" />
+            <Avatar src={pictureUrl} radius="xl" />
             <Flex justify="space-between" w="100%">
               <Stack spacing={0} maw={145}>
-                {props?.firstName && props.lastName && (
+                {firstName && lastName && (
                   <Text size="sm" weight={500} sx={{ whiteSpace: "nowrap" }}>
-                    {`${props?.firstName} ${props?.lastName}`}
+                    {`${firstName} ${lastName}`}
                   </Text>
                 )}
                 <Text color="dimmed" size="xs" truncate>
-                  {props?.email}
+                  {email}
                 </Text>
               </Stack>
               <Flex>{<Icon name="IconChevronDown" size={ICON_SIZE} />}</Flex>

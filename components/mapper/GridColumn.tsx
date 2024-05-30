@@ -27,6 +27,7 @@ const GridColumnComponent = forwardRef(
 
     return (
       <GridColumnBase
+        ref={ref}
         key={`${props.id}-${componentProps.span}`}
         style={{
           ...stylesRest,
