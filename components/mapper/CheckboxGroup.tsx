@@ -56,6 +56,7 @@ const CheckboxGroupComponent = forwardRef(
               val = [val[val.length - 1]];
             }
             setInputStore(val);
+            console.log("onChange", val);
             onChange?.({ target: { value: val } });
           },
         }

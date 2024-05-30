@@ -83,7 +83,7 @@ const SelectComponent = forwardRef(
     }
 
     if (dataType === "static") {
-      data = component.onLoad?.data ?? [];
+      data = component.onLoad?.data ?? component.props?.data ?? [];
     }
 
     const rootStyleProps = ["display", "width", "minHeight", "minWidth"];
@@ -131,7 +131,7 @@ const SelectComponent = forwardRef(
         rightSection={loading ? <InputLoader /> : null}
         label={undefined}
         value={typeof value === "number" ? String(value) : value}
-        wrapperProps={{ "data-id": component.id }}
+        wrapperProps={{ "data-id": props.id }}
       />
     );
   },

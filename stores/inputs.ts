@@ -24,16 +24,19 @@ export const useInputsStore = create<InputsState>()(
             if (isEmpty(ids)) {
               return { inputValues: {} };
             }
-            const resetIds = ids!.reduce(
-              (acc, id) => {
-                acc[id] = undefined;
-                return acc;
+
+            const filteredIds = Object.keys(state.inputValues).reduce(
+              (newObj, key) => {
+                if (!ids?.some((prefix) => key.startsWith(prefix))) {
+                  newObj[key] = state.inputValues[key];
+                }
+                return newObj;
               },
-              {} as Record<string, undefined>,
+              {} as Record<string, any>,
             );
 
             return {
-              inputValues: { ...state.inputValues, ...resetIds },
+              inputValues: filteredIds,
             };
           },
           false,
