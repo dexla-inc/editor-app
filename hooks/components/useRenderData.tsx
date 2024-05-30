@@ -27,8 +27,12 @@ export const useRenderData = ({
   const isPreviewMode = useEditorTreeStore(
     useShallow((state) => state.isPreviewMode || state.isLive),
   );
-  const { dataType = "static" } = component?.props!;
-  const { data: staticData, skeletonMinHeight = 400 } = component.onLoad!;
+  const {
+    dataType = "static",
+    skeletonMinHeight = 400,
+    skeletonMinWidth = "100%",
+  } = component?.props!;
+  const { data: staticData } = component.onLoad!;
 
   const { data: dynamicData, initiallyLoading } = useEndpoint({
     componentId: component.id!,
@@ -62,7 +66,9 @@ export const useRenderData = ({
     };
 
     if (initiallyLoading) {
-      return <Skeleton mih={skeletonMinHeight} p="xl" w="100%" />;
+      return (
+        <Skeleton mih={skeletonMinHeight} miw={skeletonMinWidth} w="100%" />
+      );
     }
 
     if (Array.isArray(data)) {

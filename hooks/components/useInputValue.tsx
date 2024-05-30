@@ -20,10 +20,14 @@ export const useInputValue = <T = string,>(
   );
 
   useEffect(() => {
-    let newValue = value ?? inputValue;
+    let newValue = value;
 
-    if (typeof value === "object" && inputValue) {
-      newValue = inputValue;
+    if (typeof value !== "boolean") {
+      if (typeof value === "object" && inputValue) {
+        newValue = inputValue;
+      } else {
+        newValue = value || inputValue;
+      }
     }
 
     customSetInputValue(newValue);

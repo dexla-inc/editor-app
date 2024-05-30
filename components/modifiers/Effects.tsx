@@ -2,10 +2,12 @@ import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { NumberInput, Select, Stack, TextInput } from "@mantine/core";
+import { Group, NumberInput, Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
 import { useEffect } from "react";
+import { UnitInput } from "@/components/UnitInput";
+import { TopLabel } from "@/components/TopLabel";
 
 const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm();
@@ -20,6 +22,8 @@ const Modifier = withModifier(({ selectedComponent }) => {
         display: selectedComponent.props?.style?.display,
         tooltipColor: selectedComponent.props?.tooltipColor,
         tooltipPosition: selectedComponent.props?.tooltipPosition,
+        skeletonMinWidth: selectedComponent.props?.skeletonMinWidth,
+        skeletonMinHeight: selectedComponent.props?.skeletonMinHeight,
       }),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -125,6 +129,29 @@ const Modifier = withModifier(({ selectedComponent }) => {
             });
           }}
         />
+        <Stack spacing={2}>
+          <TopLabel text="Skeleton" />
+          <Group noWrap>
+            {["skeletonMinWidth", "skeletonMinHeight"].map((key) => (
+              <UnitInput
+                key={key}
+                label={key.endsWith("Width") ? "Width" : "Height"}
+                size="xs"
+                options={[
+                  { value: "px", label: "px" },
+                  { value: "%", label: "%" },
+                ]}
+                {...form.getInputProps(key)}
+                onChange={(value) => {
+                  form.setFieldValue(key, value);
+                  debouncedTreeComponentAttrsUpdate({
+                    attrs: { props: { [key]: value } },
+                  });
+                }}
+              />
+            ))}
+          </Group>
+        </Stack>
       </Stack>
     </form>
   );

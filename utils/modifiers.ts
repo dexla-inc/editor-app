@@ -265,6 +265,8 @@ export const requiredModifiers: RequiredModifiers = {
     tooltip: "",
     tooltipColor: "Black.6",
     tooltipPosition: "top",
+    skeletonMinWidth: "100%",
+    skeletonMinHeight: 400,
   },
   modal: {
     showInEditor: true,
