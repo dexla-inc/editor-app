@@ -55,6 +55,7 @@ export default function BindingPopover({
   style = "iconButton",
   isPageAction,
 }: Props) {
+  const [internalValue, setInternalValue] = useState(value.boundCode);
   const [tab, setTab] = useState<BindingTab>("components");
   const [filterKeyword, setFilterKeyword] = useState<string>("");
   const selectedComponentId = useEditorTreeStore(
@@ -87,6 +88,11 @@ export default function BindingPopover({
       ...value,
       dataType: "static",
     });
+    onClose();
+  };
+
+  const onCloseSaveBoundCode = () => {
+    onChange({ ...value, boundCode: internalValue });
     onClose();
   };
 
@@ -219,7 +225,7 @@ export default function BindingPopover({
       withinPortal
       arrowPosition="center"
       position="left-end"
-      onClose={onClose}
+      onClose={onCloseSaveBoundCode}
     >
       <Popover.Target>
         {style === "iconButton" ? (
@@ -298,12 +304,12 @@ export default function BindingPopover({
             </Text>
             <CustomJavaScriptTextArea
               language="typescript"
-              value={value?.boundCode}
+              value={internalValue}
               variables={variables.list}
               components={components.list}
               actions={actions?.list}
               onChange={(code: string) => {
-                onChange({ ...value, boundCode: code });
+                setInternalValue(code);
                 if (selectedItem) {
                   setSelectedItem(undefined);
                 }
