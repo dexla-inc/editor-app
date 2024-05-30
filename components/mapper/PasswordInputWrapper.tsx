@@ -98,13 +98,14 @@ export const PasswordInputWrapper = ({
   const isPreviewMode = useEditorTreeStore(
     useShallow((state) => state.isPreviewMode || state.isLive),
   );
+  const _value = value ?? "";
   const requirements = fetchRequirements(testParameters);
-  const strength = getStrength(value, requirements);
+  const strength = getStrength(_value, requirements);
   const checks = requirements.map((requirement: any, index: number) => (
     <PasswordRequirement
       key={index}
       label={requirement.label}
-      meets={requirement.re.test(value)}
+      meets={requirement.re.test(_value)}
     />
   ));
   const bars = Array(4)
