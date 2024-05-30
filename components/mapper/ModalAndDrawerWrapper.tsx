@@ -23,6 +23,7 @@ export const ModalAndDrawerWrapper = ({ component, children }: Props) => {
   const isPreviewMode = useEditorTreeStore(
     useShallow((state) => state.isPreviewMode || state.isLive),
   );
+  const resetInputValues = useInputsStore((state) => state.resetInputValues);
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
 
   const { size, titleTag: tag, ...componentProps } = component.props as any;
@@ -59,7 +60,7 @@ export const ModalAndDrawerWrapper = ({ component, children }: Props) => {
       component,
       inputsComponentsList,
     ).map((c) => c.id!);
-    useInputsStore.getState().resetInputValues(inputFieldComponentIds);
+    resetInputValues(inputFieldComponentIds);
   }, []);
 
   const handleClose = () => {

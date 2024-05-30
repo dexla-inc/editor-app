@@ -233,7 +233,6 @@ export type Action = {
 export type ActionParams = {
   actionId: string;
   router: AppRouterInstance;
-  setActionsResponses: any;
   computeValue: ComputeValueProps;
   event?: any;
   entity: Component | PageResponse;
@@ -452,7 +451,7 @@ export const prepareRequestData = (
   return { url, header, body };
 };
 
-const handleError = async (props: APICallActionParams) => {
+export const handleError = async (props: APICallActionParams) => {
   const onErrorAction = props.entity.actions?.find(
     (action: Action) =>
       action.trigger === "onError" && action.sequentialTo === props.actionId,
@@ -473,7 +472,7 @@ const handleError = async (props: APICallActionParams) => {
   });
 };
 
-const handleSuccess = async (props: APICallActionParams) => {
+export const handleSuccess = async (props: APICallActionParams) => {
   const onSuccessAction = props.entity.actions?.find(
     (action: Action) =>
       action.trigger === "onSuccess" && action.sequentialTo === props.actionId,
@@ -562,11 +561,10 @@ export async function performFetch(
   }
 }
 
-const setLoadingState = (
-  componentId: string,
-  isLoading: boolean,
-  updateTreeComponentAttrs: Function,
-) => {
+const setLoadingState = (componentId: string, isLoading: boolean) => {
+  const updateTreeComponentAttrs =
+    useEditorTreeStore.getState().updateTreeComponentAttrs;
+
   updateTreeComponentAttrs({
     componentIds: [componentId],
     attrs: { props: { loading: isLoading } },
@@ -590,23 +588,12 @@ export const useRefreshApiCallAction = async (
 export const useApiCallAction = async (
   props: APICallActionParams,
 ): Promise<any> => {
-  const {
-    action,
-    actionId,
-    computeValue,
-    entity,
-    endpointResults,
-    setActionsResponses,
-  } = props;
-
-  const updateTreeComponentAttrs =
-    useEditorTreeStore.getState().updateTreeComponentAttrs;
-  const setActionsResponse = useEditorStore.getState().setActionsResponse;
+  const { action, computeValue, entity, endpointResults } = props;
 
   const projectId = useEditorTreeStore.getState().currentProjectId as string;
 
   if (entity?.props && action.showLoader) {
-    setLoadingState(entity.id!, true, updateTreeComponentAttrs);
+    setLoadingState(entity.id!, true);
   }
 
   const endpoint = endpointResults?.find((e) => e.id === action.endpoint)!;
@@ -671,45 +658,9 @@ export const useApiCallAction = async (
         );
     }
 
-    setActionsResponses(actionId, {
-      success: responseJson,
-      status: "success",
-    });
-    setActionsResponse(actionId, {
-      success: responseJson,
-      status: "success",
-      list: {
-        id: actionId,
-        name: action.name,
-        success: responseJson,
-      },
-    });
-
-    await handleSuccess(props);
-
     return responseJson;
-  } catch (error) {
-    if (error instanceof Error) {
-      setActionsResponses(actionId, {
-        error: safeJsonParse(error.message),
-        status: "error",
-      });
-      setActionsResponse(actionId, {
-        error: safeJsonParse(error.message),
-        status: "error",
-        list: {
-          id: actionId,
-          name: action.name,
-          error: error.message,
-        },
-      });
-    }
-
-    await handleError(props);
   } finally {
-    if (entity.props && action.showLoader) {
-      setLoadingState(entity.id!, false, updateTreeComponentAttrs);
-    }
+    setLoadingState(entity.id!, false);
   }
 };
 
