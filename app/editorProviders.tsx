@@ -9,6 +9,7 @@ import LogicFlowInitialModal from "@/components/logic-flow/LogicFlowInitialModal
 import { ReactNode } from "react";
 import InstantiatePropelAuthStore from "@/components/InstantiatePropelAuthStore";
 import InitialisePropelAuth from "@/components/InitialisePropelAuth";
+import QuickAccessModal from "@/components/editor/QuickAccessModal";
 export const EditorProviders = ({ children }: { children: ReactNode }) => {
   return (
     <>
@@ -18,7 +19,12 @@ export const EditorProviders = ({ children }: { children: ReactNode }) => {
         <Notifications />
         <ContextMenuProvider>
           <ReactFlowProvider>
-            <ModalsProvider modals={{ logicFlows: LogicFlowInitialModal }}>
+            <ModalsProvider
+              modals={{
+                logicFlows: LogicFlowInitialModal,
+                quickAccess: QuickAccessModal,
+              }}
+            >
               {children}
             </ModalsProvider>
           </ReactFlowProvider>

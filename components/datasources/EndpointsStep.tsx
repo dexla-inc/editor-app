@@ -29,6 +29,7 @@ interface AuthenticationStepParams extends DataSourceStepperWithoutNextProps {
   userEndpointLabel: string | null;
   expiryProperty: string | null;
   loginRequestBody: RequestBody[] | undefined;
+  closeModal: any;
 }
 
 export default function EndpointsStep({
@@ -44,6 +45,7 @@ export default function EndpointsStep({
   refreshToken,
   expiryProperty,
   loginRequestBody,
+  closeModal,
 }: AuthenticationStepParams) {
   const { id: projectId } = useParams<{ id: string }>();
 
@@ -57,6 +59,7 @@ export default function EndpointsStep({
         stopLoading={stopLoading}
         isLoading={isLoading}
         mb="lg"
+        closeModal={closeModal}
       />
       <InformationAlert
         title="Set Up Complete"
@@ -206,6 +209,7 @@ export default function EndpointsStep({
                 startLoading={startLoading}
                 stopLoading={stopLoading}
                 isLoading={isLoading}
+                closeModal={closeModal}
               />
             </>
           )}
@@ -221,10 +225,16 @@ export const BackAndEndpointsButtonGroup = ({
   startLoading,
   stopLoading,
   isLoading,
+  closeModal,
   ...props
 }: Pick<
   AuthenticationStepParams,
-  "dataSource" | "prevStep" | "startLoading" | "stopLoading" | "isLoading"
+  | "dataSource"
+  | "prevStep"
+  | "startLoading"
+  | "stopLoading"
+  | "isLoading"
+  | "closeModal"
 > & { projectId: string } & GroupProps) => {
   return (
     <Group position="apart" {...props}>
@@ -238,11 +248,13 @@ export const BackAndEndpointsButtonGroup = ({
           }
         }}
       ></BackButton>
+
       <EndpointsButton
         projectId={projectId}
         startLoading={startLoading}
         stopLoading={stopLoading}
         isLoading={isLoading}
+        closeModal={closeModal}
       ></EndpointsButton>
     </Group>
   );

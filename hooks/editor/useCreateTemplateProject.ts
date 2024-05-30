@@ -2,8 +2,7 @@ import { createProject } from "@/requests/projects/mutations";
 import { useProjectListQuery } from "./reactQuery/useProjectListQuery";
 import { useEffect } from "react";
 import { useAppStore } from "@/stores/app";
-import { usePropelAuthStore } from "@/stores/propelAuth";
-import { useAuthInfo } from "@propelauth/react";
+import { usePropelAuth } from "@/hooks/editor/usePropelAuth";
 
 export const useCreateTemplateProject = (orgId: string) => {
   const startLoading = useAppStore((state) => state.startLoading);
@@ -15,7 +14,7 @@ export const useCreateTemplateProject = (orgId: string) => {
     invalidate,
   } = useProjectListQuery(orgId);
 
-  const auth = useAuthInfo();
+  const { refreshAuth } = usePropelAuth();
 
   useEffect(() => {
     if (isFetched && projectsQuery?.results?.length === 0) {
@@ -39,7 +38,7 @@ export const useCreateTemplateProject = (orgId: string) => {
             companyId: orgId,
           });
 
-          auth.refreshAuthInfo();
+          refreshAuth();
 
           invalidate();
         } catch (error: any) {

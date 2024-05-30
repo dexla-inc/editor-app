@@ -1,3 +1,4 @@
+import { isDarkTheme } from "@/utils/branding";
 import { LARGE_ICON_SIZE } from "@/utils/config";
 import {
   Alert,
@@ -56,7 +57,7 @@ export function InformationAlert({
   return (
     <BaseAlert
       icon={<IconInfoCircle size={LARGE_ICON_SIZE} />}
-      color="indigo"
+      color={isDarkTheme ? "gray" : "blue"}
       title={title}
       text={text}
       size={size}
