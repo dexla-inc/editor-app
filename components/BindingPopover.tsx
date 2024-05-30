@@ -55,7 +55,7 @@ export default function BindingPopover({
   style = "iconButton",
   isPageAction,
 }: Props) {
-  const [internalValue, setInternalValue] = useState(value.boundCode);
+  const [internalValue, setInternalValue] = useState(value?.boundCode);
   const [tab, setTab] = useState<BindingTab>("components");
   const [filterKeyword, setFilterKeyword] = useState<string>("");
   const selectedComponentId = useEditorTreeStore(
