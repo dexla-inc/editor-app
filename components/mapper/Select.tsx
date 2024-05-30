@@ -86,7 +86,14 @@ const SelectComponent = forwardRef(
       data = component.onLoad?.data ?? [];
     }
 
-    const rootStyleProps = ["display", "width", "minHeight", "minWidth"];
+    const rootStyleProps = [
+      "display",
+      "width",
+      "minHeight",
+      "minWidth",
+      "maxWidth",
+      "maxHeight",
+    ];
     const wrapperStyleProps = [
       "margin",
       "marginBottom",
