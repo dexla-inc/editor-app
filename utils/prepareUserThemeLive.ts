@@ -40,7 +40,9 @@ export const prepareUserThemeLive = (projectBranding: ThemeResponse) => {
             defaultTheme.fn.lighten(hex, 0.7),
             defaultTheme.fn.lighten(hex, 0.6),
             defaultTheme.fn.lighten(hex, 0.5),
-            defaultTheme.fn.lighten(hex, 0.4),
+            color.hex.startsWith("#000000")
+              ? "#323232"
+              : defaultTheme.fn.lighten(hex, 0.4), // Custom hover for black
             color.hex,
             color.hex.startsWith("#FFFFFF")
               ? "#F5F8F8"

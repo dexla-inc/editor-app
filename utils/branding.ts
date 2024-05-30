@@ -415,7 +415,8 @@ export const getColorValue = (theme: MantineThemeExtended, value?: string) => {
 
 const getHoverColor = (value: string) => {
   let [color, opacity] = value.split(".");
-  opacity = opacity ? `${parseInt(opacity) + 1}` : "";
+  const operator = color === "Black" ? -1 : 1;
+  opacity = opacity ? `${parseInt(opacity) + operator}` : "";
   return `${color}.${opacity}`;
 };
 
