@@ -9,12 +9,14 @@ import { usePageQuery } from "@/hooks/editor/reactQuery/usePageQuery";
 
 interface EndpointsButtonProps extends LoadingStore {
   projectId: string;
+  closeModal: any;
 }
 
 export default function EndpointsButton({
   isLoading,
   startLoading,
   projectId,
+  closeModal,
 }: EndpointsButtonProps) {
   const router = useRouter();
   const { data: pageListQuery } = usePageListQuery(projectId);
@@ -35,7 +37,7 @@ export default function EndpointsButton({
 
   return (
     <Button
-      onClick={() => goToEditor(projectId)}
+      onClick={closeModal ? closeModal : () => goToEditor(projectId)}
       loading={isLoading}
       disabled={isLoading}
       rightIcon={<IconArrowUpRight size={ICON_SIZE} />}

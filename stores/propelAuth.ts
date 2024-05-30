@@ -1,4 +1,5 @@
 import { OrgMemberInfo, User, WithAuthInfoProps } from "@propelauth/react";
+import { UseAuthInfoProps } from "@propelauth/react/dist/types/hooks/useAuthInfo";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -10,10 +11,9 @@ type AuthState = {
   activeCompanyId: string;
   activeCompany: OrgMemberInfo;
   userPermissions: string[];
-  authInfo: WithAuthInfoProps;
   setActiveCompany: (companyId: string) => void;
   initializeAuth: (authInfo: WithAuthInfoProps) => Promise<void>;
-  checkHasAccess: (projectId: string) => boolean;
+  checkHasAccess: (authInfo: UseAuthInfoProps, projectId: string) => boolean;
   reset: () => void;
 };
 
@@ -53,7 +53,6 @@ export const usePropelAuthStore = create<AuthState>()(
           companies[0];
 
         set({
-          authInfo,
           accessToken: authInfo?.accessToken || "",
           user: authInfo?.user || ({} as User),
           companies: companies,
@@ -64,8 +63,8 @@ export const usePropelAuthStore = create<AuthState>()(
           userPermissions: activeCompany?.userPermissions || [],
         });
       },
-      checkHasAccess: (projectId: string) => {
-        const { authInfo, activeCompanyId } = get();
+      checkHasAccess: (authInfo: UseAuthInfoProps, projectId: string) => {
+        const { activeCompanyId } = get();
         const companies = authInfo?.orgHelper?.getOrgs() || [];
 
         const activeCompany =

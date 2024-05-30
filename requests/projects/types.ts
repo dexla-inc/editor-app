@@ -16,6 +16,7 @@ export interface ProjectParams extends ProjectUpdateParams {
     id: string;
     type: AppTypes;
   };
+  metadata?: Record<string, any>;
 }
 
 export type ProjectUpdateParams = {
@@ -24,7 +25,6 @@ export type ProjectUpdateParams = {
   domain?: string;
   subDomain?: string;
   customCode?: string;
-  redirectSlug?: string;
 };
 
 export type ProjectResponse = {
@@ -48,12 +48,11 @@ export type ProjectResponse = {
   customCode?: string;
   faviconUrl?: string;
   branding: ThemeResponse;
-  // redirectSlug is obsolete
-  redirectSlug?: string;
   redirects?: {
     signInPageId?: string;
     notFoundPageId?: string;
   };
+  metadata?: Record<string, any>;
 };
 
 export type ProjectListResponse = {

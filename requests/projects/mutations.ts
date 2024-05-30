@@ -1,7 +1,7 @@
 import { ProjectParams, ProjectResponse } from "@/requests/projects/types";
 import { PatchParams } from "@/requests/types";
 import { usePropelAuthStore } from "@/stores/propelAuth";
-import { del, patch, post } from "@/utils/api";
+import { del, get, patch, post } from "@/utils/api";
 import { buildQueryString } from "@/types/dashboardTypes";
 import { evictCache } from "@/requests/cache/queries-noauth";
 
@@ -61,6 +61,16 @@ export const deleteProject = async (id: string) => {
 
   const cacheTag = getCacheTag(id);
   await evictCache(cacheTag);
+
+  return response;
+};
+
+export const getProject = async (
+  projectIdOrDomain: string,
+  branding: boolean,
+) => {
+  const url = `/projects/${projectIdOrDomain}?branding=${branding}`;
+  const response = (await get<ProjectResponse>(url, {})) as ProjectResponse;
 
   return response;
 };

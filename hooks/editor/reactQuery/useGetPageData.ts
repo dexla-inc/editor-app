@@ -5,6 +5,9 @@ import { useUserConfigStore } from "@/stores/userConfig";
 import { cloneObject, emptyEditorTree, safeJsonParse } from "@/utils/common";
 import { decodeSchema } from "@/utils/compression";
 import { useQuery } from "@tanstack/react-query";
+import { useProjectQuery } from "./useProjectQuery";
+import { useQuickAccess } from "../useQuickAccess";
+import { useEffect } from "react";
 
 type getPageDataParams = {
   signal: AbortSignal | undefined;
@@ -28,6 +31,8 @@ export const useGetPageData = ({ projectId, pageId }: Props) => {
     setIsLoading: state.setIsLoading,
   }));
 
+  const { openModal } = useQuickAccess({ projectId });
+
   const setEditorTree = useEditorTreeStore((state) => state.setTree);
 
   const { pageCancelled, setPageCancelled } = useUserConfigStore((state) => ({
@@ -39,6 +44,14 @@ export const useGetPageData = ({ projectId, pageId }: Props) => {
     (state) => state.pageLoadTimestamp,
   );
   const setPageLoadTree = useEditorTreeStore((state) => state.setPageLoadTree);
+
+  const { data: project } = useProjectQuery(projectId);
+
+  useEffect(() => {
+    if (project?.metadata?.showOnboarding) {
+      openModal();
+    }
+  }, [project]);
 
   const getPageData = async ({ signal }: getPageDataParams) => {
     startLoading({

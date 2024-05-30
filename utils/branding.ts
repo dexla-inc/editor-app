@@ -10,7 +10,7 @@ import {
 } from "@mantine/core";
 import { CSSProperties } from "react";
 
-const isDarkTheme = useUserConfigStore.getState().isDarkTheme;
+export const isDarkTheme = useUserConfigStore.getState().isDarkTheme;
 
 // Nestable styles for the page structure items
 const nestable = {
@@ -199,7 +199,9 @@ const FLEX_HOVER = isDarkTheme ? theme.colors.dark[4] : HOVERED;
 const BORDER_COLOR = isDarkTheme ? theme.colors.dark[4] : theme.colors.gray[3];
 const BUTTON_HOVER = isDarkTheme ? theme.colors.dark[6] : HOVERED;
 const BORDER = isDarkTheme ? THIN_DARK_OUTLINE : THIN_GRAY_OUTLINE;
-const BINDER_BACKGROUND = isDarkTheme ? theme.colors.dark[5] : undefined;
+const BINDER_BACKGROUND = isDarkTheme
+  ? theme.colors.dark[5]
+  : theme.colors.gray[1];
 const LOGICFLOW_BACKGROUND = isDarkTheme ? undefined : GRAY_WHITE_COLOR;
 const DEFAULT_TEXTCOLOR = isDarkTheme ? "white" : DARK_COLOR;
 const DISABLED_HOVER = { "&:hover": { backgroundColor: "none" } };

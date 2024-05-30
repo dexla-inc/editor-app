@@ -5,13 +5,13 @@ import { useVariableStore } from "@/stores/variables";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useDataSources } from "@/hooks/editor/reactQuery/useDataSources";
 import { useVariableListQuery } from "@/hooks/editor/reactQuery/useVariableListQuery";
-import { usePropelAuthStore } from "@/stores/propelAuth";
 import { LoadingOverlay } from "@mantine/core";
 import UnauthorisedPage from "@/components/UnauthorisedPage";
 import { PageProps } from "@/types/app";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { usePageQuery } from "@/hooks/editor/reactQuery/usePageQuery";
 import useEditorHotkeysUndoRedo from "@/hooks/editor/useEditorHotkeysUndoRedo";
+import useCheckAccess from "@/hooks/editor/useCheckAccess";
 
 const PageEditor = ({ params: { id: projectId, page: pageId } }: PageProps) => {
   const initializeVariableList = useVariableStore(
@@ -21,24 +21,12 @@ const PageEditor = ({ params: { id: projectId, page: pageId } }: PageProps) => {
     (state) => state.setApiAuthConfig,
   );
 
-  const [status, setStatus] = useState<
-    "loading" | "unauthorised" | "authorised"
-  >("loading");
+  const status = useCheckAccess(projectId);
 
   useEditorHotkeysUndoRedo();
 
   const { data: datasources } = useDataSources(projectId);
   const { data: variables } = useVariableListQuery(projectId);
-  const checkHasAccess = usePropelAuthStore((state) => state.checkHasAccess);
-
-  useEffect(() => {
-    const hasAccess = checkHasAccess(projectId);
-    if (hasAccess) {
-      setStatus("authorised");
-    } else {
-      setStatus("unauthorised");
-    }
-  }, [projectId, checkHasAccess]);
 
   useEffect(() => {
     if (status === "authorised" && variables)

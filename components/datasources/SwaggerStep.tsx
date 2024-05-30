@@ -10,7 +10,14 @@ import {
   areValuesEqual,
   DataSourceStepperWithoutPreviousProps,
 } from "@/types/dashboardTypes";
-import { Anchor, Divider, Flex, Group, Stack } from "@mantine/core";
+import {
+  Anchor,
+  Divider,
+  Flex,
+  Group,
+  Stack,
+  useMantineTheme,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
 import Image from "next/image";
 import { useParams } from "next/navigation";
@@ -28,6 +35,7 @@ export default function SwaggerStep({
   setEndpoints: (endpoints: Endpoint[]) => void;
 }) {
   const { id: projectId } = useParams<{ id: string }>();
+  const theme = useMantineTheme();
 
   const form = useForm<DataSourceParams>({
     initialValues: {
@@ -119,7 +127,9 @@ export default function SwaggerStep({
 
         <Flex align="center" gap="md" justify="space-between">
           <Image
-            src="/swagger_logo.svg"
+            src={`/swagger_logo${
+              theme.colorScheme === "dark" ? "_white" : ""
+            }.svg`}
             alt="Swagger Logo"
             width={200}
             height={80}
