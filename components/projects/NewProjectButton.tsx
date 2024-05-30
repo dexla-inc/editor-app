@@ -52,7 +52,7 @@ export default function IconTitleDescriptionButton({
     <Tooltip label={tooltip} disabled={tooltip === undefined}>
       <UnstyledButton
         {...props}
-        disabled
+        {...(disabled && { disabled })}
         sx={(theme) => ({
           padding: theme.spacing.md,
           borderRadius: theme.radius.sm,

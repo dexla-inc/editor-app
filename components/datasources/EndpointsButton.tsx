@@ -1,20 +1,20 @@
-import { useEditorStore } from "@/stores/editor";
 import { ICON_SIZE } from "@/utils/config";
 import { LoadingStore } from "@/types/dashboardTypes";
 import { Button } from "@mantine/core";
 import { IconArrowUpRight } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 import { usePageListQuery } from "@/hooks/editor/reactQuery/usePageListQuery";
-import { usePageQuery } from "@/hooks/editor/reactQuery/usePageQuery";
 
 interface EndpointsButtonProps extends LoadingStore {
   projectId: string;
+  closeModal?: any;
 }
 
 export default function EndpointsButton({
   isLoading,
   startLoading,
   projectId,
+  closeModal,
 }: EndpointsButtonProps) {
   const router = useRouter();
   const { data: pageListQuery } = usePageListQuery(projectId);
@@ -35,7 +35,7 @@ export default function EndpointsButton({
 
   return (
     <Button
-      onClick={() => goToEditor(projectId)}
+      onClick={closeModal ? closeModal : () => goToEditor(projectId)}
       loading={isLoading}
       disabled={isLoading}
       rightIcon={<IconArrowUpRight size={ICON_SIZE} />}

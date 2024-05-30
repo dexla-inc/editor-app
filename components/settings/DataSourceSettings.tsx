@@ -56,10 +56,7 @@ export default function DataSourceSettings({ projectId }: Props) {
       <Stack spacing="xl">
         <Title order={2}>Data Source Settings</Title>
         <Flex>
-          <Link
-            href="/projects/[id]/settings/datasources/new"
-            as={`/projects/${projectId}/settings/datasources/new`}
-          >
+          <Link href={`/projects/${projectId}/settings/datasources/new`}>
             <IconTitleDescriptionButton
               icon="IconSparkles"
               title="Create new data source"

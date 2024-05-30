@@ -33,6 +33,7 @@ import PageSelector from "./PageSelector";
 import { Navbar } from "@/components/navbar/Navbar";
 import { Aside } from "@/components/aside/Aside";
 import { memo } from "react";
+import QuickAccessButton from "@/components/editor/QuickAccessButton";
 
 const HeaderComponent = ({ projectId }: { projectId: string }) => {
   const isDexlaAdmin = usePropelAuthStore((state) => state.isDexlaAdmin);
@@ -44,6 +45,7 @@ const HeaderComponent = ({ projectId }: { projectId: string }) => {
         <Group noWrap position="right" spacing="xs">
           {/* <LanguageSelector /> */}
           <PageSelector />
+          <QuickAccessButton projectId={projectId} />
           {isDexlaAdmin && <AddGridButton />}
           {isDexlaAdmin && <SaveTemplateButton />}
           {isDexlaAdmin && <AIChatHistoryButton projectId={projectId} />}

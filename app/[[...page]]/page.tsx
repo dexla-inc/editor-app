@@ -25,7 +25,7 @@ export async function generateMetadata({ params: { page } }: PageProps) {
     title: deploymentPage.title,
     description: deploymentPage.title,
     icons: {
-      icon: deploymentPage.project.faviconUrl ?? "/favicon.ico",
+      icon: deploymentPage.project?.faviconUrl ?? "/favicon.ico",
     },
   };
 }

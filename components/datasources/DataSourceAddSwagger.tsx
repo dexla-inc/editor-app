@@ -4,7 +4,11 @@ import { StepperStepProps } from "@/types/dashboardTypes";
 import { Container, Stack, Title } from "@mantine/core";
 import { useState } from "react";
 
-export default function DataSourceAddSwagger() {
+type Props = {
+  closeModal?: any;
+};
+
+export default function DataSourceAddSwagger({ closeModal }: Props) {
   const [activeStep, setActiveStep] = useState(0);
 
   const nextStep = () =>
@@ -34,7 +38,6 @@ export default function DataSourceAddSwagger() {
   return (
     <Container py="xl">
       <Stack spacing="xl">
-        <Title order={2}>Data Source Settings</Title>
         <DexlaStepper
           activeStep={activeStep}
           setActiveStep={setActiveStep}
@@ -45,6 +48,7 @@ export default function DataSourceAddSwagger() {
           setActiveStep={setActiveStep}
           nextStep={nextStep}
           prevStep={prevStep}
+          closeModal={closeModal}
         ></StepperContent>
       </Stack>
     </Container>

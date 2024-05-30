@@ -1,8 +1,19 @@
-import { Title, Text, Button, Flex, Stack } from "@mantine/core";
+import { Title, Text, Button, Flex, Stack, Group } from "@mantine/core";
 import { useRouter } from "next/navigation";
+import { Icon } from "./Icon";
+import { useAppStore } from "@/stores/app";
 
 export default function UnauthorisedPage() {
   const router = useRouter();
+  const refreshPage = () => window.location.reload();
+  const stopLoading = useAppStore((state) => state.stopLoading);
+
+  stopLoading({
+    id: "go-to-editor",
+    title: "Loading App",
+    message: "Unauthorised access",
+    isError: true,
+  });
 
   return (
     <Flex
@@ -21,13 +32,25 @@ export default function UnauthorisedPage() {
           Please contact your admin for access.
         </Text>
       </Stack>
-      <Button
-        size="md"
-        compact={false}
-        onClick={() => router.push("/projects")}
-      >
-        Back to home
-      </Button>
+      <Group>
+        <Button
+          size="md"
+          compact={false}
+          onClick={() => router.push("/projects")}
+          leftIcon={<Icon name="IconHome" />}
+        >
+          Back home
+        </Button>
+        <Button
+          size="md"
+          variant="default"
+          compact={false}
+          onClick={refreshPage}
+          leftIcon={<Icon name="IconRefresh" />}
+        >
+          Refresh
+        </Button>
+      </Group>
     </Flex>
   );
 }

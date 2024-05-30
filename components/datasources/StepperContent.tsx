@@ -21,13 +21,16 @@ import { useState } from "react";
 interface StepperContentProps
   extends StepperState,
     NextStepperClickEvent,
-    PreviousStepperClickEvent {}
+    PreviousStepperClickEvent {
+  closeModal: any;
+}
 
 export default function StepperContent({
   activeStep,
   setActiveStep,
   prevStep,
   nextStep,
+  closeModal,
 }: StepperContentProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const startLoading = useAppStore((state) => state.startLoading);
@@ -138,6 +141,7 @@ export default function StepperContent({
           userEndpointLabel={userEndpointLabel}
           expiryProperty={expiryProperty}
           loginRequestBody={loginRequestBody}
+          closeModal={closeModal}
         ></EndpointsStep>
       )}
     </Stack>

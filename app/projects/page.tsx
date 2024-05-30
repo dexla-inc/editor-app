@@ -27,6 +27,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useCreateTemplateProject } from "@/hooks/editor/useCreateTemplateProject";
+import { usePropelAuth } from "@/hooks/editor/usePropelAuth";
+import { invalidateQueries } from "@/hooks/editor/reactQuery/useProjectQuery";
 
 export default function Page() {
   const router = useRouter();
@@ -68,6 +70,8 @@ export default function Page() {
   const [filteredSharedProjects, setFilteredSharedProjects] =
     useState(sharedProjects);
 
+  const { refreshAuth } = usePropelAuth();
+
   const createEmptyProject = async () => {
     startLoading({
       id: "go-to-editor",
@@ -77,10 +81,13 @@ export default function Page() {
 
     setPageCancelled(true);
     const project = await createProject({ companyId: company.orgId }, true);
+    invalidateQueries(["project"]);
     invalidate();
+
     const url = `/projects/${project.id}/editor/${project.homePageId}`;
 
     router.push(url);
+    refreshAuth();
   };
 
   useEffect(() => {
