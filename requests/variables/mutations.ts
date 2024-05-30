@@ -50,6 +50,6 @@ export const deleteVariable = async (projectId: string, id: string) => {
   deleteVariableFromStore(id);
   const response = (await del<SuccessResponse>(url)) as SuccessResponse;
 
-  await evictCache(url);
+  await evictCache(cacheTag);
   return response;
 };
