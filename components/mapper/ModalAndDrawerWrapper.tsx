@@ -10,6 +10,7 @@ import {
 } from "@/utils/editor";
 import { structureMapper } from "@/utils/componentMapper";
 import { useInputsStore } from "@/stores/inputs";
+import { useEffect } from "react";
 
 type Props = {
   component: ComponentTree & Component;
@@ -44,7 +45,7 @@ export const ModalAndDrawerWrapper = ({ component, children }: Props) => {
         size,
       };
 
-  const handleClose = () => {
+  useEffect(() => {
     const inputsComponentsList = Object.entries(structureMapper).reduce(
       (acc, [key, value]) => {
         if (value.category === "Input") {
@@ -58,7 +59,10 @@ export const ModalAndDrawerWrapper = ({ component, children }: Props) => {
       component,
       inputsComponentsList,
     ).map((c) => c.id!);
+    useInputsStore.getState().resetInputValues(inputFieldComponentIds);
+  }, []);
 
+  const handleClose = () => {
     const isVisibleBound = onLoad.isVisible.dataType === "boundCode";
     const resetVariable = useVariableStore.getState().resetVariable;
     if (isVisibleBound) {
@@ -70,7 +74,6 @@ export const ModalAndDrawerWrapper = ({ component, children }: Props) => {
         resetVariable(variable);
       });
     }
-    useInputsStore.getState().resetInputValues(inputFieldComponentIds);
   };
   return (
     <>
