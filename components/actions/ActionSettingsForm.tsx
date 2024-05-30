@@ -42,7 +42,7 @@ export const ActionSettingsForm = ({
     if (form.isTouched() && form.isDirty()) {
       timeout = setTimeout(async () => {
         await onSubmit(form.values);
-      }, 200);
+      }, 500);
     }
 
     return () => clearTimeout(timeout);
