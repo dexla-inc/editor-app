@@ -141,6 +141,16 @@ export const rollbackPageState = async (
   return response;
 };
 
+export const rollbackDeployment = async (
+  projectId: string,
+  pageId: string,
+  pageDeploymentId: string,
+) => {
+  const url = `/projects/${projectId}/pages/${pageId}/state/history?type=deployment&id=${pageDeploymentId}`;
+  const response = (await post<any>(url, {})) as PageStateResponse;
+  return response;
+};
+
 export const getPageList = async (projectId: string, params?: PageParams) => {
   let url = `/projects/${projectId}/pages`;
   url += buildQueryString({ ...params });
