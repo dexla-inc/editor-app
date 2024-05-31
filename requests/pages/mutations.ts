@@ -131,22 +131,13 @@ export const deletePage = async (id: string, pageId: string) => {
   return response;
 };
 
-export const rollbackPageState = async (
+export const rollbackState = async (
   projectId: string,
   pageId: string,
-  pageHistoryId: string,
+  type: "deployment" | "page",
+  id: string,
 ) => {
-  const url = `/projects/${projectId}/pages/${pageId}/state/history/${pageHistoryId}`;
-  const response = (await post<any>(url, {})) as PageStateResponse;
-  return response;
-};
-
-export const rollbackDeployment = async (
-  projectId: string,
-  pageId: string,
-  pageDeploymentId: string,
-) => {
-  const url = `/projects/${projectId}/pages/${pageId}/state/history?type=deployment&id=${pageDeploymentId}`;
+  const url = `/projects/${projectId}/pages/${pageId}/state/history?type=${type}&id=${id}`;
   const response = (await post<any>(url, {})) as PageStateResponse;
   return response;
 };

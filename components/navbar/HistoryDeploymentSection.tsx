@@ -6,11 +6,8 @@ import { useDeploymentPageHistory } from "@/hooks/editor/reactQuery/useDeploymen
 import { LARGE_ICON_SIZE } from "@/utils/config";
 import { Icon } from "../Icon";
 import { HistoryDeploymentItem } from "./HistoryDeploymentItem";
-import {
-  rollbackDeployment,
-  rollbackPageState,
-} from "@/requests/pages/mutations";
 import { decodeSchema } from "@/utils/compression";
+import { rollbackState } from "@/requests/pages/mutations";
 
 export const HistoryDeploymentSection = ({}) => {
   const { id: projectId, page: pageId } = useParams<{
@@ -33,7 +30,7 @@ export const HistoryDeploymentSection = ({}) => {
   const handleRollbackPageState = useCallback(
     async (id: string) => {
       try {
-        const result = await rollbackDeployment(projectId, pageId, id);
+        const result = await rollbackState(projectId, pageId, "deployment", id);
         const decodedSchema = decodeSchema(result.state);
         const parsedTree = JSON.parse(decodedSchema);
 

@@ -5,7 +5,7 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 import { LARGE_ICON_SIZE } from "@/utils/config";
 import { useCallback, useState } from "react";
 import { Icon } from "../Icon";
-import { rollbackPageState } from "@/requests/pages/mutations";
+import { rollbackState } from "@/requests/pages/mutations";
 import { decodeSchema } from "@/utils/compression";
 import { PageHistoryItem } from "./PageHistoryItem";
 
@@ -30,7 +30,7 @@ export const HistoryPageSection = ({}: Props) => {
   const handleRollbackPageState = useCallback(
     async (id: string) => {
       try {
-        const result = await rollbackPageState(projectId, pageId, id);
+        const result = await rollbackState(projectId, pageId, "page", id);
         const decodedSchema = decodeSchema(result.state);
         const parsedTree = JSON.parse(decodedSchema);
 
