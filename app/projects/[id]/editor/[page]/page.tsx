@@ -12,6 +12,7 @@ import { useEffect } from "react";
 import { usePageQuery } from "@/hooks/editor/reactQuery/usePageQuery";
 import useEditorHotkeysUndoRedo from "@/hooks/editor/useEditorHotkeysUndoRedo";
 import useCheckAccess from "@/hooks/editor/useCheckAccess";
+import { usePropelAuthStore } from "@/stores/propelAuth";
 
 const PageEditor = ({ params: { id: projectId, page: pageId } }: PageProps) => {
   const initializeVariableList = useVariableStore(
@@ -22,6 +23,10 @@ const PageEditor = ({ params: { id: projectId, page: pageId } }: PageProps) => {
   );
 
   const status = useCheckAccess(projectId);
+
+  const userAssignedRole = usePropelAuthStore(
+    (state) => state.activeCompany.userAssignedRole,
+  );
 
   useEditorHotkeysUndoRedo();
 
@@ -43,7 +48,7 @@ const PageEditor = ({ params: { id: projectId, page: pageId } }: PageProps) => {
 
   const { data: editorPage } = usePageQuery(projectId, pageId);
 
-  return status === "authorised" ? (
+  return status === "authorised" || userAssignedRole === "DEXLA_ADMIN" ? (
     <Editor page={editorPage!} projectId={projectId} pageId={pageId} />
   ) : status === "unauthorised" ? (
     <UnauthorisedPage />
