@@ -20,7 +20,7 @@ const LanguageSelector = () => {
       withinPortal
       size="xs"
       data={[
-        { value: "default", label: "United Kingdom", group: "Popular" },
+        { value: "default", label: "English", group: "Popular" },
         { value: "fr-FR", label: "French", group: "Popular" },
       ]}
       sx={{
