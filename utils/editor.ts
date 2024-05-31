@@ -400,7 +400,6 @@ const translatableFieldsKeys = [
   "placeholder",
   "data",
   "tooltip",
-  "value",
 ];
 
 const styleFieldsKeys = [
@@ -432,7 +431,7 @@ export const updateTreeComponentAttrs = (
   state: string = "default",
 ) => {
   const language = useEditorTreeStore.getState().language;
-  const propsToTranslate = merge({}, attrs.props, attrs.onLoad);
+  const propsToTranslate = merge({}, attrs.props, attrs.onLoad ?? {});
   const translatableProps = pickBy(propsToTranslate, pickTranslatableFields);
   const styleProps = pickBy(attrs.props, pickStyleFields);
   // properties that are not merging with states or languages
@@ -469,7 +468,9 @@ export const updateTreeComponentAttrs = (
 
   // attributes we want to deep merge
   merge(component, { props: alwaysDefaultProps });
-  merge(component, { onLoad: alwaysDefaultOnLoadAttrs });
+  merge(component, {
+    onLoad: alwaysDefaultOnLoadAttrs,
+  });
   merge(component, { states: attrs.states });
   // attribute we want to overwrite, in this case, the ones that are not listed above
   Object.entries(omit(attrs, ["props", "onLoad", "states"])).forEach(

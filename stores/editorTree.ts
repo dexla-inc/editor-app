@@ -503,6 +503,7 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
           partialize: (state) => {
             return {
               isPreviewMode: state.isPreviewMode,
+              language: state.language,
             };
           },
         },
