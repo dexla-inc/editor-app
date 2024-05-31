@@ -1,10 +1,19 @@
-import { Stack, Tabs, Tooltip, useMantineTheme } from "@mantine/core";
+import {
+  Anchor,
+  Button,
+  Group,
+  Stack,
+  Tabs,
+  Tooltip,
+  useMantineTheme,
+} from "@mantine/core";
 import { ContextModalProps } from "@mantine/modals";
 import { GetServerSidePropsContext } from "next";
 import { useState } from "react";
 import { QuickAccessActionButton } from "./QuickAccessActionButton";
 import DataSourceAddSwagger from "../datasources/DataSourceAddSwagger";
 import { InformationAlert } from "../Alerts";
+import Link from "next/link";
 
 export const getServerSideProps = async ({
   query,
@@ -56,6 +65,11 @@ export default function QuickAccessModal({ context, id }: ContextModalProps) {
               </Stack>
             </Tabs.Panel>
           </Tabs>
+          <Group position="left">
+            <Anchor onClick={() => context.closeModal(id)} size="sm">
+              Skip, I will start designing first.
+            </Anchor>
+          </Group>
         </>
       ) : (
         filter === "swagger" && (
