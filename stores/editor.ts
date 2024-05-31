@@ -92,7 +92,7 @@ export const useEditorStore = create<EditorState>()(
       collapsedItemsCount: 0,
       pages: [],
       selectedComponentId: "content-wrapper",
-      language: "default",
+      // language: "default",
       projectId: "",
       actionsResponse: {},
       setCopiedProperties: (copiedProperties) =>
@@ -142,7 +142,7 @@ export const useEditorStore = create<EditorState>()(
         ),
       setCopiedAction: (copiedAction) =>
         set({ copiedAction }, false, "editor/setCopiedAction"),
-      setLanguage: (language) => set({ language }, false, "editor/setLanguage"),
+      // setLanguage: (language) => set({ language }, false, "editor/setLanguage"),
       setIsWindowError: (isWindowError) =>
         set({ isWindowError }, false, "editor/setIsWindowError"),
       setIsResizing: (isResizing) =>
