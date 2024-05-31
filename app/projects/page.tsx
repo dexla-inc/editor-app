@@ -29,6 +29,13 @@ import { useEffect, useState } from "react";
 import { useCreateTemplateProject } from "@/hooks/editor/useCreateTemplateProject";
 import { usePropelAuth } from "@/hooks/editor/usePropelAuth";
 import { invalidateQueries } from "@/hooks/editor/reactQuery/useProjectQuery";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Dexla - Build apps fast on Next.js",
+  description:
+    "Dexla is a low-code platform that allows you to build apps fast on Next.js. Create a new project, start from scratch or use a template.",
+};
 
 export default function Page() {
   const router = useRouter();
