@@ -3,8 +3,9 @@ import { EditorProviders } from "@/app/editorProviders";
 import { Metadata, Viewport } from "next";
 
 export const metadata: Metadata = {
-  title: "Editor",
-  description: "Dexla Editor",
+  title: "Dexla - Build apps fast on Next.js",
+  description:
+    "Dexla is a low-code platform that allows you to build apps fast on Next.js. Create a new project, start from scratch or use a template.",
   icons: {
     icon: "/favicon.ico",
   },
