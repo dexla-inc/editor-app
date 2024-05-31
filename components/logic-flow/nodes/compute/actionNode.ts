@@ -36,7 +36,7 @@ export const compute = async (node: Node, params: any) => {
     };
 
     // @ts-ignore
-    const result = await actionMapper[action].action(actionData);
+    const result = await actionMapper(action).action(actionData);
 
     return result;
   } catch (error) {

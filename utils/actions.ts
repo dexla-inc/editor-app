@@ -233,7 +233,6 @@ export type Action = {
 export type ActionParams = {
   actionId: string;
   router: AppRouterInstance;
-  setActionsResponses: any;
   computeValue: ComputeValueProps;
   event?: any;
   entity: Component | PageResponse;
@@ -459,7 +458,7 @@ const handleError = async (props: APICallActionParams) => {
   );
 
   const onErrorActionMapped =
-    onErrorAction && actionMapper[onErrorAction.action.name];
+    onErrorAction && actionMapper(onErrorAction.action.name);
 
   if (!onErrorActionMapped || !onErrorAction) {
     return;
@@ -480,7 +479,7 @@ const handleSuccess = async (props: APICallActionParams) => {
   );
 
   const onSuccessActionMapped =
-    onSuccessAction && actionMapper[onSuccessAction.action.name];
+    onSuccessAction && actionMapper(onSuccessAction.action.name);
 
   if (!onSuccessActionMapped || !onSuccessAction) {
     return;
@@ -562,11 +561,10 @@ export async function performFetch(
   }
 }
 
-const setLoadingState = (
-  componentId: string,
-  isLoading: boolean,
-  updateTreeComponentAttrs: Function,
-) => {
+const setLoadingState = (componentId: string, isLoading: boolean) => {
+  const updateTreeComponentAttrs =
+    useEditorTreeStore.getState().updateTreeComponentAttrs;
+
   updateTreeComponentAttrs({
     componentIds: [componentId],
     attrs: { props: { loading: isLoading } },
@@ -590,23 +588,12 @@ export const useRefreshApiCallAction = async (
 export const useApiCallAction = async (
   props: APICallActionParams,
 ): Promise<any> => {
-  const {
-    action,
-    actionId,
-    computeValue,
-    entity,
-    endpointResults,
-    setActionsResponses,
-  } = props;
-
-  const updateTreeComponentAttrs =
-    useEditorTreeStore.getState().updateTreeComponentAttrs;
-  const setActionsResponse = useEditorStore.getState().setActionsResponse;
+  const { action, computeValue, entity, endpointResults } = props;
 
   const projectId = useEditorTreeStore.getState().currentProjectId as string;
 
   if (entity?.props && action.showLoader) {
-    setLoadingState(entity.id!, true, updateTreeComponentAttrs);
+    setLoadingState(entity.id!, true);
   }
 
   const endpoint = endpointResults?.find((e) => e.id === action.endpoint)!;
@@ -671,45 +658,9 @@ export const useApiCallAction = async (
         );
     }
 
-    setActionsResponses(actionId, {
-      success: responseJson,
-      status: "success",
-    });
-    setActionsResponse(actionId, {
-      success: responseJson,
-      status: "success",
-      list: {
-        id: actionId,
-        name: action.name,
-        success: responseJson,
-      },
-    });
-
-    await handleSuccess(props);
-
     return responseJson;
-  } catch (error) {
-    if (error instanceof Error) {
-      setActionsResponses(actionId, {
-        error: safeJsonParse(error.message),
-        status: "error",
-      });
-      setActionsResponse(actionId, {
-        error: safeJsonParse(error.message),
-        status: "error",
-        list: {
-          id: actionId,
-          name: action.name,
-          error: error.message,
-        },
-      });
-    }
-
-    await handleError(props);
   } finally {
-    if (entity.props && action.showLoader) {
-      setLoadingState(entity.id!, false, updateTreeComponentAttrs);
-    }
+    setLoadingState(entity.id!, false);
   }
 };
 
@@ -882,81 +833,129 @@ export function showSequentialActionButton(actionName: string) {
   return ["apiCall", "changeVariable", "resetVariable"].includes(actionName);
 }
 
-export const actionMapper = {
-  alert: {
-    action: useDebugAction,
-    form: DebugActionForm,
-    defaultValues: {},
-  },
-  changeVariable: {
-    action: useChangeVariableAction,
-    form: ChangeVariableActionForm,
-    defaultValues: {},
-  },
-  resetVariable: {
-    action: useResetVariableAction,
-    form: ResetVariableActionForm,
-    defaultValues: {},
-  },
-  navigateToPage: {
-    action: useNavigationAction,
-    form: NavigationActionForm,
-    defaultValues: {
-      // runInEditMode: isPageAction ? false : true
-      runInEditMode: true,
-      queryStrings: [],
+export const actionMapper = (actionName: string) => {
+  const actions: Record<string, any> = {
+    alert: {
+      action: useDebugAction,
+      form: DebugActionForm,
+      defaultValues: {},
     },
-  },
-  refreshApiCall: {
-    action: useRefreshApiCallAction,
-    form: RefreshAPICallActionForm,
-    defaultValues: {},
-  },
-  apiCall: {
-    action: useApiCallAction,
-    form: APICallActionForm,
-    defaultValues: {
-      authConfig: useDataSourceStore.getState().apiAuthConfig,
-      showLoader: true,
-      datasources: [],
-      binds: {
-        header: {},
-        parameter: {},
-        body: {},
+    changeVariable: {
+      action: useChangeVariableAction,
+      form: ChangeVariableActionForm,
+      defaultValues: {},
+    },
+    resetVariable: {
+      action: useResetVariableAction,
+      form: ResetVariableActionForm,
+      defaultValues: {},
+    },
+    navigateToPage: {
+      action: useNavigationAction,
+      form: NavigationActionForm,
+      defaultValues: {
+        // runInEditMode: isPageAction ? false : true
+        runInEditMode: true,
+        queryStrings: [],
       },
-      authType: "authenticated",
     },
-  },
-  goToUrl: {
-    action: useGoToUrlAction,
-    form: GoToUrlForm,
-    defaultValues: {},
-  },
-  triggerLogicFlow: {
-    action: useTriggerLogicFlowAction,
-    form: TriggerLogicFlowActionForm,
-    defaultValues: {},
-  },
-  showNotification: {
-    action: useShowNotificationAction,
-    form: ShowNotificationActionForm,
-    defaultValues: {
-      color: "Primary.6",
+    refreshApiCall: {
+      action: useRefreshApiCallAction,
+      form: RefreshAPICallActionForm,
+      defaultValues: {},
     },
-  },
-  changeState: {
-    action: useChangeStateAction,
-    form: ChangeStateActionForm,
-    defaultValues: {},
-  },
-  changeLanguage: {
-    action: useChangeLanguageAction,
-    form: ChangeLanguageActionForm,
-    defaultValues: {},
-  },
-  customJavascript: {
-    action: useCustomJavascriptAction,
-    form: CustomJavascriptActionForm,
-    defaultValues: {},
-  },
+    apiCall: {
+      action: useApiCallAction,
+      form: APICallActionForm,
+      defaultValues: {
+        authConfig: useDataSourceStore.getState().apiAuthConfig,
+        showLoader: true,
+        datasources: [],
+        binds: {
+          header: {},
+          parameter: {},
+          body: {},
+        },
+        authType: "authenticated",
+      },
+    },
+    goToUrl: {
+      action: useGoToUrlAction,
+      form: GoToUrlForm,
+      defaultValues: {},
+    },
+    triggerLogicFlow: {
+      action: useTriggerLogicFlowAction,
+      form: TriggerLogicFlowActionForm,
+      defaultValues: {},
+    },
+    showNotification: {
+      action: useShowNotificationAction,
+      form: ShowNotificationActionForm,
+      defaultValues: {
+        color: "Primary.6",
+      },
+    },
+    changeState: {
+      action: useChangeStateAction,
+      form: ChangeStateActionForm,
+      defaultValues: {},
+    },
+    changeLanguage: {
+      action: useChangeLanguageAction,
+      form: ChangeLanguageActionForm,
+      defaultValues: {},
+    },
+    customJavascript: {
+      action: useCustomJavascriptAction,
+      form: CustomJavascriptActionForm,
+      defaultValues: {},
+    },
+  };
+
+  const selectedAction = actions[actionName];
+
+  const customAction = async (props: any) => {
+    try {
+      const responseJson = await selectedAction.action(props);
+
+      props.setTriggeredActionsResponses(props.actionId, {
+        success: responseJson,
+        status: "success",
+      });
+      props.setActionsResponse(props.actionId, {
+        success: responseJson,
+        status: "success",
+        list: {
+          id: props.actionId,
+          name: props.action.name,
+          success: responseJson,
+        },
+      });
+
+      // @ts-ignore
+      await handleSuccess(props);
+    } catch (error) {
+      if (error instanceof Error) {
+        props.setTriggeredActionsResponses(props.actionId, {
+          error: safeJsonParse(error.message),
+          status: "error",
+        });
+        props.setActionsResponse(props.actionId, {
+          error: safeJsonParse(error.message),
+          status: "error",
+          list: {
+            id: props.actionId,
+            name: props.action.name,
+            error: error.message,
+          },
+        });
+      }
+
+      // @ts-ignore
+      await handleError(props);
+    }
+  };
+
+  return { ...selectedAction, action: customAction };
 };
