@@ -45,7 +45,7 @@ const HeaderComponent = ({ projectId }: { projectId: string }) => {
         <Group noWrap position="right" spacing="xs">
           {/* <LanguageSelector /> */}
           <PageSelector />
-          <QuickAccessButton projectId={projectId} />
+          <QuickAccessButton id="quick-access-button" projectId={projectId} />
           {isDexlaAdmin && <AddGridButton />}
           {isDexlaAdmin && <SaveTemplateButton />}
           {isDexlaAdmin && <AIChatHistoryButton projectId={projectId} />}
