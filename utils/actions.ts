@@ -667,7 +667,7 @@ export const useApiCallAction = async (
 export const useChangeLanguageAction = ({
   action,
 }: ChangeLanguageActionParams) => {
-  const setLanguage = useEditorStore.getState().setLanguage;
+  const setLanguage = useEditorTreeStore.getState().setLanguage;
   setLanguage(action.language);
 };
 
