@@ -7,6 +7,7 @@ type BaseProps = {
   iconName: string;
   tooltip: string;
   color?: "white" | "indigo" | "teal" | "red";
+  id?: string;
 } & ActionIconProps;
 
 type ClickProps = {
@@ -27,12 +28,14 @@ export const ActionIconDefaultComponent = ({
   onClick,
   href,
   color = "white",
+  id,
   ...props
 }: Props) => {
   return (
     <Tooltip label={tooltip} withArrow>
       {href ? (
         <ActionIcon
+          id={id}
           component={Link}
           href={href}
           variant={color === "white" ? "default" : "light"}
@@ -43,6 +46,7 @@ export const ActionIconDefaultComponent = ({
         </ActionIcon>
       ) : (
         <ActionIcon
+          id={id}
           onClick={onClick}
           variant={color === "white" ? "default" : "light"}
           color={color}
