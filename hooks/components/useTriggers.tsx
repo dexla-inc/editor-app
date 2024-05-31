@@ -1,12 +1,6 @@
 import { PageResponse } from "@/requests/pages/types";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import {
-  Action,
-  ActionTrigger,
-  actionMapper,
-  handleError,
-  handleSuccess,
-} from "@/utils/actions";
+import { Action, ActionTrigger, actionMapper } from "@/utils/actions";
 import { Component } from "@/utils/editor";
 import { ChangeEvent, useMemo } from "react";
 import { useDataBinding } from "@/hooks/data/useDataBinding";
@@ -15,7 +9,6 @@ import { ComputeValueProps } from "@/types/dataBinding";
 import { useEndpoints } from "../editor/reactQuery/useDataSourcesEndpoints";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { useEditorStore } from "@/stores/editor";
-import { safeJsonParse } from "@/utils/common";
 
 const nonDefaultActionTriggers = ["onSuccess", "onError"];
 
@@ -42,9 +35,9 @@ export const useTriggers = ({
     useFlowsQuery(currentProjectId);
   const setActionsResponse = useEditorStore.getState().setActionsResponse;
 
-  const localActionResponses: Record<string, any> = {};
-  const setLocalActionsResponses = (actionId: string, response: any) => {
-    localActionResponses[actionId] = response;
+  const triggeredActionResponses: Record<string, any> = {};
+  const setTriggeredActionsResponses = (actionId: string, response: any) => {
+    triggeredActionResponses[actionId] = response;
   };
 
   const triggers = useMemo(() => {
@@ -63,16 +56,17 @@ export const useTriggers = ({
         return {
           ...acc,
           [action.trigger]: async (e: any) => {
-            const customComputeValue: ComputeValueProps = (args) =>
-              computeValue<any>(
+            const customComputeValue: ComputeValueProps = (args) => {
+              return computeValue<any>(
                 { ...args, shareableContent },
                 {
-                  actions: { ...localActionResponses },
+                  actions: { ...triggeredActionResponses },
                   event: e,
                 },
               );
+            };
 
-            const props = {
+            return actionMapper(action.action.name).action({
               // @ts-ignore
               action: action.action,
               actionId: action.id,
@@ -82,49 +76,9 @@ export const useTriggers = ({
               endpointResults: endpoints ?? [],
               entity,
               flowsList: logicFlows?.results ?? [],
-            };
-
-            try {
-              const responseJson =
-                // @ts-ignore
-                await actionMapper[action.action.name].action(props);
-
-              setLocalActionsResponses(action.id, {
-                success: responseJson,
-                status: "success",
-              });
-              setActionsResponse(action.id, {
-                success: responseJson,
-                status: "success",
-                list: {
-                  id: action.id,
-                  name: action.action.name,
-                  success: responseJson,
-                },
-              });
-
-              // @ts-ignore
-              await handleSuccess(props);
-            } catch (error) {
-              if (error instanceof Error) {
-                setLocalActionsResponses(action.id, {
-                  error: safeJsonParse(error.message),
-                  status: "error",
-                });
-                setActionsResponse(action.id, {
-                  error: safeJsonParse(error.message),
-                  status: "error",
-                  list: {
-                    id: action.id,
-                    name: action.action.name,
-                    error: error.message,
-                  },
-                });
-              }
-
-              // @ts-ignore
-              await handleError(props);
-            }
+              setActionsResponse,
+              setTriggeredActionsResponses,
+            });
           },
         };
       },
@@ -132,7 +86,7 @@ export const useTriggers = ({
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    localActionResponses,
+    triggeredActionResponses,
     endpoints,
     entity,
     isFetched,
