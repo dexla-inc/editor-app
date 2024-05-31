@@ -1,12 +1,14 @@
 import { ActionIconDefault } from "@/components/ActionIconDefault";
 import { useQuickAccess } from "@/hooks/editor/useQuickAccess";
+import { ActionIconProps } from "@mantine/core";
 import { memo } from "react";
 
 type Props = {
   projectId: string;
-};
+  id?: string;
+} & ActionIconProps;
 
-const QuickAccessButton = ({ projectId }: Props) => {
+const QuickAccessButton = ({ projectId, id }: Props) => {
   const { openModal } = useQuickAccess({ projectId });
 
   const handleClick = () => {
@@ -15,6 +17,7 @@ const QuickAccessButton = ({ projectId }: Props) => {
 
   return (
     <ActionIconDefault
+      id={id}
       iconName="IconDatabaseImport"
       tooltip="Add data"
       onClick={handleClick}
