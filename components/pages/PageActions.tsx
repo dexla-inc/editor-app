@@ -49,7 +49,7 @@ export default function PageActions({ page, setPage }: Props) {
           return null;
         }
 
-        const ActionForm = actionMapper[sequentialActionName]?.form;
+        const ActionForm = actionMapper(sequentialActionName)?.form;
 
         const item = {
           id: sequentialAction.id,
@@ -74,7 +74,7 @@ export default function PageActions({ page, setPage }: Props) {
                 page={page!}
                 projectId={projectId}
                 defaultValues={
-                  actionMapper[sequentialActionName]?.defaultValues
+                  actionMapper(sequentialActionName)?.defaultValues
                 }
                 setPage={setPage}
               >
@@ -113,7 +113,7 @@ export default function PageActions({ page, setPage }: Props) {
       )}
 
       {page?.actions?.map((action) => {
-        const actionMapped = actionMapper[action?.action?.name];
+        const actionMapped = actionMapper(action?.action?.name);
 
         return (
           !action.sequentialTo && (

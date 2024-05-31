@@ -126,7 +126,7 @@ export const LogicFlowsPage = ({ flow }: Props) => {
 
   const actionMapped = selectedNode?.data?.form?.action
     ? // @ts-ignore
-      actionMapper[selectedNode.data.form.action]
+      actionMapper(selectedNode.data.form.action)
     : null;
 
   const form = useForm({

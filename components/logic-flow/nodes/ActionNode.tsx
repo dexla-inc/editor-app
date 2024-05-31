@@ -36,7 +36,7 @@ type NodeFormType = {
 export const NodeForm = ({ form }: NodeFormType) => {
   const actionMapped = form.values?.action
     ? // @ts-ignore
-      actionMapper[form.values.action]
+      actionMapper(form.values.action)
     : null;
 
   const ActionForm = actionMapped?.form;

@@ -2,13 +2,13 @@ import { PageResponse } from "@/requests/pages/types";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { Action, ActionTrigger, actionMapper } from "@/utils/actions";
 import { Component } from "@/utils/editor";
-import { Router } from "next/router";
 import { ChangeEvent, useMemo } from "react";
 import { useDataBinding } from "@/hooks/data/useDataBinding";
 import { useFlowsQuery } from "@/hooks/editor/reactQuery/useFlowsQuery";
 import { ComputeValueProps } from "@/types/dataBinding";
 import { useEndpoints } from "../editor/reactQuery/useDataSourcesEndpoints";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import { useEditorStore } from "@/stores/editor";
 
 const nonDefaultActionTriggers = ["onSuccess", "onError"];
 
@@ -33,10 +33,11 @@ export const useTriggers = ({
   const { endpoints, isFetched } = useEndpoints(currentProjectId as string);
   const { data: logicFlows, isFetched: logicFlowsIsFetched } =
     useFlowsQuery(currentProjectId);
+  const setActionsResponse = useEditorStore.getState().setActionsResponse;
 
-  const actionResponses: Record<string, any> = {};
-  const setActionsResponses = (actionId: string, response: any) => {
-    actionResponses[actionId] = response;
+  const triggeredActionResponses: Record<string, any> = {};
+  const setTriggeredActionsResponses = (actionId: string, response: any) => {
+    triggeredActionResponses[actionId] = response;
   };
 
   const triggers = useMemo(() => {
@@ -55,27 +56,28 @@ export const useTriggers = ({
         return {
           ...acc,
           [action.trigger]: async (e: any) => {
-            const customComputeValue: ComputeValueProps = (args) =>
-              computeValue<any>(
+            const customComputeValue: ComputeValueProps = (args) => {
+              return computeValue<any>(
                 { ...args, shareableContent },
                 {
-                  actions: { ...actionResponses },
+                  actions: { ...triggeredActionResponses },
                   event: e,
                 },
               );
+            };
 
-            return actionMapper[action.action.name].action({
+            return actionMapper(action.action.name).action({
               // @ts-ignore
               action: action.action,
               actionId: action.id,
               router,
               computeValue: customComputeValue,
-              actionResponses,
-              setActionsResponses,
               event: e,
               endpointResults: endpoints ?? [],
               entity,
               flowsList: logicFlows?.results ?? [],
+              setActionsResponse,
+              setTriggeredActionsResponses,
             });
           },
         };
@@ -84,7 +86,7 @@ export const useTriggers = ({
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    actionResponses,
+    triggeredActionResponses,
     endpoints,
     entity,
     isFetched,

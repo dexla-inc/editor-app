@@ -34,7 +34,7 @@ export const ActionsTab = () => {
     return getActionsBySequentialToOrId(action.id!)?.map(
       (sequentialAction: Action) => {
         const sequentialActionName = sequentialAction.action.name;
-        const ActionForm = actionMapper[sequentialActionName]?.form;
+        const ActionForm = actionMapper(sequentialActionName)?.form;
 
         const item = {
           ...baseItem,
@@ -59,7 +59,7 @@ export const ActionsTab = () => {
               <ActionSettingsForm
                 action={sequentialAction}
                 defaultValues={
-                  actionMapper[sequentialActionName]?.defaultValues
+                  actionMapper(sequentialActionName)?.defaultValues
                 }
               >
                 {({ form }) => (
@@ -118,14 +118,14 @@ export const ActionsTab = () => {
 
     if (!actionName) return undefined;
 
-    const ActionForm = actionMapper[actionName]?.form;
+    const ActionForm = actionMapper(actionName)?.form;
 
     return (
       item && (
         <SidebarSection icon="IconBolt" {...item} key={item.label}>
           <ActionSettingsForm
             action={action}
-            defaultValues={actionMapper[actionName]?.defaultValues}
+            defaultValues={actionMapper(actionName)?.defaultValues}
           >
             {({ form }) => <ActionForm form={form} actionId={action.id} />}
           </ActionSettingsForm>
