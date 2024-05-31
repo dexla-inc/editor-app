@@ -14,7 +14,6 @@ import { useEditorClickHandler } from "@/hooks/components/useEditorClickHandler"
 import { ComponentToolbox } from "@/components/ComponentToolbox";
 import { WithComponentWrapperProps } from "@/types/component";
 import { Component } from "@/utils/editor";
-import { Router } from "next/router";
 import { useRouter } from "next/navigation";
 import merge from "lodash.merge";
 import { withComponentVisibility } from "@/hoc/withComponentVisibility";
@@ -32,6 +31,8 @@ export const withComponentWrapper = <T extends Record<string, any>>(
       (state) => !state.isPreviewMode && !state.isLive,
     );
 
+    const language = useEditorTreeStore((state) => state.language);
+
     const isSelected = useEditorTreeStore(
       useShallow((state) => state.selectedComponentIds?.includes(id!)),
     );
@@ -42,8 +43,14 @@ export const withComponentWrapper = <T extends Record<string, any>>(
       ),
     );
 
+    const onLoad = merge(
+      {},
+      component?.onLoad,
+      component?.languages?.[language],
+    );
+
     const computedOnLoad = useComputeValue({
-      onLoad: component?.onLoad ?? {},
+      onLoad,
       shareableContent,
     });
 

@@ -32,6 +32,7 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
   const hasParentComponentData = useEditorTreeStore(
     (state) => state.selectedComponentIds?.at(-1)?.includes("-related-"),
   );
+  const language = useEditorTreeStore((state) => state.language);
   const onLoadFieldsStarter = fields.reduce(
     (acc, f) => {
       acc[f.name] = {
@@ -42,13 +43,20 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
     {} as Record<string, ValueProps>,
   );
 
-  const onLoadValues = merge(onLoadFieldsStarter, component?.onLoad);
+  const onLoadValues = merge(
+    onLoadFieldsStarter,
+    component?.onLoad,
+    component?.languages?.[language],
+  );
 
   const form = useForm({
     initialValues: {
       onLoad: onLoadValues,
     },
   });
+  useEffect(() => {
+    form.setValues({ onLoad: onLoadValues });
+  }, [language]);
 
   useEffect(() => {
     if (form.isTouched()) {

@@ -49,8 +49,8 @@ export type EditorState = {
   setIsStructureCollapsed: (value: boolean) => void;
   setCopiedAction: (copiedAction?: Action[]) => void;
   // pasteAction: (componentId: string) => void;
-  language: string;
-  setLanguage: (isSaving: string) => void;
+  // language: string;
+  // setLanguage: (isSaving: string) => void;
   isResizing?: boolean;
   setIsResizing: (isResizing?: boolean) => void;
   isWindowError?: boolean;

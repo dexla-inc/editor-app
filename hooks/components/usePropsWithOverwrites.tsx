@@ -12,7 +12,6 @@ export const usePropsWithOverwrites = (
 ) => {
   const [customCurrentState, setCustomCurrentState] =
     useState<string>(currentState);
-  const language = useEditorStore((state) => state.language);
 
   useEffect(() => {
     setCustomCurrentState(currentState);
@@ -45,7 +44,6 @@ export const usePropsWithOverwrites = (
     return merge(
       {},
       omit(component.props ?? {}, omittingProps),
-      component.languages?.[language],
       component.states?.[customCurrentState],
       {
         disabled: customCurrentState === "disabled",
