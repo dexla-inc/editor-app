@@ -13,9 +13,12 @@ import { useUserConfigStore } from "@/stores/userConfig";
 import { ICON_SIZE } from "@/utils/config";
 import { generateId } from "@/types/dashboardTypes";
 import {
+  Card,
   Container,
   Flex,
   Grid,
+  Group,
+  Paper,
   Stack,
   TextInput,
   Title,
@@ -29,6 +32,7 @@ import { useEffect, useState } from "react";
 import { useCreateTemplateProject } from "@/hooks/editor/useCreateTemplateProject";
 import { usePropelAuth } from "@/hooks/editor/usePropelAuth";
 import { invalidateQueries } from "@/hooks/editor/reactQuery/useProjectQuery";
+import Image from "next/image";
 
 export default function Page() {
   const router = useRouter();
@@ -112,7 +116,11 @@ export default function Page() {
 
   return (
     <DashboardShell>
-      <Container py="xl" size="lg">
+      <Container
+        py="xl"
+        size="lg"
+        sx={{ minHeight: "90vh", display: "flex", flexDirection: "column" }}
+      >
         <Stack spacing="xl">
           <Title>Welcome back, {user?.firstName}</Title>
           <Flex>
@@ -193,6 +201,18 @@ export default function Page() {
             </>
           )}
         </Stack>
+
+        <Flex justify="flex-end" style={{ marginTop: "auto" }}>
+          <Link href="https://discord.gg/CPEy8ePKj4" target="_blank">
+            <Image
+              src="/join-us-on-discord.jpg"
+              alt="Join Dexla on Discord"
+              width={200}
+              height={100}
+              style={{ borderRadius: 4 }}
+            />
+          </Link>
+        </Flex>
       </Container>
     </DashboardShell>
   );

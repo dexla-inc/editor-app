@@ -12,9 +12,12 @@ import {
   IconArrowNarrowRight,
   IconArrowsDiff,
   IconArrowsHorizontal,
+  IconLayoutAlignBottom,
   IconLayoutAlignCenter,
   IconLayoutAlignLeft,
+  IconLayoutAlignMiddle,
   IconLayoutAlignRight,
+  IconLayoutAlignTop,
   IconLayoutDistributeVertical,
   IconLayoutList,
   IconRotate2,
@@ -81,7 +84,7 @@ const alignItemsData = [
     label: (
       <StylingPaneItemIcon
         label="Start"
-        icon={<IconLayoutAlignLeft size={14} />}
+        icon={<IconLayoutAlignTop size={14} />}
       />
     ),
     value: "flex-start",
@@ -90,7 +93,7 @@ const alignItemsData = [
     label: (
       <StylingPaneItemIcon
         label="Center"
-        icon={<IconLayoutAlignCenter size={14} />}
+        icon={<IconLayoutAlignMiddle size={14} />}
       />
     ),
     value: "center",
@@ -99,7 +102,7 @@ const alignItemsData = [
     label: (
       <StylingPaneItemIcon
         label="End"
-        icon={<IconLayoutAlignRight size={14} />}
+        icon={<IconLayoutAlignBottom size={14} />}
       />
     ),
     value: "flex-end",
