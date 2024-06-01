@@ -14,6 +14,7 @@ export const Droppable = ({
   children,
   ...props
 }: PropsWithChildren<Props>) => {
+  console.log("Droppable");
   const theme = useMantineTheme();
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const currentTargetId = useEditorStore((state) => state.currentTargetId);
