@@ -20,8 +20,8 @@ const LanguageSelector = () => {
       withinPortal
       size="xs"
       data={[
-        { value: "default", label: "English", group: "Popular" },
-        { value: "fr-FR", label: "French", group: "Popular" },
+        { value: "default", label: "English" },
+        { value: "fr-FR", label: "French" },
       ]}
       sx={{
         ...flexStyles,

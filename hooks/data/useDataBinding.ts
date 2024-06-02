@@ -40,9 +40,14 @@ export const useDataBinding = (componentId = "") => {
     );
 
     const projectId = useEditorTreeStore.getState().currentProjectId as string;
+    const language = useEditorTreeStore.getState().language as string;
 
     const auth = useDataSourceStore.getState().getAuthState(projectId);
-
+    const others = {
+      auth,
+      browser: pick(browser, ["asPath", "query"]),
+      language,
+    };
     const components = Object.entries(
       useInputsStore.getState().inputValues,
     ).reduce((acc, [componentGroupId, value]) => {
@@ -56,7 +61,6 @@ export const useDataBinding = (componentId = "") => {
       ctx?: ComputeValuePropCtx,
     ): T | undefined => {
       const { actions, event } = ctx ?? {};
-
       try {
         const result = eval(`(function () { ${boundCode} })`)();
         return result;

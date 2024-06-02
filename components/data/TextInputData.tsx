@@ -12,6 +12,11 @@ export const TextInputData = ({ component, endpoints }: DataProps) => {
       label: "Value",
       type: isTextArea ? "text" : ("text" as FieldType),
     },
+    {
+      name: "placeholder",
+      label: "Placeholder",
+      type: "text" as FieldType,
+    },
   ];
 
   return (

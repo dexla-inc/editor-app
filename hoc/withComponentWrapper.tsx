@@ -31,8 +31,6 @@ export const withComponentWrapper = <T extends Record<string, any>>(
       (state) => !state.isPreviewMode && !state.isLive,
     );
 
-    const language = useEditorTreeStore((state) => state.language);
-
     const isSelected = useEditorTreeStore(
       useShallow((state) => state.selectedComponentIds?.includes(id!)),
     );
@@ -43,14 +41,8 @@ export const withComponentWrapper = <T extends Record<string, any>>(
       ),
     );
 
-    const onLoad = merge(
-      {},
-      component?.onLoad,
-      component?.languages?.[language],
-    );
-
     const computedOnLoad = useComputeValue({
-      onLoad,
+      onLoad: component?.onLoad ?? {},
       shareableContent,
     });
 
@@ -127,7 +119,9 @@ export const withComponentWrapper = <T extends Record<string, any>>(
       component: {
         ...component,
         ...componentTree,
-        props: propsWithOverwrites,
+        props: merge({}, propsWithOverwrites, {
+          placeholder: computedOnLoad?.placeholder,
+        }),
         onLoad: computedOnLoad ?? {},
       },
       renderTree,

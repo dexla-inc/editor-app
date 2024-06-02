@@ -18,8 +18,9 @@ type RecordStringAny = Record<string, any>;
 const variablePattern = /variables\[\s*(?:\/\*[\s\S]*?\*\/\s*)?'(.*?)'\s*\]/g;
 const componentPattern = /components\[\s*(?:\/\*[\s\S]*?\*\/\s*)?'(.*?)'\s*\]/g;
 const actionPattern = /actions\[\s*(?:\/\*[\s\S]*?\*\/\s*)?'(.*?)'\s*\]/g;
-const browserPattern = /browser\[\s*(?:\/\*[\s\S]*?\*\/\s*)?'(.*?)'\s*\]/g;
-const authPattern = /auth\[\s*(?:\/\*[\s\S]*?\*\/\s*)?'(.*?)'\s*\]/g;
+const browserPattern = /others\['browser'\]\.(.*)/g;
+const authPattern = /others\['auth'\]\.(.*)/g;
+const otherPattern = /others\[\s*(?:\/\*[\s\S]*?\*\/\s*)?'(.*?)'\s*\]/g;
 const itemPattern = /item\[\s*(?:\/\*[\s\S]*?\*\/\s*)?'(.*?)'\s*\]/g;
 
 type UseComputeValue = {
@@ -77,12 +78,14 @@ export const useComputeValue = ({
     browserKeys,
     authKeys,
     itemKeys,
+    otherKeys,
   } = useMemo(() => {
     const variableKeys: any[] = [];
     const componentKeys: any[] = [];
     const actionKeys: any[] = [];
     const browserKeys: NextRouterKeys[] = [];
     const authKeys: any[] = [];
+    const otherKeys: any[] = [];
     const itemKeys: any[] = [];
 
     const patterns = [
@@ -91,6 +94,7 @@ export const useComputeValue = ({
       { pattern: actionPattern, keys: actionKeys },
       { pattern: browserPattern, keys: browserKeys },
       { pattern: authPattern, keys: authKeys },
+      { pattern: otherPattern, keys: otherKeys },
       { pattern: itemPattern, keys: itemKeys },
     ];
 
@@ -110,6 +114,7 @@ export const useComputeValue = ({
       browserKeys: [...new Set(browserKeys)],
       authKeys: [...new Set(authKeys)],
       itemKeys: [...new Set(itemKeys)],
+      otherKeys: [...new Set(otherKeys)],
     };
   }, [onLoad, valuePropsPaths]);
 
@@ -157,7 +162,7 @@ export const useComputeValue = ({
         (acc, key) => ({
           ...acc,
           // @ts-ignore
-          [key]: state.getAuthState(projectId)?.[key] || {},
+          [key]: sanitizedValue(state.getAuthState(projectId), key) || {},
         }),
         {},
       ),
@@ -167,7 +172,7 @@ export const useComputeValue = ({
   const browserValues: any = useMemo(() => {
     return browserKeys.reduce(
       // @ts-ignore
-      (acc, key) => ({ ...acc, [key]: browser[key] }),
+      (acc, key) => ({ ...acc, [key]: sanitizedValue(browser, key) }),
       {},
     );
   }, [browser, browserKeys]);
@@ -175,6 +180,15 @@ export const useComputeValue = ({
   const itemValues: any = itemKeys.reduce(
     (acc, key) => ({ ...acc, [key]: JSON.stringify(item[key]) }),
     {},
+  );
+
+  const otherValues = useEditorTreeStore(
+    useShallow((state) => {
+      return otherKeys.reduce(
+        (acc, key) => ({ ...acc, [key]: sanitizedValue(state, key) }),
+        {},
+      );
+    }),
   );
 
   const transformBoundCode = useCallback(
@@ -210,25 +224,21 @@ export const useComputeValue = ({
       });
 
       browserKeys.forEach((key: NextRouterKeys) => {
-        const regex = new RegExp(
-          `browser\\[(\\/\\* [\\S\\s]* \\*\\/)?\\s?'${key}'\\]`,
-          "g",
-        );
-        let replacer = browserValues[key];
-        replacer =
-          typeof replacer !== "string" ? JSON.stringify(replacer) : replacer;
-        result = result.replaceAll(regex, replacer);
+        const regex = new RegExp(`others\\['browser'\\]\\.${key}`, "g");
+        result = result.replaceAll(regex, `'${browserValues[key]}'`);
       });
 
       authKeys.forEach((key) => {
+        const regex = new RegExp(`others\\['auth'\\]\\.${key}`, "g");
+        result = result.replaceAll(regex, `'${auth[key]}'`);
+      });
+
+      otherKeys.forEach((key) => {
         const regex = new RegExp(
-          `auth\\[(\\/\\* [\\S\\s]* \\*\\/)?\\s?'${key}'\\]`,
+          `others\\[(\\/\\* [\\S\\s]* \\*\\/)?\\s?'${key}'\\]`,
           "g",
         );
-        let replacer = auth[key];
-        replacer =
-          typeof replacer !== "string" ? JSON.stringify(replacer) : replacer;
-        result = result.replaceAll(regex, replacer);
+        result = result.replaceAll(regex, `'${otherValues[key]}'`);
       });
 
       itemKeys.forEach((key) => {
@@ -256,6 +266,8 @@ export const useComputeValue = ({
       variables,
       itemKeys,
       itemValues,
+      otherKeys,
+      otherValues,
     ],
   );
 
@@ -303,3 +315,8 @@ export const useComputeValue = ({
 function extractKeysFromPattern(pattern: RegExp, boundCode: any) {
   return [...boundCode.matchAll(pattern)].map((match) => match[1]);
 }
+
+const sanitizedValue = (data: any, key: string) => {
+  const [first, ...rest] = key.split(".");
+  return rest.length ? data[first]?.[rest.join(".")] : data[first];
+};

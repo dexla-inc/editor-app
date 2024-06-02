@@ -74,7 +74,7 @@ const AutocompleteComponent = forwardRef(
     const [timeoutId, setTimeoutId] = useState(null);
 
     const handleChange = (item: any) => {
-      setValue(item);
+      setValue(sanitizeValue(item));
 
       if (timeoutId) {
         clearTimeout(timeoutId);
@@ -134,7 +134,7 @@ const AutocompleteComponent = forwardRef(
         dropdownComponent={CustomDropdown}
         rightSection={loading || isLoading ? <InputLoader /> : null}
         label={undefined}
-        value={value?.label ?? value}
+        value={value?.label}
       />
     );
   },
@@ -144,3 +144,11 @@ AutocompleteComponent.displayName = "Autocomplete";
 export const Autocomplete = memo(
   withComponentWrapper<Props>(AutocompleteComponent),
 );
+
+const sanitizeValue = (value: any) => {
+  if (typeof value === "string") {
+    return { label: value, value };
+  }
+
+  return value?.label ? value : { label: "", value: "" };
+};

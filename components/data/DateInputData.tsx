@@ -22,6 +22,11 @@ const fields = [
     label: "Value",
     type: "date",
   },
+  {
+    name: "placeholder",
+    label: "Placeholder",
+    type: "text",
+  },
 ];
 
 export const DateInputData = ({ component, endpoints }: DataProps) => {
