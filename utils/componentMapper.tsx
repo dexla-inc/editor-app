@@ -201,6 +201,7 @@ export type StructureDefinition = {
   category: ComponentCategoryType;
   icon?: JSX.Element;
   hide?: boolean;
+  synonyms?: string[];
 };
 
 export type StructureMapper = {
@@ -219,11 +220,13 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Layout",
     icon: <IconLayoutGrid size={ICON_SIZE} />,
+    synonyms: ["Grid Layout", "Grid System"],
   },
   GridColumn: {
     structure: (props: any) => GridColumnStructure.jsonStructure(props),
     category: "Layout",
     icon: <IconLayoutColumns size={ICON_SIZE} />,
+    synonyms: ["Grid Col", "Grid Cell"],
   },
   Container: {
     structure: (props: any) => ContainerStructure.jsonStructure(props),
@@ -235,6 +238,7 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Layout",
     icon: <IconContainer size={ICON_SIZE} />,
+    synonyms: ["Wrapper", "Box"],
   },
   Card: {
     structure: (props: any) => CardStructure.jsonStructure(props),
@@ -246,6 +250,7 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Layout",
     icon: <IconLayoutCards size={ICON_SIZE} />,
+    synonyms: ["Panel", "Tile"],
   },
   Button: {
     structure: (props: any) => ButtonStructure.jsonStructure(props),
@@ -268,6 +273,7 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Input",
     icon: <IconFileText size={ICON_SIZE} />,
+    synonyms: ["TextField", "Input Field"],
   },
   Select: {
     structure: (props: any) => SelectStructure.jsonStructure(props),
@@ -279,6 +285,7 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Input",
     icon: <IconSelect size={ICON_SIZE} />,
+    synonyms: ["Dropdown", "Select Input"],
   },
   CheckboxGroup: {
     structure: (props: any) => CheckboxGroupStructure.jsonStructure(props),
@@ -290,6 +297,7 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Input",
     icon: <IconListCheck size={ICON_SIZE} />,
+    synonyms: ["Checkboxes", "Checkbox Set"],
   },
   Checkbox: {
     structure: (props: any) => CheckboxStructure.jsonStructure(props),
@@ -301,6 +309,7 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Input",
     icon: <IconCheckbox size={ICON_SIZE} />,
+    synonyms: ["Tickbox", "Checkmark Box"],
   },
   CheckboxItem: {
     structure: (props: any) => CheckboxItemStructure.jsonStructure(props),
@@ -314,6 +323,7 @@ export const structureMapper: StructureMapper = {
     icon: <IconCheckbox size={ICON_SIZE} />,
     // Need to add a way to hide components that should not be visible in components list.
     hide: true,
+    synonyms: ["Checkbox Element", "Check Item"],
   },
   Radio: {
     structure: (props: any) => RadioStructure.jsonStructure(props),
@@ -325,6 +335,7 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Input",
     icon: <IconCircleDot size={ICON_SIZE} />,
+    synonyms: ["Radio Button", "Option Button"],
   },
   RadioItem: {
     structure: (props: any) => RadioItemStructure.jsonStructure(props),
@@ -337,6 +348,7 @@ export const structureMapper: StructureMapper = {
     category: "Input",
     icon: <IconGradienter size={ICON_SIZE} />,
     hide: true,
+    synonyms: ["Radio Option", "Radio Element"],
   },
   Form: {
     structure: (props: any) => FormStructure.jsonStructure(props),
@@ -359,6 +371,7 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Input",
     icon: <IconToggleLeft size={ICON_SIZE} />,
+    synonyms: ["Toggle"],
   },
   DateInput: {
     structure: (props: any) => DateInputStructure.jsonStructure(props),
@@ -370,6 +383,7 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Input",
     icon: <IconCalendar size={ICON_SIZE} />,
+    synonyms: ["Date Picker", "Date Field"],
   },
   Textarea: {
     structure: (props: any) => TextareaStructure.jsonStructure(props),
@@ -381,6 +395,7 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Input",
     icon: <IconPictureInPicture size={ICON_SIZE} />,
+    synonyms: ["Text Area", "Multiline Input"],
   },
   ButtonIcon: {
     structure: (props: any) => ButtonIconStructure.jsonStructure(props),
@@ -392,6 +407,7 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Input",
     icon: <IconCircleDot size={ICON_SIZE} />,
+    synonyms: ["IconButton", "Icon Button", "Action Icon"],
   },
   Autocomplete: {
     structure: (props: any) => AutocompleteStructure.jsonStructure(props),
@@ -403,6 +419,7 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Input",
     icon: <IconInputSearch size={ICON_SIZE} />,
+    synonyms: ["Typeahead", "Autosuggest"],
   },
   FileButton: {
     structure: (props: any) => FileButtonStructure.jsonStructure(props),
@@ -425,6 +442,7 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Input",
     icon: <IconFile size={ICON_SIZE} />,
+    synonyms: ["File Uploader", "Upload Input"],
   },
   Rating: {
     structure: (props: any) => RatingStructure.jsonStructure(props),
@@ -436,6 +454,7 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Input",
     icon: <IconJewishStar size={ICON_SIZE} />,
+    synonyms: ["Star Rating", "Review Rating"],
   },
   CountdownButton: {
     structure: (props: any) => CountdownButtonStructure.jsonStructure(props),
@@ -447,6 +466,7 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Input",
     icon: <IconClockHour5 size={ICON_SIZE} />,
+    synonyms: ["Timer Button", "Countdown Timer"],
   },
   Text: {
     structure: (props: any) => TextStructure.jsonStructure(props),
@@ -458,6 +478,7 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Typography",
     icon: <IconCursorText size={ICON_SIZE} />,
+    synonyms: ["Paragraph", "Text Block", "Label"],
   },
   Title: {
     structure: (props: any) => TitleStructure.jsonStructure(props),
@@ -469,6 +490,7 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Typography",
     icon: <IconHeading size={ICON_SIZE} />,
+    synonyms: ["Heading", "Header"],
   },
   // Table: {
   //   structure: (props: any) => TableStructure.jsonStructure(props),
@@ -502,6 +524,7 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Data Display",
     icon: <IconBrandChrome size={ICON_SIZE} />,
+    synonyms: ["Symbol", "Glyph"],
   },
   Image: {
     structure: (props: any) => ImageStructure.jsonStructure(props),
@@ -513,6 +536,7 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Data Display",
     icon: <IconPhoto size={ICON_SIZE} />,
+    synonyms: ["Picture", "Photo"],
   },
   // CodeSnippet: {
   //   structure: (props: any) => NotImplemented.jsonStructure(props),
@@ -528,6 +552,7 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Data Display",
     icon: <IconSeparator size={ICON_SIZE} />,
+    synonyms: ["Separator", "Line Break"],
   },
   // Newsfeed: {
   //   structure: (props: any) => NotImplemented.jsonStructure(props),
@@ -576,6 +601,7 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Data Display",
     icon: <IconUser size={ICON_SIZE} />,
+    synonyms: ["Profile Picture", "User Image"],
   },
   Alert: {
     structure: (props: any) => AlertStructure.jsonStructure(props),
@@ -587,6 +613,7 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Data Display",
     icon: <IconExclamationMark size={ICON_SIZE} />,
+    synonyms: ["Notification", "Warning"],
   },
   // List: {
   //   structure: (props: any) => NotImplemented.jsonStructure(props),
@@ -602,6 +629,7 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Data Display",
     icon: <IconLayoutBottombarCollapse size={ICON_SIZE} />,
+    synonyms: ["Collapsible", "Expandable"],
   },
   AccordionItem: {
     structure: (props: any) => AccordionItemStructure.jsonStructure(props),
@@ -613,6 +641,7 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Data Display",
     icon: <IconLayoutBottombarCollapse size={ICON_SIZE} />,
+    synonyms: ["Accordion Section", "Accordion Element"],
   },
   Link: {
     structure: (props: any) => LinkStructure.jsonStructure(props),
@@ -624,6 +653,7 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Navigation",
     icon: <IconLink size={ICON_SIZE} />,
+    synonyms: ["Hyperlink", "Anchor"],
   },
   Navbar: {
     structure: (props: any) => NavbarStructure.jsonStructure(props),
@@ -635,6 +665,7 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Navigation",
     icon: <IconLayoutSidebar size={ICON_SIZE} />,
+    synonyms: ["Navigation Bar", "Menu Bar"],
   },
   NavLink: {
     structure: (props: any) => NavLinkStructure.jsonStructure(props),
@@ -646,6 +677,7 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Navigation",
     icon: <IconClick size={ICON_SIZE} />,
+    synonyms: ["Navigation Link", "Menu Link"],
   },
   AppBar: {
     structure: (props: any) => AppBarStructure.jsonStructure(props),
@@ -657,6 +689,7 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Navigation",
     icon: <IconLayoutNavbar size={ICON_SIZE} />,
+    synonyms: ["Navigation Bar", "Top Bar"],
   },
   Tabs: {
     structure: (props: any) => TabsStructure.jsonStructure(props),
@@ -679,6 +712,7 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Navigation",
     icon: <IconSlash size={ICON_SIZE} />,
+    synonyms: ["Breadcrumbs", "Navigation Path"],
   },
   Pagination: {
     structure: (props: any) => PaginationStructure.jsonStructure(props),
@@ -690,6 +724,7 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Navigation",
     icon: <IconPageBreak size={ICON_SIZE} />,
+    synonyms: ["Pager", "Page Navigator"],
   },
   Stepper: {
     structure: (props: any) => StepperStructure.jsonStructure(props),
@@ -701,6 +736,7 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Navigation",
     icon: <IconArrowAutofitContent size={ICON_SIZE} />,
+    synonyms: ["Steps", "Wizard"],
   },
   StepperStep: {
     structure: (props: any) => StepperStepStructure.jsonStructure(props),
@@ -733,6 +769,7 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Chart",
     icon: <IconChartBar size={ICON_SIZE} />,
+    synonyms: ["Bar Graph", "Column Chart"],
   },
   // StackedBarChart: {
   //   structure: (props: any) => NotImplemented.jsonStructure(props),
@@ -756,6 +793,7 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Chart",
     icon: <IconChartLine size={ICON_SIZE} />,
+    synonyms: ["Line Graph", "Line Plot"],
   },
   PieChart: {
     structure: (props: any) => PieChartStructure.jsonStructure(props),
@@ -767,6 +805,7 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Chart",
     icon: <IconChartPie size={ICON_SIZE} />,
+    synonyms: ["Pie Graph", "Circle Chart"],
   },
   AreaChart: {
     structure: (props: any) => AreaChartStructure.jsonStructure(props),
@@ -778,6 +817,7 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Chart",
     icon: <IconChartAreaLine size={ICON_SIZE} />,
+    synonyms: ["Area Graph", "Filled Line Chart"],
   },
   // ComposedChart: {
   //   structure: (props: any) => NotImplemented.jsonStructure(props),
@@ -801,6 +841,7 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Chart",
     icon: <IconChartRadar size={ICON_SIZE} />,
+    synonyms: ["Spider Chart", "Web Chart"],
   },
   RadialChart: {
     structure: (props: any) => RadialChartStructure.jsonStructure(props),
@@ -812,6 +853,7 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Chart",
     icon: <IconChartDonut size={ICON_SIZE} />,
+    synonyms: ["Donut Chart", "Circular Chart"],
   },
   Badge: {
     structure: (props: any) => BadgeStructure.jsonStructure(props),
@@ -823,6 +865,7 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Feedback",
     icon: <IconIdBadge size={ICON_SIZE} />,
+    synonyms: ["Label", "Tag"],
   },
   Progress: {
     structure: (props: any) => ProgressStructure.jsonStructure(props),
@@ -834,6 +877,7 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Feedback",
     icon: <IconLoader2 size={ICON_SIZE} />,
+    synonyms: ["Progress Bar", "Loading Bar"],
   },
   Modal: {
     structure: (props: any) => ModalStructure.jsonStructure(props),
@@ -845,6 +889,7 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Overlays",
     icon: <IconBoxModel size={ICON_SIZE} />,
+    synonyms: ["Dialog", "Popup"],
   },
   Drawer: {
     structure: (props: any) => DrawerStructure.jsonStructure(props),
@@ -856,6 +901,7 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Overlays",
     icon: <IconLayoutSidebarLeftCollapse size={ICON_SIZE} />,
+    synonyms: ["Slideout", "Side Panel"],
   },
   PopOver: {
     structure: (props: any) => PopOverStructure.jsonStructure(props),
@@ -867,6 +913,7 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Overlays",
     icon: <IconStackPop size={ICON_SIZE} />,
+    synonyms: ["Tooltip"],
   },
   GoogleMap: {
     structure: (props: any) => MapStructure.jsonStructure(props),
@@ -878,6 +925,7 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Third Party",
     icon: <IconMapPin size={ICON_SIZE} />,
+    synonyms: ["Google Maps", "Map Plugin"],
   },
 };
 
