@@ -13,6 +13,7 @@ import merge from "lodash.merge";
 import { useEffect } from "react";
 import { RangeSliderInput } from "../RangeSliderInput";
 import { ThemeColorSelector } from "../ThemeColorSelector";
+import { SegmentedControlInput } from "../SegmentedControlInput";
 
 const Modifier = withModifier(({ selectedComponent }) => {
   const theme = useThemeStore((state) => state.theme);
@@ -35,6 +36,8 @@ const Modifier = withModifier(({ selectedComponent }) => {
         passwordUpper: selectedComponent?.props?.passwordUpper,
         passwordSpecial: selectedComponent?.props?.passwordSpecial,
         bg: selectedComponent?.props?.bg,
+        hideControls: selectedComponent?.props?.hideControls ?? false,
+        //format: selectedComponent?.props?.format,
       }),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -74,6 +77,43 @@ const Modifier = withModifier(({ selectedComponent }) => {
             });
           }}
         />
+        {/* {form.values.type === "text" && (
+          <SegmentedControlInput
+            label="Format"
+            {...form.getInputProps("format")}
+            data={[
+              { label: "Cover", value: "cover" },
+              { label: "Contain", value: "contain" },
+              { label: "%", value: "100%" },
+            ]}
+            onChange={(value) => {
+              form.setFieldValue("format", value);
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: {
+                    format: value,
+                  },
+                },
+              });
+            }}
+          />
+        )} */}
+        {form.values.type === "number" && (
+          <SegmentedControlYesNo
+            label="Hide controls"
+            {...form.getInputProps("hideControls")}
+            onChange={(value) => {
+              form.setFieldValue("hideControls", value);
+              debouncedTreeComponentAttrsUpdate({
+                attrs: {
+                  props: {
+                    hideControls: value,
+                  },
+                },
+              });
+            }}
+          />
+        )}
         <SegmentedControlYesNo
           label="Required"
           {...form.getInputProps("withAsterisk")}

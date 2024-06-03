@@ -199,6 +199,11 @@ const InputComponent = forwardRef(
             rightSection={loading ? <InputLoader /> : null}
             label={undefined}
             wrapperProps={{ "data-id": id }}
+            onKeyDown={(e) => {
+              if (!/[0-9]/.test(e.key)) {
+                e.preventDefault();
+              }
+            }}
           />
         ) : type === "password" ? (
           <PasswordInput
