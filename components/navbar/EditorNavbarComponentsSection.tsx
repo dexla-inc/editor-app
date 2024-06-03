@@ -35,6 +35,7 @@ type DraggableComponentData = {
   draggable: any;
   category?: ComponentCategoryType;
   hide?: boolean;
+  synonyms?: string[];
 };
 
 const componentsGroupedByCategory = Object.keys(structureMapper).reduce(
@@ -42,12 +43,13 @@ const componentsGroupedByCategory = Object.keys(structureMapper).reduce(
     const draggable = structureMapper[key]?.Draggable;
     const category = structureMapper[key]?.category;
     const hide = structureMapper[key]?.hide ?? false;
+    const synonyms = structureMapper[key]?.synonyms ?? [];
 
     if (draggable) {
       if (!groups[category]) {
         groups[category] = [];
       }
-      groups[category].push({ draggable, id: toSpaced(key), hide });
+      groups[category].push({ draggable, id: toSpaced(key), hide, synonyms });
     }
 
     return groups;
@@ -106,13 +108,7 @@ export const EditorNavbarComponentsSection = () => {
         <Grid gutter="xs">
           {Object.entries(componentsGroupedByCategory).map(
             ([category, components]) => {
-              // Filter the components based on the query before rendering
-              const filteredComponents = components.filter(
-                ({ id, hide }) =>
-                  (query
-                    ? id?.toLowerCase().includes(query?.toLowerCase())
-                    : true) && !hide,
-              );
+              const filteredComponents = filterComponents(components, query);
 
               if (filteredComponents.length === 0) {
                 return null; // If no components after filtering, don't render this category
@@ -192,5 +188,21 @@ export const EditorNavbarComponentsSection = () => {
         </Stack>
       )}
     </Stack>
+  );
+};
+
+const filterComponents = (
+  components: DraggableComponentData[],
+  query: string,
+) => {
+  const lowerCaseQuery = query.toLowerCase();
+  return components.filter(
+    ({ id, synonyms = [], hide }) =>
+      (query
+        ? id.toLowerCase().includes(lowerCaseQuery) ||
+          synonyms.some((synonym) =>
+            synonym.toLowerCase().includes(lowerCaseQuery),
+          )
+        : true) && !hide,
   );
 };

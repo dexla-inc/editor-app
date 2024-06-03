@@ -13,12 +13,9 @@ import { useUserConfigStore } from "@/stores/userConfig";
 import { ICON_SIZE } from "@/utils/config";
 import { generateId } from "@/types/dashboardTypes";
 import {
-  Card,
   Container,
   Flex,
   Grid,
-  Group,
-  Paper,
   Stack,
   TextInput,
   Title,
