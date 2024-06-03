@@ -21,6 +21,7 @@ import { FieldType } from "./data/forms/StaticFormFieldsBuilder";
 import { SegmentedControlInput } from "./SegmentedControlInput";
 import { Icon } from "@/components/Icon";
 import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
+import { useEditorTreeStore } from "@/stores/editorTree";
 
 // Need to extend input props depending on fieldType
 type BaseProps = {
@@ -64,6 +65,19 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
     ...AUTOCOMPLETE_OFF_PROPS,
     ...props,
   };
+  const language = useEditorTreeStore((state) => state.language);
+  const _value =
+    typeof value?.static === "object"
+      ? value?.static?.[language] || value?.static?.default
+      : value?.static;
+
+  const onChangeStatic = (val: any) => {
+    onChange({
+      ...value,
+      dataType: "static",
+      static: { ...value?.static, [language]: val, default: val },
+    });
+  };
 
   return (
     <ComponentToBindWrapper
@@ -75,14 +89,8 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
       {["number", "integer"].includes(fieldType) ? (
         <NumberInput
           placeholder={placeholder}
-          value={value?.static ? parseFloatExtension(value?.static) : ""}
-          onChange={(val) =>
-            onChange({
-              ...value,
-              dataType: "static",
-              static: val.toString(),
-            })
-          }
+          value={_value ? parseFloatExtension(_value) : ""}
+          onChange={(val) => onChangeStatic(val.toString())}
           precision={decimalPlaces}
           parser={(value) =>
             value ? parseFloatExtension(value).toString() : ""
@@ -95,14 +103,8 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
       ) : fieldType === "boolean" ? (
         <Stack w="100%">
           <SegmentedControlInput
-            value={value?.static ?? ""}
-            onChange={(val) =>
-              onChange({
-                ...value,
-                dataType: "static",
-                static: val,
-              })
-            }
+            value={_value ?? ""}
+            onChange={(val) => onChangeStatic(val)}
             data={[
               { label: "True", value: "true" },
               { label: "False", value: "false" },
@@ -113,14 +115,8 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
         </Stack>
       ) : fieldType === "yesno" ? (
         <SegmentedControlYesNo
-          value={value?.static}
-          onChange={(val) =>
-            onChange({
-              ...value,
-              dataType: "static",
-              static: val,
-            })
-          }
+          value={_value}
+          onChange={(val) => onChangeStatic(val)}
           w="100%"
           {...commonProps}
         />
@@ -139,14 +135,8 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
             )
           }
           <MonacoEditorJson
-            value={value?.static?.toString() || (props.defaultValue as string)}
-            onChange={(val: any) => {
-              onChange({
-                ...value,
-                dataType: "static",
-                static: val,
-              });
-            }}
+            value={_value?.toString() || (props.defaultValue as string)}
+            onChange={(val: any) => onChangeStatic(val)}
             {...commonProps}
           />
         </Stack>
@@ -157,7 +147,7 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
               type="button"
               compact
               onClick={() => {
-                form.insertListItem("onLoad.data.static", {
+                form.insertListItem(`onLoad.data.static.${language}`, {
                   label: "",
                   value: "",
                 });
@@ -171,15 +161,16 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
           </div>
 
           <Flex direction="column" gap="10px" mt="10px">
-            {(form.values.onLoad.data.static ?? [])?.map(
-              (_: SelectProps, index: number) => {
+            {(form.values.onLoad.data.static?.[language] ?? [])?.map(
+              (props: SelectProps, index: number) => {
+                const target = "onLoad.data.static";
                 return (
                   <Group key={index} style={{ flexWrap: "nowrap" }}>
                     <TextInput
                       size="xs"
                       placeholder="label"
                       {...form.getInputProps(
-                        `onLoad.data.static.${index}.label`,
+                        `${target}.${language}.${index}.label`,
                       )}
                       style={{ width: "50%" }}
                     />
@@ -187,7 +178,7 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
                       size="xs"
                       placeholder="value"
                       {...form.getInputProps(
-                        `onLoad.data.static.${index}.value`,
+                        `onLoad.data.static.${language}.${index}.value`,
                       )}
                       style={{ width: "50%" }}
                     />
@@ -195,7 +186,10 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
                     <Icon
                       name={ICON_DELETE}
                       onClick={() => {
-                        form.removeListItem("onLoad.data.static", index);
+                        form.removeListItem(
+                          `onLoad.data.static.${language}`,
+                          index,
+                        );
                       }}
                       style={{ cursor: "pointer" }}
                     />
@@ -209,15 +203,9 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
         <Stack w="100%">
           <TextInput
             placeholder={placeholder}
-            value={value?.static}
+            value={_value}
             type={fieldType}
-            onChange={(e) =>
-              onChange({
-                ...value,
-                dataType: "static",
-                static: e.currentTarget.value,
-              })
-            }
+            onChange={(e) => onChangeStatic(e.currentTarget.value)}
             {...commonProps}
           />
         </Stack>

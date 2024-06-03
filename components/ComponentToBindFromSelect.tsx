@@ -2,6 +2,7 @@ import { ComponentToBindWrapper } from "@/components/ComponentToBindWrapper";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { ValueProps } from "@/types/dataBinding";
 import { Select, SelectProps } from "@mantine/core";
+import { useEditorTreeStore } from "@/stores/editorTree";
 
 type Props = Omit<SelectProps, "value" | "onChange" | "label"> & {
   label?: string;
@@ -18,6 +19,11 @@ export const ComponentToBindFromSelect = ({
   ...rest
 }: Props) => {
   const { label, ...restProps } = rest;
+  const language = useEditorTreeStore((state) => state.language);
+  const _value =
+    typeof value?.static === "object"
+      ? value?.static?.[language] || value?.static?.default
+      : value?.static;
 
   return (
     <ComponentToBindWrapper
@@ -27,14 +33,18 @@ export const ComponentToBindFromSelect = ({
     >
       <Select
         style={{ flex: "1" }}
-        value={value?.static}
+        value={_value}
         size="xs"
         data={data}
         placeholder="Select State"
         nothingFound="Nothing found"
         searchable
         onChange={(e: string) => {
-          onChange({ ...value, dataType: "static", static: e });
+          onChange({
+            ...value,
+            dataType: "static",
+            static: { ...value?.static, [language]: e, default: e },
+          });
         }}
         {...restProps}
         {...AUTOCOMPLETE_OFF_PROPS}

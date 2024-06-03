@@ -38,7 +38,9 @@ export const DateInputData = ({ component, endpoints }: DataProps) => {
   const onLoadFieldsStarter = fields.reduce(
     (acc, f) => {
       acc[f.name] = {
-        static: component.onLoad?.[f.name]?.static || component.props?.[f.name],
+        static: component.onLoad?.[f.name]?.static || {
+          default: component.props?.[f.name],
+        },
       };
       return acc;
     },

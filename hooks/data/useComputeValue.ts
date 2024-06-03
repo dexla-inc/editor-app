@@ -156,6 +156,7 @@ export const useComputeValue = ({
   ) as RecordStringAny;
 
   const projectId = useEditorTreeStore.getState().currentProjectId as string;
+  const language = useEditorTreeStore((state) => state.language);
 
   const auth = useDataSourceStore(
     useShallow((state) =>
@@ -278,7 +279,12 @@ export const useComputeValue = ({
         return get(shareableContent, `data.${fieldValue?.dynamic}`);
       },
       static: (fieldValue: ValueProps) => {
-        return fieldValue?.static ?? undefined;
+        return (
+          fieldValue?.static?.[language] ??
+          fieldValue?.static?.["default"] ??
+          fieldValue?.static ??
+          undefined
+        );
       },
       boundCode: (fieldValue: ValueProps) => {
         try {
@@ -289,7 +295,7 @@ export const useComputeValue = ({
         }
       },
     }),
-    [shareableContent, transformBoundCode],
+    [shareableContent, transformBoundCode, language],
   );
 
   return useMemo(
