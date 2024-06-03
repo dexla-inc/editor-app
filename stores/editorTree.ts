@@ -494,7 +494,7 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
               "editorTree/setRelatedComponentsData",
             ),
           relatedComponentsData: {},
-          language: "default",
+          language: "en",
           setLanguage: (language) =>
             set({ language }, false, "editorTree/setLanguage"),
         }),
