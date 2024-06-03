@@ -71,12 +71,15 @@ export const SelectLogicalRules = (props: SelectLogicalRulesProps) => {
     <Stack>
       <Select
         {...props}
+        label="Rule"
+        description="Choose from the logical rules for utility"
         data={data}
         onChange={(value) => {
           props.onChange?.(value);
         }}
       />
       <TextInput
+        label="Value"
         value={comparingValue}
         onChange={(e) => {
           setComparingValue(e.target.value);

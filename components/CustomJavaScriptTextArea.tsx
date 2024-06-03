@@ -4,13 +4,11 @@ import debounce from "lodash.debounce";
 import { pick } from "next/dist/lib/pick";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useOldRouter } from "@/hooks/data/useOldRouter";
+import { useBindingContext } from "@/components/bindingPopover/BindingContextProvider";
 
 type JsProps = {
   language: "javascript" | "typescript" | "json";
   value?: string;
-  variables?: Record<string, any>;
-  components?: Record<string, any>;
-  actions?: Record<string, any>;
   onChange?: any;
   selectedItem?: string;
 };
@@ -51,12 +49,11 @@ declare var event: {
 export function CustomJavaScriptTextArea({
   language: defaultLanguage,
   value = "",
-  variables = {},
-  components = {},
-  actions = {},
   onChange,
   selectedItem,
 }: JsProps) {
+  const { actions, variables, components } = useBindingContext();
+
   const monacoRef = useRef<any>(null);
   const browser = useOldRouter();
 

@@ -83,7 +83,7 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
 
           return acc;
         },
-        { list: {} } as any,
+        { list: {} } as Record<string, any>,
       ),
     ),
   );
@@ -101,7 +101,7 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
       acc[variable.name] = parsedValue;
       return acc;
     },
-    { list: {} } as any,
+    { list: {} } as Record<string, any>,
   );
 
   const browserList = Array.of(pick(browser, ["asPath", "query"]));
@@ -120,7 +120,7 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
 
   const actionsProcess = isLogicFlow ? nodes : actionsList;
 
-  const actions = actionsProcess?.reduce(
+  const actions = (actionsProcess ?? []).reduce(
     (acc, item) => {
       let actionId, actionName, actionType;
       let endpointId = "";
@@ -166,7 +166,7 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
 
       return acc;
     },
-    { list: {} } as any,
+    { list: {} } as Record<string, any>,
   );
 
   const actionsResponse = useEditorStore((state) => state.actionsResponse);

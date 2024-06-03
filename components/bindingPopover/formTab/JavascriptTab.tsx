@@ -1,0 +1,58 @@
+import { Box, Text, TextInput } from "@mantine/core";
+import { CustomJavaScriptTextArea } from "@/components/CustomJavaScriptTextArea";
+import { isObjectOrArray } from "@/utils/common";
+import { JSONViewer } from "@/components/JSONViewer";
+import { BINDER_BACKGROUND } from "@/utils/branding";
+import { BindingContextSelector } from "@/components/bindingPopover/fields/BindingContextSelector";
+import { useEditorTreeStore } from "@/stores/editorTree";
+import { useDataBinding } from "@/hooks/data/useDataBinding";
+import { useBindingContext } from "@/components/bindingPopover/BindingContextProvider";
+
+export const JavascriptTab = ({
+  value,
+  onChange,
+  selectedItem,
+  setSelectedItem,
+}: any) => {
+  const selectedComponentId = useEditorTreeStore(
+    (state) => state.selectedComponentIds?.at(-1),
+  );
+  const { computeValue } = useDataBinding(selectedComponentId);
+  const { actions, item } = useBindingContext();
+  const currentValue = computeValue<string>({ value }, { actions, item });
+
+  return (
+    <>
+      <Box>
+        <Text size="sm" fw={500} pb={2}>
+          {"JavaScript"}
+        </Text>
+        <CustomJavaScriptTextArea
+          language="typescript"
+          value={value?.boundCode}
+          onChange={(code: string) => {
+            onChange({ ...value, boundCode: code });
+            if (selectedItem) {
+              setSelectedItem(undefined);
+            }
+          }}
+          selectedItem={selectedItem}
+        />
+      </Box>
+      {isObjectOrArray(currentValue) ? (
+        <JSONViewer data={currentValue} />
+      ) : (
+        <TextInput
+          label="Current Value"
+          styles={{ input: { background: BINDER_BACKGROUND } }}
+          value={currentValue ?? "undefined"}
+          readOnly
+          sx={{
+            color: currentValue === undefined ? "grey" : "inherit",
+          }}
+        />
+      )}
+      <BindingContextSelector setSelectedItem={setSelectedItem} />
+    </>
+  );
+};
