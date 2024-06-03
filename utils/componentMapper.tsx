@@ -273,7 +273,17 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Input",
     icon: <IconFileText size={ICON_SIZE} />,
-    synonyms: ["TextField", "Input Field"],
+    synonyms: [
+      "TextField",
+      "Input Field",
+      "Email Input",
+      "Text Input",
+      "Password Input",
+      "Number Input",
+      "Phone Input",
+      "Search Input",
+      "URL Input",
+    ],
   },
   Select: {
     structure: (props: any) => SelectStructure.jsonStructure(props),
