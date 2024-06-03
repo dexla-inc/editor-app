@@ -2,7 +2,7 @@ import { useContextMenu } from "@/contexts/ContextMenuProvider";
 import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useThemeStore } from "@/stores/theme";
-import { copyToClipboard } from "@/utils/clipboard";
+import { copyToClipboard, pasteFromClipboard } from "@/utils/clipboard";
 import { structureMapper } from "@/utils/componentMapper";
 import { NAVBAR_WIDTH } from "@/utils/config";
 import {
@@ -22,6 +22,7 @@ import {
   IconClipboardCopy,
   IconClipboardData,
   IconClipboardPlus,
+  IconClipboardText,
   IconContainer,
   IconCopy,
   IconForms,
@@ -31,6 +32,8 @@ import {
 import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { useCallback, useEffect } from "react";
 import { getComponentTreeById } from "@/utils/editor";
+import { cloneObject } from "@/utils/common";
+import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 
 const determinePasteTarget = (selectedId: string | undefined) => {
   if (!selectedId) return "content-wrapper";
@@ -49,7 +52,7 @@ export const useComponentContextMenu = () => {
   const updateTreeComponentAttrs = useEditorTreeStore(
     (state) => state.updateTreeComponentAttrs,
   );
-
+  const copiedComponent = useEditorStore((state) => state.copiedComponent);
   const setCopiedComponent = useEditorStore(
     (state) => state.setCopiedComponent,
   );
@@ -199,6 +202,88 @@ export const useComponentContextMenu = () => {
     [isPreviewMode, setCopiedComponent],
   );
 
+  const pasteComponent = useCallback(async () => {
+    const clipboardContent = pasteFromClipboard() as ComponentStructure;
+    const componentToPaste =
+      (clipboardContent as typeof copiedComponent as ComponentStructure) ||
+      (copiedComponent as ComponentStructure);
+    if (!componentToPaste || isPreviewMode) {
+      return;
+    }
+
+    const selectedComponentId = selectedComponentIdSelector(
+      useEditorTreeStore.getState(),
+    );
+
+    if (!selectedComponentId || selectedComponentId === "root")
+      return "content-wrapper";
+
+    const editorTree = useEditorTreeStore.getState().tree as EditorTreeCopy;
+
+    const selectedComponent = getComponentTreeById(
+      editorTree.root,
+      selectedComponentId,
+    ) as ComponentStructure;
+
+    let targetId = selectedComponentId;
+    const targetName = selectedComponent?.name!;
+
+    if (!targetId || targetId === "root") return "content-wrapper";
+
+    let componentIndex = 0;
+
+    const isSpecialComponents = ["GridColumn", "Alert", "Accordion"].includes(
+      clipboardContent.name,
+    );
+    const isGridItems = ["Grid", "GridColumn"].includes(componentToPaste.name);
+    const isTargetGridItems = ["Grid", "GridColumn"].includes(targetName);
+    const isTargetModalsOrDrawers = ["Modal", "Drawer"].includes(targetName);
+
+    const isLayoutCategory =
+      structureMapper[componentToPaste.name!]?.category === "Layout";
+    const isAllowedGridMatch =
+      isGridItems === isTargetGridItems && targetName === componentToPaste.name;
+    const isAllowedSibling =
+      isLayoutCategory && !isTargetGridItems && !isTargetModalsOrDrawers;
+
+    const addAsSiblingFlag =
+      selectedComponent?.blockDroppingChildrenInside ||
+      isSpecialComponents ||
+      isAllowedSibling ||
+      isAllowedGridMatch;
+
+    const editorTreeCopy = cloneObject(editorTree) as EditorTreeCopy;
+
+    if (addAsSiblingFlag) {
+      const parentComponentTree = getComponentParent(
+        editorTreeCopy.root as ComponentStructure,
+        selectedComponentId,
+      );
+      targetId = parentComponentTree?.id as string;
+      componentIndex =
+        getComponentIndex(parentComponentTree!, selectedComponentId!) + 1;
+    } else {
+      componentIndex = clipboardContent?.children?.length ?? 0;
+    }
+
+    const newSelectedId = addComponent(
+      editorTreeCopy.root as ComponentStructure,
+      clipboardContent,
+      {
+        id: targetId!,
+        edge: isGridItems ? "center" : "top",
+      },
+      componentIndex,
+      true,
+    );
+
+    setEditorTree(editorTreeCopy, {
+      action: `Pasted ${clipboardContent.name}`,
+    });
+    setSelectedComponentIds(() => [newSelectedId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [copiedComponent, isPreviewMode, setEditorTree]);
+
   const copyProperties = useCallback(
     (component: Component) => {
       const targetComponent =
@@ -273,8 +358,14 @@ export const useComponentContextMenu = () => {
           {
             key: "copy",
             icon: <IconClipboardCopy size={16} />,
-            title: "Copy",
+            title: "Copy (CTRL+C)",
             onClick: () => copyComponent(component),
+          },
+          {
+            key: "paste",
+            icon: <IconClipboardText size={16} />,
+            title: "Paste (CTRL+V)",
+            onClick: () => pasteComponent(),
           },
           {
             key: "properties",
