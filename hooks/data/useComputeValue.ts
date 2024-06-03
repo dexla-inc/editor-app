@@ -4,7 +4,7 @@ import { useCallback, useMemo } from "react";
 import get from "lodash.get";
 import { ValueProps } from "@/types/dataBinding";
 import set from "lodash.set";
-import { cloneObject, safeJsonParse } from "@/utils/common";
+import { cloneObject, removeEmpty, safeJsonParse } from "@/utils/common";
 import { useInputsStore } from "@/stores/inputs";
 import { useShallow } from "zustand/react/shallow";
 import { pick } from "next/dist/lib/pick";
@@ -63,11 +63,12 @@ export const useComputeValue = ({
 }: UseComputeValue) => {
   const { itemTransformer } = useDataTransformers();
   onLoad = cloneObject(onLoad);
+  const sanitizedOnLoad = removeEmpty(onLoad);
 
   const browser = useOldRouter();
   const valuePropsPaths = useMemo(() => {
-    return findValuePropsPaths(onLoad);
-  }, [onLoad]);
+    return findValuePropsPaths(sanitizedOnLoad);
+  }, [sanitizedOnLoad]);
 
   const item = itemTransformer(shareableContent?.relatedComponentsData ?? {});
 
@@ -99,7 +100,7 @@ export const useComputeValue = ({
     ];
 
     valuePropsPaths.forEach((fieldValuePath) => {
-      const fieldValue = get(onLoad, fieldValuePath);
+      const fieldValue = get(sanitizedOnLoad, fieldValuePath);
       if (fieldValue.dataType === "boundCode" && fieldValue.boundCode) {
         patterns.forEach(({ pattern, keys }) => {
           keys.push(...extractKeysFromPattern(pattern, fieldValue.boundCode));
@@ -116,7 +117,7 @@ export const useComputeValue = ({
       itemKeys: [...new Set(itemKeys)],
       otherKeys: [...new Set(otherKeys)],
     };
-  }, [onLoad, valuePropsPaths]);
+  }, [sanitizedOnLoad, valuePropsPaths]);
 
   const rawVariables = useVariableStore(
     useShallow((state) => pick(state.variableList, variableKeys)),
@@ -295,7 +296,7 @@ export const useComputeValue = ({
     () =>
       valuePropsPaths.reduce(
         (acc, fieldValuePath) => {
-          const fieldValue = get(onLoad, fieldValuePath);
+          const fieldValue = get(sanitizedOnLoad, fieldValuePath);
           const { dataType = "static" } = fieldValue ?? {};
 
           set(
@@ -306,9 +307,9 @@ export const useComputeValue = ({
 
           return acc;
         },
-        onLoad as Record<string, any>,
+        sanitizedOnLoad as Record<string, any>,
       ),
-    [onLoad, valueHandlers, valuePropsPaths],
+    [sanitizedOnLoad, valueHandlers, valuePropsPaths],
   );
 };
 
