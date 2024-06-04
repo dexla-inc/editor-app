@@ -134,7 +134,6 @@ export const withComponentWrapper = <T extends Record<string, any>>(
       shareableContent,
     } as any;
 
-    if (component.name === "Radio") console.log(component.onLoad);
     const ref = useRef(null);
 
     return (
