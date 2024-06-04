@@ -37,17 +37,25 @@ export const useShareableContent = ({
           `${node?.onLoad?.resultsKey}[${index}]`,
           parentData,
         );
-        shareableContent = cloneObject(acc[groupId]);
+        shareableContent = { data: cloneObject(acc[groupId]) };
       } else {
-        const staticData = computeValue({
-          value: node?.onLoad?.data,
-          shareableContent: {
-            data: shareableContent,
+        const staticData = computeValue(
+          {
+            value: node?.onLoad?.data,
+            shareableContent: {
+              ...shareableContent,
+              relatedComponentsData: acc,
+            },
           },
-        });
+          { item: itemTransformer(acc) },
+        );
+
         if (staticData) {
           acc[groupId] = get(staticData, index, staticData);
-          shareableContent = cloneObject(acc[groupId]);
+          shareableContent = {
+            ...shareableContent,
+            data: cloneObject(acc[groupId]),
+          };
         }
       }
 

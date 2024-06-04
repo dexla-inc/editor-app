@@ -24,9 +24,6 @@ export const useRenderData = ({
   component,
   shareableContent,
 }: UseRenderDataProps) => {
-  // const isPreviewMode = useEditorTreeStore(
-  //   useShallow((state) => state.isPreviewMode || state.isLive),
-  // );
   const {
     dataType = "static",
     skeletonMinHeight = 400,
@@ -38,7 +35,6 @@ export const useRenderData = ({
     componentId: component.id!,
     onLoad: component.onLoad,
     dataType,
-    includeExampleResponse: false, //!isPreviewMode,
   });
 
   const data = dataType === "dynamic" ? dynamicData : staticData;
