@@ -3,7 +3,7 @@ import { Select } from "@mantine/core";
 
 const LanguageSelector = () => {
   const language = useEditorTreeStore((state) => state.language);
-  const setLanguage = useEditorTreeStore.getState().setLanguage;
+  const setLanguage = useEditorTreeStore((state) => state.setLanguage);
 
   const flexStyles = {
     display: "flex",
