@@ -26,6 +26,7 @@ export const ModalComponent = forwardRef(
           handleClose,
           titleStyle,
           isSizeFullScreen,
+          title,
         }) => {
           return (
             <MantineModal
@@ -39,6 +40,7 @@ export const ModalComponent = forwardRef(
               size={sizePx}
               {...props}
               {...componentProps}
+              title={title}
               opened={isPreviewMode ? true : showInEditor}
               onClose={handleClose}
               styles={{

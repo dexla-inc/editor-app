@@ -22,13 +22,18 @@ export const useContentEditable = (componentId: string, ref: any) => {
 
   const exitEditMode = useCallback(() => {
     if (ref?.current) {
+      const language = useEditorTreeStore.getState().language;
       const updateTreeComponentAttrs =
         useEditorTreeStore.getState().updateTreeComponentAttrs;
+      const value = ref?.current.innerText;
       updateTreeComponentAttrs({
         componentIds: [componentId],
         attrs: {
           onLoad: {
-            children: { dataType: "static", static: ref?.current.innerText },
+            children: {
+              dataType: "static",
+              static: { [language]: value, default: value },
+            },
           },
         },
       });

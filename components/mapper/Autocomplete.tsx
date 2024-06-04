@@ -31,9 +31,9 @@ const AutocompleteComponent = forwardRef(
       ...componentProps
     } = component.props as any;
 
-    const [value, setValue] = useInputValue(
+    const [value, setValue] = useInputValue<AutocompleteItem>(
       {
-        value: component.onLoad?.value ?? "",
+        value: component.onLoad?.value ?? { label: "", value: "" },
       },
       props.id!,
     );
@@ -98,7 +98,7 @@ const AutocompleteComponent = forwardRef(
 
     useEffect(() => {
       if (itemSubmitted && onItemSubmit && value) {
-        onItemSubmit && onItemSubmit(value.value);
+        onItemSubmit && onItemSubmit(value?.value);
         setItemSubmitted(false);
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
