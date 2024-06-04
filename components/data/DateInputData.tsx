@@ -22,18 +22,25 @@ const fields = [
     label: "Value",
     type: "date",
   },
+  {
+    name: "placeholder",
+    label: "Placeholder",
+    type: "text",
+  },
 ];
 
 export const DateInputData = ({ component, endpoints }: DataProps) => {
-  const hasParentComponentData = useEditorTreeStore(
-    (state) => state.selectedComponentIds?.at(-1)?.includes("-related-"),
+  const hasParentComponentData = useEditorTreeStore((state) =>
+    state.selectedComponentIds?.at(-1)?.includes("-related-"),
   );
   const { getComponentsStates } = useComponentStates();
 
   const onLoadFieldsStarter = fields.reduce(
     (acc, f) => {
       acc[f.name] = {
-        static: component.onLoad?.[f.name]?.static || component.props?.[f.name],
+        static: component.onLoad?.[f.name]?.static || {
+          default: component.props?.[f.name],
+        },
       };
       return acc;
     },

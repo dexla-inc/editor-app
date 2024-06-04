@@ -2,6 +2,8 @@ import { ComponentToBindWrapper } from "@/components/ComponentToBindWrapper";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { ValueProps } from "@/types/dataBinding";
 import { Select, SelectProps } from "@mantine/core";
+import { useEditorTreeStore } from "@/stores/editorTree";
+import get from "lodash.get";
 
 type Props = Omit<SelectProps, "value" | "onChange" | "label"> & {
   label?: string;
@@ -18,6 +20,8 @@ export const ComponentToBindFromSelect = ({
   ...rest
 }: Props) => {
   const { label, ...restProps } = rest;
+  const language = useEditorTreeStore((state) => state.language);
+  const fetchedValue = get(value?.static, language, value?.static);
 
   return (
     <ComponentToBindWrapper
@@ -27,14 +31,18 @@ export const ComponentToBindFromSelect = ({
     >
       <Select
         style={{ flex: "1" }}
-        value={value?.static}
+        value={fetchedValue}
         size="xs"
         data={data}
         placeholder="Select State"
         nothingFound="Nothing found"
         searchable
         onChange={(e: string) => {
-          onChange({ ...value, dataType: "static", static: e });
+          onChange({
+            ...value,
+            dataType: "static",
+            static: { ...value?.static, [language]: e, default: e },
+          });
         }}
         {...restProps}
         {...AUTOCOMPLETE_OFF_PROPS}

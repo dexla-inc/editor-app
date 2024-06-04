@@ -4,12 +4,18 @@ import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useEffect } from "react";
-import { SegmentedControlYesNo } from "../SegmentedControlYesNo";
+import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
+import { StaticFormFieldsBuilder } from "@/components/data/forms/StaticFormFieldsBuilder";
 
 export const ModalData = ({ component }: DataProps) => {
   const form = useForm({
     initialValues: {
-      onLoad: component?.onLoad,
+      onLoad: {
+        ...component?.onLoad,
+        title: component?.onLoad?.title ?? {
+          static: { en: component?.props?.title, fr: component?.props?.title },
+        },
+      },
     },
   });
 
@@ -22,6 +28,14 @@ export const ModalData = ({ component }: DataProps) => {
 
   return (
     <Stack spacing="xs">
+      <StaticFormFieldsBuilder
+        field={{
+          name: "title",
+          label: "Title",
+          type: "text",
+        }}
+        form={form}
+      />
       <VisibilityModifier form={form} />
       <SegmentedControlYesNo
         label="Show in Editor"

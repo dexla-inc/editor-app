@@ -72,7 +72,7 @@ const DataItem = ({ onClick, item, onItemSelection, type }: DataItemProps) => {
 
     return <DataItemButton item={item} onClick={onClick} />;
   }
-  if (["auth", "browser", "event", "item"].includes(type!)) {
+  if (["event", "item", "others"].includes(type!)) {
     return (
       <JSONSelector
         name={type!}

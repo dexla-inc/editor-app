@@ -27,7 +27,6 @@ const Modifier = withModifier(({ selectedComponent }) => {
     form.setValues(
       merge({}, requiredModifiers.select, {
         size: selectedComponent?.props?.size ?? theme.inputSize,
-        placeholder: selectedComponent?.props?.placeholder,
         icon: selectedComponent?.props?.icon,
         data: selectedComponent?.props?.data,
         withAsterisk: selectedComponent?.props?.withAsterisk,
@@ -56,14 +55,6 @@ const Modifier = withModifier(({ selectedComponent }) => {
   return (
     <form>
       <Stack spacing="xs">
-        <TextInput
-          label="Placeholder"
-          size="xs"
-          {...form.getInputProps("placeholder")}
-          onChange={(e) => {
-            setFieldValue("placeholder", e.target.value);
-          }}
-        />
         <SegmentedControlSizes
           label="Size"
           sizing={inputSizes}

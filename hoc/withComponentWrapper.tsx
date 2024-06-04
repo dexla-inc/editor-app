@@ -14,7 +14,6 @@ import { useEditorClickHandler } from "@/hooks/components/useEditorClickHandler"
 import { ComponentToolbox } from "@/components/ComponentToolbox";
 import { WithComponentWrapperProps } from "@/types/component";
 import { Component } from "@/utils/editor";
-import { Router } from "next/router";
 import { useRouter } from "next/navigation";
 import merge from "lodash.merge";
 import { withComponentVisibility } from "@/hoc/withComponentVisibility";
@@ -65,8 +64,8 @@ export const withComponentWrapper = <T extends Record<string, any>>(
     const Wrapper = hasTooltip
       ? Tooltip
       : initiallyLoading
-      ? Skeleton
-      : Fragment;
+        ? Skeleton
+        : Fragment;
 
     const currentState = useComputeCurrentState(
       componentTree.id!,
@@ -89,7 +88,7 @@ export const withComponentWrapper = <T extends Record<string, any>>(
     });
 
     const propsWithOverwrites = usePropsWithOverwrites(
-      { ...component, id },
+      { ...component, onLoad: computedOnLoad, id },
       isEditorMode,
       currentState,
       triggers,
@@ -149,8 +148,8 @@ export const withComponentWrapper = <T extends Record<string, any>>(
                 withArrow: true,
               }
             : initiallyLoading
-            ? { visible: true }
-            : {})}
+              ? { visible: true }
+              : {})}
         >
           <Component ref={ref} {...props} />
         </Wrapper>

@@ -198,7 +198,7 @@ export interface ChangeStepAction extends BaseAction {
 
 export interface ChangeLanguageAction extends BaseAction {
   name: "changeLanguage";
-  language: "default" | "french";
+  language: ValueProps;
 }
 
 export interface CustomJavascriptAction extends BaseAction {
@@ -690,9 +690,11 @@ export const useApiCallAction = async (
 
 export const useChangeLanguageAction = ({
   action,
+  computeValue,
 }: ChangeLanguageActionParams) => {
-  const setLanguage = useEditorStore.getState().setLanguage;
-  setLanguage(action.language);
+  const setLanguage = useEditorTreeStore.getState().setLanguage;
+  const language = computeValue({ value: action.language });
+  setLanguage(language as string);
 };
 
 // IMPORTANT: do not delete the variable data as it is used in the eval
