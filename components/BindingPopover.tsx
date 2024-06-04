@@ -57,8 +57,8 @@ export default function BindingPopover({
 }: Props) {
   const [tab, setTab] = useState<BindingTab>("components");
   const [filterKeyword, setFilterKeyword] = useState<string>("");
-  const selectedComponentId = useEditorTreeStore(
-    (state) => state.selectedComponentIds?.at(-1),
+  const selectedComponentId = useEditorTreeStore((state) =>
+    state.selectedComponentIds?.at(-1),
   );
   const { computeValue } = useDataBinding(selectedComponentId);
   const [selectedItem, setSelectedItem] = useState<string>();

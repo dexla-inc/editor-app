@@ -9,6 +9,7 @@ import { ComputeValueProps } from "@/types/dataBinding";
 import { useEndpoints } from "../editor/reactQuery/useDataSourcesEndpoints";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { useEditorStore } from "@/stores/editor";
+import { useDataTransformers } from "@/hooks/data/useDataTransformers";
 
 const nonDefaultActionTriggers = ["onSuccess", "onError"];
 
@@ -27,13 +28,17 @@ export const useTriggers = ({
 }: UseTriggersProps) => {
   const currentProjectId =
     useEditorTreeStore((state) => state.currentProjectId) ?? projectId;
-  const updateTreeComponentAttrs =
-    useEditorTreeStore.getState().updateTreeComponentAttrs;
+  const updateTreeComponentAttrs = useEditorTreeStore(
+    (state) => state.updateTreeComponentAttrs,
+  );
   const { computeValue } = useDataBinding(entity?.id);
   const { endpoints, isFetched } = useEndpoints(currentProjectId as string);
   const { data: logicFlows, isFetched: logicFlowsIsFetched } =
     useFlowsQuery(currentProjectId);
-  const setActionsResponse = useEditorStore.getState().setActionsResponse;
+  const setActionsResponse = useEditorStore(
+    (state) => state.setActionsResponse,
+  );
+  const { itemTransformer } = useDataTransformers();
 
   const triggeredActionResponses: Record<string, any> = {};
   const setTriggeredActionsResponses = (actionId: string, response: any) => {
@@ -62,6 +67,7 @@ export const useTriggers = ({
                 {
                   actions: { ...triggeredActionResponses },
                   event: e,
+                  item: itemTransformer(shareableContent.relatedComponentsData),
                 },
               );
             };
