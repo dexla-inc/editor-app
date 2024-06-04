@@ -28,6 +28,7 @@ const Modifier = withModifier(({ selectedComponent }) => {
     form.setValues(
       merge({}, requiredModifiers.autocomplete, {
         size: selectedComponent?.props?.size ?? theme.inputSize,
+        placeholder: selectedComponent?.props?.placeholder,
         iconName: selectedComponent?.props?.iconName,
         data: selectedComponent?.props?.data,
         withAsterisk: selectedComponent?.props?.withAsterisk,
@@ -51,6 +52,14 @@ const Modifier = withModifier(({ selectedComponent }) => {
   return (
     <form>
       <Stack spacing="xs">
+        <TextInput
+          label="Placeholder"
+          size="xs"
+          {...form.getInputProps("placeholder")}
+          onChange={(e) => {
+            setFieldValue("placeholder", e.target.value);
+          }}
+        />
         <SegmentedControlSizes
           label="Size"
           sizing={inputSizes}

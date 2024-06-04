@@ -136,8 +136,6 @@ export type EditorTreeState = {
   setIsSaving: (value: boolean) => void;
   relatedComponentsData: Record<string, any>;
   setRelatedComponentsData: (props: Record<string, any>) => void;
-  language: string;
-  setLanguage: (isSaving: string) => void;
 };
 
 const updatePageStateFunc = async (
@@ -494,16 +492,12 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
               "editorTree/setRelatedComponentsData",
             ),
           relatedComponentsData: {},
-          language: "en",
-          setLanguage: (language) =>
-            set({ language }, false, "editorTree/setLanguage"),
         }),
         {
           name: "editor-tree-config",
           partialize: (state) => {
             return {
               isPreviewMode: state.isPreviewMode,
-              language: state.language,
             };
           },
         },

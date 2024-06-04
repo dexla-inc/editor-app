@@ -27,10 +27,8 @@ export const ModalAndDrawerWrapper = ({ component, children }: Props) => {
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
 
   const { size, titleTag: tag, ...componentProps } = component.props as any;
-  const {
-    title = componentProps?.title,
-    showInEditor = componentProps?.showInEditor,
-  } = component.onLoad || {};
+  const { showInEditor = component.props?.showInEditor } =
+    component.onLoad || {};
   const { titleStyle } = useBrandingStyles({ tag });
 
   const onLoad = useEditorTreeStore(
@@ -84,7 +82,6 @@ export const ModalAndDrawerWrapper = ({ component, children }: Props) => {
         children({
           isPreviewMode,
           target,
-          title,
           showInEditor,
           componentProps,
           titleStyle,

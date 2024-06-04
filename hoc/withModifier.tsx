@@ -61,7 +61,7 @@ export const withModifier = (Modifier: ComponentType<WithModifier>) => {
           return null;
         }
 
-        const language = state.language;
+        const language = "en";
         const selectedComponentId = selectedComponentIdSelector(state);
         const currentState =
           state.currentTreeComponentsStates?.[selectedComponentId!] ??

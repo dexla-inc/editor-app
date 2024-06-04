@@ -48,6 +48,9 @@ export type EditorState = {
   setActiveTab: (activeTab?: SectionId) => void;
   setIsStructureCollapsed: (value: boolean) => void;
   setCopiedAction: (copiedAction?: Action[]) => void;
+  // pasteAction: (componentId: string) => void;
+  language: string;
+  setLanguage: (isSaving: string) => void;
   isResizing?: boolean;
   setIsResizing: (isResizing?: boolean) => void;
   isWindowError?: boolean;
@@ -89,6 +92,7 @@ export const useEditorStore = create<EditorState>()(
       collapsedItemsCount: 0,
       pages: [],
       selectedComponentId: "content-wrapper",
+      language: "default",
       projectId: "",
       actionsResponse: {},
       setCopiedProperties: (copiedProperties) =>
@@ -138,6 +142,7 @@ export const useEditorStore = create<EditorState>()(
         ),
       setCopiedAction: (copiedAction) =>
         set({ copiedAction }, false, "editor/setCopiedAction"),
+      setLanguage: (language) => set({ language }, false, "editor/setLanguage"),
       setIsWindowError: (isWindowError) =>
         set({ isWindowError }, false, "editor/setIsWindowError"),
       setIsResizing: (isResizing) =>

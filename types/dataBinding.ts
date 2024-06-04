@@ -13,9 +13,10 @@ export type BindingTab =
 export type DataType = "static" | "dynamic" | "boundCode";
 export type ContextType =
   | "item"
+  | "auth"
   | "components"
   | "actions"
-  | "others"
+  | "browser"
   | "event"
   | "variables";
 
