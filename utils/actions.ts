@@ -514,7 +514,6 @@ export async function performFetch(
   headers?: any,
   body?: any,
   authHeaderKey?: string,
-  includeExampleResponse = false,
 ) {
   const isGetMethodType = endpoint?.methodType === "GET";
 
@@ -535,9 +534,6 @@ export async function performFetch(
   if (!response.ok) {
     const errorBody = await readDataFromStream(response.body);
     if (response.status >= 400 && response.status < 500) {
-      if (includeExampleResponse) {
-        return safeJsonParse(endpoint?.exampleResponse || "");
-      }
       throw new Error(errorBody);
     } else if (response.status >= 500) {
       console.error(errorBody);
@@ -599,8 +595,9 @@ export const useApiCallAction = async (
   const endpoint = endpointResults?.find((e) => e.id === action.endpoint)!;
 
   try {
-    const accessToken = useDataSourceStore.getState().getAuthState(projectId)
-      ?.accessToken;
+    const accessToken = useDataSourceStore
+      .getState()
+      .getAuthState(projectId)?.accessToken;
 
     const { url, header, body } = prepareRequestData(
       action,

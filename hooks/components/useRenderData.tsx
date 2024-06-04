@@ -35,7 +35,6 @@ export const useRenderData = ({
     componentId: component.id!,
     onLoad: component.onLoad,
     dataType,
-    includeExampleResponse: false,
   });
 
   const data = dataType === "dynamic" ? dynamicData : staticData;
