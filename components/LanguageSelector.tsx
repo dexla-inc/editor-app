@@ -1,9 +1,9 @@
-import { useEditorTreeStore } from "@/stores/editorTree";
+import { useEditorStore } from "@/stores/editor";
 import { Select } from "@mantine/core";
 
 const LanguageSelector = () => {
-  const language = useEditorTreeStore((state) => state.language);
-  const setLanguage = useEditorTreeStore((state) => state.setLanguage);
+  const language = useEditorStore((state) => state.language);
+  const setLanguage = useEditorStore((state) => state.setLanguage);
 
   const flexStyles = {
     display: "flex",
@@ -17,16 +17,16 @@ const LanguageSelector = () => {
       label="Language"
       value={language}
       onChange={setLanguage}
-      withinPortal
       size="xs"
       data={[
-        { value: "en", label: "English" },
-        { value: "fr", label: "French" },
+        { value: "default", label: "English" },
+        { value: "french", label: "French" },
+        // Add more languages as needed
       ]}
       sx={{
         ...flexStyles,
         whiteSpace: "nowrap",
-        width: "220px",
+        width: "160px",
       }}
     />
   );

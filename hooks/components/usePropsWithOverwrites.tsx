@@ -1,3 +1,4 @@
+import { useEditorStore } from "@/stores/editor";
 import { Component } from "@/utils/editor";
 import merge from "lodash.merge";
 import { useEffect, useMemo, useState } from "react";
@@ -11,6 +12,7 @@ export const usePropsWithOverwrites = (
 ) => {
   const [customCurrentState, setCustomCurrentState] =
     useState<string>(currentState);
+  const language = useEditorStore((state) => state.language);
 
   useEffect(() => {
     setCustomCurrentState(currentState);
@@ -43,7 +45,7 @@ export const usePropsWithOverwrites = (
     return merge(
       {},
       omit(component.props ?? {}, omittingProps),
-      { placeholder: component?.onLoad?.placeholder },
+      component.languages?.[language],
       component.states?.[customCurrentState],
       {
         disabled: customCurrentState === "disabled",

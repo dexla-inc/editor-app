@@ -392,6 +392,16 @@ export const getComponentBeingAddedId = (): string | null => {
   );
 };
 
+const translatableFieldsKeys = [
+  "children",
+  "label",
+  "title",
+  "alt",
+  "placeholder",
+  "data",
+  "tooltip",
+];
+
 const styleFieldsKeys = [
   "styles",
   "style",
@@ -407,6 +417,10 @@ const styleFieldsKeys = [
   "weight",
 ];
 
+const pickTranslatableFields = (value: string, key: string) => {
+  return value !== "" && translatableFieldsKeys.includes(key);
+};
+
 const pickStyleFields = (value: string, key: string) => {
   return value !== "" && styleFieldsKeys.includes(key);
 };
@@ -415,10 +429,21 @@ export const updateTreeComponentAttrs = (
   component: Component,
   attrs: Partial<Component>,
   state: string = "default",
+  language: string = "default",
 ) => {
+  const translatableProps = pickBy(attrs.props, pickTranslatableFields);
   const styleProps = pickBy(attrs.props, pickStyleFields);
-  // properties that are not merging with states
-  const alwaysDefaultProps = omit(attrs.props ?? {}, styleFieldsKeys);
+  // properties that are not merging with states or languages
+  const alwaysDefaultProps = omit(attrs.props ?? {}, [
+    ...translatableFieldsKeys,
+    ...styleFieldsKeys,
+  ]);
+
+  if (language === "default") {
+    merge(component, { props: translatableProps });
+  } else {
+    merge(component, { languages: { [language]: translatableProps } });
+  }
 
   if (state === "default") {
     merge(component, { props: styleProps });

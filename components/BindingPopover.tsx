@@ -68,7 +68,8 @@ export default function BindingPopover({
     actions,
     variables,
     components,
-    others,
+    browserList,
+    auth,
     event,
     getEntityEditorValue,
     item,
@@ -107,8 +108,12 @@ export default function BindingPopover({
       dataItems: Object.values(variables.list),
     },
     {
-      entity: "others",
-      dataItems: Array.of(others),
+      entity: "auth",
+      dataItems: Array.of(auth),
+    },
+    {
+      entity: "browser",
+      dataItems: browserList,
     },
     {
       entity: "actions",
@@ -156,12 +161,23 @@ export default function BindingPopover({
       ),
     },
     {
-      value: "others",
+      value: "auth",
+      label: (
+        <Center>
+          <Icon name="IconLogin" />
+          <Text ml={ML} size={TAB_TEXT_SIZE}>
+            Auth
+          </Text>
+        </Center>
+      ),
+    },
+    {
+      value: "browser",
       label: (
         <Center>
           <Icon name="IconWorldWww" />
           <Text ml={ML} size={TAB_TEXT_SIZE}>
-            Others
+            Browser
           </Text>
         </Center>
       ),
@@ -286,7 +302,6 @@ export default function BindingPopover({
               variables={variables.list}
               components={components.list}
               actions={actions?.list}
-              others={others}
               onChange={(code: string) => {
                 onChange({ ...value, boundCode: code });
                 if (selectedItem) {

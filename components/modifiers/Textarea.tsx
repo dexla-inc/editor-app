@@ -14,6 +14,7 @@ const Modifier = withModifier(({ selectedComponent }) => {
   useEffect(() => {
     form.setValues(
       merge({}, requiredModifiers.textarea, {
+        placeholder: selectedComponent?.props?.placeholder,
         size: selectedComponent?.props?.size,
         autosize: selectedComponent?.props?.autosize,
         withAsterisk: selectedComponent?.props?.withAsterisk,
@@ -26,6 +27,17 @@ const Modifier = withModifier(({ selectedComponent }) => {
   return (
     <form>
       <Stack spacing="xs">
+        <TextInput
+          label="Placeholder"
+          size="xs"
+          {...form.getInputProps("placeholder")}
+          onChange={(e) => {
+            form.setFieldValue("placeholder", e.target.value);
+            debouncedTreeComponentAttrsUpdate({
+              attrs: { props: { placeholder: e.target.value } },
+            });
+          }}
+        />
         <SegmentedControlYesNo
           label="Required"
           {...form.getInputProps("withAsterisk")}

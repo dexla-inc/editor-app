@@ -2,8 +2,6 @@ import { ComponentToBindWrapper } from "@/components/ComponentToBindWrapper";
 import { ValueProps } from "@/types/dataBinding";
 import { SegmentedControl, SegmentedControlProps, Stack } from "@mantine/core";
 import { TopLabel } from "@/components/TopLabel";
-import { useEditorTreeStore } from "@/stores/editorTree";
-import get from "lodash.get";
 
 type Props = Omit<SegmentedControlProps, "value" | "onChange" | "label"> & {
   label?: string;
@@ -16,16 +14,6 @@ export const ComponentToBindFromSegmentedControl = ({
   onChange,
   ...rest
 }: Props) => {
-  const language = useEditorTreeStore((state) => state.language);
-  const fetchedValue = get(value?.static, language, value?.static);
-
-  const onChangeStatic = (val: any) => {
-    onChange({
-      ...value,
-      dataType: "static",
-      static: { ...value?.static, [language]: val, default: val },
-    });
-  };
   return (
     <ComponentToBindWrapper
       label={rest?.label}
@@ -34,14 +22,10 @@ export const ComponentToBindFromSegmentedControl = ({
     >
       <Stack>
         <SegmentedControl
-          value={fetchedValue}
+          value={value?.static}
           size="xs"
           onChange={(e: string) =>
-            onChange({
-              ...value,
-              dataType: "static",
-              static: { ...value?.static, [language]: e, default: e },
-            })
+            onChange({ ...value, dataType: "static", static: e })
           }
           {...rest}
         />

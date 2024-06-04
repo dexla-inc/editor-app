@@ -23,6 +23,7 @@ const Modifier = withModifier(({ selectedComponent }) => {
     form.setValues(
       merge({}, requiredModifiers.input, {
         size: selectedComponent?.props?.size ?? theme.inputSize,
+        placeholder: selectedComponent?.props?.placeholder,
         type: selectedComponent?.props?.type,
         icon: selectedComponent?.props?.icon,
         withAsterisk: selectedComponent?.props?.withAsterisk,
@@ -45,6 +46,21 @@ const Modifier = withModifier(({ selectedComponent }) => {
   return (
     <form>
       <Stack spacing="xs">
+        <TextInput
+          label="Placeholder"
+          size="xs"
+          {...form.getInputProps("placeholder")}
+          onChange={(e) => {
+            form.setFieldValue("placeholder", e.target.value);
+            debouncedTreeComponentAttrsUpdate({
+              attrs: {
+                props: {
+                  placeholder: e.target.value,
+                },
+              },
+            });
+          }}
+        />
         <Select
           label="Type"
           size="xs"
