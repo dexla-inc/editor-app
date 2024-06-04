@@ -1,9 +1,7 @@
-import { useEditorStore } from "@/stores/editor";
 import { Component } from "@/utils/editor";
 import merge from "lodash.merge";
 import { useEffect, useMemo, useState } from "react";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
-import { onLoad } from "@sentry/nextjs";
 
 export const usePropsWithOverwrites = (
   component: Component,
