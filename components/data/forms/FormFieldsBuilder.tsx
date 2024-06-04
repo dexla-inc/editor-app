@@ -32,10 +32,14 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
   const hasParentComponentData = useEditorTreeStore(
     (state) => state.selectedComponentIds?.at(-1)?.includes("-related-"),
   );
+
   const onLoadFieldsStarter = fields.reduce(
     (acc, f) => {
       acc[f.name] = {
-        static: component.onLoad?.[f.name]?.static || component.props?.[f.name],
+        static: component.onLoad?.[f.name]?.static || {
+          en: component.props?.[f.name],
+          fr: component.props?.[f.name],
+        },
       };
       return acc;
     },

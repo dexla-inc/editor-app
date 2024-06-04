@@ -54,7 +54,7 @@ const InputComponent = forwardRef(
 
     const { borderStyle, inputStyle } = useBrandingStyles();
 
-    const [value, setValue] = useInputValue(
+    const [value, setValue] = useInputValue<string | number>(
       {
         value: component?.onLoad?.value ?? "",
       },
@@ -81,7 +81,7 @@ const InputComponent = forwardRef(
 
     // handle increase number range
     const increaseNumber = () => {
-      let val = value;
+      let val = parseToNumber(value);
       if (val === undefined) val = 1;
       else val += 1;
       handleChange(val);
@@ -89,7 +89,7 @@ const InputComponent = forwardRef(
 
     // handle decrease number range
     const decreaseNumber = () => {
-      let val = value;
+      let val = parseToNumber(value);
       if ([undefined, "", 0].includes(val)) val = 0;
       else val -= 1;
       handleChange(val);
