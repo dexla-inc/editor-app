@@ -262,11 +262,7 @@ export const useComputeValue = ({
   const valueHandlers = useMemo(
     () => ({
       dynamic: (fieldValue: ValueProps) => {
-        return get(
-          shareableContent,
-          `data.${fieldValue?.dynamic}`,
-          fieldValue?.dynamic,
-        );
+        return get(shareableContent, `data.${fieldValue?.dynamic}`);
       },
       static: (fieldValue: ValueProps) => {
         return fieldValue?.static ?? undefined;
