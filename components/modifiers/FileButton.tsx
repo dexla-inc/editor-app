@@ -47,6 +47,10 @@ const Modifier = withModifier(({ selectedComponent }) => {
             },
             { label: "XLS Excel Worksheet", value: "application/vnd.ms-excel" },
             {
+              label: "XLSM Excel Macro-Enabled Worksheet",
+              value: "application/vnd.ms-excel.sheet.macroEnabled.12",
+            },
+            {
               label: "PowerPoint Presentation",
               value:
                 "application/vnd.openxmlformats-officedocument.presentationml.presentation",
