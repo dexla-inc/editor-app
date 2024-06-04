@@ -74,7 +74,6 @@ const AutocompleteComponent = forwardRef(
     const [timeoutId, setTimeoutId] = useState(null);
 
     const handleChange = (item: any) => {
-      console.log(item);
       setValue(item);
 
       if (timeoutId) {
