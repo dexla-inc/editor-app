@@ -58,15 +58,6 @@ export const ModalDrawerFormBuilder = ({
             });
           }}
         />
-        <TextInput
-          label="Title"
-          size="xs"
-          {...form.getInputProps("title")}
-          onChange={(e) => {
-            const value = e.target.value;
-            onChange("title", value as string);
-          }}
-        />
         <SegmentedControlInput
           label="Heading Tag"
           data={[

@@ -31,9 +31,9 @@ const AutocompleteComponent = forwardRef(
       ...componentProps
     } = component.props as any;
 
-    const [value, setValue] = useInputValue(
+    const [value, setValue] = useInputValue<AutocompleteItem>(
       {
-        value: component.onLoad?.value ?? "",
+        value: component.onLoad?.value ?? { label: "", value: "" },
       },
       props.id!,
     );
@@ -74,7 +74,8 @@ const AutocompleteComponent = forwardRef(
     const [timeoutId, setTimeoutId] = useState(null);
 
     const handleChange = (item: any) => {
-      setValue(sanitizeValue(item));
+      console.log(item);
+      setValue(item);
 
       if (timeoutId) {
         clearTimeout(timeoutId);
@@ -98,7 +99,7 @@ const AutocompleteComponent = forwardRef(
 
     useEffect(() => {
       if (itemSubmitted && onItemSubmit && value) {
-        onItemSubmit && onItemSubmit(value.value);
+        onItemSubmit && onItemSubmit(value?.value);
         setItemSubmitted(false);
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -134,7 +135,7 @@ const AutocompleteComponent = forwardRef(
         dropdownComponent={CustomDropdown}
         rightSection={loading || isLoading ? <InputLoader /> : null}
         label={undefined}
-        value={value?.label}
+        value={value?.label ?? value}
       />
     );
   },
@@ -144,11 +145,3 @@ AutocompleteComponent.displayName = "Autocomplete";
 export const Autocomplete = memo(
   withComponentWrapper<Props>(AutocompleteComponent),
 );
-
-const sanitizeValue = (value: any) => {
-  if (typeof value === "string") {
-    return { label: value, value };
-  }
-
-  return value?.label ? value : { label: "", value: "" };
-};

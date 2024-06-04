@@ -3,6 +3,7 @@ import { Component } from "@/utils/editor";
 import merge from "lodash.merge";
 import { useEffect, useMemo, useState } from "react";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
+import { onLoad } from "@sentry/nextjs";
 
 export const usePropsWithOverwrites = (
   component: Component,
@@ -44,6 +45,7 @@ export const usePropsWithOverwrites = (
     return merge(
       {},
       omit(component.props ?? {}, omittingProps),
+      { placeholder: component?.onLoad?.placeholder },
       component.states?.[customCurrentState],
       {
         disabled: customCurrentState === "disabled",

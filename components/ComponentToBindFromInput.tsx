@@ -22,6 +22,7 @@ import { SegmentedControlInput } from "./SegmentedControlInput";
 import { Icon } from "@/components/Icon";
 import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
 import { useEditorTreeStore } from "@/stores/editorTree";
+import get from "lodash.get";
 
 // Need to extend input props depending on fieldType
 type BaseProps = {
@@ -35,6 +36,7 @@ type BaseProps = {
   isPageAction?: boolean;
   useTrueOrFalseStrings?: boolean;
   form?: any;
+  isComponent?: boolean;
 };
 
 // Define a helper type for the conditional props extension
@@ -59,6 +61,7 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
   decimalPlaces,
   isPageAction,
   form,
+  isComponent,
   ...props
 }: ComponentToBindFromInputProps<T>) => {
   const commonProps = {
@@ -66,16 +69,18 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
     ...props,
   };
   const language = useEditorTreeStore((state) => state.language);
-  const _value =
-    typeof value?.static === "object"
-      ? value?.static?.[language] || value?.static?.default
-      : value?.static;
+  const isStringValue = typeof value?.static === "string";
+  const fetchedValue = get(
+    value?.static,
+    language,
+    isComponent ? undefined : value?.static,
+  );
 
   const onChangeStatic = (val: any) => {
     onChange({
       ...value,
       dataType: "static",
-      static: { ...value?.static, [language]: val, default: val },
+      static: { ...value?.static, [language]: val },
     });
   };
 
@@ -89,7 +94,7 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
       {["number", "integer"].includes(fieldType) ? (
         <NumberInput
           placeholder={placeholder}
-          value={_value ? parseFloatExtension(_value) : ""}
+          value={fetchedValue ? parseFloatExtension(fetchedValue) : ""}
           onChange={(val) => onChangeStatic(val.toString())}
           precision={decimalPlaces}
           parser={(value) =>
@@ -103,7 +108,7 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
       ) : fieldType === "boolean" ? (
         <Stack w="100%">
           <SegmentedControlInput
-            value={_value ?? ""}
+            value={fetchedValue ?? ""}
             onChange={(val) => onChangeStatic(val)}
             data={[
               { label: "True", value: "true" },
@@ -115,7 +120,7 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
         </Stack>
       ) : fieldType === "yesno" ? (
         <SegmentedControlYesNo
-          value={_value}
+          value={fetchedValue}
           onChange={(val) => onChangeStatic(val)}
           w="100%"
           {...commonProps}
@@ -135,7 +140,7 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
             )
           }
           <MonacoEditorJson
-            value={_value?.toString() || (props.defaultValue as string)}
+            value={fetchedValue?.toString() || (props.defaultValue as string)}
             onChange={(val: any) => onChangeStatic(val)}
             {...commonProps}
           />
@@ -203,7 +208,7 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
         <Stack w="100%">
           <TextInput
             placeholder={placeholder}
-            value={_value}
+            value={fetchedValue}
             type={fieldType}
             onChange={(e) => onChangeStatic(e.currentTarget.value)}
             {...commonProps}

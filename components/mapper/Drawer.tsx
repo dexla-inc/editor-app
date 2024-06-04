@@ -19,6 +19,7 @@ export const DrawerComponent = forwardRef(
           handleClose,
           titleStyle,
           isSizeFullScreen,
+          title,
         }) => {
           return (
             <MantineDrawer
@@ -30,6 +31,7 @@ export const DrawerComponent = forwardRef(
               {...sizeProps}
               {...props}
               {...componentProps}
+              title={title}
               opened={isPreviewMode ? true : showInEditor}
               onClose={handleClose}
               styles={{

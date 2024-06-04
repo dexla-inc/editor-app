@@ -4,7 +4,7 @@ import { useCallback, useMemo } from "react";
 import get from "lodash.get";
 import { ValueProps } from "@/types/dataBinding";
 import set from "lodash.set";
-import { cloneObject, removeEmpty, safeJsonParse } from "@/utils/common";
+import { cloneObject, safeJsonParse } from "@/utils/common";
 import { useInputsStore } from "@/stores/inputs";
 import { useShallow } from "zustand/react/shallow";
 import { pick } from "next/dist/lib/pick";
@@ -63,12 +63,11 @@ export const useComputeValue = ({
 }: UseComputeValue) => {
   const { itemTransformer } = useDataTransformers();
   onLoad = cloneObject(onLoad);
-  const sanitizedOnLoad = removeEmpty(onLoad);
 
   const browser = useOldRouter();
   const valuePropsPaths = useMemo(() => {
-    return findValuePropsPaths(sanitizedOnLoad);
-  }, [sanitizedOnLoad]);
+    return findValuePropsPaths(onLoad);
+  }, [onLoad]);
 
   const item = itemTransformer(shareableContent?.relatedComponentsData ?? {});
 
@@ -100,7 +99,7 @@ export const useComputeValue = ({
     ];
 
     valuePropsPaths.forEach((fieldValuePath) => {
-      const fieldValue = get(sanitizedOnLoad, fieldValuePath);
+      const fieldValue = get(onLoad, fieldValuePath);
       if (fieldValue.dataType === "boundCode" && fieldValue.boundCode) {
         patterns.forEach(({ pattern, keys }) => {
           keys.push(...extractKeysFromPattern(pattern, fieldValue.boundCode));
@@ -117,7 +116,7 @@ export const useComputeValue = ({
       itemKeys: [...new Set(itemKeys)],
       otherKeys: [...new Set(otherKeys)],
     };
-  }, [sanitizedOnLoad, valuePropsPaths]);
+  }, [onLoad, valuePropsPaths]);
 
   const rawVariables = useVariableStore(
     useShallow((state) => pick(state.variableList, variableKeys)),
@@ -279,11 +278,10 @@ export const useComputeValue = ({
         return get(shareableContent, `data.${fieldValue?.dynamic}`);
       },
       static: (fieldValue: ValueProps) => {
-        return (
-          fieldValue?.static?.[language] ??
-          fieldValue?.static?.["default"] ??
-          fieldValue?.static ??
-          undefined
+        return get(
+          fieldValue?.static,
+          language,
+          fieldValue?.static ?? undefined,
         );
       },
       boundCode: (fieldValue: ValueProps) => {
@@ -302,7 +300,7 @@ export const useComputeValue = ({
     () =>
       valuePropsPaths.reduce(
         (acc, fieldValuePath) => {
-          const fieldValue = get(sanitizedOnLoad, fieldValuePath);
+          const fieldValue = get(onLoad, fieldValuePath);
           const { dataType = "static" } = fieldValue ?? {};
 
           set(
@@ -313,9 +311,9 @@ export const useComputeValue = ({
 
           return acc;
         },
-        sanitizedOnLoad as Record<string, any>,
+        onLoad as Record<string, any>,
       ),
-    [sanitizedOnLoad, valueHandlers, valuePropsPaths],
+    [onLoad, valueHandlers, valuePropsPaths],
   );
 };
 

@@ -88,7 +88,7 @@ export const withComponentWrapper = <T extends Record<string, any>>(
     });
 
     const propsWithOverwrites = usePropsWithOverwrites(
-      { ...component, id },
+      { ...component, onLoad: computedOnLoad, id },
       isEditorMode,
       currentState,
       triggers,
@@ -119,9 +119,7 @@ export const withComponentWrapper = <T extends Record<string, any>>(
       component: {
         ...component,
         ...componentTree,
-        props: merge({}, propsWithOverwrites, {
-          placeholder: computedOnLoad?.placeholder,
-        }),
+        props: propsWithOverwrites,
         onLoad: computedOnLoad ?? {},
       },
       renderTree,
@@ -136,6 +134,7 @@ export const withComponentWrapper = <T extends Record<string, any>>(
       shareableContent,
     } as any;
 
+    if (component.name === "Radio") console.log(component.onLoad);
     const ref = useRef(null);
 
     return (

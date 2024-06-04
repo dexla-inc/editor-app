@@ -37,7 +37,6 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
     (acc, f) => {
       acc[f.name] = {
         static: component.onLoad?.[f.name]?.static || {
-          default: component.props?.[f.name],
           en: component.props?.[f.name],
           fr: component.props?.[f.name],
         },
