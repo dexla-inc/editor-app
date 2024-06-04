@@ -12,6 +12,7 @@ import {
   Button,
   Group,
   NumberInput,
+  ScrollArea,
   Select,
   Stack,
   Text,
@@ -165,24 +166,32 @@ export const VariableForm = ({ variableId }: Props) => {
             {...form.getInputProps("isGlobal")}
             w={100}
           />
-          <Text size="xs" mb={2} color="dimmed" maw={270}>
+          <Text size="xs" mb={2} color="dimmed">
             If a variable is global, the value will not change when navigating
-            between pages.
+            between pages or refreshing your app. Also, when logging out the
+            value is reset.
+          </Text>
+          <Text size="xs" mb={2} color="dimmed">
+            If a variable is not global (default), the value will be reset when
+            navigating between pages or refreshing your app.
           </Text>
         </Group>
         <Stack spacing={2}>
           <TopLabel text="Current Value" size="sm" />
-          <Prism
-            language="json"
-            colorScheme="dark"
-            w="100%"
-            copyLabel="Copy to clipboard"
-            copiedLabel="Copied to clipboard"
-            mah={400}
-            sx={{ copy: { paddingTop: "20px" } }}
-          >
-            {safeJsonStringify(form.values.value) ?? "// Code will appear here"}
-          </Prism>
+          <ScrollArea mah={400}>
+            <Prism
+              language="json"
+              colorScheme="dark"
+              w="100%"
+              copyLabel="Copy to clipboard"
+              copiedLabel="Copied to clipboard"
+              mah={400}
+              sx={{ copy: { paddingTop: "20px" } }}
+            >
+              {safeJsonStringify(form.values.value) ??
+                "// Code will appear here"}
+            </Prism>
+          </ScrollArea>
         </Stack>
 
         <Button
