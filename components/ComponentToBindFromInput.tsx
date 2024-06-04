@@ -69,7 +69,7 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
     ...props,
   };
   const language = useEditorTreeStore((state) => state.language);
-  const isStringValue = typeof value?.static === "string";
+
   const fetchedValue = get(
     value?.static,
     language,
