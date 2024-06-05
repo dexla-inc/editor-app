@@ -375,7 +375,6 @@ const getVariablesValue = (
       // @ts-ignore
       acc[key] = fieldValue;
     }
-    console.log(acc, key, value, fieldValue);
     return acc;
   }, {});
 };
