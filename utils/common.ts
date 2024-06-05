@@ -294,11 +294,8 @@ export function removeEmpty(obj: Record<string, any>): Record<string, any> {
 
 function notEmpty(value: any): boolean {
   return (
-    value !== null &&
-    value !== undefined &&
     value !== "" &&
-    value !== "undefined" &&
-    value !== "null" &&
+    notUndefined(value) &&
     !emptyArray(value) &&
     !emptyObject(value)
   );
