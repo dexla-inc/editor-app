@@ -564,6 +564,7 @@ const setLoadingState = (componentId: string, isLoading: boolean) => {
   updateTreeComponentAttrs({
     componentIds: [componentId],
     attrs: { props: { loading: isLoading } },
+    save: false,
   });
 };
 
