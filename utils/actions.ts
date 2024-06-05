@@ -21,7 +21,12 @@ import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useVariableStore } from "@/stores/variables";
 import { readDataFromStream } from "@/utils/api";
-import { toBase64, isObject, safeJsonParse } from "@/utils/common";
+import {
+  toBase64,
+  isObject,
+  safeJsonParse,
+  notUndefined,
+} from "@/utils/common";
 import { Component, getColorFromTheme } from "@/utils/editor";
 import { executeFlow } from "@/utils/logicFlows";
 import { ArrayMethods } from "@/types/types";
@@ -366,11 +371,10 @@ const getVariablesValue = (
   return Object.entries(objs).reduce((acc, [key, value]) => {
     const fieldValue = computeValue({ value });
 
-    if (fieldValue) {
+    if (notUndefined(fieldValue)) {
       // @ts-ignore
       acc[key] = fieldValue;
     }
-
     return acc;
   }, {});
 };
@@ -596,9 +600,8 @@ export const useApiCallAction = async (
   const endpoint = endpointResults?.find((e) => e.id === action.endpoint)!;
 
   try {
-    const accessToken = useDataSourceStore
-      .getState()
-      .getAuthState(projectId)?.accessToken;
+    const accessToken = useDataSourceStore.getState().getAuthState(projectId)
+      ?.accessToken;
 
     const { url, header, body } = prepareRequestData(
       action,
