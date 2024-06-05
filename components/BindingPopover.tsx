@@ -31,7 +31,6 @@ import { useState } from "react";
 import { useDataBinding } from "@/hooks/data/useDataBinding";
 import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 
 const TAB_TEXT_SIZE = 11;
 const ML = 5;
