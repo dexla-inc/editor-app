@@ -304,6 +304,15 @@ function notEmpty(value: any): boolean {
   );
 }
 
+export function notUndefined(value: any): boolean {
+  return (
+    value !== null &&
+    value !== undefined &&
+    value !== "undefined" &&
+    value !== "null"
+  );
+}
+
 function emptyArray(value: any): boolean {
   return Array.isArray(value) && value.length === 0;
 }
