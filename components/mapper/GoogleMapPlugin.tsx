@@ -217,19 +217,8 @@ const GoogleMapPluginComponent = forwardRef<GoogleMap, Props>(
           }}
           zoom={zoom}
         >
-          {validMarkers?.map?.(({ id, name, position }) => (
-            <Marker
-              key={id}
-              position={position}
-              onMouseOver={() => handleActiveMarker(id)}
-              onMouseOut={() => setActiveMarkerId(null)}
-            >
-              {activeMarkerId === id && (
-                <InfoWindow onCloseClick={() => setActiveMarkerId(null)}>
-                  <Text>{name}</Text>
-                </InfoWindow>
-              )}
-            </Marker>
+          {validMarkers?.map?.(({ id, position }) => (
+            <Marker key={id} position={position} />
           ))}
         </GoogleMap>
 
