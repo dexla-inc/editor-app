@@ -188,8 +188,9 @@ export const VariableForm = ({ variableId }: Props) => {
               mah={400}
               sx={{ copy: { paddingTop: "20px" } }}
             >
-              {safeJsonStringify(form.values.value) ??
-                "// Code will appear here"}
+              {typeof form.values.value === "string"
+                ? safeJsonStringify(form.values.value)
+                : String(form.values.value)}
             </Prism>
           </ScrollArea>
         </Stack>
