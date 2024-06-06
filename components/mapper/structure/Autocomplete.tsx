@@ -15,7 +15,10 @@ export const jsonStructure = (props?: any): ComponentStructure => {
     },
     onLoad: {
       value: {
-        en: { label: "", value: "" },
+        static: {
+          en: { label: "", value: "" },
+        },
+        dataType: "static",
       },
     },
     states: { disabled: { bg: "Neutral.7", textColor: "PrimaryText.9" } },

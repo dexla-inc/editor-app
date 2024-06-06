@@ -22,7 +22,6 @@ import { Icon } from "@/components/Icon";
 import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import merge from "lodash.merge";
-import get from "lodash.get";
 
 // Need to extend input props depending on fieldType
 type BaseProps = {
@@ -151,7 +150,9 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
               type="button"
               compact
               onClick={() => {
-                form.insertListItem(`onLoad.data.static.${language}`, {
+                const fieldNamePrefix =
+                  "onLoad.data.static" + (isTranslatable ? `.${language}` : "");
+                form.insertListItem(fieldNamePrefix, {
                   label: "",
                   value: "",
                 });
@@ -165,41 +166,35 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
           </div>
 
           <Flex direction="column" gap="10px" mt="10px">
-            {(get(form, `values.onLoad.data.static.${language}`) ?? [])?.map(
-              (_: SelectProps, index: number) => {
-                return (
-                  <Group key={index} style={{ flexWrap: "nowrap" }}>
-                    <TextInput
-                      size="xs"
-                      placeholder="label"
-                      {...form.getInputProps(
-                        `onLoad.data.static.${language}.${index}.label`,
-                      )}
-                      style={{ width: "50%" }}
-                    />
-                    <TextInput
-                      size="xs"
-                      placeholder="value"
-                      {...form.getInputProps(
-                        `onLoad.data.static.${language}.${index}.value`,
-                      )}
-                      style={{ width: "50%" }}
-                    />
+            {(staticValue ?? [])?.map((_: SelectProps, index: number) => {
+              const fieldNamePrefix =
+                "onLoad.data.static" + (isTranslatable ? `.${language}` : "");
+              console.log(fieldNamePrefix);
+              return (
+                <Group key={index} style={{ flexWrap: "nowrap" }}>
+                  <TextInput
+                    size="xs"
+                    placeholder="label"
+                    {...form.getInputProps(`${fieldNamePrefix}.${index}.label`)}
+                    style={{ width: "50%" }}
+                  />
+                  <TextInput
+                    size="xs"
+                    placeholder="value"
+                    {...form.getInputProps(`${fieldNamePrefix}.${index}.value`)}
+                    style={{ width: "50%" }}
+                  />
 
-                    <Icon
-                      name={ICON_DELETE}
-                      onClick={() => {
-                        form.removeListItem(
-                          `onLoad.data.static.${language}`,
-                          index,
-                        );
-                      }}
-                      style={{ cursor: "pointer" }}
-                    />
-                  </Group>
-                );
-              },
-            )}
+                  <Icon
+                    name={ICON_DELETE}
+                    onClick={() => {
+                      form.removeListItem(fieldNamePrefix, index);
+                    }}
+                    style={{ cursor: "pointer" }}
+                  />
+                </Group>
+              );
+            })}
           </Flex>
         </Stack>
       ) : (

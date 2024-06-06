@@ -11,11 +11,12 @@ export const useContentEditable = (componentId: string, ref: any) => {
 
   const handleDoubleClick = useCallback(
     (e: React.MouseEvent) => {
-      if (!isPreviewMode) {
-        e.preventDefault();
-        toggleEdit(true);
-        ref?.current?.focus();
-      }
+      // TODO: re-enable this
+      // if (!isPreviewMode) {
+      //   e.preventDefault();
+      //   toggleEdit(true);
+      //   ref?.current?.focus();
+      // }
     },
     [toggleEdit, isPreviewMode, ref],
   );

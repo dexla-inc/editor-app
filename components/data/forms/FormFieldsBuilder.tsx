@@ -52,22 +52,23 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
     (acc, f) => {
       let staticValue = component.onLoad?.[f.name]?.static;
 
+      // making sure the default language 'en' is always set
       acc[f.name] = {
-        static: {},
+        static: { ...(!has(staticValue, "en") && { en: "" }) },
       };
 
-      if (!has(staticValue, "en")) {
-        acc[f.name].static.en = "";
-      }
-
+      // looking for translation keys, 'en' is the default key
       const value = has(staticValue, language)
         ? staticValue[language]
         : has(staticValue, "en")
           ? // @ts-ignore
             staticValue.en
-          : typeof staticValue !== "object"
+          : // if no translation key was found but it has the dataType attr, it means it was set before
+            // (for backwards compatibility when we had no language)
+            has(component.onLoad?.[f.name], "dataType")
             ? staticValue
-            : component.props?.[f.name];
+            : // otherwise, return the value from props
+              component.props?.[f.name];
       acc[f.name].static[language] = value;
 
       return acc;
@@ -82,7 +83,7 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
       onLoad: onLoadValues,
     },
   });
-
+  console.log(component, form.values);
   useEffect(() => {
     if (form.isTouched() && form.isDirty()) {
       debouncedTreeComponentAttrsUpdate({ attrs: form.values });
