@@ -10,6 +10,7 @@ export const VisibilityModifier = ({ form }: Props) => {
       {...form.getInputProps("onLoad.isVisible")}
       label="Visibility"
       fieldType="yesno"
+      isTranslatable
     />
   );
 };

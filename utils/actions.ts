@@ -344,10 +344,13 @@ export const useShowNotificationAction = async ({
   const showNotification = useThemeStore.getState().showNotification;
   const color = getColorFromTheme(theme, action.color);
 
+  const title = String(computeValue<string>({ value: action.title }));
+  const message = String(computeValue<string>({ value: action.message }));
+
   return showNotification({
-    title: String(computeValue<string>({ value: action.title })),
-    message: String(computeValue<string>({ value: action.message })),
-    color: color,
+    title,
+    message,
+    color,
   });
 };
 

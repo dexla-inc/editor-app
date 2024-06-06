@@ -35,6 +35,7 @@ type BaseProps = {
   defaultValue?: any;
   decimalPlaces?: number;
   isPageAction?: boolean;
+  isTranslatable?: boolean;
   useTrueOrFalseStrings?: boolean;
   form?: any;
 };
@@ -60,6 +61,7 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
   fieldType = "text",
   decimalPlaces,
   isPageAction,
+  isTranslatable = false,
   form,
   ...props
 }: ComponentToBindFromInputProps<T>) => {
@@ -69,12 +71,14 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
     ...AUTOCOMPLETE_OFF_PROPS,
     ...props,
   };
-  const staticValue = value?.static?.[language];
+  const staticValue = isTranslatable
+    ? value?.static?.[language]
+    : value?.static;
 
   const customOnChange = <T extends unknown>(val: T) => {
     const newValue = merge(value, {
       dataType: "static",
-      static: { [language]: val },
+      static: isTranslatable ? { [language]: val } : val,
     });
     onChange(newValue);
   };

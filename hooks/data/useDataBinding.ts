@@ -11,12 +11,9 @@ import { safeJsonParse } from "@/utils/common";
 import { useInputsStore } from "@/stores/inputs";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useOldRouter } from "@/hooks/data/useOldRouter";
-import { useShareableContent } from "@/hooks/data/useShareableContent";
 
 export const useDataBinding = (componentId = "") => {
   const browser = useOldRouter();
-  const { item } = useShareableContent({ componentId, computeValue });
-
   function computeValue<T>(
     { value, shareableContent, staticFallback }: GetValueProps,
     ctx: ComputeValuePropCtx,
@@ -26,7 +23,7 @@ export const useDataBinding = (componentId = "") => {
         return get(shareableContent, `data.${value?.dynamic}`, value?.dynamic);
       },
       static: function (value: ValueProps) {
-        return value?.static?.[language] ?? value?.static ?? staticFallback;
+        return value?.static ?? staticFallback;
       },
       boundCode: function (value: ValueProps) {
         let boundCode = value?.boundCode?.trim() ?? "";
