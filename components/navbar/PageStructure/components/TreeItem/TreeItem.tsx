@@ -311,7 +311,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
           </Group>
           <Flex gap={4}>
             {!!component.actions && <IconBolt size={ICON_SIZE} />}
-            {!isVisible && <IconEyeOff size={ICON_SIZE} />}
+            {isVisible === false && <IconEyeOff size={ICON_SIZE} />}
             {component.display === "none" && (
               <IconEyeOff size={ICON_SIZE} color="red" />
             )}

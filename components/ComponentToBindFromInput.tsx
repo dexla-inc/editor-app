@@ -79,6 +79,7 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
       dataType: "static",
       static: isTranslatable ? { [language]: val } : val,
     });
+
     onChange(newValue);
   };
 
@@ -118,7 +119,7 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
         </Stack>
       ) : fieldType === "yesno" ? (
         <SegmentedControlYesNo
-          value={staticValue}
+          value={staticValue ?? true}
           onChange={customOnChange}
           w="100%"
           {...commonProps}

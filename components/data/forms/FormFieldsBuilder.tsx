@@ -37,7 +37,6 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
     {
       name: "tooltip",
       label: "Tooltip",
-      type: "text",
     },
   ];
 
@@ -51,40 +50,25 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
 
   const onLoadFieldsStarter = fields.reduce(
     (acc, f) => {
-      let staticValue =
-        component.onLoad?.[f.name]?.static ?? component.props?.[f.name];
+      let staticValue = component.onLoad?.[f.name]?.static;
 
-      acc[f.name] = {};
+      acc[f.name] = {
+        static: {},
+      };
 
-      if (staticValue === undefined) {
-        acc[f.name] = {
-          static: {
-            en: undefined,
-            [language]: undefined,
-          },
-        };
-        return acc;
+      if (!has(staticValue, "en")) {
+        acc[f.name].static.en = "";
       }
 
-      // it means no language was set before, so I want to set the `en` language to the default value
-      if (language !== "en" && !has(staticValue, "en")) {
-        acc[f.name] = {
-          static: {
-            en: staticValue,
-          },
-        };
-      }
-
-      merge(acc[f.name], {
-        static: {
-          [language]: has(staticValue, language)
-            ? staticValue?.[language]
-            : has(staticValue, "en")
-              ? // @ts-ignore
-                staticValue?.en
-              : staticValue,
-        },
-      });
+      const value = has(staticValue, language)
+        ? staticValue[language]
+        : has(staticValue, "en")
+          ? // @ts-ignore
+            staticValue.en
+          : typeof staticValue !== "object"
+            ? staticValue
+            : component.props?.[f.name];
+      acc[f.name].static[language] = value;
 
       return acc;
     },
@@ -92,6 +76,7 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
   );
 
   const onLoadValues = merge({}, component?.onLoad, onLoadFieldsStarter);
+
   const form = useForm({
     initialValues: {
       onLoad: onLoadValues,
