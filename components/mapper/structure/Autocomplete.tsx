@@ -14,11 +14,11 @@ export const jsonStructure = (props?: any): ComponentStructure => {
       ...(props.props || {}),
     },
     onLoad: {
-      value: {
-        static: {
-          en: { label: "", value: "" },
-        },
+      data: {
         dataType: "static",
+        static: {
+          en: [],
+        },
       },
     },
     states: { disabled: { bg: "Neutral.7", textColor: "PrimaryText.9" } },

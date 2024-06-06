@@ -37,7 +37,7 @@ const AutocompleteComponent = forwardRef(
 
     const [value, setValue] = useInputValue<AutocompleteItem>(
       {
-        value: component.onLoad?.value,
+        value: component.onLoad?.value ?? "",
       },
       props.id!,
     );
@@ -72,7 +72,7 @@ const AutocompleteComponent = forwardRef(
     }
 
     if (dataType === "static") {
-      data = component.props?.data ?? [];
+      data = component.onLoad?.data ?? component.props?.data ?? [];
     }
 
     const [timeoutId, setTimeoutId] = useState(null);

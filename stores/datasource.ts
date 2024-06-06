@@ -42,7 +42,7 @@ export const useDataSourceStore = create<DataSourceState>()(
         getAuthState: (projectId: string) => {
           const authInfo = get().authState[projectId];
           if (!authInfo) {
-            console.error(`No auth state found for projectId: ${projectId}`);
+            // console.error(`No auth state found for projectId: ${projectId}`);
             return null; // Return null if no auth state is found
           }
 

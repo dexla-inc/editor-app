@@ -169,7 +169,7 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
             {(staticValue ?? [])?.map((_: SelectProps, index: number) => {
               const fieldNamePrefix =
                 "onLoad.data.static" + (isTranslatable ? `.${language}` : "");
-              console.log(fieldNamePrefix);
+
               return (
                 <Group key={index} style={{ flexWrap: "nowrap" }}>
                   <TextInput
