@@ -1,8 +1,5 @@
 import { DynamicFormFieldsBuilder } from "@/components/data/forms/DynamicFormFieldsBuilder";
-import {
-  FieldType,
-  StaticFormFieldsBuilder,
-} from "@/components/data/forms/StaticFormFieldsBuilder";
+import { StaticFormFieldsBuilder } from "@/components/data/forms/StaticFormFieldsBuilder";
 import { Endpoint } from "@/requests/datasources/types";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { ICON_SIZE } from "@/utils/config";
@@ -12,25 +9,40 @@ import { useForm } from "@mantine/form";
 import { IconPlug, IconPlugOff } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
-import { ValueProps } from "@/types/dataBinding";
-import { CommonData } from "@/components/data/CommonData";
-import get from "lodash.get";
-import { has } from "immutable";
+import { FieldProps, ValueProps } from "@/types/dataBinding";
+import has from "lodash.has";
+import { useComponentStates } from "@/hooks/editor/useComponentStates";
 
 type Props = {
-  fields: Array<{
-    name: string;
-    label: string;
-    type?: FieldType;
-    placeholder?: string;
-    additionalComponent?: JSX.Element;
-    decimalPlaces?: number;
-  }>;
+  fields: FieldProps[];
   endpoints: Endpoint[];
   component: Component;
 };
 
 export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
+  const { getComponentsStates } = useComponentStates();
+
+  const commonFields: FieldProps[] = [
+    {
+      name: "isVisible",
+      label: "Visibility",
+      type: "yesno",
+    },
+    {
+      name: "currentState",
+      label: "State",
+      type: "select",
+      data: getComponentsStates(),
+    },
+    {
+      name: "tooltip",
+      label: "Tooltip",
+      type: "text",
+    },
+  ];
+
+  // merging fields from forms to commonFields
+  fields = [...fields, ...commonFields];
   const language = useEditorTreeStore((state) => state.language);
 
   const hasParentComponentData = useEditorTreeStore((state) =>
@@ -68,7 +80,8 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
           [language]: has(staticValue, language)
             ? staticValue?.[language]
             : has(staticValue, "en")
-              ? staticValue?.en
+              ? // @ts-ignore
+                staticValue?.en
               : staticValue,
         },
       });
@@ -144,7 +157,6 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
           </Group>
         );
       })}
-      <CommonData component={component} />
     </>
   );
 };

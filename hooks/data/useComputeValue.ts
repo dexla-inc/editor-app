@@ -11,7 +11,7 @@ import { pick } from "next/dist/lib/pick";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useOldRouter } from "@/hooks/data/useOldRouter";
 import { useDataTransformers } from "@/hooks/data/useDataTransformers";
-import { has } from "immutable";
+import has from "lodash.has";
 import { emptyObject } from "@jest/expect-utils";
 
 type NextRouterKeys = any;
@@ -286,7 +286,8 @@ export const useComputeValue = ({
             ? emptyObject(staticValue)
               ? undefined
               : staticValue
-            : staticValue?.en
+            : // @ts-ignore
+              staticValue?.en
           : staticValue?.[language];
 
         return value;

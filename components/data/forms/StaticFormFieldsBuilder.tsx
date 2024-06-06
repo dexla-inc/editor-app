@@ -1,28 +1,9 @@
 import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
-import { FrontEndTypes } from "@/requests/variables/types";
-
-export type FieldType =
-  | "password"
-  | "email"
-  | "tel"
-  | "url"
-  | "date"
-  | "unit"
-  | "yesno"
-  | "integer"
-  | "options"
-  | Lowercase<FrontEndTypes>;
+import { ComponentToBindFromSelect } from "@/components/ComponentToBindFromSelect";
+import { FieldProps } from "@/types/dataBinding";
 
 type StaticFormFieldsBuilderProps = {
-  field: {
-    name: string;
-    label: string;
-    type?: FieldType;
-    placeholder?: string;
-    additionalComponent?: JSX.Element;
-    defaultValue?: any;
-    decimalPlaces?: number;
-  };
+  field: FieldProps;
   form: any;
 };
 
@@ -30,6 +11,20 @@ export const StaticFormFieldsBuilder = ({
   field,
   form,
 }: StaticFormFieldsBuilderProps) => {
+  if (field.type === "select") {
+    return (
+      <ComponentToBindFromSelect
+        size="xs"
+        key={field.name}
+        data={field.data}
+        label={field.label}
+        placeholder={field.placeholder}
+        {...form.getInputProps(`onLoad.${field.name}`)}
+        isTranslatable
+      />
+    );
+  }
+
   return (
     <ComponentToBindFromInput
       size="xs"

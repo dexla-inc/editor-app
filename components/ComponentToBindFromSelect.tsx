@@ -10,6 +10,7 @@ type Props = Omit<SelectProps, "value" | "onChange" | "label"> & {
   componentId?: string;
   value: ValueProps;
   onChange: (value: ValueProps) => void;
+  isTranslatable?: boolean;
 };
 
 export const ComponentToBindFromSelect = ({
@@ -17,25 +18,21 @@ export const ComponentToBindFromSelect = ({
   onChange,
   data,
   componentId,
+  isTranslatable = false,
   ...rest
 }: Props) => {
   const { label, ...restProps } = rest;
   const language = useEditorTreeStore((state) => state.language);
-  const staticValue = get(value?.static, language, value?.static);
+  const staticValue = isTranslatable
+    ? value?.static?.[language]
+    : value?.static;
 
-  const onChangeStatic = (fieldValue: any) => {
+  const customOnChange = (val: any) => {
     const newValue = {
       ...value,
       dataType: "static" as DataType,
-      static: { [language]: fieldValue },
+      static: isTranslatable ? { [language]: val } : val,
     };
-
-    if (language !== "en" && typeof value?.static === "string") {
-      newValue.static = {
-        en: value?.static,
-      };
-    }
-
     onChange(newValue);
   };
 
@@ -53,7 +50,7 @@ export const ComponentToBindFromSelect = ({
         placeholder="Select State"
         nothingFound="Nothing found"
         searchable
-        onChange={onChangeStatic}
+        onChange={customOnChange}
         {...restProps}
         {...AUTOCOMPLETE_OFF_PROPS}
       />

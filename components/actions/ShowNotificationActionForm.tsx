@@ -8,7 +8,6 @@ import { ThemeColorSelector } from "../ThemeColorSelector";
 type Props = ActionFormProps<Omit<ShowNotificationAction, "name">>;
 
 export const ShowNotificationActionForm = ({ form, isPageAction }: Props) => {
-  console.log(form.values);
   return (
     <Stack spacing={2}>
       {[

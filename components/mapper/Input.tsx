@@ -71,8 +71,6 @@ const InputComponent = forwardRef(
       id!,
     );
 
-    console.log(value, componentProps);
-
     const isClearable = clearable && !!value;
     const customStyle = merge({}, borderStyle, inputStyle, props.style, {
       backgroundColor,
