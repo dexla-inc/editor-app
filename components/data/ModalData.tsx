@@ -10,12 +10,7 @@ import { StaticFormFieldsBuilder } from "@/components/data/forms/StaticFormField
 export const ModalData = ({ component }: DataProps) => {
   const form = useForm({
     initialValues: {
-      onLoad: {
-        ...component?.onLoad,
-        title: component?.onLoad?.title ?? {
-          static: { en: component?.props?.title, fr: component?.props?.title },
-        },
-      },
+      onLoad: component?.onLoad,
     },
   });
 

@@ -1,5 +1,5 @@
 import { ComponentToBindWrapper } from "@/components/ComponentToBindWrapper";
-import { ValueProps } from "@/types/dataBinding";
+import { DataType, ValueProps } from "@/types/dataBinding";
 import { SegmentedControl, SegmentedControlProps, Stack } from "@mantine/core";
 import { TopLabel } from "@/components/TopLabel";
 import { useEditorTreeStore } from "@/stores/editorTree";
@@ -17,15 +17,24 @@ export const ComponentToBindFromSegmentedControl = ({
   ...rest
 }: Props) => {
   const language = useEditorTreeStore((state) => state.language);
-  const fetchedValue = get(value?.static, language, value?.static);
+  const staticValue = get(value?.static, language, value?.static);
 
-  const onChangeStatic = (val: any) => {
-    onChange({
+  const onChangeStatic = (fieldValue: any) => {
+    const newValue = {
       ...value,
-      dataType: "static",
-      static: { ...value?.static, [language]: val, default: val },
-    });
+      dataType: "static" as DataType,
+      static: { [language]: fieldValue },
+    };
+
+    if (language !== "en" && typeof value?.static === "string") {
+      newValue.static = {
+        en: value?.static,
+      };
+    }
+
+    onChange(newValue);
   };
+
   return (
     <ComponentToBindWrapper
       label={rest?.label}
@@ -34,15 +43,9 @@ export const ComponentToBindFromSegmentedControl = ({
     >
       <Stack>
         <SegmentedControl
-          value={fetchedValue}
+          value={staticValue}
           size="xs"
-          onChange={(e: string) =>
-            onChange({
-              ...value,
-              dataType: "static",
-              static: { ...value?.static, [language]: e, default: e },
-            })
-          }
+          onChange={onChangeStatic}
           {...rest}
         />
       </Stack>

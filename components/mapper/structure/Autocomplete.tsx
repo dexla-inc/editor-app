@@ -13,6 +13,11 @@ export const jsonStructure = (props?: any): ComponentStructure => {
       ...defaultValues,
       ...(props.props || {}),
     },
+    onLoad: {
+      value: {
+        en: { label: "", value: "" },
+      },
+    },
     states: { disabled: { bg: "Neutral.7", textColor: "PrimaryText.9" } },
     blockDroppingChildrenInside: true,
   };

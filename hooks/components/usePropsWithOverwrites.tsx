@@ -43,7 +43,6 @@ export const usePropsWithOverwrites = (
     return merge(
       {},
       omit(component.props ?? {}, omittingProps),
-      { placeholder: component?.onLoad?.placeholder },
       component.states?.[customCurrentState],
       {
         disabled: customCurrentState === "disabled",

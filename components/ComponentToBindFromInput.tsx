@@ -22,6 +22,7 @@ import { SegmentedControlInput } from "./SegmentedControlInput";
 import { Icon } from "@/components/Icon";
 import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
 import { useEditorTreeStore } from "@/stores/editorTree";
+import merge from "lodash.merge";
 import get from "lodash.get";
 
 // Need to extend input props depending on fieldType
@@ -36,7 +37,6 @@ type BaseProps = {
   isPageAction?: boolean;
   useTrueOrFalseStrings?: boolean;
   form?: any;
-  isComponent?: boolean;
 };
 
 // Define a helper type for the conditional props extension
@@ -61,27 +61,22 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
   decimalPlaces,
   isPageAction,
   form,
-  isComponent,
   ...props
 }: ComponentToBindFromInputProps<T>) => {
+  const language = useEditorTreeStore((state) => state.language);
+
   const commonProps = {
     ...AUTOCOMPLETE_OFF_PROPS,
     ...props,
   };
-  const language = useEditorTreeStore((state) => state.language);
+  const staticValue = value?.static?.[language];
 
-  const fetchedValue = get(
-    value?.static,
-    language,
-    isComponent ? undefined : value?.static,
-  );
-
-  const onChangeStatic = (val: any) => {
-    onChange({
-      ...value,
+  const customOnChange = <T extends unknown>(val: T) => {
+    const newValue = merge(value, {
       dataType: "static",
-      static: { ...value?.static, [language]: val },
+      static: { [language]: val },
     });
+    onChange(newValue);
   };
 
   return (
@@ -94,8 +89,8 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
       {["number", "integer"].includes(fieldType) ? (
         <NumberInput
           placeholder={placeholder}
-          value={fetchedValue ? parseFloatExtension(fetchedValue) : ""}
-          onChange={(val) => onChangeStatic(val.toString())}
+          value={staticValue ? parseFloatExtension(staticValue) : ""}
+          onChange={(val) => customOnChange<string>(val.toString())}
           precision={decimalPlaces}
           parser={(value) =>
             value ? parseFloatExtension(value).toString() : ""
@@ -108,8 +103,8 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
       ) : fieldType === "boolean" ? (
         <Stack w="100%">
           <SegmentedControlInput
-            value={fetchedValue ?? ""}
-            onChange={(val) => onChangeStatic(val)}
+            value={staticValue ?? ""}
+            onChange={customOnChange}
             data={[
               { label: "True", value: "true" },
               { label: "False", value: "false" },
@@ -120,8 +115,8 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
         </Stack>
       ) : fieldType === "yesno" ? (
         <SegmentedControlYesNo
-          value={fetchedValue}
-          onChange={(val) => onChangeStatic(val)}
+          value={staticValue}
+          onChange={customOnChange}
           w="100%"
           {...commonProps}
         />
@@ -140,8 +135,8 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
             )
           }
           <MonacoEditorJson
-            value={fetchedValue?.toString() || (props.defaultValue as string)}
-            onChange={(val: any) => onChangeStatic(val)}
+            value={staticValue?.toString() || (props.defaultValue as string)}
+            onChange={customOnChange}
             {...commonProps}
           />
         </Stack>
@@ -166,16 +161,15 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
           </div>
 
           <Flex direction="column" gap="10px" mt="10px">
-            {(form.values.onLoad.data.static?.[language] ?? [])?.map(
-              (props: SelectProps, index: number) => {
-                const target = "onLoad.data.static";
+            {(get(form, `values.onLoad.data.static.${language}`) ?? [])?.map(
+              (_: SelectProps, index: number) => {
                 return (
                   <Group key={index} style={{ flexWrap: "nowrap" }}>
                     <TextInput
                       size="xs"
                       placeholder="label"
                       {...form.getInputProps(
-                        `${target}.${language}.${index}.label`,
+                        `onLoad.data.static.${language}.${index}.label`,
                       )}
                       style={{ width: "50%" }}
                     />
@@ -208,9 +202,9 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
         <Stack w="100%">
           <TextInput
             placeholder={placeholder}
-            value={fetchedValue}
+            value={staticValue}
             type={fieldType}
-            onChange={(e) => onChangeStatic(e.currentTarget.value)}
+            onChange={(e) => customOnChange<string>(e.currentTarget.value)}
             {...commonProps}
           />
         </Stack>

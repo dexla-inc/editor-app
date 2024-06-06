@@ -14,6 +14,8 @@ import merge from "lodash.merge";
 import { useEffect } from "react";
 import { ValueProps } from "@/types/dataBinding";
 import { CommonData } from "@/components/data/CommonData";
+import get from "lodash.get";
+import { has } from "immutable";
 
 type Props = {
   fields: Array<{
@@ -29,25 +31,54 @@ type Props = {
 };
 
 export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
+  const language = useEditorTreeStore((state) => state.language);
+
   const hasParentComponentData = useEditorTreeStore((state) =>
     state.selectedComponentIds?.at(-1)?.includes("-related-"),
   );
 
   const onLoadFieldsStarter = fields.reduce(
     (acc, f) => {
-      acc[f.name] = {
-        static: component.onLoad?.[f.name]?.static || {
-          en: component.props?.[f.name],
-          fr: component.props?.[f.name],
+      let staticValue =
+        component.onLoad?.[f.name]?.static ?? component.props?.[f.name];
+
+      acc[f.name] = {};
+
+      if (staticValue === undefined) {
+        acc[f.name] = {
+          static: {
+            en: undefined,
+            [language]: undefined,
+          },
+        };
+        return acc;
+      }
+
+      // it means no language was set before, so I want to set the `en` language to the default value
+      if (language !== "en" && !has(staticValue, "en")) {
+        acc[f.name] = {
+          static: {
+            en: staticValue,
+          },
+        };
+      }
+
+      merge(acc[f.name], {
+        static: {
+          [language]: has(staticValue, language)
+            ? staticValue?.[language]
+            : has(staticValue, "en")
+              ? staticValue?.en
+              : staticValue,
         },
-      };
+      });
+
       return acc;
     },
     {} as Record<string, ValueProps>,
   );
 
-  const onLoadValues = merge(onLoadFieldsStarter, component?.onLoad);
-
+  const onLoadValues = merge({}, component?.onLoad, onLoadFieldsStarter);
   const form = useForm({
     initialValues: {
       onLoad: onLoadValues,
@@ -55,11 +86,16 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
   });
 
   useEffect(() => {
-    if (form.isTouched()) {
+    if (form.isTouched() && form.isDirty()) {
       debouncedTreeComponentAttrsUpdate({ attrs: form.values });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.values]);
+
+  useEffect(() => {
+    form.setValues({ onLoad: onLoadValues });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [language]);
 
   const onClickToggleDataType = (field: string) => {
     form.setTouched({ [`onLoad.${field}.dataType`]: true });

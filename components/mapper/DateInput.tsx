@@ -31,8 +31,12 @@ const DateInputComponent = ({
     bg,
     textColor,
     placeholderColor,
-    ...componentProps
+    ...restComponentProps
   } = component.props as any;
+
+  const { placeholder = component.props?.placeholder } = component?.onLoad;
+
+  const componentProps = { ...restComponentProps, placeholder };
   const { borderStyle, inputStyle } = useBrandingStyles();
   const {
     color,

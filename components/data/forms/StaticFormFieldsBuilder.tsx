@@ -40,7 +40,6 @@ export const StaticFormFieldsBuilder = ({
       decimalPlaces={field.decimalPlaces}
       {...form.getInputProps(`onLoad.${field.name}`)}
       form={form}
-      isComponent
     />
   );
 };

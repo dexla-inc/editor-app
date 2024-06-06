@@ -28,12 +28,16 @@ const AutocompleteComponent = forwardRef(
       bg,
       textColor,
       iconName,
-      ...componentProps
+      ...restComponentProps
     } = component.props as any;
+
+    const { placeholder = component.props?.placeholder } = component?.onLoad;
+
+    const componentProps = { ...restComponentProps, placeholder };
 
     const [value, setValue] = useInputValue<AutocompleteItem>(
       {
-        value: component.onLoad?.value ?? { label: "", value: "" },
+        value: component.onLoad?.value,
       },
       props.id!,
     );

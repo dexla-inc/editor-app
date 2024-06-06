@@ -50,8 +50,12 @@ const InputComponent = forwardRef(
       passwordUpper,
       passwordSpecial,
       displayRequirements,
-      ...componentProps
+      ...restComponentProps
     } = component.props as any;
+
+    const { placeholder = component.props?.placeholder } = component?.onLoad;
+
+    const componentProps = { ...restComponentProps, placeholder };
 
     const { onChange, ...restTriggers } = triggers || {};
     const { name: iconName } = icon && icon!.props!;
@@ -66,6 +70,8 @@ const InputComponent = forwardRef(
       },
       id!,
     );
+
+    console.log(value, componentProps);
 
     const isClearable = clearable && !!value;
     const customStyle = merge({}, borderStyle, inputStyle, props.style, {

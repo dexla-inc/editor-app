@@ -61,7 +61,6 @@ export const withModifier = (Modifier: ComponentType<WithModifier>) => {
           return null;
         }
 
-        const language = state.language;
         const selectedComponentId = selectedComponentIdSelector(state);
         const currentState =
           state.currentTreeComponentsStates?.[selectedComponentId!] ??
@@ -69,12 +68,9 @@ export const withModifier = (Modifier: ComponentType<WithModifier>) => {
 
         const mergedCustomData = selectedComponents?.map(
           (selectedComponent) => {
-            const mergedComponent = merge(
-              {},
-              selectedComponent,
-              { props: selectedComponent?.languages?.[language] },
-              { props: selectedComponent?.states?.[currentState] },
-            );
+            const mergedComponent = merge({}, selectedComponent, {
+              props: selectedComponent?.states?.[currentState],
+            });
             return mergedComponent;
           },
         );

@@ -32,7 +32,8 @@ export const useContentEditable = (componentId: string, ref: any) => {
           onLoad: {
             children: {
               dataType: "static",
-              static: { [language]: value, default: value },
+              // TODO: REVIEW THIS
+              static: { [language]: value },
             },
           },
         },

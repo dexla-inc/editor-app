@@ -11,6 +11,8 @@ import { pick } from "next/dist/lib/pick";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useOldRouter } from "@/hooks/data/useOldRouter";
 import { useDataTransformers } from "@/hooks/data/useDataTransformers";
+import { has } from "immutable";
+import { emptyObject } from "@jest/expect-utils";
 
 type NextRouterKeys = any;
 type RecordStringAny = Record<string, any>;
@@ -278,11 +280,16 @@ export const useComputeValue = ({
         return get(shareableContent, `data.${fieldValue?.dynamic}`);
       },
       static: (fieldValue: ValueProps) => {
-        return get(
-          fieldValue?.static,
-          language,
-          fieldValue?.static ?? undefined,
-        );
+        const staticValue = fieldValue?.static;
+        const value = !has(staticValue, language)
+          ? !has(staticValue, "en")
+            ? emptyObject(staticValue)
+              ? undefined
+              : staticValue
+            : staticValue?.en
+          : staticValue?.[language];
+
+        return value;
       },
       boundCode: (fieldValue: ValueProps) => {
         try {
