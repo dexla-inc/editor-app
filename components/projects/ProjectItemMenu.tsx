@@ -156,7 +156,7 @@ export function ProjectItemMenu({
           icon={
             <IconFileAnalytics
               size={ICON_SIZE}
-              color={isDarkTheme ? "white" : "black"}
+              color={isDarkTheme ? "#FFFFFF" : "#000000"}
             />
           }
           rightSection={
@@ -175,9 +175,9 @@ export function ProjectItemMenu({
                 <Menu.Item
                   icon={
                     page.isHome ? (
-                      <IconHome size={ICON_SIZE} color="white" />
+                      <IconHome size={ICON_SIZE} />
                     ) : (
-                      <IconFileAnalytics size={ICON_SIZE} color="white" />
+                      <IconFileAnalytics size={ICON_SIZE} />
                     )
                   }
                   onClick={() => goToEditor(projectId, page.id)}
@@ -193,7 +193,7 @@ export function ProjectItemMenu({
           icon={
             <IconSettings
               size={ICON_SIZE}
-              color={isDarkTheme ? "white" : "black"}
+              color={isDarkTheme ? "#FFFFFF" : "#000000"}
             />
           }
           rightSection={
@@ -208,52 +208,28 @@ export function ProjectItemMenu({
         <Collapse in={settingsOpened}>
           <Box ml={10}>
             <Menu.Item
-              icon={
-                <Icon
-                  name="IconSettings2"
-                  size={ICON_SIZE}
-                  color={isDarkTheme ? "white" : "black"}
-                />
-              }
+              icon={<Icon name="IconSettings2" size={ICON_SIZE} />}
               component={Link}
               href={`/projects/${projectId}/settings?name=${projectFriendlyName}`}
             >
               General
             </Menu.Item>
             <Menu.Item
-              icon={
-                <Icon
-                  name="IconDatabase"
-                  size={ICON_SIZE}
-                  color={isDarkTheme ? "white" : "black"}
-                />
-              }
+              icon={<Icon name="IconDatabase" size={ICON_SIZE} />}
               component={Link}
               href={`/projects/${projectId}/settings/datasources?name=${projectFriendlyName}`}
             >
               Datasource
             </Menu.Item>
             <Menu.Item
-              icon={
-                <Icon
-                  name="IconUsers"
-                  size={ICON_SIZE}
-                  color={isDarkTheme ? "white" : "black"}
-                />
-              }
+              icon={<Icon name="IconUsers" size={ICON_SIZE} />}
               component={Link}
               href={`/projects/${projectId}/settings/team?name=${projectFriendlyName}`}
             >
               Team
             </Menu.Item>
             <Menu.Item
-              icon={
-                <Icon
-                  name="IconWorldWww"
-                  size={ICON_SIZE}
-                  color={isDarkTheme ? "white" : "black"}
-                />
-              }
+              icon={<Icon name="IconWorldWww" size={ICON_SIZE} />}
               component={Link}
               href={`/projects/${projectId}/settings/domain?name=${projectFriendlyName}`}
             >
