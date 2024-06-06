@@ -4,9 +4,11 @@ import { cloneObject } from "@/utils/common";
 
 export const useDataTransformers = () => {
   // it transforms the related data to the format: { index: number, data: any, parent: any, grandparent: any }
-  const itemTransformer = (relatedComponentsData: any) => {
+  const itemTransformer = (
+    relatedComponentsData: Record<string, any> | undefined,
+  ) => {
     const relatedComponentsDataList = Object.entries(
-      relatedComponentsData,
+      relatedComponentsData ?? {},
     ).filter(([, value]) => !isEmpty(value));
 
     const itemData = relatedComponentsDataList?.at(-1);
