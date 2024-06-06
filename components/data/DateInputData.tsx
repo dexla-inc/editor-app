@@ -14,7 +14,6 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 import { useComponentStates } from "@/hooks/editor/useComponentStates";
 import { ValueProps } from "@/types/dataBinding";
 import merge from "lodash.merge";
-import { FormFieldsBuilder } from "./forms/FormFieldsBuilder";
 
 const fields = [
   {

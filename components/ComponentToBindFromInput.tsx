@@ -1,6 +1,6 @@
 import { ComponentToBindWrapper } from "@/components/ComponentToBindWrapper";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
-import { ValueProps } from "@/types/dataBinding";
+import { FieldType, ValueProps } from "@/types/dataBinding";
 import {
   Button,
   Flex,
@@ -17,7 +17,6 @@ import {
 import { MonacoEditorJson } from "./MonacoEditorJson";
 import { SegmentedControlYesNo } from "./SegmentedControlYesNo";
 import { TopLabel } from "./TopLabel";
-import { FieldType } from "./data/forms/StaticFormFieldsBuilder";
 import { SegmentedControlInput } from "./SegmentedControlInput";
 import { Icon } from "@/components/Icon";
 import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
