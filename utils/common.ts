@@ -167,8 +167,8 @@ export const findPathForKeyValue = (
       const newPath = currentPath
         ? `${currentPath}.${isArrayIndex(prop) ? `[${prop}]` : prop}`
         : isArrayIndex(prop)
-        ? `[${prop}]`
-        : prop;
+          ? `[${prop}]`
+          : prop;
 
       if (prop === key && obj[prop] === value) {
         return newPath;
@@ -318,7 +318,21 @@ function emptyObject(value: any): boolean {
   return isObject(value) && Object.keys(value).length === 0;
 }
 
-export const cloneObject = <T extends object>(obj: T): T => {
-  if (!obj) return obj;
-  return JSON.parse(JSON.stringify(obj)) as T;
+export const cloneObject = <T>(obj: T): T => {
+  const deepClone = (item: any): any => {
+    if (item === null || typeof item !== "object") {
+      return item;
+    }
+    if (Array.isArray(item)) {
+      return item.map(deepClone);
+    }
+    const clonedObj: any = {};
+    for (const key in item) {
+      if (item.hasOwnProperty(key)) {
+        clonedObj[key] = deepClone(item[key]);
+      }
+    }
+    return clonedObj;
+  };
+  return deepClone(obj);
 };
