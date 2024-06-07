@@ -1,5 +1,7 @@
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useCallback, useState } from "react";
+import { getStaticLanguageValue } from "@/utils/data";
+import merge from "lodash.merge";
 
 export const useContentEditable = (componentId: string, ref: any) => {
   const [isEditable, setIsEditable] = useState(false);
@@ -12,11 +14,11 @@ export const useContentEditable = (componentId: string, ref: any) => {
   const handleDoubleClick = useCallback(
     (e: React.MouseEvent) => {
       // TODO: re-enable this
-      // if (!isPreviewMode) {
-      //   e.preventDefault();
-      //   toggleEdit(true);
-      //   ref?.current?.focus();
-      // }
+      if (!isPreviewMode) {
+        e.preventDefault();
+        toggleEdit(true);
+        ref?.current?.focus();
+      }
     },
     [toggleEdit, isPreviewMode, ref],
   );
@@ -27,16 +29,16 @@ export const useContentEditable = (componentId: string, ref: any) => {
       const updateTreeComponentAttrs =
         useEditorTreeStore.getState().updateTreeComponentAttrs;
       const value = ref?.current.innerText;
+
+      const staticValues = getStaticLanguageValue(componentId, "children");
+      const updatedChildrenStaticValues = merge(staticValues, {
+        children: { static: { [language]: value } },
+      });
+
       updateTreeComponentAttrs({
         componentIds: [componentId],
         attrs: {
-          onLoad: {
-            children: {
-              dataType: "static",
-              // TODO: REVIEW THIS
-              static: { [language]: value },
-            },
-          },
+          onLoad: updatedChildrenStaticValues,
         },
       });
     }

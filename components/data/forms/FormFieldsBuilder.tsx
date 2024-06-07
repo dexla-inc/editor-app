@@ -12,7 +12,6 @@ import { useEffect } from "react";
 import { FieldProps, ValueProps } from "@/types/dataBinding";
 import has from "lodash.has";
 import { useComponentStates } from "@/hooks/editor/useComponentStates";
-import cloneDeep from "lodash.clonedeep";
 
 type Props = {
   fields: FieldProps[];

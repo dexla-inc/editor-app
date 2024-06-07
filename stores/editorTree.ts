@@ -22,7 +22,6 @@ import merge from "lodash.merge";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import setObj from "lodash.set";
-import cloneDeep from "lodash.clonedeep";
 
 const client = createClient({
   publicApiKey: process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY ?? "",
@@ -316,7 +315,7 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                   "default";
 
                 componentIds.forEach((id) => {
-                  const clonedAttrs = cloneDeep(
+                  const clonedAttrs = cloneObject(
                     state.componentMutableAttrs[id] ?? {},
                   );
 

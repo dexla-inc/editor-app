@@ -4,7 +4,7 @@ import { useCallback, useMemo } from "react";
 import get from "lodash.get";
 import { ValueProps } from "@/types/dataBinding";
 import set from "lodash.set";
-import { emptyObject, safeJsonParse } from "@/utils/common";
+import { cloneObject, emptyObject, safeJsonParse } from "@/utils/common";
 import { useInputsStore } from "@/stores/inputs";
 import { useShallow } from "zustand/react/shallow";
 import { pick } from "next/dist/lib/pick";
@@ -12,7 +12,6 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 import { useOldRouter } from "@/hooks/data/useOldRouter";
 import { useDataTransformers } from "@/hooks/data/useDataTransformers";
 import has from "lodash.has";
-import cloneDeep from "lodash.clonedeep";
 
 type NextRouterKeys = any;
 type RecordStringAny = Record<string, any>;
@@ -64,7 +63,7 @@ export const useComputeValue = ({
   onLoad = {},
 }: UseComputeValue) => {
   const { itemTransformer } = useDataTransformers();
-  onLoad = cloneDeep(onLoad);
+  onLoad = cloneObject(onLoad);
 
   const browser = useOldRouter();
   const valuePropsPaths = useMemo(() => {

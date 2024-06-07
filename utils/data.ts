@@ -1,3 +1,6 @@
+import { useEditorTreeStore } from "@/stores/editorTree";
+import has from "lodash.has";
+
 export function extractKeys(
   obj: Record<string, any> | null | undefined,
   parentKey: string = "",
@@ -34,3 +37,31 @@ export function extractKeys(
 }
 
 export const relatedKeys = ["data", "parent", "grandparent"];
+
+export const getStaticLanguageValue = (componentId: string, key: string) => {
+  const { componentMutableAttrs, language } = useEditorTreeStore.getState();
+  const component = componentMutableAttrs[componentId];
+
+  const staticValue = component.onLoad?.[key]?.static;
+  const result: Record<string, any> = {
+    [key]: {
+      static: {},
+    },
+  };
+  ["en", language].forEach((lang) => {
+    const value = has(staticValue, lang)
+      ? staticValue[lang]
+      : has(staticValue, "en")
+        ? // @ts-ignore
+          staticValue.en
+        : // if no translation key was found but it has the dataType attr, it means it was set before
+          // (for backwards compatibility when we had no language)
+          has(component.onLoad?.[key], "dataType")
+          ? staticValue
+          : // otherwise, return the value from props
+            component.props?.[key] ?? "";
+    result[key].static[lang] = value;
+  });
+
+  return result;
+};
