@@ -9,7 +9,6 @@ import { StaticFormFieldsBuilder } from "@/components/data/forms/StaticFormField
 import { IconPlug, IconPlugOff } from "@tabler/icons-react";
 import { DynamicFormFieldsBuilder } from "@/components/data/forms/DynamicFormFieldsBuilder";
 import { ICON_SIZE } from "@/utils/config";
-import { VisibilityModifier } from "@/components/data/VisibilityModifier";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useComponentStates } from "@/hooks/editor/useComponentStates";
 import { ValueProps } from "@/types/dataBinding";
@@ -165,18 +164,6 @@ export const DateInputData = ({ component, endpoints }: DataProps) => {
             </Group>
           );
         })}
-        {/* <FormFieldsBuilder
-        fields={fields}
-        component={component}
-        endpoints={endpoints!}
-      /> */}
-        <VisibilityModifier form={form} />
-        <ComponentToBindFromSelect
-          size="xs"
-          label="State"
-          {...form.getInputProps(`onLoad.currentState`)}
-          data={getComponentsStates()}
-        />
       </>
     </Stack>
   );
