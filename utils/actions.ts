@@ -499,16 +499,21 @@ const handleSuccess = async (props: APICallActionParams) => {
 
 export function constructHeaders(
   endpoint?: Endpoint,
-  headers: Record<string, string> = {},
+  headers?: any,
   authHeaderKey = "",
 ) {
   const contentType = endpoint?.mediaType || "application/json";
-  const { Authorization, ...restHeaders } = headers;
+
+  const { Authorization, ...restHeaders } = headers || {};
 
   return {
     "Content-Type": contentType,
     ...restHeaders,
-    Authorization: Authorization || (authHeaderKey ? authHeaderKey : undefined),
+    ...(Authorization
+      ? { Authorization }
+      : authHeaderKey
+        ? { Authorization: authHeaderKey }
+        : {}),
   };
 }
 
