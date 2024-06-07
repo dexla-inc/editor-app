@@ -12,6 +12,7 @@ import { useEffect } from "react";
 import { FieldProps, ValueProps } from "@/types/dataBinding";
 import has from "lodash.has";
 import { useComponentStates } from "@/hooks/editor/useComponentStates";
+import cloneDeep from "lodash.clonedeep";
 
 type Props = {
   fields: FieldProps[];
@@ -52,24 +53,23 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
     (acc, f) => {
       let staticValue = component.onLoad?.[f.name]?.static;
 
-      // making sure the default language 'en' is always set
       acc[f.name] = {
-        static: { ...(!has(staticValue, "en") && { en: "" }) },
+        static: {},
       };
-
-      // looking for translation keys, 'en' is the default key
-      const value = has(staticValue, language)
-        ? staticValue[language]
-        : has(staticValue, "en")
-          ? // @ts-ignore
-            staticValue.en
-          : // if no translation key was found but it has the dataType attr, it means it was set before
-            // (for backwards compatibility when we had no language)
-            has(component.onLoad?.[f.name], "dataType")
-            ? staticValue
-            : // otherwise, return the value from props
-              component.props?.[f.name];
-      acc[f.name].static[language] = value;
+      ["en", language].forEach((lang) => {
+        const value = has(staticValue, lang)
+          ? staticValue[lang]
+          : has(staticValue, "en")
+            ? // @ts-ignore
+              staticValue.en
+            : // if no translation key was found but it has the dataType attr, it means it was set before
+              // (for backwards compatibility when we had no language)
+              has(component.onLoad?.[f.name], "dataType")
+              ? staticValue
+              : // otherwise, return the value from props
+                component.props?.[f.name] ?? "";
+        acc[f.name].static[lang] = value;
+      });
 
       return acc;
     },
@@ -83,7 +83,7 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
       onLoad: onLoadValues,
     },
   });
-  console.log(component, form.values);
+
   useEffect(() => {
     if (form.isTouched() && form.isDirty()) {
       debouncedTreeComponentAttrsUpdate({ attrs: form.values });

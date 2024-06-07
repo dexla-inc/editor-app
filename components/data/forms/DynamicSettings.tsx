@@ -2,10 +2,8 @@ import { EndpointRequestInputs } from "@/components/EndpointRequestInputs";
 import { EndpointSelect } from "@/components/EndpointSelect";
 import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
 import SidebarSection from "@/components/SidebarSection";
-import { VisibilityModifier } from "@/components/data/VisibilityModifier";
 import { useData } from "@/hooks/data/useData";
 import { Endpoint } from "@/requests/datasources/types";
-import { PagingResponse } from "@/requests/types";
 import { AUTOCOMPLETE_OFF_PROPS, safeJsonParse } from "@/utils/common";
 import { DEFAULT_STALE_TIME } from "@/utils/config";
 import { extractKeys } from "@/utils/data";
@@ -16,6 +14,7 @@ import get from "lodash.get";
 import { useEffect, useState } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { DataType } from "@/types/dataBinding";
+import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 
 type Props = {
   component: Component;
@@ -218,7 +217,11 @@ export const DynamicSettings = ({
           </>
         )}
       </SidebarSection>
-      <VisibilityModifier form={form} />
+      <ComponentToBindFromInput
+        {...form.getInputProps("onLoad.isVisible")}
+        label="Visibility"
+        fieldType="yesno"
+      />
     </>
   );
 };

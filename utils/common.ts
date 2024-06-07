@@ -314,7 +314,7 @@ function emptyArray(value: any): boolean {
   return Array.isArray(value) && value.length === 0;
 }
 
-function emptyObject(value: any): boolean {
+export function emptyObject(value: any): boolean {
   return isObject(value) && Object.keys(value).length === 0;
 }
 

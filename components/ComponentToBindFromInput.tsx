@@ -118,7 +118,7 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
         </Stack>
       ) : fieldType === "yesno" ? (
         <SegmentedControlYesNo
-          value={staticValue ?? true}
+          value={staticValue === "" || staticValue === true}
           onChange={customOnChange}
           w="100%"
           {...commonProps}
