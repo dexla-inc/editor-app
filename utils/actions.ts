@@ -21,7 +21,12 @@ import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useVariableStore } from "@/stores/variables";
 import { readDataFromStream } from "@/utils/api";
-import { toBase64, isObject, safeJsonParse } from "@/utils/common";
+import {
+  toBase64,
+  isObject,
+  safeJsonParse,
+  notUndefined,
+} from "@/utils/common";
 import { Component, getColorFromTheme } from "@/utils/editor";
 import { executeFlow } from "@/utils/logicFlows";
 import { ArrayMethods } from "@/types/types";
@@ -366,11 +371,10 @@ const getVariablesValue = (
   return Object.entries(objs).reduce((acc, [key, value]) => {
     const fieldValue = computeValue({ value });
 
-    if (fieldValue) {
+    if (notUndefined(fieldValue)) {
       // @ts-ignore
       acc[key] = fieldValue;
     }
-
     return acc;
   }, {});
 };
@@ -500,10 +504,16 @@ export function constructHeaders(
 ) {
   const contentType = endpoint?.mediaType || "application/json";
 
+  const { Authorization, ...restHeaders } = headers || {};
+
   return {
     "Content-Type": contentType,
-    ...headers,
-    ...(authHeaderKey ? { Authorization: authHeaderKey } : {}),
+    ...restHeaders,
+    ...(Authorization
+      ? { Authorization }
+      : authHeaderKey
+      ? { Authorization: authHeaderKey }
+      : {}),
   };
 }
 
@@ -514,7 +524,6 @@ export async function performFetch(
   headers?: any,
   body?: any,
   authHeaderKey?: string,
-  includeExampleResponse = false,
 ) {
   const isGetMethodType = endpoint?.methodType === "GET";
 
@@ -535,9 +544,6 @@ export async function performFetch(
   if (!response.ok) {
     const errorBody = await readDataFromStream(response.body);
     if (response.status >= 400 && response.status < 500) {
-      if (includeExampleResponse) {
-        return safeJsonParse(endpoint?.exampleResponse || "");
-      }
       throw new Error(errorBody);
     } else if (response.status >= 500) {
       console.error(errorBody);
@@ -568,6 +574,7 @@ const setLoadingState = (componentId: string, isLoading: boolean) => {
   updateTreeComponentAttrs({
     componentIds: [componentId],
     attrs: { props: { loading: isLoading } },
+    save: false,
   });
 };
 

@@ -1,8 +1,11 @@
 import { Icon } from "@/components/Icon";
 import { buttonHoverStyles } from "@/components/styles/buttonHoverStyles";
 import { usePageListQuery } from "@/hooks/editor/reactQuery/usePageListQuery";
+import { useProjectListQuery } from "@/hooks/editor/reactQuery/useProjectListQuery";
+import { usePropelAuth } from "@/hooks/editor/usePropelAuth";
 import { PageResponse } from "@/requests/pages/types";
-import { deleteProject } from "@/requests/projects/mutations";
+import { createProject, deleteProject } from "@/requests/projects/mutations";
+import { useAppStore } from "@/stores/app";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { ICON_DELETE, ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
 import {
@@ -39,6 +42,7 @@ export function ProjectItemMenu({
   onDeleteProject,
 }: Props) {
   const theme = useMantineTheme();
+  const isDarkTheme = theme.colorScheme === "dark";
   const [pages, setPages] = useState<PageResponse[]>([]);
   const [menuOpened, setMenuOpened] = useState(false);
   const [pagesOpened, setPagesOpened] = useState(false);
@@ -46,6 +50,10 @@ export function ProjectItemMenu({
   const company = usePropelAuthStore((state) => state.activeCompany);
   const isDexlaAdmin = usePropelAuthStore((state) => state.isDexlaAdmin);
   const [isDeleting, setIsDeleting] = useState(false);
+  const startLoading = useAppStore((state) => state.startLoading);
+  const stopLoading = useAppStore((state) => state.stopLoading);
+  const { refreshAuth } = usePropelAuth();
+  const { invalidate: invalidateProjects } = useProjectListQuery(company.orgId);
 
   const handleMenuOpen = () => {
     setMenuOpened(true);
@@ -76,7 +84,45 @@ export function ProjectItemMenu({
     setPages([]);
   };
 
-  const isDarkTheme = theme.colorScheme === "dark";
+  const duplicateProject = async () => {
+    const createTemplateProject = async () => {
+      try {
+        startLoading({
+          id: "duplicating-project",
+          title: "Duplicating Project",
+          message: "Wait while we copy your project",
+        });
+
+        await createProject({
+          copyFrom: {
+            id: projectId,
+            type: "PROJECT",
+          },
+          friendlyName: projectFriendlyName + " Copy",
+          companyId: company.orgId,
+        });
+
+        refreshAuth();
+
+        invalidateProjects();
+      } catch (error: any) {
+        stopLoading({
+          id: "duplicating-project",
+          title: "Duplicating Project Failed",
+          message: error.message,
+          isError: true,
+        });
+      } finally {
+        stopLoading({
+          id: "duplicating-project",
+          title: "Project Duplicated",
+          message: "Your project is ready for you, enjoy!",
+        });
+      }
+    };
+
+    createTemplateProject();
+  };
 
   return (
     <Menu
@@ -107,7 +153,12 @@ export function ProjectItemMenu({
         <Menu.Label>Project</Menu.Label>
         <NavLink
           label="Pages"
-          icon={<IconFileAnalytics size={ICON_SIZE} />}
+          icon={
+            <IconFileAnalytics
+              size={ICON_SIZE}
+              color={isDarkTheme ? "#FFFFFF" : "#000000"}
+            />
+          }
           rightSection={
             pagesOpened ? (
               <IconChevronDown size={ICON_SIZE} />
@@ -139,7 +190,12 @@ export function ProjectItemMenu({
         </Collapse>
         <NavLink
           label="Settings"
-          icon={<IconSettings size={ICON_SIZE} />}
+          icon={
+            <IconSettings
+              size={ICON_SIZE}
+              color={isDarkTheme ? "#FFFFFF" : "#000000"}
+            />
+          }
           rightSection={
             settingsOpened ? (
               <IconChevronDown size={ICON_SIZE} />
@@ -181,6 +237,13 @@ export function ProjectItemMenu({
             </Menu.Item>
           </Box>
         </Collapse>
+        <Menu.Item
+          icon={<Icon name="IconCopy" />}
+          onClick={duplicateProject}
+          sx={{ color: isDarkTheme ? "#FFFFFF" : "#000000" }}
+        >
+          Duplicate
+        </Menu.Item>
         {isDexlaAdmin && (
           <Menu.Item
             icon={<Icon name="IconRefresh" />}

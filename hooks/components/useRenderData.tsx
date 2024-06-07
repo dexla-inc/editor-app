@@ -1,5 +1,3 @@
-import { useEditorTreeStore } from "@/stores/editorTree";
-import { useShallow } from "zustand/react/shallow";
 import { Component, ComponentTree } from "@/utils/editor";
 import { useEndpoint } from "@/hooks/components/useEndpoint";
 import { Skeleton } from "@mantine/core";
@@ -24,9 +22,6 @@ export const useRenderData = ({
   component,
   shareableContent,
 }: UseRenderDataProps) => {
-  const isPreviewMode = useEditorTreeStore(
-    useShallow((state) => state.isPreviewMode || state.isLive),
-  );
   const {
     dataType = "static",
     skeletonMinHeight = 400,
@@ -38,7 +33,6 @@ export const useRenderData = ({
     componentId: component.id!,
     onLoad: component.onLoad,
     dataType,
-    includeExampleResponse: !isPreviewMode,
   });
 
   const data = dataType === "dynamic" ? dynamicData : staticData;

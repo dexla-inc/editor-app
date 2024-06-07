@@ -14,7 +14,6 @@ type UseEndpointProps = {
   onLoad?: any;
   forceEnabled?: boolean;
   enabled?: boolean;
-  includeExampleResponse?: boolean;
 };
 
 export const useEndpoint = ({
@@ -22,7 +21,6 @@ export const useEndpoint = ({
   dataType,
   onLoad,
   enabled = true,
-  includeExampleResponse = false,
 }: UseEndpointProps) => {
   const authState = useDataSourceStore((state) => state.getAuthState);
   const setRelatedComponentsData = useEditorTreeStore(
@@ -59,18 +57,13 @@ export const useEndpoint = ({
 
     refreshAccessToken(projectId, endpoint?.dataSourceId as string);
 
-    return performFetch(
-      fetchUrl,
-      endpoint,
-      headers,
-      body,
-      authHeaderKey,
-      includeExampleResponse,
-    ).then((response) => {
-      setRelatedComponentsData({ id: componentId, data: response });
+    return performFetch(fetchUrl, endpoint, headers, body, authHeaderKey).then(
+      (response) => {
+        setRelatedComponentsData({ id: componentId, data: response });
 
-      return response;
-    });
+        return response;
+      },
+    );
   };
 
   const isEnabled = !!endpoint && dataType === "dynamic" && enabled;

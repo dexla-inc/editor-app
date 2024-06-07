@@ -123,7 +123,7 @@ export default function Page() {
           <Flex>
             {company.orgName !== "Dexla" ? (
               <Flex gap="sm">
-                <Tooltip label="Coming soon">
+                {/* <Tooltip label="Coming soon">
                   <Link
                     href={`/projects/new?company=${company.orgId}&id=${manuallyCreatedProjectId}`}
                   >
@@ -134,7 +134,7 @@ export default function Page() {
                       disabled
                     />
                   </Link>
-                </Tooltip>
+                </Tooltip> */}
                 <IconTitleDescriptionButton
                   icon="IconSparkles"
                   title="Create empty project"

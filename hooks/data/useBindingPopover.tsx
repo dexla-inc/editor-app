@@ -36,9 +36,9 @@ const parseVariableValue = (value: string): any => {
   }
 };
 
-const setEntityString = ({ selectedEntityId, entity }: BindType) => {
-  const [entityKey, entityId] = selectedEntityId.split(".");
-  const path = !entityId ? "" : `.${entityId}`;
+const setEntityString = ({ selectedEntityId, entity }: BindType): string => {
+  const [entityKey, ...restValues] = selectedEntityId.split(".");
+  const path = restValues.map((v) => `.${v}`).join("");
   return `${entity}['${entityKey}']${path}`;
 };
 
@@ -190,7 +190,10 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
 
   const getEntityEditorValue = ({ selectedEntityId, entity }: BindType) => {
     const entityHandlers = {
-      auth: () => setEntityString({ selectedEntityId, entity }),
+      auth: () => {
+        const auth = getAuthState(projectId);
+        return setEntityString({ selectedEntityId, entity });
+      },
       components: () => {
         try {
           const parsed = JSON.parse(selectedEntityId);
