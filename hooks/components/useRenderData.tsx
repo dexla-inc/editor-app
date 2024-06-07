@@ -1,5 +1,3 @@
-import { useEditorTreeStore } from "@/stores/editorTree";
-import { useShallow } from "zustand/react/shallow";
 import { Component, ComponentTree } from "@/utils/editor";
 import { useEndpoint } from "@/hooks/components/useEndpoint";
 import { Skeleton } from "@mantine/core";

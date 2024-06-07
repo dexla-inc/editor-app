@@ -11,12 +11,15 @@ export const jsonStructure = (props?: any): ComponentStructure => {
     props: {
       dataType: "static",
       type: "line",
-      height: "auto",
       style: {
-        width: "fit-content",
-        height: "fit-content",
+        width: "100%",
+        height: 320,
       },
-      chartColors: [requiredModifiers.chart.chartColors[0]],
+      chartColors: [
+        requiredModifiers.chart.chartColors[0],
+        requiredModifiers.chart.chartColors[1],
+        requiredModifiers.chart.chartColors[2],
+      ],
       series: [
         {
           name: "Desktops",
