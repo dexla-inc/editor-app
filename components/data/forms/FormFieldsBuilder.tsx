@@ -128,7 +128,7 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
                 field={f}
               />
             ) : (
-              <StaticFormFieldsBuilder field={f} form={form} />
+              <StaticFormFieldsBuilder field={f} form={form} isTranslatable />
             )}
             {hasParentComponentData && (
               <Tooltip label="Bind">

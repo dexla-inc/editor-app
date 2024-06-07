@@ -149,6 +149,7 @@ export const DateInputData = ({ component, endpoints }: DataProps) => {
                   // @ts-ignore
                   field={f}
                   form={form}
+                  isTranslatable={false}
                 />
               )}
               {hasParentComponentData && (

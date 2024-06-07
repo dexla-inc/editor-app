@@ -4,33 +4,31 @@ import { SegmentedControl, SegmentedControlProps, Stack } from "@mantine/core";
 import { TopLabel } from "@/components/TopLabel";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import get from "lodash.get";
+import merge from "lodash.merge";
 
 type Props = Omit<SegmentedControlProps, "value" | "onChange" | "label"> & {
   label?: string;
   value: ValueProps;
   onChange: (value: ValueProps) => void;
+  isTranslatable?: boolean;
 };
 
 export const ComponentToBindFromSegmentedControl = ({
   value,
   onChange,
+  isTranslatable = false,
   ...rest
 }: Props) => {
   const language = useEditorTreeStore((state) => state.language);
-  const staticValue = get(value?.static, language, value?.static);
+  const staticValue = isTranslatable
+    ? value?.static?.[language]
+    : value?.static;
 
-  const onChangeStatic = (fieldValue: any) => {
-    const newValue = {
-      ...value,
-      dataType: "static" as DataType,
-      static: { [language]: fieldValue },
-    };
-
-    if (language !== "en" && typeof value?.static === "string") {
-      newValue.static = {
-        en: value?.static,
-      };
-    }
+  const customOnChange = (fieldValue: any) => {
+    const newValue = merge(value, {
+      dataType: "static",
+      static: isTranslatable ? { [language]: fieldValue } : fieldValue,
+    });
 
     onChange(newValue);
   };
@@ -45,7 +43,7 @@ export const ComponentToBindFromSegmentedControl = ({
         <SegmentedControl
           value={staticValue}
           size="xs"
-          onChange={onChangeStatic}
+          onChange={customOnChange}
           {...rest}
         />
       </Stack>

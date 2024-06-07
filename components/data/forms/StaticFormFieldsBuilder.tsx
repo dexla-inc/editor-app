@@ -5,11 +5,13 @@ import { FieldProps } from "@/types/dataBinding";
 type StaticFormFieldsBuilderProps = {
   field: FieldProps;
   form: any;
+  isTranslatable?: boolean;
 };
 
 export const StaticFormFieldsBuilder = ({
   field,
   form,
+  isTranslatable,
 }: StaticFormFieldsBuilderProps) => {
   if (field.type === "select") {
     return (
@@ -20,7 +22,7 @@ export const StaticFormFieldsBuilder = ({
         label={field.label}
         placeholder={field.placeholder}
         {...form.getInputProps(`onLoad.${field.name}`)}
-        isTranslatable
+        isTranslatable={isTranslatable}
       />
     );
   }
