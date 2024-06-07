@@ -499,15 +499,16 @@ const handleSuccess = async (props: APICallActionParams) => {
 
 export function constructHeaders(
   endpoint?: Endpoint,
-  headers?: any,
+  headers: Record<string, string> = {},
   authHeaderKey = "",
 ) {
   const contentType = endpoint?.mediaType || "application/json";
+  const { Authorization, ...restHeaders } = headers;
 
   return {
     "Content-Type": contentType,
-    ...headers,
-    ...(authHeaderKey ? { Authorization: authHeaderKey } : {}),
+    ...restHeaders,
+    Authorization: Authorization || (authHeaderKey ? authHeaderKey : undefined),
   };
 }
 
@@ -600,8 +601,9 @@ export const useApiCallAction = async (
   const endpoint = endpointResults?.find((e) => e.id === action.endpoint)!;
 
   try {
-    const accessToken = useDataSourceStore.getState().getAuthState(projectId)
-      ?.accessToken;
+    const accessToken = useDataSourceStore
+      .getState()
+      .getAuthState(projectId)?.accessToken;
 
     const { url, header, body } = prepareRequestData(
       action,
