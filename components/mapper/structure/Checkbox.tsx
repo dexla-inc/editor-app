@@ -82,9 +82,10 @@ export const jsonStructure = (props?: any): ComponentStructure => {
     description: "Checkbox",
     props: {
       style: {
-        width: "48.5%",
-        height: "fit-content",
+        width: "auto",
+        height: "auto",
         cursor: "default",
+        borderRadius: "2px",
       },
       // TODO: Get size from branding
       size: "sm",

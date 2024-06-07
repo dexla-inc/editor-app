@@ -9,6 +9,7 @@ import { useEndpoint } from "@/hooks/components/useEndpoint";
 import groupBy from "lodash.groupby";
 import { Box, Skeleton } from "@mantine/core";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
+import { useMemo } from "react";
 
 const ReactApexChart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
@@ -22,6 +23,55 @@ export const getChartColor = (
   altColor: string,
 ) =>
   color ? getColorFromTheme(theme, color) : getColorFromTheme(theme, altColor);
+
+const defaultColors = (theme: MantineThemeExtended) => [
+  theme.colors.green[7],
+  theme.colors.orange[4],
+  theme.colors.blue[4],
+  theme.colors.red[6],
+  theme.colors.green[4],
+  theme.colors.orange[9],
+  theme.colors.green[9],
+  theme.colors.blue[8],
+  theme.colors.blue[9],
+];
+
+const baseOptions: ApexOptions = {
+  chart: {
+    toolbar: { show: false },
+    width: "100%",
+    offsetX: 0,
+    offsetY: 0,
+  },
+  states: {
+    hover: { filter: { type: "lighten", value: 0.04 } },
+    active: { filter: { type: "darken", value: 0.88 } },
+  },
+  stroke: {
+    width: 3,
+    curve: "smooth",
+    lineCap: "round",
+  },
+  grid: {
+    strokeDashArray: 3,
+    xaxis: { lines: { show: false } },
+  },
+  markers: { size: 0 },
+  legend: {
+    fontSize: "13px",
+    position: "top",
+    horizontalAlign: "right",
+    markers: { radius: 12 },
+    fontWeight: 500,
+    itemMargin: { horizontal: 8 },
+    onItemClick: { toggleDataSeries: true },
+  },
+  tooltip: {
+    x: { show: true },
+    marker: { show: true },
+  },
+  dataLabels: { enabled: false },
+};
 
 export const Chart = ({ component, ...props }: Props) => {
   const {
@@ -41,22 +91,21 @@ export const Chart = ({ component, ...props }: Props) => {
   const isPieOrRadial =
     component?.name === "PieChart" || component?.name === "RadialChart";
 
-  const colors = chartColors?.map((color: any) =>
-    getColorFromTheme(theme, color),
-  ) ?? [
-    theme.colors.green[7],
-    theme.colors.orange[4],
-    theme.colors.blue[4],
-    theme.colors.red[6],
-    theme.colors.green[4],
-    theme.colors.orange[9],
-    theme.colors.green[9],
-    theme.colors.blue[8],
-    theme.colors.blue[9],
-  ];
+  const colors = useMemo(
+    () =>
+      chartColors?.map((color: any) => getColorFromTheme(theme, color)) ??
+      defaultColors(theme),
+    [chartColors, theme],
+  );
 
-  const _labelColor = getChartColor(theme, labelColor, "SecondaryText.5");
-  const _foreColor = getChartColor(theme, foreColor, "Secondary.5");
+  const _labelColor = useMemo(
+    () => getChartColor(theme, labelColor, "SecondaryText.5"),
+    [theme, labelColor],
+  );
+  const _foreColor = useMemo(
+    () => getChartColor(theme, foreColor, "Secondary.5"),
+    [theme, foreColor],
+  );
 
   const { data: response, isLoading } = useEndpoint({
     componentId: component.id!,
@@ -64,8 +113,8 @@ export const Chart = ({ component, ...props }: Props) => {
     dataType,
   });
 
-  let dataSeries = series,
-    dynamicOptions = {};
+  let dataSeries = series;
+  let dynamicOptions = {};
 
   if (dataType === "dynamic") {
     dataSeries = [];
@@ -100,85 +149,41 @@ export const Chart = ({ component, ...props }: Props) => {
     }
   }
 
-  const customOptions: ApexOptions = merge(
-    {},
-    {
+  const customOptions = useMemo(
+    () =>
+      merge(
+        {},
+        baseOptions,
+        {
+          colors,
+          chart: { ...baseOptions.chart, foreColor: _foreColor },
+          grid: {
+            ...baseOptions.grid,
+            borderColor: theme.fn.lighten(_foreColor, 0.2),
+          },
+          markers: {
+            ...baseOptions.markers,
+            strokeColors: theme.colors.gray[0],
+          },
+          legend: {
+            ...baseOptions.legend,
+            show: type !== "radialBar" && dataSeries?.length > 0,
+            labels: { colors: _labelColor },
+          },
+        },
+        options,
+        dynamicOptions,
+      ),
+    [
       colors,
-      chart: {
-        toolbar: {
-          show: false,
-        },
-        width: "100%",
-        foreColor: _foreColor,
-        offsetX: 0,
-        offsetY: 0,
-      },
-      states: {
-        hover: {
-          filter: {
-            type: "lighten",
-            value: 0.04,
-          },
-        },
-        active: {
-          filter: {
-            type: "darken",
-            value: 0.88,
-          },
-        },
-      },
-      stroke: {
-        width: 3,
-        curve: "smooth",
-        lineCap: "round",
-      },
-      grid: {
-        strokeDashArray: 3,
-        borderColor: theme.fn.lighten(_foreColor, 0.2),
-        xaxis: {
-          lines: {
-            show: false,
-          },
-        },
-      },
-      markers: {
-        size: 0,
-        strokeColors: theme.colors.gray[0],
-      },
-      legend: {
-        show: type !== "radialBar" && dataSeries?.length > 0,
-        fontSize: 13,
-        position: "top",
-        horizontalAlign: "right",
-        markers: {
-          radius: 12,
-        },
-        fontWeight: 500,
-        itemMargin: {
-          horizontal: 8,
-        },
-        labels: {
-          colors: _labelColor,
-        },
-        legend: {
-          onItemClick: {
-            toggleDataSeries: true,
-          },
-        },
-      },
-      tooltip: {
-        x: {
-          show: true,
-        },
-        marker: {
-          show: dataSeries?.length > 1,
-        },
-      },
-      dataLabels: {
-        enabled: false,
-      },
-    },
-    options,
+      _foreColor,
+      _labelColor,
+      options,
+      dynamicOptions,
+      theme,
+      type,
+      dataSeries,
+    ],
   );
 
   Object.assign(customOptions, dynamicOptions);
@@ -187,7 +192,6 @@ export const Chart = ({ component, ...props }: Props) => {
     <Skeleton visible={isLoading} id={component.id}>
       <Box
         component={ReactApexChart}
-        // @ts-ignore
         {...omit(props, ["id"])}
         {...componentProps}
         {...triggers}
@@ -200,6 +204,8 @@ export const Chart = ({ component, ...props }: Props) => {
         }}
         type={type}
         options={customOptions}
+        width={componentProps.style?.width ?? "100%"}
+        height={componentProps.style?.height ?? 320}
       />
     </Skeleton>
   );
