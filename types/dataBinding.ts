@@ -4,12 +4,7 @@ import { Endpoint } from "@/requests/datasources/types";
 import { FrontEndTypes } from "@/requests/variables/types";
 
 export type BindingType = "Formula" | "JavaScript";
-export type BindingTab =
-  | "components"
-  | "variables"
-  | "actions"
-  | "auth"
-  | "browser";
+export type BindingTab = "components" | "variables" | "actions" | "others";
 
 export type DataType = "static" | "dynamic" | "boundCode";
 export type ContextType =

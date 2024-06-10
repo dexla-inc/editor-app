@@ -138,50 +138,26 @@ export type ObjectItem = {
   children?: ObjectItem[];
 };
 
-export const objToItems = (obj: any, root: any): ObjectItem[] => {
+export const objToItems = (
+  obj: any,
+  root: any,
+  prefix: string = "",
+): ObjectItem[] => {
   if (!obj) return [];
   return Object.entries(obj).map(([key, value]) => {
-    let path = findPathForKeyValue(root, key, value);
+    let path = (prefix ? `${prefix}.${key}` : key).replaceAll(".[", "[");
 
     return {
       key,
       value: JSON.stringify(value),
-      path: path ? path.replaceAll(".[", "[") : "",
+      path,
       type: typeof value,
       children:
         value && typeof value === "object"
-          ? objToItems(value, root)
+          ? objToItems(value, root, path)
           : undefined,
     };
   });
-};
-
-export const findPathForKeyValue = (
-  obj: any,
-  key: string,
-  value: any,
-  currentPath: string = "",
-): string | null => {
-  for (const prop in obj) {
-    if (obj.hasOwnProperty(prop)) {
-      const newPath = currentPath
-        ? `${currentPath}.${isArrayIndex(prop) ? `[${prop}]` : prop}`
-        : isArrayIndex(prop)
-          ? `[${prop}]`
-          : prop;
-
-      if (prop === key && obj[prop] === value) {
-        return newPath;
-      } else if (typeof obj[prop] === "object" && obj[prop] !== null) {
-        const path = findPathForKeyValue(obj[prop], key, value, newPath);
-        if (path !== null) {
-          return path;
-        }
-      }
-    }
-  }
-
-  return null;
 };
 
 const isArrayIndex = (prop: string): boolean => {
