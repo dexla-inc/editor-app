@@ -164,7 +164,7 @@ export const useComputeValue = ({
         (acc, key) => ({
           ...acc,
           // @ts-ignore
-          [key]: sanitizedValue(state.getAuthState(projectId), key) || {},
+          [key]: state.getAuthState(projectId) || {},
         }),
         {},
       ),
@@ -174,7 +174,7 @@ export const useComputeValue = ({
   const browserValues: any = useMemo(() => {
     return browserKeys.reduce(
       // @ts-ignore
-      (acc, key) => ({ ...acc, [key]: sanitizedValue(browser, key) }),
+      (acc, key) => ({ ...acc, [key]: browser }),
       {},
     );
   }, [browser, browserKeys]);
@@ -186,10 +186,7 @@ export const useComputeValue = ({
 
   const otherValues = useEditorTreeStore(
     useShallow((state) => {
-      return otherKeys.reduce(
-        (acc, key) => ({ ...acc, [key]: sanitizedValue(state, key) }),
-        {},
-      );
+      return otherKeys.reduce((acc, key) => ({ ...acc, [key]: state }), {});
     }),
   );
 
@@ -327,8 +324,3 @@ export const useComputeValue = ({
 function extractKeysFromPattern(pattern: RegExp, boundCode: any) {
   return [...boundCode.matchAll(pattern)].map((match) => match[1]);
 }
-
-const sanitizedValue = (data: any, key: string) => {
-  const [first, ...rest] = key.split(".");
-  return rest.length ? data[first]?.[rest.join(".")] : data[first];
-};

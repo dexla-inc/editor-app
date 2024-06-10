@@ -145,7 +145,10 @@ export const objToItems = (
 ): ObjectItem[] => {
   if (!obj) return [];
   return Object.entries(obj).map(([key, value]) => {
-    let path = (prefix ? `${prefix}.${key}` : key).replaceAll(".[", "[");
+    // if key is a number we want to wrap it with [], otherwise, prefix it with .
+    const builtKey = isNaN(Number(key)) ? `.${key}` : `[${key}]`;
+    // if prefix is empty, we want to remove that initial . because we are already prefixing it with `${entity}.`
+    let path = prefix ? `${prefix}${builtKey}` : builtKey.replace(".", "");
 
     return {
       key,
@@ -158,11 +161,6 @@ export const objToItems = (
           : undefined,
     };
   });
-};
-
-const isArrayIndex = (prop: string): boolean => {
-  // Check if prop is a non-negative integer (array index).
-  return /^\d+$/.test(prop);
 };
 
 export const emptyEditorTree = {
