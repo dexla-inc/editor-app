@@ -74,7 +74,7 @@ const Modifier = withModifier(({ selectedComponent }) => {
               attrs: {
                 props: {
                   size: value,
-                  style: { height: inputSizes[value] },
+                  style: { minHeight: inputSizes[value] },
                 },
               },
             });
