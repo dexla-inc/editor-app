@@ -39,6 +39,8 @@ import { useThemeStore } from "@/stores/theme";
 import { queryClient } from "./reactQuery";
 import { RefreshAPICallActionForm } from "@/components/actions/RefreshAPICallActionForm";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import { useInputsStore } from "@/stores/inputs";
+import { ResetComponentActionForm } from "@/components/actions/ResetComponentActionForm";
 
 const triggers = [
   "onClick",
@@ -90,6 +92,11 @@ export const actions: ActionInfo[] = [
   { name: "changeVariable", group: "Data & Logic", icon: "IconVariable" },
   { name: "resetVariable", group: "Data & Logic", icon: "IconVariableOff" },
   { name: "refreshApiCall", group: "Data & Logic", icon: "IconRefreshDot" },
+  {
+    name: "resetComponent",
+    group: "Data & Logic",
+    icon: "IconClearFormatting",
+  },
   { name: "changeState", group: "Design", icon: "IconTransform" },
   { name: "navigateToPage", group: "Navigation", icon: "IconFileInvoice" },
   { name: "goToUrl", group: "Navigation", icon: "IconLink" },
@@ -217,6 +224,11 @@ export interface ResetVariableAction extends BaseAction {
   multiple: boolean;
 }
 
+export interface ResetComponentAction extends BaseAction {
+  name: "resetComponent";
+  componentIds: string[];
+}
+
 export type ActionType =
   | NavigationAction
   | AlertAction
@@ -226,7 +238,8 @@ export type ActionType =
   | ChangeStateAction
   | TriggerLogicFlowAction
   | ChangeLanguageAction
-  | ChangeVariableAction;
+  | ChangeVariableAction
+  | ResetComponentAction;
 
 export type Action = {
   id: string;
@@ -317,6 +330,10 @@ export type ChangeStateActionParams = ActionParams & {
 
 export type ChangeLanguageActionParams = ActionParams & {
   action: ChangeLanguageAction;
+};
+
+export type ResetComponentActionParams = ActionParams & {
+  action: ResetComponentAction;
 };
 
 export const useShowNotificationAction = async ({
@@ -512,8 +529,8 @@ export function constructHeaders(
     ...(Authorization
       ? { Authorization }
       : authHeaderKey
-        ? { Authorization: authHeaderKey }
-        : {}),
+      ? { Authorization: authHeaderKey }
+      : {}),
   };
 }
 
@@ -606,9 +623,8 @@ export const useApiCallAction = async (
   const endpoint = endpointResults?.find((e) => e.id === action.endpoint)!;
 
   try {
-    const accessToken = useDataSourceStore
-      .getState()
-      .getAuthState(projectId)?.accessToken;
+    const accessToken = useDataSourceStore.getState().getAuthState(projectId)
+      ?.accessToken;
 
     const { url, header, body } = prepareRequestData(
       action,
@@ -837,6 +853,13 @@ export const useResetVariableAction = async ({
   action.variableIds?.forEach((id) => resetVariable(id));
 };
 
+export const useResetComponentAction = ({
+  action,
+}: ResetComponentActionParams) => {
+  const resetComponents = useInputsStore.getState().resetInputValues;
+  resetComponents(action.componentIds);
+};
+
 export function showSequentialActionButton(actionName: string) {
   return ["apiCall", "changeVariable", "resetVariable"].includes(actionName);
 }
@@ -917,6 +940,11 @@ export const actionMapper = (actionName: string) => {
     customJavascript: {
       action: useCustomJavascriptAction,
       form: CustomJavascriptActionForm,
+      defaultValues: {},
+    },
+    resetComponent: {
+      action: useResetComponentAction,
+      form: ResetComponentActionForm,
       defaultValues: {},
     },
   };
