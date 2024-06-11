@@ -152,7 +152,7 @@ export default function SidebarSection({
       </Group>
       {children ? (
         <Collapse in={isExpanded}>
-          <Box {...(isActionSequentialTarget ? {} : { px: "md" })}>
+          <Box {...(isActionSequentialTarget || noPadding ? {} : { px: "md" })}>
             {children}
           </Box>
         </Collapse>
