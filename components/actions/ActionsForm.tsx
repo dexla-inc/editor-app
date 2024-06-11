@@ -30,7 +30,6 @@ export const ActionsForm = ({ sequentialTo, close }: ActionProps) => {
     useEditorTreeStore.getState().updateTreeComponentAttrs;
   const copiedAction = useEditorStore.getState().copiedAction;
   const setCopiedAction = useEditorStore.getState().setCopiedAction;
-  const setSequentialTo = useEditorStore.getState().setSequentialTo;
   const openAction = useEditorStore.getState().openAction;
   const setOpenAction = useEditorStore.getState().setOpenAction;
 
@@ -72,6 +71,8 @@ export const ActionsForm = ({ sequentialTo, close }: ActionProps) => {
   useEffect(() => {
     if (availableTriggers.length > 0) {
       form.setFieldValue("trigger", availableTriggers[0]);
+    } else {
+      close?.();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [availableTriggers]);
@@ -82,10 +83,6 @@ export const ActionsForm = ({ sequentialTo, close }: ActionProps) => {
       attrs: { actions: componentActions.concat(copiedAction) },
     });
     setCopiedAction(undefined);
-  };
-
-  const handleClose = () => {
-    isSequential ? setSequentialTo(undefined) : close && close();
   };
 
   const saveAction = (trigger: ActionTrigger, action: string) => {
@@ -110,18 +107,21 @@ export const ActionsForm = ({ sequentialTo, close }: ActionProps) => {
     handleOpenAction(id);
     form.reset();
   };
+  const idExistInOpenAction = openAction?.actionIds?.some(
+    (id) => id === (sequentialTo ?? "") || id === `seq_${sequentialTo}`,
+  );
 
   const handleOpenAction = (id: string) => {
     const isAllowedInOpenAction =
       openAction?.componentId === selectedComponentId &&
       openAction?.actionIds &&
       sequentialTo &&
-      openAction?.actionIds.includes(sequentialTo ?? "");
+      idExistInOpenAction;
     const actionIds = isAllowedInOpenAction
       ? [...(openAction?.actionIds ?? []), `seq_${id}`]
       : [id];
     setOpenAction({ actionIds, componentId: selectedComponentId });
-    handleClose();
+    close?.();
   };
 
   return (
@@ -129,7 +129,7 @@ export const ActionsForm = ({ sequentialTo, close }: ActionProps) => {
     <form>
       <Stack spacing="xs" sx={{ position: "relative" }}>
         <ActionIcon
-          onClick={handleClose}
+          onClick={close}
           color="gray"
           variant="light"
           radius="xl"
