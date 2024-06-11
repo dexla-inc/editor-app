@@ -130,7 +130,7 @@ export default function BindingPopover({
                     ),
                   },
                   {
-                    value: "javascript",
+                    value: "boundCode",
                     label: (
                       <Center>
                         <Icon name="IconCode" />
