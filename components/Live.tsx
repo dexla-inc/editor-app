@@ -4,7 +4,7 @@ import { LiveWrapper } from "@/components/LiveWrapper";
 import { componentMapper } from "@/utils/componentMapper";
 import { ComponentTree, EditorTreeCopy } from "@/utils/editor";
 import { Box } from "@mantine/core";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { RenderTreeFunc } from "@/types/component";
 import { prepareUserThemeLive } from "@/utils/prepareUserThemeLive";
 import { DeploymentPage } from "@/requests/deployments/types";
@@ -25,10 +25,13 @@ type Props = {
   pageState: EditorTreeCopy;
 };
 
-let theme: MantineThemeExtended | undefined;
+//let theme: MantineThemeExtended | undefined;
 
 export const LiveComponent = ({ page, pageState }: Props) => {
-  theme = theme === undefined ? prepareUserThemeLive(page.branding) : theme;
+  const theme = useMemo(
+    () => prepareUserThemeLive(page.branding),
+    [page.branding],
+  );
 
   const projectId = page.project.id;
 
@@ -52,9 +55,11 @@ export const LiveComponent = ({ page, pageState }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (theme?.fontFamily && theme?.headings?.fontFamily) {
-    initializeFonts(theme.fontFamily, theme.headings.fontFamily);
-  }
+  useEffect(() => {
+    if (theme?.fontFamily && theme?.headings?.fontFamily) {
+      initializeFonts(theme.fontFamily, theme.headings.fontFamily);
+    }
+  }, [theme]);
 
   useEffect(() => {
     if (page.id && projectId && pageState && isLoading) {
