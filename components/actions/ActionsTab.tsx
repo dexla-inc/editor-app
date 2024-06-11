@@ -55,6 +55,7 @@ export const ActionsTab = () => {
               icon="IconArrowBadgeRight"
               {...item}
               key={item.label}
+              // noPadding
             >
               <ActionSettingsForm
                 action={sequentialAction}
@@ -66,6 +67,7 @@ export const ActionsTab = () => {
                   <ActionForm form={form} actionId={sequentialAction.id} />
                 )}
               </ActionSettingsForm>
+              {renderSequentialActions(sequentialAction)}
             </SidebarSection>
           )
         );
