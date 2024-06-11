@@ -319,7 +319,7 @@ export function NavbarLayersSection({
         items={sortedIds as string[]}
         strategy={verticalListSortingStrategy}
       >
-        <List data={flattenedItems} itemKey="id" itemHeight={30} height={800}>
+        <List data={flattenedItems} itemKey="id" itemHeight={30} height={790}>
           {(component) => {
             const isCollapsed = !!component?.collapsed;
 

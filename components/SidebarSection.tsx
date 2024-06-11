@@ -49,10 +49,9 @@ export default function SidebarSection({
   const theme = useMantineTheme();
 
   const setOpenAction = useEditorStore((state) => state.setOpenAction);
-  const isActionTarget =
-    openAction?.actionIds?.includes(id) ||
-    openAction?.actionIds?.includes(`seq_${id}`);
   const isActionSequentialTarget = openAction?.actionIds?.includes(`seq_${id}`);
+  const isActionTarget =
+    openAction?.actionIds?.includes(id) || isActionSequentialTarget;
   const canAddActionToList =
     openAction?.componentId === componentId && isSequential;
   const newActionIds = openAction?.actionIds?.filter(
@@ -76,13 +75,19 @@ export default function SidebarSection({
   };
 
   const isDarkTheme = theme.colorScheme === "dark";
-
+  const conditionalStyles =
+    isSequential || noPadding
+      ? {
+          mx: `-${theme.spacing.md}`,
+          mt: noPadding ? 0 : "md",
+        }
+      : {};
   return (
     <>
       <Group
         spacing="xs"
-        {...(!noPadding ? { pr: "xs" } : { mx: `-${theme.spacing.md}` })}
-        {...(isSequential ? { mt: "md" } : {})}
+        px="md"
+        {...conditionalStyles}
         noWrap
         sx={{
           color: theme.black,
@@ -100,11 +105,17 @@ export default function SidebarSection({
             fontWeight: 500,
             display: "block",
             width: "100%",
-            padding: `${theme.spacing.xs} ${theme.spacing.md}`,
           }}
+          py="xs"
         >
           <Group position="apart" spacing={0} noWrap>
-            <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: `${theme.spacing.sm}`,
+              }}
+            >
               <ThemeIcon
                 color="teal"
                 variant={isDarkTheme ? "default" : "light"}
@@ -112,9 +123,7 @@ export default function SidebarSection({
               >
                 <Icon name={icon} size={ICON_SIZE} />
               </ThemeIcon>
-              <Text size="xs" ml="md">
-                {startCase(label)}
-              </Text>
+              <Text size="xs">{startCase(label)}</Text>
             </Box>
             {children && (
               <IconChevronDown
@@ -143,7 +152,9 @@ export default function SidebarSection({
       </Group>
       {children ? (
         <Collapse in={isExpanded}>
-          <Box {...(!noPadding && { px: "md" })}>{children}</Box>
+          <Box {...(isActionSequentialTarget || noPadding ? {} : { px: "md" })}>
+            {children}
+          </Box>
         </Collapse>
       ) : null}
     </>

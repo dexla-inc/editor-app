@@ -1,6 +1,6 @@
 import type { MutableRefObject } from "react";
 import type { UniqueIdentifier } from "@dnd-kit/core";
-import { Component, ComponentTree } from "@/utils/editor";
+import { ComponentTree } from "@/utils/editor";
 
 export interface TreeItem extends ComponentTree {
   collapsed?: boolean;
