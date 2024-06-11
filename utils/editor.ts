@@ -413,6 +413,7 @@ const styleFieldsKeys = [
   "textColor",
   "leftIcon",
   "icon",
+  "iconColor",
   "orientation",
   "weight",
 ];
