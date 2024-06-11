@@ -20,6 +20,7 @@ import { useState } from "react";
 import { JavascriptTab } from "@/components/bindingPopover/formTab/JavascriptTab";
 import { BindingContextProvider } from "@/components/bindingPopover/BindingContextProvider";
 import { RulesTab } from "@/components/bindingPopover/formTab/RulesTab";
+import { FieldType } from "@/components/data/forms/StaticFormFieldsBuilder";
 
 const ML = 5;
 
@@ -27,6 +28,7 @@ type BinderType = "javascript" | "rules";
 
 type Props = {
   value: ValueProps;
+  fieldType: FieldType;
   onChange: (value: ValueProps) => void;
   controls: {
     isOpen: boolean;
@@ -40,6 +42,7 @@ type Props = {
 export default function BindingPopover({
   value,
   onChange,
+  fieldType,
   controls: { isOpen, onOpen, onClose },
   style = "iconButton",
   isPageAction,
@@ -144,7 +147,13 @@ export default function BindingPopover({
             </ActionIcon>
           </Flex>
           <BindingContextProvider isPageAction={isPageAction}>
-            {selectedBinderType === "rules" && <RulesTab />}
+            {selectedBinderType === "rules" && (
+              <RulesTab
+                fieldType={fieldType}
+                value={value}
+                onChange={onChange}
+              />
+            )}
             {selectedBinderType === "javascript" && (
               <JavascriptTab
                 value={value}

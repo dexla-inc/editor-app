@@ -33,6 +33,7 @@ type BaseProps = {
   defaultValue?: any;
   decimalPlaces?: number;
   isPageAction?: boolean;
+  isBindable?: boolean;
   useTrueOrFalseStrings?: boolean;
   form?: any;
   children: React.ReactNode;
@@ -61,6 +62,7 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
   fieldType = "Text",
   decimalPlaces,
   isPageAction,
+  isBindable = true,
   form,
   children,
   ...props
@@ -75,7 +77,9 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
       label={label}
       onChange={onChange}
       value={value}
+      fieldType={fieldType}
       isPageAction={isPageAction}
+      isBindable={isBindable}
     >
       <ComponentToBindContext.Provider
         value={{

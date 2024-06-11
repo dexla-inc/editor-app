@@ -9,21 +9,26 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import { FieldType } from "@/components/data/forms/StaticFormFieldsBuilder";
 
 type Props = {
   label?: string;
   value: ValueProps;
+  fieldType: FieldType;
   onChange: (value: ValueProps) => void;
   children?: React.ReactNode;
   isPageAction?: boolean;
+  isBindable?: boolean;
 };
 
 export const ComponentToBindWrapper = ({
   label,
   value,
+  fieldType,
   onChange,
   children,
   isPageAction,
+  isBindable = true,
 }: Props) => {
   const [
     isBindingPopOverOpen,
@@ -43,7 +48,7 @@ export const ComponentToBindWrapper = ({
         style={{ flexGrow: 1, minHeight: 0, alignItems: "self-end" }}
         w="100%"
       >
-        {value?.dataType === "boundCode" ? (
+        {value?.dataType === "boundCode" && isBindable ? (
           <TextInput
             w="100%"
             styles={styles}
@@ -55,17 +60,20 @@ export const ComponentToBindWrapper = ({
         ) : (
           children
         )}
-        <BindingPopover
-          isPageAction={isPageAction}
-          value={value}
-          onChange={onChange}
-          controls={{
-            isOpen: isBindingPopOverOpen,
-            onClose: onCloseBindingPopOver,
-            onOpen: onOpenBindingPopOver,
-          }}
-          style="iconButton"
-        />
+        {isBindable && (
+          <BindingPopover
+            isPageAction={isPageAction}
+            value={value}
+            fieldType={fieldType}
+            onChange={onChange}
+            controls={{
+              isOpen: isBindingPopOverOpen,
+              onClose: onCloseBindingPopOver,
+              onOpen: onOpenBindingPopOver,
+            }}
+            style="iconButton"
+          />
+        )}
       </Flex>
     </Stack>
   );
