@@ -46,7 +46,9 @@ export const CommonData = ({ component }: Pick<DataProps, "component">) => {
       <ComponentToBindFromInput
         {...form.getInputProps("onLoad.tooltip")}
         label="Tooltip"
-      />
+      >
+        <ComponentToBindFromInput.Text />
+      </ComponentToBindFromInput>
     </Stack>
   );
 };

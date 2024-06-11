@@ -10,7 +10,7 @@ export const CheckboxData = ({ component, endpoints }: DataProps) => {
         {
           name: "value",
           label: "Checked",
-          type: "boolean" as FieldType,
+          type: "Boolean" as FieldType,
         },
       ]
     : [];
@@ -18,7 +18,7 @@ export const CheckboxData = ({ component, endpoints }: DataProps) => {
   staticFields.push({
     name: "optionValue",
     label: "Value",
-    type: "text" as FieldType,
+    type: "Text" as FieldType,
   });
 
   return (

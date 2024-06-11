@@ -10,6 +10,7 @@ export const TextData = ({ component, endpoints }: DataProps) => {
     {
       name: isNavLink ? "label" : isFileButton ? "name" : "children",
       label: "Value",
+      type: "Text" as const,
     },
   ];
 

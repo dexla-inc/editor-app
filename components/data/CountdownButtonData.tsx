@@ -9,6 +9,7 @@ export const CountdownButtonData = ({ component, endpoints }: DataProps) => {
     {
       name: "children",
       label: "Value",
+      type: "Text" as const,
     },
   ];
   const updateTreeComponentAttrs = useEditorTreeStore(

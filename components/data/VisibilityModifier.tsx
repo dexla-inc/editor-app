@@ -9,7 +9,9 @@ export const VisibilityModifier = ({ form }: Props) => {
     <ComponentToBindFromInput
       {...form.getInputProps("onLoad.isVisible")}
       label="Visibility"
-      fieldType="yesno"
-    />
+      fieldType="YesNo"
+    >
+      <ComponentToBindFromInput.YesNo />
+    </ComponentToBindFromInput>
   );
 };

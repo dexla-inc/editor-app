@@ -2,22 +2,22 @@ import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput"
 import { FrontEndTypes } from "@/requests/variables/types";
 
 export type FieldType =
-  | "password"
-  | "email"
-  | "tel"
-  | "url"
-  | "date"
-  | "unit"
-  | "yesno"
-  | "integer"
-  | "options"
-  | Lowercase<FrontEndTypes>;
+  | "Password"
+  | "Email"
+  | "Tel"
+  | "Url"
+  | "Date"
+  | "Unit"
+  | "YesNo"
+  | "Integer"
+  | "Options"
+  | Capitalize<Lowercase<FrontEndTypes>>;
 
 type StaticFormFieldsBuilderProps = {
   field: {
     name: string;
     label: string;
-    type?: FieldType;
+    type: FieldType;
     placeholder?: string;
     additionalComponent?: JSX.Element;
     defaultValue?: any;
@@ -30,6 +30,9 @@ export const StaticFormFieldsBuilder = ({
   field,
   form,
 }: StaticFormFieldsBuilderProps) => {
+  // @ts-ignore
+  const InnerField = ComponentToBindFromInput[field.type];
+
   return (
     <ComponentToBindFromInput
       size="xs"
@@ -40,6 +43,8 @@ export const StaticFormFieldsBuilder = ({
       decimalPlaces={field.decimalPlaces}
       {...form.getInputProps(`onLoad.${field.name}`)}
       form={form}
-    />
+    >
+      <InnerField />
+    </ComponentToBindFromInput>
   );
 };

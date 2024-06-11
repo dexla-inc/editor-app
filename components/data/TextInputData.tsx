@@ -1,7 +1,6 @@
 import { DataProps } from "@/types/dataBinding";
 import { Stack } from "@mantine/core";
 import { FormFieldsBuilder } from "@/components/data/forms/FormFieldsBuilder";
-import { FieldType } from "@/components/data/forms/StaticFormFieldsBuilder";
 
 export const TextInputData = ({ component, endpoints }: DataProps) => {
   const isTextArea = component.name === "Textarea";
@@ -10,7 +9,7 @@ export const TextInputData = ({ component, endpoints }: DataProps) => {
     {
       name: "value",
       label: "Value",
-      type: isTextArea ? "text" : ("text" as FieldType),
+      type: isTextArea ? "Text" : ("Text" as const),
     },
   ];
 

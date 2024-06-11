@@ -1,10 +1,8 @@
 import { DynamicSettings } from "@/components/data/forms/DynamicSettings";
 import { Endpoint } from "@/requests/datasources/types";
-import { PagingResponse } from "@/requests/types";
 import { Component } from "@/utils/editor";
 import { SegmentedControl, Stack } from "@mantine/core";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { FieldType } from "@/components/data/forms/StaticFormFieldsBuilder";
 import { FormFieldsBuilder } from "@/components/data/forms/FormFieldsBuilder";
 import { DataType } from "@/types/dataBinding";
 
@@ -27,12 +25,12 @@ export const CheckboxGroupData = ({
     {
       name: "data",
       label: "Data",
-      type: "text" as FieldType, // textarea
+      type: "Text" as const, // textarea
     },
     {
       name: "value",
       label: "Value",
-      type: "text" as FieldType,
+      type: "Text" as const,
     },
   ];
 

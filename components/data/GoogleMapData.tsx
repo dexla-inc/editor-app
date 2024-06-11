@@ -1,7 +1,6 @@
 import { FormFieldsBuilder } from "@/components/data/forms/FormFieldsBuilder";
 import { DataProps } from "@/types/dataBinding";
 import { Stack } from "@mantine/core";
-import { FieldType } from "./forms/StaticFormFieldsBuilder";
 
 export const GoogleMapData = ({ component, endpoints }: DataProps) => {
   const fieldsGroup = {
@@ -10,32 +9,32 @@ export const GoogleMapData = ({ component, endpoints }: DataProps) => {
         name: "apiKey",
         label: "API Key",
         placeholder: "BJxbTxCS8ncCNBG7tNRPOdDbdx7fh3Or5qpIlZN",
-        type: "text" as FieldType,
+        type: "Text" as const,
       },
       {
         name: "centerLat",
         label: "Latitude",
         placeholder: "25.816347481537285",
-        type: "number" as FieldType,
+        type: "Number" as const,
         decimalPlaces: 15,
       },
       {
         name: "centerLng",
         label: "Longitude",
         placeholder: "-80.1219500315037",
-        type: "number" as FieldType,
+        type: "Number" as const,
         decimalPlaces: 15,
       },
       {
         name: "zoom",
         label: "Zoom",
         placeholder: "15",
-        type: "number" as FieldType,
+        type: "Number" as const,
       },
       {
         name: "markers",
         label: "Markers",
-        type: "text" as FieldType,
+        type: "Text" as const,
       },
     ],
   };

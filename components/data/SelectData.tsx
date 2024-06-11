@@ -30,8 +30,8 @@ export const SelectData = ({ component, endpoints, dataType }: DataProps) => {
       {dataType === "static" && (
         <FormFieldsBuilder
           fields={[
-            { name: "data", label: "Options", type: "options" },
-            { name: "value", label: "Value", type: "text" },
+            { name: "data", label: "Options", type: "Options" },
+            { name: "value", label: "Value", type: "Text" },
           ]}
           component={component}
           endpoints={endpoints!}
@@ -54,7 +54,7 @@ export const SelectData = ({ component, endpoints, dataType }: DataProps) => {
                   field={{
                     name: "value",
                     label: "Default Value",
-                    type: "text",
+                    type: "Text",
                   }}
                 />
                 <Title order={6} mt="xs">

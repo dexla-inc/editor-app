@@ -10,12 +10,13 @@ export const AvatarData = ({ component, endpoints }: DataProps) => {
         name: "src",
         label: "Source",
         placeholder: "https://example.com/image.png",
-        type: "url" as const,
+        type: "Url" as const,
         additionalComponent: <ShowAssetsLink />,
       },
       {
         name: "children",
         label: "Value",
+        type: "Text" as const,
       },
     ],
     Image: [
@@ -23,12 +24,13 @@ export const AvatarData = ({ component, endpoints }: DataProps) => {
         name: "src",
         label: "Source",
         placeholder: "https://example.com/image.png",
-        type: "url" as const,
+        type: "Url" as const,
         additionalComponent: <ShowAssetsLink />,
       },
       {
         name: "alt",
         label: "Alternative Text",
+        type: "Text" as const,
       },
     ],
   };
