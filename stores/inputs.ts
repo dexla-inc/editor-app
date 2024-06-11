@@ -8,6 +8,14 @@ type InputsState = {
   resetInputValues: (ids?: string[]) => void;
 };
 
+const typeHandlers: Record<string, (value: any) => any> = {
+  number: () => 0,
+  string: () => "",
+  boolean: () => false,
+  object: (value) => (Array.isArray(value) ? [] : {}),
+  undefined: () => undefined,
+};
+
 export const useInputsStore = create<InputsState>()(
   devtools(
     (set) => ({
@@ -27,8 +35,10 @@ export const useInputsStore = create<InputsState>()(
 
             const filteredIds = Object.keys(state.inputValues).reduce(
               (newObj, key) => {
-                if (!ids?.some((prefix) => key.startsWith(prefix))) {
-                  newObj[key] = state.inputValues[key];
+                newObj[key] = state.inputValues[key];
+                if (ids?.some((prefix) => key.startsWith(prefix))) {
+                  const prevValue = state.inputValues[key];
+                  newObj[key] = typeHandlers[typeof prevValue](prevValue);
                 }
                 return newObj;
               },
