@@ -3,5 +3,8 @@
     "next/core-web-vitals",
     "plugin:@tanstack/eslint-plugin-query/recommended"
   ],
+  "rules": {
+    "react/display-name": "off"
+  },
   "plugins": ["@tanstack/query"]
 }

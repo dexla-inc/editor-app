@@ -5,27 +5,22 @@ import {
   Button,
   Flex,
   Group,
-  NumberInput,
   NumberInputProps,
   SegmentedControlProps,
   SelectProps,
   Stack,
-  Text,
   TextInput,
   TextInputProps,
 } from "@mantine/core";
-import { MonacoEditorJson } from "./MonacoEditorJson";
-import { SegmentedControlYesNo } from "./SegmentedControlYesNo";
-import { TopLabel } from "./TopLabel";
 import { FieldType } from "./data/forms/StaticFormFieldsBuilder";
-import { SegmentedControlInput } from "./SegmentedControlInput";
 import { Icon } from "@/components/Icon";
 import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
 import { createContext, useContext } from "react";
+import { ComponentToBindField } from "@/components/bindingPopover/ComponentToBindField";
 
 // Need to extend input props depending on fieldType
 type BaseProps = {
-  fieldType?: FieldType;
+  fieldType: FieldType;
   value: ValueProps;
   onChange: (value: ValueProps) => void;
   placeholder?: string;
@@ -54,46 +49,18 @@ type ComponentToBindFromInputProps<T extends FieldType | undefined> =
 
 const ComponentToBindContext = createContext<any>({});
 
-export const ComponentToBindFromInput = <T extends FieldType | undefined>({
-  placeholder = "",
-  label = "Component to bind",
-  value,
-  onChange,
-  fieldType = "Text",
-  decimalPlaces,
-  isPageAction,
-  isBindable = true,
-  form,
-  children,
-  ...props
-}: ComponentToBindFromInputProps<T>) => {
+export const ComponentToBindFromInput = <T extends FieldType | undefined>(
+  props: ComponentToBindFromInputProps<T>,
+) => {
+  const { isBindable = true, children, ...restProps } = props;
   const commonProps = {
     ...AUTOCOMPLETE_OFF_PROPS,
-    ...props,
+    ...restProps,
   };
 
   return (
-    <ComponentToBindWrapper
-      label={label}
-      onChange={onChange}
-      value={value}
-      fieldType={fieldType}
-      isPageAction={isPageAction}
-      isBindable={isBindable}
-    >
-      <ComponentToBindContext.Provider
-        value={{
-          placeholder,
-          label,
-          value,
-          onChange,
-          fieldType,
-          decimalPlaces,
-          isPageAction,
-          form,
-          commonProps,
-        }}
-      >
+    <ComponentToBindWrapper {...commonProps} isBindable={isBindable}>
+      <ComponentToBindContext.Provider value={commonProps}>
         {children}
       </ComponentToBindContext.Provider>
     </ComponentToBindWrapper>
@@ -106,65 +73,46 @@ ComponentToBindFromInput.Text = function ComponentToBindFromTextInput() {
   );
 
   return (
-    <Stack w="100%">
-      <TextInput
-        placeholder={placeholder}
-        value={value?.static}
-        type={fieldType}
-        onChange={(e) =>
-          onChange({
-            ...value,
-            dataType: "static",
-            static: e.currentTarget.value,
-          })
-        }
-        {...commonProps}
-      />
-    </Stack>
+    <ComponentToBindField.Text
+      placeholder={placeholder}
+      value={value?.static}
+      type={fieldType}
+      onChange={(e: any) =>
+        onChange({
+          ...value,
+          dataType: "static",
+          static: e.currentTarget.value,
+        })
+      }
+      {...commonProps}
+      w="100%"
+    />
   );
 };
 
 ComponentToBindFromInput.Array = function ComponentToBindFromArray() {
-  const { label, value, onChange, commonProps } = useContext(
-    ComponentToBindContext,
-  );
+  const { value, onChange, commonProps } = useContext(ComponentToBindContext);
   return (
-    <Stack w="100%" spacing={0}>
-      <TopLabel text={label} required />
-      {
-        // @ts-ignore
-        commonProps?.description && (
-          <Text size={10} color="dimmed">
-            {
-              // @ts-ignore
-              commonProps?.description
-            }
-          </Text>
-        )
-      }
-      <MonacoEditorJson
-        value={
-          value?.static?.toString() || (commonProps.defaultValue as string)
-        }
-        onChange={(val: any) => {
-          onChange({
-            ...value,
-            dataType: "static",
-            static: val,
-          });
-        }}
-        {...commonProps}
-      />
-    </Stack>
+    <ComponentToBindField.Array
+      value={value?.static?.toString() || (commonProps.defaultValue as string)}
+      onChange={(val: any) => {
+        onChange({
+          ...value,
+          dataType: "static",
+          static: val,
+        });
+      }}
+      {...commonProps}
+    />
   );
 };
 
 ComponentToBindFromInput.YesNo = function ComponentToBindFromYesNo() {
   const { value, onChange, commonProps } = useContext(ComponentToBindContext);
   return (
-    <SegmentedControlYesNo
+    <ComponentToBindField.YesNo
       value={value?.static}
-      onChange={(val) =>
+      onChange={(val: string) =>
         onChange({
           ...value,
           dataType: "static",
@@ -180,24 +128,23 @@ ComponentToBindFromInput.YesNo = function ComponentToBindFromYesNo() {
 ComponentToBindFromInput.Boolean = function ComponentToBindFromBoolean() {
   const { value, onChange, commonProps } = useContext(ComponentToBindContext);
   return (
-    <Stack w="100%">
-      <SegmentedControlInput
-        value={value?.static ?? ""}
-        onChange={(val) =>
-          onChange({
-            ...value,
-            dataType: "static",
-            static: val,
-          })
-        }
-        data={[
-          { label: "True", value: "true" },
-          { label: "False", value: "false" },
-          { label: "-", value: "" },
-        ]}
-        {...commonProps}
-      />
-    </Stack>
+    <ComponentToBindField.Boolean
+      value={value?.static ?? ""}
+      onChange={(val: boolean) =>
+        onChange({
+          ...value,
+          dataType: "static",
+          static: val,
+        })
+      }
+      data={[
+        { label: "True", value: "true" },
+        { label: "False", value: "false" },
+        { label: "-", value: "" },
+      ]}
+      w="100%"
+      {...commonProps}
+    />
   );
 };
 
@@ -205,10 +152,10 @@ ComponentToBindFromInput.Number = function ComponentToBindFromNumber() {
   const { value, onChange, placeholder, decimalPlaces, commonProps } =
     useContext(ComponentToBindContext);
   return (
-    <NumberInput
+    <ComponentToBindField.Number
       placeholder={placeholder}
       value={value?.static ? parseFloatExtension(value?.static) : ""}
-      onChange={(val) =>
+      onChange={(val: number) =>
         onChange({
           ...value,
           dataType: "static",
@@ -216,10 +163,13 @@ ComponentToBindFromInput.Number = function ComponentToBindFromNumber() {
         })
       }
       precision={decimalPlaces}
-      parser={(value) => (value ? parseFloatExtension(value).toString() : "")}
-      formatter={(value) =>
+      parser={(value: number) =>
         value ? parseFloatExtension(value).toString() : ""
       }
+      formatter={(value: number) =>
+        value ? parseFloatExtension(value).toString() : ""
+      }
+      w="100%"
       {...commonProps}
     />
   );
@@ -228,7 +178,7 @@ ComponentToBindFromInput.Number = function ComponentToBindFromNumber() {
 ComponentToBindFromInput.Options = function ComponentToBindFromOptions() {
   const { form } = useContext(ComponentToBindContext);
   return (
-    <Stack style={{ gap: 0 }}>
+    <Stack style={{ gap: 0, width: "100%" }}>
       <div>
         <Button
           type="button"

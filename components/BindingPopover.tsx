@@ -24,7 +24,7 @@ import { FieldType } from "@/components/data/forms/StaticFormFieldsBuilder";
 
 const ML = 5;
 
-type BinderType = "javascript" | "rules";
+type BinderType = "boundCode" | "rules";
 
 type Props = {
   value: ValueProps;
@@ -48,12 +48,10 @@ export default function BindingPopover({
   isPageAction,
 }: Props) {
   const [selectedItem, setSelectedItem] = useState<string>();
-  const [selectedBinderType, setSelectedBinderType] =
-    useState<BinderType>("javascript");
   const onChangeDataTypeAsBoundCode = () => {
     onChange({
       ...value,
-      dataType: "boundCode",
+      dataType: "rules",
     });
     onOpen();
   };
@@ -116,8 +114,10 @@ export default function BindingPopover({
           <Flex justify="space-between" align="center">
             <Flex align="center" gap="xs">
               <SegmentedControl
-                value={selectedBinderType}
-                onChange={(b: BinderType) => setSelectedBinderType(b)}
+                value={value.dataType}
+                onChange={(b: BinderType) =>
+                  onChange({ ...value, dataType: b })
+                }
                 data={[
                   {
                     value: "rules",
@@ -147,14 +147,14 @@ export default function BindingPopover({
             </ActionIcon>
           </Flex>
           <BindingContextProvider isPageAction={isPageAction}>
-            {selectedBinderType === "rules" && (
+            {value.dataType === "rules" && (
               <RulesTab
                 fieldType={fieldType}
                 value={value}
                 onChange={onChange}
               />
             )}
-            {selectedBinderType === "javascript" && (
+            {value.dataType === "boundCode" && (
               <JavascriptTab
                 value={value}
                 onChange={onChange}

@@ -199,6 +199,15 @@ const FLEX_HOVER = isDarkTheme ? theme.colors.dark[4] : HOVERED;
 const BORDER_COLOR = isDarkTheme ? theme.colors.dark[4] : theme.colors.gray[3];
 const BUTTON_HOVER = isDarkTheme ? theme.colors.dark[6] : HOVERED;
 const BORDER = isDarkTheme ? THIN_DARK_OUTLINE : THIN_GRAY_OUTLINE;
+export const BG_RULES_GROUP = isDarkTheme
+  ? theme.colors.dark[8]
+  : theme.colors.gray[8];
+export const BG_RULE = isDarkTheme
+  ? theme.colors.dark[6]
+  : theme.colors.gray[6];
+export const BG_LOCATION = isDarkTheme
+  ? theme.colors.dark[7]
+  : theme.colors.gray[7];
 const BINDER_BACKGROUND = isDarkTheme
   ? theme.colors.dark[5]
   : theme.colors.gray[1];

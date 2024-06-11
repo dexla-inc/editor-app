@@ -1,9 +1,14 @@
-import { Select, SelectProps, Stack, TextInput } from "@mantine/core";
-import { useMemo, useState } from "react";
+import { Select, SelectProps, Text } from "@mantine/core";
+import { forwardRef, useMemo, useState } from "react";
 import isEmpty from "lodash.isempty";
 import isEqual from "lodash.isequal";
 
 type SelectLogicalRulesProps = Omit<SelectProps, "data">;
+
+interface ItemProps extends React.ComponentPropsWithoutRef<"div"> {
+  label: string;
+  description: string;
+}
 
 const data = [
   {
@@ -68,23 +73,28 @@ export const SelectLogicalRules = (props: SelectLogicalRulesProps) => {
   );
 
   return (
-    <Stack>
-      <Select
-        {...props}
-        label="Rule"
-        description="Choose from the logical rules for utility"
-        data={data}
-        onChange={(value) => {
-          props.onChange?.(value);
-        }}
-      />
-      <TextInput
-        label="Value"
-        value={comparingValue}
-        onChange={(e) => {
-          setComparingValue(e.target.value);
-        }}
-      />
-    </Stack>
+    <Select
+      {...props}
+      label="Rule"
+      itemComponent={SelectItem}
+      description="Choose from the logical rules for utility"
+      data={data}
+      onChange={(value) => {
+        props.onChange?.(value);
+      }}
+    />
   );
 };
+
+const SelectItem = forwardRef<HTMLDivElement, ItemProps>(
+  ({ label, description, ...others }: ItemProps, ref) => (
+    <div ref={ref} {...others}>
+      <div>
+        <Text size="sm">{label}</Text>
+        <Text size="xs" opacity={0.65}>
+          {description}
+        </Text>
+      </div>
+    </div>
+  ),
+);

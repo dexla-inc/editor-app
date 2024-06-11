@@ -43,12 +43,11 @@ export const ComponentToBindWrapper = ({
       {label && <TopLabel text={label} required />}
       <Flex
         align="start"
-        // gap="xs"
         pos="relative"
         style={{ flexGrow: 1, minHeight: 0, alignItems: "self-end" }}
         w="100%"
       >
-        {value?.dataType === "boundCode" && isBindable ? (
+        {["boundCode", "rules"].includes(value?.dataType!) && isBindable ? (
           <TextInput
             w="100%"
             styles={styles}

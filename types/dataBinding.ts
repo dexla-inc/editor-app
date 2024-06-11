@@ -10,7 +10,7 @@ export type BindingTab =
   | "auth"
   | "browser";
 
-export type DataType = "static" | "dynamic" | "boundCode";
+export type DataType = "static" | "dynamic" | "boundCode" | "rules";
 export type ContextType =
   | "item"
   | "auth"
@@ -20,11 +20,19 @@ export type ContextType =
   | "event"
   | "variables";
 
+export type RuleProps = {
+  result: any;
+  rule: string;
+  value: string | string[];
+  location: string;
+};
+
 export type ValueProps = Partial<{
   dataType: DataType;
   static: any;
   dynamic: string;
   boundCode: string;
+  rules: RuleProps[];
 }>;
 
 export type GetValueProps = {
