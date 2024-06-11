@@ -50,10 +50,16 @@ const SelectComponent = forwardRef(
     const { onChange, onSearchChange, ...restTriggers } = triggers || {};
     const { color, backgroundColor } = useChangeState({ bg, textColor });
     const { borderStyle, inputStyle } = useBrandingStyles();
-    const customStyle = merge({}, borderStyle, inputStyle, props.style, {
-      backgroundColor,
-      color,
-    });
+    const customStyle = merge(
+      { minHeight: inputStyle?.height },
+      borderStyle,
+      inputStyle,
+      props.style,
+      {
+        backgroundColor,
+        color,
+      },
+    );
 
     const { data: response } = useEndpoint({
       componentId: component.id!,
@@ -124,8 +130,11 @@ const SelectComponent = forwardRef(
           wrapper: {
             ...pick(customStyle, wrapperStyleProps),
           },
-          input: { ...omit(customStyle, wrapperStyleProps), minHeight: "auto" },
-          values: { height: "inherit" },
+          input: {
+            ...omit(customStyle, wrapperStyleProps),
+            height: fetchHeight(customStyle),
+          },
+          values: { minHeight: customStyle.minHeight },
         }}
         withinPortal={false}
         maxDropdownHeight={maxDropdownHeight}
@@ -146,3 +155,9 @@ const SelectComponent = forwardRef(
 SelectComponent.displayName = "Select";
 
 export const Select = memo(withComponentWrapper<Props>(SelectComponent));
+
+const fetchHeight = (style: any) => {
+  const { minHeight = "auto" } = style;
+  const match = minHeight.match(/\d+/);
+  return match && parseInt(match[0]) < 36 ? minHeight : "inherit";
+};
