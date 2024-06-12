@@ -5,7 +5,6 @@ import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useEffect } from "react";
-import { ComponentToBindFromSelect } from "@/components/ComponentToBindFromSelect";
 import merge from "lodash.merge";
 import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 
@@ -37,15 +36,19 @@ export const CommonData = ({ component }: Pick<DataProps, "component">) => {
   return (
     <Stack spacing="xs">
       <VisibilityModifier form={form} />
-      <ComponentToBindFromSelect
+      <ComponentToBindFromInput<"Select">
         size="xs"
         label="State"
         {...form.getInputProps(`onLoad.currentState`)}
         data={getComponentsStates()}
-      />
-      <ComponentToBindFromInput
+        fieldType="Select"
+      >
+        <ComponentToBindFromInput.Select />
+      </ComponentToBindFromInput>
+      <ComponentToBindFromInput<"Text">
         {...form.getInputProps("onLoad.tooltip")}
         label="Tooltip"
+        fieldType="Text"
       >
         <ComponentToBindFromInput.Text />
       </ComponentToBindFromInput>

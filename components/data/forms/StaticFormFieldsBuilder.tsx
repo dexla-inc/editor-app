@@ -11,6 +11,8 @@ export type FieldType =
   | "YesNo"
   | "Integer"
   | "Options"
+  | "Select"
+  | "Segmented"
   | Capitalize<Lowercase<FrontEndTypes>>;
 
 type StaticFormFieldsBuilderProps = {

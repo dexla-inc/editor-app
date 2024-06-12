@@ -275,6 +275,9 @@ export const useComputeValue = ({
           return;
         }
       },
+      rules: (fieldValue: ValueProps) => {
+        return;
+      },
     }),
     [shareableContent, transformBoundCode],
   );

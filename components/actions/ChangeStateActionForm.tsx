@@ -1,5 +1,4 @@
 import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
-import { ComponentToBindFromSelect } from "@/components/ComponentToBindFromSelect";
 import { useComponentStates } from "@/hooks/editor/useComponentStates";
 import { ChangeStateAction } from "@/utils/actions";
 import { Stack } from "@mantine/core";
@@ -17,21 +16,27 @@ export const ChangeStateActionForm = ({ form, isPageAction }: Props) => {
 
   return (
     <Stack spacing="xs">
-      <ComponentToBindFromInput
+      <ComponentToBindFromInput<"Text">
+        fieldType="Text"
         label="Component to change"
         isPageAction={isPageAction}
         {...form.getInputProps("componentId")}
-      />
-
+      >
+        {" "}
+        <ComponentToBindFromInput.Text />{" "}
+      </ComponentToBindFromInput>
       {!!componentStatesList.length && (
-        <ComponentToBindFromSelect
+        <ComponentToBindFromInput<"Select">
+          fieldType="Select"
           label="State"
           placeholder="Select State"
           nothingFound="Nothing found"
           searchable
           data={componentStatesList}
           {...form.getInputProps("state")}
-        />
+        >
+          <ComponentToBindFromInput.Select />
+        </ComponentToBindFromInput>
       )}
     </Stack>
   );

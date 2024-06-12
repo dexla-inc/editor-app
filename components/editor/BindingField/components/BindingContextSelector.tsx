@@ -11,7 +11,7 @@ import { Icon } from "@/components/Icon";
 import { DataTree } from "@/components/DataTree";
 import { useState } from "react";
 import { useEditorStore } from "@/stores/editor";
-import { useBindingContext } from "@/components/bindingPopover/BindingContextProvider";
+import { useBindingPopover } from "@/hooks/data/useBindingPopover";
 
 const TAB_TEXT_SIZE = 11;
 const ML = 5;
@@ -29,7 +29,7 @@ export const BindingContextSelector = ({ setSelectedItem }: any) => {
     event,
     getEntityEditorValue,
     item,
-  } = useBindingContext();
+  } = useBindingPopover();
 
   const segmentedTabOptions = [
     {

@@ -1,6 +1,5 @@
 import BindingPopover from "@/components/BindingPopover";
 import { TopLabel } from "@/components/TopLabel";
-import { ValueProps } from "@/types/dataBinding";
 import {
   Flex,
   MantineTheme,
@@ -9,27 +8,15 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { FieldType } from "@/components/data/forms/StaticFormFieldsBuilder";
+import { useBindingField } from "@/components/ComponentToBindFromInput";
 
 type Props = {
-  label?: string;
-  value: ValueProps;
-  fieldType: FieldType;
-  onChange: (value: ValueProps) => void;
-  children?: React.ReactNode;
-  isPageAction?: boolean;
-  isBindable?: boolean;
+  children: React.ReactNode;
 };
 
-export const ComponentToBindWrapper = ({
-  label,
-  value,
-  fieldType,
-  onChange,
-  children,
-  isPageAction,
-  isBindable = true,
-}: Props) => {
+export const ComponentToBindWrapper = ({ children }: Props) => {
+  const { label, value } = useBindingField<"Text">();
+
   const [
     isBindingPopOverOpen,
     { open: onOpenBindingPopOver, close: onCloseBindingPopOver },
@@ -40,14 +27,14 @@ export const ComponentToBindWrapper = ({
 
   return (
     <Stack spacing={0} w="100%">
-      {label && <TopLabel text={label} required />}
+      {label && <TopLabel text={String(label)} required />}
       <Flex
         align="start"
         pos="relative"
         style={{ flexGrow: 1, minHeight: 0, alignItems: "self-end" }}
         w="100%"
       >
-        {["boundCode", "rules"].includes(value?.dataType!) && isBindable ? (
+        {["boundCode", "rules"].includes(value?.dataType!) ? (
           <TextInput
             w="100%"
             styles={styles}
@@ -59,26 +46,19 @@ export const ComponentToBindWrapper = ({
         ) : (
           children
         )}
-        {isBindable && (
-          <BindingPopover
-            isPageAction={isPageAction}
-            value={value}
-            fieldType={fieldType}
-            onChange={onChange}
-            controls={{
-              isOpen: isBindingPopOverOpen,
-              onClose: onCloseBindingPopOver,
-              onOpen: onOpenBindingPopOver,
-            }}
-            style="iconButton"
-          />
-        )}
+        <BindingPopover
+          controls={{
+            isOpen: isBindingPopOverOpen,
+            onClose: onCloseBindingPopOver,
+            onOpen: onOpenBindingPopOver,
+          }}
+        />
       </Flex>
     </Stack>
   );
 };
 
-export const useTextInputStyles = (theme: MantineTheme) => ({
+const useTextInputStyles = (theme: MantineTheme) => ({
   root: { zIndex: 100 },
   input: {
     cursor: "pointer",

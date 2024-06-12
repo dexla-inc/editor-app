@@ -3,22 +3,21 @@ import { CustomJavaScriptTextArea } from "@/components/CustomJavaScriptTextArea"
 import { isObjectOrArray } from "@/utils/common";
 import { JSONViewer } from "@/components/JSONViewer";
 import { BINDER_BACKGROUND } from "@/utils/branding";
-import { BindingContextSelector } from "@/components/bindingPopover/fields/BindingContextSelector";
+import { BindingContextSelector } from "@/components/editor/BindingField/components/BindingContextSelector";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useDataBinding } from "@/hooks/data/useDataBinding";
-import { useBindingContext } from "@/components/bindingPopover/BindingContextProvider";
+import { useState } from "react";
+import { useBindingPopover } from "@/hooks/data/useBindingPopover";
+import { useBindingField } from "@/components/ComponentToBindFromInput";
 
-export const JavascriptTab = ({
-  value,
-  onChange,
-  selectedItem,
-  setSelectedItem,
-}: any) => {
-  const selectedComponentId = useEditorTreeStore(
-    (state) => state.selectedComponentIds?.at(-1),
+export const BoundCodeForm = () => {
+  const { value, onChange } = useBindingField();
+  const [selectedItem, setSelectedItem] = useState<string>();
+  const selectedComponentId = useEditorTreeStore((state) =>
+    state.selectedComponentIds?.at(-1),
   );
   const { computeValue } = useDataBinding(selectedComponentId);
-  const { actions, item } = useBindingContext();
+  const { actions, item } = useBindingPopover();
   const currentValue = computeValue<string>({ value }, { actions, item });
 
   return (

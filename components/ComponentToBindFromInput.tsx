@@ -16,61 +16,75 @@ import { FieldType } from "./data/forms/StaticFormFieldsBuilder";
 import { Icon } from "@/components/Icon";
 import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
 import { createContext, useContext } from "react";
-import { ComponentToBindField } from "@/components/bindingPopover/ComponentToBindField";
+import { ComponentToBindField } from "@/components/editor/BindingField/ComponentToBindField";
+import { EditorProps } from "@monaco-editor/react";
 
 // Need to extend input props depending on fieldType
 type BaseProps = {
   fieldType: FieldType;
   value: ValueProps;
   onChange: (value: ValueProps) => void;
-  placeholder?: string;
   label?: string;
-  defaultValue?: any;
-  decimalPlaces?: number;
   isPageAction?: boolean;
-  isBindable?: boolean;
   useTrueOrFalseStrings?: boolean;
   form?: any;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 };
 
-// Define a helper type for the conditional props extension
-type ExtendedPropsByFieldType<T> = T extends "text"
-  ? Omit<TextInputProps, "onChange" | "value">
-  : T extends "number"
-    ? Omit<NumberInputProps, "onChange" | "value">
-    : T extends "boolean"
-      ? Omit<SegmentedControlProps, "onChange" | "value">
-      : {};
+type FieldProps<T extends FieldType> = BaseProps &
+  (T extends "Text"
+    ? Omit<TextInputProps, "onChange" | "value">
+    : T extends "Number"
+      ? Omit<NumberInputProps, "onChange" | "value">
+      : T extends "Boolean" | "Segmented"
+        ? Omit<SegmentedControlProps, "onChange" | "value">
+        : T extends "Select"
+          ? Omit<SelectProps, "onChange" | "value">
+          : T extends "Array"
+            ? Omit<EditorProps, "onChange" | "value">
+            : {});
 
-// Define the component props type using a generic parameter for fieldType
-type ComponentToBindFromInputProps<T extends FieldType | undefined> =
-  BaseProps & ExtendedPropsByFieldType<T>;
+type ComponentToBindFromInputProps<T extends FieldType> = FieldProps<T>;
 
-const ComponentToBindContext = createContext<any>({});
+type ComponentProps =
+  | FieldProps<"Text">
+  | FieldProps<"Number">
+  | FieldProps<"Boolean">
+  | FieldProps<"Select">;
 
-export const ComponentToBindFromInput = <T extends FieldType | undefined>(
+export const ComponentToBindContext = createContext<ComponentProps | null>(
+  null,
+);
+
+export const useBindingField = <T extends FieldType>() => {
+  const context = useContext(ComponentToBindContext);
+  if (!context) {
+    throw new Error(
+      "useBindingField must be used within a ComponentToBindContext.Provider",
+    );
+  }
+
+  if (context.fieldType !== (context as FieldProps<T>).fieldType) {
+    throw new Error("Field type mismatch");
+  }
+
+  return context as FieldProps<T>;
+};
+
+export const ComponentToBindFromInput = <T extends FieldType>(
   props: ComponentToBindFromInputProps<T>,
 ) => {
-  const { isBindable = true, children, ...restProps } = props;
-  const commonProps = {
-    ...AUTOCOMPLETE_OFF_PROPS,
-    ...restProps,
-  };
+  const { children, ...restProps } = props;
 
   return (
-    <ComponentToBindWrapper {...commonProps} isBindable={isBindable}>
-      <ComponentToBindContext.Provider value={commonProps}>
-        {children}
-      </ComponentToBindContext.Provider>
-    </ComponentToBindWrapper>
+    <ComponentToBindContext.Provider value={restProps}>
+      <ComponentToBindWrapper>{children}</ComponentToBindWrapper>
+    </ComponentToBindContext.Provider>
   );
 };
 
 ComponentToBindFromInput.Text = function ComponentToBindFromTextInput() {
-  const { placeholder, value, fieldType, onChange, commonProps } = useContext(
-    ComponentToBindContext,
-  );
+  const { placeholder, value, fieldType, onChange } = useBindingField<"Text">();
 
   return (
     <ComponentToBindField.Text
@@ -84,35 +98,35 @@ ComponentToBindFromInput.Text = function ComponentToBindFromTextInput() {
           static: e.currentTarget.value,
         })
       }
-      {...commonProps}
+      {...AUTOCOMPLETE_OFF_PROPS}
       w="100%"
     />
   );
 };
 
 ComponentToBindFromInput.Array = function ComponentToBindFromArray() {
-  const { value, onChange, commonProps } = useContext(ComponentToBindContext);
+  const { value, onChange, defaultValue } = useBindingField<"Array">();
   return (
     <ComponentToBindField.Array
-      value={value?.static?.toString() || (commonProps.defaultValue as string)}
-      onChange={(val: any) => {
+      value={value?.static?.toString() || (defaultValue as string)}
+      onChange={(val) => {
         onChange({
           ...value,
           dataType: "static",
           static: val,
         });
       }}
-      {...commonProps}
+      {...AUTOCOMPLETE_OFF_PROPS}
     />
   );
 };
 
 ComponentToBindFromInput.YesNo = function ComponentToBindFromYesNo() {
-  const { value, onChange, commonProps } = useContext(ComponentToBindContext);
+  const { value, onChange } = useBindingField();
   return (
     <ComponentToBindField.YesNo
       value={value?.static}
-      onChange={(val: string) =>
+      onChange={(val) =>
         onChange({
           ...value,
           dataType: "static",
@@ -120,17 +134,17 @@ ComponentToBindFromInput.YesNo = function ComponentToBindFromYesNo() {
         })
       }
       w="100%"
-      {...commonProps}
+      {...AUTOCOMPLETE_OFF_PROPS}
     />
   );
 };
 
 ComponentToBindFromInput.Boolean = function ComponentToBindFromBoolean() {
-  const { value, onChange, commonProps } = useContext(ComponentToBindContext);
+  const { value, onChange } = useBindingField();
   return (
     <ComponentToBindField.Boolean
       value={value?.static ?? ""}
-      onChange={(val: boolean) =>
+      onChange={(val) =>
         onChange({
           ...value,
           dataType: "static",
@@ -143,14 +157,56 @@ ComponentToBindFromInput.Boolean = function ComponentToBindFromBoolean() {
         { label: "-", value: "" },
       ]}
       w="100%"
-      {...commonProps}
+      {...AUTOCOMPLETE_OFF_PROPS}
+    />
+  );
+};
+
+ComponentToBindFromInput.Segmented = function ComponentToBindFromSegmented() {
+  const { value, onChange, data } = useBindingField<"Segmented">();
+  return (
+    <ComponentToBindField.Boolean
+      value={value?.static ?? ""}
+      onChange={(val) =>
+        onChange({
+          ...value,
+          dataType: "static",
+          static: val,
+        })
+      }
+      data={data}
+      w="100%"
+      {...AUTOCOMPLETE_OFF_PROPS}
+    />
+  );
+};
+
+ComponentToBindFromInput.Select = function ComponentToBindFromSelect() {
+  const { value, onChange, data } = useBindingField<"Select">();
+  return (
+    <ComponentToBindField.Select
+      value={value?.static ?? ""}
+      onChange={(val) =>
+        onChange({
+          ...value,
+          dataType: "static",
+          static: val,
+        })
+      }
+      data={data}
+      w="100%"
+      style={{ flex: "1" }}
+      size="xs"
+      nothingFound="Nothing found"
+      searchable
+      {...AUTOCOMPLETE_OFF_PROPS}
     />
   );
 };
 
 ComponentToBindFromInput.Number = function ComponentToBindFromNumber() {
-  const { value, onChange, placeholder, decimalPlaces, commonProps } =
-    useContext(ComponentToBindContext);
+  const { value, onChange, placeholder, precision } =
+    useBindingField<"Number">();
   return (
     <ComponentToBindField.Number
       placeholder={placeholder}
@@ -162,21 +218,19 @@ ComponentToBindFromInput.Number = function ComponentToBindFromNumber() {
           static: val.toString(),
         })
       }
-      precision={decimalPlaces}
-      parser={(value: number) =>
-        value ? parseFloatExtension(value).toString() : ""
-      }
-      formatter={(value: number) =>
+      precision={precision}
+      parser={(value) => (value ? parseFloatExtension(value).toString() : "")}
+      formatter={(value) =>
         value ? parseFloatExtension(value).toString() : ""
       }
       w="100%"
-      {...commonProps}
+      {...AUTOCOMPLETE_OFF_PROPS}
     />
   );
 };
 
 ComponentToBindFromInput.Options = function ComponentToBindFromOptions() {
-  const { form } = useContext(ComponentToBindContext);
+  const { form } = useBindingField();
   return (
     <Stack style={{ gap: 0, width: "100%" }}>
       <div>
@@ -207,12 +261,14 @@ ComponentToBindFromInput.Options = function ComponentToBindFromOptions() {
                   placeholder="label"
                   {...form.getInputProps(`onLoad.data.static.${index}.label`)}
                   style={{ width: "50%" }}
+                  {...AUTOCOMPLETE_OFF_PROPS}
                 />
                 <TextInput
                   size="xs"
                   placeholder="value"
                   {...form.getInputProps(`onLoad.data.static.${index}.value`)}
                   style={{ width: "50%" }}
+                  {...AUTOCOMPLETE_OFF_PROPS}
                 />
 
                 <Icon

@@ -4,7 +4,7 @@ import debounce from "lodash.debounce";
 import { pick } from "next/dist/lib/pick";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useOldRouter } from "@/hooks/data/useOldRouter";
-import { useBindingContext } from "@/components/bindingPopover/BindingContextProvider";
+import { useBindingPopover } from "@/hooks/data/useBindingPopover";
 
 type JsProps = {
   language: "javascript" | "typescript" | "json";
@@ -52,7 +52,7 @@ export function CustomJavaScriptTextArea({
   onChange,
   selectedItem,
 }: JsProps) {
-  const { actions, variables, components } = useBindingContext();
+  const { actions, variables, components } = useBindingPopover();
 
   const monacoRef = useRef<any>(null);
   const browser = useOldRouter();

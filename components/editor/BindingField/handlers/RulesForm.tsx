@@ -1,5 +1,5 @@
-import { BindingContextSelector } from "@/components/bindingPopover/fields/BindingContextSelector";
-import { SelectLogicalRules } from "@/components/SelectLogicalRules";
+import { BindingContextSelector } from "@/components/editor/BindingField/components/BindingContextSelector";
+import { SelectLogicalRules } from "@/components/editor/BindingField/components/SelectLogicalRules";
 import {
   Accordion,
   AccordionControlProps,
@@ -13,20 +13,15 @@ import {
 } from "@mantine/core";
 import { BG_RULES_GROUP, BG_RULE, BG_LOCATION } from "@/utils/branding";
 import { IconTrash } from "@tabler/icons-react";
-import { FieldType } from "@/components/data/forms/StaticFormFieldsBuilder";
-import { RuleProps, ValueProps } from "@/types/dataBinding";
+import { RuleProps } from "@/types/dataBinding";
 import isEmpty from "lodash.isempty";
-import { ComponentToBindField } from "@/components/bindingPopover/ComponentToBindField";
+import { ComponentToBindField } from "@/components/editor/BindingField/ComponentToBindField";
 import { useForm } from "@mantine/form";
 import { useEffect } from "react";
+import { useBindingField } from "@/components/ComponentToBindFromInput";
 
-type RulesTabProps = {
-  fieldType: FieldType;
-  value: ValueProps;
-  onChange: (value: ValueProps) => void;
-};
-
-export const RulesTab = ({ fieldType, value, onChange }: RulesTabProps) => {
+export const RulesForm = () => {
+  const { fieldType, value, onChange } = useBindingField();
   const rules = (isEmpty(value.rules) ? [{}] : value.rules) as RuleProps[];
 
   const form = useForm({
@@ -121,7 +116,6 @@ export const RulesTab = ({ fieldType, value, onChange }: RulesTabProps) => {
                   <Field
                     label="Result"
                     {...form.getInputProps(`rules.${index}.result`)}
-                    isBindable={false}
                   />
                 </Flex>
               </Accordion.Panel>

@@ -11,11 +11,9 @@ import { safeJsonParse } from "@/utils/common";
 import { useInputsStore } from "@/stores/inputs";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useOldRouter } from "@/hooks/data/useOldRouter";
-import { useShareableContent } from "@/hooks/data/useShareableContent";
 
 export const useDataBinding = (componentId = "") => {
   const browser = useOldRouter();
-  const { item } = useShareableContent({ componentId, computeValue });
 
   function computeValue<T>(
     { value, shareableContent, staticFallback }: GetValueProps,
@@ -32,6 +30,9 @@ export const useDataBinding = (componentId = "") => {
         let boundCode = value?.boundCode?.trim() ?? "";
 
         return autoRunJavascriptCode(boundCode, ctx);
+      },
+      rules: function (value: ValueProps) {
+        return;
       },
     };
 

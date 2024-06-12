@@ -1,7 +1,6 @@
 import { Icon } from "@/components/Icon";
 import { BG_COLOR, DEFAULT_TEXTCOLOR } from "@/utils/branding";
 import { ICON_SIZE } from "@/utils/config";
-import { ValueProps } from "@/types/dataBinding";
 import {
   ActionIcon,
   Button,
@@ -16,38 +15,28 @@ import {
   Tooltip,
 } from "@mantine/core";
 import { IconExternalLink, IconPlugConnected } from "@tabler/icons-react";
-import { useState } from "react";
-import { JavascriptTab } from "@/components/bindingPopover/formTab/JavascriptTab";
-import { BindingContextProvider } from "@/components/bindingPopover/BindingContextProvider";
-import { RulesTab } from "@/components/bindingPopover/formTab/RulesTab";
-import { FieldType } from "@/components/data/forms/StaticFormFieldsBuilder";
+import { BoundCodeForm } from "@/components/editor/BindingField/handlers/BoundCodeForm";
+import { RulesForm } from "@/components/editor/BindingField/handlers/RulesForm";
+import { useBindingField } from "@/components/ComponentToBindFromInput";
 
 const ML = 5;
 
 type BinderType = "boundCode" | "rules";
 
 type Props = {
-  value: ValueProps;
-  fieldType: FieldType;
-  onChange: (value: ValueProps) => void;
   controls: {
     isOpen: boolean;
     onOpen: () => void;
     onClose: () => void;
   };
   style?: "input" | "iconButton";
-  isPageAction?: boolean;
 };
 
 export default function BindingPopover({
-  value,
-  onChange,
-  fieldType,
   controls: { isOpen, onOpen, onClose },
   style = "iconButton",
-  isPageAction,
 }: Props) {
-  const [selectedItem, setSelectedItem] = useState<string>();
+  const { value, onChange } = useBindingField();
   const onChangeDataTypeAsBoundCode = () => {
     onChange({
       ...value,
@@ -146,23 +135,8 @@ export default function BindingPopover({
               <Icon name="IconCopy" />
             </ActionIcon>
           </Flex>
-          <BindingContextProvider isPageAction={isPageAction}>
-            {value.dataType === "rules" && (
-              <RulesTab
-                fieldType={fieldType}
-                value={value}
-                onChange={onChange}
-              />
-            )}
-            {value.dataType === "boundCode" && (
-              <JavascriptTab
-                value={value}
-                onChange={onChange}
-                selectedItem={selectedItem}
-                setSelectedItem={setSelectedItem}
-              />
-            )}
-          </BindingContextProvider>
+          {value.dataType === "rules" && <RulesForm />}
+          {value.dataType === "boundCode" && <BoundCodeForm />}
         </Stack>
       </Popover.Dropdown>
     </Popover>

@@ -2,9 +2,7 @@ import { DataProps } from "@/types/dataBinding";
 import { ActionIcon, Group, Stack, Tooltip } from "@mantine/core";
 import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { useForm } from "@mantine/form";
-import { ComponentToBindFromSelect } from "@/components/ComponentToBindFromSelect";
 import { useEffect } from "react";
-import { ComponentToBindFromSegmentedControl } from "@/components/ComponentToBindFromSegmentedControl";
 import { StaticFormFieldsBuilder } from "@/components/data/forms/StaticFormFieldsBuilder";
 import { IconPlug, IconPlugOff } from "@tabler/icons-react";
 import { DynamicFormFieldsBuilder } from "@/components/data/forms/DynamicFormFieldsBuilder";
@@ -14,7 +12,7 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 import { useComponentStates } from "@/hooks/editor/useComponentStates";
 import { ValueProps } from "@/types/dataBinding";
 import merge from "lodash.merge";
-import { FormFieldsBuilder } from "./forms/FormFieldsBuilder";
+import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 
 const fields = [
   {
@@ -25,8 +23,8 @@ const fields = [
 ];
 
 export const DateInputData = ({ component, endpoints }: DataProps) => {
-  const hasParentComponentData = useEditorTreeStore(
-    (state) => state.selectedComponentIds?.at(-1)?.includes("-related-"),
+  const hasParentComponentData = useEditorTreeStore((state) =>
+    state.selectedComponentIds?.at(-1)?.includes("-related-"),
   );
   const { getComponentsStates } = useComponentStates();
 
@@ -85,7 +83,8 @@ export const DateInputData = ({ component, endpoints }: DataProps) => {
 
   return (
     <Stack spacing="xs">
-      <ComponentToBindFromSegmentedControl
+      <ComponentToBindFromInput<"Segmented">
+        fieldType="Segmented"
         label="Type"
         data={[
           {
@@ -102,9 +101,13 @@ export const DateInputData = ({ component, endpoints }: DataProps) => {
           },
         ]}
         {...form.getInputProps("onLoad.type")}
-      />
-      <ComponentToBindFromSelect
+      >
+        {" "}
+        <ComponentToBindFromInput.Segmented />{" "}
+      </ComponentToBindFromInput>
+      <ComponentToBindFromInput<"Select">
         label="Format"
+        fieldType="Select"
         data={[
           { label: "DD MMM YYYY", value: "DD MMM YYYY" },
           { label: "DD MM YYYY", value: "DD MM YYYY" },
@@ -116,7 +119,9 @@ export const DateInputData = ({ component, endpoints }: DataProps) => {
         ]}
         placeholder="Select format"
         {...form.getInputProps("onLoad.valueFormat")}
-      />
+      >
+        <ComponentToBindFromInput.Select />
+      </ComponentToBindFromInput>
       <>
         {fields.map((f) => {
           const isDynamic =
@@ -165,12 +170,15 @@ export const DateInputData = ({ component, endpoints }: DataProps) => {
         endpoints={endpoints!}
       /> */}
         <VisibilityModifier form={form} />
-        <ComponentToBindFromSelect
+        <ComponentToBindFromInput<"Select">
           size="xs"
           label="State"
           {...form.getInputProps(`onLoad.currentState`)}
           data={getComponentsStates()}
-        />
+          fieldType="Select"
+        >
+          <ComponentToBindFromInput.Select />
+        </ComponentToBindFromInput>
       </>
     </Stack>
   );
