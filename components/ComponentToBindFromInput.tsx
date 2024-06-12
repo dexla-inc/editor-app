@@ -12,7 +12,7 @@ import {
   TextInput,
   TextInputProps,
 } from "@mantine/core";
-import { FieldType } from "./data/forms/StaticFormFieldsBuilder";
+import { FieldType } from "@/components/editor/BindingField/BindingField";
 import { Icon } from "@/components/Icon";
 import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
 import { createContext, useContext } from "react";
@@ -84,13 +84,18 @@ export const ComponentToBindFromInput = <T extends FieldType>(
 };
 
 ComponentToBindFromInput.Text = function ComponentToBindFromTextInput() {
-  const { placeholder, value, fieldType, onChange } = useBindingField<"Text">();
+  const {
+    placeholder,
+    value,
+    onChange,
+    type = "text",
+  } = useBindingField<"Text">();
 
   return (
     <ComponentToBindField.Text
       placeholder={placeholder}
       value={value?.static}
-      type={fieldType}
+      type={type}
       onChange={(e: any) =>
         onChange({
           ...value,
@@ -205,7 +210,7 @@ ComponentToBindFromInput.Select = function ComponentToBindFromSelect() {
 };
 
 ComponentToBindFromInput.Number = function ComponentToBindFromNumber() {
-  const { value, onChange, placeholder, precision } =
+  const { value, onChange, placeholder, precision, type } =
     useBindingField<"Number">();
   return (
     <ComponentToBindField.Number
@@ -218,6 +223,7 @@ ComponentToBindFromInput.Number = function ComponentToBindFromNumber() {
           static: val.toString(),
         })
       }
+      type={type}
       precision={precision}
       parser={(value) => (value ? parseFloatExtension(value).toString() : "")}
       formatter={(value) =>

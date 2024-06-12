@@ -7,7 +7,7 @@ export const ProgressData = ({ component, endpoints }: DataProps) => {
     {
       name: "value",
       label: "Value",
-      type: "Number" as const,
+      fieldType: "Number" as const,
     },
   ];
 

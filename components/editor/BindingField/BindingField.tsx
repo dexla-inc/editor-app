@@ -1,37 +1,30 @@
 import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
-import { FrontEndTypes } from "@/requests/variables/types";
+import React from "react";
 
 export type FieldType =
-  | "Password"
-  | "Email"
-  | "Tel"
-  | "Url"
-  | "Date"
-  | "Unit"
+  | "Text"
   | "YesNo"
-  | "Integer"
+  | "Boolean"
+  | "Array"
+  | "Number"
   | "Options"
   | "Select"
-  | "Segmented"
-  | Capitalize<Lowercase<FrontEndTypes>>;
+  | "Segmented";
 
 type StaticFormFieldsBuilderProps = {
   field: {
     name: string;
     label: string;
-    type: FieldType;
+    fieldType: FieldType;
+    type?: React.HTMLInputTypeAttribute;
     placeholder?: string;
     additionalComponent?: JSX.Element;
-    defaultValue?: any;
-    decimalPlaces?: number;
+    precision?: number;
   };
   form: any;
 };
 
-export const StaticFormFieldsBuilder = ({
-  field,
-  form,
-}: StaticFormFieldsBuilderProps) => {
+export const BindingField = ({ field, form }: StaticFormFieldsBuilderProps) => {
   // @ts-ignore
   const InnerField = ComponentToBindFromInput[field.type];
 
@@ -42,7 +35,7 @@ export const StaticFormFieldsBuilder = ({
       label={field.label}
       placeholder={field.placeholder}
       fieldType={field.type}
-      decimalPlaces={field.decimalPlaces}
+      precision={field.precision}
       {...form.getInputProps(`onLoad.${field.name}`)}
       form={form}
     >

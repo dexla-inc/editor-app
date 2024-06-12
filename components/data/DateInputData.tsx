@@ -3,7 +3,6 @@ import { ActionIcon, Group, Stack, Tooltip } from "@mantine/core";
 import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { useForm } from "@mantine/form";
 import { useEffect } from "react";
-import { StaticFormFieldsBuilder } from "@/components/data/forms/StaticFormFieldsBuilder";
 import { IconPlug, IconPlugOff } from "@tabler/icons-react";
 import { DynamicFormFieldsBuilder } from "@/components/data/forms/DynamicFormFieldsBuilder";
 import { ICON_SIZE } from "@/utils/config";
@@ -13,11 +12,13 @@ import { useComponentStates } from "@/hooks/editor/useComponentStates";
 import { ValueProps } from "@/types/dataBinding";
 import merge from "lodash.merge";
 import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
+import { BindingField } from "@/components/editor/BindingField/BindingField";
 
 const fields = [
   {
     name: "value",
     label: "Value",
+    fieldType: "Text",
     type: "date",
   },
 ];
@@ -145,7 +146,7 @@ export const DateInputData = ({ component, endpoints }: DataProps) => {
                   field={f}
                 />
               ) : (
-                <StaticFormFieldsBuilder
+                <BindingField
                   // @ts-ignore
                   field={f}
                   form={form}

@@ -1,8 +1,4 @@
 import { DynamicFormFieldsBuilder } from "@/components/data/forms/DynamicFormFieldsBuilder";
-import {
-  FieldType,
-  StaticFormFieldsBuilder,
-} from "@/components/data/forms/StaticFormFieldsBuilder";
 import { Endpoint } from "@/requests/datasources/types";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { ICON_SIZE } from "@/utils/config";
@@ -11,26 +7,31 @@ import { ActionIcon, Group, Tooltip } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconPlug, IconPlugOff } from "@tabler/icons-react";
 import merge from "lodash.merge";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { ValueProps } from "@/types/dataBinding";
 import { CommonData } from "@/components/data/CommonData";
+import {
+  BindingField,
+  FieldType,
+} from "@/components/editor/BindingField/BindingField";
 
 type Props = {
   fields: Array<{
     name: string;
     label: string;
-    type?: FieldType;
+    fieldType: FieldType;
+    type?: React.HTMLInputTypeAttribute;
     placeholder?: string;
     additionalComponent?: JSX.Element;
-    decimalPlaces?: number;
+    precision?: number;
   }>;
   endpoints: Endpoint[];
   component: Component;
 };
 
 export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
-  const hasParentComponentData = useEditorTreeStore(
-    (state) => state.selectedComponentIds?.at(-1)?.includes("-related-"),
+  const hasParentComponentData = useEditorTreeStore((state) =>
+    state.selectedComponentIds?.at(-1)?.includes("-related-"),
   );
   const onLoadFieldsStarter = fields.reduce(
     (acc, f) => {
@@ -89,7 +90,7 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
                 field={f}
               />
             ) : (
-              <StaticFormFieldsBuilder field={f} form={form} />
+              <BindingField field={f} form={form} />
             )}
             {hasParentComponentData && (
               <Tooltip label="Bind">

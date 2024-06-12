@@ -2,8 +2,8 @@ import { DynamicSettings } from "@/components/data/forms/DynamicSettings";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { SegmentedControl, Select, Stack, Text, Title } from "@mantine/core";
 import { DataProps, DataType } from "@/types/dataBinding";
-import { StaticFormFieldsBuilder } from "@/components/data/forms/StaticFormFieldsBuilder";
 import { FormFieldsBuilder } from "@/components/data/forms/FormFieldsBuilder";
+import { BindingField } from "@/components/editor/BindingField/BindingField";
 
 export const SelectData = ({ component, endpoints, dataType }: DataProps) => {
   const updateTreeComponentAttrs = useEditorTreeStore(
@@ -30,8 +30,8 @@ export const SelectData = ({ component, endpoints, dataType }: DataProps) => {
       {dataType === "static" && (
         <FormFieldsBuilder
           fields={[
-            { name: "data", label: "Options", type: "Options" },
-            { name: "value", label: "Value", type: "Text" },
+            { name: "data", label: "Options", fieldType: "Options" },
+            { name: "value", label: "Value", fieldType: "Text" },
           ]}
           component={component}
           endpoints={endpoints!}
@@ -49,12 +49,12 @@ export const SelectData = ({ component, endpoints, dataType }: DataProps) => {
           {({ form, selectableObjectKeys }) => {
             return (
               <Stack spacing="xs" my="xs">
-                <StaticFormFieldsBuilder
+                <BindingField
                   form={form}
                   field={{
                     name: "value",
                     label: "Default Value",
-                    type: "Text",
+                    fieldType: "Text",
                   }}
                 />
                 <Title order={6} mt="xs">

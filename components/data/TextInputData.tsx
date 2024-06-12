@@ -9,7 +9,7 @@ export const TextInputData = ({ component, endpoints }: DataProps) => {
     {
       name: "value",
       label: "Value",
-      type: isTextArea ? "Text" : ("Text" as const),
+      fieldType: isTextArea ? "Text" : ("Text" as const),
     },
   ];
 

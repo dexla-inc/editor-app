@@ -25,12 +25,12 @@ export const CheckboxGroupData = ({
     {
       name: "data",
       label: "Data",
-      type: "Text" as const, // textarea
+      fieldType: "Text" as const, // textarea
     },
     {
       name: "value",
       label: "Value",
-      type: "Text" as const,
+      fieldType: "Text" as const,
     },
   ];
 
