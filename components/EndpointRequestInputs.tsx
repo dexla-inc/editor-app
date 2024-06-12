@@ -1,10 +1,10 @@
-import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 import { Endpoint } from "@/requests/datasources/types";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { ApiType } from "@/types/dashboardTypes";
 import { Stack, Title } from "@mantine/core";
 import React from "react";
+import { BindingField } from "@/components/editor/BindingField/BindingField";
 
 type Props = {
   selectedEndpoint?: Endpoint;
@@ -65,7 +65,7 @@ export const EndpointRequestInputs = ({
               const field = `${fieldPrefix}binds.${type}.${param.name}`;
               return (
                 <Stack key={param.name}>
-                  <ComponentToBindFromInput
+                  <BindingField
                     size="xs"
                     label={param.name}
                     description={`${

@@ -1,4 +1,7 @@
-import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
+import {
+  ComponentToBindFromInput,
+  ComponentToBindFromInputProps,
+} from "@/components/ComponentToBindFromInput";
 import React from "react";
 
 export type FieldType =
@@ -11,34 +14,14 @@ export type FieldType =
   | "Select"
   | "Segmented";
 
-type StaticFormFieldsBuilderProps = {
-  field: {
-    name: string;
-    label: string;
-    fieldType: FieldType;
-    type?: React.HTMLInputTypeAttribute;
-    placeholder?: string;
-    additionalComponent?: JSX.Element;
-    precision?: number;
-  };
-  form: any;
-};
-
-export const BindingField = ({ field, form }: StaticFormFieldsBuilderProps) => {
+export const BindingField = <T extends FieldType>(
+  props: ComponentToBindFromInputProps<T>,
+) => {
   // @ts-ignore
-  const InnerField = ComponentToBindFromInput[field.type];
+  const InnerField = ComponentToBindFromInput[props.fieldType];
 
   return (
-    <ComponentToBindFromInput
-      size="xs"
-      key={field.name}
-      label={field.label}
-      placeholder={field.placeholder}
-      fieldType={field.type}
-      precision={field.precision}
-      {...form.getInputProps(`onLoad.${field.name}`)}
-      form={form}
-    >
+    <ComponentToBindFromInput size="xs" {...props}>
       <InnerField />
     </ComponentToBindFromInput>
   );

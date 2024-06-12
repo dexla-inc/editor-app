@@ -90,7 +90,11 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
                 field={f}
               />
             ) : (
-              <BindingField field={f} form={form} />
+              <BindingField
+                {...f}
+                form={form}
+                {...form.getInputProps(`onLoad.${f.name}`)}
+              />
             )}
             {hasParentComponentData && (
               <Tooltip label="Bind">

@@ -1,4 +1,4 @@
-import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
+import { BindingField } from "@/components/editor/BindingField/BindingField";
 
 type Props = {
   form: any;
@@ -6,12 +6,10 @@ type Props = {
 
 export const VisibilityModifier = ({ form }: Props) => {
   return (
-    <ComponentToBindFromInput
+    <BindingField
       {...form.getInputProps("onLoad.isVisible")}
       label="Visibility"
       fieldType="YesNo"
-    >
-      <ComponentToBindFromInput.YesNo />
-    </ComponentToBindFromInput>
+    />
   );
 };

@@ -84,7 +84,7 @@ export const DateInputData = ({ component, endpoints }: DataProps) => {
 
   return (
     <Stack spacing="xs">
-      <ComponentToBindFromInput<"Segmented">
+      <BindingField
         fieldType="Segmented"
         label="Type"
         data={[
@@ -102,11 +102,8 @@ export const DateInputData = ({ component, endpoints }: DataProps) => {
           },
         ]}
         {...form.getInputProps("onLoad.type")}
-      >
-        {" "}
-        <ComponentToBindFromInput.Segmented />{" "}
-      </ComponentToBindFromInput>
-      <ComponentToBindFromInput<"Select">
+      />
+      <BindingField
         label="Format"
         fieldType="Select"
         data={[
@@ -120,9 +117,7 @@ export const DateInputData = ({ component, endpoints }: DataProps) => {
         ]}
         placeholder="Select format"
         {...form.getInputProps("onLoad.valueFormat")}
-      >
-        <ComponentToBindFromInput.Select />
-      </ComponentToBindFromInput>
+      />
       <>
         {fields.map((f) => {
           const isDynamic =
@@ -171,15 +166,13 @@ export const DateInputData = ({ component, endpoints }: DataProps) => {
         endpoints={endpoints!}
       /> */}
         <VisibilityModifier form={form} />
-        <ComponentToBindFromInput<"Select">
+        <BindingField
           size="xs"
           label="State"
           {...form.getInputProps(`onLoad.currentState`)}
           data={getComponentsStates()}
           fieldType="Select"
-        >
-          <ComponentToBindFromInput.Select />
-        </ComponentToBindFromInput>
+        />
       </>
     </Stack>
   );

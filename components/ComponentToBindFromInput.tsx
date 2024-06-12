@@ -44,13 +44,14 @@ type FieldProps<T extends FieldType> = BaseProps &
             ? Omit<EditorProps, "onChange" | "value">
             : {});
 
-type ComponentToBindFromInputProps<T extends FieldType> = FieldProps<T>;
+export type ComponentToBindFromInputProps<T extends FieldType> = FieldProps<T>;
 
 type ComponentProps =
   | FieldProps<"Text">
   | FieldProps<"Number">
   | FieldProps<"Boolean">
-  | FieldProps<"Select">;
+  | FieldProps<"Select">
+  | FieldProps<"Segmented">;
 
 export const ComponentToBindContext = createContext<ComponentProps | null>(
   null,

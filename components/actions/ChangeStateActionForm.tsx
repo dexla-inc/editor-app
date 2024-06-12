@@ -3,6 +3,7 @@ import { useComponentStates } from "@/hooks/editor/useComponentStates";
 import { ChangeStateAction } from "@/utils/actions";
 import { Stack } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
+import { BindingField } from "@/components/editor/BindingField/BindingField";
 
 type Props = {
   form: UseFormReturnType<Omit<ChangeStateAction, "name">>;
@@ -16,17 +17,14 @@ export const ChangeStateActionForm = ({ form, isPageAction }: Props) => {
 
   return (
     <Stack spacing="xs">
-      <ComponentToBindFromInput<"Text">
+      <BindingField
         fieldType="Text"
         label="Component to change"
         isPageAction={isPageAction}
         {...form.getInputProps("componentId")}
-      >
-        {" "}
-        <ComponentToBindFromInput.Text />{" "}
-      </ComponentToBindFromInput>
+      />
       {!!componentStatesList.length && (
-        <ComponentToBindFromInput<"Select">
+        <BindingField
           fieldType="Select"
           label="State"
           placeholder="Select State"
@@ -34,9 +32,7 @@ export const ChangeStateActionForm = ({ form, isPageAction }: Props) => {
           searchable
           data={componentStatesList}
           {...form.getInputProps("state")}
-        >
-          <ComponentToBindFromInput.Select />
-        </ComponentToBindFromInput>
+        />
       )}
     </Stack>
   );

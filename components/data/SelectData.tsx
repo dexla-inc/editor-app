@@ -51,11 +51,9 @@ export const SelectData = ({ component, endpoints, dataType }: DataProps) => {
               <Stack spacing="xs" my="xs">
                 <BindingField
                   form={form}
-                  field={{
-                    name: "value",
-                    label: "Default Value",
-                    fieldType: "Text",
-                  }}
+                  label="Default Value"
+                  fieldType="Text"
+                  {...form.getInputProps("onLoad.value")}
                 />
                 <Title order={6} mt="xs">
                   Options

@@ -6,7 +6,7 @@ import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useEffect } from "react";
 import merge from "lodash.merge";
-import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
+import { BindingField } from "@/components/editor/BindingField/BindingField";
 
 export const CommonData = ({ component }: Pick<DataProps, "component">) => {
   const onLoadValues = merge(
@@ -36,22 +36,18 @@ export const CommonData = ({ component }: Pick<DataProps, "component">) => {
   return (
     <Stack spacing="xs">
       <VisibilityModifier form={form} />
-      <ComponentToBindFromInput<"Select">
+      <BindingField
         size="xs"
         label="State"
         {...form.getInputProps(`onLoad.currentState`)}
         data={getComponentsStates()}
         fieldType="Select"
-      >
-        <ComponentToBindFromInput.Select />
-      </ComponentToBindFromInput>
-      <ComponentToBindFromInput<"Text">
+      />
+      <BindingField
         {...form.getInputProps("onLoad.tooltip")}
         label="Tooltip"
         fieldType="Text"
-      >
-        <ComponentToBindFromInput.Text />
-      </ComponentToBindFromInput>
+      />
     </Stack>
   );
 };
