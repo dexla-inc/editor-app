@@ -1,5 +1,8 @@
 import { BindingContextSelector } from "@/components/editor/BindingField/components/BindingContextSelector";
-import { SelectLogicalRules } from "@/components/editor/BindingField/components/SelectLogicalRules";
+import {
+  logicalRulesData,
+  SelectLogicalRules,
+} from "@/components/editor/BindingField/components/SelectLogicalRules";
 import {
   Accordion,
   AccordionControlProps,
@@ -7,6 +10,7 @@ import {
   Box,
   Flex,
   MultiSelect,
+  SegmentedControl,
   Stack,
   Text,
   TextInput,
@@ -19,6 +23,8 @@ import { ComponentToBindField } from "@/components/editor/BindingField/Component
 import { useForm } from "@mantine/form";
 import { useEffect } from "react";
 import { useBindingField } from "@/components/ComponentToBindFromInput";
+import { TopLabel } from "@/components/TopLabel";
+import { cloneObject } from "@/utils/common";
 
 export const RulesForm = () => {
   const { fieldType, value, onChange } = useBindingField();
@@ -29,22 +35,28 @@ export const RulesForm = () => {
       rules,
     },
   });
-  console.log(form.values);
+
   useEffect(() => {
-    if (form.isTouched()) {
-      onChange({ ...value, rules: form.values.rules, dataType: "rules" });
-    }
+    onChange({
+      ...value,
+      rules: cloneObject(form.values.rules),
+      dataType: "rules",
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.values]);
 
   // @ts-ignore
   const Field = ComponentToBindField[fieldType];
   return (
-    <Stack style={{ background: BG_RULES_GROUP }}>
+    <Stack style={{ background: BG_RULES_GROUP }} px={20} py={30}>
       {form.values.rules.map((rule, index) => {
         const isRuleMultiple = [
           "equalToMultiple",
           "notEqualToMultiple",
         ].includes(rule.rule);
+
+        const { valuePlaceholder } =
+          logicalRulesData.find((item) => item.value === rule.rule) ?? {};
 
         return (
           <Accordion
@@ -52,8 +64,6 @@ export const RulesForm = () => {
             transitionDuration={300}
             defaultValue={["item-0"]}
             multiple
-            mx={20}
-            my={30}
             bg={BG_RULE}
           >
             <Accordion.Item value={`item-${index}`}>
@@ -66,7 +76,7 @@ export const RulesForm = () => {
               </AccordionControl>
               <Accordion.Panel>
                 <Flex direction="column" gap={10}>
-                  <BindingContextSelector />
+                  <BindingContextSelector setSelectedItem={console.log} />
                   <SelectLogicalRules
                     {...form.getInputProps(`rules.${index}.rule`)}
                     onChange={(selectedRule) => {
@@ -89,12 +99,14 @@ export const RulesForm = () => {
                   {isRuleMultiple || (
                     <TextInput
                       label="Value"
+                      placeholder={valuePlaceholder}
                       {...form.getInputProps(`rules.${index}.value`)}
                     />
                   )}
                   {isRuleMultiple && (
                     <MultiSelect
                       label="Value"
+                      placeholder={valuePlaceholder}
                       value={rule.value as string[]}
                       data={rule.value as string[]}
                       searchable
@@ -117,6 +129,27 @@ export const RulesForm = () => {
                     label="Result"
                     {...form.getInputProps(`rules.${index}.result`)}
                   />
+                  <Stack>
+                    <TopLabel text="Addional Logic?" />
+                    <SegmentedControl
+                      w="50%"
+                      defaultValue="-"
+                      data={[
+                        ...[
+                          { label: "AND", value: "and" },
+                          { label: "OR", value: "or" },
+                        ],
+                        ...(!rule.operator ? [{ label: "-", value: "-" }] : []),
+                      ]}
+                      {...form.getInputProps(`rules.${index}.operator`)}
+                      onChange={(op) => {
+                        form.setFieldValue(`rules.${index}.operator`, op);
+                        if (form.values.rules.length - 1 === index) {
+                          form.insertListItem("rules", [{}]);
+                        }
+                      }}
+                    />
+                  </Stack>
                 </Flex>
               </Accordion.Panel>
             </Accordion.Item>

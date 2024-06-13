@@ -8,6 +8,7 @@ import {
   CloseButton,
   Flex,
   Popover,
+  ScrollArea,
   SegmentedControl,
   Stack,
   Text,
@@ -135,8 +136,10 @@ export default function BindingPopover({
               <Icon name="IconCopy" />
             </ActionIcon>
           </Flex>
-          {value.dataType === "rules" && <RulesForm />}
-          {value.dataType === "boundCode" && <BoundCodeForm />}
+          <ScrollArea h={500}>
+            {value.dataType === "rules" && <RulesForm />}
+            {value.dataType === "boundCode" && <BoundCodeForm />}
+          </ScrollArea>
         </Stack>
       </Popover.Dropdown>
     </Popover>

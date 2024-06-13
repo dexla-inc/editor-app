@@ -10,48 +10,56 @@ interface ItemProps extends React.ComponentPropsWithoutRef<"div"> {
   description: string;
 }
 
-const data = [
+export const logicalRulesData = [
   {
     label: "Has Value",
     value: "hasValue",
     description: "The component Holds Any Value",
+    valuePlaceholder: "Type a value the Component does have",
   },
   {
     label: "Does Not Have Value",
     value: "doesNotHaveValue",
     description: "The Component Is Empty Or Uninitialized",
+    valuePlaceholder: "Type a value the Component does not have",
   },
   {
     label: "Equal To",
     value: "equalTo",
-    description: "The Component's Value Matches A Specific Value",
+    description: "The Component's Value Does Matches A Specific Value",
+    valuePlaceholder: "Type a value the Component matches",
   },
   {
     label: "Not Equal To",
     value: "notEqualTo",
-    description: "The Component Does Contains This Specific Value",
+    description: "The Component's Value Does Not Match A Specific Value",
+    valuePlaceholder: "Type a value the Component does not match",
   },
   {
     label: "Contains",
     value: "contains",
     description: "The Component Does Contains This Specific Value",
+    valuePlaceholder: "Type a value the Component does contains",
   },
   {
     label: "Not Contains",
     value: "notContains",
     description: "The Component Does Not Contain This Specific Value",
+    valuePlaceholder: "Type a value the Component does not contain",
   },
   {
     label: "Equal To Multiple",
     value: "equalToMultiple",
     description:
       "The Component's Value Matches Any In A Set Of Specific Values",
+    valuePlaceholder: "Type a value the Component can be",
   },
   {
     label: "Not Equal To Multiple",
     value: "notEqualToMultiple",
     description:
       "The Component's Value Matches None In A Set Of Specific Values",
+    valuePlaceholder: "Type a value the Component can not be",
   },
 ];
 
@@ -78,7 +86,7 @@ export const SelectLogicalRules = (props: SelectLogicalRulesProps) => {
       label="Rule"
       itemComponent={SelectItem}
       description="Choose from the logical rules for utility"
-      data={data}
+      data={logicalRulesData}
       onChange={(value) => {
         props.onChange?.(value);
       }}

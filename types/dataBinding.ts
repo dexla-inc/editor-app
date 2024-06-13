@@ -25,6 +25,7 @@ export type RuleProps = {
   rule: string;
   value: string | string[];
   location: string;
+  operator: string;
 };
 
 export type ValueProps = Partial<{
