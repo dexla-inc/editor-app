@@ -158,6 +158,7 @@ export const requiredModifiers: RequiredModifiers = {
     passwordLower: true,
     passwordUpper: true,
     bg: "White.6",
+    pattern: "all",
   },
   textarea: {
     placeholder: "Textarea",
