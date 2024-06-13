@@ -103,7 +103,6 @@ const Modifier = withModifier(({ selectedComponent }) => {
             />
             <NumberInput
               label="Max Length"
-              min={0}
               hideControls
               {...form.getInputProps("maxLength")}
               onChange={(value) => onChange("maxLength", value)}
