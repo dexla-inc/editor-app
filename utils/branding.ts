@@ -457,6 +457,18 @@ const setComponentBorder = (style: StyleProp = {}, isPreviewMode?: boolean) => {
   return hasBorder || isPreviewMode ? {} : IDENTIFIER;
 };
 
+const constraints = {
+  charLimit: (props: any) => {
+    const { addMaxLength = false, maxLength = 10 } = props;
+    if (addMaxLength) return { maxLength };
+  },
+  patterns: {
+    all: /^[\s\S]*$/,
+    numbers: /^\d*$/,
+    alphabets: /^[a-zA-Z\s]*$/,
+  },
+};
+
 export {
   BG_COLOR,
   BINDER_BACKGROUND,
@@ -501,4 +513,5 @@ export {
   scrollbarStyles,
   setComponentBorder,
   theme,
+  constraints,
 };

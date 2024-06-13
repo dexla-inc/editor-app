@@ -20,6 +20,7 @@ import { forwardRef, memo } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useInputValue } from "@/hooks/components/useInputValue";
 import { useShallow } from "zustand/react/shallow";
+import { constraints } from "@/utils/branding";
 
 type Props = EditableComponentMapper & NumberInputProps & TextInputProps;
 
@@ -38,6 +39,9 @@ const InputComponent = forwardRef(
       bg,
       textColor,
       size,
+      maxLength,
+      pattern = "all",
+      addMaxLength,
       passwordRange,
       passwordNumber,
       passwordLower,
@@ -108,6 +112,18 @@ const InputComponent = forwardRef(
       setValue(newValue);
       if (onChange) {
         onChange(e);
+      }
+    };
+
+    const onKeyDown = (e: any) => {
+      const isDeletionKeys = ["Backspace", "Delete"].includes(e.key);
+      if (
+        !isDeletionKeys &&
+        !constraints.patterns[
+          pattern as keyof typeof constraints.patterns
+        ].test(e.key)
+      ) {
+        e.preventDefault();
       }
     };
 
@@ -199,11 +215,7 @@ const InputComponent = forwardRef(
             rightSection={loading ? <InputLoader /> : null}
             label={undefined}
             wrapperProps={{ "data-id": id }}
-            onKeyDown={(e) => {
-              if (!/[0-9]/.test(e.key)) {
-                e.preventDefault();
-              }
-            }}
+            onKeyDown={onKeyDown}
           />
         ) : type === "password" ? (
           <PasswordInput
@@ -234,6 +246,7 @@ const InputComponent = forwardRef(
             {...props}
             {...componentProps}
             ref={ref}
+            {...constraints.charLimit(component.props)}
             icon={iconName ? <Icon name={iconName} /> : null}
             style={{}}
             styles={{
@@ -247,6 +260,7 @@ const InputComponent = forwardRef(
             value={value}
             {...restTriggers}
             onChange={handleChange}
+            onKeyDown={onKeyDown}
             rightSection={
               loading ? (
                 <InputLoader />

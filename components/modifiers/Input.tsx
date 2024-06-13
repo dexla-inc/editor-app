@@ -7,7 +7,7 @@ import { INPUT_TYPES_DATA } from "@/types/dashboardTypes";
 import { inputSizes } from "@/utils/defaultSizes";
 import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { Select, Stack, TextInput } from "@mantine/core";
+import { NumberInput, Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
 import { useEffect } from "react";
@@ -37,11 +37,25 @@ const Modifier = withModifier(({ selectedComponent }) => {
         passwordSpecial: selectedComponent?.props?.passwordSpecial,
         bg: selectedComponent?.props?.bg,
         hideControls: selectedComponent?.props?.hideControls ?? false,
-        //format: selectedComponent?.props?.format,
+        addMaxLength: selectedComponent?.props?.addMaxLength ?? false,
+        maxLength: selectedComponent?.props?.maxLength ?? 10,
+        pattern: selectedComponent?.props?.pattern,
       }),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedComponent]);
+
+  const type = form.values.type;
+  const onChange = (attr: string, value: any) => {
+    form.setFieldValue(attr, value);
+    debouncedTreeComponentAttrsUpdate({
+      attrs: {
+        props: {
+          [attr]: value,
+        },
+      },
+    });
+  };
 
   return (
     <form>
@@ -50,16 +64,7 @@ const Modifier = withModifier(({ selectedComponent }) => {
           label="Placeholder"
           size="xs"
           {...form.getInputProps("placeholder")}
-          onChange={(e) => {
-            form.setFieldValue("placeholder", e.target.value);
-            debouncedTreeComponentAttrsUpdate({
-              attrs: {
-                props: {
-                  placeholder: e.target.value,
-                },
-              },
-            });
-          }}
+          onChange={(e) => onChange("placeholder", e.target.value)}
         />
         <Select
           label="Type"
@@ -72,77 +77,57 @@ const Modifier = withModifier(({ selectedComponent }) => {
               attrs: {
                 props: {
                   type: value,
+                  pattern: value === "number" ? "numbers" : "all",
                 },
               },
             });
           }}
         />
-        {/* {form.values.type === "text" && (
-          <SegmentedControlInput
-            label="Format"
-            {...form.getInputProps("format")}
-            data={[
-              { label: "Cover", value: "cover" },
-              { label: "Contain", value: "contain" },
-              { label: "%", value: "100%" },
-            ]}
-            onChange={(value) => {
-              form.setFieldValue("format", value);
-              debouncedTreeComponentAttrsUpdate({
-                attrs: {
-                  props: {
-                    format: value,
-                  },
-                },
-              });
-            }}
-          />
-        )} */}
-        {form.values.type === "number" && (
+        {type === "number" && (
           <SegmentedControlYesNo
             label="Hide controls"
             {...form.getInputProps("hideControls")}
-            onChange={(value) => {
-              form.setFieldValue("hideControls", value);
-              debouncedTreeComponentAttrsUpdate({
-                attrs: {
-                  props: {
-                    hideControls: value,
-                  },
-                },
-              });
-            }}
+            onChange={(value) => onChange("hideControls", value)}
           />
+        )}
+        {!["password", "number", "numberRange"].includes(type as string) && (
+          <>
+            <SegmentedControlInput
+              label="Character Type"
+              {...form.getInputProps("pattern")}
+              data={[
+                { label: "All", value: "all" },
+                { label: "Alphabets", value: "alphabets" },
+                { label: "Numbers", value: "numbers" },
+              ]}
+              onChange={(value) => onChange("pattern", value)}
+            />
+            <SegmentedControlYesNo
+              label="Add Max Length"
+              {...form.getInputProps("addMaxLength")}
+              onChange={(value) => onChange("addMaxLength", value)}
+            />
+            {form.values.addMaxLength && (
+              <NumberInput
+                label="Max Length"
+                min={0}
+                {...form.getInputProps("maxLength")}
+                onChange={(value) => onChange("maxLength", value)}
+              />
+            )}
+          </>
         )}
         <SegmentedControlYesNo
           label="Required"
           {...form.getInputProps("withAsterisk")}
-          onChange={(value) => {
-            form.setFieldValue("withAsterisk", value);
-            debouncedTreeComponentAttrsUpdate({
-              attrs: {
-                props: {
-                  withAsterisk: value,
-                },
-              },
-            });
-          }}
+          onChange={(value) => onChange("withAsterisk", value)}
         />
-        {form.values.type === "password" && (
+        {type === "password" && (
           <>
             <SegmentedControlYesNo
               label="Display"
               {...form.getInputProps("displayRequirements")}
-              onChange={(value) => {
-                form.setFieldValue("displayRequirements", value);
-                debouncedTreeComponentAttrsUpdate({
-                  attrs: {
-                    props: {
-                      displayRequirements: value,
-                    },
-                  },
-                });
-              }}
+              onChange={(value) => onChange("displayRequirements", value)}
             />
             {/* Create a new component with label like SegmentedControlInput */}
             <RangeSliderInput
@@ -152,72 +137,27 @@ const Modifier = withModifier(({ selectedComponent }) => {
               min={4}
               max={40}
               {...form.getInputProps("passwordRange")}
-              onChange={(value) => {
-                form.setFieldValue("passwordRange", value);
-                debouncedTreeComponentAttrsUpdate({
-                  attrs: {
-                    props: {
-                      passwordRange: value,
-                    },
-                  },
-                });
-              }}
+              onChange={(value) => onChange("passwordRange", value)}
             />
             <SegmentedControlYesNo
               label="Includes number"
               {...form.getInputProps("passwordNumber")}
-              onChange={(value) => {
-                form.setFieldValue("passwordNumber", value);
-                debouncedTreeComponentAttrsUpdate({
-                  attrs: {
-                    props: {
-                      passwordNumber: value,
-                    },
-                  },
-                });
-              }}
+              onChange={(value) => onChange("passwordNumber", value)}
             />
             <SegmentedControlYesNo
               label="Includes lowercase letter"
               {...form.getInputProps("passwordLower")}
-              onChange={(value) => {
-                form.setFieldValue("passwordLower", value);
-                debouncedTreeComponentAttrsUpdate({
-                  attrs: {
-                    props: {
-                      passwordLower: value,
-                    },
-                  },
-                });
-              }}
+              onChange={(value) => onChange("passwordLower", value)}
             />
             <SegmentedControlYesNo
               label="Includes uppercase letter"
               {...form.getInputProps("passwordUpper")}
-              onChange={(value) => {
-                form.setFieldValue("passwordUpper", value);
-                debouncedTreeComponentAttrsUpdate({
-                  attrs: {
-                    props: {
-                      passwordUpper: value,
-                    },
-                  },
-                });
-              }}
+              onChange={(value) => onChange("passwordUpper", value)}
             />
             <SegmentedControlYesNo
               label="Includes special letter"
               {...form.getInputProps("passwordSpecial")}
-              onChange={(value) => {
-                form.setFieldValue("passwordSpecial", value);
-                debouncedTreeComponentAttrsUpdate({
-                  attrs: {
-                    props: {
-                      passwordSpecial: value,
-                    },
-                  },
-                });
-              }}
+              onChange={(value) => onChange("passwordSpecial", value)}
             />
           </>
         )}
@@ -242,43 +182,18 @@ const Modifier = withModifier(({ selectedComponent }) => {
           selectedIcon={(form.values.icon as any)?.props?.name}
           onIconSelect={(iconName: string) => {
             const icon = { props: { name: iconName } };
-            form.setFieldValue("icon.props.name", iconName);
-            debouncedTreeComponentAttrsUpdate({
-              attrs: {
-                props: {
-                  icon,
-                },
-              },
-            });
+            onChange("icon", icon);
           }}
         />
         <SegmentedControlYesNo
           label="Clearable"
           {...form.getInputProps("clearable")}
-          onChange={(value) => {
-            form.setFieldValue("clearable", value);
-            debouncedTreeComponentAttrsUpdate({
-              attrs: {
-                props: {
-                  clearable: value,
-                },
-              },
-            });
-          }}
+          onChange={(value) => onChange("clearable", value)}
         />
         <ThemeColorSelector
           label="Background Color"
           {...form.getInputProps("bg")}
-          onChange={(value: string) => {
-            form.setFieldValue("bg", value);
-            debouncedTreeComponentAttrsUpdate({
-              attrs: {
-                props: {
-                  bg: value,
-                },
-              },
-            });
-          }}
+          onChange={(value: string) => onChange("bg", value)}
         />
       </Stack>
     </form>
