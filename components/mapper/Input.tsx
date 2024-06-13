@@ -121,7 +121,7 @@ const InputComponent = forwardRef(
       const isPrintable = e.key.match(/\S/);
       if (
         isPrintable &&
-        !patterns[pattern as keyof typeof patterns].test(e.key)
+        !patterns[(pattern || "all") as keyof typeof patterns].test(e.key)
       ) {
         e.preventDefault();
       }
