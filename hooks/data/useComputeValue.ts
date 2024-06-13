@@ -276,6 +276,8 @@ export const useComputeValue = ({
         }
       },
       rules: (fieldValue: ValueProps) => {
+        // console.log("rules", fieldValue);
+
         return;
       },
     }),

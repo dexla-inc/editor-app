@@ -15,13 +15,11 @@ export const logicalRulesData = [
     label: "Has Value",
     value: "hasValue",
     description: "The component Holds Any Value",
-    valuePlaceholder: "Type a value the Component does have",
   },
   {
     label: "Does Not Have Value",
     value: "doesNotHaveValue",
     description: "The Component Is Empty Or Uninitialized",
-    valuePlaceholder: "Type a value the Component does not have",
   },
   {
     label: "Equal To",
