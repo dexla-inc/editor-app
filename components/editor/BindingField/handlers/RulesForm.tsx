@@ -8,7 +8,9 @@ import {
   AccordionControlProps,
   ActionIcon,
   Box,
+  Button,
   Flex,
+  Group,
   MultiSelect,
   SegmentedControl,
   Stack,
@@ -58,6 +60,27 @@ export const RulesForm = () => {
         const { valuePlaceholder } =
           logicalRulesData.find((item) => item.value === rule.rule) ?? {};
 
+        const onSetSelectedLocation = (selectedItem: string) =>
+          form.setFieldValue(`rules.${index}.location`, selectedItem);
+
+        const onResetLocation = () =>
+          form.setFieldValue(`rules.${index}.location`, null);
+
+        const onSelectLogicalRule = (selectedRule: string) => {
+          if (
+            ["equalToMultiple", "notEqualToMultiple"].includes(selectedRule!)
+          ) {
+            if (!Array.isArray(rule.value)) {
+              form.setFieldValue(`rules.${index}.value`, []);
+            }
+          } else {
+            if (typeof rule.value !== "string") {
+              form.setFieldValue(`rules.${index}.value`, "");
+            }
+          }
+          form.setFieldValue(`rules.${index}.rule`, selectedRule);
+        };
+
         return (
           <Accordion
             key={index}
@@ -76,25 +99,24 @@ export const RulesForm = () => {
               </AccordionControl>
               <Accordion.Panel>
                 <Flex direction="column" gap={10}>
-                  <BindingContextSelector setSelectedItem={console.log} />
+                  {isEmpty(rule.location) && (
+                    <BindingContextSelector
+                      setSelectedItem={onSetSelectedLocation}
+                    />
+                  )}
+                  {isEmpty(rule.location) || (
+                    <Group>
+                      <Text size="xs" weight="bold">
+                        {extractContextAndAttributes(rule.location)}
+                      </Text>
+                      <Button variant="default" onClick={onResetLocation}>
+                        Edit
+                      </Button>
+                    </Group>
+                  )}
                   <SelectLogicalRules
                     {...form.getInputProps(`rules.${index}.rule`)}
-                    onChange={(selectedRule) => {
-                      if (
-                        ["equalToMultiple", "notEqualToMultiple"].includes(
-                          selectedRule!,
-                        )
-                      ) {
-                        if (!Array.isArray(rule.value)) {
-                          form.setFieldValue(`rules.${index}.value`, []);
-                        }
-                      } else {
-                        if (typeof rule.value !== "string") {
-                          form.setFieldValue(`rules.${index}.value`, "");
-                        }
-                      }
-                      form.setFieldValue(`rules.${index}.rule`, selectedRule);
-                    }}
+                    onChange={onSelectLogicalRule}
                   />
                   {isRuleMultiple || (
                     <TextInput
@@ -107,14 +129,11 @@ export const RulesForm = () => {
                     <MultiSelect
                       label="Value"
                       placeholder={valuePlaceholder}
-                      value={rule.value as string[]}
                       data={rule.value as string[]}
                       searchable
                       creatable
                       getCreateLabel={(query) => `+ Create ${query}`}
-                      onChange={(val) => {
-                        form.setFieldValue(`rules.${index}.value`, val);
-                      }}
+                      {...form.getInputProps(`rules.${index}.value`)}
                       onCreate={(query) => {
                         const item = { value: query, label: query };
                         form.setFieldValue(`rules.${index}.value`, [
@@ -126,6 +145,7 @@ export const RulesForm = () => {
                     />
                   )}
                   <Field
+                    withAsterisk
                     label="Result"
                     {...form.getInputProps(`rules.${index}.result`)}
                   />
@@ -171,4 +191,33 @@ function AccordionControl(
       </ActionIcon>
     </Box>
   );
+}
+
+function extractContextAndAttributes(input: string) {
+  const regex = /(\w+)\[\/\* (.*?) \*\/ '.*?'\](.*)|(\w+)\['(.*?)'\](.*)/;
+  const match = input.match(regex);
+
+  if (match) {
+    if (match[1]) {
+      // Case with comments
+      const keyword = match[1]; // The keyword (e.g., variables, auth, or any other word)
+      const comment = match[2]; // The comment inside the /* ... */ block
+      const attributes = match[3]; // The remaining part of the string after the key
+
+      const formattedAttributes = attributes.replace(/\['.*?'\]/, ""); // Remove any additional keys in square brackets
+
+      return `${keyword.charAt(0).toUpperCase() + keyword.slice(1)} - ${comment.charAt(0).toUpperCase() + comment.slice(1)}${formattedAttributes}`;
+    } else if (match[4]) {
+      // Case without comments
+      const keyword = match[4]; // The keyword (e.g., variables, auth, or any other word)
+      const comment = match[5]; // The key inside the brackets
+      const attributes = match[6]; // The remaining part of the string after the key
+
+      const formattedAttributes = attributes.replace(/\['.*?'\]/, ""); // Remove any additional keys in square brackets
+
+      return `${keyword.charAt(0).toUpperCase() + keyword.slice(1)} - ${comment.charAt(0).toUpperCase() + comment.slice(1)}${formattedAttributes}`;
+    }
+  } else {
+    return "Invalid input format";
+  }
 }

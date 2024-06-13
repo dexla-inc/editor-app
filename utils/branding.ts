@@ -201,10 +201,10 @@ const BUTTON_HOVER = isDarkTheme ? theme.colors.dark[6] : HOVERED;
 const BORDER = isDarkTheme ? THIN_DARK_OUTLINE : THIN_GRAY_OUTLINE;
 export const BG_RULES_GROUP = isDarkTheme
   ? theme.colors.dark[8]
-  : theme.colors.gray[8];
+  : theme.colors.gray[1];
 export const BG_RULE = isDarkTheme
   ? theme.colors.dark[6]
-  : theme.colors.gray[6];
+  : theme.colors.gray[3];
 export const BG_LOCATION = isDarkTheme
   ? theme.colors.dark[7]
   : theme.colors.gray[7];
