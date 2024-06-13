@@ -11,6 +11,8 @@ import { pick } from "next/dist/lib/pick";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useOldRouter } from "@/hooks/data/useOldRouter";
 import { useDataTransformers } from "@/hooks/data/useDataTransformers";
+import isEmpty from "lodash.isempty";
+import isEqual from "lodash.isequal";
 
 type NextRouterKeys = any;
 type RecordStringAny = Record<string, any>;
@@ -45,7 +47,8 @@ const findValuePropsPaths = (obj: any, prefix = ""): string[] => {
         "dataType" in obj[key] ||
         "boundCode" in obj[key] ||
         "dynamic" in obj[key] ||
-        "static" in obj[key]
+        "static" in obj[key] ||
+        "rules" in obj[key]
       ) {
         paths.push(fullPath);
       } else {
@@ -54,6 +57,24 @@ const findValuePropsPaths = (obj: any, prefix = ""): string[] => {
     }
   });
   return paths;
+};
+
+// TEST
+
+const ruleFunctions: any = {
+  hasValue: (location: any) => !isEmpty(location),
+  doesNotHaveValue: (location: any) => isEmpty(location),
+  equalTo: (location: any, comparingValue: any) => location === comparingValue,
+  notEqualTo: (location: any, comparingValue: any) =>
+    location !== comparingValue,
+  contains: (location: any, comparingValue: any) =>
+    location.includes(comparingValue),
+  notContains: (location: any, comparingValue: any) =>
+    !location.includes(comparingValue),
+  equalToMultiple: (location: any, comparingValue: any) =>
+    isEqual(location, comparingValue),
+  notEqualToMultiple: (location: any, comparingValue: any) =>
+    isEqual(location, comparingValue),
 };
 
 export const useComputeValue = ({
@@ -276,9 +297,9 @@ export const useComputeValue = ({
         }
       },
       rules: (fieldValue: ValueProps) => {
-        // console.log("rules", fieldValue);
-
-        return;
+        console.log("rules", fieldValue);
+        const result = evaluateConditions(fieldValue.rules);
+        return result;
       },
     }),
     [shareableContent, transformBoundCode],
@@ -307,4 +328,50 @@ export const useComputeValue = ({
 
 function extractKeysFromPattern(pattern: RegExp, boundCode: any) {
   return [...boundCode.matchAll(pattern)].map((match) => match[1]);
+}
+
+function evaluateCondition(condition: any) {
+  let overallResult = null;
+
+  const { conditions: rules, result } = condition;
+
+  for (let i = 0; i < rules?.length; i++) {
+    let { value, rule, location, operator } = rules[i];
+    location = autoRunJavascriptCode(`return ${location}`);
+
+    // Evaluate the rule
+    const ruleFunction = ruleFunctions[rule];
+    if (!ruleFunction) {
+      throw new Error(`Unknown rule: ${rule}`);
+    }
+    const ruleResult = ruleFunction(location, value);
+
+    if (i === 0) {
+      // Initialize overallResult with the first rule's result
+      overallResult = ruleResult;
+    } else {
+      // Apply the previous operator with the previous overallResult
+      const prevOperator = rules[i - 1].operator;
+      if (prevOperator === "and") {
+        overallResult = overallResult && ruleResult;
+      } else if (prevOperator === "or") {
+        overallResult = overallResult || ruleResult;
+      } else {
+        // throw new Error(`Unknown operator: ${prevOperator}`);
+      }
+    }
+  }
+
+  return overallResult ? result : null;
+}
+
+// Function to evaluate all conditions
+function evaluateConditions(conditions: any) {
+  for (const condition of conditions) {
+    const conditionResult = evaluateCondition(condition);
+    if (conditionResult) {
+      return conditionResult;
+    }
+  }
+  return null;
 }
