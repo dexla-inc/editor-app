@@ -28,6 +28,11 @@ const InputComponent = forwardRef(
     const isPreviewMode = useEditorTreeStore(
       useShallow((state) => state.isPreviewMode || state.isLive),
     );
+    const patterns = {
+      all: /^[\s\S]*$/,
+      numbers: /^\d*$/,
+      alphabets: /^[a-zA-Z\s]*$/,
+    };
     const {
       children,
       type,
@@ -38,6 +43,7 @@ const InputComponent = forwardRef(
       bg,
       textColor,
       size,
+      pattern,
       passwordRange,
       passwordNumber,
       passwordLower,
@@ -108,6 +114,16 @@ const InputComponent = forwardRef(
       setValue(newValue);
       if (onChange) {
         onChange(e);
+      }
+    };
+
+    const onKeyDown = (e: any) => {
+      const isPrintable = e.key.match(/\S/);
+      if (
+        isPrintable &&
+        !patterns[pattern as keyof typeof patterns].test(e.key)
+      ) {
+        e.preventDefault();
       }
     };
 
@@ -199,11 +215,7 @@ const InputComponent = forwardRef(
             rightSection={loading ? <InputLoader /> : null}
             label={undefined}
             wrapperProps={{ "data-id": id }}
-            onKeyDown={(e) => {
-              if (!/[0-9]/.test(e.key)) {
-                e.preventDefault();
-              }
-            }}
+            onKeyDown={onKeyDown}
           />
         ) : type === "password" ? (
           <PasswordInput
@@ -247,6 +259,7 @@ const InputComponent = forwardRef(
             value={value}
             {...restTriggers}
             onChange={handleChange}
+            onKeyDown={onKeyDown}
             rightSection={
               loading ? (
                 <InputLoader />
