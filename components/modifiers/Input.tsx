@@ -37,8 +37,7 @@ const Modifier = withModifier(({ selectedComponent }) => {
         passwordSpecial: selectedComponent?.props?.passwordSpecial,
         bg: selectedComponent?.props?.bg,
         hideControls: selectedComponent?.props?.hideControls ?? false,
-        addMaxLength: selectedComponent?.props?.addMaxLength ?? false,
-        maxLength: selectedComponent?.props?.maxLength ?? 10,
+        maxLength: selectedComponent?.props?.maxLength,
         pattern: selectedComponent?.props?.pattern,
       }),
     );
@@ -102,19 +101,13 @@ const Modifier = withModifier(({ selectedComponent }) => {
               ]}
               onChange={(value) => onChange("pattern", value)}
             />
-            <SegmentedControlYesNo
-              label="Add Max Length"
-              {...form.getInputProps("addMaxLength")}
-              onChange={(value) => onChange("addMaxLength", value)}
+            <NumberInput
+              label="Max Length"
+              min={0}
+              hideControls
+              {...form.getInputProps("maxLength")}
+              onChange={(value) => onChange("maxLength", value)}
             />
-            {form.values.addMaxLength && (
-              <NumberInput
-                label="Max Length"
-                min={0}
-                {...form.getInputProps("maxLength")}
-                onChange={(value) => onChange("maxLength", value)}
-              />
-            )}
           </>
         )}
         <SegmentedControlYesNo

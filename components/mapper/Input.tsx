@@ -20,7 +20,6 @@ import { forwardRef, memo } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useInputValue } from "@/hooks/components/useInputValue";
 import { useShallow } from "zustand/react/shallow";
-import { constraints } from "@/utils/branding";
 
 type Props = EditableComponentMapper & NumberInputProps & TextInputProps;
 
@@ -29,6 +28,11 @@ const InputComponent = forwardRef(
     const isPreviewMode = useEditorTreeStore(
       useShallow((state) => state.isPreviewMode || state.isLive),
     );
+    const patterns = {
+      all: /^[\s\S]*$/,
+      numbers: /^\d*$/,
+      alphabets: /^[a-zA-Z\s]*$/,
+    };
     const {
       children,
       type,
@@ -39,9 +43,7 @@ const InputComponent = forwardRef(
       bg,
       textColor,
       size,
-      maxLength,
-      pattern = "all",
-      addMaxLength,
+      pattern,
       passwordRange,
       passwordNumber,
       passwordLower,
@@ -119,9 +121,7 @@ const InputComponent = forwardRef(
       const isPrintable = e.key.match(/\S/);
       if (
         isPrintable &&
-        !constraints.patterns[
-          pattern as keyof typeof constraints.patterns
-        ].test(e.key)
+        !patterns[pattern as keyof typeof patterns].test(e.key)
       ) {
         e.preventDefault();
       }
@@ -246,7 +246,6 @@ const InputComponent = forwardRef(
             {...props}
             {...componentProps}
             ref={ref}
-            {...constraints.charLimit(component.props)}
             icon={iconName ? <Icon name={iconName} /> : null}
             style={{}}
             styles={{
