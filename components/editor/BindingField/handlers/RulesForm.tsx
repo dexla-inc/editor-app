@@ -56,6 +56,9 @@ export const RulesForm = () => {
           "equalToMultiple",
           "notEqualToMultiple",
         ].includes(rule.rule);
+        const isRuleValueCheck = ["hasValue", "doesNotHaveValue"].includes(
+          rule.rule,
+        );
 
         const { valuePlaceholder } =
           logicalRulesData.find((item) => item.value === rule.rule) ?? {};
@@ -118,7 +121,7 @@ export const RulesForm = () => {
                     {...form.getInputProps(`rules.${index}.rule`)}
                     onChange={onSelectLogicalRule}
                   />
-                  {isRuleMultiple || (
+                  {!isRuleMultiple && !isRuleValueCheck && (
                     <TextInput
                       label="Value"
                       placeholder={valuePlaceholder}
@@ -165,7 +168,7 @@ export const RulesForm = () => {
                       onChange={(op) => {
                         form.setFieldValue(`rules.${index}.operator`, op);
                         if (form.values.rules.length - 1 === index) {
-                          form.insertListItem("rules", [{}]);
+                          form.insertListItem("rules", {});
                         }
                       }}
                     />
