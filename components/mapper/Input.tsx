@@ -116,9 +116,9 @@ const InputComponent = forwardRef(
     };
 
     const onKeyDown = (e: any) => {
-      const isDeletionKeys = ["Backspace", "Delete"].includes(e.key);
+      const isPrintable = e.key.match(/\S/);
       if (
-        !isDeletionKeys &&
+        isPrintable &&
         !constraints.patterns[
           pattern as keyof typeof constraints.patterns
         ].test(e.key)
