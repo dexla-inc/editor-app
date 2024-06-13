@@ -9,6 +9,7 @@ import {
   ActionIcon,
   Box,
   Button,
+  Divider,
   Flex,
   Group,
   MultiSelect,
@@ -30,7 +31,9 @@ import { cloneObject } from "@/utils/common";
 
 export const RulesForm = () => {
   const { fieldType, value, onChange } = useBindingField();
-  const rules = (isEmpty(value.rules) ? [{}] : value.rules) as RuleProps[];
+  const rules = (
+    isEmpty(value.rules) ? [{ conditions: [{}] }] : value.rules
+  ) as RuleProps[];
 
   const form = useForm({
     initialValues: {
@@ -51,128 +54,180 @@ export const RulesForm = () => {
   const Field = ComponentToBindField[fieldType];
   return (
     <Stack style={{ background: BG_RULES_GROUP }} px={20} py={30}>
-      {form.values.rules.map((rule, index) => {
-        const isRuleMultiple = [
-          "equalToMultiple",
-          "notEqualToMultiple",
-        ].includes(rule.rule);
-        const isRuleValueCheck = ["hasValue", "doesNotHaveValue"].includes(
-          rule.rule,
-        );
-
-        const { valuePlaceholder } =
-          logicalRulesData.find((item) => item.value === rule.rule) ?? {};
-
-        const onSetSelectedLocation = (selectedItem: string) =>
-          form.setFieldValue(`rules.${index}.location`, selectedItem);
-
-        const onResetLocation = () =>
-          form.setFieldValue(`rules.${index}.location`, null);
-
-        const onSelectLogicalRule = (selectedRule: string) => {
-          if (
-            ["equalToMultiple", "notEqualToMultiple"].includes(selectedRule!)
-          ) {
-            if (!Array.isArray(rule.value)) {
-              form.setFieldValue(`rules.${index}.value`, []);
-            }
-          } else {
-            if (typeof rule.value !== "string") {
-              form.setFieldValue(`rules.${index}.value`, "");
-            }
-          }
-          form.setFieldValue(`rules.${index}.rule`, selectedRule);
-        };
-
+      {form.values.rules.map((rule, ruleIndex) => {
         return (
           <Accordion
-            key={index}
+            key={ruleIndex}
             transitionDuration={300}
             defaultValue={["item-0"]}
             multiple
             bg={BG_RULE}
           >
-            <Accordion.Item value={`item-${index}`}>
+            <Accordion.Item value={`item-${ruleIndex}`}>
               <AccordionControl
-                onClickDelete={() => form.removeListItem("rules", index)}
+                onClickDelete={() => form.removeListItem("rules", ruleIndex)}
               >
                 <Text size={15} weight="bold">
-                  Rule {`${index + 1}`}
+                  Rule {`${ruleIndex + 1}`}
                 </Text>
               </AccordionControl>
               <Accordion.Panel>
                 <Flex direction="column" gap={10}>
-                  {isEmpty(rule.location) && (
-                    <BindingContextSelector
-                      setSelectedItem={onSetSelectedLocation}
-                    />
-                  )}
-                  {isEmpty(rule.location) || (
-                    <Group>
-                      <Text size="xs" weight="bold">
-                        {extractContextAndAttributes(rule.location)}
-                      </Text>
-                      <Button variant="default" onClick={onResetLocation}>
-                        Edit
-                      </Button>
-                    </Group>
-                  )}
-                  <SelectLogicalRules
-                    {...form.getInputProps(`rules.${index}.rule`)}
-                    onChange={onSelectLogicalRule}
-                  />
-                  {!isRuleMultiple && !isRuleValueCheck && (
-                    <TextInput
-                      label="Value"
-                      placeholder={valuePlaceholder}
-                      {...form.getInputProps(`rules.${index}.value`)}
-                    />
-                  )}
-                  {isRuleMultiple && (
-                    <MultiSelect
-                      label="Value"
-                      placeholder={valuePlaceholder}
-                      data={rule.value as string[]}
-                      searchable
-                      creatable
-                      getCreateLabel={(query) => `+ Create ${query}`}
-                      {...form.getInputProps(`rules.${index}.value`)}
-                      onCreate={(query) => {
-                        const item = { value: query, label: query };
-                        form.setFieldValue(`rules.${index}.value`, [
-                          ...rule.value,
-                          item,
-                        ]);
-                        return item;
-                      }}
-                    />
-                  )}
+                  {rule.conditions.map((condition, conditionIndex) => {
+                    const isRuleMultiple = [
+                      "equalToMultiple",
+                      "notEqualToMultiple",
+                    ].includes(condition.rule);
+                    const isRuleValueCheck = [
+                      "hasValue",
+                      "doesNotHaveValue",
+                    ].includes(condition.rule);
+
+                    const { valuePlaceholder } =
+                      logicalRulesData.find(
+                        (item) => item.value === condition.rule,
+                      ) ?? {};
+
+                    const onSetSelectedLocation = (selectedItem: string) =>
+                      form.setFieldValue(
+                        `rules.${ruleIndex}.conditions.${conditionIndex}.location`,
+                        selectedItem,
+                      );
+
+                    const onResetLocation = () =>
+                      form.setFieldValue(
+                        `rules.${ruleIndex}.conditions.${conditionIndex}.location`,
+                        undefined,
+                      );
+
+                    const onSelectLogicalRule = (selectedRule: string) => {
+                      if (
+                        ["equalToMultiple", "notEqualToMultiple"].includes(
+                          selectedRule!,
+                        )
+                      ) {
+                        if (!Array.isArray(condition.value)) {
+                          form.setFieldValue(
+                            `rules.${ruleIndex}.conditions.${conditionIndex}.value`,
+                            [],
+                          );
+                        }
+                      } else {
+                        if (typeof condition.value !== "string") {
+                          form.setFieldValue(
+                            `rules.${ruleIndex}.conditions.${conditionIndex}.value`,
+                            "",
+                          );
+                        }
+                      }
+                      form.setFieldValue(
+                        `rules.${ruleIndex}.conditions.${conditionIndex}.rule`,
+                        selectedRule,
+                      );
+                    };
+
+                    return (
+                      <>
+                        {isEmpty(condition.location) && (
+                          <BindingContextSelector
+                            setSelectedItem={onSetSelectedLocation}
+                          />
+                        )}
+                        {isEmpty(condition.location) || (
+                          <Group>
+                            <Text size="xs" weight="bold">
+                              {extractContextAndAttributes(condition.location)}
+                            </Text>
+                            <Button variant="default" onClick={onResetLocation}>
+                              Edit
+                            </Button>
+                          </Group>
+                        )}
+                        <SelectLogicalRules
+                          {...form.getInputProps(
+                            `rules.${ruleIndex}.conditions.${conditionIndex}.rule`,
+                          )}
+                          onChange={onSelectLogicalRule}
+                        />
+                        {!isRuleMultiple && !isRuleValueCheck && (
+                          <TextInput
+                            label="Value"
+                            placeholder={valuePlaceholder}
+                            {...form.getInputProps(
+                              `rules.${ruleIndex}.conditions.${conditionIndex}.value`,
+                            )}
+                          />
+                        )}
+                        {isRuleMultiple && (
+                          <MultiSelect
+                            label="Value"
+                            placeholder={valuePlaceholder}
+                            data={condition.value as string[]}
+                            searchable
+                            creatable
+                            getCreateLabel={(query) => `+ Create ${query}`}
+                            {...form.getInputProps(
+                              `rules.${ruleIndex}.conditions.${conditionIndex}.value`,
+                            )}
+                            onCreate={(query) => {
+                              const item = { value: query, label: query };
+                              form.setFieldValue(
+                                `rules.${ruleIndex}.conditions.${conditionIndex}.value`,
+                                [...condition.value, item],
+                              );
+                              return item;
+                            }}
+                          />
+                        )}
+                        <Stack>
+                          <TopLabel text="Addional Logic?" />
+                          <SegmentedControl
+                            w="50%"
+                            defaultValue="-"
+                            data={[
+                              ...[
+                                { label: "AND", value: "and" },
+                                { label: "OR", value: "or" },
+                              ],
+                              ...(!condition.operator
+                                ? [{ label: "-", value: "-" }]
+                                : []),
+                            ]}
+                            {...form.getInputProps(
+                              `rules.${ruleIndex}.conditions.${conditionIndex}.operator`,
+                            )}
+                            onChange={(op) => {
+                              form.setFieldValue(
+                                `rules.${ruleIndex}.conditions.${conditionIndex}.operator`,
+                                op,
+                              );
+                              if (form.values.rules.length - 1 === ruleIndex) {
+                                form.insertListItem(
+                                  `rules.${ruleIndex}.conditions`,
+                                  {},
+                                );
+                              }
+                            }}
+                          />
+                          <Divider />
+                        </Stack>
+                      </>
+                    );
+                  })}
+
                   <Field
                     withAsterisk
                     label="Result"
-                    {...form.getInputProps(`rules.${index}.result`)}
+                    {...form.getInputProps(`rules.${ruleIndex}.result`)}
                   />
-                  <Stack>
-                    <TopLabel text="Addional Logic?" />
-                    <SegmentedControl
-                      w="50%"
-                      defaultValue="-"
-                      data={[
-                        ...[
-                          { label: "AND", value: "and" },
-                          { label: "OR", value: "or" },
-                        ],
-                        ...(!rule.operator ? [{ label: "-", value: "-" }] : []),
-                      ]}
-                      {...form.getInputProps(`rules.${index}.operator`)}
-                      onChange={(op) => {
-                        form.setFieldValue(`rules.${index}.operator`, op);
-                        if (form.values.rules.length - 1 === index) {
-                          form.insertListItem("rules", {});
-                        }
-                      }}
-                    />
-                  </Stack>
+
+                  <Button
+                    onClick={() =>
+                      form.insertListItem("rules", { conditions: [{}] })
+                    }
+                  >
+                    Add rule
+                  </Button>
                 </Flex>
               </Accordion.Panel>
             </Accordion.Item>
