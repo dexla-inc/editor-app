@@ -198,7 +198,7 @@ export interface ChangeStepAction extends BaseAction {
 
 export interface ChangeLanguageAction extends BaseAction {
   name: "changeLanguage";
-  language: "default" | "french";
+  language: ValueProps;
 }
 
 export interface CustomJavascriptAction extends BaseAction {
@@ -344,10 +344,13 @@ export const useShowNotificationAction = async ({
   const showNotification = useThemeStore.getState().showNotification;
   const color = getColorFromTheme(theme, action.color);
 
+  const title = String(computeValue<string>({ value: action.title }));
+  const message = String(computeValue<string>({ value: action.message }));
+
   return showNotification({
-    title: String(computeValue<string>({ value: action.title })),
-    message: String(computeValue<string>({ value: action.message })),
-    color: color,
+    title,
+    message,
+    color,
   });
 };
 
@@ -529,8 +532,8 @@ export function constructHeaders(
     ...(Authorization
       ? { Authorization }
       : authHeaderKey
-      ? { Authorization: authHeaderKey }
-      : {}),
+        ? { Authorization: authHeaderKey }
+        : {}),
   };
 }
 
@@ -623,8 +626,9 @@ export const useApiCallAction = async (
   const endpoint = endpointResults?.find((e) => e.id === action.endpoint)!;
 
   try {
-    const accessToken = useDataSourceStore.getState().getAuthState(projectId)
-      ?.accessToken;
+    const accessToken = useDataSourceStore
+      .getState()
+      .getAuthState(projectId)?.accessToken;
 
     const { url, header, body } = prepareRequestData(
       action,
@@ -690,9 +694,11 @@ export const useApiCallAction = async (
 
 export const useChangeLanguageAction = ({
   action,
+  computeValue,
 }: ChangeLanguageActionParams) => {
-  const setLanguage = useEditorStore.getState().setLanguage;
-  setLanguage(action.language);
+  const setLanguage = useEditorTreeStore.getState().setLanguage;
+  const language = computeValue({ value: action.language });
+  setLanguage(language as string);
 };
 
 // IMPORTANT: do not delete the variable data as it is used in the eval

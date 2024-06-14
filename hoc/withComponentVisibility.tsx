@@ -28,7 +28,7 @@ export const withComponentVisibility = <T extends Record<string, any>>(
       shareableContent,
     });
 
-    if (!computedOnLoad.isVisible) {
+    if (computedOnLoad.isVisible === false) {
       return null;
     }
 

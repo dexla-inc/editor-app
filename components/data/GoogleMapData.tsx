@@ -1,7 +1,6 @@
 import { FormFieldsBuilder } from "@/components/data/forms/FormFieldsBuilder";
-import { DataProps } from "@/types/dataBinding";
+import { DataProps, FieldType } from "@/types/dataBinding";
 import { Stack } from "@mantine/core";
-import { FieldType } from "./forms/StaticFormFieldsBuilder";
 
 export const GoogleMapData = ({ component, endpoints }: DataProps) => {
   const fieldsGroup = {

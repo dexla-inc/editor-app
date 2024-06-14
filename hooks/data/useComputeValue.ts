@@ -4,13 +4,14 @@ import { useCallback, useMemo } from "react";
 import get from "lodash.get";
 import { ValueProps } from "@/types/dataBinding";
 import set from "lodash.set";
-import { cloneObject, safeJsonParse } from "@/utils/common";
+import { cloneObject, emptyObject, safeJsonParse } from "@/utils/common";
 import { useInputsStore } from "@/stores/inputs";
 import { useShallow } from "zustand/react/shallow";
 import { pick } from "next/dist/lib/pick";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useOldRouter } from "@/hooks/data/useOldRouter";
 import { useDataTransformers } from "@/hooks/data/useDataTransformers";
+import has from "lodash.has";
 
 type NextRouterKeys = any;
 type RecordStringAny = Record<string, any>;
@@ -18,8 +19,9 @@ type RecordStringAny = Record<string, any>;
 const variablePattern = /variables\[\s*(?:\/\*[\s\S]*?\*\/\s*)?'(.*?)'\s*\]/g;
 const componentPattern = /components\[\s*(?:\/\*[\s\S]*?\*\/\s*)?'(.*?)'\s*\]/g;
 const actionPattern = /actions\[\s*(?:\/\*[\s\S]*?\*\/\s*)?'(.*?)'\s*\]/g;
-const browserPattern = /browser\[\s*(?:\/\*[\s\S]*?\*\/\s*)?'(.*?)'\s*\]/g;
-const authPattern = /auth\[\s*(?:\/\*[\s\S]*?\*\/\s*)?'(.*?)'\s*\]/g;
+const browserPattern = /others\['browser'\]\.(.*)/g;
+const authPattern = /others\['auth'\]\.(.*)/g;
+const otherPattern = /others\[\s*(?:\/\*[\s\S]*?\*\/\s*)?'(.*?)'\s*\]/g;
 const itemPattern = /item\[\s*(?:\/\*[\s\S]*?\*\/\s*)?'(.*?)'\s*\]/g;
 
 type UseComputeValue = {
@@ -77,12 +79,14 @@ export const useComputeValue = ({
     browserKeys,
     authKeys,
     itemKeys,
+    otherKeys,
   } = useMemo(() => {
     const variableKeys: any[] = [];
     const componentKeys: any[] = [];
     const actionKeys: any[] = [];
     const browserKeys: NextRouterKeys[] = [];
     const authKeys: any[] = [];
+    const otherKeys: any[] = [];
     const itemKeys: any[] = [];
 
     const patterns = [
@@ -91,6 +95,7 @@ export const useComputeValue = ({
       { pattern: actionPattern, keys: actionKeys },
       { pattern: browserPattern, keys: browserKeys },
       { pattern: authPattern, keys: authKeys },
+      { pattern: otherPattern, keys: otherKeys },
       { pattern: itemPattern, keys: itemKeys },
     ];
 
@@ -110,6 +115,7 @@ export const useComputeValue = ({
       browserKeys: [...new Set(browserKeys)],
       authKeys: [...new Set(authKeys)],
       itemKeys: [...new Set(itemKeys)],
+      otherKeys: [...new Set(otherKeys)],
     };
   }, [onLoad, valuePropsPaths]);
 
@@ -150,6 +156,7 @@ export const useComputeValue = ({
   ) as RecordStringAny;
 
   const projectId = useEditorTreeStore.getState().currentProjectId as string;
+  const language = useEditorTreeStore((state) => state.language);
 
   const auth = useDataSourceStore(
     useShallow((state) =>
@@ -157,7 +164,7 @@ export const useComputeValue = ({
         (acc, key) => ({
           ...acc,
           // @ts-ignore
-          [key]: state.getAuthState(projectId)?.[key] || {},
+          [key]: state.getAuthState(projectId) || {},
         }),
         {},
       ),
@@ -167,7 +174,7 @@ export const useComputeValue = ({
   const browserValues: any = useMemo(() => {
     return browserKeys.reduce(
       // @ts-ignore
-      (acc, key) => ({ ...acc, [key]: browser[key] }),
+      (acc, key) => ({ ...acc, [key]: browser }),
       {},
     );
   }, [browser, browserKeys]);
@@ -175,6 +182,12 @@ export const useComputeValue = ({
   const itemValues: any = itemKeys.reduce(
     (acc, key) => ({ ...acc, [key]: JSON.stringify(item[key]) }),
     {},
+  );
+
+  const otherValues = useEditorTreeStore(
+    useShallow((state) => {
+      return otherKeys.reduce((acc, key) => ({ ...acc, [key]: state }), {});
+    }),
   );
 
   const transformBoundCode = useCallback(
@@ -210,25 +223,21 @@ export const useComputeValue = ({
       });
 
       browserKeys.forEach((key: NextRouterKeys) => {
-        const regex = new RegExp(
-          `browser\\[(\\/\\* [\\S\\s]* \\*\\/)?\\s?'${key}'\\]`,
-          "g",
-        );
-        let replacer = browserValues[key];
-        replacer =
-          typeof replacer !== "string" ? JSON.stringify(replacer) : replacer;
-        result = result.replaceAll(regex, replacer);
+        const regex = new RegExp(`others\\['browser'\\]\\.${key}`, "g");
+        result = result.replaceAll(regex, `'${browserValues[key]}'`);
       });
 
       authKeys.forEach((key) => {
+        const regex = new RegExp(`others\\['auth'\\]\\.${key}`, "g");
+        result = result.replaceAll(regex, `'${auth[key]}'`);
+      });
+
+      otherKeys.forEach((key) => {
         const regex = new RegExp(
-          `auth\\[(\\/\\* [\\S\\s]* \\*\\/)?\\s?'${key}'\\]`,
+          `others\\[(\\/\\* [\\S\\s]* \\*\\/)?\\s?'${key}'\\]`,
           "g",
         );
-        let replacer = auth[key];
-        replacer =
-          typeof replacer !== "string" ? JSON.stringify(replacer) : replacer;
-        result = result.replaceAll(regex, replacer);
+        result = result.replaceAll(regex, `'${otherValues[key]}'`);
       });
 
       itemKeys.forEach((key) => {
@@ -256,6 +265,8 @@ export const useComputeValue = ({
       variables,
       itemKeys,
       itemValues,
+      otherKeys,
+      otherValues,
     ],
   );
 
@@ -265,7 +276,17 @@ export const useComputeValue = ({
         return get(shareableContent, `data.${fieldValue?.dynamic}`);
       },
       static: (fieldValue: ValueProps) => {
-        return fieldValue?.static ?? undefined;
+        const staticValue = fieldValue?.static;
+        const value = !has(staticValue, language)
+          ? !has(staticValue, "en")
+            ? emptyObject(staticValue)
+              ? undefined
+              : staticValue
+            : // @ts-ignore
+              staticValue?.en
+          : staticValue?.[language];
+
+        return value;
       },
       boundCode: (fieldValue: ValueProps) => {
         try {
@@ -276,7 +297,7 @@ export const useComputeValue = ({
         }
       },
     }),
-    [shareableContent, transformBoundCode],
+    [shareableContent, transformBoundCode, language],
   );
 
   return useMemo(

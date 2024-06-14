@@ -33,11 +33,13 @@ const CountdownButtonComponent = forwardRef(
       loading,
       textColor,
       variable,
-      duration,
       ...componentProps
     } = component.props as any;
-    const { children: childrenValue } = component.onLoad;
-
+    const {
+      children: childrenValue = component.props?.children,
+      duration = component.props?.duration,
+    } = component.onLoad;
+    console.log({ childrenValue, ...component.props });
     const durationUnitAndValue = splitValueAndUnit(duration);
     const durationValue = durationUnitAndValue ? durationUnitAndValue[0] : 30;
     const durationUnit = durationUnitAndValue
@@ -110,8 +112,7 @@ const CountdownButtonComponent = forwardRef(
         styles={{ root: DISABLED_HOVER }}
         ref={ref}
       >
-        {String(childrenValue)}{" "}
-        {count > 0 ? ` in ${count} ${durationUnit}` : ""}
+        {String(childrenValue)} {count > 0 ? ` ${count} ${durationUnit}` : ""}
       </MantineButton>
     );
   },

@@ -1,6 +1,6 @@
 import { ComponentToBindWrapper } from "@/components/ComponentToBindWrapper";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
-import { ValueProps } from "@/types/dataBinding";
+import { FieldType, ValueProps } from "@/types/dataBinding";
 import {
   Button,
   Flex,
@@ -17,10 +17,11 @@ import {
 import { MonacoEditorJson } from "./MonacoEditorJson";
 import { SegmentedControlYesNo } from "./SegmentedControlYesNo";
 import { TopLabel } from "./TopLabel";
-import { FieldType } from "./data/forms/StaticFormFieldsBuilder";
 import { SegmentedControlInput } from "./SegmentedControlInput";
 import { Icon } from "@/components/Icon";
 import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
+import { useEditorTreeStore } from "@/stores/editorTree";
+import merge from "lodash.merge";
 
 // Need to extend input props depending on fieldType
 type BaseProps = {
@@ -32,6 +33,7 @@ type BaseProps = {
   defaultValue?: any;
   decimalPlaces?: number;
   isPageAction?: boolean;
+  isTranslatable?: boolean;
   useTrueOrFalseStrings?: boolean;
   form?: any;
 };
@@ -40,10 +42,10 @@ type BaseProps = {
 type ExtendedPropsByFieldType<T> = T extends "text"
   ? Omit<TextInputProps, "onChange" | "value">
   : T extends "number"
-  ? Omit<NumberInputProps, "onChange" | "value">
-  : T extends "boolean"
-  ? Omit<SegmentedControlProps, "onChange" | "value">
-  : {};
+    ? Omit<NumberInputProps, "onChange" | "value">
+    : T extends "boolean"
+      ? Omit<SegmentedControlProps, "onChange" | "value">
+      : {};
 
 // Define the component props type using a generic parameter for fieldType
 type ComponentToBindFromInputProps<T extends FieldType | undefined> =
@@ -57,12 +59,27 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
   fieldType = "text",
   decimalPlaces,
   isPageAction,
+  isTranslatable = false,
   form,
   ...props
 }: ComponentToBindFromInputProps<T>) => {
+  const language = useEditorTreeStore((state) => state.language);
+
   const commonProps = {
     ...AUTOCOMPLETE_OFF_PROPS,
     ...props,
+  };
+  const staticValue = isTranslatable
+    ? value?.static?.[language]
+    : value?.static;
+
+  const customOnChange = <T extends unknown>(val: T) => {
+    const newValue = merge(value, {
+      dataType: "static",
+      static: isTranslatable ? { [language]: val } : val,
+    });
+
+    onChange(newValue);
   };
 
   return (
@@ -75,14 +92,8 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
       {["number", "integer"].includes(fieldType) ? (
         <NumberInput
           placeholder={placeholder}
-          value={value?.static ? parseFloatExtension(value?.static) : ""}
-          onChange={(val) =>
-            onChange({
-              ...value,
-              dataType: "static",
-              static: val.toString(),
-            })
-          }
+          value={staticValue ? parseFloatExtension(staticValue) : ""}
+          onChange={(val) => customOnChange<string>(val.toString())}
           precision={decimalPlaces}
           parser={(value) =>
             value ? parseFloatExtension(value).toString() : ""
@@ -95,14 +106,8 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
       ) : fieldType === "boolean" ? (
         <Stack w="100%">
           <SegmentedControlInput
-            value={value?.static ?? ""}
-            onChange={(val) =>
-              onChange({
-                ...value,
-                dataType: "static",
-                static: val,
-              })
-            }
+            value={staticValue ?? ""}
+            onChange={customOnChange}
             data={[
               { label: "True", value: "true" },
               { label: "False", value: "false" },
@@ -113,14 +118,8 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
         </Stack>
       ) : fieldType === "yesno" ? (
         <SegmentedControlYesNo
-          value={value?.static}
-          onChange={(val) =>
-            onChange({
-              ...value,
-              dataType: "static",
-              static: val,
-            })
-          }
+          value={staticValue === "" || staticValue === true}
+          onChange={customOnChange}
           w="100%"
           {...commonProps}
         />
@@ -139,14 +138,8 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
             )
           }
           <MonacoEditorJson
-            value={value?.static?.toString() || (props.defaultValue as string)}
-            onChange={(val: any) => {
-              onChange({
-                ...value,
-                dataType: "static",
-                static: val,
-              });
-            }}
+            value={staticValue?.toString() || (props.defaultValue as string)}
+            onChange={customOnChange}
             {...commonProps}
           />
         </Stack>
@@ -157,7 +150,9 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
               type="button"
               compact
               onClick={() => {
-                form.insertListItem("onLoad.data.static", {
+                const fieldNamePrefix =
+                  "onLoad.data.static" + (isTranslatable ? `.${language}` : "");
+                form.insertListItem(fieldNamePrefix, {
                   label: "",
                   value: "",
                 });
@@ -171,53 +166,44 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
           </div>
 
           <Flex direction="column" gap="10px" mt="10px">
-            {(form.values.onLoad.data.static ?? [])?.map(
-              (_: SelectProps, index: number) => {
-                return (
-                  <Group key={index} style={{ flexWrap: "nowrap" }}>
-                    <TextInput
-                      size="xs"
-                      placeholder="label"
-                      {...form.getInputProps(
-                        `onLoad.data.static.${index}.label`,
-                      )}
-                      style={{ width: "50%" }}
-                    />
-                    <TextInput
-                      size="xs"
-                      placeholder="value"
-                      {...form.getInputProps(
-                        `onLoad.data.static.${index}.value`,
-                      )}
-                      style={{ width: "50%" }}
-                    />
+            {(staticValue ?? [])?.map((_: SelectProps, index: number) => {
+              const fieldNamePrefix =
+                "onLoad.data.static" + (isTranslatable ? `.${language}` : "");
 
-                    <Icon
-                      name={ICON_DELETE}
-                      onClick={() => {
-                        form.removeListItem("onLoad.data.static", index);
-                      }}
-                      style={{ cursor: "pointer" }}
-                    />
-                  </Group>
-                );
-              },
-            )}
+              return (
+                <Group key={index} style={{ flexWrap: "nowrap" }}>
+                  <TextInput
+                    size="xs"
+                    placeholder="label"
+                    {...form.getInputProps(`${fieldNamePrefix}.${index}.label`)}
+                    style={{ width: "50%" }}
+                  />
+                  <TextInput
+                    size="xs"
+                    placeholder="value"
+                    {...form.getInputProps(`${fieldNamePrefix}.${index}.value`)}
+                    style={{ width: "50%" }}
+                  />
+
+                  <Icon
+                    name={ICON_DELETE}
+                    onClick={() => {
+                      form.removeListItem(fieldNamePrefix, index);
+                    }}
+                    style={{ cursor: "pointer" }}
+                  />
+                </Group>
+              );
+            })}
           </Flex>
         </Stack>
       ) : (
         <Stack w="100%">
           <TextInput
             placeholder={placeholder}
-            value={value?.static}
+            value={staticValue}
             type={fieldType}
-            onChange={(e) =>
-              onChange({
-                ...value,
-                dataType: "static",
-                static: e.currentTarget.value,
-              })
-            }
+            onChange={(e) => customOnChange<string>(e.currentTarget.value)}
             {...commonProps}
           />
         </Stack>

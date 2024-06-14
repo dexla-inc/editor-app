@@ -10,8 +10,9 @@ type Props = EditableComponentMapper & Omit<AlertProps, "title">;
 
 const AlertComponent = forwardRef(
   ({ renderTree, shareableContent, component, ...props }: Props, ref) => {
-    const { children, icon, iconColor, triggers, ...componentProps } =
+    const { icon, iconColor, triggers, ...componentProps } =
       component.props as any;
+    const { children: childrenValue } = component?.onLoad;
     const theme = useThemeStore((state) => state.theme);
     const iconColorHex = get(theme.colors, iconColor);
 
@@ -35,7 +36,7 @@ const AlertComponent = forwardRef(
           ? component.children?.map((child) =>
               renderTree(child, shareableContent),
             )
-          : children?.toString()}
+          : childrenValue?.toString()}
       </MantineAlert>
     );
   },

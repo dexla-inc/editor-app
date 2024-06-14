@@ -18,7 +18,6 @@ const Modifier = withModifier(({ selectedComponent }) => {
   useEffect(() => {
     form.setValues(
       merge({}, requiredModifiers.dateInput, {
-        placeholder: selectedComponent?.props?.placeholder,
         placeholderColor: selectedComponent?.props?.placeholderColor,
         description: selectedComponent?.props?.description,
         radius: selectedComponent?.props?.radius,
@@ -37,17 +36,6 @@ const Modifier = withModifier(({ selectedComponent }) => {
   return (
     <form>
       <Stack spacing="xs">
-        <TextInput
-          size="xs"
-          label="Placeholder"
-          {...form.getInputProps("placeholder")}
-          onChange={(e) => {
-            form.setFieldValue("placeholder", e.target.value);
-            debouncedTreeComponentAttrsUpdate({
-              attrs: { props: { placeholder: e.target.value } },
-            });
-          }}
-        />
         <SegmentedControlSizes
           label="Size"
           sizing={inputSizes}

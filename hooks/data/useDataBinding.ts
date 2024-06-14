@@ -11,12 +11,9 @@ import { safeJsonParse } from "@/utils/common";
 import { useInputsStore } from "@/stores/inputs";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useOldRouter } from "@/hooks/data/useOldRouter";
-import { useShareableContent } from "@/hooks/data/useShareableContent";
 
 export const useDataBinding = (componentId = "") => {
   const browser = useOldRouter();
-  const { item } = useShareableContent({ componentId, computeValue });
-
   function computeValue<T>(
     { value, shareableContent, staticFallback }: GetValueProps,
     ctx: ComputeValuePropCtx,
@@ -40,9 +37,14 @@ export const useDataBinding = (componentId = "") => {
     );
 
     const projectId = useEditorTreeStore.getState().currentProjectId as string;
+    const language = useEditorTreeStore.getState().language as string;
 
     const auth = useDataSourceStore.getState().getAuthState(projectId);
-
+    const others = {
+      auth,
+      browser: pick(browser, ["asPath", "query"]),
+      language,
+    };
     const components = Object.entries(
       useInputsStore.getState().inputValues,
     ).reduce((acc, [componentGroupId, value]) => {

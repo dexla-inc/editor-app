@@ -1,8 +1,5 @@
 import { DynamicFormFieldsBuilder } from "@/components/data/forms/DynamicFormFieldsBuilder";
-import {
-  FieldType,
-  StaticFormFieldsBuilder,
-} from "@/components/data/forms/StaticFormFieldsBuilder";
+import { StaticFormFieldsBuilder } from "@/components/data/forms/StaticFormFieldsBuilder";
 import { Endpoint } from "@/requests/datasources/types";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { ICON_SIZE } from "@/utils/config";
@@ -12,37 +9,73 @@ import { useForm } from "@mantine/form";
 import { IconPlug, IconPlugOff } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
-import { ValueProps } from "@/types/dataBinding";
-import { CommonData } from "@/components/data/CommonData";
+import { FieldProps, ValueProps } from "@/types/dataBinding";
+import has from "lodash.has";
+import { useComponentStates } from "@/hooks/editor/useComponentStates";
 
 type Props = {
-  fields: Array<{
-    name: string;
-    label: string;
-    type?: FieldType;
-    placeholder?: string;
-    additionalComponent?: JSX.Element;
-    decimalPlaces?: number;
-  }>;
+  fields: FieldProps[];
   endpoints: Endpoint[];
   component: Component;
 };
 
 export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
-  const hasParentComponentData = useEditorTreeStore(
-    (state) => state.selectedComponentIds?.at(-1)?.includes("-related-"),
+  const { getComponentsStates } = useComponentStates();
+
+  const commonFields: FieldProps[] = [
+    {
+      name: "isVisible",
+      label: "Visibility",
+      type: "yesno",
+    },
+    {
+      name: "currentState",
+      label: "State",
+      type: "select",
+      data: getComponentsStates(),
+    },
+    {
+      name: "tooltip",
+      label: "Tooltip",
+    },
+  ];
+
+  // merging fields from forms to commonFields
+  fields = [...fields, ...commonFields];
+  const language = useEditorTreeStore((state) => state.language);
+
+  const hasParentComponentData = useEditorTreeStore((state) =>
+    state.selectedComponentIds?.at(-1)?.includes("-related-"),
   );
+
   const onLoadFieldsStarter = fields.reduce(
     (acc, f) => {
+      let staticValue = component.onLoad?.[f.name]?.static;
+
       acc[f.name] = {
-        static: component.onLoad?.[f.name]?.static || component.props?.[f.name],
+        static: {},
       };
+      ["en", language].forEach((lang) => {
+        const value = has(staticValue, lang)
+          ? staticValue[lang]
+          : has(staticValue, "en")
+            ? // @ts-ignore
+              staticValue.en
+            : // if no translation key was found but it has the dataType attr, it means it was set before
+              // (for backwards compatibility when we had no language)
+              has(component.onLoad?.[f.name], "dataType")
+              ? staticValue
+              : // otherwise, return the value from props
+                component.props?.[f.name] ?? "";
+        acc[f.name].static[lang] = value;
+      });
+
       return acc;
     },
     {} as Record<string, ValueProps>,
   );
 
-  const onLoadValues = merge(onLoadFieldsStarter, component?.onLoad);
+  const onLoadValues = merge({}, component?.onLoad, onLoadFieldsStarter);
 
   const form = useForm({
     initialValues: {
@@ -56,6 +89,11 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.values]);
+
+  useEffect(() => {
+    form.setValues({ onLoad: onLoadValues });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [language]);
 
   const onClickToggleDataType = (field: string) => {
     form.setTouched({ [`onLoad.${field}.dataType`]: true });
@@ -89,7 +127,7 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
                 field={f}
               />
             ) : (
-              <StaticFormFieldsBuilder field={f} form={form} />
+              <StaticFormFieldsBuilder field={f} form={form} isTranslatable />
             )}
             {hasParentComponentData && (
               <Tooltip label="Bind">
@@ -104,7 +142,6 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
           </Group>
         );
       })}
-      <CommonData component={component} />
     </>
   );
 };

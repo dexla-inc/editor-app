@@ -50,8 +50,12 @@ const InputComponent = forwardRef(
       passwordUpper,
       passwordSpecial,
       displayRequirements,
-      ...componentProps
+      ...restComponentProps
     } = component.props as any;
+
+    const { placeholder = component.props?.placeholder } = component?.onLoad;
+
+    const componentProps = { ...restComponentProps, placeholder };
 
     const { onChange, ...restTriggers } = triggers || {};
     const { name: iconName } = icon && icon!.props!;
@@ -60,7 +64,7 @@ const InputComponent = forwardRef(
 
     const { borderStyle, inputStyle } = useBrandingStyles();
 
-    const [value, setValue] = useInputValue(
+    const [value, setValue] = useInputValue<string | number>(
       {
         value: component?.onLoad?.value ?? "",
       },
@@ -87,7 +91,7 @@ const InputComponent = forwardRef(
 
     // handle increase number range
     const increaseNumber = () => {
-      let val = value;
+      let val = parseToNumber(value);
       if (val === undefined) val = 1;
       else val += 1;
       handleChange(val);
@@ -95,7 +99,7 @@ const InputComponent = forwardRef(
 
     // handle decrease number range
     const decreaseNumber = () => {
-      let val = value;
+      let val = parseToNumber(value);
       if ([undefined, "", 0].includes(val)) val = 0;
       else val -= 1;
       handleChange(val);
@@ -121,7 +125,7 @@ const InputComponent = forwardRef(
       const isPrintable = e.key.match(/\S/);
       if (
         isPrintable &&
-        !patterns[pattern as keyof typeof patterns].test(e.key)
+        !patterns[(pattern || "all") as keyof typeof patterns].test(e.key)
       ) {
         e.preventDefault();
       }
