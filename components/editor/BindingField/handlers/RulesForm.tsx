@@ -18,7 +18,12 @@ import {
   Text,
   TextInput,
 } from "@mantine/core";
-import { BG_RULES_GROUP, BG_RULE, BG_LOCATION } from "@/utils/branding";
+import {
+  BG_RULES_GROUP,
+  BG_RULE,
+  BG_LOCATION,
+  BG_RULES_CONDITION,
+} from "@/utils/branding";
 import { IconTrash } from "@tabler/icons-react";
 import { RuleProps } from "@/types/dataBinding";
 import isEmpty from "lodash.isempty";
@@ -32,7 +37,9 @@ import { cloneObject } from "@/utils/common";
 export const RulesForm = () => {
   const { fieldType, value, onChange } = useBindingField();
   const rules = (
-    isEmpty(value.rules) ? [{ conditions: [{}] }] : value.rules
+    isEmpty(value.rules)
+      ? [{ conditions: [{ operator: "none" }] }]
+      : value.rules
   ) as RuleProps[];
 
   const form = useForm({
@@ -65,7 +72,9 @@ export const RulesForm = () => {
           >
             <Accordion.Item value={`item-${ruleIndex}`}>
               <AccordionControl
-                onClickDelete={() => form.removeListItem("rules", ruleIndex)}
+                onClickDeleteRule={() =>
+                  form.removeListItem("rules", ruleIndex)
+                }
               >
                 <Text size={15} weight="bold">
                   Rule {`${ruleIndex + 1}`}
@@ -126,8 +135,30 @@ export const RulesForm = () => {
                       );
                     };
 
+                    const onClickDeleteRuleCondition = () => {
+                      form.removeListItem(
+                        `rules.${ruleIndex}.conditions`,
+                        conditionIndex,
+                      );
+                    };
+
                     return (
-                      <>
+                      <Stack
+                        key={conditionIndex}
+                        bg={BG_RULES_CONDITION}
+                        p={10}
+                      >
+                        <Flex w="100%" justify="space-between" align="center">
+                          <Text size="xs" weight="bold">
+                            Condition {conditionIndex + 1}
+                          </Text>
+                          {rule.conditions.length > 1 && (
+                            <ActionIcon onClick={onClickDeleteRuleCondition}>
+                              <IconTrash size="1rem" color="red" />
+                            </ActionIcon>
+                          )}
+                        </Flex>
+
                         {isEmpty(condition.location) && (
                           <BindingContextSelector
                             setSelectedItem={onSetSelectedLocation}
@@ -180,17 +211,17 @@ export const RulesForm = () => {
                           />
                         )}
                         <Stack>
-                          <TopLabel text="Addional Logic?" />
+                          <TopLabel text="Add Condition" />
                           <SegmentedControl
                             w="50%"
-                            defaultValue="-"
+                            defaultValue="none"
                             data={[
                               ...[
                                 { label: "AND", value: "and" },
                                 { label: "OR", value: "or" },
                               ],
-                              ...(!condition.operator
-                                ? [{ label: "-", value: "-" }]
+                              ...(condition.operator === "none"
+                                ? [{ label: "None", value: "none" }]
                                 : []),
                             ]}
                             {...form.getInputProps(
@@ -201,17 +232,16 @@ export const RulesForm = () => {
                                 `rules.${ruleIndex}.conditions.${conditionIndex}.operator`,
                                 op,
                               );
-                              if (form.values.rules.length - 1 === ruleIndex) {
+                              if (condition.operator === "none") {
                                 form.insertListItem(
                                   `rules.${ruleIndex}.conditions`,
-                                  {},
+                                  { operator: "none" },
                                 );
                               }
                             }}
                           />
-                          <Divider />
                         </Stack>
-                      </>
+                      </Stack>
                     );
                   })}
 
@@ -239,12 +269,18 @@ export const RulesForm = () => {
 };
 
 function AccordionControl(
-  props: AccordionControlProps & { onClickDelete: () => void },
+  props: AccordionControlProps & { onClickDeleteRule: () => void },
 ) {
   return (
-    <Box sx={{ display: "flex", alignItems: "center" }}>
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        "&hover": { background: "" },
+      }}
+    >
       <Accordion.Control {...props} />
-      <ActionIcon onClick={props.onClickDelete} size="md">
+      <ActionIcon onClick={props.onClickDeleteRule} size="md" mr={15}>
         <IconTrash size="1rem" color="red" />
       </ActionIcon>
     </Box>
