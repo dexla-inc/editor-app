@@ -297,9 +297,10 @@ export const useComputeValue = ({
         }
       },
       rules: (fieldValue: ValueProps) => {
-        console.log("rules", fieldValue);
-        const result = evaluateConditions(fieldValue.rules);
-        return result;
+        // console.log("rules", fieldValue);
+        // const result = evaluateConditions(fieldValue.rules);
+        // return result;
+        return undefined;
       },
     }),
     [shareableContent, transformBoundCode],
