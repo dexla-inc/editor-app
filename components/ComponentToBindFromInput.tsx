@@ -1,6 +1,6 @@
 import { ComponentToBindWrapper } from "@/components/ComponentToBindWrapper";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
-import { ValueProps } from "@/types/dataBinding";
+import { FieldType, ValueProps } from "@/types/dataBinding";
 import {
   Button,
   Flex,
@@ -12,12 +12,13 @@ import {
   TextInput,
   TextInputProps,
 } from "@mantine/core";
-import { FieldType } from "@/components/editor/BindingField/BindingField";
 import { Icon } from "@/components/Icon";
 import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
 import { createContext, useContext } from "react";
 import { ComponentToBindField } from "@/components/editor/BindingField/ComponentToBindField";
 import { EditorProps } from "@monaco-editor/react";
+import { useEditorTreeStore } from "@/stores/editorTree";
+import merge from "lodash.merge";
 
 // Need to extend input props depending on fieldType
 type BaseProps = {
@@ -26,9 +27,11 @@ type BaseProps = {
   onChange: (value: ValueProps) => void;
   label?: string;
   isPageAction?: boolean;
+  isTranslatable?: boolean;
   useTrueOrFalseStrings?: boolean;
   form?: any;
   children?: React.ReactNode;
+  staticValue?: any;
 };
 
 type FieldProps<T extends FieldType> = BaseProps &
@@ -75,10 +78,26 @@ export const useBindingField = <T extends FieldType>() => {
 export const ComponentToBindFromInput = <T extends FieldType>(
   props: ComponentToBindFromInputProps<T>,
 ) => {
+  const language = useEditorTreeStore((state) => state.language);
   const { children, ...restProps } = props;
 
+  const staticValue = restProps.isTranslatable
+    ? restProps.value?.static?.[language]
+    : restProps.value?.static;
+
+  const customOnChange = <T extends unknown>(val: T) => {
+    const newValue = merge(restProps.value, {
+      dataType: "static",
+      static: restProps.isTranslatable ? { [language]: val } : val,
+    });
+
+    restProps.onChange(newValue);
+  };
+
   return (
-    <ComponentToBindContext.Provider value={restProps}>
+    <ComponentToBindContext.Provider
+      value={{ ...restProps, onChange: customOnChange, staticValue }}
+    >
       <ComponentToBindWrapper>{children}</ComponentToBindWrapper>
     </ComponentToBindContext.Provider>
   );
@@ -237,7 +256,8 @@ ComponentToBindFromInput.Number = function ComponentToBindFromNumber() {
 };
 
 ComponentToBindFromInput.Options = function ComponentToBindFromOptions() {
-  const { form } = useBindingField();
+  const { form, isTranslatable, staticValue } = useBindingField();
+  const language = useEditorTreeStore((state) => state.language);
   return (
     <Stack style={{ gap: 0, width: "100%" }}>
       <div>
@@ -245,7 +265,9 @@ ComponentToBindFromInput.Options = function ComponentToBindFromOptions() {
           type="button"
           compact
           onClick={() => {
-            form.insertListItem("onLoad.data.static", {
+            const fieldNamePrefix =
+              "onLoad.data.static" + (isTranslatable ? `.${language}` : "");
+            form.insertListItem(fieldNamePrefix, {
               label: "",
               value: "",
             });
@@ -261,19 +283,21 @@ ComponentToBindFromInput.Options = function ComponentToBindFromOptions() {
       <Flex direction="column" gap="10px" mt="10px">
         {(form.values.onLoad.data.static ?? [])?.map(
           (_: SelectProps, index: number) => {
+            const fieldNamePrefix =
+              "onLoad.data.static" + (isTranslatable ? `.${language}` : "");
             return (
               <Group key={index} style={{ flexWrap: "nowrap" }}>
                 <TextInput
                   size="xs"
                   placeholder="label"
-                  {...form.getInputProps(`onLoad.data.static.${index}.label`)}
+                  {...form.getInputProps(`${fieldNamePrefix}.${index}.label`)}
                   style={{ width: "50%" }}
                   {...AUTOCOMPLETE_OFF_PROPS}
                 />
                 <TextInput
                   size="xs"
                   placeholder="value"
-                  {...form.getInputProps(`onLoad.data.static.${index}.value`)}
+                  {...form.getInputProps(`${fieldNamePrefix}.${index}.value`)}
                   style={{ width: "50%" }}
                   {...AUTOCOMPLETE_OFF_PROPS}
                 />
@@ -281,7 +305,7 @@ ComponentToBindFromInput.Options = function ComponentToBindFromOptions() {
                 <Icon
                   name={ICON_DELETE}
                   onClick={() => {
-                    form.removeListItem("onLoad.data.static", index);
+                    form.removeListItem(fieldNamePrefix, index);
                   }}
                   style={{ cursor: "pointer" }}
                 />

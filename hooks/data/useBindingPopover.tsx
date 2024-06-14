@@ -33,9 +33,9 @@ const parseVariableValue = (value: string): any => {
   }
 };
 
-const setEntityString = ({ selectedEntityId, entity }: BindType): string => {
-  const [entityKey, ...restValues] = selectedEntityId.split(".");
-  const path = restValues.map((v) => `.${v}`).join("");
+const setEntityString = ({ selectedEntityId, entity }: BindType) => {
+  const [entityKey, ...entityId] = selectedEntityId.split(".");
+  const path = !entityId.length ? "" : `.${entityId.join(".")}`;
   return `${entity}['${entityKey}']${path}`;
 };
 
@@ -48,6 +48,7 @@ export const useBindingPopover = () => {
   });
   const nodes = useNodes<NodeData>();
   const projectId = useEditorTreeStore((state) => state.currentProjectId ?? "");
+  const language = useEditorTreeStore((state) => state.language);
   const { endpoints } = useEndpoints(projectId);
   const { data: pageListQuery } = usePageListQuery(projectId, null);
   const pageActions = pageListQuery?.results?.find(
@@ -101,8 +102,6 @@ export const useBindingPopover = () => {
     },
     { list: {} } as Record<string, any>,
   );
-
-  const browserList = Array.of(pick(browser, ["asPath", "query"]));
 
   const actionsList = isPageAction ? pageActions : selectedComponentActions;
 
@@ -188,10 +187,6 @@ export const useBindingPopover = () => {
 
   const getEntityEditorValue = ({ selectedEntityId, entity }: BindType) => {
     const entityHandlers = {
-      auth: () => {
-        const auth = getAuthState(projectId);
-        return setEntityString({ selectedEntityId, entity });
-      },
       components: () => {
         try {
           const parsed = JSON.parse(selectedEntityId);
@@ -208,7 +203,6 @@ export const useBindingPopover = () => {
           parsed.id
         }'].${parsed.path}`;
       },
-      browser: () => setEntityString({ selectedEntityId, entity }),
       event: () => setEntityString({ selectedEntityId, entity }),
       item: () => setEntityString({ selectedEntityId, entity }),
       variables: () => {
@@ -221,15 +215,21 @@ export const useBindingPopover = () => {
           return `${entity}[/* ${variables?.list[selectedEntityId].name} */ '${selectedEntityId}']`;
         }
       },
+      others: () => setEntityString({ selectedEntityId, entity }),
     };
 
     return entityHandlers[entity]();
   };
 
+  const others = {
+    auth: getAuthState(projectId) ?? {},
+    browser: pick(browser, ["asPath", "query"]),
+    language,
+  };
+
   return {
     actions,
-    auth: getAuthState(projectId),
-    browserList,
+    others,
     components,
     variables,
     event,

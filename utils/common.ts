@@ -138,55 +138,29 @@ export type ObjectItem = {
   children?: ObjectItem[];
 };
 
-export const objToItems = (obj: any, root: any): ObjectItem[] => {
+export const objToItems = (
+  obj: any,
+  root: any,
+  prefix: string = "",
+): ObjectItem[] => {
   if (!obj) return [];
   return Object.entries(obj).map(([key, value]) => {
-    let path = findPathForKeyValue(root, key, value);
+    // if key is a number we want to wrap it with [], otherwise, prefix it with .
+    const builtKey = isNaN(Number(key)) ? `.${key}` : `[${key}]`;
+    // if prefix is empty, we want to remove that initial . because we are already prefixing it with `${entity}.`
+    let path = prefix ? `${prefix}${builtKey}` : builtKey.replace(".", "");
 
     return {
       key,
       value: JSON.stringify(value),
-      path: path ? path.replaceAll(".[", "[") : "",
+      path,
       type: typeof value,
       children:
         value && typeof value === "object"
-          ? objToItems(value, root)
+          ? objToItems(value, root, path)
           : undefined,
     };
   });
-};
-
-export const findPathForKeyValue = (
-  obj: any,
-  key: string,
-  value: any,
-  currentPath: string = "",
-): string | null => {
-  for (const prop in obj) {
-    if (obj.hasOwnProperty(prop)) {
-      const newPath = currentPath
-        ? `${currentPath}.${isArrayIndex(prop) ? `[${prop}]` : prop}`
-        : isArrayIndex(prop)
-        ? `[${prop}]`
-        : prop;
-
-      if (prop === key && obj[prop] === value) {
-        return newPath;
-      } else if (typeof obj[prop] === "object" && obj[prop] !== null) {
-        const path = findPathForKeyValue(obj[prop], key, value, newPath);
-        if (path !== null) {
-          return path;
-        }
-      }
-    }
-  }
-
-  return null;
-};
-
-const isArrayIndex = (prop: string): boolean => {
-  // Check if prop is a non-negative integer (array index).
-  return /^\d+$/.test(prop);
 };
 
 export const emptyEditorTree = {
@@ -314,7 +288,7 @@ function emptyArray(value: any): boolean {
   return Array.isArray(value) && value.length === 0;
 }
 
-function emptyObject(value: any): boolean {
+export function emptyObject(value: any): boolean {
   return isObject(value) && Object.keys(value).length === 0;
 }
 

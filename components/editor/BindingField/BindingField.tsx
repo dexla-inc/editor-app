@@ -3,16 +3,7 @@ import {
   ComponentToBindFromInputProps,
 } from "@/components/ComponentToBindFromInput";
 import React from "react";
-
-export type FieldType =
-  | "Text"
-  | "YesNo"
-  | "Boolean"
-  | "Array"
-  | "Number"
-  | "Options"
-  | "Select"
-  | "Segmented";
+import { FieldType } from "@/types/dataBinding";
 
 export const BindingField = <T extends FieldType>(
   props: ComponentToBindFromInputProps<T>,

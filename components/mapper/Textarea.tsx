@@ -10,7 +10,6 @@ import {
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { ChangeEvent, forwardRef, memo } from "react";
-import { useEditorTreeStore } from "@/stores/editorTree";
 import { useInputValue } from "@/hooks/components/useInputValue";
 
 type Props = EditableComponentMapper & TextareaProps;
@@ -24,8 +23,12 @@ const TextareaComponent = forwardRef(
       bg,
       textColor,
       hideIfDataIsEmpty,
-      ...componentProps
+      ...restComponentProps
     } = component.props as any;
+
+    const { placeholder = component.props?.placeholder } = component?.onLoad;
+
+    const componentProps = { ...restComponentProps, placeholder };
     const { color, backgroundColor } = useChangeState({ bg, textColor });
     const { borderStyle, fontSizeStyle } = useBrandingStyles();
 

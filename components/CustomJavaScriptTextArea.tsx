@@ -1,9 +1,7 @@
 import { useMantineTheme } from "@mantine/core";
 import Editor from "@monaco-editor/react";
 import debounce from "lodash.debounce";
-import { pick } from "next/dist/lib/pick";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useOldRouter } from "@/hooks/data/useOldRouter";
 import { useBindingPopover } from "@/hooks/data/useBindingPopover";
 
 type JsProps = {
@@ -21,10 +19,6 @@ declare var variables: {
   [key: string]: any;
 };
 
-declare var browser: {
-  [key: string]: any;
-};
-
 declare var components: {
   [key: string]: any;
 };
@@ -37,11 +31,11 @@ declare var item: {
   [key: string]: any;
 };
 
-declare var auth: {
+declare var event: {
   [key: string]: any;
 };
 
-declare var event: {
+declare var others: {
   [key: string]: any;
 };
 `;
@@ -52,10 +46,9 @@ export function CustomJavaScriptTextArea({
   onChange,
   selectedItem,
 }: JsProps) {
-  const { actions, variables, components } = useBindingPopover();
+  const { actions, variables, components, others } = useBindingPopover();
 
   const monacoRef = useRef<any>(null);
-  const browser = useOldRouter();
 
   const theme = useMantineTheme();
 
@@ -142,13 +135,11 @@ export function CustomJavaScriptTextArea({
                     kind: monaco.languages.CompletionItemKind.Keyword,
                     insertText: `variables[/* ${variable.name} */'${id}']`,
                   })),
-                  ...Object.entries(pick(browser, ["asPath", "query"])).map(
-                    ([key]) => ({
-                      label: `browser[${key}]`,
-                      kind: monaco.languages.CompletionItemKind.Variable,
-                      insertText: `browser['${key}']`,
-                    }),
-                  ),
+                  ...Object.keys(others).map((key) => ({
+                    label: `others[${key}]`,
+                    kind: monaco.languages.CompletionItemKind.Variable,
+                    insertText: `others['${key}']`,
+                  })),
                   ...Object.entries(components).map(([id, component]) => ({
                     label: `components[${component.description}]`,
                     kind: monaco.languages.CompletionItemKind.Variable,

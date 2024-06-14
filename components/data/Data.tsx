@@ -24,6 +24,7 @@ export const Data = () => {
   return (
     <Stack px="md">
       <DataSection
+        fields={[]}
         component={component}
         endpoints={endpoints}
         dataType={component.props?.dataType ?? "static"}

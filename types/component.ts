@@ -11,3 +11,9 @@ export type WithComponentWrapperProps = {
   renderTree: RenderTreeFunc;
   shareableContent?: any;
 };
+
+export type ShareableContentProps = {
+  relatedComponentsData: Record<string, any>;
+  parentSuffix?: string;
+  parentState?: string;
+};

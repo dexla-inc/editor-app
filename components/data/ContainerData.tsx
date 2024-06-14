@@ -4,7 +4,7 @@ import { Component } from "@/utils/editor";
 import { SegmentedControl, Stack } from "@mantine/core";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { FormFieldsBuilder } from "@/components/data/forms/FormFieldsBuilder";
-import { DataType } from "@/types/dataBinding";
+import { DataType, FieldType } from "@/types/dataBinding";
 
 export type DataProps = {
   component: Component;

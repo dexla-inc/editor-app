@@ -3,7 +3,6 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 import { SegmentedControl, Select, Stack, Text, Title } from "@mantine/core";
 import { DataProps, DataType } from "@/types/dataBinding";
 import { FormFieldsBuilder } from "@/components/data/forms/FormFieldsBuilder";
-import { BindingField } from "@/components/editor/BindingField/BindingField";
 
 export const SelectData = ({ component, endpoints, dataType }: DataProps) => {
   const updateTreeComponentAttrs = useEditorTreeStore(
@@ -32,6 +31,7 @@ export const SelectData = ({ component, endpoints, dataType }: DataProps) => {
           fields={[
             { name: "data", label: "Options", fieldType: "Options" },
             { name: "value", label: "Value", fieldType: "Text" },
+            { name: "placeholder", label: "Placeholder", fieldType: "Text" },
           ]}
           component={component}
           endpoints={endpoints!}
@@ -49,11 +49,21 @@ export const SelectData = ({ component, endpoints, dataType }: DataProps) => {
           {({ form, selectableObjectKeys }) => {
             return (
               <Stack spacing="xs" my="xs">
-                <BindingField
-                  form={form}
-                  label="Default Value"
-                  fieldType="Text"
-                  {...form.getInputProps("onLoad.value")}
+                <FormFieldsBuilder
+                  fields={[
+                    {
+                      name: "value",
+                      label: "Default Value",
+                      fieldType: "Text",
+                    },
+                    {
+                      name: "placeholder",
+                      label: "Placeholder",
+                      fieldType: "Text",
+                    },
+                  ]}
+                  component={component}
+                  endpoints={endpoints!}
                 />
                 <Title order={6} mt="xs">
                   Options

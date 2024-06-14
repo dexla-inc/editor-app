@@ -8,42 +8,75 @@ import { useForm } from "@mantine/form";
 import { IconPlug, IconPlugOff } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import React, { useEffect } from "react";
-import { ValueProps } from "@/types/dataBinding";
-import { CommonData } from "@/components/data/CommonData";
-import {
-  BindingField,
-  FieldType,
-} from "@/components/editor/BindingField/BindingField";
+import { FieldProps, ValueProps } from "@/types/dataBinding";
+import has from "lodash.has";
+import { useComponentStates } from "@/hooks/editor/useComponentStates";
+import { BindingField } from "@/components/editor/BindingField/BindingField";
 
 type Props = {
-  fields: Array<{
-    name: string;
-    label: string;
-    fieldType: FieldType;
-    type?: React.HTMLInputTypeAttribute;
-    placeholder?: string;
-    additionalComponent?: JSX.Element;
-    precision?: number;
-  }>;
+  fields: FieldProps[];
   endpoints: Endpoint[];
   component: Component;
 };
 
 export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
+  const { getComponentsStates } = useComponentStates();
+
+  const commonFields: FieldProps[] = [
+    {
+      name: "isVisible",
+      label: "Visibility",
+      fieldType: "YesNo",
+    },
+    {
+      name: "currentState",
+      label: "State",
+      fieldType: "Select",
+      data: getComponentsStates(),
+    },
+    {
+      name: "tooltip",
+      label: "Tooltip",
+      fieldType: "Text",
+    },
+  ];
+
+  // merging fields from forms to commonFields
+  fields = [...fields, ...commonFields];
+  const language = useEditorTreeStore((state) => state.language);
+
   const hasParentComponentData = useEditorTreeStore((state) =>
     state.selectedComponentIds?.at(-1)?.includes("-related-"),
   );
+
   const onLoadFieldsStarter = fields.reduce(
     (acc, f) => {
+      let staticValue = component.onLoad?.[f.name]?.static;
+
       acc[f.name] = {
-        static: component.onLoad?.[f.name]?.static || component.props?.[f.name],
+        static: {},
       };
+      ["en", language].forEach((lang) => {
+        const value = has(staticValue, lang)
+          ? staticValue[lang]
+          : has(staticValue, "en")
+            ? // @ts-ignore
+              staticValue.en
+            : // if no translation key was found but it has the dataType attr, it means it was set before
+              // (for backwards compatibility when we had no language)
+              has(component.onLoad?.[f.name], "dataType")
+              ? staticValue
+              : // otherwise, return the value from props
+                component.props?.[f.name] ?? "";
+        acc[f.name].static[lang] = value;
+      });
+
       return acc;
     },
     {} as Record<string, ValueProps>,
   );
 
-  const onLoadValues = merge(onLoadFieldsStarter, component?.onLoad);
+  const onLoadValues = merge({}, component?.onLoad, onLoadFieldsStarter);
 
   const form = useForm({
     initialValues: {
@@ -57,6 +90,11 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.values]);
+
+  useEffect(() => {
+    form.setValues({ onLoad: onLoadValues });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [language]);
 
   const onClickToggleDataType = (field: string) => {
     form.setTouched({ [`onLoad.${field}.dataType`]: true });
@@ -109,7 +147,6 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
           </Group>
         );
       })}
-      <CommonData component={component} />
     </>
   );
 };

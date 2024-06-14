@@ -1,8 +1,8 @@
 import {
-  CommonData as Alert,
-  CommonData as Icon,
-  CommonData as ButtonIcon,
-} from "@/components/data/CommonData";
+  FormFieldsBuilder as Alert,
+  FormFieldsBuilder as Icon,
+  FormFieldsBuilder as ButtonIcon,
+} from "@/components/data/forms/FormFieldsBuilder";
 import { ModalData as Modal } from "@/components/data/ModalData";
 import {
   AvatarData as Avatar,

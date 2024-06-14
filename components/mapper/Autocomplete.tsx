@@ -28,10 +28,14 @@ const AutocompleteComponent = forwardRef(
       bg,
       textColor,
       iconName,
-      ...componentProps
+      ...restComponentProps
     } = component.props as any;
 
-    const [value, setValue] = useInputValue(
+    const { placeholder = component.props?.placeholder } = component?.onLoad;
+
+    const componentProps = { ...restComponentProps, placeholder };
+
+    const [value, setValue] = useInputValue<AutocompleteItem>(
       {
         value: component.onLoad?.value ?? "",
       },
@@ -68,7 +72,7 @@ const AutocompleteComponent = forwardRef(
     }
 
     if (dataType === "static") {
-      data = component.props?.data ?? [];
+      data = component.onLoad?.data ?? component.props?.data ?? [];
     }
 
     const [timeoutId, setTimeoutId] = useState(null);
@@ -98,7 +102,7 @@ const AutocompleteComponent = forwardRef(
 
     useEffect(() => {
       if (itemSubmitted && onItemSubmit && value) {
-        onItemSubmit && onItemSubmit(value.value);
+        onItemSubmit && onItemSubmit(value?.value);
         setItemSubmitted(false);
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps

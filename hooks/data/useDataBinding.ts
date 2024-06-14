@@ -14,7 +14,6 @@ import { useOldRouter } from "@/hooks/data/useOldRouter";
 
 export const useDataBinding = (componentId = "") => {
   const browser = useOldRouter();
-
   function computeValue<T>(
     { value, shareableContent, staticFallback }: GetValueProps,
     ctx: ComputeValuePropCtx,
@@ -41,9 +40,14 @@ export const useDataBinding = (componentId = "") => {
     );
 
     const projectId = useEditorTreeStore.getState().currentProjectId as string;
+    const language = useEditorTreeStore.getState().language as string;
 
     const auth = useDataSourceStore.getState().getAuthState(projectId);
-
+    const others = {
+      auth,
+      browser: pick(browser, ["asPath", "query"]),
+      language,
+    };
     const components = Object.entries(
       useInputsStore.getState().inputValues,
     ).reduce((acc, [componentGroupId, value]) => {

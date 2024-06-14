@@ -1,14 +1,11 @@
-import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
-import {
-  BindingField,
-  FieldType,
-} from "@/components/editor/BindingField/BindingField";
+import { BindingField } from "@/components/editor/BindingField/BindingField";
 import { VariableSelect } from "@/components/variables/VariableSelect";
 import { FrontEndTypes } from "@/requests/variables/types";
 import { ActionFormProps, ChangeVariableAction } from "@/utils/actions";
 import { ArrayMethods } from "@/types/types";
 import { Select, Stack } from "@mantine/core";
+import { FieldType } from "@/types/dataBinding";
 
 type Props = ActionFormProps<Omit<ChangeVariableAction, "name">>;
 
@@ -105,7 +102,8 @@ export const ChangeVariableActionForm = ({ form, isPageAction }: Props) => {
       {!hideInputField && (
         <BindingField
           required
-          fieldType={variableType?.toLowerCase() as FieldType}
+          fieldType="Text"
+          type={variableType?.toLowerCase()}
           label="Value"
           isPageAction={isPageAction}
           defaultValue={defaultValue}
