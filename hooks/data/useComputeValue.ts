@@ -13,14 +13,11 @@ import { useOldRouter } from "@/hooks/data/useOldRouter";
 import { useDataTransformers } from "@/hooks/data/useDataTransformers";
 import has from "lodash.has";
 
-type NextRouterKeys = any;
 type RecordStringAny = Record<string, any>;
 
 const variablePattern = /variables\[\s*(?:\/\*[\s\S]*?\*\/\s*)?'(.*?)'\s*\]/g;
 const componentPattern = /components\[\s*(?:\/\*[\s\S]*?\*\/\s*)?'(.*?)'\s*\]/g;
 const actionPattern = /actions\[\s*(?:\/\*[\s\S]*?\*\/\s*)?'(.*?)'\s*\]/g;
-const browserPattern = /others\['browser'\]\.(.*)/g;
-const authPattern = /others\['auth'\]\.(.*)/g;
 const otherPattern = /others\[\s*(?:\/\*[\s\S]*?\*\/\s*)?'(.*?)'\s*\]/g;
 const itemPattern = /item\[\s*(?:\/\*[\s\S]*?\*\/\s*)?'(.*?)'\s*\]/g;
 
@@ -72,52 +69,39 @@ export const useComputeValue = ({
 
   const item = itemTransformer(shareableContent?.relatedComponentsData ?? {});
 
-  const {
-    variableKeys,
-    componentKeys,
-    actionKeys,
-    browserKeys,
-    authKeys,
-    itemKeys,
-    otherKeys,
-  } = useMemo(() => {
-    const variableKeys: any[] = [];
-    const componentKeys: any[] = [];
-    const actionKeys: any[] = [];
-    const browserKeys: NextRouterKeys[] = [];
-    const authKeys: any[] = [];
-    const otherKeys: any[] = [];
-    const itemKeys: any[] = [];
+  const { variableKeys, componentKeys, actionKeys, itemKeys, otherKeys } =
+    useMemo(() => {
+      const variableKeys: any[] = [];
+      const componentKeys: any[] = [];
+      const actionKeys: any[] = [];
+      const otherKeys: any[] = [];
+      const itemKeys: any[] = [];
 
-    const patterns = [
-      { pattern: variablePattern, keys: variableKeys },
-      { pattern: componentPattern, keys: componentKeys },
-      { pattern: actionPattern, keys: actionKeys },
-      { pattern: browserPattern, keys: browserKeys },
-      { pattern: authPattern, keys: authKeys },
-      { pattern: otherPattern, keys: otherKeys },
-      { pattern: itemPattern, keys: itemKeys },
-    ];
+      const patterns = [
+        { pattern: variablePattern, keys: variableKeys },
+        { pattern: componentPattern, keys: componentKeys },
+        { pattern: actionPattern, keys: actionKeys },
+        { pattern: otherPattern, keys: otherKeys },
+        { pattern: itemPattern, keys: itemKeys },
+      ];
 
-    valuePropsPaths.forEach((fieldValuePath) => {
-      const fieldValue = get(onLoad, fieldValuePath);
-      if (fieldValue.dataType === "boundCode" && fieldValue.boundCode) {
-        patterns.forEach(({ pattern, keys }) => {
-          keys.push(...extractKeysFromPattern(pattern, fieldValue.boundCode));
-        });
-      }
-    });
+      valuePropsPaths.forEach((fieldValuePath) => {
+        const fieldValue = get(onLoad, fieldValuePath);
+        if (fieldValue.dataType === "boundCode" && fieldValue.boundCode) {
+          patterns.forEach(({ pattern, keys }) => {
+            keys.push(...extractKeysFromPattern(pattern, fieldValue.boundCode));
+          });
+        }
+      });
 
-    return {
-      variableKeys: [...new Set(variableKeys)],
-      componentKeys: [...new Set(componentKeys)],
-      actionKeys: [...new Set(actionKeys)],
-      browserKeys: [...new Set(browserKeys)],
-      authKeys: [...new Set(authKeys)],
-      itemKeys: [...new Set(itemKeys)],
-      otherKeys: [...new Set(otherKeys)],
-    };
-  }, [onLoad, valuePropsPaths]);
+      return {
+        variableKeys: [...new Set(variableKeys)],
+        componentKeys: [...new Set(componentKeys)],
+        actionKeys: [...new Set(actionKeys)],
+        itemKeys: [...new Set(itemKeys)],
+        otherKeys: [...new Set(otherKeys)],
+      };
+    }, [onLoad, valuePropsPaths]);
 
   const rawVariables = useVariableStore(
     useShallow((state) => pick(state.variableList, variableKeys)),
@@ -158,36 +142,19 @@ export const useComputeValue = ({
   const projectId = useEditorTreeStore.getState().currentProjectId as string;
   const language = useEditorTreeStore((state) => state.language);
 
-  const auth = useDataSourceStore(
-    useShallow((state) =>
-      authKeys.reduce(
-        (acc, key) => ({
-          ...acc,
-          // @ts-ignore
-          [key]: state.getAuthState(projectId) || {},
-        }),
-        {},
-      ),
-    ),
+  const auth = useDataSourceStore((state) =>
+    state.getAuthState(projectId),
   ) as RecordStringAny;
 
-  const browserValues: any = useMemo(() => {
-    return browserKeys.reduce(
-      // @ts-ignore
-      (acc, key) => ({ ...acc, [key]: browser }),
-      {},
-    );
-  }, [browser, browserKeys]);
+  const otherValues = useEditorTreeStore(
+    useShallow((state) => {
+      return { language: state.language, browser, auth };
+    }),
+  ) as RecordStringAny;
 
   const itemValues: any = itemKeys.reduce(
     (acc, key) => ({ ...acc, [key]: JSON.stringify(item[key]) }),
     {},
-  );
-
-  const otherValues = useEditorTreeStore(
-    useShallow((state) => {
-      return otherKeys.reduce((acc, key) => ({ ...acc, [key]: state }), {});
-    }),
   );
 
   const transformBoundCode = useCallback(
@@ -222,22 +189,17 @@ export const useComputeValue = ({
         result = result.replaceAll(regex, `'${inputs[key]}'`);
       });
 
-      browserKeys.forEach((key: NextRouterKeys) => {
-        const regex = new RegExp(`others\\['browser'\\]\\.${key}`, "g");
-        result = result.replaceAll(regex, `'${browserValues[key]}'`);
-      });
-
-      authKeys.forEach((key) => {
-        const regex = new RegExp(`others\\['auth'\\]\\.${key}`, "g");
-        result = result.replaceAll(regex, `'${auth[key]}'`);
-      });
-
       otherKeys.forEach((key) => {
         const regex = new RegExp(
           `others\\[(\\/\\* [\\S\\s]* \\*\\/)?\\s?'${key}'\\]`,
           "g",
         );
-        result = result.replaceAll(regex, `'${otherValues[key]}'`);
+        let replacer = otherValues[key];
+        replacer =
+          typeof replacer !== "string"
+            ? JSON.stringify(replacer)
+            : `'${replacer}'`;
+        result = result.replaceAll(regex, replacer);
       });
 
       itemKeys.forEach((key) => {
@@ -255,10 +217,6 @@ export const useComputeValue = ({
     },
     [
       actionKeys,
-      auth,
-      authKeys,
-      browserKeys,
-      browserValues,
       componentKeys,
       inputs,
       variableKeys,
@@ -291,6 +249,7 @@ export const useComputeValue = ({
       boundCode: (fieldValue: ValueProps) => {
         try {
           const boundCode = transformBoundCode(fieldValue.boundCode ?? "");
+          console.log("====>", fieldValue.boundCode, boundCode);
           return autoRunJavascriptCode(boundCode);
         } catch {
           return;
