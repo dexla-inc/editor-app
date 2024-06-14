@@ -32,8 +32,12 @@ const SelectComponent = forwardRef(
       textColor,
       multiSelect,
       maxDropdownHeight,
-      ...componentProps
+      ...restComponentProps
     } = component.props as any;
+
+    const { placeholder = component.props?.placeholder } = component?.onLoad;
+
+    const componentProps = { ...restComponentProps, placeholder };
 
     const MantineSelectWrapper = multiSelect
       ? MantineMultiSelect

@@ -1,9 +1,7 @@
 import { useMantineTheme } from "@mantine/core";
 import Editor from "@monaco-editor/react";
 import debounce from "lodash.debounce";
-import { pick } from "next/dist/lib/pick";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useOldRouter } from "@/hooks/data/useOldRouter";
 
 type JsProps = {
   language: "javascript" | "typescript" | "json";
@@ -11,6 +9,7 @@ type JsProps = {
   variables?: Record<string, any>;
   components?: Record<string, any>;
   actions?: Record<string, any>;
+  others?: Record<string, any>;
   onChange?: any;
   selectedItem?: string;
 };
@@ -20,10 +19,6 @@ const RETURN_ERROR_CODE = 1108;
 // Typing configuration to prevent the editor to understand our variables as unknown
 const customTypes = `
 declare var variables: {
-  [key: string]: any;
-};
-
-declare var browser: {
   [key: string]: any;
 };
 
@@ -39,11 +34,11 @@ declare var item: {
   [key: string]: any;
 };
 
-declare var auth: {
+declare var event: {
   [key: string]: any;
 };
 
-declare var event: {
+declare var others: {
   [key: string]: any;
 };
 `;
@@ -54,11 +49,11 @@ export function CustomJavaScriptTextArea({
   variables = {},
   components = {},
   actions = {},
+  others = {},
   onChange,
   selectedItem,
 }: JsProps) {
   const monacoRef = useRef<any>(null);
-  const browser = useOldRouter();
 
   const theme = useMantineTheme();
 
@@ -145,13 +140,11 @@ export function CustomJavaScriptTextArea({
                     kind: monaco.languages.CompletionItemKind.Keyword,
                     insertText: `variables[/* ${variable.name} */'${id}']`,
                   })),
-                  ...Object.entries(pick(browser, ["asPath", "query"])).map(
-                    ([key]) => ({
-                      label: `browser[${key}]`,
-                      kind: monaco.languages.CompletionItemKind.Variable,
-                      insertText: `browser['${key}']`,
-                    }),
-                  ),
+                  ...Object.keys(others).map((key) => ({
+                    label: `others[${key}]`,
+                    kind: monaco.languages.CompletionItemKind.Variable,
+                    insertText: `others['${key}']`,
+                  })),
                   ...Object.entries(components).map(([id, component]) => ({
                     label: `components[${component.description}]`,
                     kind: monaco.languages.CompletionItemKind.Variable,

@@ -1,7 +1,6 @@
-import { DataProps } from "@/types/dataBinding";
+import { DataProps, FieldType } from "@/types/dataBinding";
 import { Stack } from "@mantine/core";
 import { FormFieldsBuilder } from "@/components/data/forms/FormFieldsBuilder";
-import { FieldType } from "./forms/StaticFormFieldsBuilder";
 
 export const ProgressData = ({ component, endpoints }: DataProps) => {
   const staticFields = [

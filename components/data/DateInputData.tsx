@@ -9,12 +9,10 @@ import { StaticFormFieldsBuilder } from "@/components/data/forms/StaticFormField
 import { IconPlug, IconPlugOff } from "@tabler/icons-react";
 import { DynamicFormFieldsBuilder } from "@/components/data/forms/DynamicFormFieldsBuilder";
 import { ICON_SIZE } from "@/utils/config";
-import { VisibilityModifier } from "@/components/data/VisibilityModifier";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useComponentStates } from "@/hooks/editor/useComponentStates";
 import { ValueProps } from "@/types/dataBinding";
 import merge from "lodash.merge";
-import { FormFieldsBuilder } from "./forms/FormFieldsBuilder";
 
 const fields = [
   {
@@ -22,18 +20,25 @@ const fields = [
     label: "Value",
     type: "date",
   },
+  {
+    name: "placeholder",
+    label: "Placeholder",
+    type: "text",
+  },
 ];
 
 export const DateInputData = ({ component, endpoints }: DataProps) => {
-  const hasParentComponentData = useEditorTreeStore(
-    (state) => state.selectedComponentIds?.at(-1)?.includes("-related-"),
+  const hasParentComponentData = useEditorTreeStore((state) =>
+    state.selectedComponentIds?.at(-1)?.includes("-related-"),
   );
   const { getComponentsStates } = useComponentStates();
 
   const onLoadFieldsStarter = fields.reduce(
     (acc, f) => {
       acc[f.name] = {
-        static: component.onLoad?.[f.name]?.static || component.props?.[f.name],
+        static: component.onLoad?.[f.name]?.static || {
+          default: component.props?.[f.name],
+        },
       };
       return acc;
     },
@@ -144,6 +149,7 @@ export const DateInputData = ({ component, endpoints }: DataProps) => {
                   // @ts-ignore
                   field={f}
                   form={form}
+                  isTranslatable={false}
                 />
               )}
               {hasParentComponentData && (
@@ -159,18 +165,6 @@ export const DateInputData = ({ component, endpoints }: DataProps) => {
             </Group>
           );
         })}
-        {/* <FormFieldsBuilder
-        fields={fields}
-        component={component}
-        endpoints={endpoints!}
-      /> */}
-        <VisibilityModifier form={form} />
-        <ComponentToBindFromSelect
-          size="xs"
-          label="State"
-          {...form.getInputProps(`onLoad.currentState`)}
-          data={getComponentsStates()}
-        />
       </>
     </Stack>
   );
