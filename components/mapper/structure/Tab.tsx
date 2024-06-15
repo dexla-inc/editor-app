@@ -1,11 +1,7 @@
-import { defaultTheme } from "@/utils/branding";
 import { ComponentStructure } from "@/utils/editor";
-import { px } from "@mantine/core";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): ComponentStructure => {
-  const theme = props.theme ?? defaultTheme;
-
   return {
     id: nanoid(),
     name: "Tab",
@@ -25,15 +21,7 @@ export const jsonStructure = (props?: any): ComponentStructure => {
         children: [],
         props: {
           children: "Tab Text",
-          color: `${theme.colors.Black ? "Black.6" : "dark"}`,
-          style: {
-            fontSize: `${px(theme.fontSizes.sm)}px`,
-            fontWeight: "normal",
-            lineHeight: "110%",
-            letterSpacing: "0px",
-            width: "auto",
-            height: "auto",
-          },
+          color: "Black.6",
         },
         blockDroppingChildrenInside: true,
       },

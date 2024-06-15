@@ -1,11 +1,12 @@
+import { useThemeStore } from "@/stores/theme";
 import { defaultTheme } from "@/utils/branding";
 import { structureMapper } from "@/utils/componentMapper";
 import { ComponentStructure } from "@/utils/editor";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): ComponentStructure => {
+  const theme = useThemeStore.getState().theme;
   const checkboxGroupId = nanoid();
-  const theme = props.theme ?? defaultTheme;
   const checkboxStructure = structureMapper["Checkbox"].structure;
   const checkboxItemOne = checkboxStructure({
     theme,

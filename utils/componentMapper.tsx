@@ -39,7 +39,6 @@ import { Radio } from "@/components/mapper/Radio";
 import { RadioItem } from "@/components/mapper/RadioItem";
 import { Rating } from "@/components/mapper/Rating";
 import { Select } from "@/components/mapper/Select";
-import { Stepper } from "@/components/mapper/Stepper";
 import { Switch } from "@/components/mapper/Switch";
 import { Tab } from "@/components/mapper/Tab";
 import {
@@ -98,8 +97,6 @@ import * as RadioStructure from "@/components/mapper/structure/Radio";
 import * as RadioItemStructure from "@/components/mapper/structure/RadioItem";
 import * as RatingStructure from "@/components/mapper/structure/Rating";
 import * as SelectStructure from "@/components/mapper/structure/Select";
-import * as StepperStructure from "@/components/mapper/structure/Stepper";
-import * as StepperStepStructure from "@/components/mapper/structure/StepperStep";
 import * as SwitchStructure from "@/components/mapper/structure/Switch";
 import * as TabsStructure from "@/components/mapper/structure/Tabs";
 import * as TextStructure from "@/components/mapper/structure/Text";
@@ -736,23 +733,6 @@ export const structureMapper: StructureMapper = {
     icon: <IconPageBreak size={ICON_SIZE} />,
     synonyms: ["Pager", "Page Navigator"],
   },
-  Stepper: {
-    structure: (props: any) => StepperStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Stepper"
-        icon={<IconArrowAutofitContent size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Navigation",
-    icon: <IconArrowAutofitContent size={ICON_SIZE} />,
-    synonyms: ["Steps", "Wizard"],
-  },
-  StepperStep: {
-    structure: (props: any) => StepperStepStructure.jsonStructure(props),
-    category: "Navigation",
-    icon: <IconArrowAutofitContent size={ICON_SIZE} />,
-  },
   // Carousel: {
   //   structure: (props: any) => NotImplemented.jsonStructure(props),
   //   category: "Navigation",
@@ -978,12 +958,6 @@ export const componentMapper: ComponentMapper = {
     Component: (props) => <Breadcrumb {...props} />,
     modifiers: ["breadcrumb", "spacing", "size", "border", "effects"],
     actionTriggers: [],
-    sequentialTriggers: ["onSuccess", "onError"],
-  },
-  Stepper: {
-    Component: (props) => <Stepper {...props} />,
-    modifiers: ["stepper", "spacing", "size", "border", "effects"],
-    actionTriggers: ["onChange"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Grid: {

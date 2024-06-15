@@ -1,12 +1,9 @@
-import { defaultTheme } from "@/utils/branding";
 import { structureMapper } from "@/utils/componentMapper";
 import { ComponentStructure } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { px } from "@mantine/core";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): ComponentStructure => {
-  const theme = props.theme ?? defaultTheme;
   const { input: defaultInputValues, drawer: defaultDrawerValues } =
     requiredModifiers;
 
@@ -147,10 +144,7 @@ export const jsonStructure = (props?: any): ComponentStructure => {
               description: "Link",
               props: {
                 children: "Have an account? Login",
-                color: `${theme.colors.Black ? "Black.6" : "dark"}`,
-                style: {
-                  fontSize: `${px(theme.fontSizes.sm)}px`,
-                },
+                color: "Black.6",
               },
               blockDroppingChildrenInside: true,
             },

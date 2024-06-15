@@ -1,19 +1,11 @@
 import { jsonStructure as headerStructure } from "@/components/mapper/structure/table/TableActionsRow";
-import { defaultTheme } from "@/utils/branding";
 import { ComponentStructure } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { nanoid } from "nanoid";
 
-const badgeColor = {
-  Banned: "Danger.9",
-  Pending: "Background.9",
-  Active: "Success.9",
-};
-
 export const jsonStructure = (props?: any): ComponentStructure => {
-  const theme = props.theme ?? defaultTheme;
   const { table: defaultTableValues, button, input } = requiredModifiers;
-  const tableHeader = headerStructure({ theme, button, input });
+  const tableHeader = headerStructure({ button, input });
 
   return {
     id: nanoid(),
@@ -27,7 +19,7 @@ export const jsonStructure = (props?: any): ComponentStructure => {
         width: "100%",
         padding: "20px",
       },
-      bg: theme.theme === "DARK" ? "Black.6" : "White.6",
+      bg: "White.6",
     },
     blockDroppingChildrenInside: true,
     children: [

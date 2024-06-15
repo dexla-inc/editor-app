@@ -115,6 +115,10 @@ export const withComponentWrapper = <T extends Record<string, any>>(
       fixedPosition: component.fixedPosition,
     } as Component;
 
+    if (component.name === "ButtonIcon") {
+      console.log("propsWithOverwrites", propsWithOverwrites);
+    }
+
     const props = {
       component: {
         ...component,
@@ -133,6 +137,10 @@ export const withComponentWrapper = <T extends Record<string, any>>(
       }),
       shareableContent,
     } as any;
+
+    if (component.name === "ButtonIcon") {
+      console.log("props", props);
+    }
 
     const ref = useRef(null);
 

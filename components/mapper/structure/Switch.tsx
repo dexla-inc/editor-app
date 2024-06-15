@@ -1,10 +1,8 @@
-import { defaultTheme } from "@/utils/branding";
 import { ComponentStructure } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): ComponentStructure => {
-  const theme = props.theme ?? defaultTheme;
   const defaultLayoutValues = requiredModifiers.layout;
 
   return {
@@ -48,15 +46,7 @@ export const jsonStructure = (props?: any): ComponentStructure => {
         children: [],
         props: {
           children: "A label",
-          color: `${theme.colors.Black ? "Black.6" : "dark"}`,
-          size: "sm",
-          weight: "normal",
-          style: {
-            lineHeight: "110%",
-            letterSpacing: "0px",
-            width: "fit-content",
-            height: "fit-content",
-          },
+          color: "Black.6",
           ...(props.props || {}),
         },
         blockDroppingChildrenInside: true,
