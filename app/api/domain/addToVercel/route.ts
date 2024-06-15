@@ -2,9 +2,7 @@ import { addDomainToVercel } from "@/utils/domains";
 
 export async function POST(req: Request) {
   try {
-    const { body } = await req.json();
-
-    const domain = body.domain as string;
+    const { domain } = await req.json();
 
     const response = await addDomainToVercel(domain);
 

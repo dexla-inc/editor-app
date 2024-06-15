@@ -2,9 +2,9 @@ import { getTemplate } from "@/requests/templates/queries-noauth";
 
 export async function GET(req: Request) {
   try {
-    const { query } = await req.json();
-
-    const { name } = query;
+    const url = new URL(req.url);
+    const query = url.searchParams;
+    const name = query.get("name") as string;
 
     const includeTiles = false;
 
