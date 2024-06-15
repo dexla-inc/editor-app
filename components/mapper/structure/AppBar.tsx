@@ -1,12 +1,10 @@
-import { GRAY_OUTLINE, defaultTheme } from "@/utils/branding";
+import { GRAY_OUTLINE } from "@/utils/branding";
 import { GRID_SIZE } from "@/utils/config";
 import { ComponentStructure } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): ComponentStructure => {
-  const theme = props.theme ?? defaultTheme;
-
   const initialGridValues = requiredModifiers.grid;
   const initialGridColumnValues = requiredModifiers.gridColumn;
 
@@ -82,7 +80,6 @@ export const jsonStructure = (props?: any): ComponentStructure => {
               style: {
                 justifyContent: "flex-end",
                 alignItems: "center",
-                gap: theme.spacing.xs,
               },
             },
             children: [

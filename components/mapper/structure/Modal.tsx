@@ -1,19 +1,16 @@
-import { defaultTheme } from "@/utils/branding";
 import { structureMapper } from "@/utils/componentMapper";
 import { ComponentStructure } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { px } from "@mantine/core";
 import merge from "lodash.merge";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): ComponentStructure => {
-  const theme = props.theme ?? defaultTheme;
   const { input: defaultInputValues, modal: defaultModalValues } =
     requiredModifiers;
 
   const modalId = nanoid();
 
-  const containerItem = structureMapper["Container"].structure({ theme });
+  const containerItem = structureMapper["Container"].structure({});
 
   const defaultChildren = [
     {
@@ -136,10 +133,7 @@ export const jsonStructure = (props?: any): ComponentStructure => {
       description: "Link",
       props: {
         children: "Have an account? Login",
-        color: `${theme.colors.Black ? "Black.6" : "dark"}`,
-        style: {
-          fontSize: `${px(theme.fontSizes.sm)}px`,
-        },
+        color: "Black.6",
       },
       blockDroppingChildrenInside: true,
     },
@@ -151,7 +145,7 @@ export const jsonStructure = (props?: any): ComponentStructure => {
         children: "Register",
         style: {
           width: "fit-content",
-          padding: px(theme.spacing.sm),
+          //padding: px(theme.spacing.sm),
           alignSelf: "center",
         },
         textColor: "White.6",

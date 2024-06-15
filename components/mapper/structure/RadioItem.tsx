@@ -1,11 +1,12 @@
-import { defaultTheme, getColorValue } from "@/utils/branding";
+import { getColorValue } from "@/utils/branding";
 import { ComponentStructure } from "@/utils/editor";
 import { px } from "@mantine/core";
 import { nanoid } from "nanoid";
 import { structureMapper } from "@/utils/componentMapper";
+import { useThemeStore } from "@/stores/theme";
 
 export const jsonStructure = (props?: any): ComponentStructure => {
-  const theme = props.theme ?? defaultTheme;
+  const theme = useThemeStore.getState().theme;
   const radioItemContent = props.content ?? "New Radio Text";
   const radioItemTitle = props.title ?? "Radio Title";
 

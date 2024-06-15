@@ -22,7 +22,6 @@ export type Modifiers =
   | "checkboxGroup"
   | "table"
   | "radio"
-  | "stepper"
   | "drawer"
   | "buttonIcon"
   | "mapSettings"
@@ -319,12 +318,6 @@ export const requiredModifiers: RequiredModifiers = {
     align: "left",
     withAsterisk: false,
     value: "",
-  },
-  stepper: {
-    activeStep: "0",
-    numberOfSteps: 3,
-    orientation: "horizontal",
-    color: "Primary.6",
   },
   drawer: {
     position: "left",

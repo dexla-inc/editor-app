@@ -1,11 +1,7 @@
-import { defaultTheme } from "@/utils/branding";
 import { ComponentStructure } from "@/utils/editor";
-import { px } from "@mantine/core";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): ComponentStructure => {
-  const theme = props.theme ?? defaultTheme;
-
   return {
     id: nanoid(),
     name: "Tabs",
@@ -52,15 +48,7 @@ export const jsonStructure = (props?: any): ComponentStructure => {
                 children: [],
                 props: {
                   children: "First Tab",
-                  color: `${theme.colors.Black ? "Black.6" : "dark"}`,
-                  style: {
-                    fontSize: `${px(theme.fontSizes.sm)}px`,
-                    fontWeight: "normal",
-                    lineHeight: "110%",
-                    letterSpacing: "0px",
-                    width: "auto",
-                    height: "auto",
-                  },
+                  color: "Black.6",
                 },
                 blockDroppingChildrenInside: true,
               },
@@ -86,15 +74,7 @@ export const jsonStructure = (props?: any): ComponentStructure => {
                 children: [],
                 props: {
                   children: "Second Tab",
-                  color: `${theme.colors.Black ? "Black.6" : "dark"}`,
-                  style: {
-                    fontSize: `${px(theme.fontSizes.sm)}px`,
-                    fontWeight: "normal",
-                    lineHeight: "110%",
-                    letterSpacing: "0px",
-                    width: "auto",
-                    height: "auto",
-                  },
+                  color: "Black.6",
                 },
                 blockDroppingChildrenInside: true,
               },
@@ -109,7 +89,6 @@ export const jsonStructure = (props?: any): ComponentStructure => {
         props: {
           value: "first",
           style: {
-            paddingTop: px(theme.spacing.xl),
             width: "auto",
             height: "auto",
           },
@@ -122,16 +101,7 @@ export const jsonStructure = (props?: any): ComponentStructure => {
             children: [],
             props: {
               children: "First Tab Content",
-              color: `${theme.colors.Black ? "Black.6" : "dark"}`,
-              style: {
-                fontSize: `${px(theme.fontSizes.sm)}px`,
-                fontWeight: "normal",
-                lineHeight: "110%",
-                letterSpacing: "0px",
-                width: "auto",
-                height: "auto",
-                padding: theme.spacing.md,
-              },
+              color: "Black.6",
             },
             blockDroppingChildrenInside: true,
           },
@@ -144,7 +114,6 @@ export const jsonStructure = (props?: any): ComponentStructure => {
         props: {
           value: "second",
           style: {
-            paddingTop: px(theme.spacing.xl),
             width: "auto",
             height: "auto",
           },
@@ -157,16 +126,7 @@ export const jsonStructure = (props?: any): ComponentStructure => {
             children: [],
             props: {
               children: "Second Tab Content",
-              color: `${theme.colors.Black ? "Black.6" : "dark"}`,
-              style: {
-                fontSize: `${px(theme.fontSizes.sm)}px`,
-                fontWeight: "normal",
-                lineHeight: "110%",
-                letterSpacing: "0px",
-                width: "auto",
-                height: "auto",
-                padding: theme.spacing.md,
-              },
+              color: "Black.6",
             },
             blockDroppingChildrenInside: true,
           },
