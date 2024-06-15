@@ -1,11 +1,12 @@
 import { defaultPopOverValues } from "@/components/modifiers/PopOver";
+import { useThemeStore } from "@/stores/theme";
 import { defaultTheme } from "@/utils/branding";
 import { ComponentStructure } from "@/utils/editor";
 import { px } from "@mantine/core";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): ComponentStructure => {
-  const theme = props.theme ?? defaultTheme;
+  const theme = useThemeStore.getState().theme;
   return {
     id: nanoid(),
     name: "PopOver",

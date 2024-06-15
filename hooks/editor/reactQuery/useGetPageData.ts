@@ -70,7 +70,10 @@ export const useGetPageData = ({ projectId, pageId }: Props) => {
       } else if (page.state) {
         const decodedSchema = decodeSchema(page.state);
         const parsedTree = safeJsonParse(decodedSchema);
-        setEditorTree(parsedTree, {
+
+        const filteredTree = filterNestedPropsAndTheme(parsedTree);
+
+        setEditorTree(filteredTree, {
           onLoad: true,
           action: "Initial State",
         });
@@ -104,4 +107,29 @@ export const useGetPageData = ({ projectId, pageId }: Props) => {
     queryFn: async ({ signal }) => await getPageData({ signal }),
     ...{ enabled: !!projectId && !!pageId },
   });
+};
+
+const filterNestedPropsAndTheme = (obj: any): any => {
+  if (Array.isArray(obj)) {
+    return obj.map(filterNestedPropsAndTheme);
+  } else if (typeof obj === "object" && obj !== null) {
+    return Object.keys(obj).reduce((acc, key) => {
+      if (
+        key === "props" &&
+        typeof obj[key] === "object" &&
+        obj[key] !== null
+      ) {
+        acc[key] = Object.keys(obj[key]).reduce((innerAcc, innerKey) => {
+          if (innerKey !== "pages" && innerKey !== "theme") {
+            innerAcc[innerKey] = filterNestedPropsAndTheme(obj[key][innerKey]);
+          }
+          return innerAcc;
+        }, {} as any);
+      } else {
+        acc[key] = filterNestedPropsAndTheme(obj[key]);
+      }
+      return acc;
+    }, {} as any);
+  }
+  return obj;
 };

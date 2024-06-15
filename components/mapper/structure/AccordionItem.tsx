@@ -1,11 +1,7 @@
-import { defaultTheme } from "@/utils/branding";
 import { ComponentStructure } from "@/utils/editor";
-import { px } from "@mantine/core";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): ComponentStructure => {
-  const theme = props.theme ?? defaultTheme;
-
   return {
     id: nanoid(),
     name: "AccordionItem",
@@ -49,15 +45,7 @@ export const jsonStructure = (props?: any): ComponentStructure => {
                 children: [],
                 props: {
                   children: "Item Text",
-                  color: `${theme.colors.Black ? "Black.6" : "dark"}`,
-                  style: {
-                    fontSize: `${px(theme.fontSizes.sm)}px`,
-                    fontWeight: "normal",
-                    lineHeight: "110%",
-                    letterSpacing: "0px",
-                    width: "fit-content",
-                    height: "fit-content",
-                  },
+                  color: "Black.6",
                 },
                 blockDroppingChildrenInside: true,
               },
@@ -83,15 +71,7 @@ export const jsonStructure = (props?: any): ComponentStructure => {
             children: [],
             props: {
               children: "Item Text",
-              color: `${theme.colors.Black ? "Black.6" : "dark"}`,
-              style: {
-                fontSize: `${px(theme.fontSizes.sm)}px`,
-                fontWeight: "normal",
-                lineHeight: "110%",
-                letterSpacing: "0px",
-                width: "fit-content",
-                height: "fit-content",
-              },
+              color: "Black.6",
             },
             blockDroppingChildrenInside: true,
           },
