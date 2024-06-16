@@ -532,8 +532,8 @@ export function constructHeaders(
     ...(Authorization
       ? { Authorization }
       : authHeaderKey
-      ? { Authorization: authHeaderKey }
-      : {}),
+        ? { Authorization: authHeaderKey }
+        : {}),
   };
 }
 
@@ -626,8 +626,9 @@ export const useApiCallAction = async (
   const endpoint = endpointResults?.find((e) => e.id === action.endpoint)!;
 
   try {
-    const accessToken = useDataSourceStore.getState().getAuthState(projectId)
-      ?.accessToken;
+    const accessToken = useDataSourceStore
+      .getState()
+      .getAuthState(projectId)?.accessToken;
 
     const { url, header, body } = prepareRequestData(
       action,
@@ -864,10 +865,6 @@ export const useResetComponentAction = ({
   const resetComponents = useInputsStore.getState().resetInputValues;
   resetComponents(action.componentIds);
 };
-
-export function showSequentialActionButton(actionName: string) {
-  return ["apiCall", "changeVariable", "resetVariable"].includes(actionName);
-}
 
 export const actionMapper = (actionName: string) => {
   const actions: Record<string, any> = {

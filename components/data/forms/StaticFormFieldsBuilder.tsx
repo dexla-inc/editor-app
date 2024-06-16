@@ -1,4 +1,5 @@
 import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
+import { ComponentToBindFromSegmentedControl } from "@/components/ComponentToBindFromSegmentedControl";
 import { ComponentToBindFromSelect } from "@/components/ComponentToBindFromSelect";
 import { FieldProps } from "@/types/dataBinding";
 
@@ -16,6 +17,20 @@ export const StaticFormFieldsBuilder = ({
   if (field.type === "select") {
     return (
       <ComponentToBindFromSelect
+        size="xs"
+        key={field.name}
+        data={field.data}
+        label={field.label}
+        placeholder={field.placeholder}
+        {...form.getInputProps(`onLoad.${field.name}`)}
+        isTranslatable={isTranslatable}
+      />
+    );
+  }
+
+  if (field.type === "segment") {
+    return (
+      <ComponentToBindFromSegmentedControl
         size="xs"
         key={field.name}
         data={field.data}
