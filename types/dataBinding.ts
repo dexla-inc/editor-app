@@ -65,6 +65,7 @@ export type FieldType =
   | "integer"
   | "options"
   | "select"
+  | "segment"
   | Lowercase<FrontEndTypes>;
 
 export type FieldProps = {
