@@ -866,10 +866,6 @@ export const useResetComponentAction = ({
   resetComponents(action.componentIds);
 };
 
-export function showSequentialActionButton(actionName: string) {
-  return ["apiCall", "changeVariable", "resetVariable"].includes(actionName);
-}
-
 export const actionMapper = (actionName: string) => {
   const actions: Record<string, any> = {
     alert: {
