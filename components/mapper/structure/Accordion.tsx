@@ -1,11 +1,7 @@
-import { defaultTheme } from "@/utils/branding";
 import { ComponentStructure } from "@/utils/editor";
-import { px } from "@mantine/core";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): ComponentStructure => {
-  const theme = props.theme ?? defaultTheme;
-
   return {
     id: nanoid(),
     name: "Accordion",
@@ -64,15 +60,7 @@ export const jsonStructure = (props?: any): ComponentStructure => {
                     children: [],
                     props: {
                       children: "Lorem ipsum",
-                      color: `${theme.colors.Black ? "Black.6" : "dark"}`,
-                      style: {
-                        fontSize: `${px(theme.fontSizes.sm)}px`,
-                        fontWeight: "bold",
-                        lineHeight: "110%",
-                        letterSpacing: "0px",
-                        width: "fit-content",
-                        height: "fit-content",
-                      },
+                      color: "dark",
                     },
                     blockDroppingChildrenInside: true,
                   },
@@ -99,15 +87,7 @@ export const jsonStructure = (props?: any): ComponentStructure => {
                 props: {
                   children:
                     "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Fugit, consequatur cupiditate expedita vero quas rerum eos voluptatem possimus, illo maiores quis! Tempora autem cum itaque dicta officiis vitae enim rerum magni in facilis ullam corporis sint praesentium, aspernatur sit doloremque? Suscipit veniam nobis corrupti, odio adipisci laborum neque! Rerum, amet.",
-                  color: `${theme.colors.Black ? "Black.6" : "dark"}`,
-                  style: {
-                    fontSize: `${px(theme.fontSizes.sm)}px`,
-                    fontWeight: "normal",
-                    lineHeight: "150%",
-                    letterSpacing: "0px",
-                    width: "fit-content",
-                    height: "fit-content",
-                  },
+                  color: "Black.6",
                 },
                 blockDroppingChildrenInside: true,
               },
@@ -158,15 +138,7 @@ export const jsonStructure = (props?: any): ComponentStructure => {
                     children: [],
                     props: {
                       children: "Dolor Sit",
-                      color: `${theme.colors.Black ? "Black.6" : "dark"}`,
-                      style: {
-                        fontSize: `${px(theme.fontSizes.sm)}px`,
-                        fontWeight: "bold",
-                        lineHeight: "110%",
-                        letterSpacing: "0px",
-                        width: "fit-content",
-                        height: "fit-content",
-                      },
+                      color: "Black.6",
                     },
                     blockDroppingChildrenInside: true,
                   },
@@ -193,15 +165,7 @@ export const jsonStructure = (props?: any): ComponentStructure => {
                 props: {
                   children:
                     "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Fugit, consequatur cupiditate expedita vero quas rerum eos voluptatem possimus, illo maiores quis! Tempora autem cum itaque dicta officiis vitae enim rerum magni in facilis ullam corporis sint praesentium, aspernatur sit doloremque? Suscipit veniam nobis corrupti, odio adipisci laborum neque! Rerum, amet.",
-                  color: `${theme.colors.Black ? "Black.6" : "dark"}`,
-                  style: {
-                    fontSize: `${px(theme.fontSizes.sm)}px`,
-                    fontWeight: "normal",
-                    lineHeight: "150%",
-                    letterSpacing: "0px",
-                    width: "fit-content",
-                    height: "fit-content",
-                  },
+                  color: "Black.6",
                 },
                 blockDroppingChildrenInside: true,
               },

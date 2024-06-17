@@ -1,3 +1,4 @@
+import { useThemeStore } from "@/stores/theme";
 import { defaultTheme } from "@/utils/branding";
 import { ComponentStructure } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
@@ -5,7 +6,7 @@ import { MantineSize, px } from "@mantine/core";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): ComponentStructure => {
-  const theme = props.theme ?? defaultTheme;
+  const theme = useThemeStore.getState().theme;
   const setSize = (size: MantineSize) => `${px(theme.spacing[size])}px`;
 
   return {
@@ -58,7 +59,7 @@ export const jsonStructure = (props?: any): ComponentStructure => {
             description: "FileUpload Title",
             props: {
               children: "FileUpload",
-              color: `${theme.colors.Black ? "Black.6" : "dark"}`,
+              color: "Black.6",
               style: {
                 fontSize: setSize("sm"),
                 fontWeight: "normal",

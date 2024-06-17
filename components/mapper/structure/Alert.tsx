@@ -4,13 +4,8 @@ import { ComponentStructure } from "@/utils/editor";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): ComponentStructure => {
-  const theme = props.theme ?? defaultTheme;
-  const title = structureMapper["Title"].structure({
-    theme: theme,
-  });
-  const text = structureMapper["Text"].structure({
-    theme: theme,
-  });
+  const title = structureMapper["Title"].structure({});
+  const text = structureMapper["Text"].structure({});
 
   return {
     id: nanoid(),

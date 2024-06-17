@@ -77,7 +77,6 @@ const RadioModifier = dynamic(() => import("@/components/modifiers/Radio"));
 const SelectModifier = dynamic(() => import("@/components/modifiers/Select"));
 const SizeModifier = dynamic(() => import("@/components/modifiers/Size"));
 const SpacingModifier = dynamic(() => import("@/components/modifiers/Spacing"));
-const StepperModifier = dynamic(() => import("@/components/modifiers/Stepper"));
 const TabModifier = dynamic(() => import("@/components/modifiers/Tab"));
 const TableModifier = dynamic(() => import("@/components/modifiers/Table"));
 const TabsModifier = dynamic(() => import("@/components/modifiers/Tabs"));
@@ -126,7 +125,6 @@ export const modifierSectionMapper: SectionsMapper = {
   drawer: { Modifier: DrawerModifier, icon: "IconLayoutSidebarLeftCollapse" },
   buttonIcon: { Modifier: ButtonIconModifier, icon: "IconCircleDot" },
   mapSettings: { Modifier: GoogleMapModifier, icon: "IconMapPin" },
-  stepper: { Modifier: StepperModifier, icon: "IconArrowAutofitContent" },
   fileButton: { Modifier: FileButtonModifier, icon: "IconFileUpload" },
   popOver: { Modifier: PopOverModifier, icon: "IconLayoutSidebarLeftCollapse" },
   navLink: { Modifier: NavLinkModifier, icon: "IconClick" },

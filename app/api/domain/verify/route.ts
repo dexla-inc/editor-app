@@ -6,9 +6,10 @@ import {
 } from "@/utils/domains";
 
 export async function GET(req: Request) {
-  const { query } = await req.json();
+  const url = new URL(req.url);
+  const query = url.searchParams;
 
-  const domain = query.domain as string;
+  const domain = query.get("domain") as string;
 
   let status: DomainVerificationStatusProps = "Valid Configuration";
 

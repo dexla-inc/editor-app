@@ -270,7 +270,6 @@ export const useComputeValue = ({
       boundCode: (fieldValue: ValueProps) => {
         try {
           const boundCode = transformBoundCode(fieldValue.boundCode ?? "");
-          console.log("====>", fieldValue.boundCode, boundCode);
           return autoRunJavascriptCode(boundCode);
         } catch {
           return;

@@ -39,7 +39,7 @@ const CountdownButtonComponent = forwardRef(
       children: childrenValue = component.props?.children,
       duration = component.props?.duration,
     } = component.onLoad;
-    console.log({ childrenValue, ...component.props });
+
     const durationUnitAndValue = splitValueAndUnit(duration);
     const durationValue = durationUnitAndValue ? durationUnitAndValue[0] : 30;
     const durationUnit = durationUnitAndValue

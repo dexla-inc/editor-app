@@ -34,7 +34,7 @@ export const usePropsWithOverwrites = (
     }
   };
 
-  const omittingProps = ["showBorder"];
+  const omittingProps = ["showBorder", "pages", "theme"];
   if (isEditorMode) {
     omittingProps.push("error");
   }
