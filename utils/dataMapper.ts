@@ -18,7 +18,6 @@ import {
   SelectData as Autocomplete,
   SelectData as Select,
 } from "@/components/data/SelectData";
-import { TableData as Table } from "@/components/data/TableData";
 import { DateInputData as DateInput } from "@/components/data/DateInputData";
 import {
   TextInputData as Textarea,
@@ -67,7 +66,6 @@ export const dataMapper = {
   Container,
   Form: Container,
   Card: Container,
-  Table,
   Autocomplete,
   Progress,
   GoogleMap,
