@@ -1,4 +1,4 @@
-import { DataProps, FieldType } from "@/types/dataBinding";
+import { DataProps } from "@/types/dataBinding";
 import { Stack } from "@mantine/core";
 import { FormFieldsBuilder } from "@/components/data/forms/FormFieldsBuilder";
 
@@ -19,7 +19,7 @@ export const TextInputData = ({ component, endpoints }: DataProps) => {
         {
           name: "placeholder",
           label: "Placeholder",
-          type: "text" as FieldType,
+          fieldType: "Text" as const,
         },
       ]
     : defaultFields;

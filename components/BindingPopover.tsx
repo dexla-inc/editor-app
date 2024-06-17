@@ -137,6 +137,7 @@ export default function BindingPopover({
             </ActionIcon>
           </Flex>
           <ScrollArea h={500}>
+            {value.dataType}
             {value.dataType === "rules" && <RulesForm />}
             {value.dataType === "boundCode" && <BoundCodeForm />}
           </ScrollArea>

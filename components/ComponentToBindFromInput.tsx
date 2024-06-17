@@ -24,7 +24,7 @@ import merge from "lodash.merge";
 type BaseProps = {
   fieldType: FieldType;
   value: ValueProps;
-  onChange: (value: ValueProps) => void;
+  onChange: (value: ValueProps | any) => void;
   label?: string;
   isPageAction?: boolean;
   isTranslatable?: boolean;
@@ -32,6 +32,7 @@ type BaseProps = {
   form?: any;
   children?: React.ReactNode;
   staticValue?: any;
+  inputOnChange?: any;
 };
 
 type FieldProps<T extends FieldType> = BaseProps &
@@ -85,7 +86,7 @@ export const ComponentToBindFromInput = <T extends FieldType>(
     ? restProps.value?.static?.[language]
     : restProps.value?.static;
 
-  const customOnChange = <T extends unknown>(val: T) => {
+  const inputOnChange = <T extends unknown>(val: T) => {
     const newValue = merge(restProps.value, {
       dataType: "static",
       static: restProps.isTranslatable ? { [language]: val } : val,
@@ -96,7 +97,7 @@ export const ComponentToBindFromInput = <T extends FieldType>(
 
   return (
     <ComponentToBindContext.Provider
-      value={{ ...restProps, onChange: customOnChange, staticValue }}
+      value={{ ...restProps, inputOnChange, staticValue }}
     >
       <ComponentToBindWrapper>{children}</ComponentToBindWrapper>
     </ComponentToBindContext.Provider>
@@ -106,7 +107,7 @@ export const ComponentToBindFromInput = <T extends FieldType>(
 ComponentToBindFromInput.Text = function ComponentToBindFromTextInput() {
   const {
     placeholder,
-    value,
+    staticValue,
     onChange,
     type = "text",
   } = useBindingField<"Text">();
@@ -114,15 +115,9 @@ ComponentToBindFromInput.Text = function ComponentToBindFromTextInput() {
   return (
     <ComponentToBindField.Text
       placeholder={placeholder}
-      value={value?.static}
+      value={staticValue}
       type={type}
-      onChange={(e: any) =>
-        onChange({
-          ...value,
-          dataType: "static",
-          static: e.currentTarget.value,
-        })
-      }
+      onChange={(e) => onChange(e.currentTarget.value)}
       {...AUTOCOMPLETE_OFF_PROPS}
       w="100%"
     />
@@ -130,34 +125,23 @@ ComponentToBindFromInput.Text = function ComponentToBindFromTextInput() {
 };
 
 ComponentToBindFromInput.Array = function ComponentToBindFromArray() {
-  const { value, onChange, defaultValue } = useBindingField<"Array">();
+  const { staticValue, inputOnChange, defaultValue } =
+    useBindingField<"Array">();
   return (
     <ComponentToBindField.Array
-      value={value?.static?.toString() || (defaultValue as string)}
-      onChange={(val) => {
-        onChange({
-          ...value,
-          dataType: "static",
-          static: val,
-        });
-      }}
+      value={staticValue?.toString() || (defaultValue as string)}
+      onChange={inputOnChange}
       {...AUTOCOMPLETE_OFF_PROPS}
     />
   );
 };
 
 ComponentToBindFromInput.YesNo = function ComponentToBindFromYesNo() {
-  const { value, onChange } = useBindingField();
+  const { staticValue, inputOnChange } = useBindingField();
   return (
     <ComponentToBindField.YesNo
-      value={value?.static}
-      onChange={(val) =>
-        onChange({
-          ...value,
-          dataType: "static",
-          static: val,
-        })
-      }
+      value={staticValue}
+      onChange={inputOnChange}
       w="100%"
       {...AUTOCOMPLETE_OFF_PROPS}
     />
@@ -165,17 +149,11 @@ ComponentToBindFromInput.YesNo = function ComponentToBindFromYesNo() {
 };
 
 ComponentToBindFromInput.Boolean = function ComponentToBindFromBoolean() {
-  const { value, onChange } = useBindingField();
+  const { staticValue, inputOnChange } = useBindingField();
   return (
     <ComponentToBindField.Boolean
-      value={value?.static ?? ""}
-      onChange={(val) =>
-        onChange({
-          ...value,
-          dataType: "static",
-          static: val,
-        })
-      }
+      value={staticValue ?? ""}
+      onChange={inputOnChange}
       data={[
         { label: "True", value: "true" },
         { label: "False", value: "false" },
@@ -188,17 +166,11 @@ ComponentToBindFromInput.Boolean = function ComponentToBindFromBoolean() {
 };
 
 ComponentToBindFromInput.Segmented = function ComponentToBindFromSegmented() {
-  const { value, onChange, data } = useBindingField<"Segmented">();
+  const { staticValue, inputOnChange, data } = useBindingField<"Segmented">();
   return (
     <ComponentToBindField.Boolean
-      value={value?.static ?? ""}
-      onChange={(val) =>
-        onChange({
-          ...value,
-          dataType: "static",
-          static: val,
-        })
-      }
+      value={staticValue ?? ""}
+      onChange={inputOnChange}
       data={data}
       w="100%"
       {...AUTOCOMPLETE_OFF_PROPS}
@@ -207,17 +179,11 @@ ComponentToBindFromInput.Segmented = function ComponentToBindFromSegmented() {
 };
 
 ComponentToBindFromInput.Select = function ComponentToBindFromSelect() {
-  const { value, onChange, data } = useBindingField<"Select">();
+  const { staticValue, inputOnChange, data } = useBindingField<"Select">();
   return (
     <ComponentToBindField.Select
-      value={value?.static ?? ""}
-      onChange={(val) =>
-        onChange({
-          ...value,
-          dataType: "static",
-          static: val,
-        })
-      }
+      value={staticValue ?? ""}
+      onChange={inputOnChange}
       data={data}
       w="100%"
       style={{ flex: "1" }}
@@ -230,19 +196,13 @@ ComponentToBindFromInput.Select = function ComponentToBindFromSelect() {
 };
 
 ComponentToBindFromInput.Number = function ComponentToBindFromNumber() {
-  const { value, onChange, placeholder, precision, type } =
+  const { staticValue, inputOnChange, placeholder, precision, type } =
     useBindingField<"Number">();
   return (
     <ComponentToBindField.Number
       placeholder={placeholder}
-      value={value?.static ? parseFloatExtension(value?.static) : ""}
-      onChange={(val: number) =>
-        onChange({
-          ...value,
-          dataType: "static",
-          static: val.toString(),
-        })
-      }
+      value={staticValue ? parseFloatExtension(staticValue) : ""}
+      onChange={inputOnChange}
       type={type}
       precision={precision}
       parser={(value) => (value ? parseFloatExtension(value).toString() : "")}
@@ -256,7 +216,7 @@ ComponentToBindFromInput.Number = function ComponentToBindFromNumber() {
 };
 
 ComponentToBindFromInput.Options = function ComponentToBindFromOptions() {
-  const { form, isTranslatable, staticValue } = useBindingField();
+  const { form, isTranslatable } = useBindingField();
   const language = useEditorTreeStore((state) => state.language);
   return (
     <Stack style={{ gap: 0, width: "100%" }}>

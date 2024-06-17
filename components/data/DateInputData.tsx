@@ -22,7 +22,7 @@ const fields = [
   {
     name: "placeholder",
     label: "Placeholder",
-    type: "text",
+    fieldType: "Text",
   },
 ];
 

@@ -24,10 +24,9 @@ export const BindingContextSelector = ({ setSelectedItem }: any) => {
     actions,
     variables,
     components,
-    browserList,
-    auth,
     event,
     getEntityEditorValue,
+    others,
     item,
   } = useBindingPopover();
 
@@ -107,16 +106,12 @@ export const BindingContextSelector = ({ setSelectedItem }: any) => {
       dataItems: Object.values(variables.list),
     },
     {
-      entity: "auth",
-      dataItems: Array.of(auth),
-    },
-    {
-      entity: "browser",
-      dataItems: browserList,
-    },
-    {
       entity: "actions",
       dataItems: Object.values(actions?.list ?? []),
+    },
+    {
+      entity: "others",
+      dataItems: others,
     },
     {
       entity: "event",

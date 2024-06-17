@@ -1,7 +1,6 @@
-import { DataProps } from "@/types/dataBinding";
+import { DataProps, FieldType } from "@/types/dataBinding";
 import { Stack } from "@mantine/core";
 import { FormFieldsBuilder } from "@/components/data/forms/FormFieldsBuilder";
-import { FieldType } from "@/components/editor/BindingField/BindingField";
 
 export const CheckboxData = ({ component, endpoints }: DataProps) => {
   // We do this because CheckboxItem shares the same form, and we don't want to show the value field

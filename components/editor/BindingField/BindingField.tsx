@@ -8,7 +8,6 @@ import { FieldType } from "@/types/dataBinding";
 export const BindingField = <T extends FieldType>(
   props: ComponentToBindFromInputProps<T>,
 ) => {
-  // @ts-ignore
   const InnerField = ComponentToBindFromInput[props.fieldType];
 
   return (

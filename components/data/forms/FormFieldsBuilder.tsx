@@ -131,6 +131,7 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
               <BindingField
                 {...f}
                 form={form}
+                isTranslatable
                 {...form.getInputProps(`onLoad.${f.name}`)}
               />
             )}
