@@ -18,7 +18,7 @@ import { useEventData } from "@/hooks/data/useEventData";
 import { useEndpoints } from "../editor/reactQuery/useDataSourcesEndpoints";
 import { useOldRouter } from "@/hooks/data/useOldRouter";
 import { useDataBinding } from "@/hooks/data/useDataBinding";
-import { useBindingField } from "@/components/ComponentToBindFromInput";
+import { useBindingField } from "@/components/editor/BindingField/components/ComponentToBindFromInput";
 
 type BindType = {
   selectedEntityId: string;

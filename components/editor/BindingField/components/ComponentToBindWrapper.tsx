@@ -1,4 +1,4 @@
-import BindingPopover from "@/components/BindingPopover";
+import BindingPopover from "@/components/editor/BindingField/components/BindingPopover";
 import { TopLabel } from "@/components/TopLabel";
 import {
   Flex,
@@ -8,7 +8,7 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { useBindingField } from "@/components/ComponentToBindFromInput";
+import { useBindingField } from "@/components/editor/BindingField/components/ComponentToBindFromInput";
 import { DynamicForm } from "@/components/editor/BindingField/handlers/DynamicForm";
 
 type Props = {

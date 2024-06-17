@@ -2,7 +2,7 @@ import { extractKeys } from "@/utils/data";
 import { ActionIcon, Select, Tooltip } from "@mantine/core";
 import { useShareableContent } from "@/hooks/data/useShareableContent";
 import { useDataBinding } from "@/hooks/data/useDataBinding";
-import { useBindingField } from "@/components/ComponentToBindFromInput";
+import { useBindingField } from "@/components/editor/BindingField/components/ComponentToBindFromInput";
 import { ICON_SIZE } from "@/utils/config";
 import React from "react";
 import { IconPlug, IconPlugOff } from "@tabler/icons-react";

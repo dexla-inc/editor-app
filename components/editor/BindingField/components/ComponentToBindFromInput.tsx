@@ -1,4 +1,4 @@
-import { ComponentToBindWrapper } from "@/components/ComponentToBindWrapper";
+import { ComponentToBindWrapper } from "@/components/editor/BindingField/components/ComponentToBindWrapper";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { FieldType, ValueProps } from "@/types/dataBinding";
 import {
@@ -33,7 +33,7 @@ type BaseProps = {
   children?: React.ReactNode;
   staticValue?: any;
   inputOnChange?: any;
-  name: string;
+  name?: string;
 };
 
 type FieldProps<T extends FieldType> = BaseProps &

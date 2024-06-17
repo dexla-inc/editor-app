@@ -18,7 +18,7 @@ import {
 import { IconExternalLink, IconPlugConnected } from "@tabler/icons-react";
 import { BoundCodeForm } from "@/components/editor/BindingField/handlers/BoundCodeForm";
 import { RulesForm } from "@/components/editor/BindingField/handlers/RulesForm";
-import { useBindingField } from "@/components/ComponentToBindFromInput";
+import { useBindingField } from "@/components/editor/BindingField/components/ComponentToBindFromInput";
 
 const ML = 5;
 

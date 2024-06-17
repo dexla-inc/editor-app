@@ -1,7 +1,7 @@
 import {
   ComponentToBindFromInput,
   ComponentToBindFromInputProps,
-} from "@/components/ComponentToBindFromInput";
+} from "@/components/editor/BindingField/components/ComponentToBindFromInput";
 import React from "react";
 import { FieldType } from "@/types/dataBinding";
 

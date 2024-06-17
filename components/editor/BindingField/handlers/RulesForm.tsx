@@ -30,7 +30,7 @@ import isEmpty from "lodash.isempty";
 import { ComponentToBindField } from "@/components/editor/BindingField/ComponentToBindField";
 import { useForm } from "@mantine/form";
 import { useEffect } from "react";
-import { useBindingField } from "@/components/ComponentToBindFromInput";
+import { useBindingField } from "@/components/editor/BindingField/components/ComponentToBindFromInput";
 import { TopLabel } from "@/components/TopLabel";
 import { cloneObject } from "@/utils/common";
 

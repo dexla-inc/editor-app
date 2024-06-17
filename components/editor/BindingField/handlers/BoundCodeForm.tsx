@@ -8,7 +8,7 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 import { useDataBinding } from "@/hooks/data/useDataBinding";
 import { useState } from "react";
 import { useBindingPopover } from "@/hooks/data/useBindingPopover";
-import { useBindingField } from "@/components/ComponentToBindFromInput";
+import { useBindingField } from "@/components/editor/BindingField/components/ComponentToBindFromInput";
 
 export const BoundCodeForm = () => {
   const { value, onChange } = useBindingField();
