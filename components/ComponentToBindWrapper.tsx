@@ -9,6 +9,7 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useBindingField } from "@/components/ComponentToBindFromInput";
+import { DynamicForm } from "@/components/editor/BindingField/handlers/DynamicForm";
 
 type Props = {
   children: React.ReactNode;
@@ -31,28 +32,30 @@ export const ComponentToBindWrapper = ({ children }: Props) => {
       <Flex
         align="start"
         pos="relative"
+        gap={5}
         style={{ flexGrow: 1, minHeight: 0, alignItems: "self-end" }}
         w="100%"
       >
-        {["boundCode", "rules"].includes(value?.dataType!) ? (
-          <TextInput
-            w="100%"
-            styles={styles}
-            readOnly
-            value="< Edit Code >"
-            disabled={isBindingPopOverOpen}
-            onClick={onOpenBindingPopOver}
+        <DynamicForm>
+          {["boundCode", "rules"].includes(value?.dataType!) && (
+            <TextInput
+              w="100%"
+              styles={styles}
+              readOnly
+              value="< Edit Code >"
+              disabled={isBindingPopOverOpen}
+              onClick={onOpenBindingPopOver}
+            />
+          )}
+          {(value?.dataType === "static" || !value?.dataType) && children}
+          <BindingPopover
+            controls={{
+              isOpen: isBindingPopOverOpen,
+              onClose: onCloseBindingPopOver,
+              onOpen: onOpenBindingPopOver,
+            }}
           />
-        ) : (
-          children
-        )}
-        <BindingPopover
-          controls={{
-            isOpen: isBindingPopOverOpen,
-            onClose: onCloseBindingPopOver,
-            onOpen: onOpenBindingPopOver,
-          }}
-        />
+        </DynamicForm>
       </Flex>
     </Stack>
   );

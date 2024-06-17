@@ -1,11 +1,8 @@
-import { DynamicFormFieldsBuilder } from "@/components/data/forms/DynamicFormFieldsBuilder";
 import { Endpoint } from "@/requests/datasources/types";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { ICON_SIZE } from "@/utils/config";
 import { Component, debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
-import { ActionIcon, Group, Tooltip } from "@mantine/core";
+import { Group } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconPlug, IconPlugOff } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import React, { useEffect } from "react";
 import { FieldProps, ValueProps } from "@/types/dataBinding";
@@ -44,10 +41,6 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
   // merging fields from forms to commonFields
   fields = [...fields, ...commonFields];
   const language = useEditorTreeStore((state) => state.language);
-
-  const hasParentComponentData = useEditorTreeStore((state) =>
-    state.selectedComponentIds?.at(-1)?.includes("-related-"),
-  );
 
   const onLoadFieldsStarter = fields.reduce(
     (acc, f) => {
@@ -96,55 +89,17 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [language]);
 
-  const onClickToggleDataType = (field: string) => {
-    form.setTouched({ [`onLoad.${field}.dataType`]: true });
-    form.setValues({
-      onLoad: {
-        ...form.values.onLoad,
-        [String(field)]: {
-          value: "",
-          dataType:
-            form.values.onLoad[field].dataType === "dynamic"
-              ? "static"
-              : "dynamic",
-        },
-      },
-    });
-  };
-
   return (
     <>
       {fields.map((f) => {
-        const isDynamic = form.values.onLoad?.[f.name]?.dataType === "dynamic";
-        const DataTypeIcon = isDynamic ? IconPlugOff : IconPlug;
-
         return (
           <Group key={f.name} noWrap align="flex-end" spacing={10} w="100%">
-            {isDynamic ? (
-              <DynamicFormFieldsBuilder
-                form={form}
-                component={component}
-                endpoints={endpoints}
-                field={f}
-              />
-            ) : (
-              <BindingField
-                {...f}
-                form={form}
-                isTranslatable
-                {...form.getInputProps(`onLoad.${f.name}`)}
-              />
-            )}
-            {hasParentComponentData && (
-              <Tooltip label="Bind">
-                <ActionIcon
-                  onClick={() => onClickToggleDataType(f.name)}
-                  variant="default"
-                >
-                  <DataTypeIcon size={ICON_SIZE} />
-                </ActionIcon>
-              </Tooltip>
-            )}
+            <BindingField
+              {...f}
+              form={form}
+              isTranslatable
+              {...form.getInputProps(`onLoad.${f.name}`)}
+            />
           </Group>
         );
       })}

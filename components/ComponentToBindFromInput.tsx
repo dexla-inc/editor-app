@@ -33,6 +33,7 @@ type BaseProps = {
   children?: React.ReactNode;
   staticValue?: any;
   inputOnChange?: any;
+  name: string;
 };
 
 type FieldProps<T extends FieldType> = BaseProps &
