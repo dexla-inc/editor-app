@@ -66,23 +66,12 @@ export const BindingContextSelector = ({ setSelectedItem }: any) => {
       ),
     },
     {
-      value: "auth",
-      label: (
-        <Center>
-          <Icon name="IconLogin" />
-          <Text ml={ML} size={TAB_TEXT_SIZE}>
-            Auth
-          </Text>
-        </Center>
-      ),
-    },
-    {
-      value: "browser",
+      value: "others",
       label: (
         <Center>
           <Icon name="IconWorldWww" />
           <Text ml={ML} size={TAB_TEXT_SIZE}>
-            Browser
+            Others
           </Text>
         </Center>
       ),
@@ -111,7 +100,7 @@ export const BindingContextSelector = ({ setSelectedItem }: any) => {
     },
     {
       entity: "others",
-      dataItems: others,
+      dataItems: Array.of(others),
     },
     {
       entity: "event",

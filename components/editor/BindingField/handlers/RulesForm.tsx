@@ -211,7 +211,7 @@ export const RulesForm = () => {
                           />
                         )}
                         <Stack>
-                          <TopLabel text="Add Condition" />
+                          <TopLabel text="Chain Condition" />
                           <SegmentedControl
                             w="50%"
                             defaultValue="none"
