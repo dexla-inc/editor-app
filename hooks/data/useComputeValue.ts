@@ -58,7 +58,7 @@ const findValuePropsPaths = (obj: any, prefix = ""): string[] => {
   return paths;
 };
 
-const ruleFunctions: any = {
+export const ruleFunctions: any = {
   hasValue: (location: any) => location !== undefined,
   doesNotHaveValue: (location: any) => location === undefined,
   equalTo: (location: any, comparingValue: any) => location === comparingValue,

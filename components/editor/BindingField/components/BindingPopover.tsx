@@ -103,7 +103,7 @@ export default function BindingPopover({
           <Flex justify="space-between" align="center">
             <Flex align="center" gap="xs">
               <SegmentedControl
-                value={value.dataType}
+                value={value?.dataType}
                 onChange={(b: BinderType) =>
                   onChange({ ...value, dataType: b })
                 }
@@ -136,9 +136,8 @@ export default function BindingPopover({
             </ActionIcon>
           </Flex>
           <ScrollArea h={500}>
-            {value.dataType}
-            {value.dataType === "rules" && <RulesForm />}
-            {value.dataType === "boundCode" && <BoundCodeForm />}
+            {value?.dataType === "rules" && <RulesForm />}
+            {value?.dataType === "boundCode" && <BoundCodeForm />}
           </ScrollArea>
         </Stack>
       </Popover.Dropdown>

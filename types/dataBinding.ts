@@ -1,7 +1,5 @@
 import { Component } from "@/utils/editor";
-import { PagingResponse } from "@/requests/types";
 import { Endpoint } from "@/requests/datasources/types";
-import { FrontEndTypes } from "@/requests/variables/types";
 
 export type BindingType = "Formula" | "JavaScript";
 export type BindingTab = "components" | "variables" | "actions" | "others";
@@ -81,7 +79,11 @@ export type FieldProps = {
   fieldType: FieldType;
   type?: React.HTMLInputTypeAttribute;
   placeholder?: string;
-  additionalComponent?: JSX.Element;
   precision?: number;
   data?: Record<string, any>[];
+  defaultValue?: string;
+  useTrueOrFalseStrings?: boolean;
+  isPageAction?: boolean;
+  isTranslatable?: boolean;
+  form?: any;
 };

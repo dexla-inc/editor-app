@@ -24,12 +24,14 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
       name: "isVisible",
       label: "Visibility",
       fieldType: "YesNo",
+      defaultValue: "true",
     },
     {
       name: "currentState",
       label: "State",
       fieldType: "Select",
       data: getComponentsStates(),
+      defaultValue: "default",
     },
     {
       name: "tooltip",

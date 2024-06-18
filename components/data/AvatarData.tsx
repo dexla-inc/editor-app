@@ -1,4 +1,3 @@
-import { ShowAssetsLink } from "@/components/ShowAssetsLink";
 import { FormFieldsBuilder } from "@/components/data/forms/FormFieldsBuilder";
 import { DataProps } from "@/types/dataBinding";
 import { Stack } from "@mantine/core";
@@ -12,7 +11,6 @@ export const AvatarData = ({ component, endpoints }: DataProps) => {
         placeholder: "https://example.com/image.png",
         fieldType: "Text" as const,
         type: "url",
-        additionalComponent: <ShowAssetsLink />,
       },
       {
         name: "children",
@@ -27,7 +25,6 @@ export const AvatarData = ({ component, endpoints }: DataProps) => {
         placeholder: "https://example.com/image.png",
         fieldType: "Text" as const,
         type: "url",
-        additionalComponent: <ShowAssetsLink />,
       },
       {
         name: "alt",

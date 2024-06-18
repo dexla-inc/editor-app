@@ -8,6 +8,7 @@ import { BindingField } from "@/components/editor/BindingField/BindingField";
 type Props = ActionFormProps<Omit<ShowNotificationAction, "name">>;
 
 export const ShowNotificationActionForm = ({ form, isPageAction }: Props) => {
+  console.log(form.values);
   return (
     <Stack spacing={2}>
       {[
@@ -21,14 +22,13 @@ export const ShowNotificationActionForm = ({ form, isPageAction }: Props) => {
         },
       ].map(({ title, name }) => {
         return (
-          <React.Fragment key={title}>
-            <BindingField
-              fieldType="Text"
-              label={title}
-              isPageAction={isPageAction}
-              {...form.getInputProps(name)}
-            />
-          </React.Fragment>
+          <BindingField
+            key={title}
+            fieldType="Text"
+            label={title}
+            isPageAction={isPageAction}
+            {...form.getInputProps(name)}
+          />
         );
       })}
       <ThemeColorSelector
