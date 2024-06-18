@@ -1,7 +1,5 @@
 import { Select, SelectProps, Text } from "@mantine/core";
-import { forwardRef, useMemo, useState } from "react";
-import isEmpty from "lodash.isempty";
-import isEqual from "lodash.isequal";
+import { forwardRef } from "react";
 
 type SelectLogicalRulesProps = Omit<SelectProps, "data">;
 
@@ -62,22 +60,6 @@ export const logicalRulesData = [
 ];
 
 export const SelectLogicalRules = (props: SelectLogicalRulesProps) => {
-  const [comparingValue, setComparingValue] = useState("");
-
-  const dataHandlers: Record<string, (val: any) => boolean> = useMemo(
-    () => ({
-      hasValue: (val) => !isEmpty(val),
-      doesNotHaveValue: (val) => isEmpty(val),
-      equalTo: (val) => val === comparingValue,
-      notEqualTo: (val) => val !== comparingValue,
-      contains: (val) => val.includes(comparingValue),
-      notContains: (val) => !val.includes(comparingValue),
-      equalToMultiple: (val) => isEqual(val, comparingValue),
-      notEqualToMultiple: (val) => isEqual(val, comparingValue),
-    }),
-    [comparingValue],
-  );
-
   return (
     <Select
       {...props}

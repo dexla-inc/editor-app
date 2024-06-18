@@ -1,4 +1,4 @@
-import { Box, Text, TextInput } from "@mantine/core";
+import { Box, Flex, Text, TextInput } from "@mantine/core";
 import { CustomJavaScriptTextArea } from "@/components/CustomJavaScriptTextArea";
 import { isObjectOrArray } from "@/utils/common";
 import { JSONViewer } from "@/components/JSONViewer";
@@ -21,23 +21,21 @@ export const BoundCodeForm = () => {
   const currentValue = computeValue<string>({ value }, { actions, item });
 
   return (
-    <>
-      <Box>
-        <Text size="sm" fw={500} pb={2}>
-          {"JavaScript"}
-        </Text>
-        <CustomJavaScriptTextArea
-          language="typescript"
-          value={value?.boundCode}
-          onChange={(code: string) => {
-            onChange({ ...value, boundCode: code });
-            if (selectedItem) {
-              setSelectedItem(undefined);
-            }
-          }}
-          selectedItem={selectedItem}
-        />
-      </Box>
+    <Flex direction="column" gap={10}>
+      <Text size="sm" fw={500} pb={2}>
+        {"JavaScript"}
+      </Text>
+      <CustomJavaScriptTextArea
+        language="typescript"
+        value={value?.boundCode}
+        onChange={(code: string) => {
+          onChange({ ...value, boundCode: code });
+          if (selectedItem) {
+            setSelectedItem(undefined);
+          }
+        }}
+        selectedItem={selectedItem}
+      />
       {isObjectOrArray(currentValue) ? (
         <JSONViewer data={currentValue} />
       ) : (
@@ -52,6 +50,6 @@ export const BoundCodeForm = () => {
         />
       )}
       <BindingContextSelector setSelectedItem={setSelectedItem} />
-    </>
+    </Flex>
   );
 };

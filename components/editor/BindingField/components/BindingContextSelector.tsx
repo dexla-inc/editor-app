@@ -29,7 +29,7 @@ export const BindingContextSelector = ({ setSelectedItem }: any) => {
     others,
     item,
   } = useBindingPopover();
-
+  console.log(item);
   const segmentedTabOptions = [
     {
       value: "components",
@@ -116,6 +116,20 @@ export const BindingContextSelector = ({ setSelectedItem }: any) => {
           <Icon name="IconRouteAltRight" />
           <Text ml={ML} size={TAB_TEXT_SIZE}>
             Event
+          </Text>
+        </Center>
+      ),
+    });
+  }
+
+  if (Object.keys(item ?? {}).length > 0) {
+    segmentedTabOptions.unshift({
+      value: "item",
+      label: (
+        <Center>
+          <Icon name="IconRouteAltRight" />
+          <Text ml={ML} size={TAB_TEXT_SIZE}>
+            Item
           </Text>
         </Center>
       ),

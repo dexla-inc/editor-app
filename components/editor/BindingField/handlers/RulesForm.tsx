@@ -35,11 +35,10 @@ import { TopLabel } from "@/components/TopLabel";
 import { cloneObject } from "@/utils/common";
 
 export const RulesForm = () => {
-  const { fieldType, value, onChange } = useBindingField();
+  const { fieldType, value, onChange, ...restBindingFieldProps } =
+    useBindingField();
   const rules = (
-    isEmpty(value.rules)
-      ? [{ conditions: [{ operator: "none" }] }]
-      : value.rules
+    isEmpty(value.rules) ? [{ conditions: [{}] }] : value.rules
   ) as RuleProps[];
 
   const form = useForm({
@@ -61,7 +60,7 @@ export const RulesForm = () => {
   const Field = ComponentToBindField[fieldType];
   return (
     <Stack style={{ background: BG_RULES_GROUP }} px={20} py={30}>
-      {form.values.rules.map((rule, ruleIndex) => {
+      {form.values.rules?.map((rule, ruleIndex) => {
         return (
           <Accordion
             key={ruleIndex}
@@ -82,7 +81,7 @@ export const RulesForm = () => {
               </AccordionControl>
               <Accordion.Panel>
                 <Flex direction="column" gap={10}>
-                  {rule.conditions.map((condition, conditionIndex) => {
+                  {rule.conditions?.map((condition, conditionIndex) => {
                     const isRuleMultiple = [
                       "equalToMultiple",
                       "notEqualToMultiple",
@@ -193,7 +192,7 @@ export const RulesForm = () => {
                           <MultiSelect
                             label="Value"
                             placeholder={valuePlaceholder}
-                            data={condition.value as string[]}
+                            data={(condition.value as string[]) ?? []}
                             searchable
                             creatable
                             getCreateLabel={(query) => `+ Create ${query}`}
@@ -220,7 +219,7 @@ export const RulesForm = () => {
                                 { label: "AND", value: "and" },
                                 { label: "OR", value: "or" },
                               ],
-                              ...(condition.operator === "none"
+                              ...(!condition.operator
                                 ? [{ label: "None", value: "none" }]
                                 : []),
                             ]}
@@ -232,10 +231,11 @@ export const RulesForm = () => {
                                 `rules.${ruleIndex}.conditions.${conditionIndex}.operator`,
                                 op,
                               );
-                              if (condition.operator === "none") {
+
+                              if (!condition.operator) {
                                 form.insertListItem(
                                   `rules.${ruleIndex}.conditions`,
-                                  { operator: "none" },
+                                  {},
                                 );
                               }
                             }}
@@ -246,6 +246,7 @@ export const RulesForm = () => {
                   })}
 
                   <Field
+                    {...restBindingFieldProps}
                     withAsterisk
                     label="Result"
                     {...form.getInputProps(`rules.${ruleIndex}.result`)}
