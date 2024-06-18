@@ -1,9 +1,9 @@
-import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
-import { ComponentToBindFromSelect } from "@/components/ComponentToBindFromSelect";
+import { ComponentToBindFromInput } from "@/components/editor/BindingField/components/ComponentToBindFromInput";
 import { useComponentStates } from "@/hooks/editor/useComponentStates";
 import { ChangeStateAction } from "@/utils/actions";
 import { Stack } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
+import { BindingField } from "@/components/editor/BindingField/BindingField";
 
 type Props = {
   form: UseFormReturnType<Omit<ChangeStateAction, "name">>;
@@ -17,14 +17,15 @@ export const ChangeStateActionForm = ({ form, isPageAction }: Props) => {
 
   return (
     <Stack spacing="xs">
-      <ComponentToBindFromInput
+      <BindingField
+        fieldType="Text"
         label="Component to change"
         isPageAction={isPageAction}
         {...form.getInputProps("componentId")}
       />
-
       {!!componentStatesList.length && (
-        <ComponentToBindFromSelect
+        <BindingField
+          fieldType="Select"
           label="State"
           placeholder="Select State"
           nothingFound="Nothing found"

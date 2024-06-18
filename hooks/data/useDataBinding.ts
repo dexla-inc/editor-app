@@ -11,6 +11,8 @@ import { safeJsonParse } from "@/utils/common";
 import { useInputsStore } from "@/stores/inputs";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useOldRouter } from "@/hooks/data/useOldRouter";
+import isEmpty from "lodash.isempty";
+import { ruleFunctions } from "@/hooks/data/useComputeValue";
 
 export const useDataBinding = (componentId = "") => {
   const browser = useOldRouter();
@@ -29,6 +31,9 @@ export const useDataBinding = (componentId = "") => {
         let boundCode = value?.boundCode?.trim() ?? "";
 
         return autoRunJavascriptCode(boundCode, ctx);
+      },
+      rules: function (value: ValueProps) {
+        return evaluateConditions(value?.rules);
       },
     };
 
@@ -92,6 +97,49 @@ export const useDataBinding = (componentId = "") => {
     );
 
     const browserList = Array.of(pick(browser, ["asPath", "query"]));
+
+    function evaluateCondition(condition: any) {
+      let overallResult = null;
+
+      const { conditions: rules, result } = condition;
+
+      for (let i = 0; i < rules?.length; i++) {
+        let { value, rule, location } = rules[i];
+        if (isEmpty(rule) || isEmpty(location)) {
+          continue;
+        }
+        location = autoRunJavascriptCode(`return ${location}`);
+
+        // Evaluate the rule
+        const ruleFunction = ruleFunctions[rule];
+        const ruleResult = ruleFunction(location, value);
+
+        if (i === 0) {
+          // Initialize overallResult with the first rule's result
+          overallResult = ruleResult;
+        } else {
+          // Apply the previous operator with the previous overallResult
+          const prevOperator = rules[i - 1].operator;
+          if (prevOperator === "and") {
+            overallResult = overallResult && ruleResult;
+          } else if (prevOperator === "or") {
+            overallResult = overallResult || ruleResult;
+          }
+        }
+      }
+
+      return overallResult ? result : null;
+    }
+
+    function evaluateConditions(conditions: any) {
+      for (const condition of conditions) {
+        const conditionResult = evaluateCondition(condition);
+        if (conditionResult) {
+          return conditionResult;
+        }
+      }
+      return null;
+    }
 
     if (value === undefined) return staticFallback || "";
     let dataType = value?.dataType ?? "static";

@@ -1,15 +1,18 @@
-import { DataProps, FieldType } from "@/types/dataBinding";
+import { DataProps, FieldProps } from "@/types/dataBinding";
 import { Stack } from "@mantine/core";
 import { FormFieldsBuilder } from "@/components/data/forms/FormFieldsBuilder";
 
 export const CheckboxData = ({ component, endpoints }: DataProps) => {
   // We do this because CheckboxItem shares the same form, and we don't want to show the value field
-  const staticFields = ["Checkbox", "Switch"].includes(component.name)
+  const staticFields: FieldProps[] = ["Checkbox", "Switch"].includes(
+    component.name,
+  )
     ? [
         {
           name: "value",
           label: "Checked",
-          type: "boolean" as FieldType,
+          fieldType: "YesNo",
+          useTrueOrFalseStrings: true,
         },
       ]
     : [];
@@ -17,7 +20,7 @@ export const CheckboxData = ({ component, endpoints }: DataProps) => {
   staticFields.push({
     name: "optionValue",
     label: "Value",
-    type: "text" as FieldType,
+    fieldType: "Text",
   });
 
   return (

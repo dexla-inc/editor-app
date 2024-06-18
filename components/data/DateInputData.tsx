@@ -6,7 +6,7 @@ const fields: FieldProps[] = [
   {
     name: "type",
     label: "Type",
-    type: "segment",
+    fieldType: "Segmented",
     data: [
       {
         label: "Default",
@@ -25,7 +25,7 @@ const fields: FieldProps[] = [
   {
     name: "valueFormat",
     label: "Format",
-    type: "select",
+    fieldType: "Select",
     data: [
       { label: "DD MMM YYYY", value: "DD MMM YYYY" },
       { label: "DD MM YYYY", value: "DD MM YYYY" },
@@ -39,11 +39,13 @@ const fields: FieldProps[] = [
   {
     name: "value",
     label: "Value",
+    fieldType: "Text",
     type: "date",
   },
   {
     name: "placeholder",
     label: "Placeholder",
+    fieldType: "Text",
     type: "text",
   },
 ];

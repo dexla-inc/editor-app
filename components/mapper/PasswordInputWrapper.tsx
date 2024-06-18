@@ -117,8 +117,8 @@ export const PasswordInputWrapper = ({
           sanitizedValue.length > 0 && index === 0
             ? 100
             : strength >= ((index + 1) / requirements.length) * 100
-            ? 100
-            : 0
+              ? 100
+              : 0
         }
         color={strength > 90 ? "teal" : strength > 50 ? "yellow" : "red"}
         key={index}

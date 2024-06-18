@@ -1,12 +1,10 @@
 import { Component } from "@/utils/editor";
-import { PagingResponse } from "@/requests/types";
 import { Endpoint } from "@/requests/datasources/types";
-import { FrontEndTypes } from "@/requests/variables/types";
 
 export type BindingType = "Formula" | "JavaScript";
 export type BindingTab = "components" | "variables" | "actions" | "others";
 
-export type DataType = "static" | "dynamic" | "boundCode";
+export type DataType = "static" | "dynamic" | "boundCode" | "rules";
 export type ContextType =
   | "item"
   | "components"
@@ -15,11 +13,22 @@ export type ContextType =
   | "event"
   | "variables";
 
+export type RuleProps = {
+  result: any;
+  conditions: Array<{
+    rule: string;
+    value: string | string[];
+    location: string;
+    operator: string;
+  }>;
+};
+
 export type ValueProps = Partial<{
   dataType: DataType;
   static: any;
   dynamic: string;
   boundCode: string;
+  rules: RuleProps[];
 }>;
 
 export type GetValueProps = {
@@ -55,25 +64,26 @@ export type DataProps = {
 
 // Data forms
 export type FieldType =
-  | "password"
-  | "email"
-  | "tel"
-  | "url"
-  | "date"
-  | "unit"
-  | "yesno"
-  | "integer"
-  | "options"
-  | "select"
-  | "segment"
-  | Lowercase<FrontEndTypes>;
+  | "Text"
+  | "YesNo"
+  | "Boolean"
+  | "Array"
+  | "Number"
+  | "Options"
+  | "Select"
+  | "Segmented";
 
 export type FieldProps = {
   name: string;
   label: string;
-  type?: FieldType;
+  fieldType: FieldType;
+  type?: React.HTMLInputTypeAttribute;
   placeholder?: string;
-  additionalComponent?: JSX.Element;
-  decimalPlaces?: number;
+  precision?: number;
   data?: Record<string, any>[];
+  defaultValue?: string;
+  useTrueOrFalseStrings?: boolean;
+  isPageAction?: boolean;
+  isTranslatable?: boolean;
+  form?: any;
 };

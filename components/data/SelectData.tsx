@@ -29,9 +29,9 @@ export const SelectData = ({ component, endpoints, dataType }: DataProps) => {
       {dataType === "static" && (
         <FormFieldsBuilder
           fields={[
-            { name: "data", label: "Options", type: "options" },
-            { name: "value", label: "Value", type: "text" },
-            { name: "placeholder", label: "Placeholder", type: "text" },
+            { name: "data", label: "Options", fieldType: "Options" },
+            { name: "value", label: "Value", fieldType: "Text" },
+            { name: "placeholder", label: "Placeholder", fieldType: "Text" },
           ]}
           component={component}
           endpoints={endpoints!}
@@ -51,8 +51,16 @@ export const SelectData = ({ component, endpoints, dataType }: DataProps) => {
               <Stack spacing="xs" my="xs">
                 <FormFieldsBuilder
                   fields={[
-                    { name: "value", label: "Default Value", type: "text" },
-                    { name: "placeholder", label: "Placeholder", type: "text" },
+                    {
+                      name: "value",
+                      label: "Default Value",
+                      fieldType: "Text",
+                    },
+                    {
+                      name: "placeholder",
+                      label: "Placeholder",
+                      fieldType: "Text",
+                    },
                   ]}
                   component={component}
                   endpoints={endpoints!}

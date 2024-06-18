@@ -1,4 +1,3 @@
-import { BG_COLOR, BUTTON_HOVER } from "@/utils/branding";
 import { ObjectItem, objToItems } from "@/utils/common";
 import { ICON_SIZE } from "@/utils/config";
 import {
@@ -88,7 +87,7 @@ const ListItem = ({
       <Card
         ref={ref}
         p={0}
-        bg={hovered ? BUTTON_HOVER : BG_COLOR}
+        bg="transparent"
         sx={{
           cursor: "pointer",
           display: "flex",

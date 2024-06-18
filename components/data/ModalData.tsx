@@ -1,4 +1,4 @@
-import { DataProps, FieldType } from "@/types/dataBinding";
+import { DataProps } from "@/types/dataBinding";
 import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -23,11 +23,12 @@ export const ModalData = ({ component, endpoints }: DataProps) => {
     {
       name: "title",
       label: "Title",
+      fieldType: "Text" as const,
     },
     {
       name: "showInEditor",
       label: "Show in Editor",
-      type: "yesno" as FieldType,
+      fieldType: "YesNo" as const,
     },
   ];
 

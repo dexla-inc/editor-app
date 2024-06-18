@@ -18,14 +18,11 @@ import { useEventData } from "@/hooks/data/useEventData";
 import { useEndpoints } from "../editor/reactQuery/useDataSourcesEndpoints";
 import { useOldRouter } from "@/hooks/data/useOldRouter";
 import { useDataBinding } from "@/hooks/data/useDataBinding";
+import { useBindingField } from "@/components/editor/BindingField/components/ComponentToBindFromInput";
 
 type BindType = {
   selectedEntityId: string;
   entity: ContextType;
-};
-
-type Props = {
-  isPageAction?: boolean;
 };
 
 const parseVariableValue = (value: string): any => {
@@ -42,7 +39,8 @@ const setEntityString = ({ selectedEntityId, entity }: BindType) => {
   return `${entity}['${entityKey}']${path}`;
 };
 
-export const useBindingPopover = ({ isPageAction }: Props) => {
+export const useBindingPopover = () => {
+  const { isPageAction } = useBindingField();
   const activePage = useEditorStore((state) => state.activePage);
   const selectedComponentActions = useEditorTreeStore((state) => {
     const selectedComponentId = selectedComponentIdSelector(state);
@@ -84,7 +82,7 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
 
           return acc;
         },
-        { list: {} } as any,
+        { list: {} } as Record<string, any>,
       ),
     ),
   );
@@ -102,7 +100,7 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
       acc[variable.name] = parsedValue;
       return acc;
     },
-    { list: {} } as any,
+    { list: {} } as Record<string, any>,
   );
 
   const actionsList = isPageAction ? pageActions : selectedComponentActions;
@@ -119,7 +117,7 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
 
   const actionsProcess = isLogicFlow ? nodes : actionsList;
 
-  const actions = actionsProcess?.reduce(
+  const actions = (actionsProcess ?? []).reduce(
     (acc, item) => {
       let actionId, actionName, actionType;
       let endpointId = "";
@@ -165,7 +163,7 @@ export const useBindingPopover = ({ isPageAction }: Props) => {
 
       return acc;
     },
-    { list: {} } as any,
+    { list: {} } as Record<string, any>,
   );
 
   const actionsResponse = useEditorStore((state) => state.actionsResponse);

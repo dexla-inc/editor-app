@@ -1,5 +1,5 @@
-import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
+import { BindingField } from "@/components/editor/BindingField/BindingField";
 import { VariableSelect } from "@/components/variables/VariableSelect";
 import { FrontEndTypes } from "@/requests/variables/types";
 import { ActionFormProps, ChangeVariableAction } from "@/utils/actions";
@@ -31,9 +31,10 @@ export const ArrayVariableForm = ({ form, isPageAction }: Props) => {
     <>
       <Select required label="Update array" data={methods} {...method} />
       {showIndexField && (
-        <ComponentToBindFromInput
+        <BindingField
+          fieldType="Text"
           required
-          fieldType="number"
+          type="number"
           label="Index"
           isPageAction={isPageAction}
           {...form.getInputProps("index")}
@@ -46,7 +47,8 @@ export const ArrayVariableForm = ({ form, isPageAction }: Props) => {
             {...form.getInputProps("partialUpdate")}
           />
           {form.values.partialUpdate && (
-            <ComponentToBindFromInput
+            <BindingField
+              fieldType="Text"
               required
               label="Path"
               isPageAction={isPageAction}
@@ -88,7 +90,8 @@ export const ChangeVariableActionForm = ({ form, isPageAction }: Props) => {
         />
       )}
       {form.values.partialUpdate && (
-        <ComponentToBindFromInput
+        <BindingField
+          fieldType="Text"
           required
           label="Path"
           isPageAction={isPageAction}
@@ -97,9 +100,10 @@ export const ChangeVariableActionForm = ({ form, isPageAction }: Props) => {
       )}
 
       {!hideInputField && (
-        <ComponentToBindFromInput
+        <BindingField
           required
-          fieldType={variableType?.toLowerCase() as FieldType}
+          fieldType="Text"
+          type={variableType?.toLowerCase()}
           label="Value"
           isPageAction={isPageAction}
           defaultValue={defaultValue}

@@ -1,13 +1,14 @@
 import { ActionFormProps, ChangeLanguageAction } from "@/utils/actions";
-import { Select, Stack } from "@mantine/core";
-import { ComponentToBindFromSelect } from "../ComponentToBindFromSelect";
+import { Stack } from "@mantine/core";
+import { BindingField } from "@/components/editor/BindingField/BindingField";
 
 type Props = ActionFormProps<Omit<ChangeLanguageAction, "name">>;
 
 export const ChangeLanguageActionForm = ({ form }: Props) => {
   return (
     <Stack spacing="xs">
-      <ComponentToBindFromSelect
+      <BindingField
+        fieldType="Select"
         data={[
           { value: "en", label: "English" },
           { value: "fr", label: "French" },
