@@ -1,4 +1,4 @@
-import { Box, Flex, Text, TextInput } from "@mantine/core";
+import { Stack, Text, TextInput } from "@mantine/core";
 import { CustomJavaScriptTextArea } from "@/components/CustomJavaScriptTextArea";
 import { isObjectOrArray } from "@/utils/common";
 import { JSONViewer } from "@/components/JSONViewer";
@@ -21,7 +21,7 @@ export const BoundCodeForm = () => {
   const currentValue = computeValue<string>({ value }, { actions, item });
 
   return (
-    <Flex direction="column" gap={10}>
+    <Stack spacing={10}>
       <Text size="sm" fw={500} pb={2}>
         {"JavaScript"}
       </Text>
@@ -50,6 +50,6 @@ export const BoundCodeForm = () => {
         />
       )}
       <BindingContextSelector setSelectedItem={setSelectedItem} />
-    </Flex>
+    </Stack>
   );
 };

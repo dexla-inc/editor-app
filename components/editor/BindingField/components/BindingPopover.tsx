@@ -37,7 +37,7 @@ export default function BindingPopover({
   controls: { isOpen, onOpen, onClose },
   style = "iconButton",
 }: Props) {
-  const { value, onChange } = useBindingField();
+  const { value, onChange, label } = useBindingField();
   const onChangeDataTypeAsBoundCode = () => {
     onChange({
       ...value,
@@ -96,7 +96,7 @@ export default function BindingPopover({
           <Flex justify="space-between" align="center">
             <Flex align="center" gap="xs">
               <Icon name="IconPlugConnected" color={DEFAULT_TEXTCOLOR} />
-              <Title order={5}>Binder</Title>
+              <Title order={5}>Binder {label ? `- ${label}` : ""}</Title>
             </Flex>
             <CloseButton onClick={onClose} />
           </Flex>

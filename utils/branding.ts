@@ -208,9 +208,6 @@ export const BG_RULE = isDarkTheme
 export const BG_RULES_CONDITION = isDarkTheme
   ? theme.colors.dark[4]
   : theme.colors.gray[4];
-export const BG_LOCATION = isDarkTheme
-  ? theme.colors.dark[7]
-  : theme.colors.gray[7];
 const BINDER_BACKGROUND = isDarkTheme
   ? theme.colors.dark[5]
   : theme.colors.gray[1];

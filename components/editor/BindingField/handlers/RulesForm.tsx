@@ -7,9 +7,9 @@ import {
   Accordion,
   AccordionControlProps,
   ActionIcon,
+  Anchor,
   Box,
   Button,
-  Divider,
   Flex,
   Group,
   MultiSelect,
@@ -18,12 +18,7 @@ import {
   Text,
   TextInput,
 } from "@mantine/core";
-import {
-  BG_RULES_GROUP,
-  BG_RULE,
-  BG_LOCATION,
-  BG_RULES_CONDITION,
-} from "@/utils/branding";
+import { BG_RULES_GROUP, BG_RULE, BG_RULES_CONDITION } from "@/utils/branding";
 import { IconTrash } from "@tabler/icons-react";
 import { RuleProps } from "@/types/dataBinding";
 import isEmpty from "lodash.isempty";
@@ -81,7 +76,7 @@ export const RulesForm = () => {
                 </Text>
               </AccordionControl>
               <Accordion.Panel>
-                <Flex direction="column" gap={10}>
+                <Stack spacing={10}>
                   {rule.conditions?.map((condition, conditionIndex) => {
                     const isRuleMultiple = [
                       "equalToMultiple",
@@ -147,6 +142,7 @@ export const RulesForm = () => {
                         key={conditionIndex}
                         bg={BG_RULES_CONDITION}
                         p={10}
+                        spacing={0}
                       >
                         <Flex w="100%" justify="space-between" align="center">
                           <Text size="xs" weight="bold">
@@ -159,22 +155,32 @@ export const RulesForm = () => {
                           )}
                         </Flex>
 
-                        {isEmpty(condition.location) && (
-                          <BindingContextSelector
-                            setSelectedItem={onSetSelectedLocation}
-                          />
-                        )}
-                        {isEmpty(condition.location) || (
-                          <Group>
-                            <Text size="xs" weight="bold">
-                              {extractContextAndAttributes(condition.location)}
-                            </Text>
-                            <Button variant="default" onClick={onResetLocation}>
-                              Edit
-                            </Button>
-                          </Group>
-                        )}
+                        <Stack spacing={1}>
+                          <TopLabel text="Location" mt={3} required />
+                          {isEmpty(condition.location) && (
+                            <BindingContextSelector
+                              setSelectedItem={onSetSelectedLocation}
+                            />
+                          )}
+                          {isEmpty(condition.location) || (
+                            <Group>
+                              <Text size="xs" weight="bold">
+                                {extractContextAndAttributes(
+                                  condition.location,
+                                )}
+                              </Text>
+                              <Anchor
+                                variant="default"
+                                onClick={onResetLocation}
+                                size="xs"
+                              >
+                                Edit
+                              </Anchor>
+                            </Group>
+                          )}
+                        </Stack>
                         <SelectLogicalRules
+                          withAsterisk
                           {...form.getInputProps(
                             `rules.${ruleIndex}.conditions.${conditionIndex}.rule`,
                           )}
@@ -182,6 +188,7 @@ export const RulesForm = () => {
                         />
                         {!isRuleMultiple && !isRuleValueCheck && (
                           <TextInput
+                            withAsterisk
                             label="Value"
                             placeholder={valuePlaceholder}
                             {...form.getInputProps(
@@ -196,6 +203,7 @@ export const RulesForm = () => {
                             data={(condition.value as string[]) ?? []}
                             searchable
                             creatable
+                            withAsterisk
                             getCreateLabel={(query) => `+ Create ${query}`}
                             {...form.getInputProps(
                               `rules.${ruleIndex}.conditions.${conditionIndex}.value`,
@@ -210,10 +218,11 @@ export const RulesForm = () => {
                             }}
                           />
                         )}
-                        <Stack>
-                          <TopLabel text="Chain Condition" />
+                        <Stack spacing={2}>
+                          <TopLabel text="Chain Condition" mt={3} />
                           <SegmentedControl
-                            w="50%"
+                            size="xs"
+                            w="30%"
                             defaultValue="none"
                             data={[
                               ...[
@@ -252,20 +261,17 @@ export const RulesForm = () => {
                     label="Result"
                     {...form.getInputProps(`rules.${ruleIndex}.result`)}
                   />
-
-                  <Button
-                    onClick={() =>
-                      form.insertListItem("rules", { conditions: [{}] })
-                    }
-                  >
-                    Add rule
-                  </Button>
-                </Flex>
+                </Stack>
               </Accordion.Panel>
             </Accordion.Item>
           </Accordion>
         );
       })}
+      <Button
+        onClick={() => form.insertListItem("rules", { conditions: [{}] })}
+      >
+        Add rule
+      </Button>
     </Stack>
   );
 };

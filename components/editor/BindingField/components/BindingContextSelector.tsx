@@ -29,7 +29,7 @@ export const BindingContextSelector = ({ setSelectedItem }: any) => {
     others,
     item,
   } = useBindingPopover();
-  console.log(item);
+
   const segmentedTabOptions = [
     {
       value: "components",
