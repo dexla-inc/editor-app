@@ -440,7 +440,7 @@ export const updateTreeComponentAttrs = (
 
   // attributes we want to deep merge
   merge(component, { props: alwaysDefaultProps });
-  merge(component, { onLoad: attrs.onLoad });
+  component.onLoad = Object.assign({}, component.onLoad, attrs.onLoad);
   merge(component, { states: attrs.states });
   // attribute we want to overwrite, in this case, the ones that are not listed above
   Object.entries(omit(attrs, ["props", "onLoad", "states"])).forEach(

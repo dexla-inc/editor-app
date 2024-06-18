@@ -2,14 +2,11 @@ import { useMantineTheme } from "@mantine/core";
 import Editor from "@monaco-editor/react";
 import debounce from "lodash.debounce";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useBindingPopover } from "@/hooks/data/useBindingPopover";
 
 type JsProps = {
   language: "javascript" | "typescript" | "json";
   value?: string;
-  variables?: Record<string, any>;
-  components?: Record<string, any>;
-  actions?: Record<string, any>;
-  others?: Record<string, any>;
   onChange?: any;
   selectedItem?: string;
 };
@@ -46,13 +43,11 @@ declare var others: {
 export function CustomJavaScriptTextArea({
   language: defaultLanguage,
   value = "",
-  variables = {},
-  components = {},
-  actions = {},
-  others = {},
   onChange,
   selectedItem,
 }: JsProps) {
+  const { actions, variables, components, others } = useBindingPopover();
+
   const monacoRef = useRef<any>(null);
 
   const theme = useMantineTheme();

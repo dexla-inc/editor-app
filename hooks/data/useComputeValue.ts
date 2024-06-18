@@ -12,6 +12,8 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 import { useOldRouter } from "@/hooks/data/useOldRouter";
 import { useDataTransformers } from "@/hooks/data/useDataTransformers";
 import has from "lodash.has";
+import isEmpty from "lodash.isempty";
+import isEqual from "lodash.isequal";
 
 type RecordStringAny = Record<string, any>;
 
@@ -44,7 +46,8 @@ const findValuePropsPaths = (obj: any, prefix = ""): string[] => {
         "dataType" in obj[key] ||
         "boundCode" in obj[key] ||
         "dynamic" in obj[key] ||
-        "static" in obj[key]
+        "static" in obj[key] ||
+        "rules" in obj[key]
       ) {
         paths.push(fullPath);
       } else {
@@ -53,6 +56,22 @@ const findValuePropsPaths = (obj: any, prefix = ""): string[] => {
     }
   });
   return paths;
+};
+
+export const ruleFunctions: any = {
+  hasValue: (location: any) => location !== undefined,
+  doesNotHaveValue: (location: any) => location === undefined,
+  equalTo: (location: any, comparingValue: any) => location === comparingValue,
+  notEqualTo: (location: any, comparingValue: any) =>
+    location !== comparingValue,
+  contains: (location: any, comparingValue: any) =>
+    location.includes(comparingValue),
+  notContains: (location: any, comparingValue: any) =>
+    !location.includes(comparingValue),
+  equalToMultiple: (location: any, comparingValue: any) =>
+    isEqual(location, comparingValue),
+  notEqualToMultiple: (location: any, comparingValue: any) =>
+    isEqual(location, comparingValue),
 };
 
 export const useComputeValue = ({
@@ -86,10 +105,21 @@ export const useComputeValue = ({
       ];
 
       valuePropsPaths.forEach((fieldValuePath) => {
-        const fieldValue = get(onLoad, fieldValuePath);
+        const fieldValue = get(onLoad, fieldValuePath) as ValueProps;
         if (fieldValue.dataType === "boundCode" && fieldValue.boundCode) {
           patterns.forEach(({ pattern, keys }) => {
             keys.push(...extractKeysFromPattern(pattern, fieldValue.boundCode));
+          });
+        }
+        if (fieldValue.dataType === "rules" && fieldValue.rules?.length) {
+          fieldValue.rules.forEach((rule) => {
+            rule.conditions.forEach((condition) => {
+              patterns.forEach(({ pattern, keys }) => {
+                keys.push(
+                  ...extractKeysFromPattern(pattern, condition.location ?? ""),
+                );
+              });
+            });
           });
         }
       });
@@ -181,14 +211,6 @@ export const useComputeValue = ({
         result = result.replaceAll(regex, replacer);
       });
 
-      actionKeys.forEach((key) => {
-        const regex = new RegExp(
-          `actions\\[(\\/\\* [\\S\\s]* \\*\\/)?\\s?'${key}'\\]`,
-          "g",
-        );
-        result = result.replaceAll(regex, `'${inputs[key]}'`);
-      });
-
       otherKeys.forEach((key) => {
         const regex = new RegExp(
           `others\\[(\\/\\* [\\S\\s]* \\*\\/)?\\s?'${key}'\\]`,
@@ -216,7 +238,6 @@ export const useComputeValue = ({
       return result;
     },
     [
-      actionKeys,
       componentKeys,
       inputs,
       variableKeys,
@@ -227,6 +248,52 @@ export const useComputeValue = ({
       otherValues,
     ],
   );
+
+  function evaluateCondition(condition: any) {
+    let overallResult = null;
+
+    const { conditions: rules, result } = condition;
+
+    for (let i = 0; i < rules?.length; i++) {
+      let { value, rule, location } = rules[i];
+      if (isEmpty(rule) || isEmpty(location)) {
+        continue;
+      }
+      const transformedLocation = transformBoundCode(
+        `return ${location}` ?? "",
+      );
+      location = autoRunJavascriptCode(transformedLocation);
+
+      // Evaluate the rule
+      const ruleFunction = ruleFunctions[rule];
+      const ruleResult = ruleFunction(location, value);
+
+      if (i === 0) {
+        // Initialize overallResult with the first rule's result
+        overallResult = ruleResult;
+      } else {
+        // Apply the previous operator with the previous overallResult
+        const prevOperator = rules[i - 1].operator;
+        if (prevOperator === "and") {
+          overallResult = overallResult && ruleResult;
+        } else if (prevOperator === "or") {
+          overallResult = overallResult || ruleResult;
+        }
+      }
+    }
+
+    return overallResult ? result : null;
+  }
+
+  function evaluateConditions(conditions: any) {
+    for (const condition of conditions) {
+      const conditionResult = evaluateCondition(condition);
+      if (conditionResult) {
+        return conditionResult;
+      }
+    }
+    return null;
+  }
 
   const valueHandlers = useMemo(
     () => ({
@@ -254,8 +321,11 @@ export const useComputeValue = ({
           return;
         }
       },
+      rules: (fieldValue: ValueProps) => {
+        return evaluateConditions(fieldValue.rules);
+      },
     }),
-    [shareableContent, transformBoundCode, language],
+    [shareableContent, transformBoundCode, language, evaluateConditions],
   );
 
   return useMemo(

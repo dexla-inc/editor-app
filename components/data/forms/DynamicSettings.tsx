@@ -14,7 +14,7 @@ import get from "lodash.get";
 import { useEffect, useState } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { DataType } from "@/types/dataBinding";
-import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
+import { BindingField } from "@/components/editor/BindingField/BindingField";
 
 type Props = {
   component: Component;
@@ -217,10 +217,10 @@ export const DynamicSettings = ({
           </>
         )}
       </SidebarSection>
-      <ComponentToBindFromInput
+      <BindingField
         {...form.getInputProps("onLoad.isVisible")}
         label="Visibility"
-        fieldType="yesno"
+        fieldType="YesNo"
       />
     </>
   );

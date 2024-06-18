@@ -1,10 +1,10 @@
-import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 import { CustomNode, NodeData } from "@/components/logic-flow/nodes/CustomNode";
 import { ValueProps } from "@/types/dataBinding";
 import { UseFormReturnType } from "@mantine/form";
 import { IconArrowFork } from "@tabler/icons-react";
 import { nanoid } from "nanoid";
 import { NodeProps } from "reactflow";
+import { BindingField } from "@/components/editor/BindingField/BindingField";
 export * from "@/components/logic-flow/nodes/compute/actionNode";
 
 type FormValues = {
@@ -34,9 +34,9 @@ type NodeFormType = {
 
 export const NodeForm = ({ form }: NodeFormType) => {
   return (
-    <ComponentToBindFromInput
+    <BindingField
       label="Condition"
-      fieldType="boolean"
+      fieldType="Boolean"
       useTrueOrFalseStrings
       {...form.getInputProps("condition")}
     />

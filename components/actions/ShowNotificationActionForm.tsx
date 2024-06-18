@@ -1,9 +1,9 @@
-import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 import { ActionFormProps, ShowNotificationAction } from "@/utils/actions";
 import { ApiType } from "@/types/dashboardTypes";
 import { Stack } from "@mantine/core";
 import React from "react";
 import { ThemeColorSelector } from "../ThemeColorSelector";
+import { BindingField } from "@/components/editor/BindingField/BindingField";
 
 type Props = ActionFormProps<Omit<ShowNotificationAction, "name">>;
 
@@ -21,13 +21,13 @@ export const ShowNotificationActionForm = ({ form, isPageAction }: Props) => {
         },
       ].map(({ title, name }) => {
         return (
-          <React.Fragment key={title}>
-            <ComponentToBindFromInput
-              label={title}
-              isPageAction={isPageAction}
-              {...form.getInputProps(name)}
-            />
-          </React.Fragment>
+          <BindingField
+            key={title}
+            fieldType="Text"
+            label={title}
+            isPageAction={isPageAction}
+            {...form.getInputProps(name)}
+          />
         );
       })}
       <ThemeColorSelector

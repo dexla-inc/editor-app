@@ -12,9 +12,9 @@ import { SegmentedControlYesNo } from "../SegmentedControlYesNo";
 import { usePageListQuery } from "@/hooks/editor/reactQuery/usePageListQuery";
 import { useParams } from "next/navigation";
 import { ActionIconDefault } from "../ActionIconDefault";
-import { ComponentToBindFromInput } from "../ComponentToBindFromInput";
 import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
 import { Icon } from "../Icon";
+import { BindingField } from "@/components/editor/BindingField/BindingField";
 
 type Props = ActionFormProps<Omit<NavigationAction, "name">>;
 
@@ -86,7 +86,8 @@ export const NavigationActionForm = ({ form, isPageAction }: Props) => {
             style={{ width: "50%" }}
             {...form.getInputProps(`queryStrings.${index}.key`)}
           />
-          <ComponentToBindFromInput
+          <BindingField
+            fieldType="Text"
             placeholder="value"
             size="xs"
             label=""

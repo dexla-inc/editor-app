@@ -25,7 +25,7 @@ export const ContainerData = ({
     {
       name: "data",
       label: "Data",
-      type: "text" as FieldType, // textarea
+      fieldType: "Text" as const, // textarea
     },
   ];
 
