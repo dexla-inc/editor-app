@@ -287,10 +287,12 @@ function AccordionControl(
       sx={{
         display: "flex",
         alignItems: "center",
-        "&hover": { background: "" },
       }}
     >
-      <Accordion.Control {...props} />
+      <Accordion.Control
+        {...props}
+        sx={{ "&:hover": { background: "transparent" } }}
+      />
       {props.displayDeleteButton && (
         <ActionIcon onClick={props.onClickDeleteRule} size="md" mr={15}>
           <IconTrash size="1rem" color="red" />
@@ -301,29 +303,22 @@ function AccordionControl(
 }
 
 function extractContextAndAttributes(input: string) {
-  const regex = /(\w+)\[\/\* (.*?) \*\/ '.*?'\](.*)|(\w+)\['(.*?)'\](.*)/;
-  const match = input.match(regex);
+  const regexWithComment = /(\w+)\[\/\* (.*?) \*\/ ?'.*?'\](.*)/;
+  const regexWithoutComment = /(\w+)\['(.*?)'\](.*)/;
+  let match = input.match(regexWithComment);
+
+  if (!match) {
+    match = input.match(regexWithoutComment);
+  }
 
   if (match) {
-    if (match[1]) {
-      // Case with comments
-      const keyword = match[1]; // The keyword (e.g., variables, auth, or any other word)
-      const comment = match[2]; // The comment inside the /* ... */ block
-      const attributes = match[3]; // The remaining part of the string after the key
+    const keyword = match[1];
+    const comment = match[2];
+    const attributes = match[3];
 
-      const formattedAttributes = attributes.replace(/\['.*?'\]/, ""); // Remove any additional keys in square brackets
+    const formattedAttributes = attributes.replace(/\['.*?'\]/, "").trim();
 
-      return `${keyword.charAt(0).toUpperCase() + keyword.slice(1)} - ${comment.charAt(0).toUpperCase() + comment.slice(1)}${formattedAttributes}`;
-    } else if (match[4]) {
-      // Case without comments
-      const keyword = match[4]; // The keyword (e.g., variables, auth, or any other word)
-      const comment = match[5]; // The key inside the brackets
-      const attributes = match[6]; // The remaining part of the string after the key
-
-      const formattedAttributes = attributes.replace(/\['.*?'\]/, ""); // Remove any additional keys in square brackets
-
-      return `${keyword.charAt(0).toUpperCase() + keyword.slice(1)} - ${comment.charAt(0).toUpperCase() + comment.slice(1)}${formattedAttributes}`;
-    }
+    return `${keyword.charAt(0).toUpperCase() + keyword.slice(1)} - ${comment.charAt(0).toUpperCase() + comment.slice(1)}${formattedAttributes}`;
   } else {
     return "Invalid input format";
   }
