@@ -205,7 +205,7 @@ ComponentToBindFromInput.Segmented = function ComponentToBindFromSegmented() {
     ...defaultProps
   } = useBindingField<"Segmented">();
   return (
-    <ComponentToBindField.Boolean
+    <ComponentToBindField.Segmented
       {...defaultProps}
       {...AUTOCOMPLETE_OFF_PROPS}
       w="100%"

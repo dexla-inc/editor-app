@@ -73,7 +73,7 @@ export const EndpointRequestInputs = ({
                       param.location ? `${param.location} - ` : ""
                     }${param.type}`}
                     type={param.type}
-                    fieldType={param.type === "array" ? "text" : param.type}
+                    fieldType="Text"
                     {...(param.name !== "Authorization"
                       ? // @ts-ignore
                         { required: param.required }

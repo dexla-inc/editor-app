@@ -4,10 +4,11 @@ import { MonacoEditorJson } from "@/components/MonacoEditorJson";
 import { NumberInput, Select, TextInput } from "@mantine/core";
 
 export const ComponentToBindField = {
-  Boolean: SegmentedControlInput,
-  YesNo: SegmentedControlYesNo,
-  Array: MonacoEditorJson,
   Text: TextInput,
-  Number: NumberInput,
+  Array: MonacoEditorJson,
+  YesNo: SegmentedControlYesNo,
+  Boolean: SegmentedControlInput,
+  Segmented: SegmentedControlInput,
   Select: Select,
+  Number: NumberInput,
 };

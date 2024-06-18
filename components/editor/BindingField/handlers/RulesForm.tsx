@@ -71,6 +71,7 @@ export const RulesForm = () => {
           >
             <Accordion.Item value={`item-${ruleIndex}`}>
               <AccordionControl
+                displayDeleteButton={form.values.rules.length > 1}
                 onClickDeleteRule={() =>
                   form.removeListItem("rules", ruleIndex)
                 }
@@ -270,7 +271,10 @@ export const RulesForm = () => {
 };
 
 function AccordionControl(
-  props: AccordionControlProps & { onClickDeleteRule: () => void },
+  props: AccordionControlProps & {
+    onClickDeleteRule: () => void;
+    displayDeleteButton: boolean;
+  },
 ) {
   return (
     <Box
@@ -281,9 +285,11 @@ function AccordionControl(
       }}
     >
       <Accordion.Control {...props} />
-      <ActionIcon onClick={props.onClickDeleteRule} size="md" mr={15}>
-        <IconTrash size="1rem" color="red" />
-      </ActionIcon>
+      {props.displayDeleteButton && (
+        <ActionIcon onClick={props.onClickDeleteRule} size="md" mr={15}>
+          <IconTrash size="1rem" color="red" />
+        </ActionIcon>
+      )}
     </Box>
   );
 }
