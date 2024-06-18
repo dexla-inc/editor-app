@@ -38,7 +38,7 @@ export const SegmentedControlYesNo = ({
     { label: options.true, value: "true" },
     { label: options.false, value: "false" },
   ];
-  console.log({ data });
+
   return (
     <Stack spacing={2} w="100%">
       <TopLabel text={label!} />
