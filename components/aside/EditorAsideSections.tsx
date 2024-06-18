@@ -1,6 +1,5 @@
 import SidebarSection from "@/components/SidebarSection";
 import { StateSelector } from "@/components/aside/StateSelector";
-
 import { Tab, useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { componentMapper } from "@/utils/componentMapper";

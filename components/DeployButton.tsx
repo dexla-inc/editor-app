@@ -6,6 +6,7 @@ import { createDeployment } from "@/requests/deployments/mutations";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
 import { usePropelAuthStore } from "@/stores/propelAuth";
+import { generateProjectSlugLink } from "@/utils/common";
 import { Button, Tooltip } from "@mantine/core";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -51,7 +52,7 @@ export const DeployButton = () => {
 
   useEffect(() => {
     if (projectId && page && slug) {
-      const deployUrl = generateDeployLink(projectId, customDomain, slug);
+      const deployUrl = generateProjectSlugLink(projectId, customDomain, slug);
       setDeployUrl(deployUrl);
     }
   }, [projectId, customDomain, page, slug]);
@@ -118,26 +119,5 @@ export const DeployButton = () => {
         />
       </Tooltip>
     </Button.Group>
-  );
-};
-
-const generateDeployLink = (
-  projectId: string,
-  customDomain: string,
-  slug: string,
-): URL => {
-  const hostName = window?.location?.hostname ?? "";
-  const domain = hostName ?? "";
-  const isLocalhost = process.env.NEXT_PUBLIC_APP_ENVIRONMENT === "local";
-  const baseDomain = isLocalhost
-    ? `${domain}:3000`
-    : customDomain || process.env.NEXT_PUBLIC_DEPLOYED_DOMAIN;
-
-  const prefix = isLocalhost || !customDomain ? `${projectId}.` : "";
-
-  return new URL(
-    `${isLocalhost ? "http" : "https"}://${prefix}${baseDomain}/${
-      slug === "/" ? "" : slug
-    }`,
   );
 };

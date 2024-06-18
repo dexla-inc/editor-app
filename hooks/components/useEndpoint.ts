@@ -57,13 +57,18 @@ export const useEndpoint = ({
 
     refreshAccessToken(projectId, endpoint?.dataSourceId as string);
 
-    return performFetch(fetchUrl, endpoint, headers, body, authHeaderKey).then(
-      (response) => {
-        setRelatedComponentsData({ id: componentId, data: response });
+    return performFetch(
+      fetchUrl,
+      endpoint?.methodType,
+      headers,
+      body,
+      endpoint?.mediaType,
+      authHeaderKey,
+    ).then((response) => {
+      setRelatedComponentsData({ id: componentId, data: response });
 
-        return response;
-      },
-    );
+      return response;
+    });
   };
 
   const isEnabled = !!endpoint && dataType === "dynamic" && enabled;

@@ -3,7 +3,7 @@ import { ProjectResponse } from "@/requests/projects/types";
 import { useQuery } from "@tanstack/react-query";
 import { queryClient } from "@/utils/reactQuery";
 
-const cacheTime = 5 * 1000; // 5 seconds
+//const cacheTime = 5 * 1000; // 5 seconds
 
 export const useProjectQuery = (projectId: string | undefined) => {
   const queryKey = ["project", projectId];
@@ -11,7 +11,7 @@ export const useProjectQuery = (projectId: string | undefined) => {
   const queryResult = useQuery<ProjectResponse, Error>({
     queryKey: queryKey,
     queryFn: () => getProject(projectId ?? "", true),
-    staleTime: cacheTime,
+    //staleTime: cacheTime,
     enabled: !!projectId,
   });
 

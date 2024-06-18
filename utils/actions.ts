@@ -11,6 +11,7 @@ import {
   DataSourceAuthResponse,
   DataSourceResponse,
   Endpoint,
+  MediaTypes,
 } from "@/requests/datasources/types";
 import { ShowNotificationActionForm } from "@/components/actions/ShowNotificationActionForm";
 import { LogicFlowResponse } from "@/requests/logicflows/types";
@@ -41,6 +42,7 @@ import { RefreshAPICallActionForm } from "@/components/actions/RefreshAPICallAct
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { useInputsStore } from "@/stores/inputs";
 import { ResetComponentActionForm } from "@/components/actions/ResetComponentActionForm";
+import { MethodTypes } from "@/requests/types";
 
 const triggers = [
   "onClick",
@@ -518,11 +520,11 @@ const handleSuccess = async (props: APICallActionParams) => {
 };
 
 export function constructHeaders(
-  endpoint?: Endpoint,
+  mediaType?: MediaTypes,
   headers?: any,
   authHeaderKey = "",
 ) {
-  const contentType = endpoint?.mediaType || "application/json";
+  const contentType = mediaType || "application/json";
 
   const { Authorization, ...restHeaders } = headers || {};
 
@@ -540,17 +542,18 @@ export function constructHeaders(
 // Function to perform the fetch operation
 export async function performFetch(
   url: string,
-  endpoint?: Endpoint,
+  methodType?: MethodTypes,
   headers?: any,
   body?: any,
+  mediaType: MediaTypes = "application/json",
   authHeaderKey?: string,
 ) {
-  const isGetMethodType = endpoint?.methodType === "GET";
+  const isGetMethodType = methodType === "GET";
 
-  const _headers = constructHeaders(endpoint, headers, authHeaderKey);
+  const _headers = constructHeaders(mediaType, headers, authHeaderKey);
 
   const init: RequestInit = {
-    method: endpoint?.methodType,
+    method: methodType,
     headers: _headers,
   };
 
@@ -647,7 +650,14 @@ export const useApiCallAction = async (
 
     switch (action.authType) {
       case "login":
-        responseJson = await performFetch(url, endpoint, header, body);
+        responseJson = await performFetch(
+          url,
+          endpoint.methodType,
+          header,
+          body,
+          endpoint.mediaType,
+          authHeaderKey,
+        );
         const apiAuthConfig = useDataSourceStore.getState().apiAuthConfig;
         const authConfig = apiAuthConfig?.[endpoint.dataSourceId];
         const mergedAuthConfig = { ...responseJson, ...authConfig };
@@ -658,9 +668,10 @@ export const useApiCallAction = async (
       case "logout":
         responseJson = await performFetch(
           fetchUrl,
-          endpoint,
+          endpoint.methodType,
           header,
           body,
+          endpoint.mediaType,
           authHeaderKey,
         );
 
@@ -679,9 +690,10 @@ export const useApiCallAction = async (
 
         responseJson = await performFetch(
           fetchUrl,
-          endpoint,
+          endpoint.methodType,
           header,
           body ?? {},
+          endpoint.mediaType,
           authHeaderKey,
         );
     }
