@@ -10,6 +10,5 @@ export const ComponentToBindField = {
   Boolean: SegmentedControlInput,
   Segmented: SegmentedControlInput,
   Select: Select,
-  Options: MonacoEditorJson,
   Number: NumberInput,
 };

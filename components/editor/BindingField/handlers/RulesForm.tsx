@@ -52,7 +52,7 @@ export const RulesForm = () => {
   }, [form.values]);
 
   // @ts-ignore
-  const Field = ComponentToBindField[fieldType];
+  const Field = ComponentToBindField[fieldType] || ComponentToBindField.Text;
   return (
     <Stack style={{ background: BG_RULES_GROUP }} px={20} py={30}>
       {form.values.rules?.map((rule, ruleIndex) => {

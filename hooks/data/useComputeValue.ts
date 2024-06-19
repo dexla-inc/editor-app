@@ -286,6 +286,10 @@ export const useComputeValue = ({
   }
 
   function evaluateConditions(conditions: any) {
+    if (!Array.isArray(conditions)) {
+      return null;
+    }
+
     for (const condition of conditions) {
       const conditionResult = evaluateCondition(condition);
       if (conditionResult) {

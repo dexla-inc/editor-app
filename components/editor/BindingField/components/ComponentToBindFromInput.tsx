@@ -93,7 +93,6 @@ export const ComponentToBindFromInput = <T extends FieldType>(
       dataType: "static",
       static: restProps.isTranslatable ? { [language]: val } : val,
     });
-
     restProps.onChange(newValue);
   };
 
@@ -164,7 +163,7 @@ ComponentToBindFromInput.YesNo = function ComponentToBindFromYesNo() {
       {...defaultProps}
       {...AUTOCOMPLETE_OFF_PROPS}
       w="100%"
-      value={staticValue || defaultValue}
+      value={staticValue ?? defaultValue}
       onChange={inputOnChange}
     />
   );
