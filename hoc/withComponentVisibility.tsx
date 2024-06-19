@@ -17,8 +17,7 @@ export const withComponentVisibility = <T extends Record<string, any>>(
 
     const onLoad = useEditorTreeStore(
       useShallow(
-        (state) =>
-          state.componentMutableAttrs[componentTree.id!]?.onLoad || true,
+        (state) => state.componentMutableAttrs[componentTree.id!]?.onLoad || {},
       ),
     );
 

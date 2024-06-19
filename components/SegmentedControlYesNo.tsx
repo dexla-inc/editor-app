@@ -11,7 +11,7 @@ interface Props
   extends Omit<SegmentedControlProps, "data" | "onChange" | "value"> {
   label?: string;
   description?: string;
-  value?: boolean;
+  value?: boolean | string;
   useTrueOrFalseStrings?: boolean;
   onChange?: (value: boolean) => void;
 }
@@ -24,8 +24,7 @@ export const SegmentedControlYesNo = ({
   useTrueOrFalseStrings = false,
   ...props
 }: Props) => {
-  // if value is empty | undefined | null, it means, it wasnt defined before, so its default value is "true"
-  const stringValue = isEmpty(value) ? "true" : "false";
+  const stringValue = value || value === "" ? "true" : "false";
 
   const handleChange = (val: string) => {
     onChange?.(val === "true");
