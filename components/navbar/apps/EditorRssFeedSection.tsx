@@ -2,38 +2,33 @@ import { Button, Flex, Select, Stack, TextInput } from "@mantine/core";
 import { IconArrowLeft } from "@tabler/icons-react";
 import { ICON_SIZE } from "@/utils/config";
 import { AppId } from "../AppItem";
-import { EndpointSelect } from "@/components/EndpointSelect";
 import { ActionIconDefault } from "@/components/ActionIconDefault";
 import { useForm } from "@mantine/form";
-import { useEffect, useState } from "react";
-import useGenerateProjectSlugLink from "@/hooks/editor/useGenerateProjectSlugLink";
+import { useEffect } from "react";
 import { useParams } from "next/navigation";
 import { useAppStore } from "@/stores/app";
 import { convertToPatchParams, generateId } from "@/types/dashboardTypes";
-import { ProjectUpdateParams } from "@/requests/projects/types";
 import { patchProject } from "@/requests/projects/mutations";
 import { useProjectQuery } from "@/hooks/editor/reactQuery/useProjectQuery";
 import SidebarSection from "@/components/navbar/apps/SidebarSection";
-import {
-  AUTOCOMPLETE_OFF_PROPS,
-  generateProjectSlugLink,
-} from "@/utils/common";
+import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { Icon } from "@/components/Icon";
-import { useRouter } from "next/router";
+import { EndpointSetup } from "./EndpointSetup";
+import { useEndpoints } from "@/hooks/editor/reactQuery/useDataSourcesEndpoints";
+import { ProjectAppForm } from "@/types/projectApps";
 
 type Props = {
   setSelectedApp: (id: AppId | null) => void;
 };
-
-type FormData = Pick<ProjectUpdateParams, "apps">;
 
 export const EditorRssFeedSection = ({ setSelectedApp }: Props) => {
   const { id: projectId } = useParams<{ id: string; page: string }>();
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
   const { data: project, refetch } = useProjectQuery(projectId);
+  const { endpoints } = useEndpoints(projectId as string);
 
-  const form = useForm<FormData>({
+  const form = useForm<ProjectAppForm>({
     initialValues: {
       apps:
         project?.apps
@@ -42,10 +37,13 @@ export const EditorRssFeedSection = ({ setSelectedApp }: Props) => {
             id: app.id,
             type: "rss_feed",
             configuration: {
-              endpoint: app.configuration.endpoint,
+              endpointId: app.configuration.endpointId,
               relativeUrl: app.configuration.relativeUrl,
               version: app.configuration.version,
               encoding: app.configuration.encoding,
+              resultsKey: app.configuration.resultsKey,
+              staleTime: app.configuration.staleTime,
+              binds: app.configuration.binds,
             },
           })) ?? [],
     },
@@ -60,10 +58,13 @@ export const EditorRssFeedSection = ({ setSelectedApp }: Props) => {
             id: app.id,
             type: "rss_feed",
             configuration: {
-              endpoint: app.configuration.endpoint,
+              endpointId: app.configuration.endpointId,
               relativeUrl: app.configuration.relativeUrl,
               version: app.configuration.version,
               encoding: app.configuration.encoding,
+              resultsKey: app.configuration.resultsKey,
+              staleTime: app.configuration.staleTime,
+              binds: app.configuration.binds,
             },
           })),
         });
@@ -81,7 +82,7 @@ export const EditorRssFeedSection = ({ setSelectedApp }: Props) => {
   //   setRelativeUrl(form.values.relativeUrl);
   // }, [form.values.relativeUrl]);
 
-  const onSubmit = async (values: FormData) => {
+  const onSubmit = async (values: ProjectAppForm) => {
     try {
       startLoading({
         id: "updating-apps",
@@ -91,7 +92,7 @@ export const EditorRssFeedSection = ({ setSelectedApp }: Props) => {
 
       form.validate();
 
-      const patchParams = convertToPatchParams<FormData>(values);
+      const patchParams = convertToPatchParams<ProjectAppForm>(values);
       await patchProject(projectId, patchParams);
       refetch();
 
@@ -127,6 +128,9 @@ export const EditorRssFeedSection = ({ setSelectedApp }: Props) => {
         relativeUrl: "rss-feed.xml",
         version: "1.0",
         encoding: "UTF-8",
+        resultsKey: "",
+        staleTime: 30,
+        binds: { header: {}, parameter: {}, body: {} },
       },
     });
   };
@@ -166,9 +170,11 @@ export const EditorRssFeedSection = ({ setSelectedApp }: Props) => {
             remove={removeRssFeedItem}
           >
             <Stack p="xs" pr={0}>
-              <EndpointSelect
-                {...form.getInputProps(`apps.${index}.configuration.endpoint`)}
-                isOnLoad
+              <EndpointSetup
+                projectApp={app}
+                endpoints={endpoints}
+                form={form}
+                index={index}
               />
               <Flex align="flex-end" gap="xs" w="100%">
                 <TextInput
@@ -183,9 +189,9 @@ export const EditorRssFeedSection = ({ setSelectedApp }: Props) => {
                 <ActionIconDefault
                   iconName="IconExternalLink"
                   tooltip={app.configuration.relativeUrl}
-                  onClick={() => preview(app.configuration.endpoint)}
+                  onClick={() => preview(app.configuration.endpointId)}
                   disabled={
-                    app.configuration.endpoint === "" ||
+                    app.configuration.endpointId === "" ||
                     app.configuration.relativeUrl === ""
                   }
                 />
@@ -232,13 +238,3 @@ export const EditorRssFeedSection = ({ setSelectedApp }: Props) => {
     </Stack>
   );
 };
-
-function generateProjectUrl(
-  projectId: string,
-  domain: string,
-  subDomain: string,
-  slug: string,
-) {
-  const fullDomain = subDomain ? `${subDomain}.${domain}` : domain;
-  return generateProjectSlugLink(projectId, fullDomain, slug);
-}

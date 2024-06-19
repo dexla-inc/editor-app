@@ -8,8 +8,8 @@ import {
 } from "@/utils/actions";
 import { Stack } from "@mantine/core";
 import { useParams } from "next/navigation";
-import { SegmentedControlInput } from "../SegmentedControlInput";
-import { SegmentedControlYesNo } from "../SegmentedControlYesNo";
+import { SegmentedControlInput } from "@/components/SegmentedControlInput";
+import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
 import { useEffect } from "react";
 import { useEndpoints } from "@/hooks/editor/reactQuery/useDataSourcesEndpoints";
 

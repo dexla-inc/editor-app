@@ -1,10 +1,12 @@
 import { getDataSourceEndpoint } from "@/requests/datasources/queries-noauth";
+import { getDeploymentPage } from "@/requests/deployments/queries-noauth";
 import { performFetch } from "@/utils/actions";
 import { NextRequest, NextResponse } from "next/server";
 import { Builder } from "xml2js";
 
 type Props = {
   params: {
+    id: string;
     endpoint: string;
   };
 };
@@ -13,16 +15,19 @@ export async function GET(
   req: NextRequest,
   { params }: Props,
 ): Promise<NextResponse> {
-  const endpointId = params.endpoint;
+  const { id, endpoint } = params;
 
-  const endpoint = await getDataSourceEndpoint("empty", endpointId);
+  const [endpointResult, deployment] = await Promise.all([
+    getDataSourceEndpoint(id, endpoint),
+    getDeploymentPage(id, "/"),
+  ]);
 
   const result = performFetch(
-    endpoint.url!,
-    endpoint.methodType,
-    endpoint.headers,
-    endpoint.body,
-    endpoint.mediaType,
+    endpointResult.url!,
+    endpointResult.methodType,
+    endpointResult.headers,
+    endpointResult.body,
+    endpointResult.mediaType,
   );
 
   console.log("Endpoint:", result);
