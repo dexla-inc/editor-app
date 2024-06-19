@@ -30,8 +30,7 @@ import { TopLabel } from "@/components/TopLabel";
 import { cloneObject } from "@/utils/common";
 
 export const RulesForm = () => {
-  const { fieldType, value, onChange, ...restBindingFieldProps } =
-    useBindingField();
+  const { fieldType, value, onChange } = useBindingField();
   const rules = (
     isEmpty(value.rules) ? [{ conditions: [{}] }] : value.rules
   ) as RuleProps[];
@@ -50,7 +49,7 @@ export const RulesForm = () => {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.values]);
-
+  console.log(form.values);
   // @ts-ignore
   const Field = ComponentToBindField[fieldType] || ComponentToBindField.Text;
   return (
@@ -257,7 +256,6 @@ export const RulesForm = () => {
                   })}
 
                   <Field
-                    {...restBindingFieldProps}
                     withAsterisk
                     label="Result"
                     {...form.getInputProps(`rules.${ruleIndex}.result`)}
