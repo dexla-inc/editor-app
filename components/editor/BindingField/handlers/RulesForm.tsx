@@ -52,7 +52,7 @@ export const RulesForm = () => {
   }, [form.values]);
 
   // @ts-ignore
-  const Field = ComponentToBindField[fieldType];
+  const Field = ComponentToBindField[fieldType] || ComponentToBindField.Text;
   return (
     <Stack style={{ background: BG_RULES_GROUP }} px={20} py={30}>
       {form.values.rules?.map((rule, ruleIndex) => {
@@ -319,7 +319,7 @@ function extractContextAndAttributes(input: string) {
     const formattedAttributes = attributes.replace(/\['.*?'\]/, "").trim();
 
     return `${keyword.charAt(0).toUpperCase() + keyword.slice(1)} - ${comment.charAt(0).toUpperCase() + comment.slice(1)}${formattedAttributes}`;
-  } else {
-    return "Invalid input format";
   }
+
+  return "";
 }

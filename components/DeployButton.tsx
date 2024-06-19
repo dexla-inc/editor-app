@@ -5,6 +5,7 @@ import { useProjectQuery } from "@/hooks/editor/reactQuery/useProjectQuery";
 import { createDeployment } from "@/requests/deployments/mutations";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
+import { usePropelAuthStore } from "@/stores/propelAuth";
 import { Button, Tooltip } from "@mantine/core";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -17,6 +18,9 @@ export const DeployButton = () => {
 
   const { data: pageListQuery, isFetched } = usePageListQuery(projectId, null);
   const setPages = useEditorStore((state) => state.setPages);
+  const canDeploy = usePropelAuthStore(
+    (state) => !!state.userPermissions.find((p) => p === "can_deploy"),
+  );
 
   const { startLoading, stopLoading, isLoading } = useAppStore((state) => ({
     startLoading: state.startLoading,
@@ -89,13 +93,15 @@ export const DeployButton = () => {
     }
   };
 
+  const deployIsDisabled = !canDeploy || (canDeploy && isLoading);
+
   return (
     <Button.Group>
       <Tooltip label="Deploy">
         <Button
           loading={isLoading}
           loaderPosition="center"
-          disabled={isLoading}
+          disabled={deployIsDisabled}
           onClick={() => handleDeploy(true)}
           leftIcon={<Icon name="IconRocket" />}
         >

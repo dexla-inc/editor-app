@@ -27,6 +27,7 @@ export const withComponentWrapper = <T extends Record<string, any>>(
     renderTree,
     shareableContent,
   }: WithComponentWrapperProps) => {
+    console.log("withComponentWrapper", componentTree.id, id);
     const isEditorMode = useEditorTreeStore(
       (state) => !state.isPreviewMode && !state.isLive,
     );
