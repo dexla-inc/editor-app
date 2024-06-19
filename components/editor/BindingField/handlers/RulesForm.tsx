@@ -30,10 +30,20 @@ import { TopLabel } from "@/components/TopLabel";
 import { cloneObject } from "@/utils/common";
 
 export const RulesForm = () => {
-  const { fieldType, value, onChange, ...restBindingFieldProps } =
-    useBindingField();
+  const { fieldType, value, onChange } = useBindingField();
   const rules = (
-    isEmpty(value.rules) ? [{ conditions: [{}] }] : value.rules
+    isEmpty(value.rules)
+      ? [
+          {
+            conditions: [
+              {
+                rule: "equalTo",
+                value: "",
+              },
+            ],
+          },
+        ]
+      : value.rules
   ) as RuleProps[];
 
   const form = useForm({
@@ -256,7 +266,6 @@ export const RulesForm = () => {
                   })}
 
                   <Field
-                    {...restBindingFieldProps}
                     withAsterisk
                     label="Result"
                     {...form.getInputProps(`rules.${ruleIndex}.result`)}
