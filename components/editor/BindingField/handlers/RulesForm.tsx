@@ -33,7 +33,18 @@ export const RulesForm = () => {
   const { fieldType, value, onChange, ...restBindingFieldProps } =
     useBindingField();
   const rules = (
-    isEmpty(value.rules) ? [{ conditions: [{}] }] : value.rules
+    isEmpty(value.rules)
+      ? [
+          {
+            conditions: [
+              {
+                rule: "equalTo",
+                value: "",
+              },
+            ],
+          },
+        ]
+      : value.rules
   ) as RuleProps[];
 
   const form = useForm({
@@ -185,7 +196,6 @@ export const RulesForm = () => {
                             `rules.${ruleIndex}.conditions.${conditionIndex}.rule`,
                           )}
                           onChange={onSelectLogicalRule}
-                          defaultValue="equalto"
                         />
                         {!isRuleMultiple && !isRuleValueCheck && (
                           <TextInput
