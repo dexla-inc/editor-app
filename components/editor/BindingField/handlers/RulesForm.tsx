@@ -185,6 +185,7 @@ export const RulesForm = () => {
                             `rules.${ruleIndex}.conditions.${conditionIndex}.rule`,
                           )}
                           onChange={onSelectLogicalRule}
+                          defaultValue="equalto"
                         />
                         {!isRuleMultiple && !isRuleValueCheck && (
                           <TextInput
