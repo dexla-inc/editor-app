@@ -286,7 +286,7 @@ export const useComputeValue = ({
   }
 
   function evaluateConditions(conditions: any) {
-    for (const condition of conditions) {
+    for (const condition of conditions ?? []) {
       const conditionResult = evaluateCondition(condition);
       if (conditionResult) {
         return conditionResult;

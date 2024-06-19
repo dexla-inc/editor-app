@@ -15,16 +15,15 @@ export const withComponentVisibility = <T extends Record<string, any>>(
       id = `${componentTree.id}-related-${shareableContent?.parentSuffix}`;
     }
 
-    const isVisible = useEditorTreeStore(
+    const onLoad = useEditorTreeStore(
       useShallow(
         (state) =>
-          state.componentMutableAttrs[componentTree.id!]?.onLoad?.isVisible ??
-          true,
+          state.componentMutableAttrs[componentTree.id!]?.onLoad || true,
       ),
     );
 
     const computedOnLoad = useComputeValue({
-      onLoad: { isVisible },
+      onLoad: { isVisible: onLoad.isVisible },
       shareableContent,
     });
 
