@@ -5,6 +5,7 @@ import get from "lodash.get";
 import {
   ComputeValuePropCtx,
   GetValueProps,
+  RuleProps,
   ValueProps,
 } from "@/types/dataBinding";
 import { safeJsonParse } from "@/utils/common";
@@ -33,7 +34,7 @@ export const useDataBinding = (componentId = "") => {
         return autoRunJavascriptCode(boundCode, ctx);
       },
       rules: function (value: ValueProps) {
-        return evaluateConditions(value?.rules);
+        return evaluateRules(value?.rules as RuleProps[]);
       },
     };
 
@@ -98,13 +99,13 @@ export const useDataBinding = (componentId = "") => {
 
     const browserList = Array.of(pick(browser, ["asPath", "query"]));
 
-    function evaluateCondition(condition: any) {
+    function evaluateCondition(rule: any) {
       let overallResult = null;
 
-      const { conditions: rules, result } = condition;
+      const { conditions } = rule;
 
-      for (let i = 0; i < rules?.length; i++) {
-        let { value, rule, location } = rules[i];
+      for (let i = 0; i < conditions?.length; i++) {
+        let { value, rule, location } = conditions[i];
         if (isEmpty(rule) || isEmpty(location)) {
           continue;
         }
@@ -119,7 +120,7 @@ export const useDataBinding = (componentId = "") => {
           overallResult = ruleResult;
         } else {
           // Apply the previous operator with the previous overallResult
-          const prevOperator = rules[i - 1].operator;
+          const prevOperator = conditions[i - 1].operator;
           if (prevOperator === "and") {
             overallResult = overallResult && ruleResult;
           } else if (prevOperator === "or") {
@@ -128,17 +129,17 @@ export const useDataBinding = (componentId = "") => {
         }
       }
 
-      return overallResult ? result : null;
+      return overallResult;
     }
 
-    function evaluateConditions(conditions: any) {
-      for (const condition of conditions ?? []) {
-        const conditionResult = evaluateCondition(condition);
-        if (conditionResult) {
-          return conditionResult;
+    function evaluateRules(rules: RuleProps[]) {
+      for (const rule of rules ?? []) {
+        const ruleResult = evaluateCondition(rule);
+        if (ruleResult) {
+          return rule.result;
         }
       }
-      return null;
+      return;
     }
 
     if (value === undefined) return staticFallback || "";
