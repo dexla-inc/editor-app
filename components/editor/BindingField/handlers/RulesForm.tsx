@@ -49,7 +49,7 @@ export const RulesForm = () => {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.values]);
-  console.log(form.values);
+
   // @ts-ignore
   const Field = ComponentToBindField[fieldType] || ComponentToBindField.Text;
   return (
