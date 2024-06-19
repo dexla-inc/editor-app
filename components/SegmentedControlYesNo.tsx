@@ -5,6 +5,7 @@ import {
   Stack,
   Text,
 } from "@mantine/core";
+import isEmpty from "lodash.isempty";
 
 interface Props
   extends Omit<SegmentedControlProps, "data" | "onChange" | "value"> {
@@ -23,7 +24,8 @@ export const SegmentedControlYesNo = ({
   useTrueOrFalseStrings = false,
   ...props
 }: Props) => {
-  const stringValue = value ? "true" : "false";
+  // if value is empty | undefined | null, it means, it wasnt defined before, so its default value is "true"
+  const stringValue = isEmpty(value) ? "true" : "false";
 
   const handleChange = (val: string) => {
     onChange?.(val === "true");

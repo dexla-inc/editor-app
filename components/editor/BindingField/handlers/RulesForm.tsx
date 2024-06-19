@@ -319,7 +319,7 @@ function extractContextAndAttributes(input: string) {
     const formattedAttributes = attributes.replace(/\['.*?'\]/, "").trim();
 
     return `${keyword.charAt(0).toUpperCase() + keyword.slice(1)} - ${comment.charAt(0).toUpperCase() + comment.slice(1)}${formattedAttributes}`;
-  } else {
-    return "Invalid input format";
   }
+
+  return "";
 }
