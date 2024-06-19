@@ -290,38 +290,40 @@ ComponentToBindFromInput.Options = function ComponentToBindFromOptions() {
       </div>
 
       <Flex direction="column" gap="10px" mt="10px">
-        {(form.values.onLoad.data.static ?? [])?.map(
-          (_: SelectProps, index: number) => {
-            const fieldNamePrefix =
-              "onLoad.data.static" + (isTranslatable ? `.${language}` : "");
-            return (
-              <Group key={index} style={{ flexWrap: "nowrap" }}>
-                <TextInput
-                  size="xs"
-                  placeholder="label"
-                  {...form.getInputProps(`${fieldNamePrefix}.${index}.label`)}
-                  style={{ width: "50%" }}
-                  {...AUTOCOMPLETE_OFF_PROPS}
-                />
-                <TextInput
-                  size="xs"
-                  placeholder="value"
-                  {...form.getInputProps(`${fieldNamePrefix}.${index}.value`)}
-                  style={{ width: "50%" }}
-                  {...AUTOCOMPLETE_OFF_PROPS}
-                />
+        {(
+          (isTranslatable
+            ? form.values.onLoad.data.static[language]
+            : form.values.onLoad.data.static) ?? []
+        )?.map((_: SelectProps, index: number) => {
+          const fieldNamePrefix =
+            "onLoad.data.static" + (isTranslatable ? `.${language}` : "");
+          return (
+            <Group key={index} style={{ flexWrap: "nowrap" }}>
+              <TextInput
+                size="xs"
+                placeholder="label"
+                {...form.getInputProps(`${fieldNamePrefix}.${index}.label`)}
+                style={{ width: "50%" }}
+                {...AUTOCOMPLETE_OFF_PROPS}
+              />
+              <TextInput
+                size="xs"
+                placeholder="value"
+                {...form.getInputProps(`${fieldNamePrefix}.${index}.value`)}
+                style={{ width: "50%" }}
+                {...AUTOCOMPLETE_OFF_PROPS}
+              />
 
-                <Icon
-                  name={ICON_DELETE}
-                  onClick={() => {
-                    form.removeListItem(fieldNamePrefix, index);
-                  }}
-                  style={{ cursor: "pointer" }}
-                />
-              </Group>
-            );
-          },
-        )}
+              <Icon
+                name={ICON_DELETE}
+                onClick={() => {
+                  form.removeListItem(fieldNamePrefix, index);
+                }}
+                style={{ cursor: "pointer" }}
+              />
+            </Group>
+          );
+        })}
       </Flex>
     </Stack>
   );
