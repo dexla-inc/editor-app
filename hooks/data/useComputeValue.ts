@@ -2,7 +2,7 @@ import { useVariableStore } from "@/stores/variables";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useCallback, useMemo } from "react";
 import get from "lodash.get";
-import { ValueProps } from "@/types/dataBinding";
+import { RuleProps, ValueProps } from "@/types/dataBinding";
 import set from "lodash.set";
 import { cloneObject, emptyObject, safeJsonParse } from "@/utils/common";
 import { useInputsStore } from "@/stores/inputs";
@@ -61,17 +61,18 @@ const findValuePropsPaths = (obj: any, prefix = ""): string[] => {
 export const ruleFunctions: any = {
   hasValue: (location: any) => location !== undefined,
   doesNotHaveValue: (location: any) => location === undefined,
-  equalTo: (location: any, comparingValue: any) => location === comparingValue,
+  equalTo: (location: any, comparingValue: any) =>
+    location === safeJsonParse(comparingValue),
   notEqualTo: (location: any, comparingValue: any) =>
-    location !== comparingValue,
+    location !== safeJsonParse(comparingValue),
   contains: (location: any, comparingValue: any) =>
     location.includes(comparingValue),
   notContains: (location: any, comparingValue: any) =>
     !location.includes(comparingValue),
   equalToMultiple: (location: any, comparingValue: any) =>
-    isEqual(location, comparingValue),
+    isEqual(location, comparingValue?.map(safeJsonParse)),
   notEqualToMultiple: (location: any, comparingValue: any) =>
-    isEqual(location, comparingValue),
+    isEqual(location, comparingValue?.map(safeJsonParse)),
 };
 
 export const useComputeValue = ({
@@ -249,13 +250,13 @@ export const useComputeValue = ({
     ],
   );
 
-  function evaluateCondition(condition: any) {
+  function evaluateCondition(rule: any) {
     let overallResult = null;
 
-    const { conditions: rules, result } = condition;
+    const { conditions } = rule;
 
-    for (let i = 0; i < rules?.length; i++) {
-      let { value, rule, location } = rules[i];
+    for (let i = 0; i < conditions?.length; i++) {
+      let { value, rule, location } = conditions[i];
       if (isEmpty(rule) || isEmpty(location)) {
         continue;
       }
@@ -273,7 +274,7 @@ export const useComputeValue = ({
         overallResult = ruleResult;
       } else {
         // Apply the previous operator with the previous overallResult
-        const prevOperator = rules[i - 1].operator;
+        const prevOperator = conditions[i - 1].operator;
         if (prevOperator === "and") {
           overallResult = overallResult && ruleResult;
         } else if (prevOperator === "or") {
@@ -282,17 +283,17 @@ export const useComputeValue = ({
       }
     }
 
-    return overallResult ? result : null;
+    return overallResult;
   }
 
-  function evaluateConditions(conditions: any) {
-    for (const condition of conditions ?? []) {
-      const conditionResult = evaluateCondition(condition);
-      if (conditionResult) {
-        return conditionResult;
+  function evaluateRules(rules: RuleProps[]) {
+    for (const rule of rules ?? []) {
+      const ruleResult = evaluateCondition(rule);
+      if (ruleResult) {
+        return rule.result;
       }
     }
-    return null;
+    return;
   }
 
   const valueHandlers = useMemo(
@@ -322,10 +323,10 @@ export const useComputeValue = ({
         }
       },
       rules: (fieldValue: ValueProps) => {
-        return evaluateConditions(fieldValue.rules);
+        return evaluateRules(fieldValue.rules as RuleProps[]);
       },
     }),
-    [shareableContent, transformBoundCode, language, evaluateConditions],
+    [shareableContent, transformBoundCode, language, evaluateRules],
   );
 
   return useMemo(
