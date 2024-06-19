@@ -221,6 +221,7 @@ ComponentToBindFromInput.Select = function ComponentToBindFromSelect() {
     fieldType,
     isPageAction,
     label,
+    data = [],
     ...defaultProps
   } = useBindingField<"Select">();
   return (
@@ -228,6 +229,7 @@ ComponentToBindFromInput.Select = function ComponentToBindFromSelect() {
       {...defaultProps}
       {...AUTOCOMPLETE_OFF_PROPS}
       w="100%"
+      data={data}
       value={staticValue ?? ""}
       onChange={inputOnChange}
       style={{ flex: "1" }}
