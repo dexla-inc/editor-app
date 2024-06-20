@@ -1,22 +1,16 @@
-import { BindingContextSelector } from "@/components/editor/BindingField/components/BindingContextSelector";
 import {
   logicalRulesData,
   SelectLogicalRules,
-} from "@/components/editor/BindingField/components/SelectLogicalRules";
+} from "@/components/editor/BindingField/handlers/RulesForm/SelectLogicalRules";
 import {
   Accordion,
   AccordionControlProps,
   ActionIcon,
-  Anchor,
   Box,
   Button,
   Flex,
-  Group,
-  MultiSelect,
-  SegmentedControl,
   Stack,
   Text,
-  TextInput,
 } from "@mantine/core";
 import { BG_RULES_GROUP, BG_RULE, BG_RULES_CONDITION } from "@/utils/branding";
 import { IconTrash } from "@tabler/icons-react";
@@ -26,8 +20,8 @@ import { ComponentToBindField } from "@/components/editor/BindingField/Component
 import { useForm } from "@mantine/form";
 import { useEffect } from "react";
 import { useBindingField } from "@/components/editor/BindingField/components/ComponentToBindFromInput";
-import { TopLabel } from "@/components/TopLabel";
-import { cloneObject } from "@/utils/common";
+import { LocationField } from "@/components/editor/BindingField/handlers/RulesForm/LocationField";
+import { ValueField } from "@/components/editor/BindingField/handlers/RulesForm/ValueField";
 
 export const RulesForm = () => {
   const {
@@ -47,7 +41,7 @@ export const RulesForm = () => {
             conditions: [
               {
                 rule: "equalTo",
-                value: "",
+                value: {},
               },
             ],
           },
@@ -60,11 +54,11 @@ export const RulesForm = () => {
       rules,
     },
   });
-
+  console.log(form.values);
   useEffect(() => {
     onChange({
       ...value,
-      rules: cloneObject(form.values.rules),
+      rules: form.values.rules,
       dataType: "rules",
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -111,18 +105,6 @@ export const RulesForm = () => {
                         (item) => item.value === condition.rule,
                       ) ?? {};
 
-                    const onSetSelectedLocation = (selectedItem: string) =>
-                      form.setFieldValue(
-                        `rules.${ruleIndex}.conditions.${conditionIndex}.location`,
-                        selectedItem,
-                      );
-
-                    const onResetLocation = () =>
-                      form.setFieldValue(
-                        `rules.${ruleIndex}.conditions.${conditionIndex}.location`,
-                        undefined,
-                      );
-
                     const onSelectLogicalRule = (selectedRule: string) => {
                       if (
                         ["equalToMultiple", "notEqualToMultiple"].includes(
@@ -132,14 +114,14 @@ export const RulesForm = () => {
                         if (!Array.isArray(condition.value)) {
                           form.setFieldValue(
                             `rules.${ruleIndex}.conditions.${conditionIndex}.value`,
-                            [],
+                            { ...condition.value, static: [] },
                           );
                         }
                       } else {
                         if (typeof condition.value !== "string") {
                           form.setFieldValue(
                             `rules.${ruleIndex}.conditions.${conditionIndex}.value`,
-                            "",
+                            { ...condition.value, static: "" },
                           );
                         }
                       }
@@ -174,30 +156,11 @@ export const RulesForm = () => {
                           )}
                         </Flex>
 
-                        <Stack spacing={1}>
-                          <TopLabel text="Location" mt={3} required />
-                          {isEmpty(condition.location) && (
-                            <BindingContextSelector
-                              setSelectedItem={onSetSelectedLocation}
-                            />
+                        <LocationField
+                          {...form.getInputProps(
+                            `rules.${ruleIndex}.conditions.${conditionIndex}.location`,
                           )}
-                          {isEmpty(condition.location) || (
-                            <Group>
-                              <Text size="xs" weight="bold">
-                                {extractContextAndAttributes(
-                                  condition.location,
-                                )}
-                              </Text>
-                              <Anchor
-                                variant="default"
-                                onClick={onResetLocation}
-                                size="xs"
-                              >
-                                Edit
-                              </Anchor>
-                            </Group>
-                          )}
-                        </Stack>
+                        />
                         <SelectLogicalRules
                           withAsterisk
                           {...form.getInputProps(
@@ -205,38 +168,14 @@ export const RulesForm = () => {
                           )}
                           onChange={onSelectLogicalRule}
                         />
-                        {!isRuleMultiple && !isRuleValueCheck && (
-                          <TextInput
-                            withAsterisk
-                            label="Value"
-                            placeholder={valuePlaceholder}
-                            {...form.getInputProps(
-                              `rules.${ruleIndex}.conditions.${conditionIndex}.value`,
-                            )}
-                          />
-                        )}
-                        {isRuleMultiple && (
-                          <MultiSelect
-                            label="Value"
-                            placeholder={valuePlaceholder}
-                            data={(condition.value as string[]) ?? []}
-                            searchable
-                            creatable
-                            withAsterisk
-                            getCreateLabel={(query) => `+ Create ${query}`}
-                            {...form.getInputProps(
-                              `rules.${ruleIndex}.conditions.${conditionIndex}.value`,
-                            )}
-                            onCreate={(query) => {
-                              const item = { value: query, label: query };
-                              form.setFieldValue(
-                                `rules.${ruleIndex}.conditions.${conditionIndex}.value`,
-                                [...condition.value, item],
-                              );
-                              return item;
-                            }}
-                          />
-                        )}
+                        <ValueField
+                          placeholder={valuePlaceholder!}
+                          isSingle={!isRuleMultiple && !isRuleValueCheck}
+                          isMultiple={isRuleMultiple}
+                          {...form.getInputProps(
+                            `rules.${ruleIndex}.conditions.${conditionIndex}.value`,
+                          )}
+                        />
                         {/* Temporarily commenting out as chaining is confusing at the moment. 
                         Will revisit after ticket 86dtvrcwk is completed */}
                         {/* <Stack spacing={2}>
@@ -289,7 +228,11 @@ export const RulesForm = () => {
         );
       })}
       <Button
-        onClick={() => form.insertListItem("rules", { conditions: [{}] })}
+        onClick={() =>
+          form.insertListItem("rules", {
+            conditions: [{ rule: "equalTo", value: {} }],
+          })
+        }
       >
         Add rule
       </Button>
@@ -321,26 +264,4 @@ function AccordionControl(
       )}
     </Box>
   );
-}
-
-function extractContextAndAttributes(input: string) {
-  const regexWithComment = /(\w+)\[\/\* (.*?) \*\/ ?'.*?'\](.*)/;
-  const regexWithoutComment = /(\w+)\['(.*?)'\](.*)/;
-  let match = input.match(regexWithComment);
-
-  if (!match) {
-    match = input.match(regexWithoutComment);
-  }
-
-  if (match) {
-    const keyword = match[1];
-    const comment = match[2];
-    const attributes = match[3];
-
-    const formattedAttributes = attributes.replace(/\['.*?'\]/, "").trim();
-
-    return `${keyword.charAt(0).toUpperCase() + keyword.slice(1)} - ${comment.charAt(0).toUpperCase() + comment.slice(1)}${formattedAttributes}`;
-  }
-
-  return "";
 }
