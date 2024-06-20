@@ -41,17 +41,29 @@ const findValuePropsPaths = (obj: any, prefix = ""): string[] => {
   let paths: string[] = [];
   Object.keys(obj).forEach((key) => {
     const fullPath = prefix ? `${prefix}.${key}` : key;
-    if (typeof obj[key] === "object" && obj[key] !== null) {
+    const value = obj[key];
+
+    if (typeof value === "object" && value !== null) {
       if (
-        "dataType" in obj[key] ||
-        "boundCode" in obj[key] ||
-        "dynamic" in obj[key] ||
-        "static" in obj[key] ||
-        "rules" in obj[key]
+        "dataType" in value ||
+        "boundCode" in value ||
+        "dynamic" in value ||
+        "static" in value ||
+        "rules" in value
       ) {
         paths.push(fullPath);
+      }
+      if (Array.isArray(value) && key === "rules") {
+        value.forEach((condition, index) => {
+          if (typeof condition === "object" && condition !== null) {
+            paths = [
+              ...paths,
+              ...findValuePropsPaths(condition, `${fullPath}[${index}]`),
+            ];
+          }
+        });
       } else {
-        paths = [...paths, ...findValuePropsPaths(obj[key], fullPath)];
+        paths = [...paths, ...findValuePropsPaths(value, fullPath)];
       }
     }
   });
@@ -250,7 +262,7 @@ export const useComputeValue = ({
     ],
   );
 
-  function evaluateCondition(rule: any) {
+  function evaluateCondition(rule: RuleProps) {
     let overallResult = null;
 
     const { conditions } = rule;
@@ -260,14 +272,16 @@ export const useComputeValue = ({
       if (isEmpty(rule) || isEmpty(location)) {
         continue;
       }
-      const transformedLocation = transformBoundCode(
-        `return ${location}` ?? "",
-      );
+      const transformedValue =
+        valueHandlers[value?.dataType ?? "static"](value);
+      const transformedLocation = transformBoundCode(location);
       location = autoRunJavascriptCode(transformedLocation);
+
+      console.log(value.boundCode, { transformedValue }, variableKeys);
 
       // Evaluate the rule
       const ruleFunction = ruleFunctions[rule];
-      const ruleResult = ruleFunction(location, value);
+      const ruleResult = ruleFunction(location, transformedValue);
 
       if (i === 0) {
         // Initialize overallResult with the first rule's result
