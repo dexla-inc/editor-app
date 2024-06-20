@@ -237,7 +237,9 @@ export const RulesForm = () => {
                             }}
                           />
                         )}
-                        <Stack spacing={2}>
+                        {/* Temporarily commenting out as chaining is confusing at the moment. 
+                        Will revisit after ticket 86dtvrcwk is completed */}
+                        {/* <Stack spacing={2}>
                           <TopLabel text="Chain Condition" mt={3} />
                           <SegmentedControl
                             size="xs"
@@ -269,7 +271,7 @@ export const RulesForm = () => {
                               }
                             }}
                           />
-                        </Stack>
+                        </Stack> */}
                       </Stack>
                     );
                   })}
