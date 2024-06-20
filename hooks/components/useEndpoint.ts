@@ -1,6 +1,7 @@
 import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { getUrl, performFetch } from "@/utils/actions";
+import { getUrl } from "@/utils/actionsApi";
+import { performFetch } from "@/utils/actionsApi";
 import { DEFAULT_STALE_TIME } from "@/utils/config";
 import { useQuery } from "@tanstack/react-query";
 import get from "lodash.get";

@@ -1,8 +1,7 @@
-import { Button, Flex, Select, Stack, TextInput } from "@mantine/core";
+import { Button, Flex, Select, Stack, TextInput, Tooltip } from "@mantine/core";
 import { IconArrowLeft } from "@tabler/icons-react";
 import { ICON_SIZE } from "@/utils/config";
 import { AppId } from "../AppItem";
-import { ActionIconDefault } from "@/components/ActionIconDefault";
 import { useForm } from "@mantine/form";
 import { useEffect } from "react";
 import { useParams } from "next/navigation";
@@ -11,7 +10,6 @@ import { convertToPatchParams, generateId } from "@/types/dashboardTypes";
 import { patchProject } from "@/requests/projects/mutations";
 import { useProjectQuery } from "@/hooks/editor/reactQuery/useProjectQuery";
 import SidebarSection from "@/components/navbar/apps/SidebarSection";
-import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { Icon } from "@/components/Icon";
 import { EndpointSetup } from "./EndpointSetup";
 import { useEndpoints } from "@/hooks/editor/reactQuery/useDataSourcesEndpoints";
@@ -112,7 +110,7 @@ export const EditorRssFeedSection = ({ setSelectedApp }: Props) => {
   };
 
   const preview = async (endpoint: string) => {
-    const apiUrl = `/api/xml/${endpoint}`;
+    const apiUrl = `/api/project/${projectId}/xml/${endpoint}`;
     const newTab = window.open(apiUrl, "_blank");
     if (newTab) {
       newTab.focus();
@@ -169,33 +167,13 @@ export const EditorRssFeedSection = ({ setSelectedApp }: Props) => {
             icon="IconRss"
             remove={removeRssFeedItem}
           >
-            <Stack p="xs" pr={0}>
+            <Stack>
               <EndpointSetup
                 projectApp={app}
                 endpoints={endpoints}
                 form={form}
                 index={index}
               />
-              <Flex align="flex-end" gap="xs" w="100%">
-                <TextInput
-                  label="Relative URL"
-                  {...form.getInputProps(
-                    `apps.${index}.configuration.relativeUrl`,
-                  )}
-                  placeholder="rss-feed.xml"
-                  w="100%"
-                  {...AUTOCOMPLETE_OFF_PROPS}
-                />
-                <ActionIconDefault
-                  iconName="IconExternalLink"
-                  tooltip={app.configuration.relativeUrl}
-                  onClick={() => preview(app.configuration.endpointId)}
-                  disabled={
-                    app.configuration.endpointId === "" ||
-                    app.configuration.relativeUrl === ""
-                  }
-                />
-              </Flex>
               <TextInput
                 label="Version"
                 {...form.getInputProps(`apps.${index}.configuration.version`)}
@@ -226,6 +204,25 @@ export const EditorRssFeedSection = ({ setSelectedApp }: Props) => {
                 placeholder="UTF-8"
                 w="100%"
               />
+              <Tooltip
+                label={
+                  app.configuration.endpointId
+                    ? "View XML File"
+                    : "Add an endpoint"
+                }
+              >
+                <div>
+                  <Button
+                    onClick={() => preview(app.configuration.endpointId)}
+                    w="100%"
+                    variant="default"
+                    leftIcon={<Icon name="IconExternalLink" />}
+                    disabled={!app.configuration.endpointId}
+                  >
+                    Preview XML
+                  </Button>
+                </div>
+              </Tooltip>
             </Stack>
           </SidebarSection>
         ))}

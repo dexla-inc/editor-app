@@ -43,8 +43,6 @@ export const EndpointSetup = ({
     }
   }, [form.values]);
 
-  console.log("selectedEndpoint", selectedEndpoint);
-
   return (
     <>
       <EndpointSelect
