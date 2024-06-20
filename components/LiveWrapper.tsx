@@ -2,6 +2,7 @@ import { useCustomCode } from "@/hooks/editor/useCustomCode";
 import { ProjectResponse } from "@/requests/projects/types";
 import { useThemeStore } from "@/stores/theme";
 import { Box, BoxProps, MantineProvider } from "@mantine/core";
+import { Notifications } from "@mantine/notifications";
 
 type Props = {
   project: ProjectResponse;
@@ -16,7 +17,8 @@ export const LiveWrapper = ({ children, project, ...props }: Props) => {
   }
 
   return (
-    <MantineProvider withNormalizeCSS theme={theme} {...props}>
+    <MantineProvider theme={theme} withNormalizeCSS {...props}>
+      <Notifications />
       <Box
         pos="relative"
         style={{
