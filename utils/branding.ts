@@ -203,7 +203,7 @@ export const BG_RULES_GROUP = isDarkTheme
   ? theme.colors.dark[8]
   : theme.colors.gray[1];
 export const BG_RULE = isDarkTheme
-  ? theme.colors.dark[6]
+  ? theme.colors.dark[7]
   : theme.colors.gray[3];
 export const BG_RULES_CONDITION = isDarkTheme
   ? theme.colors.dark[4]

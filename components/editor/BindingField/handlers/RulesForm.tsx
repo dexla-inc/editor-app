@@ -30,7 +30,16 @@ import { TopLabel } from "@/components/TopLabel";
 import { cloneObject } from "@/utils/common";
 
 export const RulesForm = () => {
-  const { fieldType, value, onChange } = useBindingField();
+  const {
+    fieldType,
+    value,
+    onChange,
+    inputOnChange,
+    name,
+    label,
+    ...restBindingFieldProps
+  } = useBindingField();
+
   const rules = (
     isEmpty(value.rules)
       ? [
@@ -228,7 +237,9 @@ export const RulesForm = () => {
                             }}
                           />
                         )}
-                        <Stack spacing={2}>
+                        {/* Temporarily commenting out as chaining is confusing at the moment. 
+                        Will revisit after ticket 86dtvrcwk is completed */}
+                        {/* <Stack spacing={2}>
                           <TopLabel text="Chain Condition" mt={3} />
                           <SegmentedControl
                             size="xs"
@@ -255,17 +266,18 @@ export const RulesForm = () => {
                               if (!condition.operator) {
                                 form.insertListItem(
                                   `rules.${ruleIndex}.conditions`,
-                                  {},
+                                  { rule: "equalTo" },
                                 );
                               }
                             }}
                           />
-                        </Stack>
+                        </Stack> */}
                       </Stack>
                     );
                   })}
 
                   <Field
+                    {...restBindingFieldProps}
                     withAsterisk
                     label="Result"
                     {...form.getInputProps(`rules.${ruleIndex}.result`)}
