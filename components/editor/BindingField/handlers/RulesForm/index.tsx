@@ -220,8 +220,6 @@ export const RulesForm = () => {
 
                   <ResultField
                     {...restBindingFieldProps}
-                    withAsterisk
-                    label="Result"
                     fieldType={fieldType}
                     {...form.getInputProps(`rules.${ruleIndex}.result`)}
                   />

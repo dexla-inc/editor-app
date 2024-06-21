@@ -3,11 +3,12 @@ import { LocationField } from "@/components/editor/BindingField/handlers/RulesFo
 import { IconPlugConnected } from "@tabler/icons-react";
 import { ICON_SIZE } from "@/utils/config";
 import { ComponentToBindField } from "@/components/editor/BindingField/ComponentToBindField";
-import { ValueProps } from "@/types/dataBinding";
+import { FieldType, ValueProps } from "@/types/dataBinding";
 
 type ResultFieldProps = {
   value: ValueProps;
   onChange: (val: ValueProps) => void;
+  fieldType: FieldType;
 };
 
 export const ResultField = (props: ResultFieldProps) => {
@@ -22,8 +23,6 @@ export const ResultField = (props: ResultFieldProps) => {
     <Group align="flex-start" w="100%" spacing={5}>
       {isStaticDataType && (
         <Field
-          withAsterisk
-          label="Result"
           style={{ flexGrow: 1 }}
           {...props}
           value={props.value.static}
