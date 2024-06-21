@@ -3,7 +3,14 @@ import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
 import { Endpoint } from "@/requests/datasources/types";
 import { AUTOCOMPLETE_OFF_PROPS, safeJsonParse } from "@/utils/common";
 import { DEFAULT_STALE_TIME } from "@/utils/config";
-import { Divider, Flex, Select, Text, TextInput } from "@mantine/core";
+import {
+  Divider,
+  Flex,
+  PasswordInput,
+  Select,
+  Text,
+  TextInput,
+} from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { useEffect, useState } from "react";
 import { ProjectApp, ProjectAppForm } from "@/types/projectApps";
@@ -11,7 +18,6 @@ import { extractKeys } from "@/utils/data";
 import { ApiType } from "@/types/dashboardTypes";
 import { Stack, Title } from "@mantine/core";
 import React from "react";
-import { BindingField } from "@/components/editor/BindingField/BindingField";
 
 type Props = {
   projectApp: ProjectApp;
@@ -26,7 +32,6 @@ export const EndpointSetup = ({
   form,
   index,
 }: Props) => {
-  const [initiallyOpened, setInitiallyOpened] = useState(true);
   const [selectedEndpoint, setSelectedEndpoint] = useState<
     Endpoint | undefined
   >(endpoints?.find((e) => e.id === projectApp.configuration?.endpointId));
@@ -139,29 +144,36 @@ export const EndpointSetup = ({
                   </Title>
                 )}
                 {items &&
-                  items.map((param) => {
-                    let additionalProps = {};
-
+                  items.map((param, i) => {
                     const field = `apps.${index}.configuration.binds.${type}.${param.name}`;
 
                     return (
                       <Stack key={param.name}>
-                        <BindingField
-                          size="xs"
-                          label={param.name}
-                          description={`${
-                            // @ts-ignore
-                            param.location ? `${param.location} - ` : ""
-                          }${param.type}`}
-                          type={param.type}
-                          fieldType="Text"
-                          {...(param.name !== "Authorization"
-                            ? // @ts-ignore
-                              { required: param.required }
-                            : {})}
-                          {...additionalProps}
-                          {...form.getInputProps(field)}
-                        />
+                        {{
+                          ...(["authorization", "apikey"].includes(
+                            param.name.toLowerCase(),
+                          ) ? (
+                            <PasswordInput
+                              size="xs"
+                              label={param.name}
+                              description={`${
+                                // @ts-ignore
+                                param.location ? `${param.location} - ` : ""
+                              }${param.type}`}
+                              {...AUTOCOMPLETE_OFF_PROPS}
+                              {...form.getInputProps(field)}
+                            />
+                          ) : (
+                            <TextInput
+                              label={param.name}
+                              description={`${
+                                // @ts-ignore
+                                param.location ? `${param.location} - ` : ""
+                              }${param.type}`}
+                              {...form.getInputProps(field)}
+                            />
+                          )),
+                        }}
                       </Stack>
                     );
                   })}

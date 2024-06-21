@@ -1,7 +1,7 @@
 import { getDataSourceEndpoint } from "@/requests/datasources/queries-noauth";
 import { getDeploymentPage } from "@/requests/deployments/queries-noauth";
-import { getUrl, performFetch } from "@/utils/actionsApi";
-import { removeEmpty } from "@/utils/common";
+import { toQueryString } from "@/types/dashboardTypes";
+import { performFetch } from "@/utils/actionsApi";
 import { NextRequest, NextResponse } from "next/server";
 import { Builder } from "xml2js";
 
@@ -12,13 +12,6 @@ type Props = {
   };
 };
 
-const anonServiceKey =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVzYm5paGhlbm9odHlydXpyZmhhIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcxODM1OTUyMywiZXhwIjoyMDMzOTM1NTIzfQ._vVbxLM8TpiKVCYFNJk7Jb5PxEZoTcAQhnLJakPXVQc";
-
-function sanitizeKey(key: string): string {
-  return key.replace(/[^a-zA-Z0-9_]/g, "_");
-}
-
 export async function GET(
   req: NextRequest,
   { params }: Props,
@@ -26,43 +19,46 @@ export async function GET(
   const { id, endpoint } = params;
 
   const [endpointResult, deployment] = await Promise.all([
-    getDataSourceEndpoint(id, endpoint),
-    getDeploymentPage(id, "/"),
+    getDataSourceEndpoint(id, endpoint, "no-cache"),
+    getDeploymentPage(id, "/", "no-cache"),
   ]);
 
+  const rssFeeds = deployment?.project?.apps?.filter(
+    (f) => f.type === "rss_feed",
+  );
+  if (!rssFeeds) {
+    return new NextResponse("Project does not have any rss_feed apps", {
+      status: 404,
+    });
+  }
+
+  const rssFeed = rssFeeds.find((f) => f.configuration.endpointId === endpoint);
+
+  if (!rssFeed) {
+    return new NextResponse(
+      "Project does not have rss_feed app for this endpoint",
+      {
+        status: 404,
+      },
+    );
+  }
+
+  const queryString = toQueryString(rssFeed.configuration.binds.parameter);
+
   const result = await performFetch(
-    endpointResult.url! + "?limit=1",
+    endpointResult.url + `${queryString}`,
     endpointResult.methodType,
-    {
-      ...endpointResult.headers,
-      Authorization: "Bearer " + anonServiceKey,
-      apikey: anonServiceKey,
-    },
-    endpointResult.body,
+    rssFeed.configuration.binds.header,
+    undefined,
     endpointResult.mediaType,
   );
 
-  console.log("result:", result);
-
   const builder = new Builder({
     xmldec: { version: "1.0", encoding: "UTF-8" },
+    attrkey: "$",
   });
 
-  const sanitizedResult = result.map((item) =>
-    Object.fromEntries(
-      Object.entries(item).map(([key, value]) => [sanitizeKey(key), value]),
-    ),
-  );
-
-  const data = {
-    root: {
-      property: sanitizedResult,
-    },
-  };
-
-  console.log("data:", data);
-
-  const xmlData = builder.buildObject(data);
+  const xmlData = builder.buildObject(result);
 
   return new NextResponse(xmlData, {
     headers: {

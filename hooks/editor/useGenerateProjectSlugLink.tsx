@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { useProjectQuery } from "./reactQuery/useProjectQuery";
 import { generateProjectSlugLink } from "@/utils/common";
-import { useParams } from "next/navigation";
+import { useEditorParams } from "./useSafeParams";
 
 const useGenerateProjectSlugLink = (slug: string) => {
-  const { id: projectId, page } = useParams<{ id: string; page: string }>();
+  const { id: projectId, page } = useEditorParams();
 
   const [url, setUrl] = useState<URL>();
   const [customDomain, setCustomDomain] = useState("");

@@ -2,17 +2,17 @@ import { ActionIconDefault } from "@/components/ActionIconDefault";
 import { Icon } from "@/components/Icon";
 import { usePageListQuery } from "@/hooks/editor/reactQuery/usePageListQuery";
 import { useProjectQuery } from "@/hooks/editor/reactQuery/useProjectQuery";
+import { useEditorParams } from "@/hooks/editor/useSafeParams";
 import { createDeployment } from "@/requests/deployments/mutations";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { generateProjectSlugLink } from "@/utils/common";
 import { Button, Tooltip } from "@mantine/core";
-import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export const DeployButton = () => {
-  const { id: projectId, page } = useParams<{ id: string; page: string }>();
+  const { id: projectId, page } = useEditorParams();
   const [customDomain, setCustomDomain] = useState("");
   const [deployUrl, setDeployUrl] = useState<URL>();
   const [slug, setSlug] = useState<string>("");

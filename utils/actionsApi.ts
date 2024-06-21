@@ -47,7 +47,6 @@ export async function performFetch(
   if (body && !isGetMethodType) {
     init.body = JSON.stringify(body);
   }
-
   const response = await fetch(url, init);
 
   // Early return for non-2xx status codes
@@ -61,6 +60,7 @@ export async function performFetch(
     }
   }
 
+  console.log("contentLength", response.headers.get("Content-Length"));
   // Handle no-content responses explicitly
   if (
     response.status === 204 ||

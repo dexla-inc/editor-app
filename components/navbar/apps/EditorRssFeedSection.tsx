@@ -4,7 +4,6 @@ import { ICON_SIZE } from "@/utils/config";
 import { AppId } from "../AppItem";
 import { useForm } from "@mantine/form";
 import { useEffect } from "react";
-import { useParams } from "next/navigation";
 import { useAppStore } from "@/stores/app";
 import { convertToPatchParams, generateId } from "@/types/dashboardTypes";
 import { patchProject } from "@/requests/projects/mutations";
@@ -14,13 +13,15 @@ import { Icon } from "@/components/Icon";
 import { EndpointSetup } from "./EndpointSetup";
 import { useEndpoints } from "@/hooks/editor/reactQuery/useDataSourcesEndpoints";
 import { ProjectAppForm } from "@/types/projectApps";
+import { useEditorParams } from "@/hooks/editor/useSafeParams";
 
 type Props = {
   setSelectedApp: (id: AppId | null) => void;
 };
 
 export const EditorRssFeedSection = ({ setSelectedApp }: Props) => {
-  const { id: projectId } = useParams<{ id: string; page: string }>();
+  const { id: projectId } = useEditorParams();
+
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
   const { data: project, refetch } = useProjectQuery(projectId);
@@ -41,7 +42,11 @@ export const EditorRssFeedSection = ({ setSelectedApp }: Props) => {
               encoding: app.configuration.encoding,
               resultsKey: app.configuration.resultsKey,
               staleTime: app.configuration.staleTime,
-              binds: app.configuration.binds,
+              binds: app.configuration.binds || {
+                header: {},
+                parameter: {},
+                body: {},
+              },
             },
           })) ?? [],
     },
@@ -62,7 +67,11 @@ export const EditorRssFeedSection = ({ setSelectedApp }: Props) => {
               encoding: app.configuration.encoding,
               resultsKey: app.configuration.resultsKey,
               staleTime: app.configuration.staleTime,
-              binds: app.configuration.binds,
+              binds: app.configuration.binds || {
+                header: {},
+                parameter: {},
+                body: {},
+              },
             },
           })),
         });
@@ -70,22 +79,33 @@ export const EditorRssFeedSection = ({ setSelectedApp }: Props) => {
     }
   }, [project]);
 
-  // useEffect(() => {
-  //   if (url && relativeUrl) {
-  //     setPreviewUrl(new URL(url));
-  //   }
-  // }, [relativeUrl, url]);
-
-  // useEffect(() => {
-  //   setRelativeUrl(form.values.relativeUrl);
-  // }, [form.values.relativeUrl]);
-
   const onSubmit = async (values: ProjectAppForm) => {
     try {
       startLoading({
         id: "updating-apps",
         title: "Updating Project Apps",
         message: "Wait while your RSS Feed is being updated",
+      });
+
+      const updatedValues = { ...values };
+      form.values.apps?.forEach((app, index) => {
+        const dynamicHeaders =
+          form.values.apps![index].configuration.binds.header;
+        const dynamicParameters =
+          form.values.apps![index].configuration.binds.parameter;
+        const dynamicBody = form.values.apps![index].configuration.binds.body;
+
+        if (dynamicHeaders) {
+          updatedValues.apps![index].configuration.binds.header =
+            dynamicHeaders;
+        }
+        if (dynamicParameters) {
+          updatedValues.apps![index].configuration.binds.parameter =
+            dynamicParameters;
+        }
+        if (dynamicBody) {
+          updatedValues.apps![index].configuration.binds.body = dynamicBody;
+        }
       });
 
       form.validate();
@@ -122,7 +142,7 @@ export const EditorRssFeedSection = ({ setSelectedApp }: Props) => {
       id: generateId(),
       type: "rss_feed",
       configuration: {
-        endpoint: "",
+        endpointId: "",
         relativeUrl: "rss-feed.xml",
         version: "1.0",
         encoding: "UTF-8",
