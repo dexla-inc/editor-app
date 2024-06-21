@@ -1,8 +1,12 @@
+// @ts-ignore
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
+// @ts-ignore
 Deno.serve(async (req: Request) => {
   const supabaseClient = createClient(
+    // @ts-ignore
     Deno.env.get("SUPABASE_URL") ?? "",
+    // @ts-ignore
     Deno.env.get("SUPABASE_ANON_KEY") ?? "",
     {
       global: { headers: { Authorization: req.headers.get("Authorization")! } },
@@ -18,9 +22,8 @@ Deno.serve(async (req: Request) => {
     });
   }
 
-  // Transform the data and find the most recent last_updated date
-  let mostRecentUpdate = new Date(0); // Initialize to epoch date
-  const transformedProperties = data.map((item) => {
+  let mostRecentUpdate = new Date(0);
+  const transformedProperties = data.map((item: any) => {
     const lastUpdateDate = new Date(item.last_updated);
     if (lastUpdateDate > mostRecentUpdate) {
       mostRecentUpdate = lastUpdateDate;

@@ -9,7 +9,7 @@ export const useOldRouter = () => {
   const searchParams = useSearchParams();
   const asPath = usePathname();
   const router = useRouter();
-  const params = new URLSearchParams(searchParams.toString());
+  const params = new URLSearchParams(searchParams?.toString());
   const queryParams = useParams<Record<string, string>>();
   const query: Record<string, string> = { ...queryParams };
 
