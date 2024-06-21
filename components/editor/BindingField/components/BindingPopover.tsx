@@ -3,6 +3,7 @@ import { BG_COLOR, DEFAULT_TEXTCOLOR } from "@/utils/branding";
 import { ICON_SIZE } from "@/utils/config";
 import {
   ActionIcon,
+  Box,
   Button,
   Center,
   CloseButton,

@@ -137,7 +137,7 @@ export const BindingContextSelector = ({ setSelectedItem }: any) => {
   }
 
   return (
-    <Stack>
+    <Stack style={{ overflow: "hidden" }}>
       <SegmentedControl
         value={tab}
         onChange={(value) => setTab(value as BindingTab)}

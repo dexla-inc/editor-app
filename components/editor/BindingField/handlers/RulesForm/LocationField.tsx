@@ -15,7 +15,7 @@ export const LocationField = ({
   label = "Location",
 }: LocationField) => {
   return (
-    <Stack spacing={1} style={{ flexGrow: 1 }}>
+    <Stack spacing={1} style={{ flexGrow: 1 }} maw={400}>
       <TopLabel text={label} mt={4} required />
       {isEmpty(value) && (
         <BindingContextSelector
