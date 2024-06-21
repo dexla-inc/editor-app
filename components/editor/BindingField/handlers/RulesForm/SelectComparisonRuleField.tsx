@@ -1,7 +1,7 @@
 import { Select, SelectProps, Text } from "@mantine/core";
 import { forwardRef } from "react";
 
-type SelectLogicalRulesProps = Omit<SelectProps, "data">;
+type SelectComparisonRuleFieldProps = Omit<SelectProps, "data">;
 
 interface ItemProps extends React.ComponentPropsWithoutRef<"div"> {
   label: string;
@@ -59,7 +59,9 @@ export const logicalRulesData = [
   },
 ];
 
-export const SelectLogicalRules = (props: SelectLogicalRulesProps) => {
+export const SelectComparisonRuleField = (
+  props: SelectComparisonRuleFieldProps,
+) => {
   return (
     <Select
       {...props}
