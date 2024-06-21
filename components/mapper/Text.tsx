@@ -25,7 +25,7 @@ const TextComponent = forwardRef(
     const { children: childrenValue = component.props?.children } =
       component.onLoad;
     const { style, ...restProps } = props as any;
-    console.log(childrenValue);
+
     const { textStyle } = useBrandingStyles({ tag: fontTag });
     const customStyle = useMemo(
       () => merge({}, style, textStyle),
