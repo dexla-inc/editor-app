@@ -27,7 +27,7 @@ export const LocationField = ({
       {isEmpty(value) || (
         <Group>
           <Text size="xs" weight="bold">
-            {extractContextAndAttributes(value)}
+            {extractContextAndAttributes(value ?? "")}
           </Text>
           <Anchor
             variant="default"
@@ -42,7 +42,7 @@ export const LocationField = ({
   );
 };
 
-export function extractContextAndAttributes(input: string) {
+export function extractContextAndAttributes(input: string = "") {
   const regexWithComment = /(\w+)\[\/\* (.*?) \*\/ ?'.*?'\](.*)/;
   const regexWithoutComment = /(\w+)\['(.*?)'\](.*)/;
   let match = input.match(regexWithComment);

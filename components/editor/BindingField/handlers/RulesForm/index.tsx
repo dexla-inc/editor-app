@@ -278,6 +278,10 @@ function transformRuleProps(ruleProps: RuleProps) {
     {} as ConditionProps,
   );
 
+  if (condition.location === undefined || condition.rule === undefined) {
+    return;
+  }
+
   const value =
     condition.value?.dataType === "boundCode"
       ? extractContextAndAttributes(condition.value.boundCode ?? "")
