@@ -2,10 +2,11 @@ import { ActionIcon, Group, MultiSelect, TextInput } from "@mantine/core";
 import { IconPlugConnected } from "@tabler/icons-react";
 import { ICON_SIZE } from "@/utils/config";
 import { LocationField } from "@/components/editor/BindingField/handlers/RulesForm/LocationField";
+import { ValueProps } from "@/types/dataBinding";
 
 type ValueField = {
-  value: any;
-  onChange: (val: any) => void;
+  value: ValueProps;
+  onChange: (val: ValueProps) => void;
   placeholder: string;
   isMultiple: boolean;
   isSingle: boolean;
@@ -64,7 +65,7 @@ export const ValueField = ({
       {isStaticDataType || (
         <LocationField
           label="Value"
-          value={value.boundCode}
+          value={value.boundCode!}
           onChange={(val) => {
             onChange({ ...value, boundCode: val });
           }}

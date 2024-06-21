@@ -25,7 +25,11 @@ export type ConditionProps = {
 };
 
 export type RuleProps = {
-  result: any;
+  result: {
+    static?: any;
+    boundCode?: string;
+    dataType?: "static" | "boundCode";
+  };
   conditions: ConditionProps[];
 };
 
