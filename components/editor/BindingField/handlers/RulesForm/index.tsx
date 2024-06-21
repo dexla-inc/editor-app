@@ -16,7 +16,6 @@ import { BG_RULES_GROUP, BG_RULE, BG_RULES_CONDITION } from "@/utils/branding";
 import { IconTrash } from "@tabler/icons-react";
 import { ConditionProps, RuleProps } from "@/types/dataBinding";
 import isEmpty from "lodash.isempty";
-import { ComponentToBindField } from "@/components/editor/BindingField/ComponentToBindField";
 import { useForm } from "@mantine/form";
 import { useEffect } from "react";
 import { useBindingField } from "@/components/editor/BindingField/components/ComponentToBindFromInput";
@@ -26,6 +25,7 @@ import {
 } from "@/components/editor/BindingField/handlers/RulesForm/LocationField";
 import { ValueField } from "@/components/editor/BindingField/handlers/RulesForm/ValueField";
 import get from "lodash.get";
+import { ResultField } from "@/components/editor/BindingField/handlers/RulesForm/ResultField";
 
 export const RulesForm = () => {
   const {
@@ -68,8 +68,6 @@ export const RulesForm = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.values]);
 
-  // @ts-ignore
-  const Field = ComponentToBindField[fieldType] || ComponentToBindField.Text;
   return (
     <Stack style={{ background: BG_RULES_GROUP }} px={20} py={30}>
       {form.values.rules?.map((rule, ruleIndex) => {
@@ -220,10 +218,11 @@ export const RulesForm = () => {
                     );
                   })}
 
-                  <Field
+                  <ResultField
                     {...restBindingFieldProps}
                     withAsterisk
                     label="Result"
+                    fieldType={fieldType}
                     {...form.getInputProps(`rules.${ruleIndex}.result`)}
                   />
                 </Stack>
