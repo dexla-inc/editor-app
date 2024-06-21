@@ -88,7 +88,7 @@ export const withComponentWrapper = <T extends Record<string, any>>(
     });
 
     const propsWithOverwrites = usePropsWithOverwrites(
-      { ...component, id },
+      { ...component, id, onLoad: computedOnLoad },
       isEditorMode,
       currentState,
       triggers,

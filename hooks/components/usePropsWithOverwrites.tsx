@@ -38,13 +38,22 @@ export const usePropsWithOverwrites = (
   if (isEditorMode) {
     omittingProps.push("error");
   }
-
+  console.log(
+    "error->",
+    component.props?.hasError,
+    component.onLoad.validationMessage,
+    undefined,
+  );
   return useMemo(() => {
     return merge(
       {},
       omit(component.props ?? {}, omittingProps),
       component.states?.[customCurrentState],
       {
+        error: component.props?.hasError
+          ? component.onLoad.validationMessage ??
+            `${component.description} is required`
+          : undefined,
         disabled: customCurrentState === "disabled",
         triggers: !isEditorMode && {
           ...triggers,

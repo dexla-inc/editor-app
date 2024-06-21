@@ -123,7 +123,7 @@ ComponentToBindFromInput.Text = function ComponentToBindFromTextInput() {
       w="100%"
       value={staticValue}
       type={type}
-      onChange={(e: any) => inputOnChange(e.currentTarget.value)}
+      onChange={(val: any) => inputOnChange(val)}
     />
   );
 };

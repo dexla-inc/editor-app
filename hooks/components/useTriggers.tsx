@@ -106,10 +106,10 @@ export const useTriggers = ({
     if (typeof triggers.onChange === "function") {
       triggers.onChange(e);
     }
-    if (entity.props?.error) {
+    if (entity.props?.hasError) {
       updateTreeComponentAttrs?.({
         componentIds: [entity.id!],
-        attrs: { props: { error: `` } },
+        attrs: { props: { hasError: false } },
         save: false,
       });
     }

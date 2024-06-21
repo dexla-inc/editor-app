@@ -81,17 +81,17 @@ const FormComponent = forwardRef(
       formFieldComponents.forEach((component) => {
         updateTreeComponentAttrs({
           componentIds: [component.id!],
-          attrs: { props: { error: `` } },
+          attrs: { props: { hasError: false } },
           save: false,
         });
       });
-
+      console.log(invalidComponents);
       if (invalidComponents.length) {
         invalidComponents.forEach((component) => {
           updateTreeComponentAttrs({
             componentIds: [component.id!],
             attrs: {
-              props: { error: `${component?.description} is required` },
+              props: { hasError: true },
             },
             save: false,
           });
