@@ -3,8 +3,14 @@ import { LocationField } from "@/components/editor/BindingField/handlers/RulesFo
 import { IconPlugConnected } from "@tabler/icons-react";
 import { ICON_SIZE } from "@/utils/config";
 import { ComponentToBindField } from "@/components/editor/BindingField/ComponentToBindField";
+import { ValueProps } from "@/types/dataBinding";
 
-export const ResultField = (props: any) => {
+type ResultFieldProps = {
+  value: ValueProps;
+  onChange: (val: ValueProps) => void;
+};
+
+export const ResultField = (props: ResultFieldProps) => {
   const isStaticDataType =
     props.value.dataType === undefined || props.value.dataType === "static";
 
@@ -29,7 +35,7 @@ export const ResultField = (props: any) => {
       {isStaticDataType || (
         <LocationField
           label="Result"
-          value={props.value.boundCode}
+          value={props.value.boundCode!}
           onChange={(val) => {
             props.onChange({ ...props.value, boundCode: val });
           }}
