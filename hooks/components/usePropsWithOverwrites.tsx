@@ -45,6 +45,10 @@ export const usePropsWithOverwrites = (
       omit(component.props ?? {}, omittingProps),
       component.states?.[customCurrentState],
       {
+        error: component.props?.hasError
+          ? component.onLoad.validationMessage ??
+            `${component.description} is required`
+          : undefined,
         disabled: customCurrentState === "disabled",
         triggers: !isEditorMode && {
           ...triggers,
