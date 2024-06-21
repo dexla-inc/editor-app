@@ -42,7 +42,7 @@ export const LocationField = ({
   );
 };
 
-function extractContextAndAttributes(input: string) {
+export function extractContextAndAttributes(input: string) {
   const regexWithComment = /(\w+)\[\/\* (.*?) \*\/ ?'.*?'\](.*)/;
   const regexWithoutComment = /(\w+)\['(.*?)'\](.*)/;
   let match = input.match(regexWithComment);

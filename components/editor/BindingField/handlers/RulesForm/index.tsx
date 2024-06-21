@@ -14,14 +14,18 @@ import {
 } from "@mantine/core";
 import { BG_RULES_GROUP, BG_RULE, BG_RULES_CONDITION } from "@/utils/branding";
 import { IconTrash } from "@tabler/icons-react";
-import { RuleProps } from "@/types/dataBinding";
+import { ConditionProps, RuleProps } from "@/types/dataBinding";
 import isEmpty from "lodash.isempty";
 import { ComponentToBindField } from "@/components/editor/BindingField/ComponentToBindField";
 import { useForm } from "@mantine/form";
 import { useEffect } from "react";
 import { useBindingField } from "@/components/editor/BindingField/components/ComponentToBindFromInput";
-import { LocationField } from "@/components/editor/BindingField/handlers/RulesForm/LocationField";
+import {
+  extractContextAndAttributes,
+  LocationField,
+} from "@/components/editor/BindingField/handlers/RulesForm/LocationField";
 import { ValueField } from "@/components/editor/BindingField/handlers/RulesForm/ValueField";
+import get from "lodash.get";
 
 export const RulesForm = () => {
   const {
@@ -87,6 +91,7 @@ export const RulesForm = () => {
                 <Text size={15} weight="bold">
                   Rule {`${ruleIndex + 1}`}
                 </Text>
+                <Text size="xs">{transformRuleProps(rule)}</Text>
               </AccordionControl>
               <Accordion.Panel>
                 <Stack spacing={10}>
@@ -176,7 +181,7 @@ export const RulesForm = () => {
                             `rules.${ruleIndex}.conditions.${conditionIndex}.value`,
                           )}
                         />
-                        {/* Temporarily commenting out as chaining is confusing at the moment. 
+                        {/* Temporarily commenting out as chaining is confusing at the moment.
                         Will revisit after ticket 86dtvrcwk is completed */}
                         {/* <Stack spacing={2}>
                           <TopLabel text="Chain Condition" mt={3} />
@@ -264,4 +269,22 @@ function AccordionControl(
       )}
     </Box>
   );
+}
+
+function transformRuleProps(ruleProps: RuleProps) {
+  const condition: ConditionProps = get(
+    ruleProps,
+    "conditions[0]",
+    {} as ConditionProps,
+  );
+
+  const value =
+    condition.value?.dataType === "boundCode"
+      ? extractContextAndAttributes(condition.value.boundCode ?? "")
+      : condition.value?.static;
+
+  let conditionString = `${extractContextAndAttributes(condition.location)} > ${condition.rule} > `;
+  if (value !== undefined) conditionString += `${value} > `;
+
+  return `${conditionString}${ruleProps.result}`;
 }
