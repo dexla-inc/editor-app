@@ -58,7 +58,7 @@ export const RulesForm = () => {
       rules,
     },
   });
-  console.log(form.values);
+
   useEffect(() => {
     onChange({
       ...value,
@@ -69,7 +69,7 @@ export const RulesForm = () => {
   }, [form.values]);
 
   return (
-    <Stack style={{ background: BG_RULES_GROUP }} px={20} py={30} w="100%">
+    <Stack style={{ background: BG_RULES_GROUP }} px={20} py={30}>
       {form.values.rules?.map((rule, ruleIndex) => {
         return (
           <Accordion
