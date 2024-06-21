@@ -32,6 +32,12 @@ export const CheckboxGroupData = ({
       label: "Value",
       fieldType: "Text" as const,
     },
+    {
+      name: "validationMessage",
+      label: "Validation message",
+      fieldType: "Text" as const,
+      defaultValue: `${component.description} is required`,
+    },
   ];
 
   return (

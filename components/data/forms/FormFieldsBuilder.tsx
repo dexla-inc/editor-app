@@ -62,7 +62,7 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
               has(component.onLoad?.[f.name], "dataType")
               ? staticValue
               : // otherwise, return the value from props
-                component.props?.[f.name] ?? "";
+                component.props?.[f.name] ?? f.defaultValue ?? "";
         acc[f.name].static[lang] = value;
       });
 
