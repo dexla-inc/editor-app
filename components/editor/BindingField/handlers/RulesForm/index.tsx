@@ -58,7 +58,7 @@ export const RulesForm = () => {
       rules,
     },
   });
-  console.log(form.values);
+
   useEffect(() => {
     onChange({
       ...value,
