@@ -2,7 +2,7 @@ import { ActionIconDefault } from "@/components/ActionIconDefault";
 import { Icon } from "@/components/Icon";
 import { usePageListQuery } from "@/hooks/editor/reactQuery/usePageListQuery";
 import { useProjectQuery } from "@/hooks/editor/reactQuery/useProjectQuery";
-import { useEditorParams } from "@/hooks/editor/useSafeParams";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 import { createDeployment } from "@/requests/deployments/mutations";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";

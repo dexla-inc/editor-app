@@ -5,7 +5,7 @@ import {
 } from "@/components/datasources/SwaggerURLInput";
 import NextButton from "@/components/NextButton";
 import { useDataSources } from "@/hooks/editor/reactQuery/useDataSources";
-import { useEditorParams } from "@/hooks/editor/useSafeParams";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 import { createDataSource } from "@/requests/datasources/mutations";
 import { DataSourceParams, Endpoint } from "@/requests/datasources/types";
 import {

@@ -1,6 +1,6 @@
 import { Icon } from "@/components/Icon";
 import { DataSourceEndpointDetail } from "@/components/datasources/DataSourceEndpointDetail";
-import { useEditorParams } from "@/hooks/editor/useSafeParams";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 import { EndpointParams } from "@/requests/datasources/types";
 import { Button, Group, Stack } from "@mantine/core";
 import { useState } from "react";

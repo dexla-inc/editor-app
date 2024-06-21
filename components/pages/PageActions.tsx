@@ -1,7 +1,7 @@
 import { ActionSettingsForm } from "@/components/pages/ActionSettingsForm";
 import { SelectActionForm } from "@/components/pages/SelectActionForm";
 import { SidebarSection } from "@/components/pages/SidebarSection";
-import { useEditorParams } from "@/hooks/editor/useSafeParams";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 import { patchPage } from "@/requests/pages/mutations";
 import { PageResponse } from "@/requests/pages/types";
 import { PatchParams } from "@/requests/types";

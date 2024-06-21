@@ -14,7 +14,7 @@ import { ActionIconDefault } from "../ActionIconDefault";
 import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
 import { Icon } from "../Icon";
 import { BindingField } from "@/components/editor/BindingField/BindingField";
-import { useEditorParams } from "@/hooks/editor/useSafeParams";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 
 type Props = ActionFormProps<Omit<NavigationAction, "name">>;
 

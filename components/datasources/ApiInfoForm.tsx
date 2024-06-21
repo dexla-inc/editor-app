@@ -4,7 +4,7 @@ import {
   validateName,
 } from "@/components/datasources/BasicDetailsInputs";
 import { DataSourceEndpoint } from "@/components/datasources/DataSourceEndpoint";
-import { useEditorParams } from "@/hooks/editor/useSafeParams";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 import { ApiFromAI } from "@/requests/datasources/types";
 import { Button, Flex, Select, Stack, TextInput, Title } from "@mantine/core";
 import { useForm } from "@mantine/form";

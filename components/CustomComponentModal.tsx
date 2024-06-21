@@ -18,7 +18,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import merge from "lodash.merge";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { selectedComponentIdSelector } from "@/utils/componentSelectors";
-import { useEditorParams } from "@/hooks/editor/useSafeParams";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 
 type Props = {
   isCustomComponentModalOpen: boolean;

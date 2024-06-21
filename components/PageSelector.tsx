@@ -1,4 +1,4 @@
-import { useEditorParams } from "@/hooks/editor/useSafeParams";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 import { useEditorStore } from "@/stores/editor";
 import { Select } from "@mantine/core";
 import { useParams, useRouter } from "next/navigation";

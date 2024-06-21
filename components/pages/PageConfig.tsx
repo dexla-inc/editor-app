@@ -2,7 +2,7 @@ import { ActionIconDefault } from "@/components/ActionIconDefault";
 import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
 import { usePageListQuery } from "@/hooks/editor/reactQuery/usePageListQuery";
 import { useProjectQuery } from "@/hooks/editor/reactQuery/useProjectQuery";
-import { useEditorParams } from "@/hooks/editor/useSafeParams";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 import { createPage, deletePage, patchPage } from "@/requests/pages/mutations";
 import {
   PageBody,

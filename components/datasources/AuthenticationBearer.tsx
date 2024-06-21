@@ -29,7 +29,7 @@ import { useForm } from "@mantine/form";
 import { useEffect } from "react";
 import { InformationAlert } from "../Alerts";
 import { useEndpoints } from "@/hooks/editor/reactQuery/useDataSourcesEndpoints";
-import { useEditorParams } from "@/hooks/editor/useSafeParams";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 
 export interface BearerTokenAuthenticationProps extends DataSourceStepperProps {
   loginEndpointId: string | null;

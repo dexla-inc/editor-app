@@ -1,7 +1,7 @@
 import { SettingsButton } from "@/components/navbar/SettingsButtons";
 import { Stack } from "@mantine/core";
 import { ProjectSettings } from "../datasources/ProjectSettings";
-import { useEditorParams } from "@/hooks/editor/useSafeParams";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 
 export const EditorNavbarSettingsSection = () => {
   const { id: projectId } = useEditorParams();

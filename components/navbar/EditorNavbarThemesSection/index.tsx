@@ -12,7 +12,7 @@ import { SelectFont } from "@/components/navbar/EditorNavbarThemesSection/Select
 import { TypographyModal } from "@/components/navbar/EditorNavbarThemesSection/TypographyModal";
 import { useGoogleFontsQuery } from "@/hooks/editor/reactQuery/useGoogleFontsQuery";
 import { useProjectQuery } from "@/hooks/editor/reactQuery/useProjectQuery";
-import { useEditorParams } from "@/hooks/editor/useSafeParams";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 import { CardStyle } from "@/requests/projects/types";
 import { saveTheme } from "@/requests/themes/mutations";
 import { ThemeResponse } from "@/requests/themes/types";

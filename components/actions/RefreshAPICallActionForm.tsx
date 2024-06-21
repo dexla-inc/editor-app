@@ -3,7 +3,7 @@ import { EndpointSelect } from "@/components/EndpointSelect";
 import { ActionFormProps, RefreshAPICallAction } from "@/utils/actions";
 import { Stack } from "@mantine/core";
 import { useEndpoints } from "@/hooks/editor/reactQuery/useDataSourcesEndpoints";
-import { useEditorParams } from "@/hooks/editor/useSafeParams";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 
 type Props = ActionFormProps<Omit<RefreshAPICallAction, "name">>;
 

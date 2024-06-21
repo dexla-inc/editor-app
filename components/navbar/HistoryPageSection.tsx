@@ -7,7 +7,7 @@ import { Icon } from "../Icon";
 import { rollbackState } from "@/requests/pages/mutations";
 import { decodeSchema } from "@/utils/compression";
 import { PageHistoryItem } from "./PageHistoryItem";
-import { useEditorParams } from "@/hooks/editor/useSafeParams";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 
 type Props = {};
 

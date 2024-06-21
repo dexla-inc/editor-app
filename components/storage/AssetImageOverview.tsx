@@ -1,7 +1,7 @@
 import { ActionIconDefault } from "@/components/ActionIconDefault";
 import { AssetImages } from "@/components/storage/AssetImages";
 import { useStorageQuery } from "@/hooks/editor/reactQuery/useStorageQuery";
-import { useEditorParams } from "@/hooks/editor/useSafeParams";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 import { uploadFile } from "@/requests/storage/mutations";
 import { ICON_SIZE } from "@/utils/config";
 import {

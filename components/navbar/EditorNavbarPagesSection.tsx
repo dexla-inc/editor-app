@@ -6,7 +6,7 @@ import { Stack } from "@mantine/core";
 import debounce from "lodash.debounce";
 import { useCallback, useEffect, useState } from "react";
 import { useEditorStore } from "@/stores/editor";
-import { useEditorParams } from "@/hooks/editor/useSafeParams";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 
 export const EditorNavbarPagesSection = () => {
   const { id: projectId, page: currentPage } = useEditorParams();

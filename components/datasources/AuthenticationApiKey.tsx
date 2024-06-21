@@ -1,6 +1,6 @@
 import BackButton from "@/components/BackButton";
 import NextButton from "@/components/NextButton";
-import { useEditorParams } from "@/hooks/editor/useSafeParams";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 import { updateDataSource } from "@/requests/datasources/mutations";
 import { DataSourceParams } from "@/requests/datasources/types";
 import { DataSourceStepperProps } from "@/types/dashboardTypes";

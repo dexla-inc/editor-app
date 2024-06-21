@@ -4,7 +4,7 @@ import { DataSourceEndpoint } from "@/components/datasources/DataSourceEndpoint"
 import { DataSourceEndpointList } from "@/components/datasources/DataSourceEndpointList";
 import EndpointsButton from "@/components/datasources/EndpointsButton";
 import { TestUserLogin } from "@/components/datasources/TestUserLogin";
-import { useEditorParams } from "@/hooks/editor/useSafeParams";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 import {
   AuthenticationSchemeLabels,
   RequestBody,

@@ -5,7 +5,7 @@ import {
   validateName,
 } from "@/components/datasources/BasicDetailsInputs";
 import NextButton from "@/components/NextButton";
-import { useEditorParams } from "@/hooks/editor/useSafeParams";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 import { updateDataSource } from "@/requests/datasources/mutations";
 import {
   AuthenticationSchemes,

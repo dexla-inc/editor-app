@@ -7,7 +7,7 @@ import { useForm } from "@mantine/form";
 import { Editor } from "@monaco-editor/react";
 import { useEffect, useState } from "react";
 import { safeJsonParse } from "@/utils/common";
-import { useEditorParams } from "@/hooks/editor/useSafeParams";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 
 const editorOptions = {
   automaticLayout: true,

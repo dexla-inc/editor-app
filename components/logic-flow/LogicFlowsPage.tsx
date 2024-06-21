@@ -33,7 +33,7 @@ import { nanoid } from "nanoid";
 import { useCallback, useEffect, useRef } from "react";
 import { useUpdateNodeInternals } from "reactflow";
 import { safeJsonParse } from "@/utils/common";
-import { useEditorParams } from "@/hooks/editor/useSafeParams";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 
 type Props = {
   flow: LogicFlowResponse;

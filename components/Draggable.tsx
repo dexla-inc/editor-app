@@ -1,5 +1,5 @@
 import { useDraggable } from "@/hooks/editor/useDraggable";
-import { useEditorParams } from "@/hooks/editor/useSafeParams";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 import { deleteCustomComponent } from "@/requests/components/mutations";
 import { useEditorStore } from "@/stores/editor";
 import { usePropelAuthStore } from "@/stores/propelAuth";

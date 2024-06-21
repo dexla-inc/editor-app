@@ -11,7 +11,7 @@ import { Button, Modal, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { useEditorParams } from "@/hooks/editor/useSafeParams";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 
 export const LogicFlowFormModal = () => {
   const { id: projectId } = useEditorParams();

@@ -7,7 +7,7 @@ import { Select, Stack, Text } from "@mantine/core";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { DataSourceForm } from "../datasources/DataSourceForm";
-import { useEditorParams } from "@/hooks/editor/useSafeParams";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 
 export const EditorNavbarDataSourcesSection = () => {
   const { id: projectId } = useEditorParams();

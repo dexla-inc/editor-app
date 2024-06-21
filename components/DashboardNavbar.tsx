@@ -8,7 +8,7 @@ import { useLogoutFunction } from "@propelauth/react";
 import { IconArrowLeft, IconLogout, IconSettings } from "@tabler/icons-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEditorParams } from "@/hooks/editor/useSafeParams";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 
 type DashboardNavbarProps = {
   isLoading?: boolean;

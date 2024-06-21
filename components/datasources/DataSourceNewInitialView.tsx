@@ -1,5 +1,5 @@
 import MantineStyledButton from "@/components/datasources/DataSourceOptionButton";
-import { useEditorParams } from "@/hooks/editor/useSafeParams";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 import { Container, Flex, Title } from "@mantine/core";
 
 export default function DataSourceNewInitialView() {

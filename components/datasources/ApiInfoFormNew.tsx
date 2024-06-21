@@ -2,7 +2,7 @@ import {
   validateBaseUrl,
   validateName,
 } from "@/components/datasources/BasicDetailsInputs";
-import { useEditorParams } from "@/hooks/editor/useSafeParams";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 import { createDataSource } from "@/requests/datasources/mutations";
 import { DataSourceParams } from "@/requests/datasources/types";
 import { useAppStore } from "@/stores/app";

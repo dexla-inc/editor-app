@@ -13,7 +13,7 @@ import { Icon } from "@/components/Icon";
 import { EndpointSetup } from "./EndpointSetup";
 import { useEndpoints } from "@/hooks/editor/reactQuery/useDataSourcesEndpoints";
 import { ProjectAppForm } from "@/types/projectApps";
-import { useEditorParams } from "@/hooks/editor/useSafeParams";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 
 type Props = {
   setSelectedApp: (id: AppId | null) => void;

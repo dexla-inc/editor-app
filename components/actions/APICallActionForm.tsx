@@ -11,7 +11,7 @@ import { SegmentedControlInput } from "@/components/SegmentedControlInput";
 import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
 import { useEffect } from "react";
 import { useEndpoints } from "@/hooks/editor/reactQuery/useDataSourcesEndpoints";
-import { useEditorParams } from "@/hooks/editor/useSafeParams";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 
 type Props = ActionFormProps<Omit<APICallAction, "name" | "datasource">>;
 

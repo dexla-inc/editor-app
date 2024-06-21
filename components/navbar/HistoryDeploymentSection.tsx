@@ -7,7 +7,7 @@ import { Icon } from "../Icon";
 import { HistoryDeploymentItem } from "./HistoryDeploymentItem";
 import { decodeSchema } from "@/utils/compression";
 import { rollbackState } from "@/requests/pages/mutations";
-import { useEditorParams } from "@/hooks/editor/useSafeParams";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 
 export const HistoryDeploymentSection = ({}) => {
   const { id: projectId, page: pageId } = useEditorParams();

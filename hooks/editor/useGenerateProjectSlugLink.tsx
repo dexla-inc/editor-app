@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useProjectQuery } from "./reactQuery/useProjectQuery";
 import { generateProjectSlugLink } from "@/utils/common";
-import { useEditorParams } from "./useSafeParams";
+import { useEditorParams } from "./useEditorParams";
 
 const useGenerateProjectSlugLink = (slug: string) => {
   const { id: projectId, page } = useEditorParams();

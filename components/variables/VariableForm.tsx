@@ -24,7 +24,7 @@ import { TopLabel } from "../TopLabel";
 import { safeJsonStringify, toSnakeCase } from "@/utils/common";
 import { Prism } from "@mantine/prism";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
-import { useEditorParams } from "@/hooks/editor/useSafeParams";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 
 type VariablesFormValues = {
   name: string;

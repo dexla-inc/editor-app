@@ -1,5 +1,5 @@
 import { DataSourceEndpointDetail } from "@/components/datasources/DataSourceEndpointDetail";
-import { useEditorParams } from "@/hooks/editor/useSafeParams";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 import { Endpoint } from "@/requests/datasources/types";
 import { MethodTypes } from "@/requests/types";
 import { ICON_SIZE } from "@/utils/config";
