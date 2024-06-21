@@ -11,9 +11,14 @@ type ResultFieldProps = {
   fieldType: FieldType;
 };
 
-export const ResultField = (props: ResultFieldProps) => {
+export const ResultField = ({
+  value,
+  onChange,
+  fieldType,
+  ...props
+}: ResultFieldProps) => {
   const isStaticDataType =
-    props.value.dataType === undefined || props.value.dataType === "static";
+    value.dataType === undefined || value.dataType === "static";
 
   const Field =
     // @ts-ignore
@@ -25,25 +30,25 @@ export const ResultField = (props: ResultFieldProps) => {
         <Field
           style={{ flexGrow: 1 }}
           {...props}
-          value={props.value.static}
+          value={value.static}
           onChange={(val: string) => {
-            props.onChange({ ...props.value, static: val });
+            onChange({ ...value, static: val });
           }}
         />
       )}
       {isStaticDataType || (
         <LocationField
           label="Result"
-          value={props.value.boundCode!}
+          value={value.boundCode!}
           onChange={(val) => {
-            props.onChange({ ...props.value, boundCode: val });
+            onChange({ ...value, boundCode: val });
           }}
         />
       )}
       <ActionIcon
         onClick={() => {
           const dataType = isStaticDataType ? "boundCode" : "static";
-          props.onChange({ ...props.value, dataType });
+          onChange({ ...value, dataType });
         }}
         variant="default"
         tabIndex={-1}
