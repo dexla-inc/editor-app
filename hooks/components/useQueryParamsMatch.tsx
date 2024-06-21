@@ -11,6 +11,7 @@ export const useQueryParamsMatch = (
 
   const urlSearchParams = useMemo(
     () =>
+      queryParams &&
       Array.from(queryParams.entries()).map(([key, value]) => ({
         key,
         value,

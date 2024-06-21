@@ -1,10 +1,10 @@
 import { DataSourceEndpointDetail } from "@/components/datasources/DataSourceEndpointDetail";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 import { Endpoint } from "@/requests/datasources/types";
 import { MethodTypes } from "@/requests/types";
 import { ICON_SIZE } from "@/utils/config";
 import { Box, Flex, Group, Text, UnstyledButton } from "@mantine/core";
 import { IconChevronDown, IconChevronRight } from "@tabler/icons-react";
-import { useParams } from "next/navigation";
 import { useState } from "react";
 
 export type ColorScheme = {
@@ -56,7 +56,7 @@ export const DataSourceEndpoint = ({
   opened: externalOpened,
   setOpened: externalSetOpened,
 }: DataSourceEndpointProps) => {
-  const routeParams = useParams<{ dataSourceId: string }>();
+  const routeParams = useEditorParams();
   const [internalOpened, setInternalOpened] = useState<boolean>(false);
   const isOpened = externalOpened ?? internalOpened;
   const setOpened = externalSetOpened ?? setInternalOpened;

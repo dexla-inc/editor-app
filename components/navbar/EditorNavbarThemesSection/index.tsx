@@ -12,6 +12,7 @@ import { SelectFont } from "@/components/navbar/EditorNavbarThemesSection/Select
 import { TypographyModal } from "@/components/navbar/EditorNavbarThemesSection/TypographyModal";
 import { useGoogleFontsQuery } from "@/hooks/editor/reactQuery/useGoogleFontsQuery";
 import { useProjectQuery } from "@/hooks/editor/reactQuery/useProjectQuery";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 import { CardStyle } from "@/requests/projects/types";
 import { saveTheme } from "@/requests/themes/mutations";
 import { ThemeResponse } from "@/requests/themes/types";
@@ -35,7 +36,6 @@ import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { IconArrowsMaximize, IconSearch } from "@tabler/icons-react";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 type EditorNavbarThemesSectionProps = {
   isActive: boolean;
@@ -60,7 +60,7 @@ export const pixelMetrics = [
 
 export const EditorNavbarThemesSection =
   ({}: EditorNavbarThemesSectionProps) => {
-    const { id: projectId } = useParams<{ id: string }>();
+    const { id: projectId } = useEditorParams();
     const startLoading = useAppStore((state) => state.startLoading);
     const stopLoading = useAppStore((state) => state.stopLoading);
     const [currentFontIndex, setCurrentFontIndex] = useState<number>(0);

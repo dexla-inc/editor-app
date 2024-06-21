@@ -83,3 +83,15 @@ export const getDataSourceAuth = async (projectId: string) => {
 
   return response;
 };
+
+export const getDataSourceEndpoint = async (
+  projectId: string,
+  id: string,
+  cache: RequestCache,
+) => {
+  let url = `/projects/${projectId}/datasources/endpoints/${id}`;
+
+  const response = (await getWithoutAuth<Endpoint>(url, {}, cache)) as Endpoint;
+
+  return response;
+};

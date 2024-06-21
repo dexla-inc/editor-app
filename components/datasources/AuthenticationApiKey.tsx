@@ -1,11 +1,11 @@
 import BackButton from "@/components/BackButton";
 import NextButton from "@/components/NextButton";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 import { updateDataSource } from "@/requests/datasources/mutations";
 import { DataSourceParams } from "@/requests/datasources/types";
 import { DataSourceStepperProps } from "@/types/dashboardTypes";
 import { Divider, Group, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useParams } from "next/navigation";
 
 interface AuthenticationStepProps extends DataSourceStepperProps {
   setAccessToken: (accessToken: string | null) => void;
@@ -21,7 +21,7 @@ export default function AuthenticationApiKey({
   dataSource,
   setAccessToken,
 }: AuthenticationStepProps) {
-  const { id: projectId } = useParams<{ id: string }>();
+  const { id: projectId } = useEditorParams();
 
   const form = useForm<DataSourceParams>({
     validateInputOnBlur: true,

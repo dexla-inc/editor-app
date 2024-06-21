@@ -2,6 +2,7 @@ import { ActionIconDefault } from "@/components/ActionIconDefault";
 import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
 import { usePageListQuery } from "@/hooks/editor/reactQuery/usePageListQuery";
 import { useProjectQuery } from "@/hooks/editor/reactQuery/useProjectQuery";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 import { createPage, deletePage, patchPage } from "@/requests/pages/mutations";
 import {
   PageBody,
@@ -17,7 +18,7 @@ import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
 import { Button, Group, Stack, TextInput, Tooltip } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconArrowLeft } from "@tabler/icons-react";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import slugify from "slugify";
 
@@ -31,7 +32,7 @@ export default function PageConfig({ page, setPage }: Props) {
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
   const router = useRouter();
-  const { id: projectId } = useParams<{ id: string }>();
+  const { id: projectId } = useEditorParams();
   const [slug, setSlug] = useState("");
   const resetTree = useEditorTreeStore((state) => state.resetTree);
   const { invalidate } = usePageListQuery(projectId, null);
@@ -48,14 +49,14 @@ export default function PageConfig({ page, setPage }: Props) {
         value === ""
           ? "You must provide a title"
           : value.length > 50
-          ? "Title too long"
-          : null,
+            ? "Title too long"
+            : null,
       slug: (value) =>
         value === ""
           ? "You must provide a slug"
           : value.length > 100
-          ? "Slug too long"
-          : null,
+            ? "Slug too long"
+            : null,
     },
   });
 

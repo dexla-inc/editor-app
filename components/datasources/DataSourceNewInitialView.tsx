@@ -1,9 +1,9 @@
 import MantineStyledButton from "@/components/datasources/DataSourceOptionButton";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 import { Container, Flex, Title } from "@mantine/core";
-import { useParams } from "next/navigation";
 
 export default function DataSourceNewInitialView() {
-  const { id: projectId } = useParams<{ id: string }>();
+  const { id: projectId } = useEditorParams();
   return (
     <Container py="xl">
       <Title order={3} pb="xl">

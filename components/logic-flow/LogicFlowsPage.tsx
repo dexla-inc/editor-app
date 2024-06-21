@@ -30,17 +30,17 @@ import { useMutation } from "@tanstack/react-query";
 import isEqual from "lodash.isequal";
 import startCase from "lodash.startcase";
 import { nanoid } from "nanoid";
-import { useParams } from "next/navigation";
 import { useCallback, useEffect, useRef } from "react";
 import { useUpdateNodeInternals } from "reactflow";
 import { safeJsonParse } from "@/utils/common";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 
 type Props = {
   flow: LogicFlowResponse;
 };
 
 export const LogicFlowsPage = ({ flow }: Props) => {
-  const { id: projectId } = useParams<{ id: string }>();
+  const { id: projectId } = useEditorParams();
   const reactFlowWrapper = useRef(null);
   const restoreFlow = useFlowStore((state) => state.restoreFlow);
   const selectedNode = useFlowStore((state) => state.selectedNode);

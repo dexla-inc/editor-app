@@ -4,15 +4,12 @@ import { usePageListQuery } from "@/hooks/editor/reactQuery/usePageListQuery";
 import { PageResponse } from "@/requests/pages/types";
 import { Stack } from "@mantine/core";
 import debounce from "lodash.debounce";
-import { useParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { useEditorStore } from "@/stores/editor";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 
 export const EditorNavbarPagesSection = () => {
-  const { id: projectId, page: currentPage } = useParams<{
-    id: string;
-    page: string;
-  }>();
+  const { id: projectId, page: currentPage } = useEditorParams();
   const page = useEditorStore((state) => state.activePage);
   const setPage = useEditorStore((state) => state.setActivePage);
   const [search, setSearch] = useState<string>("");
@@ -28,8 +25,8 @@ export const EditorNavbarPagesSection = () => {
 
   useEffect(() => {
     if (pageListQuery?.results) {
-      const filteredPages = pageListQuery.results.filter(
-        (p) => p.title?.toLowerCase().includes(search?.toLowerCase()),
+      const filteredPages = pageListQuery.results.filter((p) =>
+        p.title?.toLowerCase().includes(search?.toLowerCase()),
       );
       setPages(filteredPages);
     }
