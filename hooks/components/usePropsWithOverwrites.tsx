@@ -38,7 +38,12 @@ export const usePropsWithOverwrites = (
   if (isEditorMode) {
     omittingProps.push("error");
   }
-
+  console.log(
+    "error->",
+    component.props?.hasError,
+    component.onLoad.validationMessage,
+    undefined,
+  );
   return useMemo(() => {
     return merge(
       {},
