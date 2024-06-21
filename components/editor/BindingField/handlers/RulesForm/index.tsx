@@ -1,7 +1,7 @@
 import {
   logicalRulesData,
-  SelectLogicalRules,
-} from "@/components/editor/BindingField/handlers/RulesForm/SelectLogicalRules";
+  SelectComparisonRuleField,
+} from "@/components/editor/BindingField/handlers/RulesForm/SelectComparisonRuleField";
 import {
   Accordion,
   AccordionControlProps,
@@ -166,7 +166,7 @@ export const RulesForm = () => {
                             `rules.${ruleIndex}.conditions.${conditionIndex}.location`,
                           )}
                         />
-                        <SelectLogicalRules
+                        <SelectComparisonRuleField
                           withAsterisk
                           {...form.getInputProps(
                             `rules.${ruleIndex}.conditions.${conditionIndex}.rule`,
