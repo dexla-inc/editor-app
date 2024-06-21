@@ -45,7 +45,7 @@ export const withComponentWrapper = <T extends Record<string, any>>(
       onLoad: component?.onLoad ?? {},
       shareableContent,
     });
-    console.log(computedOnLoad);
+
     // Commenting out as liveblocks doesn't work properly since detachment.
     // const selectedByOther = useEditorTreeStore(
     //   useShallow((state) => {
