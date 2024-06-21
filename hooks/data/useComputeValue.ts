@@ -37,6 +37,7 @@ const autoRunJavascriptCode = (boundCode: string) => {
   }
 };
 
+// get all ValueProps paths + if it finds the rules property, it looks for nested ValueProps within rules and return them.
 const findValuePropsPaths = (obj: any, prefix = ""): string[] => {
   let paths: string[] = [];
   Object.keys(obj).forEach((key) => {
@@ -277,8 +278,6 @@ export const useComputeValue = ({
       const transformedLocation = transformBoundCode(location);
       location = autoRunJavascriptCode(transformedLocation);
 
-      console.log(value.boundCode, { transformedValue }, variableKeys);
-
       // Evaluate the rule
       const ruleFunction = ruleFunctions[rule];
       const ruleResult = ruleFunction(location, transformedValue);
@@ -337,7 +336,8 @@ export const useComputeValue = ({
         }
       },
       rules: (fieldValue: ValueProps) => {
-        return evaluateRules(fieldValue.rules as RuleProps[]);
+        const result = evaluateRules(fieldValue.rules as RuleProps[]);
+        return result;
       },
     }),
     [shareableContent, transformBoundCode, language, evaluateRules],
@@ -350,11 +350,18 @@ export const useComputeValue = ({
           const fieldValue = get(onLoad, fieldValuePath);
           const { dataType = "static" } = fieldValue ?? {};
 
-          set(
-            acc,
-            fieldValuePath,
-            valueHandlers[dataType as keyof typeof valueHandlers]?.(fieldValue),
-          );
+          // as the rules nested properties are mapped within valuePropsPaths (because rules contain condition -> ValueProps)
+          // we want to ignore these nested props and use the first parent ValueProps, so that an entire set of conditions
+          // in rules are turned into a single value
+          if (fieldValuePath.search("rules") === -1) {
+            set(
+              acc,
+              fieldValuePath,
+              valueHandlers[dataType as keyof typeof valueHandlers]?.(
+                fieldValue,
+              ),
+            );
+          }
 
           return acc;
         },
