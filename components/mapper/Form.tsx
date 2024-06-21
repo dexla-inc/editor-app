@@ -85,7 +85,7 @@ const FormComponent = forwardRef(
           save: false,
         });
       });
-      console.log(invalidComponents);
+
       if (invalidComponents.length) {
         invalidComponents.forEach((component) => {
           updateTreeComponentAttrs({
