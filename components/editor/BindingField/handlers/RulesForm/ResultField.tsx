@@ -12,13 +12,13 @@ type ResultFieldProps = {
 };
 
 export const ResultField = ({
-  value,
+  value = {},
   onChange,
   fieldType,
   ...props
 }: ResultFieldProps) => {
   const isStaticDataType =
-    value.dataType === undefined || value.dataType === "static";
+    value?.dataType === undefined || value?.dataType === "static";
 
   const Field =
     // @ts-ignore
@@ -28,9 +28,11 @@ export const ResultField = ({
     <Group align="flex-start" w="100%" spacing={5}>
       {isStaticDataType && (
         <Field
+          label="Result"
+          withAsterisk
           style={{ flexGrow: 1 }}
           {...props}
-          value={value.static}
+          value={value?.static}
           onChange={(val: string) => {
             onChange({ ...value, static: val });
           }}
@@ -39,7 +41,7 @@ export const ResultField = ({
       {isStaticDataType || (
         <LocationField
           label="Result"
-          value={value.boundCode!}
+          value={value?.boundCode!}
           onChange={(val) => {
             onChange({ ...value, boundCode: val });
           }}
