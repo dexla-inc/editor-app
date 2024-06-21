@@ -16,7 +16,7 @@ export const getDeploymentPages = async (projectId: string) => {
 export const getDeploymentPage = async (
   projectId: string,
   slug: string,
-  cache: RequestCache,
+  cache?: RequestCache,
 ) => {
   const url = `/projects/${projectId}/deployments/page?slug=${slug}`;
 
