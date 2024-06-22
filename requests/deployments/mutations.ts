@@ -18,8 +18,10 @@ export const createDeployment = async (
   )) as DeploymentResponse;
 
   const cacheTag = getCacheTag(hostUrl);
+  const projectIdCacheTag = getCacheTag(projectId);
 
   await evictCache(cacheTag);
+  await evictCache(projectIdCacheTag);
 
   return response;
 };

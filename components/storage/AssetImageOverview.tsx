@@ -1,6 +1,7 @@
 import { ActionIconDefault } from "@/components/ActionIconDefault";
 import { AssetImages } from "@/components/storage/AssetImages";
 import { useStorageQuery } from "@/hooks/editor/reactQuery/useStorageQuery";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 import { uploadFile } from "@/requests/storage/mutations";
 import { ICON_SIZE } from "@/utils/config";
 import {
@@ -11,11 +12,10 @@ import {
   TextInput,
 } from "@mantine/core";
 import { IconSearch } from "@tabler/icons-react";
-import { useParams } from "next/navigation";
 import { useCallback, useState } from "react";
 
 export const AssetImageOverview = () => {
-  const { id: projectId } = useParams<{ id: string }>();
+  const { id: projectId } = useEditorParams();
   const [search, setSearch] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { invalidate } = useStorageQuery(projectId);

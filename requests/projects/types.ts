@@ -1,5 +1,6 @@
 import { ThemeResponse } from "@/requests/themes/types";
 import { AppTypes, UserRoles } from "@/types/dashboardTypes";
+import { ProjectApp } from "@/types/projectApps";
 import { ProjectTypes } from "@/types/projectTypes";
 
 export type RegionTypes = "FRANCE_CENTRAL" | "US_CENTRAL" | "UK_SOUTH";
@@ -25,6 +26,7 @@ export type ProjectUpdateParams = {
   domain?: string;
   subDomain?: string;
   customCode?: string;
+  apps?: ProjectApp[];
 };
 
 export type ProjectResponse = {
@@ -53,6 +55,7 @@ export type ProjectResponse = {
     notFoundPageId?: string;
   };
   metadata?: Record<string, any>;
+  apps?: ProjectApp[];
 };
 
 export type ProjectListResponse = {

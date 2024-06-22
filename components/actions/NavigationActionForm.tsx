@@ -10,16 +10,16 @@ import {
 } from "@mantine/core";
 import { SegmentedControlYesNo } from "../SegmentedControlYesNo";
 import { usePageListQuery } from "@/hooks/editor/reactQuery/usePageListQuery";
-import { useParams } from "next/navigation";
 import { ActionIconDefault } from "../ActionIconDefault";
 import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
 import { Icon } from "../Icon";
 import { BindingField } from "@/components/editor/BindingField/BindingField";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 
 type Props = ActionFormProps<Omit<NavigationAction, "name">>;
 
 export const NavigationActionForm = ({ form, isPageAction }: Props) => {
-  const { id: projectId } = useParams<{ id: string }>();
+  const { id: projectId } = useEditorParams();
   const { data: pageListQuery } = usePageListQuery(projectId, null);
 
   const onClickAddQueryString = () => {

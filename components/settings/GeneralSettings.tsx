@@ -61,7 +61,7 @@ export default function GeneralSettings({ projectId }: Props) {
     } catch (error: any) {
       stopLoading({
         id: "updating-project",
-        title: "Project Updated",
+        title: "Project Update Failed",
         message: error,
         isError: true,
       });

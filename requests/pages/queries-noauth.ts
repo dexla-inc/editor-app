@@ -25,12 +25,10 @@ export const getPage = async (
   projectId: string,
   pageId: string,
   headers = {},
-  init = {},
 ) => {
   const response = (await getWithoutAuth<PageResponse>(
     `/projects/${projectId}/pages/${pageId}`,
     headers,
-    init,
   )) as PageResponse;
 
   return response;

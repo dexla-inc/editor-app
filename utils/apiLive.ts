@@ -3,6 +3,7 @@ type FetchType = {
   method?: string;
   body?: object;
   headers?: object;
+  cache?: RequestCache;
   init?: object;
 };
 
@@ -13,6 +14,7 @@ async function doFetchWithoutAuth<Type>({
   method,
   body,
   headers = {},
+  cache = "default",
   init = {},
 }: FetchType): Promise<Type | null> {
   return new Promise(async (resolve, reject) => {
@@ -26,6 +28,7 @@ async function doFetchWithoutAuth<Type>({
       response = await fetch(`${baseURL}${url}`, {
         ...init,
         method,
+        cache,
         headers: {
           ...(contentType ? { "Content-Type": contentType } : {}),
           ...headers,
@@ -50,12 +53,14 @@ async function doFetchWithoutAuth<Type>({
 export async function getWithoutAuth<Type>(
   url: FetchType["url"],
   headers?: object,
+  cache?: RequestCache,
   init?: object,
 ): Promise<Type | ReadableStream<Uint8Array> | null> {
   return doFetchWithoutAuth<Type | ReadableStream<Uint8Array> | null>({
     url,
     method: "GET",
     headers,
+    cache,
     init,
   });
 }

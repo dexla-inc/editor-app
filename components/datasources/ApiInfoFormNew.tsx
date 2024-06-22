@@ -2,16 +2,17 @@ import {
   validateBaseUrl,
   validateName,
 } from "@/components/datasources/BasicDetailsInputs";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 import { createDataSource } from "@/requests/datasources/mutations";
 import { DataSourceParams } from "@/requests/datasources/types";
 import { useAppStore } from "@/stores/app";
 import { Box, Button, Flex, Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export default function ApiInfoFormNew() {
   const router = useRouter();
-  const { id: projectId } = useParams<{ id: string }>();
+  const { id: projectId } = useEditorParams();
 
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);

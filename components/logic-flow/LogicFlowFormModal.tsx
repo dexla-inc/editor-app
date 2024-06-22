@@ -10,11 +10,11 @@ import { convertToPatchParams } from "@/types/dashboardTypes";
 import { Button, Modal, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useParams } from "next/navigation";
 import { useEffect } from "react";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 
 export const LogicFlowFormModal = () => {
-  const { id: projectId } = useParams<{ id: string }>();
+  const { id: projectId } = useEditorParams();
   const client = useQueryClient();
   const shouldShowFormModal = useFlowStore(
     (state) => state.shouldShowFormModal,

@@ -13,14 +13,24 @@ export type ContextType =
   | "event"
   | "variables";
 
+export type ConditionProps = {
+  rule: string;
+  value: {
+    static?: any;
+    boundCode?: string;
+    dataType?: "static" | "boundCode";
+  };
+  location: string;
+  operator: string;
+};
+
 export type RuleProps = {
-  result: any;
-  conditions: Array<{
-    rule: string;
-    value: string | string[];
-    location: string;
-    operator: string;
-  }>;
+  result: {
+    static?: any;
+    boundCode?: string;
+    dataType?: "static" | "boundCode";
+  };
+  conditions: ConditionProps[];
 };
 
 export type ValueProps = Partial<{

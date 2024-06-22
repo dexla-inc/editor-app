@@ -32,6 +32,12 @@ export const SelectData = ({ component, endpoints, dataType }: DataProps) => {
             { name: "data", label: "Options", fieldType: "Options" },
             { name: "value", label: "Value", fieldType: "Text" },
             { name: "placeholder", label: "Placeholder", fieldType: "Text" },
+            {
+              name: "validationMessage",
+              label: "Validation message",
+              fieldType: "Text" as const,
+              defaultValue: `${component.description} is required`,
+            },
           ]}
           component={component}
           endpoints={endpoints!}

@@ -1,10 +1,10 @@
 import { SettingsButton } from "@/components/navbar/SettingsButtons";
 import { Stack } from "@mantine/core";
-import { useParams } from "next/navigation";
 import { ProjectSettings } from "../datasources/ProjectSettings";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 
 export const EditorNavbarSettingsSection = () => {
-  const { id: projectId } = useParams<{ id: string }>();
+  const { id: projectId } = useEditorParams();
 
   const settings = (
     <Stack p="xs" pr={0} justify="space-between" sx={{ height: "89vh" }}>

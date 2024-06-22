@@ -102,6 +102,17 @@ type QueryParams = {
   [key: string]: string | number | boolean | undefined;
 };
 
+export function toQueryString(params: Record<string, string>): string {
+  const queryString = Object.keys(params)
+    .filter((key) => params[key])
+    .map(
+      (key) => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`,
+    )
+    .join("&");
+
+  return queryString ? `?${queryString}` : "";
+}
+
 export function buildQueryString(paramsObj: QueryParams): string {
   const params = new URLSearchParams();
 
@@ -128,10 +139,10 @@ export type ExtractRouteParams<TPath extends string> = {
 export type Split<S extends string, D extends string> = string extends S
   ? string[]
   : S extends ""
-  ? []
-  : S extends `${infer T}${D}${infer U}`
-  ? [T, ...Split<U, D>]
-  : [S];
+    ? []
+    : S extends `${infer T}${D}${infer U}`
+      ? [T, ...Split<U, D>]
+      : [S];
 
 export function replaceBrackets(
   basePath: string,

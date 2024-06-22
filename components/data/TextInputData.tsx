@@ -12,6 +12,12 @@ export const TextInputData = ({ component, endpoints }: DataProps) => {
       label: "Value",
       fieldType: isTextArea ? "Text" : ("Text" as const),
     },
+    {
+      name: "validationMessage",
+      label: "Validation message",
+      fieldType: "Text" as const,
+      defaultValue: `${component.description} is required`,
+    },
   ];
   const staticFields = addPlaceholder
     ? [

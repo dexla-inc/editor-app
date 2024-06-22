@@ -16,16 +16,16 @@ import { showNotification } from "@mantine/notifications";
 import { IconNewSection } from "@tabler/icons-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import merge from "lodash.merge";
-import { useParams } from "next/navigation";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { selectedComponentIdSelector } from "@/utils/componentSelectors";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 
 type Props = {
   isCustomComponentModalOpen: boolean;
 };
 
 export const CustomComponentModal = ({ isCustomComponentModalOpen }: Props) => {
-  const { id: projectId } = useParams();
+  const { id: projectId } = useEditorParams();
   const queryClient = useQueryClient();
   const setIsCustomComponentModalOpen = useUserConfigStore(
     (state) => state.setIsCustomComponentModalOpen,

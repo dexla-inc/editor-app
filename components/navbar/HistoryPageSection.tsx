@@ -1,5 +1,4 @@
 import { Pagination, Stack, Text } from "@mantine/core";
-import { useParams } from "next/navigation";
 import { usePageStateHistory } from "@/hooks/editor/reactQuery/usePageStateHistory";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { LARGE_ICON_SIZE } from "@/utils/config";
@@ -8,14 +7,12 @@ import { Icon } from "../Icon";
 import { rollbackState } from "@/requests/pages/mutations";
 import { decodeSchema } from "@/utils/compression";
 import { PageHistoryItem } from "./PageHistoryItem";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 
 type Props = {};
 
 export const HistoryPageSection = ({}: Props) => {
-  const { id: projectId, page: pageId } = useParams<{
-    id: string;
-    page: string;
-  }>();
+  const { id: projectId, page: pageId } = useEditorParams();
   const [activePage, setActivePage] = useState(1);
   const limit = 10;
   const offset = (activePage - 1) * limit;

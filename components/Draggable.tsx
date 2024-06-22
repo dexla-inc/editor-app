@@ -1,4 +1,5 @@
 import { useDraggable } from "@/hooks/editor/useDraggable";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 import { deleteCustomComponent } from "@/requests/components/mutations";
 import { useEditorStore } from "@/stores/editor";
 import { usePropelAuthStore } from "@/stores/propelAuth";
@@ -13,7 +14,6 @@ import {
 } from "@mantine/core";
 import { IconTrash } from "@tabler/icons-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useParams } from "next/navigation";
 import { PropsWithChildren, useCallback } from "react";
 
 type Props = {
@@ -30,7 +30,7 @@ export const Draggable = ({
   isDeletable,
   ...props
 }: PropsWithChildren<Props>) => {
-  const { id: projectId } = useParams<{ id: string }>();
+  const { id: projectId } = useEditorParams();
   const theme = useMantineTheme();
 
   const setComponentToAdd = useEditorStore((state) => state.setComponentToAdd);

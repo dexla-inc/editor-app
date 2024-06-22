@@ -99,7 +99,7 @@ export const useDataBinding = (componentId = "") => {
 
     const browserList = Array.of(pick(browser, ["asPath", "query"]));
 
-    function evaluateCondition(rule: any) {
+    function evaluateCondition(rule: RuleProps) {
       let overallResult = null;
 
       const { conditions } = rule;
@@ -109,11 +109,13 @@ export const useDataBinding = (componentId = "") => {
         if (isEmpty(rule) || isEmpty(location)) {
           continue;
         }
-        location = autoRunJavascriptCode(`return ${location}`);
+        const transformedValue =
+          valueHandlers[value?.dataType ?? "static"](value);
+        location = autoRunJavascriptCode(location)!;
 
         // Evaluate the rule
         const ruleFunction = ruleFunctions[rule];
-        const ruleResult = ruleFunction(location, value);
+        const ruleResult = ruleFunction(location, transformedValue);
 
         if (i === 0) {
           // Initialize overallResult with the first rule's result
@@ -136,7 +138,7 @@ export const useDataBinding = (componentId = "") => {
       for (const rule of rules ?? []) {
         const ruleResult = evaluateCondition(rule);
         if (ruleResult) {
-          return rule.result;
+          return valueHandlers[rule.result?.dataType ?? "static"](rule.result);
         }
       }
       return;

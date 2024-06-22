@@ -28,13 +28,14 @@ export const withPageOnLoad = <T extends {}>(WrappedComponent: any) => {
     useEffect(() => {
       const triggerPageActions = async () => {
         const isPageValid =
-          page && (pathName.includes(page.id) || pathName.includes(page.slug));
+          page &&
+          (pathName?.includes(page.id) || pathName?.includes(page.slug));
         // TODO: Do not run when runInEditMode is false and the mode is editor.
         // TODO: Only the last action gets run
 
         if (isPageValid && onPageLoad && actionTriggeredForPath !== pathName) {
           await onPageLoad?.();
-          setActionTriggeredForPath(pathName);
+          pathName && setActionTriggeredForPath(pathName);
         }
       };
 

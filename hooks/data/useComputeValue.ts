@@ -37,21 +37,34 @@ const autoRunJavascriptCode = (boundCode: string) => {
   }
 };
 
+// get all ValueProps paths + if it finds the rules property, it looks for nested ValueProps within rules and return them.
 const findValuePropsPaths = (obj: any, prefix = ""): string[] => {
   let paths: string[] = [];
   Object.keys(obj).forEach((key) => {
     const fullPath = prefix ? `${prefix}.${key}` : key;
-    if (typeof obj[key] === "object" && obj[key] !== null) {
+    const value = obj[key];
+
+    if (typeof value === "object" && value !== null) {
       if (
-        "dataType" in obj[key] ||
-        "boundCode" in obj[key] ||
-        "dynamic" in obj[key] ||
-        "static" in obj[key] ||
-        "rules" in obj[key]
+        "dataType" in value ||
+        "boundCode" in value ||
+        "dynamic" in value ||
+        "static" in value ||
+        "rules" in value
       ) {
         paths.push(fullPath);
+      }
+      if (Array.isArray(value) && key === "rules") {
+        value.forEach((condition, index) => {
+          if (typeof condition === "object" && condition !== null) {
+            paths = [
+              ...paths,
+              ...findValuePropsPaths(condition, `${fullPath}[${index}]`),
+            ];
+          }
+        });
       } else {
-        paths = [...paths, ...findValuePropsPaths(obj[key], fullPath)];
+        paths = [...paths, ...findValuePropsPaths(value, fullPath)];
       }
     }
   });
@@ -250,7 +263,7 @@ export const useComputeValue = ({
     ],
   );
 
-  function evaluateCondition(rule: any) {
+  function evaluateCondition(rule: RuleProps) {
     let overallResult = null;
 
     const { conditions } = rule;
@@ -260,14 +273,14 @@ export const useComputeValue = ({
       if (isEmpty(rule) || isEmpty(location)) {
         continue;
       }
-      const transformedLocation = transformBoundCode(
-        `return ${location}` ?? "",
-      );
+      const transformedValue =
+        valueHandlers[value?.dataType ?? "static"](value);
+      const transformedLocation = transformBoundCode(location);
       location = autoRunJavascriptCode(transformedLocation);
 
       // Evaluate the rule
       const ruleFunction = ruleFunctions[rule];
-      const ruleResult = ruleFunction(location, value);
+      const ruleResult = ruleFunction(location, transformedValue);
 
       if (i === 0) {
         // Initialize overallResult with the first rule's result
@@ -290,7 +303,7 @@ export const useComputeValue = ({
     for (const rule of rules ?? []) {
       const ruleResult = evaluateCondition(rule);
       if (ruleResult) {
-        return rule.result;
+        return valueHandlers[rule.result?.dataType ?? "static"](rule.result);
       }
     }
     return;
@@ -323,7 +336,8 @@ export const useComputeValue = ({
         }
       },
       rules: (fieldValue: ValueProps) => {
-        return evaluateRules(fieldValue.rules as RuleProps[]);
+        const result = evaluateRules(fieldValue.rules as RuleProps[]);
+        return result;
       },
     }),
     [shareableContent, transformBoundCode, language, evaluateRules],
@@ -336,11 +350,18 @@ export const useComputeValue = ({
           const fieldValue = get(onLoad, fieldValuePath);
           const { dataType = "static" } = fieldValue ?? {};
 
-          set(
-            acc,
-            fieldValuePath,
-            valueHandlers[dataType as keyof typeof valueHandlers]?.(fieldValue),
-          );
+          // as the rules nested properties are mapped within valuePropsPaths (because rules contain condition -> ValueProps)
+          // we want to ignore these nested props and use the first parent ValueProps, so that an entire set of conditions
+          // in rules are turned into a single value
+          if (fieldValuePath.search("rules") === -1) {
+            set(
+              acc,
+              fieldValuePath,
+              valueHandlers[dataType as keyof typeof valueHandlers]?.(
+                fieldValue,
+              ),
+            );
+          }
 
           return acc;
         },

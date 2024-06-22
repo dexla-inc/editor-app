@@ -5,12 +5,12 @@ import { useDataSources } from "@/hooks/editor/reactQuery/useDataSources";
 import { DataSourceResponse } from "@/requests/datasources/types";
 import { Select, Stack, Text } from "@mantine/core";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { DataSourceForm } from "../datasources/DataSourceForm";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 
 export const EditorNavbarDataSourcesSection = () => {
-  const { id: projectId } = useParams<{ id: string }>();
+  const { id: projectId } = useEditorParams();
 
   const [datasourceId, setDatasourceId] = useState<string>();
   const [datasource, setDatasource] = useState<DataSourceResponse>();

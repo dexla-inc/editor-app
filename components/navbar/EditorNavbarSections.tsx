@@ -5,10 +5,13 @@ import { EditorNavbarDataSourcesSection } from "@/components/navbar/EditorNavbar
 import { EditorNavbarPagesSection } from "@/components/navbar/EditorNavbarPagesSection";
 import { EditorNavbarSettingsSection } from "@/components/navbar/EditorNavbarSettingsSection";
 import { EditorNavbarThemesSection } from "@/components/navbar/EditorNavbarThemesSection";
+import { EditorHistorySection } from "@/components/navbar/EditorHistorySection";
+import { EditorNavbarAppsSection } from "@/components/navbar/apps/EditorNavbarAppsSection";
 import { NavbarSection } from "@/components/navbar/NavbarSection";
 import { NavbarLayersSection } from "@/components/navbar/PageStructure/SortableTree";
 import { useEditorStore } from "@/stores/editor";
 import {
+  IconApps,
   IconBrush,
   IconCode,
   IconComponents,
@@ -20,7 +23,6 @@ import {
   IconSettings,
 } from "@tabler/icons-react";
 import { useMemo } from "react";
-import { EditorHistorySection } from "./EditorHistorySection";
 
 export type SectionId =
   | "pages"
@@ -31,7 +33,8 @@ export type SectionId =
   | "customCode"
   | "history"
   | "settings"
-  | "assets";
+  | "assets"
+  | "apps";
 
 const sections = [
   {
@@ -80,6 +83,11 @@ const sections = [
     label: "Settings",
     icon: IconSettings,
   },
+  {
+    id: "apps" as SectionId,
+    label: "Apps",
+    icon: IconApps,
+  },
 ];
 
 export type Sections = typeof sections;
@@ -98,6 +106,7 @@ export const sectionMapper: SectionsMapper = {
   assets: (props: any) => <EditorAssetsSection {...props} />,
   customCode: (props: any) => <EditorNavbarCustomCodeSection {...props} />,
   settings: (props: any) => <EditorNavbarSettingsSection {...props} />,
+  apps: (props: any) => <EditorNavbarAppsSection {...props} />,
 };
 
 export const EditorNavbarSections = () => {

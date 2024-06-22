@@ -19,12 +19,12 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useParams } from "next/navigation";
 import { useState } from "react";
 import { TopLabel } from "../TopLabel";
 import { safeJsonStringify, toSnakeCase } from "@/utils/common";
 import { Prism } from "@mantine/prism";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 
 type VariablesFormValues = {
   name: string;
@@ -45,7 +45,7 @@ export const VariableForm = ({ variableId }: Props) => {
   const setVariable = useVariableStore((state) => state.setVariable);
   const variable = variableList.find((v) => v.id === variableId);
   const [selectedType, setSelectedType] = useState(variable?.type ?? "TEXT");
-  const { id: projectId } = useParams<{ id: string }>();
+  const { id: projectId } = useEditorParams();
   const { createVariablesMutation, updateVariablesMutation } =
     useVariableMutation(projectId);
 

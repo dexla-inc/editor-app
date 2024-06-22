@@ -4,11 +4,11 @@ import {
   validateName,
 } from "@/components/datasources/BasicDetailsInputs";
 import { DataSourceEndpoint } from "@/components/datasources/DataSourceEndpoint";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 import { ApiFromAI } from "@/requests/datasources/types";
 import { Button, Flex, Select, Stack, TextInput, Title } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import Link from "next/link";
-import { useParams } from "next/navigation";
 
 type Props = {
   api: ApiFromAI;
@@ -16,7 +16,7 @@ type Props = {
 };
 
 export default function ApiInfoForm({ api, title }: Props) {
-  const { id: projectId } = useParams<{ id: string }>();
+  const { id: projectId } = useEditorParams();
 
   const form = useForm<ApiFromAI>({
     validate: {

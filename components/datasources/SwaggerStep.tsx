@@ -5,6 +5,7 @@ import {
 } from "@/components/datasources/SwaggerURLInput";
 import NextButton from "@/components/NextButton";
 import { useDataSources } from "@/hooks/editor/reactQuery/useDataSources";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 import { createDataSource } from "@/requests/datasources/mutations";
 import { DataSourceParams, Endpoint } from "@/requests/datasources/types";
 import {
@@ -21,7 +22,6 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import Image from "next/image";
-import { useParams } from "next/navigation";
 
 export default function SwaggerStep({
   nextStep,
@@ -35,7 +35,7 @@ export default function SwaggerStep({
 }: DataSourceStepperWithoutPreviousProps & {
   setEndpoints: (endpoints: Endpoint[]) => void;
 }) {
-  const { id: projectId } = useParams<{ id: string }>();
+  const { id: projectId } = useEditorParams();
   const theme = useMantineTheme();
 
   const { invalidate } = useDataSources(projectId);

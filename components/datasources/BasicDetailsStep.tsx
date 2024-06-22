@@ -5,6 +5,7 @@ import {
   validateName,
 } from "@/components/datasources/BasicDetailsInputs";
 import NextButton from "@/components/NextButton";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 import { updateDataSource } from "@/requests/datasources/mutations";
 import {
   AuthenticationSchemes,
@@ -19,7 +20,6 @@ import {
 } from "@/types/dashboardTypes";
 import { Divider, Group, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useParams } from "next/navigation";
 
 export interface BasicDetailsStepProps
   extends LoadingStore,
@@ -44,7 +44,7 @@ export default function BasicDetailsStep({
   authenticationScheme,
   setAuthenticationScheme,
 }: BasicDetailsStepProps) {
-  const { id: projectId } = useParams<{ id: string }>();
+  const { id: projectId } = useEditorParams();
   if (dataSource?.authenticationScheme) {
     setAuthenticationScheme(dataSource?.authenticationScheme);
   }

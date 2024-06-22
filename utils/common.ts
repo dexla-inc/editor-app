@@ -310,3 +310,24 @@ export const cloneObject = <T>(obj: T): T => {
   };
   return deepClone(obj);
 };
+
+export const generateProjectSlugLink = (
+  projectId: string,
+  customDomain: string,
+  slug: string,
+): URL => {
+  const hostName = window?.location?.hostname ?? "";
+  const domain = hostName ?? "";
+  const isLocalhost = process.env.NEXT_PUBLIC_APP_ENVIRONMENT === "local";
+  const baseDomain = isLocalhost
+    ? `${domain}:3000`
+    : customDomain || process.env.NEXT_PUBLIC_DEPLOYED_DOMAIN;
+
+  const prefix = isLocalhost || !customDomain ? `${projectId}.` : "";
+
+  return new URL(
+    `${isLocalhost ? "http" : "https"}://${prefix}${baseDomain}/${
+      slug === "/" ? "" : slug
+    }`,
+  );
+};

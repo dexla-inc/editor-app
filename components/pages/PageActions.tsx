@@ -1,6 +1,7 @@
 import { ActionSettingsForm } from "@/components/pages/ActionSettingsForm";
 import { SelectActionForm } from "@/components/pages/SelectActionForm";
 import { SidebarSection } from "@/components/pages/SidebarSection";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 import { patchPage } from "@/requests/pages/mutations";
 import { PageResponse } from "@/requests/pages/types";
 import { PatchParams } from "@/requests/types";
@@ -9,7 +10,6 @@ import { Box, Button } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconArrowBadgeRight, IconBolt } from "@tabler/icons-react";
 import startCase from "lodash.startcase";
-import { useParams } from "next/navigation";
 
 type Props = {
   page?: PageResponse | null | undefined;
@@ -18,7 +18,7 @@ type Props = {
 
 export default function PageActions({ page, setPage }: Props) {
   const [addForm, { open, close }] = useDisclosure(false);
-  const { id: projectId } = useParams<{ id: string }>();
+  const { id: projectId } = useEditorParams();
 
   const removeAction = async (id: string) => {
     if (page) {

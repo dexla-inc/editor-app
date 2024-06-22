@@ -7,16 +7,16 @@ import {
   EndpointAuthType,
 } from "@/utils/actions";
 import { Stack } from "@mantine/core";
-import { useParams } from "next/navigation";
-import { SegmentedControlInput } from "../SegmentedControlInput";
-import { SegmentedControlYesNo } from "../SegmentedControlYesNo";
+import { SegmentedControlInput } from "@/components/SegmentedControlInput";
+import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
 import { useEffect } from "react";
 import { useEndpoints } from "@/hooks/editor/reactQuery/useDataSourcesEndpoints";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 
 type Props = ActionFormProps<Omit<APICallAction, "name" | "datasource">>;
 
 export const APICallActionForm = ({ form, isPageAction }: Props) => {
-  const { id: projectId } = useParams<{ id: string }>();
+  const { id: projectId } = useEditorParams();
 
   const { endpoints } = useEndpoints(projectId as string);
 

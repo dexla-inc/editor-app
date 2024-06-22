@@ -26,10 +26,10 @@ import {
   Stack,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useParams } from "next/navigation";
 import { useEffect } from "react";
 import { InformationAlert } from "../Alerts";
 import { useEndpoints } from "@/hooks/editor/reactQuery/useDataSourcesEndpoints";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 
 export interface BearerTokenAuthenticationProps extends DataSourceStepperProps {
   loginEndpointId: string | null;
@@ -83,7 +83,7 @@ export default function AuthenticationBearer({
   setLoginRequestBody,
   fromPage,
 }: BearerTokenAuthenticationProps) {
-  const { id: projectId } = useParams<{ id: string }>();
+  const { id: projectId } = useEditorParams();
   const clearApiAuthConfig = useDataSourceStore(
     (state) => state.clearApiAuthConfig,
   );

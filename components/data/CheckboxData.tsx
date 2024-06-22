@@ -14,6 +14,12 @@ export const CheckboxData = ({ component, endpoints }: DataProps) => {
           fieldType: "YesNo",
           useTrueOrFalseStrings: true,
         },
+        {
+          name: "validationMessage",
+          label: "Validation message",
+          fieldType: "Text" as const,
+          defaultValue: `${component.description} is required`,
+        },
       ]
     : [];
 

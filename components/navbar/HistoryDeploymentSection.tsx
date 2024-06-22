@@ -1,6 +1,5 @@
 import { Pagination, Stack, Text } from "@mantine/core";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { useParams } from "next/navigation";
 import { useCallback, useState } from "react";
 import { useDeploymentPageHistory } from "@/hooks/editor/reactQuery/useDeploymentPageHistory";
 import { LARGE_ICON_SIZE } from "@/utils/config";
@@ -8,12 +7,10 @@ import { Icon } from "../Icon";
 import { HistoryDeploymentItem } from "./HistoryDeploymentItem";
 import { decodeSchema } from "@/utils/compression";
 import { rollbackState } from "@/requests/pages/mutations";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 
 export const HistoryDeploymentSection = ({}) => {
-  const { id: projectId, page: pageId } = useParams<{
-    id: string;
-    page: string;
-  }>();
+  const { id: projectId, page: pageId } = useEditorParams();
   const [activePage, setActivePage] = useState(1);
   const limit = 10;
   const offset = (activePage - 1) * limit;

@@ -4,6 +4,7 @@ import { DataSourceEndpoint } from "@/components/datasources/DataSourceEndpoint"
 import { DataSourceEndpointList } from "@/components/datasources/DataSourceEndpointList";
 import EndpointsButton from "@/components/datasources/EndpointsButton";
 import { TestUserLogin } from "@/components/datasources/TestUserLogin";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 import {
   AuthenticationSchemeLabels,
   RequestBody,
@@ -19,7 +20,6 @@ import {
   Text,
   Title,
 } from "@mantine/core";
-import { useParams } from "next/navigation";
 
 interface AuthenticationStepParams extends DataSourceStepperWithoutNextProps {
   accessToken?: string | null;
@@ -47,7 +47,7 @@ export default function EndpointsStep({
   loginRequestBody,
   closeModal,
 }: AuthenticationStepParams) {
-  const { id: projectId } = useParams<{ id: string }>();
+  const { id: projectId } = useEditorParams();
 
   return (
     <Stack mb={100}>
