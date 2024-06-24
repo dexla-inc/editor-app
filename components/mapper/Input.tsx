@@ -121,7 +121,17 @@ const InputComponent = forwardRef(
       }
     };
 
-    const onKeyDown = (e: KeyboardEvent) => {
+    const onKeyDown = (e: any) => {
+      const isPrintable = e.key.match(/\S/);
+      if (
+        isPrintable &&
+        !patterns[(pattern || "all") as keyof typeof patterns].test(e.key)
+      ) {
+        e.preventDefault();
+      }
+    };
+
+    const onNumberInputKeyDown = (e: KeyboardEvent) => {
       const isLetter = /^[a-zA-Z]$/.test(e.key);
       const isSpecialCharacter = /^[!@#$%^&*(),.?":{}|<>]$/.test(e.key);
       const allowedKeys = [
@@ -231,7 +241,7 @@ const InputComponent = forwardRef(
             rightSection={loading ? <InputLoader /> : null}
             label={undefined}
             wrapperProps={{ "data-id": id }}
-            onKeyDown={onKeyDown}
+            onKeyDown={onNumberInputKeyDown}
           />
         ) : type === "password" ? (
           <PasswordInput
