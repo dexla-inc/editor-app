@@ -408,7 +408,7 @@ export const DataSourceEndpointDetail = ({
       };
 
       if (body && !isGetMethodType) {
-        init.body = JSON.stringify(body);
+        init.body = body;
       }
       const response = await fetch(fetchUrl, init);
 
