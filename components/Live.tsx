@@ -32,7 +32,6 @@ export const LiveComponent = ({ page, pageState }: Props) => {
     () => prepareUserThemeLive(page.branding),
     [page.branding],
   );
-  console.log("page beginning", theme);
 
   const projectId = page.project.id;
 
@@ -50,22 +49,28 @@ export const LiveComponent = ({ page, pageState }: Props) => {
   const setTheme = useThemeStore((state) => state.setTheme);
   const resetInputValues = useInputsStore((state) => state.resetInputValues);
   const [isLoading, setIsLoading] = useState(true);
+  const [isThemeLoading, setIsThemeLoading] = useState(true);
+  const [areFontsLoaded, setAreFontsLoaded] = useState(false);
 
   useEffect(() => {
-    if (theme) setTheme(theme);
-    console.log("setting theme", theme);
+    const loadThemeAndFonts = async () => {
+      if (theme) {
+        setTheme(theme);
+        if (theme.fontFamily && theme.headings?.fontFamily) {
+          try {
+            await initializeFonts(theme.fontFamily, theme.headings.fontFamily);
+            setAreFontsLoaded(true);
+          } catch (error) {
+            setAreFontsLoaded(true);
+          }
+        } else {
+          setAreFontsLoaded(true);
+        }
+        setIsThemeLoading(false);
+      }
+    };
+    loadThemeAndFonts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    if (theme?.fontFamily && theme?.headings?.fontFamily) {
-      initializeFonts(theme.fontFamily, theme.headings.fontFamily);
-      console.log(
-        "setting fonts",
-        theme?.fontFamily,
-        theme?.headings?.fontFamily,
-      );
-    }
   }, [theme]);
 
   useEffect(() => {
@@ -141,7 +146,12 @@ export const LiveComponent = ({ page, pageState }: Props) => {
     [],
   );
 
-  if ((editorTree.root?.children ?? [])?.length === 0 || isLoading) {
+  if (
+    isThemeLoading ||
+    !areFontsLoaded ||
+    (editorTree.root?.children ?? []).length === 0 ||
+    isLoading
+  ) {
     return null;
   }
 
