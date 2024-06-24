@@ -48,16 +48,7 @@ export const RulesForm = () => {
     isEmpty(value.rules)
       ? {
           value: {},
-          rules: [
-            {
-              conditions: [
-                {
-                  rule: "equalTo",
-                  value: {},
-                },
-              ],
-            },
-          ],
+          rules: [],
         }
       : value.rules
   ) as RuleProps;

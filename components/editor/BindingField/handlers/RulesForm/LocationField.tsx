@@ -14,7 +14,6 @@ export const LocationField = ({
   onChange,
   label = "Location",
 }: LocationField) => {
-  console.log("location", value);
   return (
     <Stack spacing={1} style={{ flexGrow: 1 }}>
       <TopLabel text={label} mt={4} required />
