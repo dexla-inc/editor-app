@@ -1,20 +1,22 @@
-export const initializeFonts = async (
+import WebFont from "webfontloader";
+
+export const initializeFonts = (
   defaultFontFamily: string | undefined,
   headingsFontFamily: string | undefined,
 ) => {
-  const fallbackFont = "Open Sans";
-  const WebFont = (await import("webfontloader")).default;
-  WebFont.load({
-    google: {
-      families: [
-        `${defaultFontFamily}:${supportedVariants.join()}` ?? fallbackFont,
-        `${headingsFontFamily}:${supportedVariants.join()}` ?? fallbackFont,
-      ],
-    },
-    context: frames[0],
-  });
-  // if (typeof window !== "undefined") {
-  // }
+  if (typeof window !== "undefined") {
+    const fallbackFont = "Open Sans";
+    // const WebFont = (await import("webfontloader")).default;
+    WebFont.load({
+      google: {
+        families: [
+          `${defaultFontFamily}:${supportedVariants.join()}` ?? fallbackFont,
+          `${headingsFontFamily}:${supportedVariants.join()}` ?? fallbackFont,
+        ],
+      },
+      context: frames[0],
+    });
+  }
 };
 
 const supportedVariants = [
