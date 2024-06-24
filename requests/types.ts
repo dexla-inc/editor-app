@@ -13,7 +13,7 @@ export interface PagingResponse<T> extends IResponse {
   paging: PagingModel;
 }
 
-interface PagingModel {
+export interface PagingModel {
   totalRecords: number;
   recordsPerPage: number;
   page: number;
