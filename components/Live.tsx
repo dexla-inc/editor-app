@@ -61,7 +61,7 @@ export const LiveComponent = ({ page, pageState }: Props) => {
             await initializeFonts(theme.fontFamily, theme.headings.fontFamily);
             setAreFontsLoaded(true);
           } catch (error) {
-            setAreFontsLoaded(true);
+            setAreFontsLoaded(false);
           }
         } else {
           setAreFontsLoaded(true);
