@@ -405,6 +405,7 @@ export const DataSourceEndpointDetail = ({
       const init: RequestInit = {
         method: methodType,
         headers: _headers,
+        ...(withCredentials ? { credentials: "include" } : {}),
       };
 
       if (body && !isGetMethodType) {
