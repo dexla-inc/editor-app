@@ -121,13 +121,25 @@ const InputComponent = forwardRef(
       }
     };
 
-    const onKeyDown = (e: any) => {
-      const isPrintable = e.key.match(/\S/);
-      if (
-        isPrintable &&
-        !patterns[(pattern || "all") as keyof typeof patterns].test(e.key)
-      ) {
+    const onKeyDown = (e: KeyboardEvent) => {
+      const isLetter = /^[a-zA-Z]$/.test(e.key);
+      const isSpecialCharacter = /^[!@#$%^&*(),.?":{}|<>]$/.test(e.key);
+      const allowedKeys = [
+        "Backspace",
+        "Delete",
+        "ArrowLeft",
+        "ArrowRight",
+        "ArrowUp",
+        "ArrowDown",
+        "Tab",
+        "Escape",
+        "Enter",
+      ];
+
+      if (isLetter || isSpecialCharacter) {
         e.preventDefault();
+      } else if (!allowedKeys.includes(e.key)) {
+        // Check for other control keys here if needed
       }
     };
 
