@@ -32,6 +32,7 @@ export const LiveComponent = ({ page, pageState }: Props) => {
     () => prepareUserThemeLive(page.branding),
     [page.branding],
   );
+  console.log("page beginning", theme);
 
   const projectId = page.project.id;
 
@@ -52,12 +53,18 @@ export const LiveComponent = ({ page, pageState }: Props) => {
 
   useEffect(() => {
     if (theme) setTheme(theme);
+    console.log("setting theme", theme);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     if (theme?.fontFamily && theme?.headings?.fontFamily) {
       initializeFonts(theme.fontFamily, theme.headings.fontFamily);
+      console.log(
+        "setting fonts",
+        theme?.fontFamily,
+        theme?.headings?.fontFamily,
+      );
     }
   }, [theme]);
 

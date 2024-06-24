@@ -3,6 +3,7 @@ import { MantineThemeExtended } from "@/types/types";
 import { ThemeResponse } from "@/requests/themes/types";
 
 export const prepareUserThemeLive = (projectBranding: ThemeResponse) => {
+  console.log("projectBranding", projectBranding);
   const defaultFontFamily =
     projectBranding?.defaultFont ?? defaultTheme.fontFamily ?? "Open Sans";
   const headingsFontFamily =
