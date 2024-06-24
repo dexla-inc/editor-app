@@ -1,6 +1,7 @@
 import { FileWithPath } from "@mantine/dropzone";
 import { requiredModifiers } from "./modifiers";
 import { GRID_SIZE } from "./config";
+import { PagingModel } from "@/requests/types";
 
 export const convertToBase64 = (file: FileWithPath): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -331,3 +332,21 @@ export const generateProjectSlugLink = (
     }`,
   );
 };
+
+export function extractPagingFromSupabase(value: string): PagingModel {
+  const [rangePart, totalRecordsStr] = value.split("/");
+  const [startStr, endStr] = rangePart.split("-");
+
+  const totalRecords = parseInt(totalRecordsStr, 10);
+  const start = parseInt(startStr, 10);
+  const end = parseInt(endStr, 10);
+
+  const recordsPerPage = end - start + 1;
+  const page = Math.floor(start / recordsPerPage) + 1;
+
+  return {
+    totalRecords: totalRecords,
+    recordsPerPage: recordsPerPage,
+    page: page,
+  };
+}

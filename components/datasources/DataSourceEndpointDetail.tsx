@@ -37,9 +37,19 @@ import { useForm } from "@mantine/form";
 import debounce from "lodash.debounce";
 import { useEffect, useReducer, useState } from "react";
 import { MonacoEditorJson } from "../MonacoEditorJson";
-import { safeJsonParse, toBase64 } from "@/utils/common";
+import {
+  extractPagingFromSupabase,
+  safeJsonParse,
+  toBase64,
+} from "@/utils/common";
 import { AddRequestInput } from "./AddRequestInput";
 import { useEndpoints } from "@/hooks/editor/reactQuery/useDataSourcesEndpoints";
+import {
+  constructHeaders,
+  performFetch,
+  prepareRequestData,
+} from "@/utils/actionsApi";
+import { readDataFromStream } from "@/utils/api";
 
 const MethodTypeArray: MethodTypes[] = [
   "GET",
@@ -352,7 +362,7 @@ export const DataSourceEndpointDetail = ({
         withCredentials,
         parameters,
         requestBody,
-        body: body,
+        body,
       } = state;
 
       let { url, relativeUrl } = state;
@@ -384,17 +394,23 @@ export const DataSourceEndpointDetail = ({
         }
       }
 
-      // Use the Next.js API route as a proxy if isServerRequest is true
       const fetchUrl = state.isServerRequest
         ? `/api/proxy?targetUrl=${toBase64(url)}`
         : apiUrl;
 
-      const response = await fetch(fetchUrl, {
+      const isGetMethodType = methodType === "GET";
+
+      const _headers = constructHeaders(mediaType, requestHeaders);
+
+      const init: RequestInit = {
         method: methodType,
-        headers: requestHeaders,
-        ...(withCredentials ? { credentials: "include" } : {}),
-        ...(body ? { body: body } : {}),
-      });
+        headers: _headers,
+      };
+
+      if (body && !isGetMethodType) {
+        init.body = JSON.stringify(body);
+      }
+      const response = await fetch(fetchUrl, init);
 
       if (response.status.toString().startsWith("50")) {
         const result = await response.json();
@@ -422,6 +438,23 @@ export const DataSourceEndpointDetail = ({
 
         if (response.headers.get("content-type")?.includes("application/json"))
           result = await response.json();
+
+        // SUPABASE ONLY, NEEDS REFACTORING
+        const contentRange = response.headers.get("Content-Range");
+
+        if (contentRange && !contentRange.endsWith("/*")) {
+          const pagingModel = extractPagingFromSupabase(contentRange);
+
+          result = {
+            results: result,
+            paging: {
+              totalRecords: pagingModel.totalRecords,
+              recordsPerPage: pagingModel.recordsPerPage,
+              page: pagingModel.page,
+            },
+          };
+        }
+
         let exampleResult = result;
         if (Array.isArray(result)) {
           exampleResult = result.slice(0, 2);

@@ -1,7 +1,7 @@
 import { MethodTypes } from "@/requests/types";
 import { readDataFromStream } from "@/utils/api";
 import { Endpoint, MediaTypes } from "@/requests/datasources/types";
-import { notUndefined } from "@/utils/common";
+import { extractPagingFromSupabase, notUndefined } from "@/utils/common";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { ValueProps } from "@/types/dataBinding";
@@ -60,7 +60,6 @@ export async function performFetch(
     }
   }
 
-  console.log("contentLength", response.headers.get("Content-Length"));
   // Handle no-content responses explicitly
   if (
     response.status === 204 ||
@@ -70,7 +69,23 @@ export async function performFetch(
   }
 
   try {
-    return await response.json();
+    const jsonResponse = await response.json();
+
+    // SUPABASE ONLY, NEEDS REFACTORING
+    const contentRange = response.headers.get("Content-Range");
+
+    if (!contentRange || contentRange.endsWith("/*")) return jsonResponse;
+
+    const pagingModel = extractPagingFromSupabase(contentRange);
+
+    return {
+      results: jsonResponse,
+      paging: {
+        totalRecords: pagingModel.totalRecords,
+        recordsPerPage: pagingModel.recordsPerPage,
+        page: pagingModel.page,
+      },
+    };
   } catch (error) {
     console.error("Failed to parse JSON:", error);
     return null;
