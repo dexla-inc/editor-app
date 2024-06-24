@@ -12,9 +12,14 @@ import {
   Stack,
   Text,
 } from "@mantine/core";
-import { BG_RULES_GROUP, BG_RULE, BG_RULES_CONDITION } from "@/utils/branding";
-import { IconTrash } from "@tabler/icons-react";
-import { ConditionProps, RuleProps } from "@/types/dataBinding";
+import { BG_RULE, BG_RULES_CONDITION, BG_RULES_GROUP } from "@/utils/branding";
+import { IconPlus, IconTrash } from "@tabler/icons-react";
+import {
+  ConditionProps,
+  DataType,
+  RuleItemProps,
+  RuleProps,
+} from "@/types/dataBinding";
 import isEmpty from "lodash.isempty";
 import { useForm } from "@mantine/form";
 import { useEffect } from "react";
@@ -26,6 +31,7 @@ import {
 import { ValueField } from "@/components/editor/BindingField/handlers/RulesForm/ValueField";
 import get from "lodash.get";
 import { ResultField } from "@/components/editor/BindingField/handlers/RulesForm/ResultField";
+import { CurrentValueField } from "@/components/editor/BindingField/components/CurrentValueField";
 
 export const RulesForm = () => {
   const {
@@ -40,36 +46,52 @@ export const RulesForm = () => {
 
   const rules = (
     isEmpty(value.rules)
-      ? [
-          {
-            conditions: [
-              {
-                rule: "equalTo",
-                value: {},
-              },
-            ],
-          },
-        ]
+      ? {
+          value: {},
+          rules: [
+            {
+              conditions: [
+                {
+                  rule: "equalTo",
+                  value: {},
+                },
+              ],
+            },
+          ],
+        }
       : value.rules
-  ) as RuleProps[];
+  ) as RuleProps;
 
   const form = useForm({
-    initialValues: {
-      rules,
-    },
+    initialValues: rules,
   });
 
   useEffect(() => {
     onChange({
       ...value,
-      rules: form.values.rules,
+      rules: form.values,
       dataType: "rules",
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.values]);
 
   return (
-    <Stack style={{ background: BG_RULES_GROUP }} px={20} py={30}>
+    <Stack style={{ background: BG_RULES_GROUP }} px={20} py={10}>
+      <Box sx={{ textAlign: "right" }}>
+        <Button
+          fw={400}
+          leftIcon={<IconPlus size={15} />}
+          variant="default"
+          onClick={() =>
+            form.insertListItem("rules", {
+              conditions: [{ rule: "equalTo", value: {}, result: {} }],
+            })
+          }
+        >
+          Add Rule
+        </Button>
+      </Box>
+
       {form.values.rules?.map((rule, ruleIndex) => {
         return (
           <Accordion
@@ -81,7 +103,6 @@ export const RulesForm = () => {
           >
             <Accordion.Item value={`item-${ruleIndex}`}>
               <AccordionControl
-                displayDeleteButton={form.values.rules.length > 1}
                 onClickDeleteRule={() =>
                   form.removeListItem("rules", ruleIndex)
                 }
@@ -229,15 +250,19 @@ export const RulesForm = () => {
           </Accordion>
         );
       })}
-      <Button
-        onClick={() =>
-          form.insertListItem("rules", {
-            conditions: [{ rule: "equalTo", value: {} }],
-          })
-        }
-      >
-        Add rule
-      </Button>
+
+      <CurrentValueField
+        value={value}
+        onChange={(selectedItem: string) => {
+          form.setValues({
+            value: {
+              boundCode: `return ${selectedItem}`,
+              dataType: DataType.boundCode,
+            },
+          });
+        }}
+        hideBindingContextSelector={!form.values.rules?.length}
+      />
     </Stack>
   );
 };
@@ -245,7 +270,6 @@ export const RulesForm = () => {
 function AccordionControl(
   props: AccordionControlProps & {
     onClickDeleteRule: () => void;
-    displayDeleteButton: boolean;
   },
 ) {
   return (
@@ -259,16 +283,14 @@ function AccordionControl(
         {...props}
         sx={{ "&:hover": { background: "transparent" } }}
       />
-      {props.displayDeleteButton && (
-        <ActionIcon onClick={props.onClickDeleteRule} size="md" mr={15}>
-          <IconTrash size="1rem" color="red" />
-        </ActionIcon>
-      )}
+      <ActionIcon onClick={props.onClickDeleteRule} size="md" mr={15}>
+        <IconTrash size="1rem" color="red" />
+      </ActionIcon>
     </Box>
   );
 }
 
-function transformRuleProps(ruleProps: RuleProps) {
+function transformRuleProps(ruleProps: RuleItemProps) {
   const condition: ConditionProps = get(
     ruleProps,
     "conditions[0]",
@@ -287,5 +309,10 @@ function transformRuleProps(ruleProps: RuleProps) {
   let conditionString = `${extractContextAndAttributes(condition.location)} > ${condition.rule} > `;
   if (value !== undefined) conditionString += `${value} > `;
 
-  return `${conditionString}${ruleProps.result}`;
+  const result =
+    ruleProps.result?.dataType === DataType.boundCode
+      ? extractContextAndAttributes(ruleProps.result?.boundCode)
+      : ruleProps.result?.static;
+
+  return `${conditionString}${result}`;
 }

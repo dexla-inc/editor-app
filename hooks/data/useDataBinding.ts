@@ -5,6 +5,7 @@ import get from "lodash.get";
 import {
   ComputeValuePropCtx,
   GetValueProps,
+  RuleItemProps,
   RuleProps,
   ValueProps,
 } from "@/types/dataBinding";
@@ -34,7 +35,7 @@ export const useDataBinding = (componentId = "") => {
         return autoRunJavascriptCode(boundCode, ctx);
       },
       rules: function (value: ValueProps) {
-        return evaluateRules(value?.rules as RuleProps[]);
+        return evaluateRules(value?.rules!);
       },
     };
 
@@ -99,7 +100,7 @@ export const useDataBinding = (componentId = "") => {
 
     const browserList = Array.of(pick(browser, ["asPath", "query"]));
 
-    function evaluateCondition(rule: RuleProps) {
+    function evaluateCondition(rule: RuleItemProps) {
       let overallResult = null;
 
       const { conditions } = rule;
@@ -134,8 +135,14 @@ export const useDataBinding = (componentId = "") => {
       return overallResult;
     }
 
-    function evaluateRules(rules: RuleProps[]) {
-      for (const rule of rules ?? []) {
+    function evaluateRules(rules: RuleProps) {
+      const rulesList = rules?.rules;
+
+      if (!rulesList?.length) {
+        return valueHandlers.boundCode(rules.value);
+      }
+
+      for (const rule of rules.rules) {
         const ruleResult = evaluateCondition(rule);
         if (ruleResult) {
           return valueHandlers[rule.result?.dataType ?? "static"](rule.result);
@@ -145,9 +152,7 @@ export const useDataBinding = (componentId = "") => {
     }
 
     if (value === undefined) return staticFallback || "";
-    let dataType = value?.dataType ?? "static";
-
-    const result = valueHandlers[dataType](value);
+    const result = valueHandlers[value?.dataType ?? "static"](value);
 
     return result;
   }

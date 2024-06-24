@@ -1,10 +1,15 @@
 import { Component } from "@/utils/editor";
 import { Endpoint } from "@/requests/datasources/types";
 
-export type BindingType = "Formula" | "JavaScript";
 export type BindingTab = "components" | "variables" | "actions" | "others";
 
-export type DataType = "static" | "dynamic" | "boundCode" | "rules";
+export enum DataType {
+  static = "static",
+  dynamic = "dynamic",
+  boundCode = "boundCode",
+  rules = "rules",
+}
+
 export type ContextType =
   | "item"
   | "components"
@@ -15,30 +20,27 @@ export type ContextType =
 
 export type ConditionProps = {
   rule: string;
-  value: {
-    static?: any;
-    boundCode?: string;
-    dataType?: "static" | "boundCode";
-  };
+  value: ValueProps<DataType.dynamic | DataType.rules>;
   location: string;
   operator: string;
 };
 
-export type RuleProps = {
-  result: {
-    static?: any;
-    boundCode?: string;
-    dataType?: "static" | "boundCode";
-  };
+export type RuleItemProps = {
+  result: ValueProps<DataType.dynamic | DataType.rules>;
   conditions: ConditionProps[];
 };
 
-export type ValueProps = Partial<{
-  dataType: DataType;
+export type RuleProps = {
+  value: ValueProps<DataType.dynamic | DataType.static | DataType.rules>;
+  rules: RuleItemProps[];
+};
+
+export type ValueProps<T extends DataType = never> = Partial<{
+  dataType: Exclude<DataType, T>;
   static: any;
   dynamic: string;
   boundCode: string;
-  rules: RuleProps[];
+  rules: RuleProps;
 }>;
 
 export type GetValueProps = {

@@ -66,6 +66,7 @@ export const SelectComparisonRuleField = (
     <Select
       {...props}
       label="Rule"
+      mt={2}
       itemComponent={SelectItem}
       description="Choose from the logical rules for utility"
       data={logicalRulesData}

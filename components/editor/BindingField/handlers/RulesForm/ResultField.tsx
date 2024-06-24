@@ -3,7 +3,7 @@ import { LocationField } from "@/components/editor/BindingField/handlers/RulesFo
 import { IconPlugConnected } from "@tabler/icons-react";
 import { ICON_SIZE } from "@/utils/config";
 import { ComponentToBindField } from "@/components/editor/BindingField/ComponentToBindField";
-import { FieldType, ValueProps } from "@/types/dataBinding";
+import { DataType, FieldType, ValueProps } from "@/types/dataBinding";
 
 type ResultFieldProps = {
   value: ValueProps;
@@ -22,7 +22,7 @@ export const ResultField = ({
 
   const Field =
     // @ts-ignore
-    ComponentToBindField[props.fieldType] || ComponentToBindField.Text;
+    ComponentToBindField[fieldType] || ComponentToBindField.Text;
 
   return (
     <Group align="flex-start" w="100%" spacing={5}>
@@ -49,7 +49,9 @@ export const ResultField = ({
       )}
       <ActionIcon
         onClick={() => {
-          const dataType = isStaticDataType ? "boundCode" : "static";
+          const dataType = isStaticDataType
+            ? DataType.boundCode
+            : DataType.static;
           onChange({ ...value, dataType });
         }}
         variant="default"
