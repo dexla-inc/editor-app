@@ -139,10 +139,10 @@ export const useDataBinding = (componentId = "") => {
       const rulesList = rules?.rules;
 
       if (!rulesList?.length) {
-        return valueHandlers.boundCode(rules.value);
+        return valueHandlers.boundCode(rules?.value);
       }
 
-      for (const rule of rules.rules) {
+      for (const rule of rulesList) {
         const ruleResult = evaluateCondition(rule);
         if (ruleResult) {
           return valueHandlers[rule.result?.dataType ?? "static"](rule.result);
