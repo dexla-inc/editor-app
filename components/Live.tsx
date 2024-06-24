@@ -62,6 +62,18 @@ export const LiveComponent = ({ page, pageState }: Props) => {
   }, [theme]);
 
   useEffect(() => {
+    if (variables) initializeVariableList(variables.results);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [variables, page.id]);
+
+  useEffect(() => {
+    if (datasources) {
+      setApiAuthConfig(projectId, datasources);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [datasources]);
+
+  useEffect(() => {
     if (page.id && projectId && pageState && isLoading) {
       useEditorTreeStore.setState(
         {
@@ -85,18 +97,6 @@ export const LiveComponent = ({ page, pageState }: Props) => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId, page.id, pageState, isLoading]);
-
-  useEffect(() => {
-    if (variables) initializeVariableList(variables.results);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [variables, page.id]);
-
-  useEffect(() => {
-    if (datasources) {
-      setApiAuthConfig(projectId, datasources);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [datasources]);
 
   const renderTree: RenderTreeFunc = useCallback(
     (componentTree: ComponentTree, shareableContent = {}) => {
