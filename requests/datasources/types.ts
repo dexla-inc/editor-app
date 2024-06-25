@@ -62,7 +62,7 @@ type ErrorDetail = {
   code: string;
 };
 
-export type EnvironmentTypes = "None" | "Staging" | "Production";
+export type EnvironmentTypes = "Editor" | "Staging" | "Production";
 
 export type MediaTypes =
   | "application/json"
