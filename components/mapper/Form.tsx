@@ -69,14 +69,16 @@ const FormComponent = forwardRef(
           type: "submit",
         },
       );
-
-      const invalidComponents = formFieldComponents.filter(
-        (component) =>
-          (inputValues[component?.id!] === "" ||
-            inputValues[component?.id!] === undefined) &&
-          component?.props?.withAsterisk,
-      );
-
+      const invalidComponents = formFieldComponents.filter((component) => {
+        let id = component?.id!;
+        if (shareableContent?.parentSuffix !== undefined) {
+          id = `${component?.id!}-related-${shareableContent?.parentSuffix}`;
+        }
+        return (
+          (inputValues[id] === "" || inputValues[id] === undefined) &&
+          component?.props?.withAsterisk
+        );
+      });
       // re-setting error messages onSubmit
       formFieldComponents.forEach((component) => {
         updateTreeComponentAttrs({
