@@ -13,7 +13,6 @@ import { useOldRouter } from "@/hooks/data/useOldRouter";
 import { useDataTransformers } from "@/hooks/data/useDataTransformers";
 import has from "lodash.has";
 import isEmpty from "lodash.isempty";
-import isEqual from "lodash.isequal";
 
 type RecordStringAny = Record<string, any>;
 
@@ -83,9 +82,9 @@ export const ruleFunctions: any = {
   notContains: (location: any, comparingValue: any) =>
     !location.includes(comparingValue),
   equalToMultiple: (location: any, comparingValue: any) =>
-    isEqual(location, comparingValue?.map(safeJsonParse)),
+    comparingValue?.some((item: any) => safeJsonParse(item) === location),
   notEqualToMultiple: (location: any, comparingValue: any) =>
-    isEqual(location, comparingValue?.map(safeJsonParse)),
+    !comparingValue?.some((item: any) => safeJsonParse(item) === location),
 };
 
 export const useComputeValue = ({
