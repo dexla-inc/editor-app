@@ -74,22 +74,21 @@ export const ValueField = ({
           }}
         />
       )}
-      {isSingle ||
-        (isMultiple && (
-          <ActionIcon
-            onClick={() => {
-              const dataType = isStaticDataType
-                ? DataType.boundCode
-                : DataType.static;
-              onChange({ ...value, dataType });
-            }}
-            variant="default"
-            tabIndex={-1}
-            mt={25}
-          >
-            <IconPlugConnected size={ICON_SIZE} />
-          </ActionIcon>
-        ))}
+      {(isSingle || isMultiple) && (
+        <ActionIcon
+          onClick={() => {
+            const dataType = isStaticDataType
+              ? DataType.boundCode
+              : DataType.static;
+            onChange({ ...value, dataType });
+          }}
+          variant="default"
+          tabIndex={-1}
+          mt={25}
+        >
+          <IconPlugConnected size={ICON_SIZE} />
+        </ActionIcon>
+      )}
     </Group>
   );
 };
