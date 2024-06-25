@@ -177,30 +177,36 @@ export const RulesForm = () => {
                             `rules.${ruleIndex}.conditions.${conditionIndex}.location`,
                           )}
                         />
-                        <SelectComparisonRuleField
-                          withAsterisk
-                          {...form.getInputProps(
-                            `rules.${ruleIndex}.conditions.${conditionIndex}.rule`,
-                          )}
-                          onChange={onSelectLogicalRule}
-                        />
-                        <ValueField
-                          placeholder={valuePlaceholder!}
-                          isSingle={!isRuleMultiple && !isRuleValueCheck}
-                          isMultiple={isRuleMultiple}
-                          {...form.getInputProps(
-                            `rules.${ruleIndex}.conditions.${conditionIndex}.value`,
-                          )}
-                        />
+                        {condition.location && (
+                          <>
+                            <SelectComparisonRuleField
+                              withAsterisk
+                              {...form.getInputProps(
+                                `rules.${ruleIndex}.conditions.${conditionIndex}.rule`,
+                              )}
+                              onChange={onSelectLogicalRule}
+                            />
+                            <ValueField
+                              placeholder={valuePlaceholder!}
+                              isSingle={!isRuleMultiple && !isRuleValueCheck}
+                              isMultiple={isRuleMultiple}
+                              {...form.getInputProps(
+                                `rules.${ruleIndex}.conditions.${conditionIndex}.value`,
+                              )}
+                            />
+                          </>
+                        )}
                       </Stack>
                     );
                   })}
 
-                  <ResultField
-                    {...restBindingFieldProps}
-                    fieldType={fieldType}
-                    {...form.getInputProps(`rules.${ruleIndex}.result`)}
-                  />
+                  {rule.conditions?.[0].location && (
+                    <ResultField
+                      {...restBindingFieldProps}
+                      fieldType={fieldType}
+                      {...form.getInputProps(`rules.${ruleIndex}.result`)}
+                    />
+                  )}
                 </Stack>
               </Accordion.Panel>
             </Accordion.Item>
