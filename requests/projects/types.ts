@@ -2,6 +2,7 @@ import { ThemeResponse } from "@/requests/themes/types";
 import { AppTypes, UserRoles } from "@/types/dashboardTypes";
 import { ProjectApp } from "@/types/projectApps";
 import { ProjectTypes } from "@/types/projectTypes";
+import { EnvironmentTypes } from "@/requests/datasources/types";
 
 export type RegionTypes = "FRANCE_CENTRAL" | "US_CENTRAL" | "UK_SOUTH";
 
@@ -27,6 +28,7 @@ export type ProjectUpdateParams = {
   subDomain?: string;
   customCode?: string;
   apps?: ProjectApp[];
+  liveUrls?: Partial<Record<EnvironmentTypes, LiveUrl>>;
 };
 
 export type ProjectResponse = {
@@ -56,6 +58,12 @@ export type ProjectResponse = {
   };
   metadata?: Record<string, any>;
   apps?: ProjectApp[];
+  liveUrls?: Record<EnvironmentTypes, LiveUrl>;
+};
+
+type LiveUrl = {
+  domain: string;
+  subDomain: string;
 };
 
 export type ProjectListResponse = {

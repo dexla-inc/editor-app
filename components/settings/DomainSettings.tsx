@@ -1,28 +1,39 @@
-import { InformationAlert, SuccessAlert } from "@/components/Alerts";
 import { useProjectQuery } from "@/hooks/editor/reactQuery/useProjectQuery";
+import { EnvironmentTypes } from "@/requests/datasources/types";
 import { patchProject } from "@/requests/projects/mutations";
+import { ProjectUpdateParams } from "@/requests/projects/types";
 import { useAppStore } from "@/stores/app";
 import { convertToPatchParams } from "@/types/dashboardTypes";
-import {
-  Button,
-  Container,
-  Group,
-  Stack,
-  Table,
-  Text,
-  TextInput,
-  Title,
-} from "@mantine/core";
+import { Button, Container, Group, Stack, Title } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useEffect, useState } from "react";
+import { EnvironmentFormSection } from "./EnvironmentFormSection";
 
 type Props = {
   projectId: string;
 };
 
-type FormProps = {
-  domain: string;
-  subDomain: string;
+type FormProps = Pick<ProjectUpdateParams, "liveUrls">;
+
+const verifyDomains = async (
+  domains: Partial<Record<EnvironmentTypes, string>>,
+) => {
+  const results = await Promise.all(
+    Object.keys(domains).map(async (env) => {
+      const domain = domains[env as EnvironmentTypes];
+      try {
+        const verifyResponse = await fetch(
+          `/api/domain/verify?domain=${domain}`,
+        );
+        const json = await verifyResponse.json();
+        return { env: env as EnvironmentTypes, status: json.status };
+      } catch (error) {
+        console.error({ error });
+        return { env: env as EnvironmentTypes, status: "Error" };
+      }
+    }),
+  );
+  return results;
 };
 
 export default function DomainSettings({ projectId }: Props) {
@@ -30,20 +41,56 @@ export default function DomainSettings({ projectId }: Props) {
   const stopLoading = useAppStore((state) => state.stopLoading);
   const { data: project } = useProjectQuery(projectId);
 
-  const [verificationStatus, setVerificationStatus] = useState("");
+  const [verificationStatus, setVerificationStatus] = useState<
+    Partial<Record<EnvironmentTypes, string>>
+  >({
+    Staging: "",
+    Production: "",
+  });
+
   const form = useForm<FormProps>({
     initialValues: {
-      domain: "",
-      subDomain: "",
+      liveUrls: {
+        Staging: {
+          domain: "",
+          subDomain: "",
+        },
+        Production: {
+          domain: "",
+          subDomain: "",
+        },
+      },
     },
   });
+
+  useEffect(() => {
+    if (project) {
+      form.setValues({
+        liveUrls: {
+          Staging: {
+            domain: project.liveUrls?.Staging?.domain || "",
+            subDomain: project.liveUrls?.Staging?.subDomain || "",
+          },
+          Production: {
+            domain: project.liveUrls?.Production?.domain || "",
+            subDomain: project.liveUrls?.Production?.subDomain || "",
+          },
+        },
+      });
+    }
+  }, [project]);
 
   const handleSubmit = async (values: FormProps) => {
     try {
       startLoading({ id: "domain", message: "Saving..." });
-      const fullDomain = values.subDomain
-        ? `${values.subDomain}.${values.domain}`
-        : values.domain;
+
+      const fullDomainStaging = values.liveUrls?.Staging?.subDomain
+        ? `${values.liveUrls.Staging?.subDomain}.${values.liveUrls.Staging?.domain}`
+        : values.liveUrls?.Staging?.domain;
+
+      const fullDomainProduction = values.liveUrls?.Production?.subDomain
+        ? `${values.liveUrls.Production?.subDomain}.${values.liveUrls.Production?.domain}`
+        : values.liveUrls?.Production?.domain;
 
       await fetch(`/api/domain/addToVercel`, {
         method: "POST",
@@ -51,7 +98,7 @@ export default function DomainSettings({ projectId }: Props) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          domain: fullDomain,
+          domains: [fullDomainStaging, fullDomainProduction],
         }),
       });
 
@@ -60,45 +107,57 @@ export default function DomainSettings({ projectId }: Props) {
       await patchProject(projectId, patchParams);
       stopLoading({ id: "domain", message: "Saved!" });
 
-      const verifyResponse = await fetch(
-        `/api/domain/verify?domain=${fullDomain}`,
+      const verifyResponseStaging = await fetch(
+        `/api/domain/verify?domain=${fullDomainStaging}`,
       );
-      const verifyJson = await verifyResponse.json();
-      setVerificationStatus(verifyJson.status);
+      const verifyJsonStaging = await verifyResponseStaging.json();
+
+      const verifyResponseProduction = await fetch(
+        `/api/domain/verify?domain=${fullDomainProduction}`,
+      );
+      const verifyJsonProduction = await verifyResponseProduction.json();
+
+      setVerificationStatus({
+        Staging: verifyJsonStaging.status,
+        Production: verifyJsonProduction.status,
+      });
     } catch (error) {
       console.error(error);
       stopLoading({
         id: "domain",
-        message: "Somethign went wrong",
+        message: "Something went wrong",
         isError: true,
       });
     }
   };
 
+  const verifyDomain = async () => {
+    if (project) {
+      const domainsToVerify: Partial<Record<EnvironmentTypes, string>> = {
+        Staging: project.liveUrls?.Staging?.subDomain
+          ? `${project.liveUrls.Staging.subDomain}.${project.liveUrls.Staging.domain}`
+          : project.liveUrls?.Staging?.domain || "",
+        Production: project.liveUrls?.Production?.subDomain
+          ? `${project.liveUrls.Production.subDomain}.${project.liveUrls.Production.domain}`
+          : project.liveUrls?.Production?.domain || "",
+      };
+
+      const verificationResults = await verifyDomains(domainsToVerify);
+
+      const newVerificationStatus = verificationResults.reduce(
+        (acc, { env, status }) => {
+          // @ts-ignore
+          acc[env as EnvironmentTypes] = status;
+          return acc;
+        },
+        { Staging: "", Production: "" },
+      );
+      setVerificationStatus(newVerificationStatus);
+    }
+  };
+
   useEffect(() => {
-    const verifyDomain = async () => {
-      if (project) {
-        form.setFieldValue("domain", project.domain ?? "");
-        form.setFieldValue("subDomain", project.subDomain ?? "");
-
-        const fullDomain = project.subDomain
-          ? `${project.subDomain}.${project.domain}`
-          : project.domain;
-
-        try {
-          const verifyResponse = await fetch(
-            `/api/domain/verify?domain=${fullDomain}`,
-          );
-          const json = await verifyResponse.json();
-          setVerificationStatus(json.status);
-        } catch (error) {
-          console.error({ error });
-        }
-      }
-    };
-
     verifyDomain();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [project]);
 
   return (
@@ -106,59 +165,23 @@ export default function DomainSettings({ projectId }: Props) {
       <Stack spacing="xl">
         <Title order={2}>Domain Settings</Title>
 
-        {form.values.domain && verificationStatus !== "Valid Configuration" && (
-          <InformationAlert title="Domain Configuration" isHtml>
-            <Text>Please, add the folowing to your DNS configuration:</Text>
-            <Table>
-              <thead>
-                <tr>
-                  <th>Type</th>
-                  <th>Name</th>
-                  <th>Value</th>
-                </tr>
-              </thead>
-              <tbody>
-                {form.values.subDomain ? (
-                  <tr>
-                    <td>CNAME</td>
-                    <td>{form.values.subDomain}</td>
-                    <td>cname.vercel-dns.com</td>
-                  </tr>
-                ) : (
-                  <tr>
-                    <td>A</td>
-                    <td>@</td>
-                    <td>76.76.21.21</td>
-                  </tr>
-                )}
-              </tbody>
-            </Table>
-          </InformationAlert>
-        )}
-
-        {form.values.domain && verificationStatus === "Valid Configuration" && (
-          <SuccessAlert
-            title="Domain Configuration"
-            text="Your domain is already configured."
-          />
-        )}
-
         <form onSubmit={form.onSubmit(handleSubmit)}>
-          <Stack>
-            <TextInput
-              label="Domain"
-              placeholder="Your custom domain"
-              {...form.getInputProps("domain")}
-            />
-            <TextInput
-              label="Subdomain"
-              placeholder="Your custom subdomain"
-              {...form.getInputProps("subDomain")}
-            />
-            <Group>
-              <Button type="submit">Save</Button>
-            </Group>
+          <Stack spacing="lg">
+            {(["Staging", "Production"] as EnvironmentTypes[]).map((env) => (
+              <EnvironmentFormSection
+                key={env}
+                env={env}
+                form={form}
+                verificationStatus={verificationStatus}
+              />
+            ))}
           </Stack>
+          <Group mt="md">
+            <Button type="submit">Save</Button>
+            <Button onClick={verifyDomain} variant="default">
+              Refresh
+            </Button>
+          </Group>
         </form>
       </Stack>
     </Container>
