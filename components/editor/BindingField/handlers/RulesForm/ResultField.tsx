@@ -1,4 +1,4 @@
-import { ActionIcon, Group } from "@mantine/core";
+import { ActionIcon, Box, Group } from "@mantine/core";
 import { LocationField } from "@/components/editor/BindingField/handlers/RulesForm/LocationField";
 import { IconPlugConnected } from "@tabler/icons-react";
 import { ICON_SIZE } from "@/utils/config";
@@ -27,16 +27,17 @@ export const ResultField = ({
   return (
     <Group align="flex-start" w="100%" spacing={5}>
       {isStaticDataType && (
-        <Field
-          label="Result"
-          withAsterisk
-          style={{ flexGrow: 1 }}
-          {...props}
-          value={value?.static}
-          onChange={(val: string) => {
-            onChange({ ...value, static: val });
-          }}
-        />
+        <Box style={{ flexGrow: 1 }}>
+          <Field
+            label="Result"
+            {...props}
+            withAsterisk
+            value={value?.static}
+            onChange={(val: string) => {
+              onChange({ ...value, static: val });
+            }}
+          />
+        </Box>
       )}
       {isStaticDataType || (
         <LocationField
@@ -56,7 +57,7 @@ export const ResultField = ({
         }}
         variant="default"
         tabIndex={-1}
-        mt={25}
+        mt={24}
       >
         <IconPlugConnected size={ICON_SIZE} />
       </ActionIcon>
