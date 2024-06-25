@@ -1,6 +1,7 @@
 import { Component, ComponentTree } from "@/utils/editor";
 import { useEndpoint } from "@/hooks/components/useEndpoint";
 import { Skeleton } from "@mantine/core";
+import { DataType } from "@/types/dataBinding";
 
 type UseRenderDataProps = {
   component: Component & ComponentTree;
@@ -23,7 +24,7 @@ export const useRenderData = ({
   shareableContent,
 }: UseRenderDataProps) => {
   const {
-    dataType = "static",
+    dataType = DataType.static,
     skeletonMinHeight = 400,
     skeletonMinWidth = "100%",
   } = component?.props!;

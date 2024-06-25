@@ -136,10 +136,16 @@ export default function BindingPopover({
               <Icon name="IconCopy" />
             </ActionIcon>
           </Flex>
-          <ScrollArea h={500}>
+          <Box
+            mih={200}
+            mah={700}
+            sx={{
+              overflowY: "auto",
+            }}
+          >
             {value?.dataType === "rules" && <RulesForm />}
             {value?.dataType === "boundCode" && <BoundCodeForm />}
-          </ScrollArea>
+          </Box>
         </Stack>
       </Popover.Dropdown>
     </Popover>

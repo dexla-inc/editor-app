@@ -5,7 +5,6 @@ import {
   Stack,
   Text,
 } from "@mantine/core";
-import isEmpty from "lodash.isempty";
 
 interface Props
   extends Omit<SegmentedControlProps, "data" | "onChange" | "value"> {
@@ -14,6 +13,7 @@ interface Props
   value?: boolean | string;
   useTrueOrFalseStrings?: boolean;
   onChange?: (value: boolean) => void;
+  withAsterisk?: boolean;
 }
 
 export const SegmentedControlYesNo = ({
@@ -22,6 +22,7 @@ export const SegmentedControlYesNo = ({
   value,
   onChange,
   useTrueOrFalseStrings = false,
+  withAsterisk = false,
   ...props
 }: Props) => {
   const stringValue = value || value === "" ? "true" : "false";
@@ -41,8 +42,9 @@ export const SegmentedControlYesNo = ({
   ];
 
   return (
-    <Stack spacing={2} w="100%">
-      <TopLabel text={label!} />
+    // WARNING: do not remove the mt property, it will break RulesForm design
+    <Stack spacing={2} w="100%" mt={4}>
+      <TopLabel text={label!} required={withAsterisk} />
       {description && (
         <Text size={10} color="dimmed">
           {description}
