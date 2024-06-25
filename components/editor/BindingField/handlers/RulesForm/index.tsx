@@ -12,10 +12,10 @@ import {
   Stack,
   Text,
 } from "@mantine/core";
-import { BG_RULES_GROUP, BG_RULE, BG_RULES_CONDITION } from "@/utils/branding";
-import { IconTrash } from "@tabler/icons-react";
-import { ConditionProps, RuleProps } from "@/types/dataBinding";
-import isEmpty from "lodash.isempty";
+import { BG_RULES_CONDITION } from "@/utils/branding";
+import { IconPlus, IconTrash } from "@tabler/icons-react";
+import { DataType, RuleProps } from "@/types/dataBinding";
+import { isEmpty } from "@/utils/common";
 import { useForm } from "@mantine/form";
 import { useEffect } from "react";
 import { useBindingField } from "@/components/editor/BindingField/components/ComponentToBindFromInput";
@@ -24,8 +24,9 @@ import {
   LocationField,
 } from "@/components/editor/BindingField/handlers/RulesForm/LocationField";
 import { ValueField } from "@/components/editor/BindingField/handlers/RulesForm/ValueField";
-import get from "lodash.get";
 import { ResultField } from "@/components/editor/BindingField/handlers/RulesForm/ResultField";
+import { CurrentValueField } from "@/components/editor/BindingField/components/CurrentValueField";
+import { RuleTitle } from "@/components/editor/BindingField/handlers/RulesForm/RuleTitle";
 
 export const RulesForm = () => {
   const {
@@ -40,36 +41,48 @@ export const RulesForm = () => {
 
   const rules = (
     isEmpty(value.rules)
-      ? [
-          {
-            conditions: [
-              {
-                rule: "equalTo",
-                value: {},
-              },
-            ],
-          },
-        ]
+      ? {
+          value: {},
+          rules: [],
+        }
       : value.rules
-  ) as RuleProps[];
+  ) as RuleProps;
 
   const form = useForm({
-    initialValues: {
-      rules,
-    },
+    initialValues: rules,
   });
 
   useEffect(() => {
     onChange({
       ...value,
-      rules: form.values.rules,
+      rules: form.values,
       dataType: "rules",
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.values]);
 
   return (
-    <Stack style={{ background: BG_RULES_GROUP }} px={20} py={30}>
+    <Stack spacing={15}>
+      <Flex justify="space-between" align="center">
+        <Text size="sm" weight="bold">
+          {!form.values.rules?.length &&
+            extractContextAndAttributes(form.values.value?.boundCode)}
+        </Text>
+        <Button
+          styles={{ root: { justifySelf: "self-end" } }}
+          fw={400}
+          leftIcon={<IconPlus size={15} />}
+          variant="default"
+          onClick={() =>
+            form.insertListItem("rules", {
+              conditions: [{ rule: "equalTo", value: {}, result: {} }],
+            })
+          }
+        >
+          Add Rule
+        </Button>
+      </Flex>
+
       {form.values.rules?.map((rule, ruleIndex) => {
         return (
           <Accordion
@@ -77,22 +90,25 @@ export const RulesForm = () => {
             transitionDuration={300}
             defaultValue={["item-0"]}
             multiple
-            bg={BG_RULE}
+            bg={BG_RULES_CONDITION}
+            styles={{
+              content: { paddingTop: 0 },
+              label: { padding: "0.75rem 0" },
+            }}
           >
             <Accordion.Item value={`item-${ruleIndex}`}>
               <AccordionControl
-                displayDeleteButton={form.values.rules.length > 1}
                 onClickDeleteRule={() =>
                   form.removeListItem("rules", ruleIndex)
                 }
               >
-                <Text size={15} weight="bold">
-                  Rule {`${ruleIndex + 1}`}
-                </Text>
-                <Text size="xs">{transformRuleProps(rule)}</Text>
+                <RuleTitle
+                  ruleProps={rule}
+                  fallback={`Rule ${ruleIndex + 1}`}
+                />
               </AccordionControl>
               <Accordion.Panel>
-                <Stack spacing={10}>
+                <Stack spacing={0}>
                   {rule.conditions?.map((condition, conditionIndex) => {
                     const isRuleMultiple = [
                       "equalToMultiple",
@@ -142,16 +158,8 @@ export const RulesForm = () => {
                     };
 
                     return (
-                      <Stack
-                        key={conditionIndex}
-                        bg={BG_RULES_CONDITION}
-                        p={10}
-                        spacing={0}
-                      >
+                      <Stack key={conditionIndex} p={0} spacing={0}>
                         <Flex w="100%" justify="space-between" align="center">
-                          <Text size="xs" weight="bold">
-                            Condition {conditionIndex + 1}
-                          </Text>
                           {rule.conditions.length > 1 && (
                             <ActionIcon onClick={onClickDeleteRuleCondition}>
                               <IconTrash size="1rem" color="red" />
@@ -164,80 +172,55 @@ export const RulesForm = () => {
                             `rules.${ruleIndex}.conditions.${conditionIndex}.location`,
                           )}
                         />
-                        <SelectComparisonRuleField
-                          withAsterisk
-                          {...form.getInputProps(
-                            `rules.${ruleIndex}.conditions.${conditionIndex}.rule`,
-                          )}
-                          onChange={onSelectLogicalRule}
-                        />
-                        <ValueField
-                          placeholder={valuePlaceholder!}
-                          isSingle={!isRuleMultiple && !isRuleValueCheck}
-                          isMultiple={isRuleMultiple}
-                          {...form.getInputProps(
-                            `rules.${ruleIndex}.conditions.${conditionIndex}.value`,
-                          )}
-                        />
-                        {/* Temporarily commenting out as chaining is confusing at the moment.
-                        Will revisit after ticket 86dtvrcwk is completed */}
-                        {/* <Stack spacing={2}>
-                          <TopLabel text="Chain Condition" mt={3} />
-                          <SegmentedControl
-                            size="xs"
-                            w="30%"
-                            defaultValue="none"
-                            data={[
-                              ...[
-                                { label: "AND", value: "and" },
-                                { label: "OR", value: "or" },
-                              ],
-                              ...(!condition.operator
-                                ? [{ label: "None", value: "none" }]
-                                : []),
-                            ]}
-                            {...form.getInputProps(
-                              `rules.${ruleIndex}.conditions.${conditionIndex}.operator`,
-                            )}
-                            onChange={(op) => {
-                              form.setFieldValue(
-                                `rules.${ruleIndex}.conditions.${conditionIndex}.operator`,
-                                op,
-                              );
-
-                              if (!condition.operator) {
-                                form.insertListItem(
-                                  `rules.${ruleIndex}.conditions`,
-                                  { rule: "equalTo" },
-                                );
-                              }
-                            }}
-                          />
-                        </Stack> */}
+                        {condition.location && (
+                          <>
+                            <SelectComparisonRuleField
+                              withAsterisk
+                              {...form.getInputProps(
+                                `rules.${ruleIndex}.conditions.${conditionIndex}.rule`,
+                              )}
+                              onChange={onSelectLogicalRule}
+                            />
+                            <ValueField
+                              placeholder={valuePlaceholder!}
+                              isSingle={!isRuleMultiple && !isRuleValueCheck}
+                              isMultiple={isRuleMultiple}
+                              {...form.getInputProps(
+                                `rules.${ruleIndex}.conditions.${conditionIndex}.value`,
+                              )}
+                            />
+                          </>
+                        )}
                       </Stack>
                     );
                   })}
 
-                  <ResultField
-                    {...restBindingFieldProps}
-                    fieldType={fieldType}
-                    {...form.getInputProps(`rules.${ruleIndex}.result`)}
-                  />
+                  {rule.conditions?.[0].location && (
+                    <ResultField
+                      {...restBindingFieldProps}
+                      fieldType={fieldType}
+                      {...form.getInputProps(`rules.${ruleIndex}.result`)}
+                    />
+                  )}
                 </Stack>
               </Accordion.Panel>
             </Accordion.Item>
           </Accordion>
         );
       })}
-      <Button
-        onClick={() =>
-          form.insertListItem("rules", {
-            conditions: [{ rule: "equalTo", value: {} }],
-          })
-        }
-      >
-        Add rule
-      </Button>
+
+      <CurrentValueField
+        value={value}
+        onChange={(selectedItem: string) => {
+          form.setValues({
+            value: {
+              boundCode: `return ${selectedItem}`,
+              dataType: DataType.boundCode,
+            },
+          });
+        }}
+        hideBindingContextSelector={!form.values.rules?.length}
+      />
     </Stack>
   );
 };
@@ -245,7 +228,6 @@ export const RulesForm = () => {
 function AccordionControl(
   props: AccordionControlProps & {
     onClickDeleteRule: () => void;
-    displayDeleteButton: boolean;
   },
 ) {
   return (
@@ -257,35 +239,11 @@ function AccordionControl(
     >
       <Accordion.Control
         {...props}
-        sx={{ "&:hover": { background: "transparent" } }}
+        sx={{ "&:hover": { background: "transparent" }, paddingLeft: 14 }}
       />
-      {props.displayDeleteButton && (
-        <ActionIcon onClick={props.onClickDeleteRule} size="md" mr={15}>
-          <IconTrash size="1rem" color="red" />
-        </ActionIcon>
-      )}
+      <ActionIcon onClick={props.onClickDeleteRule} size="md" mr={15}>
+        <IconTrash size="1rem" color="red" />
+      </ActionIcon>
     </Box>
   );
-}
-
-function transformRuleProps(ruleProps: RuleProps) {
-  const condition: ConditionProps = get(
-    ruleProps,
-    "conditions[0]",
-    {} as ConditionProps,
-  );
-
-  if (condition.location === undefined || condition.rule === undefined) {
-    return;
-  }
-
-  const value =
-    condition.value?.dataType === "boundCode"
-      ? extractContextAndAttributes(condition.value.boundCode ?? "")
-      : condition.value?.static;
-
-  let conditionString = `${extractContextAndAttributes(condition.location)} > ${condition.rule} > `;
-  if (value !== undefined) conditionString += `${value} > `;
-
-  return `${conditionString}${ruleProps.result}`;
 }

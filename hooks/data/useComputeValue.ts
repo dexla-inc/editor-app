@@ -2,9 +2,14 @@ import { useVariableStore } from "@/stores/variables";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useCallback, useMemo } from "react";
 import get from "lodash.get";
-import { RuleProps, ValueProps } from "@/types/dataBinding";
+import { RuleItemProps, RuleProps, ValueProps } from "@/types/dataBinding";
 import set from "lodash.set";
-import { cloneObject, emptyObject, safeJsonParse } from "@/utils/common";
+import {
+  cloneObject,
+  emptyObject,
+  isEmpty,
+  safeJsonParse,
+} from "@/utils/common";
 import { useInputsStore } from "@/stores/inputs";
 import { useShallow } from "zustand/react/shallow";
 import { pick } from "next/dist/lib/pick";
@@ -12,8 +17,6 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 import { useOldRouter } from "@/hooks/data/useOldRouter";
 import { useDataTransformers } from "@/hooks/data/useDataTransformers";
 import has from "lodash.has";
-import isEmpty from "lodash.isempty";
-import isEqual from "lodash.isequal";
 
 type RecordStringAny = Record<string, any>;
 
@@ -72,8 +75,8 @@ const findValuePropsPaths = (obj: any, prefix = ""): string[] => {
 };
 
 export const ruleFunctions: any = {
-  hasValue: (location: any) => location !== undefined,
-  doesNotHaveValue: (location: any) => location === undefined,
+  hasValue: (location: any) => !isEmpty(location),
+  doesNotHaveValue: (location: any) => isEmpty(location),
   equalTo: (location: any, comparingValue: any) =>
     location === safeJsonParse(comparingValue),
   notEqualTo: (location: any, comparingValue: any) =>
@@ -83,9 +86,9 @@ export const ruleFunctions: any = {
   notContains: (location: any, comparingValue: any) =>
     !location.includes(comparingValue),
   equalToMultiple: (location: any, comparingValue: any) =>
-    isEqual(location, comparingValue?.map(safeJsonParse)),
+    comparingValue?.some((item: any) => safeJsonParse(item) === location),
   notEqualToMultiple: (location: any, comparingValue: any) =>
-    isEqual(location, comparingValue?.map(safeJsonParse)),
+    !comparingValue?.some((item: any) => safeJsonParse(item) === location),
 };
 
 export const useComputeValue = ({
@@ -125,8 +128,11 @@ export const useComputeValue = ({
             keys.push(...extractKeysFromPattern(pattern, fieldValue.boundCode));
           });
         }
-        if (fieldValue.dataType === "rules" && fieldValue.rules?.length) {
-          fieldValue.rules.forEach((rule) => {
+        if (
+          fieldValue.dataType === "rules" &&
+          fieldValue.rules?.rules?.length
+        ) {
+          fieldValue.rules?.rules?.forEach((rule) => {
             rule.conditions.forEach((condition) => {
               patterns.forEach(({ pattern, keys }) => {
                 keys.push(
@@ -263,7 +269,7 @@ export const useComputeValue = ({
     ],
   );
 
-  function evaluateCondition(rule: RuleProps) {
+  function evaluateCondition(rule: RuleItemProps) {
     let overallResult = null;
 
     const { conditions } = rule;
@@ -299,8 +305,14 @@ export const useComputeValue = ({
     return overallResult;
   }
 
-  function evaluateRules(rules: RuleProps[]) {
-    for (const rule of rules ?? []) {
+  function evaluateRules(rules: RuleProps) {
+    const rulesList = rules?.rules;
+
+    if (!rulesList?.length) {
+      return valueHandlers.boundCode(rules.value);
+    }
+
+    for (const rule of rules.rules) {
       const ruleResult = evaluateCondition(rule);
       if (ruleResult) {
         return valueHandlers[rule.result?.dataType ?? "static"](rule.result);
@@ -336,7 +348,7 @@ export const useComputeValue = ({
         }
       },
       rules: (fieldValue: ValueProps) => {
-        const result = evaluateRules(fieldValue.rules as RuleProps[]);
+        const result = evaluateRules(fieldValue.rules!);
         return result;
       },
     }),

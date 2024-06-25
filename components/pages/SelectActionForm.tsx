@@ -6,7 +6,6 @@ import startCase from "lodash.startcase";
 import { useForm } from "@mantine/form";
 import { useEffect } from "react";
 import { nanoid } from "nanoid";
-import merge from "lodash.merge";
 import { PageResponse } from "@/requests/pages/types";
 import isEmpty from "lodash.isempty";
 import { patchPage } from "@/requests/pages/mutations";

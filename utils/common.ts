@@ -350,3 +350,38 @@ export function extractPagingFromSupabase(value: string): PagingModel {
     page: page,
   };
 }
+
+export function isEmpty(value: any) {
+  // Check for null or undefined
+  if (value == null) return true;
+
+  // Check for boolean
+  if (typeof value === "boolean") return false;
+
+  // Check for number
+  if (typeof value === "number") return isNaN(value);
+
+  // Check for string
+  if (typeof value === "string") return value.trim().length === 0;
+
+  // Check for array
+  if (Array.isArray(value)) return value.length === 0;
+
+  // Check for object
+  if (typeof value === "object") {
+    // Check if it's a Date object
+    if (value instanceof Date) return isNaN(value.getTime());
+
+    // Check if the object is empty
+    return Object.keys(value).length === 0;
+  }
+
+  // Check for map or set
+  if (value instanceof Map || value instanceof Set) return value.size === 0;
+
+  // Check for function
+  if (typeof value === "function") return false;
+
+  // Default case for other types
+  return false;
+}

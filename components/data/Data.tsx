@@ -4,6 +4,7 @@ import { Stack } from "@mantine/core";
 import { useShallow } from "zustand/react/shallow";
 import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 import { useEndpoints } from "@/hooks/editor/reactQuery/useDataSourcesEndpoints";
+import { DataType } from "@/types/dataBinding";
 
 export const Data = () => {
   const component = useEditorTreeStore(
@@ -27,7 +28,7 @@ export const Data = () => {
         fields={[]}
         component={component}
         endpoints={endpoints}
-        dataType={component.props?.dataType ?? "static"}
+        dataType={component.props?.dataType ?? DataType.static}
       />
     </Stack>
   );
