@@ -12,7 +12,7 @@ import {
   Stack,
   Text,
 } from "@mantine/core";
-import { BG_RULE, BG_RULES_CONDITION, BG_RULES_GROUP } from "@/utils/branding";
+import { BG_RULES_CONDITION } from "@/utils/branding";
 import { IconPlus, IconTrash } from "@tabler/icons-react";
 import {
   ConditionProps,
@@ -67,9 +67,14 @@ export const RulesForm = () => {
   }, [form.values]);
 
   return (
-    <Stack style={{ background: BG_RULES_GROUP }} px={20} py={10}>
-      <Box sx={{ textAlign: "right" }}>
+    <Stack spacing={10}>
+      <Flex justify="space-between" align="center">
+        <Text size="sm" weight="bold">
+          {!form.values.rules?.length &&
+            extractContextAndAttributes(form.values.value?.boundCode)}
+        </Text>
         <Button
+          styles={{ root: { justifySelf: "self-end" } }}
           fw={400}
           leftIcon={<IconPlus size={15} />}
           variant="default"
@@ -81,7 +86,7 @@ export const RulesForm = () => {
         >
           Add Rule
         </Button>
-      </Box>
+      </Flex>
 
       {form.values.rules?.map((rule, ruleIndex) => {
         return (
@@ -90,7 +95,11 @@ export const RulesForm = () => {
             transitionDuration={300}
             defaultValue={["item-0"]}
             multiple
-            bg={BG_RULE}
+            bg={BG_RULES_CONDITION}
+            styles={{
+              content: { paddingTop: 0 },
+              label: { padding: "0.75rem 0" },
+            }}
           >
             <Accordion.Item value={`item-${ruleIndex}`}>
               <AccordionControl
@@ -98,13 +107,13 @@ export const RulesForm = () => {
                   form.removeListItem("rules", ruleIndex)
                 }
               >
-                <Text size={15} weight="bold">
+                <Text size={14} weight="bold">
                   Rule {`${ruleIndex + 1}`}
                 </Text>
                 <Text size="xs">{transformRuleProps(rule)}</Text>
               </AccordionControl>
               <Accordion.Panel>
-                <Stack spacing={10}>
+                <Stack spacing={0}>
                   {rule.conditions?.map((condition, conditionIndex) => {
                     const isRuleMultiple = [
                       "equalToMultiple",
@@ -154,16 +163,8 @@ export const RulesForm = () => {
                     };
 
                     return (
-                      <Stack
-                        key={conditionIndex}
-                        bg={BG_RULES_CONDITION}
-                        p={10}
-                        spacing={0}
-                      >
+                      <Stack key={conditionIndex} p={0} spacing={0}>
                         <Flex w="100%" justify="space-between" align="center">
-                          <Text size="xs" weight="bold">
-                            Condition {conditionIndex + 1}
-                          </Text>
                           {rule.conditions.length > 1 && (
                             <ActionIcon onClick={onClickDeleteRuleCondition}>
                               <IconTrash size="1rem" color="red" />
@@ -191,41 +192,6 @@ export const RulesForm = () => {
                             `rules.${ruleIndex}.conditions.${conditionIndex}.value`,
                           )}
                         />
-                        {/* Temporarily commenting out as chaining is confusing at the moment.
-                        Will revisit after ticket 86dtvrcwk is completed */}
-                        {/* <Stack spacing={2}>
-                          <TopLabel text="Chain Condition" mt={3} />
-                          <SegmentedControl
-                            size="xs"
-                            w="30%"
-                            defaultValue="none"
-                            data={[
-                              ...[
-                                { label: "AND", value: "and" },
-                                { label: "OR", value: "or" },
-                              ],
-                              ...(!condition.operator
-                                ? [{ label: "None", value: "none" }]
-                                : []),
-                            ]}
-                            {...form.getInputProps(
-                              `rules.${ruleIndex}.conditions.${conditionIndex}.operator`,
-                            )}
-                            onChange={(op) => {
-                              form.setFieldValue(
-                                `rules.${ruleIndex}.conditions.${conditionIndex}.operator`,
-                                op,
-                              );
-
-                              if (!condition.operator) {
-                                form.insertListItem(
-                                  `rules.${ruleIndex}.conditions`,
-                                  { rule: "equalTo" },
-                                );
-                              }
-                            }}
-                          />
-                        </Stack> */}
                       </Stack>
                     );
                   })}
@@ -272,7 +238,7 @@ function AccordionControl(
     >
       <Accordion.Control
         {...props}
-        sx={{ "&:hover": { background: "transparent" } }}
+        sx={{ "&:hover": { background: "transparent" }, paddingLeft: 14 }}
       />
       <ActionIcon onClick={props.onClickDeleteRule} size="md" mr={15}>
         <IconTrash size="1rem" color="red" />
