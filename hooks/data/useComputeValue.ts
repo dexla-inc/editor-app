@@ -4,7 +4,12 @@ import { useCallback, useMemo } from "react";
 import get from "lodash.get";
 import { RuleItemProps, RuleProps, ValueProps } from "@/types/dataBinding";
 import set from "lodash.set";
-import { cloneObject, emptyObject, safeJsonParse } from "@/utils/common";
+import {
+  cloneObject,
+  emptyObject,
+  isEmpty,
+  safeJsonParse,
+} from "@/utils/common";
 import { useInputsStore } from "@/stores/inputs";
 import { useShallow } from "zustand/react/shallow";
 import { pick } from "next/dist/lib/pick";
@@ -12,7 +17,6 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 import { useOldRouter } from "@/hooks/data/useOldRouter";
 import { useDataTransformers } from "@/hooks/data/useDataTransformers";
 import has from "lodash.has";
-import isEmpty from "lodash.isempty";
 
 type RecordStringAny = Record<string, any>;
 
@@ -71,8 +75,8 @@ const findValuePropsPaths = (obj: any, prefix = ""): string[] => {
 };
 
 export const ruleFunctions: any = {
-  hasValue: (location: any) => location !== undefined,
-  doesNotHaveValue: (location: any) => location === undefined,
+  hasValue: (location: any) => !isEmpty(location),
+  doesNotHaveValue: (location: any) => isEmpty(location),
   equalTo: (location: any, comparingValue: any) =>
     location === safeJsonParse(comparingValue),
   notEqualTo: (location: any, comparingValue: any) =>

@@ -14,13 +14,8 @@ import {
 } from "@mantine/core";
 import { BG_RULES_CONDITION } from "@/utils/branding";
 import { IconPlus, IconTrash } from "@tabler/icons-react";
-import {
-  ConditionProps,
-  DataType,
-  RuleItemProps,
-  RuleProps,
-} from "@/types/dataBinding";
-import isEmpty from "lodash.isempty";
+import { DataType, RuleProps } from "@/types/dataBinding";
+import { isEmpty } from "@/utils/common";
 import { useForm } from "@mantine/form";
 import { useEffect } from "react";
 import { useBindingField } from "@/components/editor/BindingField/components/ComponentToBindFromInput";
@@ -29,9 +24,9 @@ import {
   LocationField,
 } from "@/components/editor/BindingField/handlers/RulesForm/LocationField";
 import { ValueField } from "@/components/editor/BindingField/handlers/RulesForm/ValueField";
-import get from "lodash.get";
 import { ResultField } from "@/components/editor/BindingField/handlers/RulesForm/ResultField";
 import { CurrentValueField } from "@/components/editor/BindingField/components/CurrentValueField";
+import { RuleTitle } from "@/components/editor/BindingField/handlers/RulesForm/RuleTitle";
 
 export const RulesForm = () => {
   const {
@@ -67,7 +62,7 @@ export const RulesForm = () => {
   }, [form.values]);
 
   return (
-    <Stack spacing={10}>
+    <Stack spacing={15}>
       <Flex justify="space-between" align="center">
         <Text size="sm" weight="bold">
           {!form.values.rules?.length &&
@@ -107,10 +102,10 @@ export const RulesForm = () => {
                   form.removeListItem("rules", ruleIndex)
                 }
               >
-                <Text size={14} weight="bold">
-                  Rule {`${ruleIndex + 1}`}
-                </Text>
-                <Text size="xs">{transformRuleProps(rule)}</Text>
+                <RuleTitle
+                  ruleProps={rule}
+                  fallback={`Rule ${ruleIndex + 1}`}
+                />
               </AccordionControl>
               <Accordion.Panel>
                 <Stack spacing={0}>
@@ -251,31 +246,4 @@ function AccordionControl(
       </ActionIcon>
     </Box>
   );
-}
-
-function transformRuleProps(ruleProps: RuleItemProps) {
-  const condition: ConditionProps = get(
-    ruleProps,
-    "conditions[0]",
-    {} as ConditionProps,
-  );
-
-  if (condition.location === undefined || condition.rule === undefined) {
-    return;
-  }
-
-  const value =
-    condition.value?.dataType === "boundCode"
-      ? extractContextAndAttributes(condition.value.boundCode ?? "")
-      : condition.value?.static;
-
-  let conditionString = `${extractContextAndAttributes(condition.location)} > ${condition.rule} > `;
-  if (value !== undefined) conditionString += `${value} > `;
-
-  const result =
-    ruleProps.result?.dataType === DataType.boundCode
-      ? extractContextAndAttributes(ruleProps.result?.boundCode)
-      : ruleProps.result?.static;
-
-  return `${conditionString}${result}`;
 }

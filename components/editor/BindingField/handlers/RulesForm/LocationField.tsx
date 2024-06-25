@@ -1,5 +1,5 @@
 import { TopLabel } from "@/components/TopLabel";
-import isEmpty from "lodash.isempty";
+import { isEmpty } from "@/utils/common";
 import { BindingContextSelector } from "@/components/editor/BindingField/components/BindingContextSelector";
 import { Anchor, Group, Stack, Text } from "@mantine/core";
 

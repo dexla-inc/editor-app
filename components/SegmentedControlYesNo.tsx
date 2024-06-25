@@ -5,7 +5,6 @@ import {
   Stack,
   Text,
 } from "@mantine/core";
-import isEmpty from "lodash.isempty";
 
 interface Props
   extends Omit<SegmentedControlProps, "data" | "onChange" | "value"> {
