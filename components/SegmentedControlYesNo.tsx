@@ -40,7 +40,7 @@ export const SegmentedControlYesNo = ({
     { label: options.true, value: "true" },
     { label: options.false, value: "false" },
   ];
-  console.log({ stringValue }, value);
+
   return (
     // WARNING: do not remove the mt property, it will break RulesForm design
     <Stack spacing={2} w="100%" mt={4}>

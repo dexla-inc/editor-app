@@ -31,8 +31,8 @@ export const RuleTitle = ({
       ? extractContextAndAttributes(condition.value.boundCode ?? "")
       : condition.value?.static;
 
-  let conditionString = `${logicalRulesData.find((item) => item.value === condition.rule)?.label} > `;
-  if (!isEmpty(value)) conditionString += `${value} > `;
+  let conditionString = `${logicalRulesData.find((item) => item.value === condition.rule)?.label}`;
+  if (!isEmpty(value)) conditionString += ` > ${value}`;
 
   const result =
     ruleProps.result?.dataType === DataType.boundCode
@@ -46,7 +46,7 @@ export const RuleTitle = ({
       </Text>
       <Text size={11} c="gray.6">
         {conditionString}
-        {result}
+        {result !== undefined && ` > ${result}`}
       </Text>
     </>
   );

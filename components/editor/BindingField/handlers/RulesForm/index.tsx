@@ -52,7 +52,7 @@ export const RulesForm = () => {
   const form = useForm({
     initialValues: rules,
   });
-  console.log(form.values, defaultValue);
+
   useEffect(() => {
     onChange({
       ...value,
