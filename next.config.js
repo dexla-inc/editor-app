@@ -11,6 +11,13 @@ const nextConfig = {
     includePaths: [path.join(__dirname, "styles")],
   },
   reactStrictMode: true,
+  experimental: {
+    optimizePackageImports: [
+      "@mantine/core",
+      "@mantine/hooks",
+      "@mantine/form",
+    ],
+  },
   modularizeImports: {
     "@tabler/icons-react": {
       transform: "@tabler/icons-react/dist/esm/icons/{{member}}",
