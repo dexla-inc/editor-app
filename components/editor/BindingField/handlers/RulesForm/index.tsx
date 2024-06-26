@@ -36,6 +36,7 @@ export const RulesForm = () => {
     inputOnChange,
     name,
     label,
+    defaultValue,
     ...restBindingFieldProps
   } = useBindingField();
 
@@ -51,7 +52,7 @@ export const RulesForm = () => {
   const form = useForm({
     initialValues: rules,
   });
-
+  console.log(form.values, defaultValue);
   useEffect(() => {
     onChange({
       ...value,
@@ -75,7 +76,13 @@ export const RulesForm = () => {
           variant="default"
           onClick={() =>
             form.insertListItem("rules", {
-              conditions: [{ rule: "equalTo", value: {}, result: {} }],
+              conditions: [
+                {
+                  rule: "equalTo",
+                  value: {},
+                },
+              ],
+              result: { dataType: "static", static: defaultValue },
             })
           }
         >

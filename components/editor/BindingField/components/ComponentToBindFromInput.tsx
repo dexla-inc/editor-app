@@ -34,6 +34,7 @@ type BaseProps = {
   staticValue?: any;
   inputOnChange?: any;
   name?: string;
+  defaultValue?: any;
 };
 
 type FieldTypeProps<T extends FieldType> = BaseProps &
