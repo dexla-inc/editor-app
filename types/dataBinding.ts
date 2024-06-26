@@ -93,7 +93,7 @@ export type FieldProps = {
   placeholder?: string;
   precision?: number;
   data?: Record<string, any>[];
-  defaultValue?: string;
+  defaultValue?: any;
   useTrueOrFalseStrings?: boolean;
   isPageAction?: boolean;
   isTranslatable?: boolean;

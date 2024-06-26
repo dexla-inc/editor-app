@@ -10,7 +10,7 @@ interface Props
   extends Omit<SegmentedControlProps, "data" | "onChange" | "value"> {
   label?: string;
   description?: string;
-  value?: boolean | string;
+  value?: boolean;
   useTrueOrFalseStrings?: boolean;
   onChange?: (value: boolean) => void;
   withAsterisk?: boolean;
@@ -25,7 +25,7 @@ export const SegmentedControlYesNo = ({
   withAsterisk = false,
   ...props
 }: Props) => {
-  const stringValue = value || value === "" ? "true" : "false";
+  const stringValue = value ? "true" : "false";
 
   const handleChange = (val: string) => {
     onChange?.(val === "true");

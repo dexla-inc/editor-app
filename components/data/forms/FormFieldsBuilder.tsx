@@ -24,7 +24,7 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
       name: "isVisible",
       label: "Visibility",
       fieldType: "YesNo",
-      defaultValue: "true",
+      defaultValue: true,
     },
     {
       name: "currentState",
