@@ -42,7 +42,7 @@ export const GlobalProviders = ({
   );
   const defaultTheme = isDarkTheme ? defaultDarkTheme : defaultLightTheme;
   const mergedTheme = merge(defaultTheme, projectTheme);
-
+  console.log({ defaultTheme, projectTheme, mergedTheme });
   const [loadTagManager, setLoadTagManager] = useState(false);
 
   useEffect(() => {
