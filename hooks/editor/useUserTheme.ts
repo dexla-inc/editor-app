@@ -24,10 +24,7 @@ export const useUserTheme = (projectId: string) => {
           userTheme?.defaultFont ??
           defaultTheme.fontFamily ??
           "Open Sans";
-        console.log("useUserTheme===>", {
-          defaultFontFamily,
-          headingsFontFamily,
-        });
+
         const WebFont = (await import("webfontloader")).default;
 
         WebFont.load({

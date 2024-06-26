@@ -65,7 +65,6 @@ async function LivePage({ params: { page } }: PageProps) {
       notFoundPageslug ? `/${notFoundPageslug}` : "https://dexla.ai/404",
     );
   }
-  // console.log("page--->", deploymentPage);
   const decodedSchema = decodeSchema(deploymentPage.pageState);
   const pageState = safeJsonParse(decodedSchema) as EditorTreeCopy;
 
