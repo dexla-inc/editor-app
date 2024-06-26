@@ -15,6 +15,15 @@ type Props = {
 
 type FormProps = Pick<ProjectUpdateParams, "liveUrls">;
 
+type SupportedEnvironmentTypes = Extract<
+  EnvironmentTypes,
+  "Staging" | "Production"
+>;
+
+const environments: SupportedEnvironmentTypes[] = ["Staging", "Production"];
+
+const domainsToVerify: Partial<Record<SupportedEnvironmentTypes, string>> = {};
+
 const verifyDomains = async (
   domains: Partial<Record<EnvironmentTypes, string>>,
 ) => {
@@ -98,7 +107,17 @@ export default function DomainSettings({ projectId }: Props) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          domains: [fullDomainStaging, fullDomainProduction],
+          domain: fullDomainStaging,
+        }),
+      });
+
+      await fetch(`/api/domain/addToVercel`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          domain: fullDomainProduction,
         }),
       });
 
@@ -133,25 +152,38 @@ export default function DomainSettings({ projectId }: Props) {
 
   const verifyDomain = async () => {
     if (project) {
-      const domainsToVerify: Partial<Record<EnvironmentTypes, string>> = {
-        Staging: project.liveUrls?.Staging?.subDomain
-          ? `${project.liveUrls.Staging.subDomain}.${project.liveUrls.Staging.domain}`
-          : project.liveUrls?.Staging?.domain || "",
-        Production: project.liveUrls?.Production?.subDomain
-          ? `${project.liveUrls.Production.subDomain}.${project.liveUrls.Production.domain}`
-          : project.liveUrls?.Production?.domain || "",
-      };
+      // const domainsToVerify: Partial<Record<EnvironmentTypes, string>> = {
+      //   Staging: project.liveUrls?.Staging?.subDomain
+      //     ? `${project.liveUrls.Staging.subDomain}.${project.liveUrls.Staging.domain}`
+      //     : project.liveUrls?.Staging?.domain || "",
+      //   Production: project.liveUrls?.Production?.subDomain
+      //     ? `${project.liveUrls.Production.subDomain}.${project.liveUrls.Production.domain}`
+      //     : project.liveUrls?.Production?.domain || "",
+      // };
+
+      const domainsToVerify: Partial<
+        Record<SupportedEnvironmentTypes, string>
+      > = {};
+
+      environments.forEach((env) => {
+        const subDomain = project.liveUrls?.[env]?.subDomain;
+        const domain = project.liveUrls?.[env]?.domain;
+        const fullDomain = subDomain ? `${subDomain}.${domain}` : domain || "";
+
+        if (domain && verificationStatus[env] !== "Valid Configuration") {
+          domainsToVerify[env] = fullDomain;
+        }
+      });
 
       const verificationResults = await verifyDomains(domainsToVerify);
 
-      const newVerificationStatus = verificationResults.reduce(
-        (acc, { env, status }) => {
-          // @ts-ignore
-          acc[env as EnvironmentTypes] = status;
-          return acc;
-        },
-        { Staging: "", Production: "" },
-      );
+      // Merge the new verification results with the previous status
+      const newVerificationStatus = { ...verificationStatus };
+
+      verificationResults.forEach(({ env, status }) => {
+        newVerificationStatus[env as SupportedEnvironmentTypes] = status;
+      });
+
       setVerificationStatus(newVerificationStatus);
     }
   };
@@ -164,7 +196,6 @@ export default function DomainSettings({ projectId }: Props) {
     <Container py="xl">
       <Stack spacing="xl">
         <Title order={2}>Domain Settings</Title>
-
         <form onSubmit={form.onSubmit(handleSubmit)}>
           <Stack spacing="lg">
             {(["Staging", "Production"] as EnvironmentTypes[]).map((env) => (
