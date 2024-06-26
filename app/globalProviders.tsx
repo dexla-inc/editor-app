@@ -1,48 +1,25 @@
 "use client";
 
 import {
-  darkTheme as defaultDarkTheme,
-  theme as defaultLightTheme,
-} from "@/utils/branding";
-import { cache } from "@/utils/emotionCache";
-import {
   dehydrate,
   HydrationBoundary,
   QueryClientProvider,
 } from "@tanstack/react-query";
 import { queryClient } from "@/utils/reactQuery";
-import { MantineProvider } from "@mantine/core";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { ReactNode, useEffect, useMemo, useState } from "react";
-import { useUserConfigStore } from "@/stores/userConfig";
+import { ReactNode, useEffect, useState } from "react";
 import TagManager from "react-gtm-module";
 import Script from "next/script";
-import { MantineGlobal } from "@/components/MantineGlobal";
 import { ProgressBar } from "@/components/ProgressBar";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { prepareUserThemeLive } from "@/utils/prepareUserThemeLive";
-import merge from "lodash.merge";
 
 const GTM_ID = "GTM-P3DVFXMS";
 const nodeEnv = process.env.NODE_ENV;
 
-export const GlobalProviders = ({
-  children,
-  branding,
-}: {
-  children: ReactNode;
-  branding: any;
-}) => {
-  const isDarkTheme = useUserConfigStore((state: any) => state.isDarkTheme);
+export const GlobalProviders = ({ children }: { children: ReactNode }) => {
   const dehydratedState = dehydrate(queryClient);
   const isLive = useEditorTreeStore((state) => state.isLive);
-  const projectTheme = useMemo(
-    () => prepareUserThemeLive(branding),
-    [branding],
-  );
-  const defaultTheme = isDarkTheme ? defaultDarkTheme : defaultLightTheme;
-  const mergedTheme = merge(defaultTheme, projectTheme);
-  console.log({ defaultTheme, projectTheme, mergedTheme });
+
   const [loadTagManager, setLoadTagManager] = useState(false);
 
   useEffect(() => {
@@ -59,12 +36,7 @@ export const GlobalProviders = ({
   }, []);
 
   return (
-    <MantineProvider
-      withGlobalStyles
-      withNormalizeCSS
-      theme={mergedTheme}
-      emotionCache={cache}
-    >
+    <>
       {/*Google Tag Manager*/}
       {loadTagManager && (
         <Script id="google-analytics" strategy="afterInteractive">
@@ -90,11 +62,10 @@ export const GlobalProviders = ({
       )}
       <QueryClientProvider client={queryClient}>
         <HydrationBoundary state={dehydratedState}>
-          <MantineGlobal isLive />
           <ProgressBar>{children}</ProgressBar>
         </HydrationBoundary>
       </QueryClientProvider>
       <SpeedInsights />
-    </MantineProvider>
+    </>
   );
 };

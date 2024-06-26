@@ -1,8 +1,9 @@
 import { useCustomCode } from "@/hooks/editor/useCustomCode";
 import { ProjectResponse } from "@/requests/projects/types";
 import { useThemeStore } from "@/stores/theme";
-import { Box, BoxProps } from "@mantine/core";
+import { Box, BoxProps, MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
+import { MantineGlobal } from "@/components/MantineGlobal";
 
 type Props = {
   project: ProjectResponse;
@@ -17,7 +18,8 @@ export const LiveWrapper = ({ children, project }: Props) => {
   }
 
   return (
-    <>
+    <MantineProvider theme={theme} withNormalizeCSS>
+      <MantineGlobal isLive />
       <Notifications />
       <Box
         pos="relative"
@@ -28,6 +30,6 @@ export const LiveWrapper = ({ children, project }: Props) => {
       >
         <Box id="iframe-content">{children}</Box>
       </Box>
-    </>
+    </MantineProvider>
   );
 };

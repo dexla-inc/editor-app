@@ -10,12 +10,25 @@ import { ReactNode } from "react";
 import InstantiatePropelAuthStore from "@/components/InstantiatePropelAuthStore";
 import InitialisePropelAuth from "@/components/InitialisePropelAuth";
 import QuickAccessModal from "@/components/editor/QuickAccessModal";
+import { cache } from "@/utils/emotionCache";
+import { MantineProvider } from "@mantine/core";
+import { useUserConfigStore } from "@/stores/userConfig";
+import { darkTheme, theme } from "@/utils/branding";
+import { MantineGlobal } from "@/components/MantineGlobal";
 export const EditorProviders = ({ children }: { children: ReactNode }) => {
+  const isDarkTheme = useUserConfigStore((state: any) => state.isDarkTheme);
+
   return (
-    <>
+    <MantineProvider
+      withGlobalStyles
+      withNormalizeCSS
+      theme={isDarkTheme ? darkTheme : theme}
+      emotionCache={cache}
+    >
       <InitialisePropelAuth>
         <InstantiatePropelAuthStore />
         <ReactQueryDevtools initialIsOpen={false} />
+        <MantineGlobal isLive={false} />
         <Notifications />
         <ContextMenuProvider>
           <ReactFlowProvider>
@@ -30,6 +43,6 @@ export const EditorProviders = ({ children }: { children: ReactNode }) => {
           </ReactFlowProvider>
         </ContextMenuProvider>
       </InitialisePropelAuth>
-    </>
+    </MantineProvider>
   );
 };

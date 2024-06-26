@@ -9,7 +9,6 @@ import { redirect } from "next/navigation";
 import { EditorTreeCopy } from "@/utils/editor";
 import { Viewport } from "next";
 import { Suspense } from "react";
-import { MantineProvider } from "@mantine/core";
 
 export async function generateMetadata({ params: { page } }: PageProps) {
   if (page?.includes?.("_next")) {
@@ -75,8 +74,6 @@ async function LivePage({ params: { page } }: PageProps) {
   ) {
     redirect(`/${signInPageSlug}`.replace("//", "/"));
   }
-
-  const theme = {};
 
   return (
     <Suspense>
