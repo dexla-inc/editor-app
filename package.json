@@ -9,7 +9,8 @@
     "lint": "lint-staged",
     "prepare": "husky install",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.1.0",
@@ -80,6 +81,8 @@
     "nextjs-toploader": "^1.6.12",
     "nprogress": "^0.2.0",
     "openai": "^4.28.4",
+    "patch-package": "^8.0.0",
+    "postinstall-postinstall": "^2.1.0",
     "prisma": "^5.10.2",
     "proxy-memoize": "^2.0.5",
     "rc-virtual-list": "^3.11.4",
