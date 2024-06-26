@@ -29,7 +29,10 @@ export default async function RootLayout({
     currentSlug = "/";
   }
 
-  const deploymentPage = await getDeploymentPage(url, currentSlug);
+  let deploymentPage = { branding: {} };
+  try {
+    deploymentPage = await getDeploymentPage(url, currentSlug);
+  } catch {}
 
   return (
     <html lang="en">

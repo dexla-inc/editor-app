@@ -12,7 +12,7 @@ export const useUserTheme = (projectId: string) => {
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const isLive = useEditorTreeStore((state) => state.isLive);
   const project = useProjectQuery(projectId);
-  console.log("useUserTheme", project);
+
   useEffect(() => {
     const updateTheme = async () => {
       if (project.isFetched) {
