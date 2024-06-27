@@ -5,11 +5,16 @@ import { EditableComponentMapper } from "@/utils/editor";
 import { Title as MantineTitle, TitleProps } from "@mantine/core";
 import merge from "lodash.merge";
 import { forwardRef, memo, useMemo } from "react";
+import useFontFaceObserver from "use-font-face-observer";
 
 type Props = EditableComponentMapper & TitleProps;
 
 const TitleComponent = forwardRef(
   ({ component, shareableContent, ...props }: Props, ref: any) => {
+    const isFontLoaded = useFontFaceObserver([
+      { family: "Poppins" }, // Same name you have in your CSS
+    ]);
+
     const contentEditableProps = useContentEditable(
       component.id as string,
       ref,
@@ -43,7 +48,7 @@ const TitleComponent = forwardRef(
         //   ...(style?.fontSize ? { fontSize: style.fontSize + "px" } : {}),
         // }}
       >
-        {String(childrenValue)}
+        {isFontLoaded && String(childrenValue)}
       </MantineTitle>
     );
   },
