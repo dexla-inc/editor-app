@@ -12,6 +12,15 @@ import TagManager from "react-gtm-module";
 import Script from "next/script";
 import { ProgressBar } from "@/components/ProgressBar";
 import { useEditorTreeStore } from "@/stores/editorTree";
+import { Poppins } from "next/font/google";
+
+const poppins = Poppins({
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  style: ["normal", "italic"],
+  display: "block",
+  subsets: ["latin"],
+  preload: true,
+});
 
 const GTM_ID = "GTM-P3DVFXMS";
 const nodeEnv = process.env.NODE_ENV;
@@ -37,6 +46,11 @@ export const GlobalProviders = ({ children }: { children: ReactNode }) => {
 
   return (
     <>
+      <style jsx global>{`
+        html {
+          font-family: ${poppins.style.fontFamily};
+        }
+      `}</style>
       {/*Google Tag Manager*/}
       {loadTagManager && (
         <Script id="google-analytics" strategy="afterInteractive">
