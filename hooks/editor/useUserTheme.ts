@@ -32,12 +32,12 @@ export const useUserTheme = (projectId: string) => {
 
         const WebFont = (await import("webfontloader")).default;
 
-        WebFont.load({
-          google: {
-            families: [defaultFontFamily, headingsFontFamily],
-          },
-          context: isLive ? window : iframeWindow,
-        });
+        // WebFont.load({
+        //   google: {
+        //     families: [defaultFontFamily, headingsFontFamily],
+        //   },
+        //   context: isLive ? window : iframeWindow,
+        // });
 
         setInternalTheme({
           fontFamily: defaultFontFamily,
