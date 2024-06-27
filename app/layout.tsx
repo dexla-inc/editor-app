@@ -1,6 +1,13 @@
-import { Inter } from "next/font/google";
+import { Inter, Poppins } from "next/font/google";
 import { GlobalProviders } from "@/app/globalProviders";
 import { ReactNode } from "react";
+
+const poppins = Poppins({
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  style: ["normal", "italic"],
+  preload: true,
+  display: "block",
+});
 
 // If loading a variable font, you don't need to specify the font weight
 const inter = Inter({
@@ -23,6 +30,11 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body>
+        <style jsx global>{`
+          html {
+            font-family: ${poppins.style.fontFamily};
+          }
+        `}</style>
         <main className={inter.variable}>
           <GlobalProviders>{children}</GlobalProviders>
         </main>
