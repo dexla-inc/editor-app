@@ -14,7 +14,7 @@ import { ProgressBar } from "@/components/ProgressBar";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { Poppins } from "next/font/google";
 
-const poppins = Poppins({
+export const poppins = Poppins({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
   style: ["normal", "italic"],
   display: "block",
@@ -46,11 +46,11 @@ export const GlobalProviders = ({ children }: { children: ReactNode }) => {
 
   return (
     <>
-      <style jsx global>{`
-        html {
-          font-family: ${poppins.style.fontFamily};
-        }
-      `}</style>
+      {/*<style jsx global>{`*/}
+      {/*  html {*/}
+      {/*    font-family: ${poppins.style.fontFamily};*/}
+      {/*  }*/}
+      {/*`}</style>*/}
       {/*Google Tag Manager*/}
       {loadTagManager && (
         <Script id="google-analytics" strategy="afterInteractive">
