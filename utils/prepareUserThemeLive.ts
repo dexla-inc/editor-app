@@ -4,14 +4,9 @@ import { ThemeResponse } from "@/requests/themes/types";
 // import { poppins } from "@/app/globalProviders";
 
 export const prepareUserThemeLive = (projectBranding: ThemeResponse) => {
-  const defaultFontFamily =
-    projectBranding?.defaultFont ?? defaultTheme.fontFamily ?? "Open Sans";
+  const defaultFontFamily = "Poppins";
   // const defaultFontFamily = "var(--font-poppins) !important";
-  const headingsFontFamily =
-    projectBranding?.fonts?.[0].fontFamily ??
-    projectBranding?.defaultFont ??
-    defaultTheme.fontFamily ??
-    "Open Sans";
+  const headingsFontFamily = "Poppins";
   // const headingsFontFamily = "var(--font-poppins) !important";
 
   const userTheme: MantineThemeExtended = {

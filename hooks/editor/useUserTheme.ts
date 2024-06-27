@@ -18,17 +18,10 @@ export const useUserTheme = (projectId: string) => {
     const updateTheme = async () => {
       if (project.isFetched) {
         const projectBranding = project.data?.branding;
-        const defaultFontFamily =
-          projectBranding?.defaultFont ??
-          defaultTheme.fontFamily ??
-          "Open Sans";
-        // const defaultFontFamily = "--font-poppins";
-        const headingsFontFamily =
-          projectBranding?.fonts?.[0].fontFamily ??
-          projectBranding?.defaultFont ??
-          defaultTheme.fontFamily ??
-          "Open Sans";
-        // const headingsFontFamily = "--font-poppins";
+        const defaultFontFamily = "Poppins";
+        // const defaultFontFamily = "var(--font-poppins) !important";
+        const headingsFontFamily = "Poppins";
+        // const headingsFontFamily = "var(--font-poppins) !important";
 
         const WebFont = (await import("webfontloader")).default;
 
