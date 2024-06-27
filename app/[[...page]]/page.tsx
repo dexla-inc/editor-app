@@ -37,6 +37,9 @@ export const viewport: Viewport = {
 };
 
 async function LivePage({ params: { page } }: PageProps) {
+  // As we have live app pages and all the other pages provided from the root, we were getting this page loaded along
+  // with an internal page. If /projects/projectId/page/pageId was accessed, this page would get loaded too, because both
+  // are hitting the root folder. So this condition forces this script to return nothing if im in another page.
   if (page?.includes?.("_next")) {
     return null;
   }
@@ -61,7 +64,6 @@ async function LivePage({ params: { page } }: PageProps) {
       notFoundPageslug ? `/${notFoundPageslug}` : "https://dexla.ai/404",
     );
   }
-
   const decodedSchema = decodeSchema(deploymentPage.pageState);
   const pageState = safeJsonParse(decodedSchema) as EditorTreeCopy;
 

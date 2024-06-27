@@ -3,6 +3,8 @@ import { WithComponentWrapperProps } from "@/types/component";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useShallow } from "zustand/react/shallow";
 import { useComputeValue } from "@/hooks/data/useComputeValue";
+import useFontFaceObserver from "use-font-face-observer";
+import { useMantineTheme } from "@mantine/core";
 
 export const withComponentVisibility = <T extends Record<string, any>>(
   Component: ComponentType<T>,
@@ -10,10 +12,13 @@ export const withComponentVisibility = <T extends Record<string, any>>(
   const ComponentVisibilityWrapper = (props: WithComponentWrapperProps) => {
     const { component: componentTree, shareableContent } = props;
     let id = componentTree.id;
+    const theme = useMantineTheme();
 
     if (shareableContent?.parentSuffix !== undefined) {
       id = `${componentTree.id}-related-${shareableContent?.parentSuffix}`;
     }
+
+    const isFontLoaded = useFontFaceObserver([{ family: theme.fontFamily! }]);
 
     const onLoad = useEditorTreeStore(
       useShallow(
@@ -26,7 +31,7 @@ export const withComponentVisibility = <T extends Record<string, any>>(
       shareableContent,
     });
 
-    if (computedOnLoad.isVisible === false) {
+    if (computedOnLoad.isVisible === false || !isFontLoaded) {
       return null;
     }
 

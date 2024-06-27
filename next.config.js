@@ -7,10 +7,30 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
 const path = require("path");
 
 const nextConfig = {
+  async headers() {
+    return [
+      {
+        source: "/:all*(woff|woff2|ttf|otf)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+    ];
+  },
   sassOptions: {
     includePaths: [path.join(__dirname, "styles")],
   },
   reactStrictMode: true,
+  experimental: {
+    optimizePackageImports: [
+      "@mantine/core",
+      "@mantine/hooks",
+      "@mantine/form",
+    ],
+  },
   modularizeImports: {
     "@tabler/icons-react": {
       transform: "@tabler/icons-react/dist/esm/icons/{{member}}",

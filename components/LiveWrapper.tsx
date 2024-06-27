@@ -3,12 +3,13 @@ import { ProjectResponse } from "@/requests/projects/types";
 import { useThemeStore } from "@/stores/theme";
 import { Box, BoxProps, MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
+import { MantineGlobal } from "@/components/MantineGlobal";
 
 type Props = {
   project: ProjectResponse;
 } & BoxProps;
 
-export const LiveWrapper = ({ children, project, ...props }: Props) => {
+export const LiveWrapper = ({ children, project }: Props) => {
   const theme = useThemeStore((state) => state.theme);
   useCustomCode(project);
 
@@ -17,7 +18,8 @@ export const LiveWrapper = ({ children, project, ...props }: Props) => {
   }
 
   return (
-    <MantineProvider theme={theme} withNormalizeCSS {...props}>
+    <MantineProvider theme={theme} withNormalizeCSS>
+      <MantineGlobal isLive />
       <Notifications />
       <Box
         pos="relative"

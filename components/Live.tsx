@@ -14,7 +14,6 @@ import { useThemeStore } from "@/stores/theme";
 import { useVariableStore } from "@/stores/variables";
 import { initializeFonts } from "@/utils/webfontloader";
 import { useEffect } from "react";
-import { MantineThemeExtended } from "@/types/types";
 import { useInputsStore } from "@/stores/inputs";
 import { useDataSources } from "@/hooks/editor/reactQuery/useDataSources";
 import { useVariableListQuery } from "@/hooks/editor/reactQuery/useVariableListQuery";
