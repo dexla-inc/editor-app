@@ -9,13 +9,13 @@ const inter = Inter({
   display: "swap",
 });
 
-const poppins = Poppins({
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
-  style: ["normal", "italic"],
-  subsets: ["latin"],
-  variable: "--font-poppins",
-  preload: true,
-});
+// const poppins = Poppins({
+//   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+//   style: ["normal", "italic"],
+//   subsets: ["latin"],
+//   variable: "--font-poppins",
+//   preload: true,
+// });
 
 declare global {
   interface Window {
@@ -32,7 +32,7 @@ export default async function RootLayout({
     <html lang="en">
       <body>
         <style></style>
-        <main className={`${inter.variable} ${poppins.variable}`}>
+        <main className={inter.variable}>
           <GlobalProviders>{children}</GlobalProviders>
         </main>
       </body>

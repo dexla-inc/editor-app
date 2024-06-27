@@ -5,13 +5,17 @@ import { EditableComponentMapper } from "@/utils/editor";
 import { Text as MantineText, TextProps } from "@mantine/core";
 import merge from "lodash.merge";
 import { forwardRef, memo, useMemo } from "react";
+import useFontFaceObserver from "use-font-face-observer";
 
 type Props = EditableComponentMapper & TextProps;
 
 const TextComponent = forwardRef(
   ({ component, shareableContent, ...props }: Props, ref: any) => {
-    const isFontLoaded = document.fonts.check("12px Poppins");
+    const isFontLoaded = useFontFaceObserver([
+      { family: "Poppins" }, // Same name you have in your CSS
+    ]);
 
+    console.log({ isFontLoaded });
     const contentEditableProps = useContentEditable(
       component.id as string,
       ref,

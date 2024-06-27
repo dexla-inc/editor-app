@@ -5,15 +5,15 @@ export const initializeFonts = async (
   if (typeof window !== "undefined") {
     const fallbackFont = "Open Sans";
     const WebFont = (await import("webfontloader")).default;
-    // WebFont.load({
-    //   google: {
-    //     families: [
-    //       `${defaultFontFamily}:${supportedVariants.join()}` ?? fallbackFont,
-    //       `${headingsFontFamily}:${supportedVariants.join()}` ?? fallbackFont,
-    //     ],
-    //   },
-    //   context: frames[0],
-    // });
+    WebFont.load({
+      google: {
+        families: [
+          `${defaultFontFamily}:${supportedVariants.join()}` ?? fallbackFont,
+          `${headingsFontFamily}:${supportedVariants.join()}` ?? fallbackFont,
+        ],
+      },
+      context: frames[0],
+    });
   }
 };
 

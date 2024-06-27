@@ -14,13 +14,13 @@ import { ProgressBar } from "@/components/ProgressBar";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { Poppins } from "next/font/google";
 
-export const poppins = Poppins({
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
-  style: ["normal", "italic"],
-  display: "block",
-  subsets: ["latin"],
-  preload: true,
-});
+// export const poppins = Poppins({
+//   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+//   style: ["normal", "italic"],
+//   display: "block",
+//   subsets: ["latin"],
+//   preload: true,
+// });
 
 const GTM_ID = "GTM-P3DVFXMS";
 const nodeEnv = process.env.NODE_ENV;
