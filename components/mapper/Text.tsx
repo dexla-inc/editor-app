@@ -5,7 +5,6 @@ import { EditableComponentMapper } from "@/utils/editor";
 import { Text as MantineText, TextProps } from "@mantine/core";
 import merge from "lodash.merge";
 import { forwardRef, memo, useMemo } from "react";
-import useFontFaceObserver from "use-font-face-observer";
 
 type Props = EditableComponentMapper & TextProps;
 

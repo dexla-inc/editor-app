@@ -16,9 +16,7 @@ export const withComponentVisibility = <T extends Record<string, any>>(
       id = `${componentTree.id}-related-${shareableContent?.parentSuffix}`;
     }
 
-    const isFontLoaded = useFontFaceObserver([
-      { family: "Poppins" }, // Same name you have in your CSS
-    ]);
+    const isFontLoaded = useFontFaceObserver([{ family: "Poppins" }]);
 
     const onLoad = useEditorTreeStore(
       useShallow(

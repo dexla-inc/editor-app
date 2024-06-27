@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { useProjectQuery } from "@/hooks/editor/reactQuery/useProjectQuery";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { MantineThemeExtended } from "@/types/types";
-// import { poppins } from "@/app/globalProviders";
 
 export const useUserTheme = (projectId: string) => {
   const setTheme = useThemeStore((state) => state.setTheme);
@@ -18,10 +17,15 @@ export const useUserTheme = (projectId: string) => {
     const updateTheme = async () => {
       if (project.isFetched) {
         const projectBranding = project.data?.branding;
-        const defaultFontFamily = "Poppins";
-        // const defaultFontFamily = "var(--font-poppins) !important";
-        const headingsFontFamily = "Poppins";
-        // const headingsFontFamily = "var(--font-poppins) !important";
+        const defaultFontFamily =
+          projectBranding?.defaultFont ??
+          defaultTheme.fontFamily ??
+          "Open Sans";
+        const headingsFontFamily =
+          projectBranding?.fonts?.[0].fontFamily ??
+          projectBranding?.defaultFont ??
+          defaultTheme.fontFamily ??
+          "Open Sans";
 
         const WebFont = (await import("webfontloader")).default;
 
