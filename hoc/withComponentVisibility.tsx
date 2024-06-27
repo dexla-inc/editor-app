@@ -3,6 +3,7 @@ import { WithComponentWrapperProps } from "@/types/component";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useShallow } from "zustand/react/shallow";
 import { useComputeValue } from "@/hooks/data/useComputeValue";
+import useFontFaceObserver from "use-font-face-observer";
 
 export const withComponentVisibility = <T extends Record<string, any>>(
   Component: ComponentType<T>,
@@ -15,6 +16,10 @@ export const withComponentVisibility = <T extends Record<string, any>>(
       id = `${componentTree.id}-related-${shareableContent?.parentSuffix}`;
     }
 
+    const isFontLoaded = useFontFaceObserver([
+      { family: "Poppins" }, // Same name you have in your CSS
+    ]);
+
     const onLoad = useEditorTreeStore(
       useShallow(
         (state) => state.componentMutableAttrs[componentTree.id!]?.onLoad || {},
@@ -26,7 +31,7 @@ export const withComponentVisibility = <T extends Record<string, any>>(
       shareableContent,
     });
 
-    if (computedOnLoad.isVisible === false) {
+    if (computedOnLoad.isVisible === false || !isFontLoaded) {
       return null;
     }
 

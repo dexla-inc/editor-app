@@ -11,10 +11,6 @@ type Props = EditableComponentMapper & TitleProps;
 
 const TitleComponent = forwardRef(
   ({ component, shareableContent, ...props }: Props, ref: any) => {
-    const isFontLoaded = useFontFaceObserver([
-      { family: "Poppins" }, // Same name you have in your CSS
-    ]);
-
     const contentEditableProps = useContentEditable(
       component.id as string,
       ref,
@@ -48,7 +44,7 @@ const TitleComponent = forwardRef(
         //   ...(style?.fontSize ? { fontSize: style.fontSize + "px" } : {}),
         // }}
       >
-        {isFontLoaded && String(childrenValue)}
+        {String(childrenValue)}
       </MantineTitle>
     );
   },

@@ -11,11 +11,6 @@ type Props = EditableComponentMapper & TextProps;
 
 const TextComponent = forwardRef(
   ({ component, shareableContent, ...props }: Props, ref: any) => {
-    const isFontLoaded = useFontFaceObserver([
-      { family: "Poppins" }, // Same name you have in your CSS
-    ]);
-
-    console.log({ isFontLoaded });
     const contentEditableProps = useContentEditable(
       component.id as string,
       ref,
@@ -48,7 +43,7 @@ const TextComponent = forwardRef(
         ref={ref}
         style={customStyle}
       >
-        {!hideIfDataIsEmpty && isFontLoaded && String(childrenValue)}
+        {!hideIfDataIsEmpty && String(childrenValue)}
       </MantineText>
     );
   },
