@@ -92,7 +92,7 @@ const InputComponent = forwardRef(
     // handle increase number range
     const increaseNumber = () => {
       let val = parseToNumber(value);
-      if (val === undefined) val = 1;
+      if (typeof val !== "number") val = 1;
       else val += 1;
       handleChange(val);
     };
@@ -100,14 +100,14 @@ const InputComponent = forwardRef(
     // handle decrease number range
     const decreaseNumber = () => {
       let val = parseToNumber(value);
-      if ([undefined, "", 0].includes(val)) val = 0;
+      if (typeof val !== "number") val = 0;
       else val -= 1;
       handleChange(val);
     };
 
     const parseToNumber = (value: any) => {
-      const number = Number(value);
-      return isNaN(number) ? 0 : number;
+      const isAllNumberChars = /^\d+$/.test(value);
+      return isAllNumberChars ? Number(value) : "";
     };
 
     const handleChange = async (e: any) => {
