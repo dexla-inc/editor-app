@@ -31,11 +31,6 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body>
-        <style jsx global>{`
-          html {
-            font-family: "Poppins";
-          }
-        `}</style>
         <main className={inter.variable}>
           <GlobalProviders>{children}</GlobalProviders>
         </main>

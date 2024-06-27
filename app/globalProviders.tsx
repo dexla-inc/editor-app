@@ -46,11 +46,11 @@ export const GlobalProviders = ({ children }: { children: ReactNode }) => {
 
   return (
     <>
-      {/*<style jsx global>{`*/}
-      {/*  html {*/}
-      {/*    font-family: ${poppins.style.fontFamily};*/}
-      {/*  }*/}
-      {/*`}</style>*/}
+      <style jsx global>{`
+        html {
+          font-family: "Poppins";
+        }
+      `}</style>
       {/*Google Tag Manager*/}
       {loadTagManager && (
         <Script id="google-analytics" strategy="afterInteractive">
