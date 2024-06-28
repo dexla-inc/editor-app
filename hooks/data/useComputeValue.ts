@@ -2,7 +2,12 @@ import { useVariableStore } from "@/stores/variables";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useCallback, useMemo } from "react";
 import get from "lodash.get";
-import { RuleItemProps, RuleProps, ValueProps } from "@/types/dataBinding";
+import {
+  FieldType,
+  RuleItemProps,
+  RuleProps,
+  ValueProps,
+} from "@/types/dataBinding";
 import set from "lodash.set";
 import {
   cloneObject,
@@ -74,21 +79,43 @@ const findValuePropsPaths = (obj: any, prefix = ""): string[] => {
   return paths;
 };
 
-export const ruleFunctions: any = {
-  hasValue: (location: any) => !isEmpty(location),
-  doesNotHaveValue: (location: any) => isEmpty(location),
-  equalTo: (location: any, comparingValue: any) =>
+type RuleFunctionParams = {
+  location: any;
+  comparingValue?: any;
+};
+
+type RuleFunction = (params: RuleFunctionParams) => boolean;
+
+export const ruleFunctions: { [key: string]: RuleFunction } = {
+  hasValue: ({ location }) => !isEmpty(location),
+  doesNotHaveValue: ({ location }) => isEmpty(location),
+  equalTo: ({ location, comparingValue }) =>
     location === safeJsonParse(comparingValue),
-  notEqualTo: (location: any, comparingValue: any) =>
+  notEqualTo: ({ location, comparingValue }) =>
     location !== safeJsonParse(comparingValue),
-  contains: (location: any, comparingValue: any) =>
-    location.includes(comparingValue),
-  notContains: (location: any, comparingValue: any) =>
+  contains: ({ location, comparingValue }) => location.includes(comparingValue),
+  notContains: ({ location, comparingValue }) =>
     !location.includes(comparingValue),
-  equalToMultiple: (location: any, comparingValue: any) =>
-    comparingValue?.some((item: any) => safeJsonParse(item) === location),
-  notEqualToMultiple: (location: any, comparingValue: any) =>
-    !comparingValue?.some((item: any) => safeJsonParse(item) === location),
+  equalToMultiple: ({ location, comparingValue }) => {
+    if (Array.isArray(location)) {
+      return location.some((locItem: any) =>
+        comparingValue?.some((item: any) => safeJsonParse(item) === locItem),
+      );
+    }
+    return comparingValue?.some(
+      (item: any) => safeJsonParse(item) === location,
+    );
+  },
+  notEqualToMultiple: ({ location, comparingValue }) => {
+    if (Array.isArray(location)) {
+      return location.every((locItem: any) =>
+        comparingValue?.every((item: any) => safeJsonParse(item) !== locItem),
+      );
+    }
+    return comparingValue?.every(
+      (item: any) => safeJsonParse(item) !== location,
+    );
+  },
 };
 
 export const useComputeValue = ({
@@ -286,7 +313,10 @@ export const useComputeValue = ({
 
       // Evaluate the rule
       const ruleFunction = ruleFunctions[rule];
-      const ruleResult = ruleFunction(location, transformedValue);
+      const ruleResult = ruleFunction({
+        location,
+        comparingValue: transformedValue,
+      });
 
       if (i === 0) {
         // Initialize overallResult with the first rule's result
@@ -317,6 +347,9 @@ export const useComputeValue = ({
       if (ruleResult) {
         return valueHandlers[rule.result?.dataType ?? "static"](rule.result);
       }
+    }
+    if (["YesNo", "Boolean"].includes(rules.fieldType)) {
+      return false;
     }
     return;
   }

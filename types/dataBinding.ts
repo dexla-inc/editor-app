@@ -33,6 +33,7 @@ export type RuleItemProps = {
 export type RuleProps = {
   value: ValueProps<DataType.dynamic | DataType.static | DataType.rules>;
   rules: RuleItemProps[];
+  fieldType: FieldType;
 };
 
 export type ValueProps<T extends DataType = never> = Partial<{

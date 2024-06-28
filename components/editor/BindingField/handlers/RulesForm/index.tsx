@@ -56,7 +56,7 @@ export const RulesForm = () => {
   useEffect(() => {
     onChange({
       ...value,
-      rules: form.values,
+      rules: { ...form.values, fieldType },
       dataType: "rules",
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
