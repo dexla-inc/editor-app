@@ -30,7 +30,8 @@ const InputComponent = forwardRef(
     );
     const patterns = {
       all: /^[\s\S]*$/,
-      numbers: /^\d*$/,
+      numbers:
+        /^(\d|Backspace|Delete|ArrowLeft|ArrowRight|ArrowUp|ArrowDown|Tab|Enter|Shift|Ctrl|Escape)*$/,
       alphabets: /^[a-zA-Z\s]*$/,
     };
     const {
@@ -100,20 +101,19 @@ const InputComponent = forwardRef(
     // handle decrease number range
     const decreaseNumber = () => {
       let val = parseToNumber(value);
-      if (typeof val !== "number") val = 0;
-      else val -= 1;
+      if (typeof val === "number") val -= 1;
       handleChange(val);
     };
 
     const parseToNumber = (value: any) => {
-      const isAllNumberChars = /^\d+$/.test(value);
-      return isAllNumberChars ? Number(value) : "";
+      const isPrintableNumbers = /^(\d{1,3}(,\d{3})*(\.\d+)?|\d+)$/.test(value);
+      return isPrintableNumbers ? Number(value) : "";
     };
 
     const handleChange = async (e: any) => {
       let newValue = e.target ? e.target.value : e;
       if (type === "number" || type === "numberRange") {
-        newValue = newValue ? Number(newValue) : 0;
+        newValue = parseToNumber(newValue);
       }
       setValue(newValue);
       if (onChange) {
@@ -128,28 +128,6 @@ const InputComponent = forwardRef(
         !patterns[(pattern || "all") as keyof typeof patterns].test(e.key)
       ) {
         e.preventDefault();
-      }
-    };
-
-    const onNumberInputKeyDown = (e: KeyboardEvent) => {
-      const isLetter = /^[a-zA-Z]$/.test(e.key);
-      const isSpecialCharacter = /^[!@#$%^&*(),.?":{}|<>]$/.test(e.key);
-      const allowedKeys = [
-        "Backspace",
-        "Delete",
-        "ArrowLeft",
-        "ArrowRight",
-        "ArrowUp",
-        "ArrowDown",
-        "Tab",
-        "Escape",
-        "Enter",
-      ];
-
-      if (isLetter || isSpecialCharacter) {
-        e.preventDefault();
-      } else if (!allowedKeys.includes(e.key)) {
-        // Check for other control keys here if needed
       }
     };
 
@@ -241,7 +219,7 @@ const InputComponent = forwardRef(
             rightSection={loading ? <InputLoader /> : null}
             label={undefined}
             wrapperProps={{ "data-id": id }}
-            onKeyDown={onNumberInputKeyDown}
+            onKeyDown={onKeyDown}
           />
         ) : type === "password" ? (
           <PasswordInput

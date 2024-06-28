@@ -69,7 +69,9 @@ const Modifier = withModifier(({ selectedComponent }) => {
               attrs: {
                 props: {
                   type: value,
-                  pattern: value === "number" ? "numbers" : "all",
+                  pattern: ["number", "numberRange"].includes(value as string)
+                    ? "numbers"
+                    : "all",
                 },
               },
             });
