@@ -24,6 +24,7 @@ import {
 } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { Icon } from "./Icon";
+import { useProjectQuery } from "@/hooks/editor/reactQuery/useProjectQuery";
 
 export const DeployButtonDropdown = () => {
   const { id: projectId, page } = useEditorParams();
@@ -37,12 +38,33 @@ export const DeployButtonDropdown = () => {
     stopLoading: state.stopLoading,
   }));
 
+  const [shouldFetchProject, setShouldFetchProject] = useState<boolean>(false);
+  const { data: project } = useProjectQuery(projectId, shouldFetchProject);
   const [slug, setSlug] = useState<string>("");
+  useEffect(() => {
+    if (deployments?.results.length === 0) {
+      setShouldFetchProject(true);
+    }
+  }, [deployments]);
 
+  const defaultEnvironments = ["Staging", "Production"] as EnvironmentTypes[];
   const sortedDeployments = deployments?.results.slice().sort((a, b) => {
     if (a.environment > b.environment) return -1;
     if (a.environment < b.environment) return 1;
     return 0;
+  });
+
+  const deploymentsByEnvironment = defaultEnvironments.map((env) => {
+    return (
+      sortedDeployments?.find(
+        (deployment) => deployment.environment === env,
+      ) || {
+        environment: env,
+        updatedBy: undefined,
+        project: project,
+        canPromote: false,
+      }
+    );
   });
 
   const handleDeploy = async (
@@ -56,9 +78,9 @@ export const DeployButtonDropdown = () => {
         message: "Deploying your app to " + environment + "...",
       });
 
-      const deployUrl = getDeployUrl(project, environment, slug);
+      const deployHost = getDeployHost(project, environment, slug);
 
-      await createDeployment(projectId, deployUrl?.host ?? "", {
+      await createDeployment(projectId, deployHost ?? "", {
         forceProduction: environment === "Production",
       });
 
@@ -121,9 +143,9 @@ export const DeployButtonDropdown = () => {
 
   return (
     <Box>
-      {sortedDeployments?.map((deployment, index) => {
-        const deployUrl = getDeployUrl(
-          deployment.project,
+      {deploymentsByEnvironment?.map((deployment, index) => {
+        const deployUrl = getDeployHref(
+          deployment.project!,
           deployment.environment,
           slug,
         );
@@ -132,45 +154,50 @@ export const DeployButtonDropdown = () => {
           <Stack key={deployment.environment} spacing="xs">
             <Title order={5}>{deployment.environment}</Title>
             <Box>
-              <Tooltip label={deployUrl?.href}>
+              <Tooltip label={deployUrl}>
                 <Flex align="center" gap={2}>
                   <Anchor
                     size="xs"
                     lineClamp={1}
-                    href={deployUrl?.href}
+                    href={deployUrl}
                     target="_blank"
                   >
-                    {deployUrl?.href}
+                    {deployUrl}
                   </Anchor>
                   <ActionIcon
                     size="xs"
-                    onClick={() => openDeployHref(deployUrl?.href!)}
+                    onClick={() => openDeployHref(deployUrl!)}
                   >
                     <Icon name="IconExternalLink" color={primaryColor} />
                   </ActionIcon>
                 </Flex>
               </Tooltip>
             </Box>
-            <Box>
-              <Text size="xs">Last Deployed By</Text>
-              <Text size="xs" color="dimmed">
-                {deployment.updatedBy.name}
-              </Text>
-              <Text size="xs" color="dimmed">
-                {" "}
-                {new Date(deployment.updatedBy.date).toLocaleString(undefined, {
-                  year: "numeric",
-                  month: "short",
-                  day: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </Text>
-            </Box>
+            {deployment.updatedBy?.name && (
+              <Box>
+                <Text size="xs">Last Deployed By</Text>
+                <Text size="xs" color="dimmed">
+                  {deployment.updatedBy.name}
+                </Text>
+                <Text size="xs" color="dimmed">
+                  {" "}
+                  {new Date(deployment.updatedBy.date).toLocaleString(
+                    undefined,
+                    {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    },
+                  )}
+                </Text>
+              </Box>
+            )}
             <Flex gap="xs">
               <Button
                 onClick={() =>
-                  handleDeploy(deployment.project, deployment.environment)
+                  handleDeploy(deployment.project!, deployment.environment)
                 }
                 leftIcon={<Icon name="IconRocket" />}
               >
@@ -187,7 +214,7 @@ export const DeployButtonDropdown = () => {
                 </Button>
               )}
             </Flex>
-            {index < sortedDeployments.length - 1 && <Divider mb="xs" />}
+            {index < deploymentsByEnvironment.length - 1 && <Divider mb="xs" />}
           </Stack>
         );
       })}
@@ -200,13 +227,33 @@ const getDeployUrl = (
   environment: EnvironmentTypes,
   slug: string,
 ) => {
-  if (!project.liveUrls) return;
+  if (!project.liveUrls) return undefined;
 
   const liveUrl = project.liveUrls[environment];
 
-  const fullDomain = liveUrl.subDomain
-    ? `${liveUrl.subDomain}.${liveUrl.domain}`
-    : liveUrl.domain;
+  //if(!liveUrl.subDomain && !liveUrl.domain) return;
+
+  const fullDomain = liveUrl?.subDomain
+    ? `${liveUrl?.subDomain}.${liveUrl?.domain}`
+    : liveUrl?.domain;
 
   return generateProjectSlugLink(project.id, fullDomain, slug);
+};
+
+const getDeployHref = (
+  project: ProjectResponse,
+  environment: EnvironmentTypes,
+  slug: string,
+) => {
+  const url = getDeployUrl(project, environment, slug);
+  return url?.href;
+};
+
+const getDeployHost = (
+  project: ProjectResponse,
+  environment: EnvironmentTypes,
+  slug: string,
+) => {
+  const url = getDeployUrl(project, environment, slug);
+  return url?.host;
 };

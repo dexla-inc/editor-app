@@ -5,14 +5,17 @@ import { queryClient } from "@/utils/reactQuery";
 
 //const cacheTime = 5 * 1000; // 5 seconds
 
-export const useProjectQuery = (projectId: string | undefined) => {
+export const useProjectQuery = (
+  projectId: string | undefined,
+  enabled?: boolean,
+) => {
   const queryKey = ["project", projectId];
 
   const queryResult = useQuery<ProjectResponse, Error>({
     queryKey: queryKey,
     queryFn: () => getProject(projectId ?? "", true),
     //staleTime: cacheTime,
-    enabled: !!projectId,
+    enabled: !!projectId && enabled !== false,
   });
 
   const refetch = () => {
