@@ -44,6 +44,7 @@ export const ValueField = ({
               label="Value"
               placeholder={placeholder}
               data={(value?.static as string[]) ?? []}
+              value={value?.static}
               searchable
               creatable
               withAsterisk
