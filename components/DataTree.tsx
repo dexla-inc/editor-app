@@ -17,10 +17,59 @@ type DataItemProps = {
   onClick?: any;
 } & Pick<Props, "type" | "onItemSelection">;
 
-const filterDataItems = (dataItems: any[], filterKeyword: string) => {
+const filterDataItems = (
+  dataItems: any[],
+  filterKeyword: string,
+  type: string,
+) => {
   const regex = new RegExp(filterKeyword, "i");
+
+  const filterObject = (obj: any): any => {
+    if (typeof obj !== "object" || obj === null) return obj;
+    let filtered: any = {};
+    for (const key in obj) {
+      if (regex.test(key)) {
+        filtered[key] = obj[key];
+      } else if (typeof obj[key] === "object") {
+        const nestedFiltered = filterObject(obj[key]);
+        if (Object.keys(nestedFiltered).length > 0) {
+          filtered[key] = nestedFiltered;
+        }
+      }
+    }
+    return filtered;
+  };
+
   return dataItems.filter((variable: any) => {
-    return filterKeyword === "" || regex.test(variable.name);
+    if (filterKeyword === "") {
+      return true;
+    }
+
+    let nameMatches = regex.test(variable.name);
+    let valueMatches = false;
+    let filteredValue: any = null;
+
+    try {
+      const parsedValue = JSON.parse(variable.value ?? variable.defaultValue);
+      if (typeof parsedValue === "object" && parsedValue !== null) {
+        filteredValue = filterObject(parsedValue);
+        valueMatches = Object.keys(filteredValue).length > 0;
+      }
+    } catch (e) {
+      // Handle the case where parsing fails (e.g., invalid JSON)
+    }
+
+    if (nameMatches || valueMatches) {
+      if (valueMatches) {
+        variable.value = JSON.stringify(filteredValue);
+        if (!variable.value) {
+          variable.defaultValue = JSON.stringify(filteredValue);
+        }
+      }
+      return true;
+    }
+
+    return false;
   });
 };
 
@@ -115,7 +164,7 @@ export function DataTree({
   filterKeyword = "",
 }: Props) {
   const filteredDataItems = useMemo(
-    () => filterDataItems(dataItems, filterKeyword),
+    () => filterDataItems(dataItems, filterKeyword, type),
     [dataItems, filterKeyword],
   );
 
