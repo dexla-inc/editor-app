@@ -30,8 +30,7 @@ const InputComponent = forwardRef(
     );
     const patterns = {
       all: /^[\s\S]*$/,
-      numbers:
-        /^(\d|Backspace|Delete|ArrowLeft|ArrowRight|ArrowUp|ArrowDown|Tab|Enter|Shift|Ctrl|Escape)*$/,
+      numbers: /^\d*$/,
       alphabets: /^[a-zA-Z\s]*$/,
     };
     const {
@@ -121,8 +120,12 @@ const InputComponent = forwardRef(
       }
     };
 
-    const onKeyDown = (e: any) => {
-      const isPrintable = e.key.match(/\S/);
+    const onKeyDown = (e: KeyboardEvent) => {
+      const { altKey, ctrlKey, metaKey, shiftKey, key } = e;
+      const isPrintable = key.length === 1;
+      if (ctrlKey || shiftKey || altKey || metaKey) {
+        return;
+      }
       if (
         isPrintable &&
         !patterns[(pattern || "all") as keyof typeof patterns].test(e.key)
