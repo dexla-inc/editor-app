@@ -11,6 +11,7 @@ import {
 import { structureMapper } from "@/utils/componentMapper";
 import { useInputsStore } from "@/stores/inputs";
 import { useEffect } from "react";
+import { ConditionProps, RuleItemProps } from "@/types/dataBinding";
 
 type Props = {
   component: ComponentTree & Component;
@@ -66,14 +67,33 @@ export const ModalAndDrawerWrapper = ({ component, children }: Props) => {
   }, []);
 
   const handleClose = () => {
-    const isVisibleBound = onLoad.isVisible.dataType === "boundCode";
     const resetVariable = useVariableStore.getState().resetVariable;
-    if (isVisibleBound) {
+
+    if (onLoad.isVisible.dataType === "boundCode") {
       const boundVariables = extractKeysFromPattern(
         variablePattern,
-        onLoad.isVisible.boundCode,
+        onLoad.isVisible.boundCode ?? "",
       );
+
       boundVariables.forEach((variable) => {
+        resetVariable(variable);
+      });
+    }
+
+    if (onLoad.isVisible.dataType === "rules") {
+      const ruleValueVariables = extractKeysFromPattern(
+        variablePattern,
+        onLoad.isVisible.rules?.value?.boundCode ?? "",
+      );
+      const ruleConditionVariables = onLoad.isVisible.rules?.rules?.flatMap(
+        (rule: RuleItemProps) => {
+          return rule.conditions?.flatMap((condition) =>
+            extractKeysFromPattern(variablePattern, condition.location ?? ""),
+          );
+        },
+      );
+
+      [...ruleConditionVariables, ...ruleValueVariables].forEach((variable) => {
         resetVariable(variable);
       });
     }
