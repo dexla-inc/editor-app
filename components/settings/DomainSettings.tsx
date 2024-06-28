@@ -152,15 +152,6 @@ export default function DomainSettings({ projectId }: Props) {
 
   const verifyDomain = async () => {
     if (project) {
-      // const domainsToVerify: Partial<Record<EnvironmentTypes, string>> = {
-      //   Staging: project.liveUrls?.Staging?.subDomain
-      //     ? `${project.liveUrls.Staging.subDomain}.${project.liveUrls.Staging.domain}`
-      //     : project.liveUrls?.Staging?.domain || "",
-      //   Production: project.liveUrls?.Production?.subDomain
-      //     ? `${project.liveUrls.Production.subDomain}.${project.liveUrls.Production.domain}`
-      //     : project.liveUrls?.Production?.domain || "",
-      // };
-
       const domainsToVerify: Partial<
         Record<SupportedEnvironmentTypes, string>
       > = {};
@@ -177,7 +168,6 @@ export default function DomainSettings({ projectId }: Props) {
 
       const verificationResults = await verifyDomains(domainsToVerify);
 
-      // Merge the new verification results with the previous status
       const newVerificationStatus = { ...verificationStatus };
 
       verificationResults.forEach(({ env, status }) => {

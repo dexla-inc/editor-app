@@ -5,7 +5,7 @@ import { memo, MouseEventHandler } from "react";
 
 type BaseProps = {
   iconName: string;
-  tooltip: string;
+  tooltip?: string;
   color?: "white" | "indigo" | "teal" | "red";
   id?: string;
 } & ActionIconProps;
@@ -32,7 +32,7 @@ export const ActionIconDefaultComponent = ({
   ...props
 }: Props) => {
   return (
-    <Tooltip label={tooltip} withArrow>
+    <Tooltip label={tooltip} withArrow disabled={!tooltip}>
       {href ? (
         <ActionIcon
           id={id}
