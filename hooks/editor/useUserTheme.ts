@@ -16,12 +16,14 @@ export const useUserTheme = (projectId: string) => {
   useEffect(() => {
     const updateTheme = async () => {
       if (project.isFetched) {
-        const userTheme = project.data?.branding;
+        const projectBranding = project.data?.branding;
         const defaultFontFamily =
-          userTheme?.defaultFont ?? defaultTheme.fontFamily ?? "Open Sans";
+          projectBranding?.defaultFont ??
+          defaultTheme.fontFamily ??
+          "Open Sans";
         const headingsFontFamily =
-          userTheme?.fonts?.[0].fontFamily ??
-          userTheme?.defaultFont ??
+          projectBranding?.fonts?.[0].fontFamily ??
+          projectBranding?.defaultFont ??
           defaultTheme.fontFamily ??
           "Open Sans";
 
@@ -36,11 +38,11 @@ export const useUserTheme = (projectId: string) => {
 
         setInternalTheme({
           fontFamily: defaultFontFamily,
-          fonts: userTheme?.fonts,
+          fonts: projectBranding?.fonts,
           headings: {
             fontFamily: headingsFontFamily,
-            fontWeight: userTheme?.fonts?.[0].fontWeight ?? 500,
-            sizes: userTheme?.fonts?.reduce((acc, font) => {
+            fontWeight: projectBranding?.fonts?.[0].fontWeight ?? 500,
+            sizes: projectBranding?.fonts?.reduce((acc, font) => {
               return {
                 ...acc,
                 [font.tag?.toLowerCase()]: {
@@ -52,7 +54,7 @@ export const useUserTheme = (projectId: string) => {
             }, {} as any),
           },
           colors: {
-            ...userTheme?.colors.reduce((userColors, color) => {
+            ...projectBranding?.colors.reduce((userColors, color) => {
               const hex = color.hex.substring(0, 7);
               return {
                 ...userColors,
@@ -76,16 +78,18 @@ export const useUserTheme = (projectId: string) => {
             }, {}),
           },
           primaryColor: "Primary",
-          logoUrl: userTheme?.logoUrl,
-          faviconUrl: userTheme?.faviconUrl,
-          logos: userTheme?.logos,
-          hasCompactButtons: userTheme?.hasCompactButtons,
-          cardStyle: userTheme?.cardStyle,
-          defaultFont: userTheme?.defaultFont,
-          defaultSpacing: userTheme?.defaultSpacing ?? defaultTheme.spacing.md,
-          defaultRadius: userTheme?.defaultRadius ?? defaultTheme.radius.md,
-          theme: userTheme?.theme ?? defaultTheme.theme,
-          inputSize: userTheme?.inputSize ?? defaultTheme.inputSize,
+          logoUrl: projectBranding?.logoUrl,
+          faviconUrl: projectBranding?.faviconUrl,
+          logos: projectBranding?.logos,
+          hasCompactButtons: projectBranding?.hasCompactButtons,
+          cardStyle: projectBranding?.cardStyle,
+          defaultFont: projectBranding?.defaultFont,
+          defaultSpacing:
+            projectBranding?.defaultSpacing ?? defaultTheme.spacing.md,
+          defaultRadius:
+            projectBranding?.defaultRadius ?? defaultTheme.radius.md,
+          theme: projectBranding?.theme ?? defaultTheme.theme,
+          inputSize: projectBranding?.inputSize ?? defaultTheme.inputSize,
         });
       }
     };

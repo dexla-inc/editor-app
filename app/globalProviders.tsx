@@ -1,20 +1,15 @@
 "use client";
 
-import { darkTheme, theme } from "@/utils/branding";
-import { cache } from "@/utils/emotionCache";
 import {
   dehydrate,
   HydrationBoundary,
   QueryClientProvider,
 } from "@tanstack/react-query";
 import { queryClient } from "@/utils/reactQuery";
-import { MantineProvider } from "@mantine/core";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ReactNode, useEffect, useState } from "react";
-import { useUserConfigStore } from "@/stores/userConfig";
 import TagManager from "react-gtm-module";
 import Script from "next/script";
-import { MantineGlobal } from "@/components/MantineGlobal";
 import { ProgressBar } from "@/components/ProgressBar";
 import { useEditorTreeStore } from "@/stores/editorTree";
 
@@ -22,7 +17,6 @@ const GTM_ID = "GTM-P3DVFXMS";
 const nodeEnv = process.env.NODE_ENV;
 
 export const GlobalProviders = ({ children }: { children: ReactNode }) => {
-  const isDarkTheme = useUserConfigStore((state: any) => state.isDarkTheme);
   const dehydratedState = dehydrate(queryClient);
   const isLive = useEditorTreeStore((state) => state.isLive);
 
@@ -42,12 +36,7 @@ export const GlobalProviders = ({ children }: { children: ReactNode }) => {
   }, []);
 
   return (
-    <MantineProvider
-      withGlobalStyles
-      withNormalizeCSS
-      theme={isDarkTheme ? darkTheme : theme}
-      emotionCache={cache}
-    >
+    <>
       {/*Google Tag Manager*/}
       {loadTagManager && (
         <Script id="google-analytics" strategy="afterInteractive">
@@ -73,11 +62,10 @@ export const GlobalProviders = ({ children }: { children: ReactNode }) => {
       )}
       <QueryClientProvider client={queryClient}>
         <HydrationBoundary state={dehydratedState}>
-          <MantineGlobal isLive />
           <ProgressBar>{children}</ProgressBar>
         </HydrationBoundary>
       </QueryClientProvider>
       <SpeedInsights />
-    </MantineProvider>
+    </>
   );
 };

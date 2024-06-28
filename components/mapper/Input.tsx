@@ -92,7 +92,7 @@ const InputComponent = forwardRef(
     // handle increase number range
     const increaseNumber = () => {
       let val = parseToNumber(value);
-      if (val === undefined) val = 1;
+      if (typeof val !== "number") val = 1;
       else val += 1;
       handleChange(val);
     };
@@ -100,20 +100,19 @@ const InputComponent = forwardRef(
     // handle decrease number range
     const decreaseNumber = () => {
       let val = parseToNumber(value);
-      if ([undefined, "", 0].includes(val)) val = 0;
-      else val -= 1;
+      if (typeof val === "number") val -= 1;
       handleChange(val);
     };
 
     const parseToNumber = (value: any) => {
-      const number = Number(value);
-      return isNaN(number) ? 0 : number;
+      const isPrintableNumbers = /^(\d{1,3}(,\d{3})*(\.\d+)?|\d+)$/.test(value);
+      return isPrintableNumbers ? Number(value) : "";
     };
 
     const handleChange = async (e: any) => {
       let newValue = e.target ? e.target.value : e;
       if (type === "number" || type === "numberRange") {
-        newValue = newValue ? Number(newValue) : 0;
+        newValue = parseToNumber(newValue);
       }
       setValue(newValue);
       if (onChange) {
@@ -121,35 +120,17 @@ const InputComponent = forwardRef(
       }
     };
 
-    const onKeyDown = (e: any) => {
-      const isPrintable = e.key.match(/\S/);
+    const onKeyDown = (e: KeyboardEvent) => {
+      const { altKey, ctrlKey, metaKey, shiftKey, key } = e;
+      const isPrintable = key.length === 1;
+      if (ctrlKey || shiftKey || altKey || metaKey) {
+        return;
+      }
       if (
         isPrintable &&
         !patterns[(pattern || "all") as keyof typeof patterns].test(e.key)
       ) {
         e.preventDefault();
-      }
-    };
-
-    const onNumberInputKeyDown = (e: KeyboardEvent) => {
-      const isLetter = /^[a-zA-Z]$/.test(e.key);
-      const isSpecialCharacter = /^[!@#$%^&*(),.?":{}|<>]$/.test(e.key);
-      const allowedKeys = [
-        "Backspace",
-        "Delete",
-        "ArrowLeft",
-        "ArrowRight",
-        "ArrowUp",
-        "ArrowDown",
-        "Tab",
-        "Escape",
-        "Enter",
-      ];
-
-      if (isLetter || isSpecialCharacter) {
-        e.preventDefault();
-      } else if (!allowedKeys.includes(e.key)) {
-        // Check for other control keys here if needed
       }
     };
 
@@ -241,7 +222,7 @@ const InputComponent = forwardRef(
             rightSection={loading ? <InputLoader /> : null}
             label={undefined}
             wrapperProps={{ "data-id": id }}
-            onKeyDown={onNumberInputKeyDown}
+            onKeyDown={onKeyDown}
           />
         ) : type === "password" ? (
           <PasswordInput

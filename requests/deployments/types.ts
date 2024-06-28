@@ -17,7 +17,15 @@ export type DeploymentResponse = {
   commitMessage: string;
   taskId: string;
   version: string;
+  canPromote: boolean;
   pages: DeploymentPage[];
+  project: ProjectResponse;
+  updatedBy: AuditInfo;
+};
+
+type AuditInfo = {
+  name: string;
+  date: number;
 };
 
 export type DeploymentPage = IResponse & {
