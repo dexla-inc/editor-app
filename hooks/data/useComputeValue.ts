@@ -108,11 +108,9 @@ export const ruleFunctions: { [key: string]: RuleFunction } = {
   },
   notEqualToMultiple: ({ location, comparingValue }) => {
     if (Array.isArray(location)) {
-      const result = location.every((locItem: any) =>
+      return location.every((locItem: any) =>
         comparingValue?.every((item: any) => safeJsonParse(item) !== locItem),
       );
-      console.log({ location, comparingValue, result });
-      return result;
     }
     return comparingValue?.every(
       (item: any) => safeJsonParse(item) !== location,
