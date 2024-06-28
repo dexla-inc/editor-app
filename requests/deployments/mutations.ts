@@ -51,5 +51,14 @@ export const getDeploymentPageHistory = async (
   return response;
 };
 
+export const getRecentDeployment = async (projectId: string) => {
+  const response = (await get<PagingResponse<DeploymentResponse>>(
+    `/projects/${projectId}/deployments/recent`,
+    {},
+  )) as PagingResponse<DeploymentResponse>;
+
+  return response;
+};
+
 const getCacheTag = (hostUrl: string) =>
   `/projects/${hostUrl}/deployments/page`;
