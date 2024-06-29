@@ -40,37 +40,57 @@ const filterDataItems = (
     return filtered;
   };
 
-  return dataItems.filter((variable: any) => {
-    if (filterKeyword === "") {
-      return true;
-    }
-
-    let nameMatches = regex.test(variable.name);
-    let valueMatches = false;
-    let filteredValue: any = null;
-
-    try {
-      const parsedValue = JSON.parse(variable.value ?? variable.defaultValue);
-      if (typeof parsedValue === "object" && parsedValue !== null) {
-        filteredValue = filterObject(parsedValue);
-        valueMatches = Object.keys(filteredValue).length > 0;
+  if (type === "variables") {
+    return dataItems.filter((variable: any) => {
+      if (filterKeyword === "") {
+        return true;
       }
-    } catch (e) {
-      // Handle the case where parsing fails (e.g., invalid JSON)
-    }
 
-    if (nameMatches || valueMatches) {
-      if (valueMatches) {
-        variable.value = JSON.stringify(filteredValue);
-        if (!variable.value) {
-          variable.defaultValue = JSON.stringify(filteredValue);
+      let nameMatches = regex.test(variable.name);
+      let valueMatches = false;
+      let filteredValue: any = null;
+
+      try {
+        const parsedValue = JSON.parse(variable.value ?? variable.defaultValue);
+        if (typeof parsedValue === "object" && parsedValue !== null) {
+          filteredValue = filterObject(parsedValue);
+          valueMatches = Object.keys(filteredValue).length > 0;
+        }
+      } catch (e) {
+        // Handle the case where parsing fails (e.g., invalid JSON)
+      }
+
+      if (nameMatches || valueMatches) {
+        if (valueMatches) {
+          variable.value = JSON.stringify(filteredValue);
+          if (!variable.value) {
+            variable.defaultValue = JSON.stringify(filteredValue);
+          }
+        }
+        return true;
+      }
+
+      return false;
+    });
+  } else {
+    const filterDataItem = (item: any): any => {
+      if (typeof item !== "object" || item === null) return null;
+      let filtered: any = {};
+      for (const key in item) {
+        if (regex.test(key)) {
+          filtered[key] = item[key];
+        } else if (typeof item[key] === "object") {
+          const nestedFiltered = filterDataItem(item[key]) ?? {};
+          if (Object.keys(nestedFiltered).length > 0) {
+            filtered[key] = nestedFiltered;
+          }
         }
       }
-      return true;
-    }
+      return Object.keys(filtered).length > 0 ? filtered : null;
+    };
 
-    return false;
-  });
+    return dataItems.map(filterDataItem).filter((item) => item !== null);
+  }
 };
 
 const DataItemButton = ({
