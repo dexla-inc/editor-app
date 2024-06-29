@@ -1,4 +1,5 @@
 import { useEditorParams } from "@/hooks/editor/useEditorParams";
+import { usePageList } from "@/hooks/editor/usePageList";
 import { useEditorStore } from "@/stores/editor";
 import { Select } from "@mantine/core";
 import { useParams, useRouter } from "next/navigation";
@@ -8,11 +9,7 @@ import { useShallow } from "zustand/react/shallow";
 const PageSelector = () => {
   const router = useRouter();
   const { id: projectId, page: pageId } = useEditorParams();
-  const pages = useEditorStore(
-    useShallow((state) =>
-      state.pages.map((page) => ({ value: page.id, label: page.title })),
-    ),
-  );
+  const pages = usePageList(projectId);
 
   const flexStyles = {
     display: "flex",

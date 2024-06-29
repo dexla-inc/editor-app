@@ -116,7 +116,10 @@ export const useDataBinding = (componentId = "") => {
 
         // Evaluate the rule
         const ruleFunction = ruleFunctions[rule];
-        const ruleResult = ruleFunction(location, transformedValue);
+        const ruleResult = ruleFunction({
+          location,
+          comparingValue: transformedValue,
+        });
 
         if (i === 0) {
           // Initialize overallResult with the first rule's result
@@ -147,6 +150,9 @@ export const useDataBinding = (componentId = "") => {
         if (ruleResult) {
           return valueHandlers[rule.result?.dataType ?? "static"](rule.result);
         }
+      }
+      if (["YesNo", "Boolean"].includes(rules.fieldType)) {
+        return false;
       }
       return;
     }

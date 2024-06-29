@@ -1,4 +1,5 @@
 import { useProjectQuery } from "@/hooks/editor/reactQuery/useProjectQuery";
+import { usePageList } from "@/hooks/editor/usePageList";
 import { patchProject } from "@/requests/projects/mutations";
 import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
@@ -14,21 +15,12 @@ type Params = {
   };
 };
 
-const mapPagesToSelectData = (pages: any[]) => {
-  return pages.map((page) => ({
-    value: page.slug,
-    label: page.title,
-  }));
-};
-
 export const ProjectSettings = () => {
   const projectId = useEditorTreeStore(
     (state) => state.currentProjectId,
   ) as string;
 
   const { data: project, invalidate } = useProjectQuery(projectId);
-
-  const pages = useEditorStore((state) => state.pages);
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<Params>({});
@@ -47,7 +39,7 @@ export const ProjectSettings = () => {
     }
   };
 
-  const pagesMinimal = mapPagesToSelectData(pages);
+  const pages = usePageList(projectId, "slug");
 
   useEffect(() => {
     form.setValues({
@@ -67,7 +59,7 @@ export const ProjectSettings = () => {
         <Select
           label="Sign in page"
           description="Page redirected to when a user is not signed in."
-          data={pagesMinimal}
+          data={pages}
           {...form.getInputProps("redirects.signInPageId")}
           clearable
           searchable
@@ -75,7 +67,7 @@ export const ProjectSettings = () => {
         <Select
           label="Not found page"
           description="Page redirected to when a page is not found."
-          data={pagesMinimal}
+          data={pages}
           {...form.getInputProps("redirects.notFoundPageId")}
           clearable
           searchable
