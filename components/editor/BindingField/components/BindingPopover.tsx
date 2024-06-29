@@ -9,7 +9,6 @@ import {
   CloseButton,
   Flex,
   Popover,
-  ScrollArea,
   SegmentedControl,
   Stack,
   Text,
