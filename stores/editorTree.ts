@@ -343,7 +343,10 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                   debouncedUpdatePageState(
                     encodeSchema(
                       JSON.stringify(
-                        removeKeysRecursive(treeWithRecoveredAttrs, ["error"]),
+                        removeKeysRecursive(treeWithRecoveredAttrs, [
+                          "error",
+                          "collapsed",
+                        ]),
                       ),
                     ),
                     "Attribute change",
