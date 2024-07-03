@@ -5,14 +5,22 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 import {
   Component,
   debouncedTreeComponentAttrsUpdate,
+  debouncedTreeComponentChildrenUpdate,
   getComponentTreeById,
 } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { Select, Stack } from "@mantine/core";
+import { NumberInput, Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
 import { useEffect } from "react";
 import { selectedComponentIdSelector } from "@/utils/componentSelectors";
+import { structureMapper } from "@/utils/componentMapper";
+
+const createItem = (itemPosition: number) => {
+  return structureMapper["AccordionItem"].structure({
+    props: { value: `item-${itemPosition}` },
+  });
+};
 
 const Modifier = withModifier(({ selectedComponent }) => {
   const editorTree = useEditorTreeStore((state) => state.tree);
@@ -20,20 +28,13 @@ const Modifier = withModifier(({ selectedComponent }) => {
     const selectedComponentId = selectedComponentIdSelector(state);
     return getComponentTreeById(editorTree.root, selectedComponentId!);
   });
-  const form = useForm({
-    initialValues: {
-      variant: "default",
-      // TODO: get this back
-      // value: selectedComponent.children?.[0]?.props?.value,
-      numberOfItems: selectedComponentTree?.children?.length,
-    },
-  });
+  const form = useForm();
 
   useEffect(() => {
     form.setValues(
       merge({}, requiredModifiers.accordion, {
         variant: selectedComponent.props?.variant,
-        value: selectedComponent.props?.value,
+        defaultValue: selectedComponent.props?.defaultValue,
         numberOfItems: selectedComponentTree?.children?.length,
       }),
     );
@@ -47,31 +48,28 @@ const Modifier = withModifier(({ selectedComponent }) => {
     Separated: "separated",
   };
 
-  useEffect(() => {
-    form.setValues(
-      merge({}, requiredModifiers.accordion, {
-        variant: selectedComponent.props?.variant,
-        value: selectedComponent.props?.value,
-        numberOfItems: selectedComponentTree?.children?.length,
-      }),
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponent]);
-
-  const addCarouselSlide = (accordion: Component, id: string) => {
-    // TODO: get this back
-    // const newItem = createItem(id)();
-    // const updatedChildren = [
-    //   ...Array.from(accordion?.children ?? []),
-    //   newItem,
-    // ];
-    // debouncedTreeComponentChildrenUpdate(updatedChildren);
+  const addCarouselSlide = (value: number) => {
+    const newItem = createItem(value);
+    const updatedChildren = [
+      ...Array.from(selectedComponentTree?.children ?? []),
+      newItem,
+    ];
+    debouncedTreeComponentChildrenUpdate(updatedChildren);
   };
 
-  const removeItem = (accordion: Component, newSize: string) => {
-    // TODO: get this back
-    // const updatedChildren = accordion?.children?.slice(0, Number(newSize));
-    // debouncedTreeComponentChildrenUpdate(updatedChildren!);
+  const removeItem = (value: number) => {
+    const updatedChildren = (selectedComponentTree?.children ?? []).slice(
+      0,
+      value,
+    );
+    debouncedTreeComponentChildrenUpdate(updatedChildren);
+  };
+
+  const onChange = (key: string, value: string) => {
+    form.setFieldValue("variant", value);
+    debouncedTreeComponentAttrsUpdate({
+      attrs: { props: { [key]: value } },
+    });
   };
 
   return (
@@ -85,39 +83,27 @@ const Modifier = withModifier(({ selectedComponent }) => {
             value: data[key],
           }))}
           {...form.getInputProps("variant")}
-          onChange={(value) => {
-            form.setFieldValue("variant", value as string);
-            debouncedTreeComponentAttrsUpdate({
-              attrs: { props: { variant: value } },
-            });
-          }}
+          onChange={(value) => onChange("variant", value as string)}
         />
-        {/*TODO: get this back*/}
-        {/*<Select*/}
-        {/*  label="Default Value"*/}
-        {/*  size="xs"*/}
-        {/*  data={*/}
-        {/*    selectedComponent.children?.map(*/}
-        {/*      (key) => key.props?.value!,*/}
-        {/*    ) as string[]*/}
-        {/*  }*/}
-        {/*  {...form.getInputProps("value")}*/}
-        {/*  onChange={(value) => {*/}
-        {/*    form.setFieldValue("value", value as string);*/}
-        {/*    debouncedTreeUpdate(selectedComponentIds, { value });*/}
-        {/*  }}*/}
-        {/*/>*/}
-        <UnitInput
+        <TextInput
+          label="Default Value"
+          size="xs"
+          {...form.getInputProps("defaultValue")}
+          onChange={(e) => onChange("defaultValue", e.currentTarget.value)}
+        />
+
+        <NumberInput
           label="Number of Items"
-          disabledUnits={["%", "vh", "vw", "rem", "px", "auto"]}
           {...form.getInputProps("numberOfItems")}
           onChange={(value) => {
-            if (Number(value) > form.values.numberOfItems!) {
-              addCarouselSlide(selectedComponent!, value);
+            const sanitizedValue = Number(value);
+            const numberOfItems = form.getInputProps("numberOfItems").value;
+            if (sanitizedValue > numberOfItems) {
+              addCarouselSlide(sanitizedValue);
             } else {
-              removeItem(selectedComponent!, value);
+              removeItem(sanitizedValue);
             }
-            form.setFieldValue("numberOfItems", Number(value));
+            form.setFieldValue("numberOfItems", sanitizedValue);
           }}
         />
       </Stack>
