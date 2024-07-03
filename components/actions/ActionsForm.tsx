@@ -78,6 +78,18 @@ export const ActionsForm = ({ sequentialTo, close }: ActionProps) => {
   }, [availableTriggers]);
 
   const pasteAction = (copiedAction: Action[]) => {
+    // Special condition when pasting a single sequential action, as a raw sequential action is attached to an action
+    // and the trigger key is "onSuccess" or "onError"
+    if (copiedAction.length === 1) {
+      const isSequential = ["onSuccess", "onError"].includes(
+        copiedAction[0].trigger,
+      );
+      if (isSequential) {
+        copiedAction[0].trigger = form.values.trigger;
+        copiedAction[0].sequentialTo = undefined;
+      }
+    }
+
     updateTreeComponentAttrs({
       componentIds: [selectedComponentId!],
       attrs: { actions: componentActions.concat(copiedAction) },
