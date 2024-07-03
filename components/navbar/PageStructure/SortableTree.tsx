@@ -20,13 +20,12 @@ import {
   arrayMove,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { SortableTreeItem } from "@/components/navbar/PageStructure/components";
 import type {
   FlattenedItem,
-  SensorContext,
   TreeItems,
 } from "@/components/navbar/PageStructure/types";
 import {
@@ -37,7 +36,6 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import List from "rc-virtual-list";
-import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 import { cloneObject } from "@/utils/common";
 
 const measuring = {
@@ -96,7 +94,7 @@ export function NavbarLayersSection({
     return result;
   });
 
-  const selectedComponentId = useEditorTreeStore(selectedComponentIdSelector);
+  // const selectedComponentId = useEditorTreeStore(selectedComponentIdSelector);
   // const isStructureCollapsed = useEditorStore(
   //   (state) => state.isStructureCollapsed,
   // );
@@ -104,15 +102,9 @@ export function NavbarLayersSection({
 
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
   const [overId, setOverId] = useState<UniqueIdentifier | null>(null);
-  const [offsetLeft, setOffsetLeft] = useState(0);
 
   const projected =
     activeId && overId ? getProjection(flattenedItems, overId) : null;
-
-  const sensorContext: SensorContext = useRef({
-    items: flattenedItems,
-    offset: offsetLeft,
-  });
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -131,13 +123,6 @@ export function NavbarLayersSection({
     ? flattenedItems.find(({ id }) => id === activeId)
     : null;
 
-  useEffect(() => {
-    sensorContext.current = {
-      items: flattenedItems,
-      offset: offsetLeft,
-    };
-  }, [flattenedItems, offsetLeft]);
-
   function handleDragStart(e: DragStartEvent) {
     const {
       active: { id: activeId },
@@ -146,10 +131,9 @@ export function NavbarLayersSection({
     setOverId(activeId);
   }
 
-  function handleDragMove({ delta, activatorEvent }: DragMoveEvent) {
+  function handleDragMove({ activatorEvent }: DragMoveEvent) {
     activatorEvent?.preventDefault();
     activatorEvent?.stopPropagation();
-    setOffsetLeft(delta.x);
   }
 
   function handleDragOver({ over, activatorEvent }: DragOverEvent) {
@@ -200,7 +184,6 @@ export function NavbarLayersSection({
   function resetState() {
     setOverId(null);
     setActiveId(null);
-    setOffsetLeft(0);
 
     document.body.style?.setProperty("cursor", "");
   }
@@ -276,25 +259,24 @@ export function NavbarLayersSection({
             );
           }}
         </List>
-
-        {createPortal(
-          <DragOverlay
-            dropAnimation={dropAnimationConfig}
-            modifiers={indicator ? [adjustTranslate] : undefined}
-          >
-            {activeId && activeItem ? (
-              <SortableTreeItem
-                component={activeItem}
-                id={activeId}
-                depth={activeItem.depth}
-                clone
-                indentationWidth={indentationWidth}
-              />
-            ) : null}
-          </DragOverlay>,
-          document.body,
-        )}
       </SortableContext>
+      {createPortal(
+        <DragOverlay
+          dropAnimation={dropAnimationConfig}
+          modifiers={indicator ? [adjustTranslate] : undefined}
+        >
+          {activeId && activeItem ? (
+            <SortableTreeItem
+              component={activeItem}
+              id={activeId}
+              depth={activeItem.depth}
+              clone
+              indentationWidth={indentationWidth}
+            />
+          ) : null}
+        </DragOverlay>,
+        document.body,
+      )}
     </DndContext>
   );
 }
