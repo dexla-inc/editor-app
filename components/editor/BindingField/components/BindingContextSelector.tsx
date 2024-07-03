@@ -155,6 +155,7 @@ export const BindingContextSelector = ({ setSelectedItem }: any) => {
         .filter((entityData) => entityData.entity === tab)
         .map((entityData) => {
           const { entity, dataItems } = entityData;
+
           return (
             <DataTree
               key={entity}

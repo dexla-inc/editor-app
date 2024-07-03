@@ -66,6 +66,7 @@ const emptyEditorComponentMutableAttrs = {
         paddingBottom: "0px",
         backgroundSize: "contain",
         overflow: "auto",
+        height: "auto",
       },
     },
   },
@@ -199,6 +200,10 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                 const newComponentMutableAttrs = getTreeComponentMutableProps(
                   tree.root,
                 );
+
+                // WARNING: backwards compatibility, removing height: 100% from main-content, fixes safari issues
+                newComponentMutableAttrs["main-content"].props.style.height =
+                  "auto";
 
                 const newState = {
                   ...state,
