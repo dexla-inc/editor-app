@@ -144,8 +144,6 @@ export function NavbarLayersSection({
     } = e;
     setActiveId(activeId);
     setOverId(activeId);
-
-    document.body.style?.setProperty("cursor", "grabbing");
   }
 
   function handleDragMove({ delta, activatorEvent }: DragMoveEvent) {
@@ -158,6 +156,12 @@ export function NavbarLayersSection({
     activatorEvent?.preventDefault();
     activatorEvent?.stopPropagation();
     setOverId(over?.id ?? null);
+
+    if (activeId === over?.id) {
+      document.body.style?.setProperty("cursor", "not-allowed");
+    } else {
+      document.body.style?.setProperty("cursor", "grabbing");
+    }
   }
 
   function handleDragEnd({ active, over }: DragEndEvent) {
