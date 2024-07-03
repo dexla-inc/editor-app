@@ -65,7 +65,6 @@ export interface Props extends Omit<HTMLAttributes<HTMLLIElement>, "id"> {
 export const TreeItem = forwardRef<HTMLDivElement, Props>(
   (
     {
-      childCount,
       clone,
       depth,
       disableSelection,
@@ -269,7 +268,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
               {id === "root" || id === "content-wrapper" ? (
                 <Text
                   id={`layer-${id}`}
-                  size="xs"
+                  size="0.72rem"
                   lineClamp={1}
                   sx={{ cursor: "move", width: "100%" }}
                 >
@@ -279,7 +278,6 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
                 <TextInput
                   ref={editFieldRef}
                   id={`layer-${id}`}
-                  size="xs"
                   w="100%"
                   variant="unstyled"
                   {...form.getInputProps("value")}
@@ -300,7 +298,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
               ) : (
                 <Text
                   id={`layer-${id}`}
-                  size="xs"
+                  size="0.72rem"
                   lineClamp={1}
                   sx={{ cursor: "move", width: "100%" }}
                 >
