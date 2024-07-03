@@ -106,7 +106,7 @@ export const ActionsTab = () => {
   };
 
   const actionsSections = component.actions?.map((action: Action) => {
-    const isSequential = !!action.sequentialTo;
+    const isSequential = ["onSuccess", "onError"].includes(action.trigger);
     const actionName = action.action.name;
 
     const item = !isSequential
