@@ -1,7 +1,8 @@
 import type { UniqueIdentifier } from "@dnd-kit/core";
 import type { FlattenedItem, TreeItem, TreeItems } from "./types";
-import { ComponentStructure } from "@/utils/editor";
+import { Component, ComponentStructure } from "@/utils/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
+import crawl from "tree-crawl";
 
 export function getProjection(
   items: FlattenedItem[],
@@ -14,6 +15,19 @@ export function getProjection(
     parentId: overItem.parentId,
   };
 }
+
+export const getAllTreeIds = (treeRoot: TreeItem) => {
+  const componentIds: string[] = [];
+  crawl(
+    treeRoot,
+    (node, context) => {
+      componentIds.push(node.id!);
+    },
+    { order: "bfs" },
+  );
+
+  return componentIds;
+};
 
 export function updateCollapseState(
   componentTree: any,
@@ -39,7 +53,7 @@ export function updateCollapseState(
     return false; // Selected component not found in this subtree
   }
 
-  for (let component of componentTree) {
+  for (let component of componentTree ?? []) {
     traverseAndExpand(component, selectedComponentId);
   }
 
