@@ -15,6 +15,8 @@ import {
 import { IconTrash } from "@tabler/icons-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { PropsWithChildren, useCallback } from "react";
+import { useDraggable as useDndDraggable } from "@dnd-kit/core";
+import { CSS } from "@dnd-kit/utilities";
 
 type Props = {
   id: string;
@@ -36,7 +38,12 @@ export const Draggable = ({
   const setComponentToAdd = useEditorStore((state) => state.setComponentToAdd);
   const activeCompany = usePropelAuthStore((state) => state.activeCompany);
 
+  const { attributes, listeners, setNodeRef, transform } = useDndDraggable({
+    id,
+    data,
+  });
   const onDragStart = useCallback(() => {
+    console.log("onDragStart");
     setComponentToAdd(data);
   }, [data, setComponentToAdd]);
 
@@ -72,6 +79,9 @@ export const Draggable = ({
       w="100%"
       {...props}
       style={{ ...styles }}
+      sx={{
+        transform: CSS.Transform.toString(transform),
+      }}
     >
       <Card
         w="100%"
@@ -83,6 +93,10 @@ export const Draggable = ({
             boxShadow: theme.shadows.sm,
           },
         }}
+        ref={setNodeRef}
+        {...attributes}
+        {...listeners}
+        //onDragStart={draggable.onDragStart}
       >
         {isDeletable && (
           <Card.Section>
@@ -113,10 +127,15 @@ export const Draggable = ({
             </Group>
           </Card.Section>
         )}
-        <Group position="apart" noWrap sx={{ textAlign: "center" }}>
-          <Box {...draggable} w="100%">
-            {children}
-          </Box>
+        <Group
+          position="apart"
+          noWrap
+          sx={{ textAlign: "center" }}
+          style={{
+            transform: CSS.Transform.toString(transform),
+          }}
+        >
+          <Box w="100%">{children}</Box>
         </Group>
       </Card>
     </Box>

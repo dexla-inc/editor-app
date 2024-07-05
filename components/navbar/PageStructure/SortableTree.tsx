@@ -44,7 +44,7 @@ const measuring = {
   },
 };
 
-const dropAnimationConfig: DropAnimation = {
+export const dropAnimationConfig: DropAnimation = {
   keyframes({ transform }) {
     return [
       { opacity: 1, transform: CSS.Transform.toString(transform.initial) },
@@ -132,11 +132,13 @@ export function NavbarLayersSection({
   }
 
   function handleDragMove({ activatorEvent }: DragMoveEvent) {
+    console.log("handleDragMove");
     activatorEvent?.preventDefault();
     activatorEvent?.stopPropagation();
   }
 
   function handleDragOver({ over, activatorEvent }: DragOverEvent) {
+    console.log("handleDragOver");
     activatorEvent?.preventDefault();
     activatorEvent?.stopPropagation();
     setOverId(over?.id ?? null);
@@ -218,48 +220,50 @@ export function NavbarLayersSection({
 
   return (
     <DndContext
-      sensors={sensors}
-      collisionDetection={closestCenter}
-      measuring={measuring}
+      // sensors={sensors}
+      // collisionDetection={closestCenter}
+      // measuring={measuring}
       onDragStart={handleDragStart}
       onDragMove={handleDragMove}
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
       onDragCancel={handleDragCancel}
     >
-      <SortableContext
-        items={sortedIds as string[]}
-        strategy={verticalListSortingStrategy}
-      >
-        <List data={flattenedItems} itemKey="id" itemHeight={30} height={790}>
-          {(component) => {
-            const isCollapsed =
-              component?.collapsed === true ||
-              component?.collapsed === undefined;
+      <DroppableArea id="test-area">
+        <SortableContext
+          items={sortedIds as string[]}
+          strategy={verticalListSortingStrategy}
+        >
+          <List data={flattenedItems} itemKey="id" itemHeight={30} height={790}>
+            {(component) => {
+              const isCollapsed =
+                component?.collapsed === true ||
+                component?.collapsed === undefined;
 
-            return (
-              <SortableTreeItem
-                component={component}
-                key={component.id}
-                id={component.id!}
-                depth={
-                  component.id === activeId && projected
-                    ? projected.depth
-                    : component.depth
-                }
-                indentationWidth={indentationWidth}
-                indicator={indicator}
-                collapsed={isCollapsed}
-                onCollapse={
-                  (component.children ?? []).length
-                    ? () => handleCollapse(component.id!)
-                    : undefined
-                }
-              />
-            );
-          }}
-        </List>
-      </SortableContext>
+              return (
+                <SortableTreeItem
+                  component={component}
+                  key={component.id}
+                  id={component.id!}
+                  depth={
+                    component.id === activeId && projected
+                      ? projected.depth
+                      : component.depth
+                  }
+                  indentationWidth={indentationWidth}
+                  indicator={indicator}
+                  collapsed={isCollapsed}
+                  onCollapse={
+                    (component.children ?? []).length
+                      ? () => handleCollapse(component.id!)
+                      : undefined
+                  }
+                />
+              );
+            }}
+          </List>
+        </SortableContext>
+      </DroppableArea>
       {createPortal(
         <DragOverlay
           dropAnimation={dropAnimationConfig}
@@ -278,5 +282,27 @@ export function NavbarLayersSection({
         document.body,
       )}
     </DndContext>
+  );
+}
+
+// REFERENCE: https://github.com/WawanC/multi-column-dnd-kit/blob/main/src/components/task-list/TaskList.tsx
+
+import React from "react";
+import { useDroppable } from "@dnd-kit/core";
+
+function DroppableArea({ id, children }: any) {
+  const { isOver, setNodeRef } = useDroppable({ id });
+  console.log({ isOver });
+  const style = {
+    // backgroundColor: isOver ? "lightgreen" : "white",
+    // padding: "16px",
+    // borderRadius: "4px",
+    // border: "1px solid #ccc",
+  };
+
+  return (
+    <div ref={setNodeRef} style={style}>
+      {children}
+    </div>
   );
 }

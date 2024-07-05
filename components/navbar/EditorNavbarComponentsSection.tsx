@@ -29,6 +29,14 @@ import {
 import { IconFrustum, IconSearch } from "@tabler/icons-react";
 import { useCallback, useRef, useState } from "react";
 import { safeJsonParse } from "@/utils/common";
+import { SortableContext } from "@dnd-kit/sortable";
+import { DndContext, DragOverlay, Modifier } from "@dnd-kit/core";
+import { createPortal } from "react-dom";
+import { SortableTreeItem } from "@/components/navbar/PageStructure/components";
+import { dropAnimationConfig } from "@/components/navbar/PageStructure/SortableTree";
+import { useEditorStore } from "@/stores/editor";
+import { useDraggable } from "@/hooks/editor/useDraggable";
+import { nanoid } from "nanoid";
 
 type DraggableComponentData = {
   id: string;
@@ -57,6 +65,13 @@ const componentsGroupedByCategory = Object.keys(structureMapper).reduce(
   {} as Record<string, DraggableComponentData[]>,
 );
 
+const adjustTranslate: Modifier = ({ transform }) => {
+  return {
+    ...transform,
+    y: transform.y - 25,
+  };
+};
+
 export const EditorNavbarComponentsSection = () => {
   const [query, setQuery] = useState<string>("");
   const [componentTypeToShow, setComponentTypeToShow] =
@@ -67,12 +82,28 @@ export const EditorNavbarComponentsSection = () => {
   const activeCompany = usePropelAuthStore((state) => state.activeCompany);
   const customStackRef = useRef<HTMLDivElement>(null);
   const userTheme = useThemeStore((state) => state.theme);
+  const componentToAdd = useEditorStore((state) => state.componentToAdd);
+  const setComponentToAdd = useEditorStore((state) => state.setComponentToAdd);
+  const setActiveTab = useEditorStore((state) => state.setActiveTab);
 
   const { data: componentList } = useCustomComponentList(
     projectId,
     activeCompany.orgId ?? "",
     componentTypeToShow,
   );
+
+  // const draggable = useDraggable({
+  //     id: `add-${nanoid()}`,
+  //     onDragStart: () => {},
+  // });
+
+  const onDragStart = (e: any) => {
+    console.log("onDragStart", e);
+    // const component = structureMapper[e.active.id];
+    // const data = component.structure({});
+    setComponentToAdd(e.active.data.current);
+    setActiveTab("layers");
+  };
 
   const renderTree = useCallback((component: Component) => {
     const componentToRender = componentMapper[component.name];
@@ -115,14 +146,40 @@ export const EditorNavbarComponentsSection = () => {
               }
 
               return (
-                <>
+                <DndContext key={"key"} onDragStart={onDragStart}>
                   <Grid.Col span={12}>
                     <Title order={6}>{category}</Title>
                   </Grid.Col>
-                  {filteredComponents.map(({ id, draggable: Draggable }) => (
-                    <GridItemComponent key={id} id={id} Draggable={Draggable} />
-                  ))}
-                </>
+                  <SortableContext
+                    id={"sortable list"}
+                    items={filteredComponents}
+                  >
+                    {filteredComponents.map(({ id, draggable: Draggable }) => (
+                      <GridItemComponent
+                        key={id}
+                        id={id}
+                        Draggable={Draggable}
+                      />
+                    ))}
+                  </SortableContext>
+                  {createPortal(
+                    <DragOverlay
+                      dropAnimation={dropAnimationConfig}
+                      modifiers={[adjustTranslate]}
+                    >
+                      {componentToAdd && (
+                        <GridItemComponent
+                          key={componentToAdd?.id}
+                          id={componentToAdd?.id!}
+                          Draggable={
+                            structureMapper[componentToAdd?.name!].Draggable
+                          }
+                        />
+                      )}
+                    </DragOverlay>,
+                    document.body,
+                  )}
+                </DndContext>
               );
             },
           )}

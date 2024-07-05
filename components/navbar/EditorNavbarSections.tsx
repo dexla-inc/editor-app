@@ -112,16 +112,40 @@ export const sectionMapper: SectionsMapper = {
 export const EditorNavbarSections = () => {
   const activeTab = useEditorStore((state) => state.activeTab);
 
-  const selectedSection = useMemo(() => {
-    const item = sections.find((item) => item.id === activeTab);
+  // const selectedSection = useMemo(() => {
+  //   const item = sections.find((item) => item.id === activeTab);
+  //
+  //   if (!item) return null;
+  //
+  //   return sectionMapper[item.id]({
+  //     ...item,
+  //     isActive: item.id === activeTab,
+  //   });
+  // }, [activeTab]);
 
-    if (!item) return null;
-
-    return sectionMapper[item.id]({
+  const selectedSection = sections.map((item) =>
+    sectionMapper[item.id]({
       ...item,
-      isActive: item.id === activeTab,
-    });
-  }, [activeTab]);
+      isActive: true,
+    }),
+  );
 
-  return <NavbarSection sections={sections}>{selectedSection}</NavbarSection>;
+  return (
+    <NavbarSection sections={sections}>
+      {sections.map((item, index) => {
+        const comp = sectionMapper[item.id]({
+          ...item,
+          isActive: true,
+        });
+
+        const isActive = item.id === activeTab;
+
+        return (
+          <div key={index} style={{ display: isActive ? "block" : "none" }}>
+            {comp}
+          </div>
+        );
+      })}
+    </NavbarSection>
+  );
 };
