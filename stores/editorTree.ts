@@ -142,7 +142,7 @@ export type EditorTreeState = {
 };
 
 const updatePageStateFunc = async (
-  state: PageStateParams["state"],
+  tree: EditorTreeCopy,
   description: PageStateParams["description"],
   projectId: string,
   pageId: string,
@@ -151,6 +151,18 @@ const updatePageStateFunc = async (
   history?: number | null,
   setHistoryCount?: (count: number | null) => void,
 ) => {
+  const state = encodeSchema(
+    JSON.stringify(
+      removeKeysRecursive(tree, [
+        "error",
+        "collapsed",
+        "depth",
+        "index",
+        "parentId",
+      ]),
+    ),
+  );
+
   try {
     setIsSaving(true);
     await updatePageState(
@@ -186,7 +198,7 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                   !options?.skipSave
                 ) {
                   debouncedUpdatePageState(
-                    encodeSchema(JSON.stringify(tree)),
+                    tree,
                     options?.action ?? "Generic change",
                     state.currentProjectId ?? "",
                     state.currentPageId ?? "",
@@ -268,17 +280,7 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
 
                 if (save && !state.isPreviewMode && !state.isLive) {
                   debouncedUpdatePageState(
-                    encodeSchema(
-                      JSON.stringify(
-                        removeKeysRecursive(treeWithRecoveredAttrs, [
-                          "error",
-                          "collapsed",
-                          "depth",
-                          "index",
-                          "parentId",
-                        ]),
-                      ),
-                    ),
+                    treeWithRecoveredAttrs,
                     "children change",
                     state.currentProjectId ?? "",
                     state.currentPageId ?? "",
@@ -341,14 +343,7 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                 );
                 if (save && !state.isPreviewMode && !state.isLive) {
                   debouncedUpdatePageState(
-                    encodeSchema(
-                      JSON.stringify(
-                        removeKeysRecursive(treeWithRecoveredAttrs, [
-                          "error",
-                          "collapsed",
-                        ]),
-                      ),
-                    ),
+                    treeWithRecoveredAttrs,
                     "Attribute change",
                     state.currentProjectId ?? "",
                     state.currentPageId ?? "",
@@ -385,11 +380,7 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
               );
               if (!state.isPreviewMode && !state.isLive) {
                 debouncedUpdatePageState(
-                  encodeSchema(
-                    JSON.stringify(
-                      removeKeysRecursive(treeWithRecoveredAttrs, ["error"]),
-                    ),
-                  ),
+                  treeWithRecoveredAttrs,
                   "Reset component",
                   state.currentProjectId ?? "",
                   state.currentPageId ?? "",

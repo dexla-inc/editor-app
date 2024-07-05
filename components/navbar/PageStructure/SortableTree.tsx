@@ -31,6 +31,7 @@ import type {
 import {
   buildTree,
   flattenTree,
+  getAllTreeIds,
   getProjection,
   updateCollapseState,
 } from "@/components/navbar/PageStructure/utilities";
@@ -39,6 +40,7 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 import List from "rc-virtual-list";
 import { cloneObject } from "@/utils/common";
 import { selectedComponentIdSelector } from "@/utils/componentSelectors";
+import { useEditorStore } from "@/stores/editor";
 
 const measuring = {
   droppable: {
@@ -89,10 +91,11 @@ export function NavbarLayersSection({
     (state) => state.updateTreeComponentAttrs,
   );
   const selectedComponentId = useEditorTreeStore(selectedComponentIdSelector);
-  const editorTree = useEditorTreeStore(
-    (state) => state.tree.root.children as TreeItems,
+  const editorTree = useEditorTreeStore((state) => state.tree.root);
+  const isStructureCollapsed = useEditorStore(
+    (state) => state.isStructureCollapsed,
   );
-  const flattenedItems = flattenTree(editorTree as TreeItems, true);
+  const flattenedItems = flattenTree(editorTree.children as TreeItems, true);
 
   const [list, setList] = useState<FlattenedItem[]>([]);
 
@@ -101,7 +104,10 @@ export function NavbarLayersSection({
   }, [flattenedItems]);
 
   useEffect(() => {
-    const expandedIds = updateCollapseState(editorTree, selectedComponentId);
+    const expandedIds = updateCollapseState(
+      editorTree.children,
+      selectedComponentId,
+    );
     updateTreeComponentAttrs({
       componentIds: expandedIds.filter((id) => id !== selectedComponentId),
       // @ts-ignore
@@ -110,9 +116,16 @@ export function NavbarLayersSection({
     });
   }, [selectedComponentId]);
 
-  // const isStructureCollapsed = useEditorStore(
-  //   (state) => state.isStructureCollapsed,
-  // );
+  useEffect(() => {
+    const allTreeIds = getAllTreeIds(editorTree);
+    updateTreeComponentAttrs({
+      componentIds: allTreeIds,
+      // @ts-ignore
+      attrs: { collapsed: isStructureCollapsed },
+      save: false,
+    });
+  }, [isStructureCollapsed]);
+
   const setTree = useEditorTreeStore((state) => state.setTree);
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
   const [overId, setOverId] = useState<UniqueIdentifier | null>(null);
@@ -161,11 +174,11 @@ export function NavbarLayersSection({
 
     if (projected && over) {
       const { tree } = useEditorTreeStore.getState();
-      const editorTree = cloneObject(tree);
+      const editorTreeCopy = cloneObject(tree);
       const { depth, parentId } = projected;
       // flattenedItems is just representative, where we really want to move items is the actual tree with uncollapsed items
       const clonedItems: FlattenedItem[] = flattenTree(
-        editorTree.root.children as TreeItems,
+        editorTreeCopy.root.children as TreeItems,
         false,
       );
       const overIndex = clonedItems.findIndex(({ id }) => id === over.id);
@@ -179,8 +192,8 @@ export function NavbarLayersSection({
       };
 
       const sortedItems = arrayMove(clonedItems, activeIndex, overIndex);
-      editorTree.root.children = buildTree(sortedItems);
-      setTree(editorTree, { action: "children change" });
+      editorTreeCopy.root.children = buildTree(sortedItems);
+      setTree(editorTreeCopy, { action: "children change" });
     }
   }
 
