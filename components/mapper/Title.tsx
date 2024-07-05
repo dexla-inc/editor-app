@@ -2,9 +2,14 @@ import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useContentEditable } from "@/hooks/components/useContentEditable";
 import { useBrandingStyles } from "@/hooks/editor/useBrandingStyles";
 import { EditableComponentMapper } from "@/utils/editor";
-import { Title as MantineTitle, TitleProps } from "@mantine/core";
+import {
+  Title as MantineTitle,
+  TitleProps,
+  useMantineTheme,
+} from "@mantine/core";
 import merge from "lodash.merge";
 import { forwardRef, memo, useMemo } from "react";
+import useFontFaceObserver from "use-font-face-observer";
 
 type Props = EditableComponentMapper & TitleProps;
 
@@ -14,6 +19,8 @@ const TitleComponent = forwardRef(
       component.id as string,
       ref,
     );
+    const theme = useMantineTheme();
+    const isFontLoaded = useFontFaceObserver([{ family: theme.fontFamily! }]);
 
     const { triggers, variable, order, hideIfDataIsEmpty, ...componentProps } =
       component.props as any;
@@ -43,7 +50,7 @@ const TitleComponent = forwardRef(
         //   ...(style?.fontSize ? { fontSize: style.fontSize + "px" } : {}),
         // }}
       >
-        {String(childrenValue)}
+        {isFontLoaded && String(childrenValue)}
       </MantineTitle>
     );
   },
