@@ -1,6 +1,7 @@
 import type { UniqueIdentifier } from "@dnd-kit/core";
 import type { FlattenedItem, TreeItem, TreeItems } from "./types";
 import { ComponentStructure } from "@/utils/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 
 export function getProjection(
   items: FlattenedItem[],
@@ -12,6 +13,37 @@ export function getProjection(
     depth: overItem.depth,
     parentId: overItem.parentId,
   };
+}
+
+export function updateCollapseState(
+  componentTree: any,
+  selectedComponentId: any,
+) {
+  let updatedIds: any[] = [];
+
+  function traverseAndExpand(component: any, selectedComponentId: any) {
+    if (component.id === selectedComponentId) {
+      updatedIds.push(component.id);
+      return true; // Found the selected component
+    }
+
+    if (component.children) {
+      for (let child of component.children) {
+        if (traverseAndExpand(child, selectedComponentId)) {
+          updatedIds.push(component.id);
+          return true; // Continue to propagate up
+        }
+      }
+    }
+
+    return false; // Selected component not found in this subtree
+  }
+
+  for (let component of componentTree) {
+    traverseAndExpand(component, selectedComponentId);
+  }
+
+  return updatedIds;
 }
 
 function flatten(
@@ -49,9 +81,10 @@ function flatten(
 
 export function flattenTree(
   items: TreeItems,
-  componentMutableAttrs: any,
   skipChildren: boolean,
 ): FlattenedItem[] {
+  const componentMutableAttrs =
+    useEditorTreeStore.getState().componentMutableAttrs;
   return flatten(items, componentMutableAttrs, skipChildren);
 }
 
