@@ -1,22 +1,3 @@
-export const initializeFonts = async (
-  defaultFontFamily: string | undefined,
-  headingsFontFamily: string | undefined,
-) => {
-  if (typeof window !== "undefined") {
-    const fallbackFont = "Open Sans";
-    const WebFont = (await import("webfontloader")).default;
-    WebFont.load({
-      google: {
-        families: [
-          `${defaultFontFamily}:${supportedVariants.join()}` ?? fallbackFont,
-          `${headingsFontFamily}:${supportedVariants.join()}` ?? fallbackFont,
-        ],
-      },
-      context: frames[0],
-    });
-  }
-};
-
 const supportedVariants = [
   "100",
   "100italic",
@@ -37,3 +18,33 @@ const supportedVariants = [
   "900",
   "900italic",
 ];
+
+export const initializeFonts = async (
+  defaultFontFamily: string | undefined,
+  headingsFontFamily: string | undefined,
+) => {
+  if (typeof window !== "undefined") {
+    const fallbackFont = "Open Sans";
+    const WebFont = (await import("webfontloader")).default;
+
+    const defaultFont = defaultFontFamily
+      ? `${defaultFontFamily}:${supportedVariants.join()}`
+      : fallbackFont;
+    const headingsFont = headingsFontFamily
+      ? `${headingsFontFamily}:${supportedVariants.join()}`
+      : fallbackFont;
+
+    WebFont.load({
+      google: {
+        families: [defaultFont, headingsFont],
+      },
+      context: frames[0],
+      active() {
+        console.log("Fonts have loaded");
+      },
+      inactive() {
+        console.error("Failed to load fonts");
+      },
+    });
+  }
+};
