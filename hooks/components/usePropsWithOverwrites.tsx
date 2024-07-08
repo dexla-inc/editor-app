@@ -49,7 +49,7 @@ export const usePropsWithOverwrites = (
           ? component.onLoad.validationMessage ??
             `${component.description} is required`
           : undefined,
-        disabled: customCurrentState === "disabled",
+        disabled: !isEditorMode && customCurrentState === "disabled",
         triggers: !isEditorMode && {
           ...triggers,
           onMouseOver: triggers?.onHover ?? hoverStateFunc,
