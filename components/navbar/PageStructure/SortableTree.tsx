@@ -20,27 +20,33 @@ import {
   arrayMove,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { SortableTreeItem } from "@/components/navbar/PageStructure/components";
 import type {
   FlattenedItem,
+  SensorContext,
+  TreeItem,
   TreeItems,
 } from "@/components/navbar/PageStructure/types";
 import {
   buildTree,
   flattenTree,
-  getAllTreeIds,
+  getAllAncestors,
+  getChildCount,
   getProjection,
-  updateCollapseState,
+  removeChildrenOf,
+  setProperty,
 } from "@/components/navbar/PageStructure/utilities";
-import { CSS } from "@dnd-kit/utilities";
-import { useEditorTreeStore } from "@/stores/editorTree";
-import List from "rc-virtual-list";
-import { cloneObject } from "@/utils/common";
-import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 import { useEditorStore } from "@/stores/editor";
+import { debouncedTreeRootChildrenUpdate } from "@/utils/editor";
+import { CSS } from "@dnd-kit/utilities";
+import { usePrevious } from "@mantine/hooks";
+import { useEditorTreeStore } from "../../../stores/editorTree";
+import List from "rc-virtual-list";
+import { selectedComponentIdSelector } from "@/utils/componentSelectors";
+import { safeJsonParse } from "@/utils/common";
 
 const measuring = {
   droppable: {
@@ -87,50 +93,101 @@ export function NavbarLayersSection({
   indicator = false,
   indentationWidth = 10,
 }: Props) {
-  const updateTreeComponentAttrs = useEditorTreeStore(
-    (state) => state.updateTreeComponentAttrs,
-  );
+  const items = useEditorTreeStore((state) => {
+    const { children } = state.tree.root;
+    return children;
+  });
   const selectedComponentId = useEditorTreeStore(selectedComponentIdSelector);
-  const editorTree = useEditorTreeStore((state) => state.tree.root);
   const isStructureCollapsed = useEditorStore(
     (state) => state.isStructureCollapsed,
   );
-  const flattenedItems = flattenTree(editorTree.children as TreeItems, true);
-
-  const [list, setList] = useState<FlattenedItem[]>([]);
-
-  useEffect(() => {
-    setList(flattenedItems);
-  }, [flattenedItems]);
-
-  useEffect(() => {
-    const expandedIds = updateCollapseState(
-      editorTree.children,
-      selectedComponentId,
-    );
-    updateTreeComponentAttrs({
-      componentIds: expandedIds.filter((id) => id !== selectedComponentId),
-      // @ts-ignore
-      attrs: { collapsed: false },
-      save: false,
-    });
-  }, [selectedComponentId]);
-
-  useEffect(() => {
-    const allTreeIds = getAllTreeIds(editorTree);
-    updateTreeComponentAttrs({
-      componentIds: allTreeIds,
-      // @ts-ignore
-      attrs: { collapsed: isStructureCollapsed },
-      save: false,
-    });
-  }, [isStructureCollapsed]);
-
-  const setTree = useEditorTreeStore((state) => state.setTree);
+  const setItems = useCallback((updateItems: any, save = true) => {
+    debouncedTreeRootChildrenUpdate(updateItems, save);
+  }, []);
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
   const [overId, setOverId] = useState<UniqueIdentifier | null>(null);
+  const [offsetLeft, setOffsetLeft] = useState(0);
 
-  const projected = activeId && overId ? getProjection(list, overId) : null;
+  const prevIsStructureCollapsed = usePrevious(isStructureCollapsed);
+
+  const didStructureCollapedChange =
+    prevIsStructureCollapsed !== isStructureCollapsed;
+
+  const flattenedItems = useMemo(() => {
+    const flattenedTree = flattenTree(items as TreeItems);
+    let ancestors: FlattenedItem[] = [];
+    if (selectedComponentId) {
+      ancestors = getAllAncestors(flattenedTree, selectedComponentId);
+    }
+
+    if (didStructureCollapedChange && !isStructureCollapsed) {
+      return flattenedTree;
+    }
+
+    if (didStructureCollapedChange && isStructureCollapsed) {
+      const _flattenedTree = flattenedTree.map((item) => {
+        return { ...item, collapsed: true };
+      });
+
+      const collapsedItems = _flattenedTree.map((item) => item.id);
+
+      return removeChildrenOf(
+        _flattenedTree,
+        // @ts-ignore
+        activeId ? [activeId, ...collapsedItems] : collapsedItems,
+      );
+    }
+
+    // @ts-ignore
+    const collapsedItems: string[] = flattenedTree
+      .map((item) => {
+        if (ancestors.find((a) => a.id === item.id)) {
+          return { ...item, collapsed: true };
+        }
+
+        return item;
+      })
+      .reduce(
+        // @ts-ignore
+        (acc, { children, collapsed, id }: TreeItem) => {
+          const isCollapsed = collapsed ?? true;
+          if (isCollapsed && !ancestors.find((a) => a.id === id)) {
+            return [...acc, id];
+          }
+
+          return acc;
+        },
+        [] as string[],
+      );
+
+    return removeChildrenOf(
+      flattenedTree,
+      // @ts-ignore
+      activeId ? [activeId, ...collapsedItems] : collapsedItems,
+    );
+  }, [
+    items,
+    selectedComponentId,
+    didStructureCollapedChange,
+    isStructureCollapsed,
+    activeId,
+  ]);
+
+  const projected =
+    activeId && overId
+      ? getProjection(
+          flattenedItems,
+          activeId,
+          overId,
+          offsetLeft,
+          indentationWidth,
+        )
+      : null;
+
+  const sensorContext: SensorContext = useRef({
+    items: flattenedItems,
+    offset: offsetLeft,
+  });
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -140,9 +197,21 @@ export function NavbarLayersSection({
     }),
   );
 
-  const sortedIds = useMemo(() => list.map(({ id }) => id), [list]);
+  const sortedIds = useMemo(
+    () => flattenedItems.map(({ id }) => id),
+    [flattenedItems],
+  );
 
-  const activeItem = activeId ? list.find(({ id }) => id === activeId) : null;
+  const activeItem = activeId
+    ? flattenedItems.find(({ id }) => id === activeId)
+    : null;
+
+  useEffect(() => {
+    sensorContext.current = {
+      items: flattenedItems,
+      offset: offsetLeft,
+    };
+  }, [flattenedItems, offsetLeft]);
 
   function handleDragStart(e: DragStartEvent) {
     const {
@@ -150,36 +219,29 @@ export function NavbarLayersSection({
     } = e;
     setActiveId(activeId);
     setOverId(activeId);
+
+    document.body.style?.setProperty("cursor", "grabbing");
   }
 
-  function handleDragMove({ activatorEvent }: DragMoveEvent) {
+  function handleDragMove({ delta, activatorEvent }: DragMoveEvent) {
     activatorEvent?.preventDefault();
     activatorEvent?.stopPropagation();
+    setOffsetLeft(delta.x);
   }
 
   function handleDragOver({ over, activatorEvent }: DragOverEvent) {
     activatorEvent?.preventDefault();
     activatorEvent?.stopPropagation();
     setOverId(over?.id ?? null);
-
-    if (activeId === over?.id) {
-      document.body.style?.setProperty("cursor", "not-allowed");
-    } else {
-      document.body.style?.setProperty("cursor", "grabbing");
-    }
   }
 
   function handleDragEnd({ active, over }: DragEndEvent) {
     resetState();
 
     if (projected && over) {
-      const { tree } = useEditorTreeStore.getState();
-      const editorTreeCopy = cloneObject(tree);
       const { depth, parentId } = projected;
-      // flattenedItems is just representative, where we really want to move items is the actual tree with uncollapsed items
-      const clonedItems: FlattenedItem[] = flattenTree(
-        editorTreeCopy.root.children as TreeItems,
-        false,
+      const clonedItems: FlattenedItem[] = safeJsonParse(
+        JSON.stringify(flattenTree(items as TreeItems)),
       );
       const overIndex = clonedItems.findIndex(({ id }) => id === over.id);
       const activeIndex = clonedItems.findIndex(({ id }) => id === active.id);
@@ -192,8 +254,9 @@ export function NavbarLayersSection({
       };
 
       const sortedItems = arrayMove(clonedItems, activeIndex, overIndex);
-      editorTreeCopy.root.children = buildTree(sortedItems);
-      setTree(editorTreeCopy, { action: "children change" });
+      const newItems = buildTree(sortedItems);
+
+      setItems(newItems as any);
     }
   }
 
@@ -204,38 +267,42 @@ export function NavbarLayersSection({
   function resetState() {
     setOverId(null);
     setActiveId(null);
+    setOffsetLeft(0);
 
     document.body.style?.setProperty("cursor", "");
   }
 
-  const handleCollapse = async (id: string) => {
-    const { componentMutableAttrs } = useEditorTreeStore.getState();
-
-    // @ts-ignore
-    const collapsed = componentMutableAttrs[id]?.collapsed;
-    const updatedCollapse = !(collapsed === true || collapsed === undefined);
-
-    await updateTreeComponentAttrs({
-      componentIds: [id],
-      attrs: {
-        // @ts-ignore
-        collapsed: updatedCollapse,
-      },
-      save: false,
-    });
-  };
+  const handleCollapse = useCallback(
+    (id: UniqueIdentifier) => {
+      setItems(
+        setProperty(items as TreeItems, id, "collapsed", (value) => {
+          if (value === undefined) {
+            return false;
+          }
+          return !value;
+        }),
+        false,
+      );
+    },
+    [items, setItems],
+  );
 
   useEffect(() => {
-    const timeout = setTimeout(async () => {
+    const timeout = setTimeout(() => {
       if (overId) {
-        await handleCollapse(overId as string);
+        setItems(
+          setProperty(items as TreeItems, overId, "collapsed", (value) => {
+            return false;
+          }),
+          false,
+        );
       }
-    }, 1000);
+    }, 100);
 
     return () => {
       clearTimeout(timeout);
     };
-  }, [overId]);
+  }, [overId, handleCollapse, items, setItems]);
 
   return (
     <DndContext
@@ -252,11 +319,9 @@ export function NavbarLayersSection({
         items={sortedIds as string[]}
         strategy={verticalListSortingStrategy}
       >
-        <List data={list} itemKey="id" itemHeight={30} height={790}>
+        <List data={flattenedItems} itemKey="id" itemHeight={30} height={790}>
           {(component) => {
-            const isCollapsed =
-              component?.collapsed === true ||
-              component?.collapsed === undefined;
+            const isCollapsed = !!component?.collapsed;
 
             return (
               <SortableTreeItem
@@ -270,7 +335,7 @@ export function NavbarLayersSection({
                 }
                 indentationWidth={indentationWidth}
                 indicator={indicator}
-                collapsed={isCollapsed}
+                collapsed={Boolean(isCollapsed)}
                 onCollapse={
                   (component.children ?? []).length
                     ? () => handleCollapse(component.id!)
@@ -280,24 +345,26 @@ export function NavbarLayersSection({
             );
           }}
         </List>
+
+        {createPortal(
+          <DragOverlay
+            dropAnimation={dropAnimationConfig}
+            modifiers={indicator ? [adjustTranslate] : undefined}
+          >
+            {activeId && activeItem ? (
+              <SortableTreeItem
+                component={activeItem}
+                id={activeId}
+                depth={activeItem.depth}
+                clone
+                childCount={getChildCount(items as TreeItems, activeId) + 1}
+                indentationWidth={indentationWidth}
+              />
+            ) : null}
+          </DragOverlay>,
+          document.body,
+        )}
       </SortableContext>
-      {createPortal(
-        <DragOverlay
-          dropAnimation={dropAnimationConfig}
-          modifiers={indicator ? [adjustTranslate] : undefined}
-        >
-          {activeId && activeItem ? (
-            <SortableTreeItem
-              component={activeItem}
-              id={activeId}
-              depth={activeItem.depth}
-              clone
-              indentationWidth={indentationWidth}
-            />
-          ) : null}
-        </DragOverlay>,
-        document.body,
-      )}
     </DndContext>
   );
 }

@@ -2,17 +2,14 @@ import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useBrandingStyles } from "@/hooks/editor/useBrandingStyles";
 import { useContentEditable } from "@/hooks/components/useContentEditable";
 import { EditableComponentMapper } from "@/utils/editor";
-import { Text as MantineText, TextProps, useMantineTheme } from "@mantine/core";
+import { Text as MantineText, TextProps } from "@mantine/core";
 import merge from "lodash.merge";
 import { forwardRef, memo, useMemo } from "react";
-import useFontFaceObserver from "use-font-face-observer";
 
 type Props = EditableComponentMapper & TextProps;
 
 const TextComponent = forwardRef(
   ({ component, shareableContent, ...props }: Props, ref: any) => {
-    const theme = useMantineTheme();
-    const isFontLoaded = useFontFaceObserver([{ family: theme.fontFamily! }]);
     const contentEditableProps = useContentEditable(
       component.id as string,
       ref,
@@ -45,7 +42,7 @@ const TextComponent = forwardRef(
         ref={ref}
         style={customStyle}
       >
-        {!hideIfDataIsEmpty && isFontLoaded && String(childrenValue)}
+        {!hideIfDataIsEmpty && String(childrenValue)}
       </MantineText>
     );
   },

@@ -1,110 +1,129 @@
-import type { UniqueIdentifier } from "@dnd-kit/core";
-import type { FlattenedItem, TreeItem, TreeItems } from "./types";
-import { Component, ComponentStructure } from "@/utils/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import crawl from "tree-crawl";
+import type { UniqueIdentifier } from "@dnd-kit/core";
+import { arrayMove } from "@dnd-kit/sortable";
+import type { FlattenedItem, TreeItem, TreeItems } from "./types";
+
+function getDragDepth(offset: number, indentationWidth: number) {
+  return Math.round(offset / indentationWidth);
+}
 
 export function getProjection(
   items: FlattenedItem[],
+  activeId: UniqueIdentifier,
   overId: UniqueIdentifier,
+  dragOffset: number,
+  indentationWidth: number,
 ) {
   const overItemIndex = items.findIndex(({ id }) => id === overId);
-  const overItem = items[overItemIndex];
-  return {
-    depth: overItem.depth,
-    parentId: overItem.parentId,
-  };
+  const activeItemIndex = items.findIndex(({ id }) => id === activeId);
+  const activeItem = items[activeItemIndex];
+  const newItems = arrayMove(items, activeItemIndex, overItemIndex);
+  const previousItem = newItems[overItemIndex - 1];
+  const nextItem = newItems[overItemIndex + 1];
+  const dragDepth = getDragDepth(dragOffset, indentationWidth);
+  const projectedDepth = activeItem?.depth + dragDepth;
+  const maxDepth = getMaxDepth({
+    previousItem,
+  });
+  const minDepth = getMinDepth({ nextItem });
+  let depth = projectedDepth;
+
+  if (projectedDepth >= maxDepth) {
+    depth = maxDepth;
+  } else if (projectedDepth < minDepth) {
+    depth = minDepth;
+  }
+
+  return { depth, maxDepth, minDepth, parentId: getParentId() };
+
+  function getParentId() {
+    if (depth === 0 || !previousItem) {
+      return null;
+    }
+
+    if (depth === previousItem.depth) {
+      return previousItem.parentId;
+    }
+
+    if (depth > previousItem.depth) {
+      return previousItem.id;
+    }
+
+    const newParent = newItems
+      .slice(0, overItemIndex)
+      .reverse()
+      .find((item) => item.depth === depth)?.parentId;
+
+    return newParent ?? null;
+  }
 }
 
-export const getAllTreeIds = (treeRoot: TreeItem) => {
-  const componentIds: string[] = [];
-  crawl(
-    treeRoot,
-    (node, context) => {
-      componentIds.push(node.id!);
-    },
-    { order: "bfs" },
-  );
-
-  return componentIds;
-};
-
-export function updateCollapseState(
-  componentTree: any,
-  selectedComponentId: any,
-) {
-  let updatedIds: any[] = [];
-
-  function traverseAndExpand(component: any, selectedComponentId: any) {
-    if (component.id === selectedComponentId) {
-      updatedIds.push(component.id);
-      return true; // Found the selected component
-    }
-
-    if (component.children) {
-      for (let child of component.children) {
-        if (traverseAndExpand(child, selectedComponentId)) {
-          updatedIds.push(component.id);
-          return true; // Continue to propagate up
-        }
-      }
-    }
-
-    return false; // Selected component not found in this subtree
+function getMaxDepth({
+  previousItem: previousItemTree,
+}: {
+  previousItem: FlattenedItem;
+}) {
+  if (!previousItemTree) {
+    return 0;
+  }
+  const previousItem =
+    useEditorTreeStore.getState().componentMutableAttrs[previousItemTree.id!];
+  if (previousItem?.blockDroppingChildrenInside) {
+    return previousItem.depth ?? 0;
   }
 
-  for (let component of componentTree ?? []) {
-    traverseAndExpand(component, selectedComponentId);
+  if (previousItem) {
+    return (previousItem.depth ?? 0) + 1;
   }
 
-  return updatedIds;
+  return 0;
+}
+
+function getMinDepth({ nextItem }: { nextItem: FlattenedItem }) {
+  if (nextItem) {
+    return nextItem.depth;
+  }
+
+  return 0;
 }
 
 function flatten(
   items: TreeItems,
-  componentMutableAttrs: any,
-  skipChildren: boolean,
   parentId: UniqueIdentifier | null = null,
   depth = 0,
 ): FlattenedItem[] {
   return (items ?? []).reduce<FlattenedItem[]>((acc, item, index) => {
-    if (item.id! in componentMutableAttrs) {
-      item.collapsed = componentMutableAttrs[item.id!].collapsed;
-    }
-
-    const isCollapsed =
-      item?.collapsed === true || item?.collapsed === undefined;
-
-    if (isCollapsed && skipChildren) {
-      return [...acc, { ...item, parentId, depth, index }];
-    }
-
     return [
       ...acc,
       { ...item, parentId, depth, index },
-      ...flatten(
-        item.children ?? [],
-        componentMutableAttrs,
-        skipChildren,
-        item.id,
-        depth + 1,
-      ),
+      ...flatten(item.children ?? [], item.id, depth + 1),
     ];
   }, []);
 }
 
-export function flattenTree(
-  items: TreeItems,
-  skipChildren: boolean,
-): FlattenedItem[] {
-  const componentMutableAttrs =
-    useEditorTreeStore.getState().componentMutableAttrs;
-  return flatten(items, componentMutableAttrs, skipChildren);
+export function flattenTree(items: TreeItems): FlattenedItem[] {
+  return flatten(items);
 }
 
-export function buildTree(
+export const getAllAncestors = (
   flattenedItems: FlattenedItem[],
-): ComponentStructure[] {
+  id: UniqueIdentifier,
+): FlattenedItem[] => {
+  const item = flattenedItems.find((item) => item.id === id);
+  if (!item) {
+    return [];
+  }
+  const { parentId } = item;
+  if (!parentId) {
+    return [];
+  }
+
+  const parentItem = flattenedItems.find((item) => item.id === parentId)!;
+
+  return [parentItem, ...getAllAncestors(flattenedItems, parentId)];
+};
+
+export function buildTree(flattenedItems: FlattenedItem[]): TreeItems {
   const root: TreeItem = { id: "root", children: [], name: "Container" };
   const nodes: Record<string, TreeItem> = { [root.id as string]: root };
   const items = flattenedItems.map((item) => ({ ...item, children: [] }));
@@ -122,9 +141,116 @@ export function buildTree(
     parent.children?.push(item);
   }
 
-  return root.children as ComponentStructure[];
+  return root.children as TreeItems;
 }
 
 export function findItem(items: TreeItem[], itemId: UniqueIdentifier) {
   return items.find(({ id }) => id === itemId);
+}
+
+export function findItemDeep(
+  items: TreeItems,
+  itemId: UniqueIdentifier,
+): TreeItem | undefined {
+  for (const item of items) {
+    const { id, children } = item;
+
+    if (id === itemId) {
+      return item;
+    }
+
+    if (children && children.length) {
+      const child = findItemDeep(children, itemId);
+      if (child) {
+        return child;
+      }
+    }
+  }
+
+  return undefined;
+}
+
+export function removeItem(items: TreeItems, id: UniqueIdentifier) {
+  const newItems = [];
+
+  for (const item of items) {
+    if (item.id === id) {
+      continue;
+    }
+
+    if (item.children?.length) {
+      item.children = removeItem(item.children, id);
+    }
+
+    newItems.push(item);
+  }
+
+  return newItems;
+}
+
+export function setProperty<T extends keyof TreeItem>(
+  items: TreeItems,
+  id: UniqueIdentifier,
+  property: T,
+  setter: (value: TreeItem[T]) => TreeItem[T],
+): TreeItems {
+  return items.map((item) => {
+    const currentItem = item as TreeItem;
+
+    if (currentItem.id === id) {
+      return {
+        ...currentItem,
+        [property]: setter(currentItem[property] as TreeItem[T]),
+      };
+    }
+
+    if (currentItem.children) {
+      return {
+        ...currentItem,
+        children: setProperty(currentItem.children, id, property, setter),
+      };
+    }
+
+    return currentItem;
+  });
+}
+
+function countChildren(items: TreeItem[], count = 0): number {
+  return (items ?? []).reduce((acc, { children }) => {
+    if (children?.length) {
+      return countChildren(children, acc + 1);
+    }
+
+    return acc + 1;
+  }, count);
+}
+
+export function getChildCount(items: TreeItems, id: UniqueIdentifier) {
+  const item = findItemDeep(items, id);
+
+  if (!item) {
+    return 0;
+  }
+
+  return countChildren(item.children || []);
+}
+
+export function removeChildrenOf(
+  items: FlattenedItem[],
+  ids: UniqueIdentifier[],
+) {
+  const excludeParentIds = [...ids];
+
+  return items.filter((item) => {
+    if (item.parentId && excludeParentIds.includes(item.parentId)) {
+      if ((item.children ?? []).length) {
+        if (item.id !== undefined) {
+          excludeParentIds.push(item.id);
+        }
+      }
+      return false;
+    }
+
+    return true;
+  });
 }

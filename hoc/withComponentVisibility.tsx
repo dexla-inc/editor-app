@@ -12,10 +12,13 @@ export const withComponentVisibility = <T extends Record<string, any>>(
   const ComponentVisibilityWrapper = (props: WithComponentWrapperProps) => {
     const { component: componentTree, shareableContent } = props;
     let id = componentTree.id;
+    const theme = useMantineTheme();
 
     if (shareableContent?.parentSuffix !== undefined) {
       id = `${componentTree.id}-related-${shareableContent?.parentSuffix}`;
     }
+
+    const isFontLoaded = useFontFaceObserver([{ family: theme.fontFamily! }]);
 
     const onLoad = useEditorTreeStore(
       useShallow(
@@ -28,7 +31,7 @@ export const withComponentVisibility = <T extends Record<string, any>>(
       shareableContent,
     });
 
-    if (computedOnLoad.isVisible === false) {
+    if (computedOnLoad.isVisible === false || !isFontLoaded) {
       return null;
     }
 
