@@ -395,7 +395,7 @@ export const DataSourceEndpointDetail = ({
       }
 
       const fetchUrl = state.isServerRequest
-        ? `/api/proxy?targetUrl=${toBase64(url)}`
+        ? `/api/proxy?targetUrl=${toBase64(apiUrl)}`
         : apiUrl;
 
       const isGetMethodType = methodType === "GET";
