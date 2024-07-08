@@ -9,9 +9,9 @@ import { FieldProps, ValueProps } from "@/types/dataBinding";
 import has from "lodash.has";
 import { useComponentStates } from "@/hooks/editor/useComponentStates";
 import { BindingField } from "@/components/editor/BindingField/BindingField";
-import { unflattenObject } from "@/utils/common";
 import get from "lodash.get";
 import isEqual from "lodash.isequal";
+import set from "lodash.set";
 
 type Props = {
   fields: FieldProps[];
@@ -53,9 +53,7 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
       const targetItem = get(component.onLoad, f.name, {});
       let staticValue = targetItem?.static;
 
-      acc[f.name] = {
-        static: {},
-      };
+      set(acc, f.name, { static: {} });
       ["en", language].forEach((lang) => {
         const value = has(staticValue, lang)
           ? staticValue[lang]
@@ -68,10 +66,10 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
               ? staticValue
               : // otherwise, return the value from props
                 get(component.props, f.name, f.defaultValue ?? "");
-        acc[f.name].static[lang] = value;
+        set(acc, `${f.name}.static.${lang}`, value);
       });
 
-      return unflattenObject(acc);
+      return acc;
     },
     {} as Record<string, ValueProps>,
   );
@@ -80,7 +78,6 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
 
   const form = useForm({
     initialValues: {
-      // unflatten the object to make it compatible with the form. Keys such as options.labels are transformed to options: { labels: ... }
       onLoad: onLoadValues,
     },
   });
