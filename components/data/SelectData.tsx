@@ -55,22 +55,6 @@ export const SelectData = ({ component, endpoints, dataType }: DataProps) => {
           {({ form, selectableObjectKeys }) => {
             return (
               <Stack spacing="xs" my="xs">
-                <FormFieldsBuilder
-                  fields={[
-                    {
-                      name: "value",
-                      label: "Default Value",
-                      fieldType: "Text",
-                    },
-                    {
-                      name: "placeholder",
-                      label: "Placeholder",
-                      fieldType: "Text",
-                    },
-                  ]}
-                  component={component}
-                  endpoints={endpoints!}
-                />
                 <Title order={6} mt="xs">
                   Options
                 </Title>
@@ -89,6 +73,22 @@ export const SelectData = ({ component, endpoints, dataType }: DataProps) => {
                   data={selectableObjectKeys}
                   {...form.getInputProps("onLoad.dataValueKey")}
                   searchable
+                />
+                <FormFieldsBuilder
+                  fields={[
+                    {
+                      name: "value",
+                      label: "Default Value",
+                      fieldType: "Text",
+                    },
+                    {
+                      name: "placeholder",
+                      label: "Placeholder",
+                      fieldType: "Text",
+                    },
+                  ]}
+                  component={component}
+                  endpoints={endpoints!}
                 />
               </Stack>
             );
