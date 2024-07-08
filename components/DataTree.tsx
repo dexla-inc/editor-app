@@ -51,7 +51,9 @@ const filterDataItems = (
       let filteredValue: any = null;
 
       try {
-        const parsedValue = JSON.parse(variable.value ?? variable.defaultValue);
+        const parsedValue = safeJsonParse(
+          variable.value ?? variable.defaultValue,
+        );
         if (typeof parsedValue === "object" && parsedValue !== null) {
           filteredValue = filterObject(parsedValue);
           valueMatches = Object.keys(filteredValue).length > 0;
@@ -71,6 +73,10 @@ const filterDataItems = (
       }
 
       return false;
+    });
+  } else if (type === "components") {
+    return dataItems.filter((variable: any) => {
+      return filterKeyword === "" || regex.test(variable.name);
     });
   } else {
     const filterDataItem = (item: any): any => {
