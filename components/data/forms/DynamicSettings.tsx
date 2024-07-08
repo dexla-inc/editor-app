@@ -205,15 +205,14 @@ export const DynamicSettings = ({
                 }}
               />
             )}
-            {children && children({ form, selectableObjectKeys })}
-
-            <Divider mt="md" />
 
             <EndpointRequestInputs
               selectedEndpoint={selectedEndpoint!}
               form={form}
               formType="data"
             />
+            <Divider mt="md" />
+            {children && children({ form, selectableObjectKeys })}
           </>
         )}
       </SidebarSection>
