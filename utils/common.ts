@@ -2,7 +2,6 @@ import { FileWithPath } from "@mantine/dropzone";
 import { requiredModifiers } from "./modifiers";
 import { GRID_SIZE } from "./config";
 import { PagingModel } from "@/requests/types";
-import set from "lodash.set";
 
 export const convertToBase64 = (file: FileWithPath): Promise<string> => {
   return new Promise((resolve, reject) => {

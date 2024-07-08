@@ -1,14 +1,31 @@
 import { DynamicSettings } from "@/components/data/forms/DynamicSettings";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { SegmentedControl, Select, Stack, Text, Title } from "@mantine/core";
-import { ChartForm } from "@/components/data/forms/static/ChartForm";
 import { DataProps } from "@/types/dataBinding";
 import { DataType } from "@/types/dataBinding";
+import { FormFieldsBuilder } from "@/components/data/forms/FormFieldsBuilder";
 
 export const ChartData = ({ component, endpoints, dataType }: DataProps) => {
   const updateTreeComponentAttrs = useEditorTreeStore(
     (state) => state.updateTreeComponentAttrs,
   );
+  const isPieOrRadial =
+    component?.name === "PieChart" || component?.name === "RadialChart";
+
+  const specialData = isPieOrRadial
+    ? { name: "options.labels", label: "Data Labels" }
+    : { name: "options.xaxis.categories", label: "Data (x-axis)" };
+  const staticFields = [
+    {
+      ...specialData,
+      fieldType: "Array" as const,
+    },
+    {
+      name: "series",
+      label: "Data",
+      fieldType: "Array" as const,
+    },
+  ];
 
   return (
     <Stack spacing="xs">
@@ -30,7 +47,11 @@ export const ChartData = ({ component, endpoints, dataType }: DataProps) => {
         }
       />
       {dataType === "static" && (
-        <ChartForm component={component} endpoints={endpoints} />
+        <FormFieldsBuilder
+          component={component}
+          fields={staticFields}
+          endpoints={endpoints!}
+        />
       )}
       {dataType === "dynamic" && (
         <DynamicSettings
