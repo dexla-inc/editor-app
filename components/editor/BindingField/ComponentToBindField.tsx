@@ -7,7 +7,7 @@ export const ComponentToBindField = {
   Text: (props: any) => (
     <TextInput {...props} onChange={(e) => props.onChange(e.target.value)} />
   ),
-  Array: MonacoEditorJson,
+  TextArea: MonacoEditorJson,
   YesNo: SegmentedControlYesNo,
   Boolean: SegmentedControlInput,
   Segmented: SegmentedControlInput,

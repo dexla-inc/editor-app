@@ -80,7 +80,7 @@ export type FieldType =
   | "Text"
   | "YesNo"
   | "Boolean"
-  | "Array"
+  | "TextArea"
   | "Number"
   | "Options"
   | "Select"

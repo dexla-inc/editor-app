@@ -18,12 +18,12 @@ export const ChartData = ({ component, endpoints, dataType }: DataProps) => {
   const staticFields = [
     {
       ...specialData,
-      fieldType: "Array" as const,
+      fieldType: "TextArea" as const,
     },
     {
       name: "series",
       label: "Data",
-      fieldType: "Array" as const,
+      fieldType: "TextArea" as const,
     },
   ];
 

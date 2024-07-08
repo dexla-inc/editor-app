@@ -1,5 +1,5 @@
 import { ComponentToBindWrapper } from "@/components/editor/BindingField/components/ComponentToBindWrapper";
-import { AUTOCOMPLETE_OFF_PROPS, safeJsonParse } from "@/utils/common";
+import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { FieldType, ValueProps } from "@/types/dataBinding";
 import {
   Button,
@@ -45,7 +45,7 @@ type FieldTypeProps<T extends FieldType> = BaseProps &
         ? Omit<SegmentedControlProps, "onChange" | "value">
         : T extends "Select"
           ? Omit<SelectProps, "onChange" | "value">
-          : T extends "Array"
+          : T extends "TextArea"
             ? Omit<EditorProps, "onChange" | "value">
             : {});
 
@@ -128,7 +128,7 @@ ComponentToBindFromInput.Text = function ComponentToBindFromTextInput() {
   );
 };
 
-ComponentToBindFromInput.Array = function ComponentToBindFromArray() {
+ComponentToBindFromInput.TextArea = function ComponentToBindFromArray() {
   const {
     staticValue,
     inputOnChange,
@@ -136,9 +136,9 @@ ComponentToBindFromInput.Array = function ComponentToBindFromArray() {
     isPageAction,
     label,
     ...defaultProps
-  } = useBindingField<"Array">();
+  } = useBindingField<"TextArea">();
   return (
-    <ComponentToBindField.Array
+    <ComponentToBindField.TextArea
       {...defaultProps}
       {...AUTOCOMPLETE_OFF_PROPS}
       value={JSON.stringify(staticValue || [])}
