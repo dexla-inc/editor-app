@@ -29,7 +29,9 @@ export const ChartData = ({ component, endpoints, dataType }: DataProps) => {
           })
         }
       />
-      {dataType === "static" && <ChartForm component={component} />}
+      {dataType === "static" && (
+        <ChartForm component={component} endpoints={endpoints} />
+      )}
       {dataType === "dynamic" && (
         <DynamicSettings
           component={component}

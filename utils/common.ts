@@ -2,6 +2,7 @@ import { FileWithPath } from "@mantine/dropzone";
 import { requiredModifiers } from "./modifiers";
 import { GRID_SIZE } from "./config";
 import { PagingModel } from "@/requests/types";
+import set from "lodash.set";
 
 export const convertToBase64 = (file: FileWithPath): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -390,3 +391,13 @@ export function isEmpty(value: any) {
   // Default case for other types
   return false;
 }
+
+export const unflattenObject = (obj: Record<string, any>) => {
+  const result: Record<string, any> = {};
+
+  Object.keys(obj).forEach((key) => {
+    set(result, key, obj[key]);
+  });
+
+  return result;
+};

@@ -9,6 +9,8 @@ import { FieldProps, ValueProps } from "@/types/dataBinding";
 import has from "lodash.has";
 import { useComponentStates } from "@/hooks/editor/useComponentStates";
 import { BindingField } from "@/components/editor/BindingField/BindingField";
+import { unflattenObject } from "@/utils/common";
+import get from "lodash.get";
 
 type Props = {
   fields: FieldProps[];
@@ -46,7 +48,9 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
 
   const onLoadFieldsStarter = fields.reduce(
     (acc, f) => {
-      let staticValue = component.onLoad?.[f.name]?.static;
+      const [keyFirst, ...keyRest] = f.name.split(".");
+      const keyPath = keyRest.join("?.");
+      let staticValue = get(component.onLoad, f.name)?.static;
 
       acc[f.name] = {
         static: {},
@@ -59,10 +63,10 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
               staticValue.en
             : // if no translation key was found but it has the dataType attr, it means it was set before
               // (for backwards compatibility when we had no language)
-              has(component.onLoad?.[f.name], "dataType")
+              has(component.onLoad?.[keyFirst]?.[keyPath], "dataType")
               ? staticValue
               : // otherwise, return the value from props
-                component.props?.[f.name] ?? f.defaultValue ?? "";
+                get(component.props, f.name, f.defaultValue ?? "");
         acc[f.name].static[lang] = value;
       });
 
@@ -75,7 +79,7 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
 
   const form = useForm({
     initialValues: {
-      onLoad: onLoadValues,
+      onLoad: unflattenObject(onLoadValues),
     },
   });
 
@@ -87,7 +91,7 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
   }, [form.values]);
 
   useEffect(() => {
-    form.setValues({ onLoad: onLoadValues });
+    form.setValues({ onLoad: unflattenObject(onLoadValues) });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [language]);
 

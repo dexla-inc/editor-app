@@ -76,6 +76,7 @@ const baseOptions: ApexOptions = {
 
 const ChartComponent = forwardRef(
   ({ renderTree, shareableContent, component, ...props }: Props, ref) => {
+    const mergedProps = merge({}, component.props, component.onLoad);
     const {
       children,
       series,
@@ -87,7 +88,7 @@ const ChartComponent = forwardRef(
       triggers,
       dataType = "static",
       ...componentProps
-    } = component.props as any;
+    } = mergedProps;
 
     const theme = useThemeStore((state) => state.theme);
     const isPieOrRadial =

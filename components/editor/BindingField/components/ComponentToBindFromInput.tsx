@@ -1,5 +1,5 @@
 import { ComponentToBindWrapper } from "@/components/editor/BindingField/components/ComponentToBindWrapper";
-import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
+import { AUTOCOMPLETE_OFF_PROPS, safeJsonParse } from "@/utils/common";
 import { FieldType, ValueProps } from "@/types/dataBinding";
 import {
   Button,
@@ -142,8 +142,8 @@ ComponentToBindFromInput.Array = function ComponentToBindFromArray() {
     <ComponentToBindField.Array
       {...defaultProps}
       {...AUTOCOMPLETE_OFF_PROPS}
-      value={staticValue?.toString()}
-      onChange={inputOnChange}
+      value={JSON.stringify(staticValue || [])}
+      onChange={(val) => inputOnChange(JSON.parse(val || ""))}
     />
   );
 };
