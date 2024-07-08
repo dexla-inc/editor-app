@@ -73,19 +73,11 @@ export async function performFetch(
 
     // SUPABASE ONLY, NEEDS REFACTORING
     const contentRange = response.headers.get("Content-Range");
-
+    
     if (!contentRange || contentRange.endsWith("/*")) return jsonResponse;
 
-    const pagingModel = extractPagingFromSupabase(contentRange);
+    return extractPagingFromSupabase<typeof jsonResponse>(contentRange, jsonResponse);
 
-    return {
-      results: jsonResponse,
-      paging: {
-        totalRecords: pagingModel.totalRecords,
-        recordsPerPage: pagingModel.recordsPerPage,
-        page: pagingModel.page,
-      },
-    };
   } catch (error) {
     console.error("Failed to parse JSON:", error);
     return null;

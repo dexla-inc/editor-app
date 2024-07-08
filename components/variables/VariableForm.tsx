@@ -48,6 +48,7 @@ export const VariableForm = ({ variableId }: Props) => {
   const { id: projectId } = useEditorParams();
   const { createVariablesMutation, updateVariablesMutation } =
     useVariableMutation(projectId);
+    
 
   const form = useForm<VariablesFormValues>({
     initialValues: {
@@ -188,7 +189,7 @@ export const VariableForm = ({ variableId }: Props) => {
               mah={400}
               sx={{ copy: { paddingTop: "20px" } }}
             >
-              {typeof form.values.value === "string"
+              {(typeof form.values.value === "string" || typeof form.values.value === "object")
                 ? safeJsonStringify(form.values.value)
                 : String(form.values.value)}
             </Prism>
