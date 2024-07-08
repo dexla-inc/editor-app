@@ -16,7 +16,6 @@ export const AsideComponent = () => {
       sx={{
         height: `calc(100% - ${HEADER_HEIGHT}px)`,
       }}
-      mah="91vh"
     >
       <MantineAside.Section grow component={ScrollArea}>
         <Box py="sm">
