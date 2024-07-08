@@ -59,6 +59,7 @@ export type Component = {
 } & ComponentBase;
 
 export type ComponentTree = {
+  blockDroppingChildrenInside?: boolean;
   children?: ComponentTree[];
 } & ComponentBase;
 

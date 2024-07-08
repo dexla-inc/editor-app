@@ -1,13 +1,11 @@
 import {
   DndContext,
   DragEndEvent,
-  DragMoveEvent,
   DragOverEvent,
   DragOverlay,
   DragStartEvent,
   DropAnimation,
   MeasuringStrategy,
-  Modifier,
   PointerSensor,
   UniqueIdentifier,
   closestCenter,
@@ -71,22 +69,11 @@ const dropAnimationConfig: DropAnimation = {
   },
 };
 
-const adjustTranslate: Modifier = ({ transform }) => {
-  return {
-    ...transform,
-    y: transform.y - 25,
-  };
-};
-
 interface Props {
   indentationWidth?: number;
-  indicator?: boolean;
 }
 
-export function NavbarLayersSection({
-  indicator = false,
-  indentationWidth = 10,
-}: Props) {
+export function NavbarLayersSection({ indentationWidth = 10 }: Props) {
   const updateTreeComponentAttrs = useEditorTreeStore(
     (state) => state.updateTreeComponentAttrs,
   );
@@ -129,8 +116,12 @@ export function NavbarLayersSection({
   const setTree = useEditorTreeStore((state) => state.setTree);
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
   const [overId, setOverId] = useState<UniqueIdentifier | null>(null);
+  const [offsetLeft, setOffsetLeft] = useState(0);
 
-  const projected = activeId && overId ? getProjection(list, overId) : null;
+  const projected =
+    activeId && overId
+      ? getProjection(list, activeId, overId, offsetLeft, indentationWidth)
+      : null;
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -152,14 +143,11 @@ export function NavbarLayersSection({
     setOverId(activeId);
   }
 
-  function handleDragMove({ activatorEvent }: DragMoveEvent) {
-    activatorEvent?.preventDefault();
-    activatorEvent?.stopPropagation();
+  function handleDragMove({ delta }: DragMoveEvent) {
+    setOffsetLeft(delta.x);
   }
 
   function handleDragOver({ over, activatorEvent }: DragOverEvent) {
-    activatorEvent?.preventDefault();
-    activatorEvent?.stopPropagation();
     setOverId(over?.id ?? null);
 
     if (activeId === over?.id) {
@@ -203,6 +191,7 @@ export function NavbarLayersSection({
 
   function resetState() {
     setOverId(null);
+    setOffsetLeft(0);
     setActiveId(null);
 
     document.body.style?.setProperty("cursor", "");
@@ -269,7 +258,6 @@ export function NavbarLayersSection({
                     : component.depth
                 }
                 indentationWidth={indentationWidth}
-                indicator={indicator}
                 collapsed={isCollapsed}
                 onCollapse={
                   (component.children ?? []).length
@@ -282,10 +270,7 @@ export function NavbarLayersSection({
         </List>
       </SortableContext>
       {createPortal(
-        <DragOverlay
-          dropAnimation={dropAnimationConfig}
-          modifiers={indicator ? [adjustTranslate] : undefined}
-        >
+        <DragOverlay dropAnimation={dropAnimationConfig}>
           {activeId && activeItem ? (
             <SortableTreeItem
               component={activeItem}
