@@ -18,17 +18,6 @@ export const ChartForm = ({
   const isPieOrRadial =
     component?.name === "PieChart" || component?.name === "RadialChart";
 
-  const { series, options } = pick(component.props!, ["series", "options"]);
-  const _dataLabels = isPieOrRadial
-    ? options?.labels
-    : options?.xaxis?.categories;
-
-  const form = useForm({
-    initialValues: merge({}, initialValues, {
-      data: JSON.stringify(series, null, 2),
-      dataLabels: JSON.stringify(_dataLabels, null, 2),
-    }),
-  });
   const specialData = isPieOrRadial
     ? { name: "options.labels", label: "Data Labels" }
     : { name: "options.xaxis.categories", label: "Data (x-axis)" };
