@@ -48,7 +48,7 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
 
   const onLoadFieldsStarter = fields.reduce(
     (acc, f) => {
-      // Require that I target the exact key in multiple levels case e.g. options.categories.x-axis
+      // Target the exact key in multiple levels case e.g. options.categories.x-axis
       const targetItem = get(component.onLoad, f.name, {});
       let staticValue = targetItem?.static;
 
@@ -79,6 +79,7 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
 
   const form = useForm({
     initialValues: {
+      // unflatten the object to make it compatible with the form. Keys such as options.labels are transformed to options: { labels: ... }
       onLoad: unflattenObject(onLoadValues),
     },
   });

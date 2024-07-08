@@ -392,6 +392,7 @@ export function isEmpty(value: any) {
   return false;
 }
 
+// Flatten an object to a single level. Keys like e.g options.label will be converted to options: {label: ...}
 export const unflattenObject = (obj: Record<string, any>) => {
   const result: Record<string, any> = {};
 
