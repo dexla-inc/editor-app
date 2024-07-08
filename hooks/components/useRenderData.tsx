@@ -2,6 +2,7 @@ import { Component, ComponentTree } from "@/utils/editor";
 import { useEndpoint } from "@/hooks/components/useEndpoint";
 import { Skeleton } from "@mantine/core";
 import { DataType } from "@/types/dataBinding";
+import { isEmpty } from "@/utils/common";
 
 type UseRenderDataProps = {
   component: Component & ComponentTree;
@@ -45,17 +46,18 @@ export const useRenderData = ({
       parentSuffix,
       currentComponentGroupId,
     }: RenderComponentProps) => {
+      // if (!Object.keys(data || {}).length) data = undefined;
       return renderTree(child, {
         ...shareableContent,
         // if data is undefined, we don't want to overwrite the data passed by a parent that is sharing data
-        ...(data && {
+        ...(!isEmpty(data) && {
           data,
           parentSuffix,
         }),
         // This is used by useComputeValue only in order to build the Item context
         relatedComponentsData: {
           ...(shareableContent?.relatedComponentsData ?? {}),
-          ...(data && { [currentComponentGroupId]: data }),
+          ...(!isEmpty(data) && { [currentComponentGroupId]: data }),
         },
       });
     };
