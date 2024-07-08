@@ -48,9 +48,9 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
 
   const onLoadFieldsStarter = fields.reduce(
     (acc, f) => {
-      const [keyFirst, ...keyRest] = f.name.split(".");
-      const keyPath = keyRest.join("?.");
-      let staticValue = get(component.onLoad, f.name)?.static;
+      // Require that I target the exact key in multiple levels case e.g. options.categories.x-axis
+      const targetItem = get(component.onLoad, f.name, {});
+      let staticValue = targetItem?.static;
 
       acc[f.name] = {
         static: {},
@@ -63,7 +63,7 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
               staticValue.en
             : // if no translation key was found but it has the dataType attr, it means it was set before
               // (for backwards compatibility when we had no language)
-              has(component.onLoad?.[keyFirst]?.[keyPath], "dataType")
+              has(targetItem, "dataType")
               ? staticValue
               : // otherwise, return the value from props
                 get(component.props, f.name, f.defaultValue ?? "");
