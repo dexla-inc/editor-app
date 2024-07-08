@@ -4,13 +4,14 @@ import { Component, debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { Group } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { FieldProps, ValueProps } from "@/types/dataBinding";
 import has from "lodash.has";
 import { useComponentStates } from "@/hooks/editor/useComponentStates";
 import { BindingField } from "@/components/editor/BindingField/BindingField";
 import { unflattenObject } from "@/utils/common";
 import get from "lodash.get";
+import isEqual from "lodash.isequal";
 
 type Props = {
   fields: FieldProps[];
@@ -70,7 +71,7 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
         acc[f.name].static[lang] = value;
       });
 
-      return acc;
+      return unflattenObject(acc);
     },
     {} as Record<string, ValueProps>,
   );
@@ -80,11 +81,12 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
   const form = useForm({
     initialValues: {
       // unflatten the object to make it compatible with the form. Keys such as options.labels are transformed to options: { labels: ... }
-      onLoad: unflattenObject(onLoadValues),
+      onLoad: onLoadValues,
     },
   });
 
   useEffect(() => {
+    if (isEqual(component.onLoad, form.values.onLoad)) return;
     if (form.isTouched()) {
       debouncedTreeComponentAttrsUpdate({ attrs: form.values });
     }
@@ -92,7 +94,7 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
   }, [form.values]);
 
   useEffect(() => {
-    form.setValues({ onLoad: unflattenObject(onLoadValues) });
+    form.setValues({ onLoad: onLoadValues });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [language]);
 
