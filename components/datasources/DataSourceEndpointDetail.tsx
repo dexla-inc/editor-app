@@ -46,10 +46,7 @@ import { AddRequestInput } from "./AddRequestInput";
 import { useEndpoints } from "@/hooks/editor/reactQuery/useDataSourcesEndpoints";
 import {
   constructHeaders,
-  performFetch,
-  prepareRequestData,
 } from "@/utils/actionsApi";
-import { readDataFromStream } from "@/utils/api";
 
 const MethodTypeArray: MethodTypes[] = [
   "GET",
@@ -435,7 +432,7 @@ export const DataSourceEndpointDetail = ({
         handleInputChange("errorExampleResponse", errorExampleResponse);
       } else {
         // If the result is an array, limit it to the first 2 items
-        let result = {};
+        let result: any = {};
 
         if (response.headers.get("content-type")?.includes("application/json"))
           result = await response.json();
@@ -444,16 +441,7 @@ export const DataSourceEndpointDetail = ({
         const contentRange = response.headers.get("Content-Range");
 
         if (contentRange && !contentRange.endsWith("/*")) {
-          const pagingModel = extractPagingFromSupabase(contentRange);
-
-          result = {
-            results: result,
-            paging: {
-              totalRecords: pagingModel.totalRecords,
-              recordsPerPage: pagingModel.recordsPerPage,
-              page: pagingModel.page,
-            },
-          };
+          result = extractPagingFromSupabase<typeof result>(contentRange, result);
         }
 
         let exampleResult = result;

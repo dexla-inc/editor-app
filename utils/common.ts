@@ -333,8 +333,8 @@ export const generateProjectSlugLink = (
   );
 };
 
-export function extractPagingFromSupabase(value: string): PagingModel {
-  const [rangePart, totalRecordsStr] = value.split("/");
+export function extractPagingFromSupabase<T>(contentRange: string, result: T): { results: T; paging: PagingModel } {
+  const [rangePart, totalRecordsStr] = contentRange.split("/");
   const [startStr, endStr] = rangePart.split("-");
 
   const totalRecords = parseInt(totalRecordsStr, 10);
@@ -344,10 +344,15 @@ export function extractPagingFromSupabase(value: string): PagingModel {
   const recordsPerPage = end - start + 1;
   const page = Math.floor(start / recordsPerPage) + 1;
 
-  return {
+  const pagingModel: PagingModel = {
     totalRecords: totalRecords,
     recordsPerPage: recordsPerPage,
     page: page,
+  };
+
+  return {
+    results: result,
+    paging: pagingModel,
   };
 }
 

@@ -7,7 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import get from "lodash.get";
 import { DataType } from "@/types/dataBinding";
 import { removeEmpty, toBase64 } from "@/utils/common";
-import { useEndpoints } from "../editor/reactQuery/useDataSourcesEndpoints";
+import { useEndpoints } from "@/hooks/editor/reactQuery/useDataSourcesEndpoints";
 
 type UseEndpointProps = {
   componentId: string;
