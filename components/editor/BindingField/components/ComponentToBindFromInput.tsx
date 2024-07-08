@@ -269,8 +269,13 @@ ComponentToBindFromInput.Number = function ComponentToBindFromNumber() {
 ComponentToBindFromInput.Options = function ComponentToBindFromOptions() {
   const { form, isTranslatable } = useBindingField<"Options">();
   const language = useEditorTreeStore((state) => state.language);
+
+  const staticValue = isTranslatable
+    ? form.values.onLoad.data.static[language]
+    : form.values.onLoad.data.static;
+
   return (
-    <Stack style={{ gap: 0, width: "100%" }}>
+    <Stack w="100%" spacing={0}>
       <div>
         <Button
           type="button"
@@ -278,6 +283,11 @@ ComponentToBindFromInput.Options = function ComponentToBindFromOptions() {
           onClick={() => {
             const fieldNamePrefix =
               "onLoad.data.static" + (isTranslatable ? `.${language}` : "");
+
+            if (typeof staticValue === "string") {
+              form.setFieldValue(fieldNamePrefix, []);
+            }
+
             form.insertListItem(fieldNamePrefix, {
               label: "",
               value: "",
@@ -291,42 +301,40 @@ ComponentToBindFromInput.Options = function ComponentToBindFromOptions() {
         </Button>
       </div>
 
-      <Flex direction="column" gap="10px" mt="10px">
-        {(
-          (isTranslatable
-            ? form.values.onLoad.data.static[language]
-            : form.values.onLoad.data.static) ?? []
-        )?.map((_: SelectProps, index: number) => {
-          const fieldNamePrefix =
-            "onLoad.data.static" + (isTranslatable ? `.${language}` : "");
-          return (
-            <Group key={index} style={{ flexWrap: "nowrap" }}>
-              <TextInput
-                size="xs"
-                placeholder="label"
-                {...form.getInputProps(`${fieldNamePrefix}.${index}.label`)}
-                style={{ width: "50%" }}
-                {...AUTOCOMPLETE_OFF_PROPS}
-              />
-              <TextInput
-                size="xs"
-                placeholder="value"
-                {...form.getInputProps(`${fieldNamePrefix}.${index}.value`)}
-                style={{ width: "50%" }}
-                {...AUTOCOMPLETE_OFF_PROPS}
-              />
+      {!!staticValue.length && (
+        <Stack spacing="10px" mt="10px">
+          {(staticValue || [])?.map((_: SelectProps, index: number) => {
+            const fieldNamePrefix =
+              "onLoad.data.static" + (isTranslatable ? `.${language}` : "");
+            return (
+              <Group key={index} style={{ flexWrap: "nowrap" }}>
+                <TextInput
+                  size="xs"
+                  placeholder="label"
+                  {...form.getInputProps(`${fieldNamePrefix}.${index}.label`)}
+                  style={{ width: "50%" }}
+                  {...AUTOCOMPLETE_OFF_PROPS}
+                />
+                <TextInput
+                  size="xs"
+                  placeholder="value"
+                  {...form.getInputProps(`${fieldNamePrefix}.${index}.value`)}
+                  style={{ width: "50%" }}
+                  {...AUTOCOMPLETE_OFF_PROPS}
+                />
 
-              <Icon
-                name={ICON_DELETE}
-                onClick={() => {
-                  form.removeListItem(fieldNamePrefix, index);
-                }}
-                style={{ cursor: "pointer" }}
-              />
-            </Group>
-          );
-        })}
-      </Flex>
+                <Icon
+                  name={ICON_DELETE}
+                  onClick={() => {
+                    form.removeListItem(fieldNamePrefix, index);
+                  }}
+                  style={{ cursor: "pointer" }}
+                />
+              </Group>
+            );
+          })}
+        </Stack>
+      )}
     </Stack>
   );
 };
