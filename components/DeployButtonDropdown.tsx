@@ -21,6 +21,7 @@ import {
   Tooltip,
   ActionIcon,
   Button,
+  Loader,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { Icon } from "./Icon";
@@ -28,7 +29,11 @@ import { useProjectQuery } from "@/hooks/editor/reactQuery/useProjectQuery";
 
 export const DeployButtonDropdown = () => {
   const { id: projectId, page } = useEditorParams();
-  const { data: deployments, invalidate } = useDeploymentRecent(projectId);
+  const {
+    data: deployments,
+    isLoading,
+    invalidate,
+  } = useDeploymentRecent(projectId);
   // TODO: Backend add pages to deployments without state
   const { data: pageListQuery, isFetched } = usePageListQuery(projectId, null);
   const theme = useMantineTheme();
@@ -141,7 +146,9 @@ export const DeployButtonDropdown = () => {
     }
   }, [pageListQuery, isFetched, page]);
 
-  return (
+  return isLoading ? (
+    <Loader />
+  ) : (
     <Box>
       {deploymentsByEnvironment?.map((deployment, index) => {
         const deployUrl = getDeployHref(
