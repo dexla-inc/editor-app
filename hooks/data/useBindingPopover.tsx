@@ -19,19 +19,28 @@ import { useEndpoints } from "../editor/reactQuery/useDataSourcesEndpoints";
 import { useOldRouter } from "@/hooks/data/useOldRouter";
 import { useDataBinding } from "@/hooks/data/useDataBinding";
 import { useBindingField } from "@/components/editor/BindingField/components/ComponentToBindFromInput";
+import { getAllComponentsByName } from "@/utils/editor";
 
 type BindType = {
   selectedEntityId: string;
   entity: ContextType;
 };
-
-const parseVariableValue = (value: string): any => {
-  try {
-    return JSON.parse(value);
-  } catch (_) {
-    return value;
-  }
-};
+const inputComponentNames = [
+  "Input",
+  "Select",
+  "CheckboxGroup",
+  "Checkbox",
+  "CheckboxItem",
+  "Radio",
+  "RadioItem",
+  "Switch",
+  "DateInput",
+  "Textarea",
+  "Autocomplete",
+  "FileUpload",
+  "FileButton",
+  "Rating",
+];
 
 const setEntityString = ({ selectedEntityId, entity }: BindType) => {
   const [entityKey, ...entityId] = selectedEntityId.split(".");
@@ -65,12 +74,39 @@ export const useBindingPopover = () => {
   const event = useEventData();
 
   const components = useEditorTreeStore(
-    useShallow((state) =>
-      Object.entries(inputsStore).reduce(
+    useShallow((state) => {
+      const allInputs = getAllComponentsByName(
+        state.tree.root,
+        inputComponentNames,
+      ).sort((a, b) => a.description.localeCompare(b.description));
+
+      // reading all inputs from the tree
+      const treeInputs = allInputs.reduce(
+        (acc, comp) => {
+          const { id, description } = comp ?? {};
+
+          acc.list[id] = {
+            id,
+            name: description,
+            description,
+            value: inputsStore[id],
+          };
+          acc[id] = inputsStore[id];
+
+          return acc;
+        },
+        { list: {} } as Record<string, any>,
+      );
+
+      // reading the inputStore, as this should be the source of truth
+      return Object.entries(inputsStore).reduce(
         (acc, [componentGroupId, value]) => {
           const [componentId, groupId] = componentGroupId.split("-related-");
           const { description } =
             state.componentMutableAttrs[componentId] ?? {};
+
+          // this line replaces fields that were supposed to be repeatable
+          delete componentId[componentId];
 
           acc.list[componentGroupId] = {
             id: componentGroupId,
@@ -82,9 +118,9 @@ export const useBindingPopover = () => {
 
           return acc;
         },
-        { list: {} } as Record<string, any>,
-      ),
-    ),
+        treeInputs,
+      );
+    }),
   );
 
   const variables = variablesList.reduce(
@@ -92,7 +128,7 @@ export const useBindingPopover = () => {
       let value = variable.value ?? variable.defaultValue ?? "";
       const parsedValue =
         ["ARRAY", "OBJECT"].includes(variable.type) && typeof value === "string"
-          ? parseVariableValue(value)
+          ? safeJsonParse(value)
           : value;
 
       acc.list[variable.id] = variable;
