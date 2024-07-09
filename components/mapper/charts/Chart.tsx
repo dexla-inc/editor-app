@@ -227,7 +227,7 @@ const ChartComponent = forwardRef(
     } catch {
       return (
         <Skeleton visible={isLoading} id={component.id}>
-          <Box ref={ref} />
+          <Box />
         </Skeleton>
       );
     }
