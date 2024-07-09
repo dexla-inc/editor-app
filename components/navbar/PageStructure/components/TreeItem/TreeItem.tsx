@@ -3,7 +3,6 @@ import React, {
   forwardRef,
   HTMLAttributes,
   KeyboardEvent,
-  useEffect,
   useRef,
 } from "react";
 
@@ -84,7 +83,6 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
     },
     ref,
   ) => {
-    const customRef = useRef<HTMLDivElement>(null!);
     const theme = useMantineTheme();
     const [editable, { toggle: toggleEdit, close: closeEdit }] =
       useDisclosure(false);
@@ -161,18 +159,6 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
 
     const icon = structureMapper[component.name as string]?.icon;
 
-    // useEffect(() => {
-    //   const isRootOrContentWrapper = id === "root" || id === "content-wrapper";
-    //   if (isSelected && !isRootOrContentWrapper) {
-    //     customRef.current?.scrollIntoView({
-    //       behavior: "smooth",
-    //       block: "center",
-    //     });
-    //   }
-    //
-    //   // eslint-disable-next-line react-hooks/exhaustive-deps
-    // }, [isSelected]);
-
     return (
       <li
         className={classNames(
@@ -220,7 +206,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
           }}
           {...handleProps}
         >
-          <Group position="apart" noWrap w="100%" ref={customRef}>
+          <Group position="apart" noWrap w="100%">
             <Group
               spacing={4}
               noWrap
