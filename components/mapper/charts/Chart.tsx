@@ -201,7 +201,7 @@ const ChartComponent = forwardRef(
       );
 
       Object.assign(customOptions, dynamicOptions);
-      console.log(customOptions);
+
       return (
         <Skeleton visible={isLoading} id={component.id}>
           <Box

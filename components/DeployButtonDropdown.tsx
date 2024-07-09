@@ -111,10 +111,7 @@ export const DeployButtonDropdown = () => {
     }
   };
 
-  const promote = async (
-    project: ProjectResponse,
-    environment: EnvironmentTypes,
-  ) => {
+  const promote = async (project: ProjectResponse) => {
     try {
       startLoading({
         id: "deploy",
@@ -122,7 +119,7 @@ export const DeployButtonDropdown = () => {
         message: "Promoting your app to Production...",
       });
 
-      const deployHost = getDeployHost(project, environment, slug);
+      const deployHost = getDeployHost(project, "Production", slug);
 
       await promoteDeployment(projectId, deployHost ?? "");
       invalidate();
@@ -223,9 +220,7 @@ export const DeployButtonDropdown = () => {
               </Button>
               {deployment.environment === "Staging" && (
                 <Button
-                  onClick={() =>
-                    promote(deployment.project!, deployment.environment)
-                  }
+                  onClick={() => promote(deployment.project!)}
                   leftIcon={<Icon name="IconRocket" />}
                   variant="outline"
                   disabled={!deployment.canPromote}
