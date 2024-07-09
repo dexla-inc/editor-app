@@ -21,6 +21,7 @@ import {
   Tooltip,
   ActionIcon,
   Button,
+  Loader,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { Icon } from "./Icon";
@@ -28,14 +29,23 @@ import { useProjectQuery } from "@/hooks/editor/reactQuery/useProjectQuery";
 
 export const DeployButtonDropdown = () => {
   const { id: projectId, page } = useEditorParams();
-  const { data: deployments, invalidate } = useDeploymentRecent(projectId);
+  const {
+    data: deployments,
+    isLoading,
+    invalidate,
+  } = useDeploymentRecent(projectId);
   // TODO: Backend add pages to deployments without state
   const { data: pageListQuery, isFetched } = usePageListQuery(projectId, null);
   const theme = useMantineTheme();
 
-  const { startLoading, stopLoading } = useAppStore((state) => ({
+  const {
+    startLoading,
+    stopLoading,
+    isLoading: globalLoading,
+  } = useAppStore((state) => ({
     startLoading: state.startLoading,
     stopLoading: state.stopLoading,
+    isLoading: state.isLoading,
   }));
 
   const [shouldFetchProject, setShouldFetchProject] = useState<boolean>(false);
@@ -141,7 +151,9 @@ export const DeployButtonDropdown = () => {
     }
   }, [pageListQuery, isFetched, page]);
 
-  return (
+  return isLoading ? (
+    <Loader />
+  ) : (
     <Box>
       {deploymentsByEnvironment?.map((deployment, index) => {
         const deployUrl = getDeployHref(
@@ -200,6 +212,7 @@ export const DeployButtonDropdown = () => {
                   handleDeploy(deployment.project!, deployment.environment)
                 }
                 leftIcon={<Icon name="IconRocket" />}
+                loading={globalLoading}
               >
                 Deploy
               </Button>
@@ -209,6 +222,7 @@ export const DeployButtonDropdown = () => {
                   leftIcon={<Icon name="IconRocket" />}
                   variant="outline"
                   disabled={!deployment.canPromote}
+                  loading={globalLoading}
                 >
                   Promote
                 </Button>
