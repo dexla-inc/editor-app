@@ -26,14 +26,17 @@ export const createDeployment = async (
   return response;
 };
 
-export const promoteDeployment = async (projectId: string) => {
+export const promoteDeployment = async (projectId: string, hostUrl: string) => {
   const response = (await post<DeploymentResponse>(
     `/projects/${projectId}/deployments/promote`,
     {},
   )) as DeploymentResponse;
 
-  const cacheTag = getCacheTag(projectId);
+  const cacheTag = getCacheTag(hostUrl);
+  const projectIdCacheTag = getCacheTag(projectId);
+
   await evictCache(cacheTag);
+  await evictCache(projectIdCacheTag);
 
   return response;
 };
