@@ -36,7 +36,7 @@ import {
 } from "@/components/navbar/PageStructure/utilities";
 import { CSS } from "@dnd-kit/utilities";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import List from "rc-virtual-list";
+import List, { ListRef } from "rc-virtual-list";
 import { cloneObject } from "@/utils/common";
 import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 import { useEditorStore } from "@/stores/editor";
@@ -131,10 +131,12 @@ export function NavbarLayersSection({ indentationWidth = 10 }: Props) {
   }, [flattenedItems]);
 
   useEffect(() => {
-    listRef.current.scrollTo({
-      index: scrollIndex,
-      align: "center",
-    });
+    if (listRef && scrollIndex !== undefined) {
+      listRef.current?.scrollTo({
+        index: scrollIndex,
+        align: "top",
+      });
+    }
   }, [scrollIndex]);
 
   useEffect(() => {
@@ -202,12 +204,13 @@ export function NavbarLayersSection({ indentationWidth = 10 }: Props) {
     resetState();
 
     if (projected && over) {
-      const { tree } = useEditorTreeStore.getState();
+      const { tree, componentMutableAttrs } = useEditorTreeStore.getState();
       const editorTreeCopy = cloneObject(tree);
       const { depth, parentId } = projected;
       // flattenedItems is just representative, where we really want to move items is the actual tree with uncollapsed items
       const clonedItems: FlattenedItem[] = flattenTree(
         editorTreeCopy.root.children as TreeItems,
+        componentMutableAttrs,
         false,
       );
       const overIndex = clonedItems.findIndex(({ id }) => id === over.id);

@@ -102,6 +102,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
           display: c?.props?.style?.display,
           description: c?.description,
           name: c?.name,
+          // @ts-ignore
           collapsed: c?.collapsed === true || c?.collapsed === undefined,
           onLoad: {
             endpointId: c?.onLoad?.endpointId,
