@@ -91,13 +91,6 @@ export function NavbarLayersSection({ indentationWidth = 10 }: Props) {
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
   const [overId, setOverId] = useState<UniqueIdentifier | null>(null);
   const [offsetLeft, setOffsetLeft] = useState(0);
-  const [list, setList] = useState<FlattenedItem[]>([]);
-
-  useEffect(() => {
-    startTransition(() => {
-      setList(flattenedItems);
-    });
-  }, [flattenedItems]);
 
   useEffect(() => {
     const expandedIds = updateCollapseState(
@@ -121,10 +114,12 @@ export function NavbarLayersSection({ indentationWidth = 10 }: Props) {
       (component) => component.id === selectedComponentId,
     );
     if (scrollIndex !== newScrollIndex) {
-      setScrollIndex(newScrollIndex);
+      setTimeout(() => {
+        setScrollIndex(newScrollIndex);
+      }, 100);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponentId, flattenedItems]);
+  }, [flattenedItems]);
 
   useEffect(() => {
     listRef.current.scrollTo({
@@ -146,7 +141,13 @@ export function NavbarLayersSection({ indentationWidth = 10 }: Props) {
 
   const projected =
     activeId && overId
-      ? getProjection(list, activeId, overId, offsetLeft, indentationWidth)
+      ? getProjection(
+          flattenedItems,
+          activeId,
+          overId,
+          offsetLeft,
+          indentationWidth,
+        )
       : null;
 
   const sensors = useSensors(
@@ -157,9 +158,14 @@ export function NavbarLayersSection({ indentationWidth = 10 }: Props) {
     }),
   );
 
-  const sortedIds = useMemo(() => list.map(({ id }) => id), [list]);
+  const sortedIds = useMemo(
+    () => flattenedItems.map(({ id }) => id),
+    [flattenedItems],
+  );
 
-  const activeItem = activeId ? list.find(({ id }) => id === activeId) : null;
+  const activeItem = activeId
+    ? flattenedItems.find(({ id }) => id === activeId)
+    : null;
 
   function handleDragStart(e: DragStartEvent) {
     const {
@@ -173,7 +179,7 @@ export function NavbarLayersSection({ indentationWidth = 10 }: Props) {
     setOffsetLeft(delta.x);
   }
 
-  function handleDragOver({ over, activatorEvent }: DragOverEvent) {
+  function handleDragOver({ over }: DragOverEvent) {
     setOverId(over?.id ?? null);
 
     if (activeId === over?.id) {
@@ -268,7 +274,7 @@ export function NavbarLayersSection({ indentationWidth = 10 }: Props) {
         strategy={verticalListSortingStrategy}
       >
         <List
-          data={list}
+          data={flattenedItems}
           itemKey="id"
           itemHeight={30}
           height={790}
