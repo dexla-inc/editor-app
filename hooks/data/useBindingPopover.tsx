@@ -78,12 +78,13 @@ export const useBindingPopover = () => {
       const allInputs = getAllComponentsByName(
         state.tree.root,
         inputComponentNames,
-      ).sort((a, b) => a.description.localeCompare(b.description));
+        // @ts-ignore
+      ).sort((a, b) => a?.description?.localeCompare(b?.description));
 
       // reading all inputs from the tree
       const treeInputs = allInputs.reduce(
         (acc, comp) => {
-          const { id, description } = comp ?? {};
+          const { id = "", description } = comp ?? {};
 
           acc.list[id] = {
             id,
@@ -106,7 +107,8 @@ export const useBindingPopover = () => {
             state.componentMutableAttrs[componentId] ?? {};
 
           // this line replaces fields that were supposed to be repeatable
-          delete componentId[componentId];
+          delete acc[componentId];
+          delete acc.list[componentId];
 
           acc.list[componentGroupId] = {
             id: componentGroupId,
