@@ -11,6 +11,7 @@ import { Box, Skeleton } from "@mantine/core";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { forwardRef, memo, useMemo } from "react";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { safeJsonParse } from "@/utils/common";
 
 const ReactApexChart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
@@ -76,6 +77,8 @@ const baseOptions: ApexOptions = {
 
 const ChartComponent = forwardRef(
   ({ renderTree, shareableContent, component, ...props }: Props, ref) => {
+    const mergedProps = merge({}, component.props, component.onLoad);
+
     const {
       children,
       series,
@@ -87,7 +90,7 @@ const ChartComponent = forwardRef(
       triggers,
       dataType = "static",
       ...componentProps
-    } = component.props as any;
+    } = mergedProps;
 
     const theme = useThemeStore((state) => state.theme);
     const isPieOrRadial =
@@ -153,66 +156,81 @@ const ChartComponent = forwardRef(
       }
     }
 
-    const customOptions = useMemo(
-      () =>
-        merge(
-          {},
-          baseOptions,
-          {
-            colors,
-            chart: { ...baseOptions.chart, foreColor: _foreColor },
-            grid: {
-              ...baseOptions.grid,
-              borderColor: theme.fn.lighten(_foreColor, 0.2),
+    try {
+      const customOptions = useMemo(
+        () =>
+          merge(
+            {},
+            baseOptions,
+            {
+              colors,
+              chart: { ...baseOptions.chart, foreColor: _foreColor },
+              grid: {
+                ...baseOptions.grid,
+                borderColor: theme.fn.lighten(_foreColor, 0.2),
+              },
+              markers: {
+                ...baseOptions.markers,
+                strokeColors: theme.colors.gray[0],
+              },
+              legend: {
+                ...baseOptions.legend,
+                show:
+                  type !== "radialBar" && safeJsonParse(dataSeries)?.length > 0,
+                labels: { colors: _labelColor },
+              },
             },
-            markers: {
-              ...baseOptions.markers,
-              strokeColors: theme.colors.gray[0],
+            {
+              xaxis: {
+                categories: safeJsonParse(get(options, "xaxis.categories", "")),
+              },
+              labels: safeJsonParse(options?.labels) ?? [],
             },
-            legend: {
-              ...baseOptions.legend,
-              show: type !== "radialBar" && dataSeries?.length > 0,
-              labels: { colors: _labelColor },
-            },
-          },
+            dynamicOptions,
+          ),
+        [
+          colors,
+          _foreColor,
+          _labelColor,
           options,
           dynamicOptions,
-        ),
-      [
-        colors,
-        _foreColor,
-        _labelColor,
-        options,
-        dynamicOptions,
-        theme,
-        type,
-        dataSeries,
-      ],
-    );
+          theme,
+          type,
+          dataSeries,
+        ],
+      );
 
-    Object.assign(customOptions, dynamicOptions);
-
-    return (
-      <Skeleton visible={isLoading} id={component.id}>
-        <Box
-          component={ReactApexChart}
-          {...omit(props, ["id"])}
-          {...componentProps}
-          {...triggers}
-          series={dataSeries}
-          style={{
-            ...(props.style ?? {}),
-            textAlign: "center",
-            padding: 0,
-            color: theme.colors.gray[8],
-          }}
-          type={type}
-          options={customOptions}
-          width={componentProps.style?.width ?? "100%"}
-          height={componentProps.style?.height ?? 320}
-        />
-      </Skeleton>
-    );
+      Object.assign(customOptions, dynamicOptions);
+      console.log(customOptions);
+      return (
+        <Skeleton visible={isLoading} id={component.id}>
+          <Box
+            ref={ref}
+            component={ReactApexChart}
+            {...omit(props, ["id"])}
+            {...componentProps}
+            {...triggers}
+            series={safeJsonParse(dataSeries)}
+            style={{
+              ...(props.style ?? {}),
+              textAlign: "center",
+              padding: 0,
+              color: theme.colors.gray[8],
+            }}
+            type={type}
+            options={customOptions}
+            width={componentProps.style?.width ?? "100%"}
+            height={componentProps.style?.height ?? 320}
+          />
+        </Skeleton>
+      );
+    } catch {
+      return (
+        <Skeleton visible={isLoading} id={component.id}>
+          <Box />
+        </Skeleton>
+      );
+    }
   },
 );
 

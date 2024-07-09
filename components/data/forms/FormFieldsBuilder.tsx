@@ -4,11 +4,13 @@ import { Component, debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { Group } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { FieldProps, ValueProps } from "@/types/dataBinding";
 import has from "lodash.has";
 import { useComponentStates } from "@/hooks/editor/useComponentStates";
 import { BindingField } from "@/components/editor/BindingField/BindingField";
+import get from "lodash.get";
+import set from "lodash.set";
 
 type Props = {
   fields: FieldProps[];
@@ -46,11 +48,11 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
 
   const onLoadFieldsStarter = fields.reduce(
     (acc, f) => {
-      let staticValue = component.onLoad?.[f.name]?.static;
+      // Target the exact key in multiple levels case e.g. options.categories.x-axis
+      const targetItem = get(component.onLoad, f.name, {});
+      let staticValue = targetItem?.static;
 
-      acc[f.name] = {
-        static: {},
-      };
+      set(acc, f.name, { static: {} });
       ["en", language].forEach((lang) => {
         const value = has(staticValue, lang)
           ? staticValue[lang]
@@ -59,11 +61,11 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
               staticValue.en
             : // if no translation key was found but it has the dataType attr, it means it was set before
               // (for backwards compatibility when we had no language)
-              has(component.onLoad?.[f.name], "dataType")
+              has(targetItem, "dataType")
               ? staticValue
               : // otherwise, return the value from props
-                component.props?.[f.name] ?? f.defaultValue ?? "";
-        acc[f.name].static[lang] = value;
+                get(component.props, f.name, f.defaultValue ?? "");
+        set(acc, `${f.name}.static.${lang}`, value);
       });
 
       return acc;

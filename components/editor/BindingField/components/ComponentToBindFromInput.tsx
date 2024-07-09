@@ -3,7 +3,6 @@ import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { FieldType, ValueProps } from "@/types/dataBinding";
 import {
   Button,
-  Flex,
   Group,
   NumberInputProps,
   SegmentedControlProps,
@@ -46,7 +45,7 @@ type FieldTypeProps<T extends FieldType> = BaseProps &
         ? Omit<SegmentedControlProps, "onChange" | "value">
         : T extends "Select"
           ? Omit<SelectProps, "onChange" | "value">
-          : T extends "Array"
+          : T extends "TextArea"
             ? Omit<EditorProps, "onChange" | "value">
             : {});
 
@@ -94,6 +93,7 @@ export const ComponentToBindFromInput = <T extends FieldType>(
       dataType: "static",
       static: restProps.isTranslatable ? { [language]: val } : val,
     });
+
     restProps.onChange(newValue);
   };
 
@@ -129,7 +129,7 @@ ComponentToBindFromInput.Text = function ComponentToBindFromTextInput() {
   );
 };
 
-ComponentToBindFromInput.Array = function ComponentToBindFromArray() {
+ComponentToBindFromInput.TextArea = function ComponentToBindFromTextArea() {
   const {
     staticValue,
     inputOnChange,
@@ -137,12 +137,15 @@ ComponentToBindFromInput.Array = function ComponentToBindFromArray() {
     isPageAction,
     label,
     ...defaultProps
-  } = useBindingField<"Array">();
+  } = useBindingField<"TextArea">();
+  const value =
+    typeof staticValue === "string" ? staticValue : JSON.stringify(staticValue);
+
   return (
-    <ComponentToBindField.Array
+    <ComponentToBindField.TextArea
       {...defaultProps}
       {...AUTOCOMPLETE_OFF_PROPS}
-      value={staticValue?.toString()}
+      value={value}
       onChange={inputOnChange}
     />
   );
