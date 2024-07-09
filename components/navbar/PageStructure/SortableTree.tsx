@@ -134,7 +134,7 @@ export function NavbarLayersSection({ indentationWidth = 10 }: Props) {
     if (listRef && scrollIndex !== undefined) {
       listRef.current?.scrollTo({
         index: scrollIndex,
-        align: "top",
+        align: "auto",
       });
     }
   }, [scrollIndex]);
