@@ -93,6 +93,7 @@ export const ComponentToBindFromInput = <T extends FieldType>(
       dataType: "static",
       static: restProps.isTranslatable ? { [language]: val } : val,
     });
+
     restProps.onChange(newValue);
   };
 
@@ -128,7 +129,7 @@ ComponentToBindFromInput.Text = function ComponentToBindFromTextInput() {
   );
 };
 
-ComponentToBindFromInput.TextArea = function ComponentToBindFromArray() {
+ComponentToBindFromInput.TextArea = function ComponentToBindFromTextArea() {
   const {
     staticValue,
     inputOnChange,
@@ -137,12 +138,15 @@ ComponentToBindFromInput.TextArea = function ComponentToBindFromArray() {
     label,
     ...defaultProps
   } = useBindingField<"TextArea">();
+  const value =
+    typeof staticValue === "string" ? staticValue : JSON.stringify(staticValue);
+
   return (
     <ComponentToBindField.TextArea
       {...defaultProps}
       {...AUTOCOMPLETE_OFF_PROPS}
-      value={JSON.stringify(staticValue || [])}
-      onChange={(val) => inputOnChange(JSON.parse(val || ""))}
+      value={value}
+      onChange={inputOnChange}
     />
   );
 };

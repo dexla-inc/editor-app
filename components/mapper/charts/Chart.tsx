@@ -18,6 +18,14 @@ const ReactApexChart = dynamic(() => import("react-apexcharts"), {
 
 type Props = EditableComponentMapper;
 
+const jsonParseOrEmpty = (val: string) => {
+  try {
+    return JSON.parse(val);
+  } catch {
+    return [];
+  }
+};
+
 export const getChartColor = (
   theme: MantineThemeExtended,
   color: string,
@@ -76,7 +84,8 @@ const baseOptions: ApexOptions = {
 
 const ChartComponent = forwardRef(
   ({ renderTree, shareableContent, component, ...props }: Props, ref) => {
-    const mergedProps = merge({}, component.props, component.onLoad);
+    const mergedProps = Object.assign({}, component.props, component.onLoad);
+
     const {
       children,
       series,
@@ -172,11 +181,15 @@ const ChartComponent = forwardRef(
             },
             legend: {
               ...baseOptions.legend,
-              show: type !== "radialBar" && dataSeries?.length > 0,
+              show:
+                type !== "radialBar" &&
+                jsonParseOrEmpty(dataSeries)?.length > 0,
               labels: { colors: _labelColor },
             },
           },
-          options,
+          {
+            xaxis: { categories: jsonParseOrEmpty(options.xaxis.categories) },
+          },
           dynamicOptions,
         ),
       [
@@ -200,7 +213,7 @@ const ChartComponent = forwardRef(
           {...omit(props, ["id"])}
           {...componentProps}
           {...triggers}
-          series={dataSeries}
+          series={jsonParseOrEmpty(dataSeries)}
           style={{
             ...(props.style ?? {}),
             textAlign: "center",

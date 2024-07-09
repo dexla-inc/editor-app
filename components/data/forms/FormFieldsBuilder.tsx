@@ -10,7 +10,6 @@ import has from "lodash.has";
 import { useComponentStates } from "@/hooks/editor/useComponentStates";
 import { BindingField } from "@/components/editor/BindingField/BindingField";
 import get from "lodash.get";
-import isEqual from "lodash.isequal";
 import set from "lodash.set";
 
 type Props = {
@@ -83,7 +82,6 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
   });
 
   useEffect(() => {
-    if (isEqual(component.onLoad, form.values.onLoad)) return;
     if (form.isTouched()) {
       debouncedTreeComponentAttrsUpdate({ attrs: form.values });
     }
