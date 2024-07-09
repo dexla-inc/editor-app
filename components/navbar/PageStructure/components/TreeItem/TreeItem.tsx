@@ -46,7 +46,6 @@ export interface Props extends Omit<HTMLAttributes<HTMLLIElement>, "id"> {
   id: any;
   childCount?: number;
   clone?: boolean;
-  collapsed?: boolean;
   depth: number;
   disableInteraction?: boolean;
   disableSelection?: boolean;
@@ -72,7 +71,6 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
       handleProps,
       indentationWidth,
       indicator,
-      collapsed,
       onCollapse,
       onRemove,
       style,
@@ -104,6 +102,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
           display: c?.props?.style?.display,
           description: c?.description,
           name: c?.name,
+          collapsed: c?.collapsed === true || c?.collapsed === undefined,
           onLoad: {
             endpointId: c?.onLoad?.endpointId,
             isVisible: c?.onLoad?.isVisible,
@@ -233,7 +232,9 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
                     size={ICON_SIZE}
                     style={{
                       transition: "transform 200ms ease",
-                      transform: !collapsed ? "none" : "rotate(-90deg)",
+                      transform: !component.collapsed
+                        ? "none"
+                        : "rotate(-90deg)",
                     }}
                   />
                 </ActionIcon>

@@ -40,6 +40,7 @@ import List from "rc-virtual-list";
 import { cloneObject } from "@/utils/common";
 import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 import { useEditorStore } from "@/stores/editor";
+import { useShallow } from "zustand/react/shallow";
 
 const measuring = {
   droppable: {
@@ -83,7 +84,15 @@ export function NavbarLayersSection({ indentationWidth = 10 }: Props) {
   const isStructureCollapsed = useEditorStore(
     (state) => state.isStructureCollapsed,
   );
-  const flattenedItems = flattenTree(editorTree.children as TreeItems, true);
+  const flattenedItems = useEditorTreeStore(
+    useShallow((state) => {
+      return flattenTree(
+        state.tree.root.children as TreeItems,
+        state.componentMutableAttrs,
+        true,
+      );
+    }),
+  );
   const listRef = useRef<ListRef>(null);
   const [scrollIndex, setScrollIndex] = useState<number>();
   const [, startTransition] = useTransition();
@@ -256,6 +265,7 @@ export function NavbarLayersSection({ indentationWidth = 10 }: Props) {
     return () => {
       clearTimeout(timeout);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [overId]);
 
   return (
@@ -281,10 +291,6 @@ export function NavbarLayersSection({ indentationWidth = 10 }: Props) {
           ref={listRef}
         >
           {(component) => {
-            const isCollapsed =
-              component?.collapsed === true ||
-              component?.collapsed === undefined;
-
             return (
               <SortableTreeItem
                 component={component}
@@ -296,7 +302,6 @@ export function NavbarLayersSection({ indentationWidth = 10 }: Props) {
                     : component.depth
                 }
                 indentationWidth={indentationWidth}
-                collapsed={isCollapsed}
                 onCollapse={
                   (component.children ?? []).length
                     ? () => handleCollapse(component.id!)

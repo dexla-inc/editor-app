@@ -158,10 +158,9 @@ function flatten(
 
 export function flattenTree(
   items: TreeItems,
+  componentMutableAttrs: any,
   skipChildren: boolean,
 ): FlattenedItem[] {
-  const componentMutableAttrs =
-    useEditorTreeStore.getState().componentMutableAttrs;
   return flatten(items, componentMutableAttrs, skipChildren);
 }
 
