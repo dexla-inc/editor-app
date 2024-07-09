@@ -256,7 +256,7 @@ const ComponentToolboxInner = ({ component }: Props) => {
         )}
       </Group>
     </>,
-    iframeWindow?.document?.body,
+    iframeWindow?.document?.body as any,
   );
 };
 
