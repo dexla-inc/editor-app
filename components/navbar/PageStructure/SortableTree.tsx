@@ -19,7 +19,7 @@ import {
   arrayMove,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { createPortal } from "react-dom";
 
 import { SortableTreeItem } from "@/components/navbar/PageStructure/components";
@@ -84,11 +84,19 @@ export function NavbarLayersSection({ indentationWidth = 10 }: Props) {
     (state) => state.isStructureCollapsed,
   );
   const flattenedItems = flattenTree(editorTree.children as TreeItems, true);
-
+  const listRef = useRef<ListRef>(null);
+  const [scrollIndex, setScrollIndex] = useState<number>();
+  const [, startTransition] = useTransition();
+  const setTree = useEditorTreeStore((state) => state.setTree);
+  const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
+  const [overId, setOverId] = useState<UniqueIdentifier | null>(null);
+  const [offsetLeft, setOffsetLeft] = useState(0);
   const [list, setList] = useState<FlattenedItem[]>([]);
 
   useEffect(() => {
-    setList(flattenedItems);
+    startTransition(() => {
+      setList(flattenedItems);
+    });
   }, [flattenedItems]);
 
   useEffect(() => {
@@ -96,13 +104,34 @@ export function NavbarLayersSection({ indentationWidth = 10 }: Props) {
       editorTree.children,
       selectedComponentId,
     );
-    updateTreeComponentAttrs({
-      componentIds: expandedIds.filter((id) => id !== selectedComponentId),
-      // @ts-ignore
-      attrs: { collapsed: false },
-      save: false,
+
+    startTransition(() => {
+      updateTreeComponentAttrs({
+        componentIds: expandedIds.filter((id) => id !== selectedComponentId),
+        // @ts-ignore
+        attrs: { collapsed: false },
+        save: false,
+      });
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedComponentId]);
+
+  useEffect(() => {
+    const newScrollIndex = flattenedItems.findIndex(
+      (component) => component.id === selectedComponentId,
+    );
+    if (scrollIndex !== newScrollIndex) {
+      setScrollIndex(newScrollIndex);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedComponentId, flattenedItems]);
+
+  useEffect(() => {
+    listRef.current.scrollTo({
+      index: scrollIndex,
+      align: "center",
+    });
+  }, [scrollIndex]);
 
   useEffect(() => {
     const allTreeIds = getAllTreeIds(editorTree);
@@ -112,12 +141,8 @@ export function NavbarLayersSection({ indentationWidth = 10 }: Props) {
       attrs: { collapsed: isStructureCollapsed },
       save: false,
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isStructureCollapsed]);
-
-  const setTree = useEditorTreeStore((state) => state.setTree);
-  const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
-  const [overId, setOverId] = useState<UniqueIdentifier | null>(null);
-  const [offsetLeft, setOffsetLeft] = useState(0);
 
   const projected =
     activeId && overId
@@ -242,7 +267,13 @@ export function NavbarLayersSection({ indentationWidth = 10 }: Props) {
         items={sortedIds as string[]}
         strategy={verticalListSortingStrategy}
       >
-        <List data={list} itemKey="id" itemHeight={30} height={790}>
+        <List
+          data={list}
+          itemKey="id"
+          itemHeight={30}
+          height={790}
+          ref={listRef}
+        >
           {(component) => {
             const isCollapsed =
               component?.collapsed === true ||

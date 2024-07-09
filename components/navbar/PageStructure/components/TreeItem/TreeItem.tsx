@@ -161,17 +161,17 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
 
     const icon = structureMapper[component.name as string]?.icon;
 
-    useEffect(() => {
-      const isRootOrContentWrapper = id === "root" || id === "content-wrapper";
-      if (isSelected && !isRootOrContentWrapper) {
-        customRef.current?.scrollIntoView({
-          behavior: "smooth",
-          block: "center",
-        });
-      }
-
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isSelected]);
+    // useEffect(() => {
+    //   const isRootOrContentWrapper = id === "root" || id === "content-wrapper";
+    //   if (isSelected && !isRootOrContentWrapper) {
+    //     customRef.current?.scrollIntoView({
+    //       behavior: "smooth",
+    //       block: "center",
+    //     });
+    //   }
+    //
+    //   // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [isSelected]);
 
     return (
       <li
@@ -309,7 +309,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
           </Group>
           <Flex gap={4}>
             {!!component.actions && <IconBolt size={ICON_SIZE} />}
-            {isVisible === false && <IconEyeOff size={ICON_SIZE} />}
+            {!isVisible && <IconEyeOff size={ICON_SIZE} />}
             {component.display === "none" && (
               <IconEyeOff size={ICON_SIZE} color="red" />
             )}
