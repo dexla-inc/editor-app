@@ -99,7 +99,7 @@ export const jsonStructure = (props?: any): ComponentStructure => {
       optionValue,
     },
     children: [containerCheckboxItem],
-    states: { disabled: { bg: "Neutral.7", textColor: "PrimaryText.9" } },
+    states: { disabled: { bg: "Neutral.6", textColor: "Neutral.9" } },
     blockDroppingChildrenInside: false,
   };
 };
