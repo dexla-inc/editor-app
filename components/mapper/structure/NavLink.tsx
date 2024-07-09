@@ -22,9 +22,9 @@ export const jsonStructure = (props?: any): ComponentStructure => {
     },
     states: {
       disabled: {
-        bg: "Secondary.1",
-        color: "PrimaryText.9",
-        iconColor: "PrimaryText.9",
+        bg: "Neutral.6",
+        color: "Neutral.9",
+        iconColor: "Neutral.9",
       },
     },
   };

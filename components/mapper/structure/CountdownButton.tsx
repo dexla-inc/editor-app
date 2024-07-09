@@ -21,7 +21,7 @@ export const jsonStructure = (props?: any): ComponentStructure => {
     states: {
       hover: { color: "Primary.7" },
       disabled: {
-        color: "Neutral.8",
+        color: "Neutral.6",
       },
     },
     blockDroppingChildrenInside: true,

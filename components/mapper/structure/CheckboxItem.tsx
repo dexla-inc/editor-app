@@ -21,7 +21,7 @@ export const jsonStructure = (props?: any): ComponentStructure => {
         dataType: "static",
       },
     },
-    states: { disabled: { bg: "Neutral.7", textColor: "PrimaryText.9" } },
+    states: { disabled: { bg: "Neutral.6", textColor: "Neutral.9" } },
     blockDroppingChildrenInside: true,
   };
 };
