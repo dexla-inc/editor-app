@@ -38,9 +38,14 @@ export const DeployButtonDropdown = () => {
   const { data: pageListQuery, isFetched } = usePageListQuery(projectId, null);
   const theme = useMantineTheme();
 
-  const { startLoading, stopLoading } = useAppStore((state) => ({
+  const {
+    startLoading,
+    stopLoading,
+    isLoading: globalLoading,
+  } = useAppStore((state) => ({
     startLoading: state.startLoading,
     stopLoading: state.stopLoading,
+    isLoading: state.isLoading,
   }));
 
   const [shouldFetchProject, setShouldFetchProject] = useState<boolean>(false);
@@ -207,6 +212,7 @@ export const DeployButtonDropdown = () => {
                   handleDeploy(deployment.project!, deployment.environment)
                 }
                 leftIcon={<Icon name="IconRocket" />}
+                loading={globalLoading}
               >
                 Deploy
               </Button>
@@ -216,6 +222,7 @@ export const DeployButtonDropdown = () => {
                   leftIcon={<Icon name="IconRocket" />}
                   variant="outline"
                   disabled={!deployment.canPromote}
+                  loading={globalLoading}
                 >
                   Promote
                 </Button>
