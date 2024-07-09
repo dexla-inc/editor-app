@@ -67,13 +67,13 @@ async function LivePage({ params: { page } }: PageProps) {
   const decodedSchema = decodeSchema(deploymentPage.pageState);
   const pageState = safeJsonParse(decodedSchema) as EditorTreeCopy;
 
-  if (
-    !isLoggedIn &&
-    deploymentPage?.authenticatedOnly &&
-    currentSlug !== signInPageSlug
-  ) {
-    redirect(`/${signInPageSlug}`.replace("//", "/"));
-  }
+  // if (
+  //   !isLoggedIn &&
+  //   deploymentPage?.authenticatedOnly &&
+  //   currentSlug !== signInPageSlug
+  // ) {
+  //   redirect(`/${signInPageSlug}`.replace("//", "/"));
+  // }
 
   return (
     <Suspense>
