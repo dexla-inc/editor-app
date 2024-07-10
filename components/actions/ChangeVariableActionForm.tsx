@@ -9,6 +9,17 @@ import { FieldType } from "@/types/dataBinding";
 
 type Props = ActionFormProps<Omit<ChangeVariableAction, "name">>;
 
+const valueFieldTypeMapper = (variableType: string) => {
+  const map = {
+    NUMBER: "Number",
+    BOOLEAN: "YesNo",
+    OBJECT: "TextArea",
+    ARRAY: "TextArea",
+  };
+
+  return map[variableType] ?? "Text";
+};
+
 export const ArrayVariableForm = ({ form, isPageAction }: Props) => {
   const methods: Array<{ label: string; value: ArrayMethods }> = [
     { label: "Replace all items", value: "REPLACE_ALL_ITEMS" },
@@ -70,6 +81,7 @@ export const ChangeVariableActionForm = ({ form, isPageAction }: Props) => {
         : '""'
       : null;
   const hideInputField = method?.includes("REMOVE");
+  const valueFieldType = valueFieldTypeMapper(variableType);
 
   return (
     <Stack spacing="xs">
@@ -102,7 +114,7 @@ export const ChangeVariableActionForm = ({ form, isPageAction }: Props) => {
       {!hideInputField && (
         <BindingField
           required
-          fieldType="Text"
+          fieldType={valueFieldType}
           type={variableType?.toLowerCase()}
           label="Value"
           isPageAction={isPageAction}
