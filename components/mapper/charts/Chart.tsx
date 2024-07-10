@@ -81,16 +81,18 @@ const ChartComponent = forwardRef(
 
     const {
       children,
-      series,
+      series: defaultSeries,
       type,
-      options,
+      options: defaultOptions,
       chartColors,
       labelColor,
       foreColor,
       triggers,
       dataType = "static",
       ...componentProps
-    } = mergedProps;
+    } = component.props as Record<string, any>;
+    const { series = defaultSeries, options = defaultOptions } =
+      component.onLoad;
 
     const theme = useThemeStore((state) => state.theme);
     const isPieOrRadial =
