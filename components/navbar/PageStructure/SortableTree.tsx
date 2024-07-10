@@ -75,7 +75,7 @@ interface Props {
   indentationWidth?: number;
 }
 
-export function NavbarLayersSection({ indentationWidth = 10 }: Props) {
+export function NavbarLayersSection({ indentationWidth = 15 }: Props) {
   const updateTreeComponentAttrs = useEditorTreeStore(
     (state) => state.updateTreeComponentAttrs,
   );
@@ -177,6 +177,9 @@ export function NavbarLayersSection({ indentationWidth = 10 }: Props) {
   const activeItem = activeId
     ? flattenedItems.find(({ id }) => id === activeId)
     : null;
+  const overItem = activeId
+    ? flattenedItems.find(({ id }) => id === overId)
+    : null;
 
   function handleDragStart(e: DragStartEvent) {
     const {
@@ -260,7 +263,7 @@ export function NavbarLayersSection({ indentationWidth = 10 }: Props) {
 
   useEffect(() => {
     const timeout = setTimeout(async () => {
-      if (overId) {
+      if (overId && !overItem?.blockDroppingChildrenInside) {
         updateTreeComponentAttrs({
           componentIds: [overId],
           attrs: {
@@ -270,13 +273,17 @@ export function NavbarLayersSection({ indentationWidth = 10 }: Props) {
           save: false,
         });
       }
-    }, 1000);
+    }, 700);
 
     return () => {
       clearTimeout(timeout);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [overId]);
+
+  const hightlightId = !overItem?.blockDroppingChildrenInside
+    ? overItem?.id
+    : overItem?.parentId;
 
   return (
     <DndContext
@@ -317,6 +324,7 @@ export function NavbarLayersSection({ indentationWidth = 10 }: Props) {
                     ? () => handleCollapse(component.id!)
                     : undefined
                 }
+                highlightId={hightlightId}
               />
             );
           }}

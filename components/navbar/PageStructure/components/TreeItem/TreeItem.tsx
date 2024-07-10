@@ -10,7 +10,7 @@ import styles from "@/components/navbar/PageStructure/components/TreeItem/TreeIt
 import { useComponentContextMenu } from "@/hooks/components/useComponentContextMenu";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useUserConfigStore } from "@/stores/userConfig";
-import { DARK_COLOR, GRAY_WHITE_COLOR } from "@/utils/branding";
+import { DARK_COLOR, GRAY_WHITE_COLOR, theme } from "@/utils/branding";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { structureMapper } from "@/utils/componentMapper";
 import { ICON_SIZE } from "@/utils/config";
@@ -57,6 +57,7 @@ export interface Props extends Omit<HTMLAttributes<HTMLLIElement>, "id"> {
   onRemove?(): void;
   wrapperRef?(node: HTMLLIElement): void;
   component: ComponentTree;
+  highlightId?: string;
 }
 
 // eslint-disable-next-line react/display-name
@@ -77,6 +78,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
       id,
       wrapperRef,
       component: componentTree,
+      highlightId,
       ...props
     },
     ref,
@@ -208,15 +210,21 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
         >
           <Group position="apart" noWrap w="100%" h="100%">
             <Group
-              spacing={4}
+              spacing={2}
               noWrap
               w="100%"
               h="100%"
               align="center"
               sx={(theme) => ({
                 backgroundColor: `${
-                  editable &&
-                  (theme.colorScheme === "dark" ? DARK_COLOR : GRAY_WHITE_COLOR)
+                  (editable &&
+                    (theme.colorScheme === "dark"
+                      ? DARK_COLOR
+                      : GRAY_WHITE_COLOR)) ||
+                  (componentTree.id === highlightId &&
+                    (theme.colorScheme === "dark"
+                      ? theme.colors.gray[8]
+                      : theme.colors.gray[4]))
                 }`,
               })}
             >
@@ -231,7 +239,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
                   }}
                 >
                   <IconChevronDown
-                    size={ICON_SIZE}
+                    size={13}
                     style={{
                       transition: "transform 200ms ease",
                       transform: !component.collapsed
@@ -242,7 +250,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
                 </ActionIcon>
               )}
               {!onCollapse && (
-                <Card unstyled w="18px" h="28px" p={0} bg="transparent">
+                <Card unstyled w="14px" h="28px" p={0} bg="transparent">
                   {" "}
                 </Card>
               )}
