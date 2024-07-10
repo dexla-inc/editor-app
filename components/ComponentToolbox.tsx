@@ -26,8 +26,8 @@ import { Group, Text, Tooltip, UnstyledButton } from "@mantine/core";
 import { IconGripVertical } from "@tabler/icons-react";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { useDisclosure } from "@mantine/hooks";
 import { selectedComponentIdSelector } from "@/utils/componentSelectors";
+import { createPortal } from "react-dom";
 
 type Props = {
   component: Component;
@@ -92,15 +92,13 @@ const ComponentToolboxInner = ({ component }: Props) => {
     const comp =
       iframeWindow?.document.querySelector(`[data-id="${component.id}"]`) ??
       iframeWindow?.document.getElementById(component.id!);
-    const parent = comp?.parentElement;
 
-    if (comp && parent) {
+    if (comp) {
       const compRect = comp.getBoundingClientRect();
-      const parentRect = parent.getBoundingClientRect();
 
       setToolboxStyle({
-        top: `${Math.abs(parentRect.top - compRect.top) - 24}px`,
-        left: `${Math.abs(parentRect.left - compRect.left)}px`,
+        top: `${Math.abs(compRect.top) - 24}px`,
+        left: `${Math.abs(compRect.left)}px`,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -122,7 +120,7 @@ const ComponentToolboxInner = ({ component }: Props) => {
     "wrap-with-container",
   );
 
-  return (
+  return createPortal(
     <>
       <Group
         id="toolbox"
@@ -257,7 +255,8 @@ const ComponentToolboxInner = ({ component }: Props) => {
           </>
         )}
       </Group>
-    </>
+    </>,
+    iframeWindow?.document?.body as any,
   );
 };
 

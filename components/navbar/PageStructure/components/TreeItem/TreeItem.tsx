@@ -3,7 +3,6 @@ import React, {
   forwardRef,
   HTMLAttributes,
   KeyboardEvent,
-  useEffect,
   useRef,
 } from "react";
 
@@ -11,7 +10,7 @@ import styles from "@/components/navbar/PageStructure/components/TreeItem/TreeIt
 import { useComponentContextMenu } from "@/hooks/components/useComponentContextMenu";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useUserConfigStore } from "@/stores/userConfig";
-import { DARK_COLOR, GRAY_WHITE_COLOR } from "@/utils/branding";
+import { DARK_COLOR, GRAY_WHITE_COLOR, theme } from "@/utils/branding";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { structureMapper } from "@/utils/componentMapper";
 import { ICON_SIZE } from "@/utils/config";
@@ -47,7 +46,6 @@ export interface Props extends Omit<HTMLAttributes<HTMLLIElement>, "id"> {
   id: any;
   childCount?: number;
   clone?: boolean;
-  collapsed?: boolean;
   depth: number;
   disableInteraction?: boolean;
   disableSelection?: boolean;
@@ -59,13 +57,13 @@ export interface Props extends Omit<HTMLAttributes<HTMLLIElement>, "id"> {
   onRemove?(): void;
   wrapperRef?(node: HTMLLIElement): void;
   component: ComponentTree;
+  highlightId?: string | null;
 }
 
 // eslint-disable-next-line react/display-name
 export const TreeItem = forwardRef<HTMLDivElement, Props>(
   (
     {
-      childCount,
       clone,
       depth,
       disableSelection,
@@ -74,18 +72,17 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
       handleProps,
       indentationWidth,
       indicator,
-      collapsed,
       onCollapse,
       onRemove,
       style,
       id,
       wrapperRef,
       component: componentTree,
+      highlightId,
       ...props
     },
     ref,
   ) => {
-    const customRef = useRef<HTMLDivElement>(null!);
     const theme = useMantineTheme();
     const [editable, { toggle: toggleEdit, close: closeEdit }] =
       useDisclosure(false);
@@ -107,6 +104,8 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
           display: c?.props?.style?.display,
           description: c?.description,
           name: c?.name,
+          // @ts-ignore
+          collapsed: c?.collapsed === true || c?.collapsed === undefined,
           onLoad: {
             endpointId: c?.onLoad?.endpointId,
             isVisible: c?.onLoad?.isVisible,
@@ -162,18 +161,6 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
 
     const icon = structureMapper[component.name as string]?.icon;
 
-    useEffect(() => {
-      const isRootOrContentWrapper = id === "root" || id === "content-wrapper";
-      if (isSelected && !isRootOrContentWrapper) {
-        customRef.current?.scrollIntoView({
-          behavior: "smooth",
-          block: "center",
-        });
-      }
-
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isSelected]);
-
     return (
       <li
         className={classNames(
@@ -221,16 +208,23 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
           }}
           {...handleProps}
         >
-          <Group position="apart" noWrap w="100%" ref={customRef}>
+          <Group position="apart" noWrap w="100%" h="100%">
             <Group
-              spacing={4}
+              spacing={2}
               noWrap
               w="100%"
+              h="100%"
               align="center"
               sx={(theme) => ({
                 backgroundColor: `${
-                  editable &&
-                  (theme.colorScheme === "dark" ? DARK_COLOR : GRAY_WHITE_COLOR)
+                  (editable &&
+                    (theme.colorScheme === "dark"
+                      ? DARK_COLOR
+                      : GRAY_WHITE_COLOR)) ||
+                  (componentTree.id === highlightId &&
+                    (theme.colorScheme === "dark"
+                      ? theme.colors.gray[8]
+                      : theme.colors.gray[4]))
                 }`,
               })}
             >
@@ -245,16 +239,18 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
                   }}
                 >
                   <IconChevronDown
-                    size={ICON_SIZE}
+                    size={13}
                     style={{
                       transition: "transform 200ms ease",
-                      transform: !collapsed ? "none" : "rotate(-90deg)",
+                      transform: !component.collapsed
+                        ? "none"
+                        : "rotate(-90deg)",
                     }}
                   />
                 </ActionIcon>
               )}
               {!onCollapse && (
-                <Card unstyled w="18px" h="28px" p={0} bg="transparent">
+                <Card unstyled w="14px" h="28px" p={0} bg="transparent">
                   {" "}
                 </Card>
               )}
@@ -269,7 +265,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
               {id === "root" || id === "content-wrapper" ? (
                 <Text
                   id={`layer-${id}`}
-                  size="xs"
+                  size="0.72rem"
                   lineClamp={1}
                   sx={{ cursor: "move", width: "100%" }}
                 >
@@ -279,8 +275,8 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
                 <TextInput
                   ref={editFieldRef}
                   id={`layer-${id}`}
-                  size="xs"
                   w="100%"
+                  bg="transparent"
                   variant="unstyled"
                   {...form.getInputProps("value")}
                   onChange={(e) => {
@@ -293,6 +289,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
                       },
                     });
                   }}
+                  sx={{ background: "transparent" }}
                   onBlur={closeEdit}
                   autoFocus
                   {...AUTOCOMPLETE_OFF_PROPS}
@@ -300,7 +297,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
               ) : (
                 <Text
                   id={`layer-${id}`}
-                  size="xs"
+                  size="0.72rem"
                   lineClamp={1}
                   sx={{ cursor: "move", width: "100%" }}
                 >
@@ -311,7 +308,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
           </Group>
           <Flex gap={4}>
             {!!component.actions && <IconBolt size={ICON_SIZE} />}
-            {isVisible === false && <IconEyeOff size={ICON_SIZE} />}
+            {!isVisible && <IconEyeOff size={ICON_SIZE} />}
             {component.display === "none" && (
               <IconEyeOff size={ICON_SIZE} color="red" />
             )}

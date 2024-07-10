@@ -34,7 +34,14 @@ import {
 } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import startCase from "lodash.startcase";
-import { memo, PropsWithChildren, useEffect } from "react";
+import {
+  memo,
+  PropsWithChildren,
+  useEffect,
+  useRef,
+  useState,
+  useLayoutEffect,
+} from "react";
 
 type Props = {
   sections: Sections;
@@ -52,6 +59,9 @@ export const NavbarSectionComponent = ({
   const setNavbarWidth = useUserConfigStore((state) => state.setNavbarWidth);
   const collapsedItemsCount = useEditorStore(
     (state) => state.collapsedItemsCount,
+  );
+  const setNavbarSectionHeight = useEditorStore(
+    (state) => state.setNavbarSectionHeight,
   );
   const setCollapsedItemsCount = useEditorStore(
     (state) => state.setCollapsedItemsCount,
@@ -81,6 +91,13 @@ export const NavbarSectionComponent = ({
   useEffect(() => {
     if (ref.current) ref.current.scrollTop = 0;
   }, [activeTab, ref]);
+
+  let navbarSectionRef = useRef(null);
+  useLayoutEffect(
+    // @ts-ignore
+    () => setNavbarSectionHeight(navbarSectionRef.current?.offsetHeight),
+    [],
+  );
 
   const currentSection = sections.find((section) => section.id === activeTab);
 
@@ -204,7 +221,7 @@ export const NavbarSectionComponent = ({
         </Title>
         {activeTab === "layers" && actionButtons}
       </Flex>
-      <Stack spacing={2} w="100%">
+      <Stack spacing={2} w="100%" h="100%" ref={navbarSectionRef}>
         {children}
       </Stack>
     </Stack>

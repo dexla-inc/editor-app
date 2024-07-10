@@ -59,6 +59,7 @@ export type Component = {
 } & ComponentBase;
 
 export type ComponentTree = {
+  blockDroppingChildrenInside?: boolean;
   children?: ComponentTree[];
 } & ComponentBase;
 
@@ -132,83 +133,6 @@ export const replaceIdsDeeply = (treeRoot: ComponentStructure) => {
     { order: "bfs" },
   );
 };
-
-// TODO: get this back - not sure if we need this
-// export const getEditorTreeFromPageStructure = (
-//   tree: { rows: Row[] },
-//   theme: MantineThemeExtended,
-//   pages: PageResponse[],
-// ) => {
-//   const editorTree: { root: ComponentStructure } & Omit<EditorTree, "root"> = {
-//     name: "Initial State",
-//     timestamp: Date.now(),
-//     root: {
-//       ...emptyEditorTree.root,
-//       children: [
-//         {
-//           id: "content-wrapper",
-//           name: "Container",
-//           description: "Root Container",
-//           props: {
-//             style: {
-//               width: "100%",
-//               display: "flex",
-//               flexDirection: "column",
-//               boxSizing: "border-box",
-//               minHeight: "20px",
-//             },
-//           },
-//           children: tree.rows.map((row: Row) => {
-//             return {
-//               id: nanoid(),
-//               name: "Container",
-//               description: "Container",
-//               props: {
-//                 style: {
-//                   width: "100%",
-//                   backgroundColor: "White.6",
-//                   display: "flex",
-//                   flexDirection: "row",
-//                 },
-//               },
-//               children: traverseComponents(row.components, theme),
-//             };
-//           }),
-//         },
-//       ],
-//     },
-//   };
-//
-//   return editorTree;
-// };
-
-// TODO: get this back - not sure if we need this
-// export const getNewComponent = (
-//   components: ComponentStructure[],
-//   theme: MantineThemeExtended,
-//   pages: PageResponse[],
-// ): ComponentStructure => {
-//   const firstComponent = components[0];
-//   const structureDefinition = structureMapper[firstComponent.name];
-//   const firstComponentStructure = structureDefinition.structure({
-//     ...firstComponent,
-//     props: {
-//       ...(firstComponent?.props ?? {}),
-//     },
-//     theme,
-//   });
-//
-//   return {
-//     id: nanoid(),
-//     name: firstComponentStructure.name,
-//     description: firstComponentStructure.name,
-//     props: { ...firstComponentStructure.props },
-//     children:
-//       firstComponent.children && firstComponent.children.length > 0
-//         ? traverseComponents(firstComponent.children, theme)
-//         : [],
-//   };
-// };
 
 export type TileType = {
   node: Component;
