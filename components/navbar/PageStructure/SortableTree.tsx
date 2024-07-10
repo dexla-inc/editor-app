@@ -261,7 +261,14 @@ export function NavbarLayersSection({ indentationWidth = 10 }: Props) {
   useEffect(() => {
     const timeout = setTimeout(async () => {
       if (overId) {
-        await handleCollapse(overId as string);
+        updateTreeComponentAttrs({
+          componentIds: [overId],
+          attrs: {
+            // @ts-ignore
+            collapsed: false,
+          },
+          save: false,
+        });
       }
     }, 1000);
 
@@ -289,7 +296,7 @@ export function NavbarLayersSection({ indentationWidth = 10 }: Props) {
         <List
           data={flattenedItems}
           itemKey="id"
-          itemHeight={30}
+          itemHeight={22}
           height={790}
           ref={listRef}
         >

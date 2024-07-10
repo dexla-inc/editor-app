@@ -206,11 +206,12 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
           }}
           {...handleProps}
         >
-          <Group position="apart" noWrap w="100%">
+          <Group position="apart" noWrap w="100%" h="100%">
             <Group
               spacing={4}
               noWrap
               w="100%"
+              h="100%"
               align="center"
               sx={(theme) => ({
                 backgroundColor: `${
@@ -267,6 +268,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
                   ref={editFieldRef}
                   id={`layer-${id}`}
                   w="100%"
+                  bg="transparent"
                   variant="unstyled"
                   {...form.getInputProps("value")}
                   onChange={(e) => {
@@ -279,6 +281,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
                       },
                     });
                   }}
+                  sx={{ background: "transparent" }}
                   onBlur={closeEdit}
                   autoFocus
                   {...AUTOCOMPLETE_OFF_PROPS}
