@@ -57,7 +57,7 @@ export interface Props extends Omit<HTMLAttributes<HTMLLIElement>, "id"> {
   onRemove?(): void;
   wrapperRef?(node: HTMLLIElement): void;
   component: ComponentTree;
-  highlightId?: string;
+  highlightId?: string | null;
 }
 
 // eslint-disable-next-line react/display-name

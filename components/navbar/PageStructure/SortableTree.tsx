@@ -100,6 +100,9 @@ export function NavbarLayersSection({ indentationWidth = 15 }: Props) {
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
   const [overId, setOverId] = useState<UniqueIdentifier | null>(null);
   const [offsetLeft, setOffsetLeft] = useState(0);
+  const navbarSectionHeight = useEditorStore(
+    (state) => state.navbarSectionHeight,
+  );
 
   useEffect(() => {
     const expandedIds = updateCollapseState(
@@ -265,7 +268,7 @@ export function NavbarLayersSection({ indentationWidth = 15 }: Props) {
     const timeout = setTimeout(async () => {
       if (overId && !overItem?.blockDroppingChildrenInside) {
         updateTreeComponentAttrs({
-          componentIds: [overId],
+          componentIds: [overId as string],
           attrs: {
             // @ts-ignore
             collapsed: false,
@@ -304,7 +307,7 @@ export function NavbarLayersSection({ indentationWidth = 15 }: Props) {
           data={flattenedItems}
           itemKey="id"
           itemHeight={22}
-          height={790}
+          height={navbarSectionHeight}
           ref={listRef}
         >
           {(component) => {
@@ -324,7 +327,7 @@ export function NavbarLayersSection({ indentationWidth = 15 }: Props) {
                     ? () => handleCollapse(component.id!)
                     : undefined
                 }
-                highlightId={hightlightId}
+                highlightId={hightlightId as string}
               />
             );
           }}
