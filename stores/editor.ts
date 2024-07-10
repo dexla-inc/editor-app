@@ -60,6 +60,8 @@ export type EditorState = {
   setActionsResponse: (actionId: string, response: any) => void;
   asideSelectedTab: Tab;
   setAsideSelectedTab: (tab: Tab) => void;
+  navbarSectionHeight?: number;
+  setNavbarSectionHeight: (h: number) => void;
 };
 
 // creates a store with undo/redo capability
@@ -69,6 +71,8 @@ export const useEditorStore = create<EditorState>()(
     (set) => ({
       asideSelectedTab: "design",
       setAsideSelectedTab: (tab) => set({ asideSelectedTab: tab }),
+      navbarSectionHeight: 1000,
+      setNavbarSectionHeight: (h) => set({ navbarSectionHeight: h }),
       setActionsResponse: (actionId, response) =>
         set(
           (state) => ({
