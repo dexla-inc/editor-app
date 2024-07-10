@@ -26,6 +26,8 @@ async function handleRequest(req: NextRequest) {
     "accept-language",
     "user-agent",
     "authorization",
+    "apikey",
+    "apiKey",
   ];
 
   const decodedUrl = fromBase64(targetUrl as string);
