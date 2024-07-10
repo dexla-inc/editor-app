@@ -9,8 +9,9 @@ import { FieldType } from "@/types/dataBinding";
 
 type Props = ActionFormProps<Omit<ChangeVariableAction, "name">>;
 
-const valueFieldTypeMapper = (variableType: string) => {
-  const map = {
+const valueFieldTypeMapper = (variableType: FrontEndTypes): FieldType => {
+  const map: Record<FrontEndTypes, FieldType> = {
+    TEXT: "Text",
     NUMBER: "Number",
     BOOLEAN: "YesNo",
     OBJECT: "TextArea",
