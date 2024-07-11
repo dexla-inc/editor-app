@@ -32,7 +32,7 @@ import {
   flattenTree,
   getAllTreeIds,
   getProjection,
-  getAllIdsToBeExpanded,
+  updateCollapseState,
 } from "@/components/navbar/PageStructure/utilities";
 import { CSS } from "@dnd-kit/utilities";
 import { useEditorTreeStore } from "@/stores/editorTree";
@@ -79,7 +79,6 @@ export function NavbarLayersSection({ indentationWidth = 15 }: Props) {
   const updateTreeComponentAttrs = useEditorTreeStore(
     (state) => state.updateTreeComponentAttrs,
   );
-  const setTree = useEditorTreeStore((state) => state.setTree);
   const selectedComponentId = useEditorTreeStore(selectedComponentIdSelector);
   const editorTree = useEditorTreeStore((state) => state.tree.root);
   const isStructureCollapsed = useEditorStore(
@@ -97,6 +96,7 @@ export function NavbarLayersSection({ indentationWidth = 15 }: Props) {
   const listRef = useRef<ListRef>(null);
   const [scrollIndex, setScrollIndex] = useState<number>();
   const [, startTransition] = useTransition();
+  const setTree = useEditorTreeStore((state) => state.setTree);
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
   const [overId, setOverId] = useState<UniqueIdentifier | null>(null);
   const [offsetLeft, setOffsetLeft] = useState(0);
@@ -105,7 +105,7 @@ export function NavbarLayersSection({ indentationWidth = 15 }: Props) {
   );
 
   useEffect(() => {
-    const expandedIds = getAllIdsToBeExpanded(
+    const expandedIds = updateCollapseState(
       editorTree.children,
       selectedComponentId,
     );
@@ -121,17 +121,17 @@ export function NavbarLayersSection({ indentationWidth = 15 }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedComponentId]);
 
-  // useEffect(() => {
-  //   const newScrollIndex = flattenedItems.findIndex(
-  //     (component) => component.id === selectedComponentId,
-  //   );
-  //   if (scrollIndex !== newScrollIndex) {
-  //     setTimeout(() => {
-  //       setScrollIndex(newScrollIndex);
-  //     }, 100);
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [flattenedItems]);
+  useEffect(() => {
+    const newScrollIndex = flattenedItems.findIndex(
+      (component) => component.id === selectedComponentId,
+    );
+    if (scrollIndex !== newScrollIndex) {
+      setTimeout(() => {
+        setScrollIndex(newScrollIndex);
+      }, 100);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [flattenedItems]);
 
   useEffect(() => {
     if (listRef && scrollIndex !== undefined) {
