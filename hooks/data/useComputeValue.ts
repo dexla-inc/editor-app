@@ -2,12 +2,7 @@ import { useVariableStore } from "@/stores/variables";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useCallback, useMemo } from "react";
 import get from "lodash.get";
-import {
-  FieldType,
-  RuleItemProps,
-  RuleProps,
-  ValueProps,
-} from "@/types/dataBinding";
+import { RuleItemProps, RuleProps, ValueProps } from "@/types/dataBinding";
 import set from "lodash.set";
 import {
   cloneObject,
@@ -115,6 +110,18 @@ export const ruleFunctions: { [key: string]: RuleFunction } = {
     return comparingValue?.every(
       (item: any) => safeJsonParse(item) !== location,
     );
+  },
+  greaterThan: ({ location, comparingValue }) => {
+    return location > comparingValue;
+  },
+  lessThan: ({ location, comparingValue }) => {
+    return location > comparingValue;
+  },
+  greaterThanOrEqualTo: ({ location, comparingValue }) => {
+    return location >= comparingValue;
+  },
+  lessThanOrEqualTo: ({ location, comparingValue }) => {
+    return location <= comparingValue;
   },
 };
 
