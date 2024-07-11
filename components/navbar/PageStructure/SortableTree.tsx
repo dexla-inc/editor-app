@@ -19,7 +19,7 @@ import {
   arrayMove,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { useEffect, useMemo, useRef, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { createPortal } from "react-dom";
 
 import { SortableTreeItem } from "@/components/navbar/PageStructure/components";
@@ -41,6 +41,7 @@ import { cloneObject } from "@/utils/common";
 import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 import { useEditorStore } from "@/stores/editor";
 import { useShallow } from "zustand/react/shallow";
+import { usePrevious } from "@mantine/hooks";
 
 const measuring = {
   droppable: {
@@ -75,7 +76,7 @@ interface Props {
   indentationWidth?: number;
 }
 
-export function NavbarLayersSection({ indentationWidth = 15 }: Props) {
+export function NavbarLayersSection({ indentationWidth = 12 }: Props) {
   const updateTreeComponentAttrs = useEditorTreeStore(
     (state) => state.updateTreeComponentAttrs,
   );
@@ -100,9 +101,7 @@ export function NavbarLayersSection({ indentationWidth = 15 }: Props) {
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
   const [overId, setOverId] = useState<UniqueIdentifier | null>(null);
   const [offsetLeft, setOffsetLeft] = useState(0);
-  const navbarSectionHeight = useEditorStore(
-    (state) => state.navbarSectionHeight,
-  );
+  const previousSelectedComponentId = usePrevious(selectedComponentId);
 
   useEffect(() => {
     const expandedIds = getAllIdsToBeExpanded(
@@ -121,23 +120,23 @@ export function NavbarLayersSection({ indentationWidth = 15 }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedComponentId]);
 
-  // useEffect(() => {
-  //   const newScrollIndex = flattenedItems.findIndex(
-  //     (component) => component.id === selectedComponentId,
-  //   );
-  //   if (scrollIndex !== newScrollIndex) {
-  //     setTimeout(() => {
-  //       setScrollIndex(newScrollIndex);
-  //     }, 100);
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [flattenedItems]);
+  useEffect(() => {
+    if (selectedComponentId !== previousSelectedComponentId) {
+      const newScrollIndex = flattenedItems.findIndex(
+        (component) => component.id === selectedComponentId,
+      );
+      if (scrollIndex !== newScrollIndex) {
+        setScrollIndex(newScrollIndex);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedComponentId, previousSelectedComponentId]);
 
   useEffect(() => {
     if (listRef && scrollIndex !== undefined) {
       listRef.current?.scrollTo({
         index: scrollIndex,
-        align: "auto",
+        align: "top",
       });
     }
   }, [scrollIndex]);
@@ -172,17 +171,19 @@ export function NavbarLayersSection({ indentationWidth = 15 }: Props) {
     }),
   );
 
-  const sortedIds = useMemo(
-    () => flattenedItems.map(({ id }) => id),
-    [flattenedItems],
+  const { sortedIds, activeItem, overItem } = flattenedItems.reduce(
+    (acc, item) => {
+      acc.sortedIds.push(item?.id);
+      if (item.id === activeId) {
+        acc.activeItem = item;
+      }
+      if (item.id === overId) {
+        acc.overItem = item;
+      }
+      return acc;
+    },
+    { sortedIds: [], activeItem: {}, overItem: {} } as any,
   );
-
-  const activeItem = activeId
-    ? flattenedItems.find(({ id }) => id === activeId)
-    : null;
-  const overItem = activeId
-    ? flattenedItems.find(({ id }) => id === overId)
-    : null;
 
   function handleDragStart(e: DragStartEvent) {
     const {
@@ -284,7 +285,7 @@ export function NavbarLayersSection({ indentationWidth = 15 }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [overId]);
 
-  const hightlightId = !overItem?.blockDroppingChildrenInside
+  const highlightId = !overItem?.blockDroppingChildrenInside
     ? overItem?.id
     : overItem?.parentId;
 
@@ -307,7 +308,7 @@ export function NavbarLayersSection({ indentationWidth = 15 }: Props) {
           data={flattenedItems}
           itemKey="id"
           itemHeight={22}
-          height={navbarSectionHeight}
+          height={1000}
           ref={listRef}
         >
           {(component) => {
@@ -327,7 +328,7 @@ export function NavbarLayersSection({ indentationWidth = 15 }: Props) {
                     ? () => handleCollapse(component.id!)
                     : undefined
                 }
-                highlightId={hightlightId as string}
+                highlightId={highlightId as string}
               />
             );
           }}
