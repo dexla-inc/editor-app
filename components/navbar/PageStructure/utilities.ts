@@ -92,7 +92,7 @@ export const getAllTreeIds = (treeRoot: TreeItem) => {
   return componentIds;
 };
 
-export function getAllIdsToBeExpanded(
+export function updateCollapseState(
   componentTree: any,
   selectedComponentId: any,
 ) {
