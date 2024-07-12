@@ -54,10 +54,10 @@ const ruleFunctions: { [key: string]: RuleFunction<boolean> } = {
 
 export const ruleFormulaFunctions: { [key: string]: RuleFunction<string> } = {
   addTextBefore: ({ location, comparingValue }) => {
-    return `${comparingValue} ${location}`;
+    return `${comparingValue}${location}`;
   },
   addTextAfter: ({ location, comparingValue }) => {
-    return `${location} ${comparingValue}`;
+    return `${location}${comparingValue}`;
   },
 };
 
