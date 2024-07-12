@@ -86,6 +86,21 @@ export const logicalRulesData = [
     valuePlaceholder:
       "Type a value the selected location is less than or equal to",
   },
+  {
+    label: "Add Text Before",
+    value: "addTextBefore",
+    description: "The selected location's value will appear after custom text.",
+    valuePlaceholder:
+      "Type a value the selected location appears after custom text",
+  },
+  {
+    label: "Add Text After",
+    value: "addTextAfter",
+    description:
+      "The selected location's value will appear before custom text.",
+    valuePlaceholder:
+      "Type a value the selected location appears before custom text",
+  },
 ];
 
 export const SelectComparisonRuleField = (

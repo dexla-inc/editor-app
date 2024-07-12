@@ -27,6 +27,8 @@ import { ValueField } from "@/components/editor/BindingField/handlers/RulesForm/
 import { ResultField } from "@/components/editor/BindingField/handlers/RulesForm/ResultField";
 import { CurrentValueField } from "@/components/editor/BindingField/components/CurrentValueField";
 import { RuleTitle } from "@/components/editor/BindingField/handlers/RulesForm/RuleTitle";
+import { ruleFormulaFunctions } from "@/hooks/data/useRuleHandler";
+import get from "lodash.get";
 
 export const RulesForm = () => {
   const {
@@ -91,6 +93,10 @@ export const RulesForm = () => {
       </Flex>
 
       {form.values.rules?.map((rule, ruleIndex) => {
+        const isRuleFormula =
+          ruleFormulaFunctions[get(rule, "conditions[0].rule", "")] !==
+          undefined;
+
         return (
           <Accordion
             key={ruleIndex}
@@ -117,10 +123,13 @@ export const RulesForm = () => {
               <Accordion.Panel>
                 <Stack spacing={0}>
                   {rule.conditions?.map((condition, conditionIndex) => {
-                    const isRuleMultiple = [
+                    const MULTIPLE_RULES = [
                       "equalToMultiple",
                       "notEqualToMultiple",
-                    ].includes(condition.rule);
+                    ];
+                    const isRuleMultiple = MULTIPLE_RULES.includes(
+                      condition.rule,
+                    );
                     const isRuleValueCheck = [
                       "hasValue",
                       "doesNotHaveValue",
@@ -132,25 +141,24 @@ export const RulesForm = () => {
                       ) ?? {};
 
                     const onSelectLogicalRule = (selectedRule: string) => {
-                      if (
-                        ["equalToMultiple", "notEqualToMultiple"].includes(
-                          selectedRule!,
-                        )
-                      ) {
-                        if (!Array.isArray(condition.value)) {
-                          form.setFieldValue(
-                            `rules.${ruleIndex}.conditions.${conditionIndex}.value`,
-                            { ...condition.value, static: [] },
-                          );
-                        }
-                      } else {
-                        if (typeof condition.value !== "string") {
-                          form.setFieldValue(
-                            `rules.${ruleIndex}.conditions.${conditionIndex}.value`,
-                            { ...condition.value, static: "" },
-                          );
+                      if (condition.value.dataType !== "boundCode") {
+                        if (MULTIPLE_RULES.includes(selectedRule!)) {
+                          if (!Array.isArray(condition.value.static)) {
+                            form.setFieldValue(
+                              `rules.${ruleIndex}.conditions.${conditionIndex}.value`,
+                              { ...condition.value, static: [] },
+                            );
+                          }
+                        } else {
+                          if (typeof condition.value.static !== "string") {
+                            form.setFieldValue(
+                              `rules.${ruleIndex}.conditions.${conditionIndex}.value`,
+                              { ...condition.value, static: "" },
+                            );
+                          }
                         }
                       }
+
                       form.setFieldValue(
                         `rules.${ruleIndex}.conditions.${conditionIndex}.rule`,
                         selectedRule,
@@ -202,7 +210,7 @@ export const RulesForm = () => {
                     );
                   })}
 
-                  {rule.conditions?.[0].location && (
+                  {rule.conditions?.[0].location && !isRuleFormula && (
                     <ResultField
                       {...restBindingFieldProps}
                       fieldType={fieldType}

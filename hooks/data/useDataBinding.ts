@@ -5,19 +5,17 @@ import get from "lodash.get";
 import {
   ComputeValuePropCtx,
   GetValueProps,
-  RuleItemProps,
-  RuleProps,
   ValueProps,
 } from "@/types/dataBinding";
 import { safeJsonParse } from "@/utils/common";
 import { useInputsStore } from "@/stores/inputs";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useOldRouter } from "@/hooks/data/useOldRouter";
-import isEmpty from "lodash.isempty";
-import { ruleFunctions } from "@/hooks/data/useComputeValue";
+import { useRuleHandler } from "@/hooks/data/useRuleHandler";
 
 export const useDataBinding = (componentId = "") => {
   const browser = useOldRouter();
+  const rulesHandler = useRuleHandler();
   function computeValue<T>(
     { value, shareableContent, staticFallback }: GetValueProps,
     ctx: ComputeValuePropCtx,
@@ -35,6 +33,7 @@ export const useDataBinding = (componentId = "") => {
         return autoRunJavascriptCode(boundCode, ctx);
       },
       rules: function (value: ValueProps) {
+        const evaluateRules = rulesHandler({ valueHandlers });
         return evaluateRules(value?.rules!);
       },
     };
@@ -99,63 +98,6 @@ export const useDataBinding = (componentId = "") => {
     );
 
     const browserList = Array.of(pick(browser, ["asPath", "query"]));
-
-    function evaluateCondition(rule: RuleItemProps) {
-      let overallResult = null;
-
-      const { conditions } = rule;
-
-      for (let i = 0; i < conditions?.length; i++) {
-        let { value, rule, location } = conditions[i];
-        if (isEmpty(rule) || isEmpty(location)) {
-          continue;
-        }
-        const transformedValue =
-          valueHandlers[value?.dataType ?? "static"](value);
-        location = autoRunJavascriptCode(location)!;
-
-        // Evaluate the rule
-        const ruleFunction = ruleFunctions[rule];
-        const ruleResult = ruleFunction({
-          location,
-          comparingValue: transformedValue,
-        });
-
-        if (i === 0) {
-          // Initialize overallResult with the first rule's result
-          overallResult = ruleResult;
-        } else {
-          // Apply the previous operator with the previous overallResult
-          const prevOperator = conditions[i - 1].operator;
-          if (prevOperator === "and") {
-            overallResult = overallResult && ruleResult;
-          } else if (prevOperator === "or") {
-            overallResult = overallResult || ruleResult;
-          }
-        }
-      }
-
-      return overallResult;
-    }
-
-    function evaluateRules(rules: RuleProps) {
-      const rulesList = rules?.rules;
-
-      if (!rulesList?.length) {
-        return valueHandlers.boundCode(rules?.value);
-      }
-
-      for (const rule of rulesList) {
-        const ruleResult = evaluateCondition(rule);
-        if (ruleResult) {
-          return valueHandlers[rule.result?.dataType ?? "static"](rule.result);
-        }
-      }
-      if (["YesNo", "Boolean"].includes(rules.fieldType)) {
-        return false;
-      }
-      return;
-    }
 
     if (value === undefined) return staticFallback || "";
     const result = valueHandlers[value?.dataType ?? "static"](value);
