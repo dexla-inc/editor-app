@@ -43,8 +43,8 @@ export const ValueField = ({
             <MultiSelect
               label="Value"
               placeholder={placeholder}
-              data={(value?.static as string[]) ?? []}
-              value={value?.static}
+              data={Array.isArray(value?.static) ? value?.static : []}
+              value={Array.isArray(value?.static) ? value?.static : []}
               searchable
               creatable
               withAsterisk

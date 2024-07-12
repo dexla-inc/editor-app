@@ -2,19 +2,9 @@ import { useVariableStore } from "@/stores/variables";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useCallback, useMemo } from "react";
 import get from "lodash.get";
-import {
-  FieldType,
-  RuleItemProps,
-  RuleProps,
-  ValueProps,
-} from "@/types/dataBinding";
+import { ValueProps } from "@/types/dataBinding";
 import set from "lodash.set";
-import {
-  cloneObject,
-  emptyObject,
-  isEmpty,
-  safeJsonParse,
-} from "@/utils/common";
+import { cloneObject, emptyObject, safeJsonParse } from "@/utils/common";
 import { useInputsStore } from "@/stores/inputs";
 import { useShallow } from "zustand/react/shallow";
 import { pick } from "next/dist/lib/pick";
@@ -22,6 +12,7 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 import { useOldRouter } from "@/hooks/data/useOldRouter";
 import { useDataTransformers } from "@/hooks/data/useDataTransformers";
 import has from "lodash.has";
+import { useRuleHandler } from "@/hooks/data/useRuleHandler";
 
 type RecordStringAny = Record<string, any>;
 
@@ -79,49 +70,11 @@ const findValuePropsPaths = (obj: any, prefix = ""): string[] => {
   return paths;
 };
 
-type RuleFunctionParams = {
-  location: any;
-  comparingValue?: any;
-};
-
-type RuleFunction = (params: RuleFunctionParams) => boolean;
-
-export const ruleFunctions: { [key: string]: RuleFunction } = {
-  hasValue: ({ location }) => !isEmpty(location),
-  doesNotHaveValue: ({ location }) => isEmpty(location),
-  equalTo: ({ location, comparingValue }) =>
-    location === safeJsonParse(comparingValue),
-  notEqualTo: ({ location, comparingValue }) =>
-    location !== safeJsonParse(comparingValue),
-  contains: ({ location, comparingValue }) => location.includes(comparingValue),
-  notContains: ({ location, comparingValue }) =>
-    !location.includes(comparingValue),
-  equalToMultiple: ({ location, comparingValue }) => {
-    if (Array.isArray(location)) {
-      return location.some((locItem: any) =>
-        comparingValue?.some((item: any) => safeJsonParse(item) === locItem),
-      );
-    }
-    return comparingValue?.some(
-      (item: any) => safeJsonParse(item) === location,
-    );
-  },
-  notEqualToMultiple: ({ location, comparingValue }) => {
-    if (Array.isArray(location)) {
-      return location.every((locItem: any) =>
-        comparingValue?.every((item: any) => safeJsonParse(item) !== locItem),
-      );
-    }
-    return comparingValue?.every(
-      (item: any) => safeJsonParse(item) !== location,
-    );
-  },
-};
-
 export const useComputeValue = ({
   shareableContent,
   onLoad = {},
 }: UseComputeValue) => {
+  const rulesHandler = useRuleHandler();
   const { itemTransformer } = useDataTransformers();
   onLoad = cloneObject(onLoad);
 
@@ -296,97 +249,39 @@ export const useComputeValue = ({
     ],
   );
 
-  function evaluateCondition(rule: RuleItemProps) {
-    let overallResult = null;
+  const valueHandlers = {
+    dynamic: (fieldValue: ValueProps) => {
+      return get(shareableContent, `data.${fieldValue?.dynamic}`);
+    },
+    static: (fieldValue: ValueProps) => {
+      const staticValue = fieldValue?.static;
+      const value = !has(staticValue, language)
+        ? !has(staticValue, "en")
+          ? emptyObject(staticValue)
+            ? undefined
+            : staticValue
+          : // @ts-ignore
+            staticValue?.en
+        : staticValue?.[language];
 
-    const { conditions } = rule;
-
-    for (let i = 0; i < conditions?.length; i++) {
-      let { value, rule, location } = conditions[i];
-      if (isEmpty(rule) || isEmpty(location)) {
-        continue;
+      return value;
+    },
+    boundCode: (fieldValue: ValueProps) => {
+      try {
+        const boundCode = transformBoundCode(fieldValue.boundCode ?? "");
+        return autoRunJavascriptCode(boundCode);
+      } catch {
+        return;
       }
-      const transformedValue =
-        valueHandlers[value?.dataType ?? "static"](value);
-      const transformedLocation = transformBoundCode(location);
-      location = autoRunJavascriptCode(transformedLocation);
-
-      // Evaluate the rule
-      const ruleFunction = ruleFunctions[rule];
-      const ruleResult = ruleFunction({
-        location,
-        comparingValue: transformedValue,
+    },
+    rules: (fieldValue: ValueProps) => {
+      const evaluateRules = rulesHandler({
+        valueHandlers,
       });
-
-      if (i === 0) {
-        // Initialize overallResult with the first rule's result
-        overallResult = ruleResult;
-      } else {
-        // Apply the previous operator with the previous overallResult
-        const prevOperator = conditions[i - 1].operator;
-        if (prevOperator === "and") {
-          overallResult = overallResult && ruleResult;
-        } else if (prevOperator === "or") {
-          overallResult = overallResult || ruleResult;
-        }
-      }
-    }
-
-    return overallResult;
-  }
-
-  function evaluateRules(rules: RuleProps) {
-    const rulesList = rules?.rules;
-
-    if (!rulesList?.length) {
-      return valueHandlers.boundCode(rules.value);
-    }
-
-    for (const rule of rules.rules) {
-      const ruleResult = evaluateCondition(rule);
-      if (ruleResult) {
-        return valueHandlers[rule.result?.dataType ?? "static"](rule.result);
-      }
-    }
-    if (["YesNo", "Boolean"].includes(rules.fieldType)) {
-      return false;
-    }
-    return;
-  }
-
-  const valueHandlers = useMemo(
-    () => ({
-      dynamic: (fieldValue: ValueProps) => {
-        return get(shareableContent, `data.${fieldValue?.dynamic}`);
-      },
-      static: (fieldValue: ValueProps) => {
-        const staticValue = fieldValue?.static;
-        const value = !has(staticValue, language)
-          ? !has(staticValue, "en")
-            ? emptyObject(staticValue)
-              ? undefined
-              : staticValue
-            : // @ts-ignore
-              staticValue?.en
-          : staticValue?.[language];
-
-        return value;
-      },
-      boundCode: (fieldValue: ValueProps) => {
-        try {
-          const boundCode = transformBoundCode(fieldValue.boundCode ?? "");
-          return autoRunJavascriptCode(boundCode);
-        } catch {
-          return;
-        }
-      },
-      rules: (fieldValue: ValueProps) => {
-        const result = evaluateRules(fieldValue.rules!);
-        return result;
-      },
-    }),
-    [shareableContent, transformBoundCode, language, evaluateRules],
-  );
+      const result = evaluateRules(fieldValue.rules!);
+      return result;
+    },
+  };
 
   return useMemo(
     () =>
@@ -412,7 +307,8 @@ export const useComputeValue = ({
         },
         onLoad as Record<string, any>,
       ),
-    [onLoad, valueHandlers, valuePropsPaths],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [onLoad, valuePropsPaths],
   );
 };
 
