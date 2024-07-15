@@ -1,7 +1,7 @@
 import { SectionId } from "@/components/navbar/EditorNavbarSections";
 import { PageResponse } from "@/requests/pages/types";
 import { Action } from "@/utils/actions";
-import { ComponentStructure, ComponentTree } from "@/utils/editor";
+import { ComponentStructure, ComponentTree, Edge } from "@/utils/editor";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import merge from "lodash.merge";
@@ -60,6 +60,8 @@ export type EditorState = {
   setActionsResponse: (actionId: string, response: any) => void;
   asideSelectedTab: Tab;
   setAsideSelectedTab: (tab: Tab) => void;
+  edge?: Edge;
+  setEdge: (edge: Edge | undefined) => void;
 };
 
 // creates a store with undo/redo capability
@@ -67,6 +69,8 @@ export const useEditorStore = create<EditorState>()(
   // @ts-ignore
   devtools(
     (set) => ({
+      edge: undefined,
+      setEdge: (edge) => set({ edge }),
       asideSelectedTab: "design",
       setAsideSelectedTab: (tab) => set({ asideSelectedTab: tab }),
       setActionsResponse: (actionId, response) =>

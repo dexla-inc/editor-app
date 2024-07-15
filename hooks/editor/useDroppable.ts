@@ -48,8 +48,8 @@ const debouncedDragEnter = debounce((event: any, id: string) => {
         activeComponent?.name as string
       ].allowedParentTypes?.includes(comp?.name as string)
     : isPopOver
-    ? true
-    : !comp?.props?.blockDroppingChildrenInside;
+      ? true
+      : !comp?.props?.blockDroppingChildrenInside;
 
   if (!isTryingToDropInsideItself && activeComponent && isAllowed) {
     setCurrentTargetId(id);
@@ -81,8 +81,7 @@ export const useDroppable = ({
   const setCurrentTargetId = useEditorStore(
     (state) => state.setCurrentTargetId,
   );
-  const isResizing = useEditorStore((state) => state.isResizing);
-  const [edge, setEdge] = useState<Edge>();
+  const setEdge = useEditorStore((state) => state.setEdge);
   const currentTargetId = useEditorStore((state) => state.currentTargetId);
   const componentToAdd = useEditorStore((state) => state.componentToAdd);
   const component = useEditorTreeStore(
@@ -91,7 +90,9 @@ export const useDroppable = ({
 
   const handleDrop = useCallback(
     (event: React.DragEvent) => {
+      const isResizing = useEditorStore.getState().isResizing;
       if (isResizing) return;
+      const edge = useEditorStore.getState().edge;
       const selectedComponentId = selectedComponentIdSelector(
         useEditorTreeStore.getState(),
       );
@@ -109,7 +110,7 @@ export const useDroppable = ({
 
       setCurrentTargetId(undefined);
     },
-    [isResizing, componentToAdd?.id, id, edge, setCurrentTargetId, onDrop],
+    [componentToAdd?.id, id, setCurrentTargetId, onDrop],
   );
 
   const handleEdgeSet = (
@@ -145,6 +146,7 @@ export const useDroppable = ({
 
   const handleDragOver = useCallback(
     (event: React.DragEvent) => {
+      const isResizing = useEditorStore.getState().isResizing;
       if (isResizing) return;
 
       event.preventDefault();
@@ -173,7 +175,6 @@ export const useDroppable = ({
       currentWindow,
       currentTargetId,
       component?.blockDroppingChildrenInside,
-      isResizing,
     ],
   );
 
@@ -188,13 +189,14 @@ export const useDroppable = ({
 
   const handleDragLeave = useCallback(
     (event: any) => {
+      const isResizing = useEditorStore.getState().isResizing;
       if (isResizing) return;
 
       event.preventDefault();
       event.stopPropagation();
       setEdge(undefined);
     },
-    [setEdge, isResizing],
+    [setEdge],
   );
 
   const handleDragEnd = useCallback(
@@ -203,17 +205,17 @@ export const useDroppable = ({
         return;
       }
 
+      const isResizing = useEditorStore.getState().isResizing;
       if (isResizing) return;
 
       event.preventDefault();
       event.stopPropagation();
       setEdge(undefined);
     },
-    [setEdge, isResizing],
+    [setEdge],
   );
 
   return {
-    edge,
     onDrop: handleDrop,
     onDragOver: handleDragOver,
     onDragEnter: handleDragEnter,
