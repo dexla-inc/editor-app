@@ -34,14 +34,7 @@ import {
 } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import startCase from "lodash.startcase";
-import {
-  memo,
-  PropsWithChildren,
-  useEffect,
-  useRef,
-  useState,
-  useLayoutEffect,
-} from "react";
+import { memo, PropsWithChildren, useEffect } from "react";
 
 type Props = {
   sections: Sections;
