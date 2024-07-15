@@ -9,75 +9,66 @@ import {
 import { DROP_INDICATOR_WIDTH } from "@/utils/config";
 import { useMemo } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
+import { useShallow } from "zustand/react/shallow";
 
 type Props = {
   componentId: string;
-  isSelected?: boolean;
-  selectedByOther?: string;
 };
 
-export const useEditorShadows = ({
-  componentId,
-  isSelected,
-  selectedByOther,
-}: Props) => {
+export const useEditorShadows = ({ componentId }: Props) => {
   const isEditorMode = useEditorTreeStore(
     (state) => !state.isPreviewMode && !state.isLive,
   );
-  const isOver = useEditorStore(
-    (state) => state.currentTargetId === componentId,
-  );
-  const onDrop = useOnDrop();
+  const shadows = useEditorStore(
+    useShallow((state) => {
+      const baseShadow = GREEN_BASE_SHADOW;
+      const edge =
+        state.currentTargetId === componentId ? state.edge : undefined;
 
+      if (edge) {
+        let boxShadow;
+        switch (edge) {
+          case "top":
+            boxShadow = `0 -${DROP_INDICATOR_WIDTH}px 0 0 ${
+              GREEN_COLOR
+            }, ${baseShadow}`;
+            break;
+          case "bottom":
+            boxShadow = `0 ${DROP_INDICATOR_WIDTH}px 0 0 ${
+              GREEN_COLOR
+            }, ${baseShadow}`;
+            break;
+          case "left":
+            boxShadow = `-${DROP_INDICATOR_WIDTH}px 0 0 0 ${
+              GREEN_COLOR
+            }, ${baseShadow}`;
+            break;
+          case "right":
+            boxShadow = `${DROP_INDICATOR_WIDTH}px 0 0 0 ${
+              GREEN_COLOR
+            }, ${baseShadow}`;
+            break;
+          default:
+            boxShadow = baseShadow;
+        }
+        return {
+          boxShadow: boxShadow,
+          background: edge === "center" ? GREEN_COLOR : "none",
+          opacity: edge === "center" ? 0.4 : 1,
+        };
+      } else {
+        return {};
+      }
+    }),
+  );
+
+  const onDrop = useOnDrop();
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
-  const baseShadow = selectedByOther
-    ? `inset 0 0 0 2px ${selectedByOther}`
-    : GREEN_BASE_SHADOW;
-  const thinBaseShadow = THIN_GREEN_BASE_SHADOW;
-  const { edge, ...droppable } = useDroppable({
+  const droppable = useDroppable({
     id: componentId,
     onDrop,
     currentWindow: iframeWindow,
   });
-
-  const shadows = useMemo(() => {
-    if (isOver) {
-      let boxShadow;
-      switch (edge) {
-        case "top":
-          boxShadow = `0 -${DROP_INDICATOR_WIDTH}px 0 0 ${
-            selectedByOther ?? GREEN_COLOR
-          }, ${baseShadow}`;
-          break;
-        case "bottom":
-          boxShadow = `0 ${DROP_INDICATOR_WIDTH}px 0 0 ${
-            selectedByOther ?? GREEN_COLOR
-          }, ${baseShadow}`;
-          break;
-        case "left":
-          boxShadow = `-${DROP_INDICATOR_WIDTH}px 0 0 0 ${
-            selectedByOther ?? GREEN_COLOR
-          }, ${baseShadow}`;
-          break;
-        case "right":
-          boxShadow = `${DROP_INDICATOR_WIDTH}px 0 0 0 ${
-            selectedByOther ?? GREEN_COLOR
-          }, ${baseShadow}`;
-          break;
-        default:
-          boxShadow = baseShadow;
-      }
-      return {
-        boxShadow: boxShadow,
-        background: edge === "center" ? selectedByOther ?? GREEN_COLOR : "none",
-        opacity: edge === "center" ? 0.4 : 1,
-      };
-    } else if (isSelected || selectedByOther) {
-      return { boxShadow: baseShadow };
-    } else {
-      return {};
-    }
-  }, [isOver, edge, selectedByOther, baseShadow, isSelected]);
 
   const tealOutline = useMemo(
     () => ({
@@ -95,10 +86,10 @@ export const useEditorShadows = ({
         pointerEvents: "none",
       },
       "&:hover": {
-        boxShadow: thinBaseShadow,
+        boxShadow: THIN_GREEN_BASE_SHADOW,
       },
     }),
-    [thinBaseShadow, shadows],
+    [shadows],
   );
 
   if (!isEditorMode) {

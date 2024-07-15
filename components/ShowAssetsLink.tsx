@@ -3,14 +3,13 @@ import { useUserConfigStore } from "@/stores/userConfig";
 import { Anchor } from "@mantine/core";
 
 export const ShowAssetsLink = () => {
-  const activeTab = useEditorStore((state) => state.activeTab);
-  const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
   const setActiveTab = useEditorStore((state) => state.setActiveTab);
 
-  const isTheme = activeTab === "assets";
-  const _val = isTabPinned ? "layers" : undefined;
-
   const openImageUploader = () => {
+    const isTheme = useEditorStore.getState().activeTab === "assets";
+    const _val = useUserConfigStore.getState().isTabPinned
+      ? "layers"
+      : undefined;
     setActiveTab(isTheme ? _val : "assets");
   };
 

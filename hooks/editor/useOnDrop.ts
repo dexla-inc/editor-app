@@ -21,23 +21,23 @@ const parseId = (_id: string) => {
   const id = _id.startsWith("layer")
     ? _id.split("layer-")[1]
     : _id.startsWith("add")
-    ? _id.split("add-")[1]
-    : _id;
+      ? _id.split("add-")[1]
+      : _id;
   return id;
 };
 
 export const useOnDrop = () => {
-  const editorTree = useEditorTreeStore((state) => state.tree);
-  const setEditorTree = useEditorTreeStore((state) => state.setTree);
-  const componentToAdd = useEditorStore((state) => state.componentToAdd);
   const setComponentToAdd = useEditorStore((state) => state.setComponentToAdd);
   const setSelectedComponentIds = useEditorTreeStore(
     (state) => state.setSelectedComponentIds,
   );
-  const isResizing = useEditorStore((state) => state.isResizing);
 
   const onDrop = useCallback(
     (_droppedId: string, dropTarget: DropTarget) => {
+      const { tree: editorTree, setTree: setEditorTree } =
+        useEditorTreeStore.getState();
+      const { componentToAdd, isResizing } = useEditorStore.getState();
+
       if (isResizing) return;
       // const droppedId = parseId(_droppedId ?? componentToAdd?.id);
       const activeComponent = componentToAdd
@@ -115,15 +115,7 @@ export const useOnDrop = () => {
       setEditorTree(editorTree as EditorTreeCopy);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [
-      componentToAdd,
-      editorTree,
-      setEditorTree,
-      handleComponentAddition,
-      handleReorderingOrMoving,
-      handleRootDrop,
-      isResizing,
-    ],
+    [handleComponentAddition, handleReorderingOrMoving, handleRootDrop],
   );
 
   function handleGridComponentAddition(
