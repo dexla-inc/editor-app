@@ -15,7 +15,7 @@ import { useShallow } from "zustand/react/shallow";
 type Props = EditableComponentMapper & ButtonProps & ReactElement<"Button">;
 
 const ButtonComponent = forwardRef(
-  ({ component, style, shareableContent, ...props }: Props, ref) => {
+  ({ component, style, shareableContent, theme, ...props }: Props, ref) => {
     const {
       triggers,
       icon,
@@ -29,7 +29,7 @@ const ButtonComponent = forwardRef(
     const { children: childrenValue = component.props?.children } =
       component.onLoad;
 
-    const theme = useThemeStore((state) => state.theme);
+    console.log("theme", theme);
 
     const contentEditableProps = useContentEditable(
       component.id as string,

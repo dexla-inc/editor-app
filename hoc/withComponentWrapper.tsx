@@ -17,6 +17,7 @@ import { Component } from "@/utils/editor";
 import { useRouter } from "next/navigation";
 import merge from "lodash.merge";
 import { withComponentVisibility } from "@/hoc/withComponentVisibility";
+import { useThemeStore } from "@/stores/theme";
 
 export const withComponentWrapper = <T extends Record<string, any>>(
   Component: ComponentType<T>,
@@ -115,6 +116,8 @@ export const withComponentWrapper = <T extends Record<string, any>>(
       fixedPosition: component.fixedPosition,
     } as Component;
 
+    const theme = useThemeStore(useShallow((state) => state.theme));
+
     const props = {
       component: {
         ...component,
@@ -132,6 +135,7 @@ export const withComponentWrapper = <T extends Record<string, any>>(
         onContextMenu: handleContextMenu,
       }),
       shareableContent,
+      theme,
     } as any;
 
     const ref = useRef(null);
