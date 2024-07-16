@@ -96,6 +96,7 @@ const DateInputComponent = ({
         valueFormat={valueFormatValue}
         value={dateInputValue}
         {...restTriggers}
+        wrapperProps={{ "data-id": props.id }}
         onChange={handleChange}
         style={{}}
         styles={{
