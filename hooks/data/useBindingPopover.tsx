@@ -20,6 +20,7 @@ import { useOldRouter } from "@/hooks/data/useOldRouter";
 import { useDataBinding } from "@/hooks/data/useDataBinding";
 import { useBindingField } from "@/components/editor/BindingField/components/ComponentToBindFromInput";
 import { getAllComponentsByName } from "@/utils/editor";
+import { useEffect } from "react";
 
 type BindType = {
   selectedEntityId: string;
@@ -59,7 +60,7 @@ export const useBindingPopover = () => {
   const projectId = useEditorTreeStore((state) => state.currentProjectId ?? "");
   const language = useEditorTreeStore((state) => state.language);
   const { endpoints } = useEndpoints(projectId);
-  const { data: pageListQuery } = usePageListQuery(projectId, null);
+  const { data: pageListQuery, invalidate } = usePageListQuery(projectId, null);
   const pageActions = pageListQuery?.results?.find(
     (p) => p.id === activePage?.id,
   )?.actions;
@@ -72,6 +73,10 @@ export const useBindingPopover = () => {
   const getAuthState = useDataSourceStore((state) => state.getAuthState);
   const inputsStore = useInputsStore((state) => state.inputValues);
   const event = useEventData();
+
+  useEffect(() => {
+    invalidate();
+  }, []);
 
   const components = useEditorTreeStore(
     useShallow((state) => {
@@ -140,7 +145,7 @@ export const useBindingPopover = () => {
     },
     { list: {} } as Record<string, any>,
   );
-
+  console.log(pageActions, selectedComponentActions, isPageAction);
   const actionsList = isPageAction ? pageActions : selectedComponentActions;
 
   const isLogicFlow = nodes.length > 0;
