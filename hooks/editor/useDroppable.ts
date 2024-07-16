@@ -189,12 +189,14 @@ export const useDroppable = ({
   );
 
   const handleDragLeave = useCallback((event: any) => {
-    const { isResizing, setEdge } = useEditorStore.getState();
+    const { isResizing, setEdge, edge } = useEditorStore.getState();
     if (isResizing) return;
 
     event.preventDefault();
     event.stopPropagation();
-    setEdge(undefined);
+    if (edge !== undefined) {
+      setEdge(undefined);
+    }
   }, []);
 
   const handleDragEnd = useCallback((event: any) => {
@@ -202,12 +204,14 @@ export const useDroppable = ({
       return;
     }
 
-    const { isResizing, setEdge } = useEditorStore.getState();
+    const { isResizing, setEdge, edge } = useEditorStore.getState();
     if (isResizing) return;
 
     event.preventDefault();
     event.stopPropagation();
-    setEdge(undefined);
+    if (edge !== undefined) {
+      setEdge(undefined);
+    }
   }, []);
 
   return {
