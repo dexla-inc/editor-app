@@ -157,7 +157,10 @@ export const useDroppable = ({
 
       const { clientX: mouseX, clientY: mouseY } = event;
       const w = currentWindow ?? window;
-      const rect = w.document.getElementById(id)?.getBoundingClientRect()!;
+      const comp =
+        w?.document?.querySelector(`[data-id^="${id}"]`) ??
+        w?.document?.querySelector(`[id^="${id}"]`);
+      const rect = comp?.getBoundingClientRect()!;
 
       if (!mouseX || !mouseY || !rect || currentTargetId !== id) return;
 
@@ -186,12 +189,14 @@ export const useDroppable = ({
   );
 
   const handleDragLeave = useCallback((event: any) => {
-    const { isResizing, setEdge } = useEditorStore.getState();
+    const { isResizing, setEdge, edge } = useEditorStore.getState();
     if (isResizing) return;
 
     event.preventDefault();
     event.stopPropagation();
-    setEdge(undefined);
+    if (edge !== undefined) {
+      setEdge(undefined);
+    }
   }, []);
 
   const handleDragEnd = useCallback((event: any) => {
@@ -199,12 +204,14 @@ export const useDroppable = ({
       return;
     }
 
-    const { isResizing, setEdge } = useEditorStore.getState();
+    const { isResizing, setEdge, edge } = useEditorStore.getState();
     if (isResizing) return;
 
     event.preventDefault();
     event.stopPropagation();
-    setEdge(undefined);
+    if (edge !== undefined) {
+      setEdge(undefined);
+    }
   }, []);
 
   return {
