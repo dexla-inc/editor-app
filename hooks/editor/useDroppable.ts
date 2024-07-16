@@ -10,7 +10,7 @@ import {
   getComponentTreeById,
 } from "@/utils/editor";
 import debounce from "lodash.debounce";
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 
 const debouncedDragEnter = debounce((event: any, id: string) => {
@@ -48,8 +48,8 @@ const debouncedDragEnter = debounce((event: any, id: string) => {
         activeComponent?.name as string
       ].allowedParentTypes?.includes(comp?.name as string)
     : isPopOver
-    ? true
-    : !comp?.props?.blockDroppingChildrenInside;
+      ? true
+      : !comp?.props?.blockDroppingChildrenInside;
 
   if (!isTryingToDropInsideItself && activeComponent && isAllowed) {
     setCurrentTargetId(id);
@@ -78,20 +78,12 @@ export const useDroppable = ({
   onDrop: (droppedId: string, dropTarget: DropTarget) => void;
   currentWindow?: Window;
 }) => {
-  const setCurrentTargetId = useEditorStore(
-    (state) => state.setCurrentTargetId,
-  );
-  const isResizing = useEditorStore((state) => state.isResizing);
-  const [edge, setEdge] = useState<Edge>();
-  const currentTargetId = useEditorStore((state) => state.currentTargetId);
-  const componentToAdd = useEditorStore((state) => state.componentToAdd);
-  const component = useEditorTreeStore(
-    (state) => state.componentMutableAttrs[id],
-  );
-
   const handleDrop = useCallback(
     (event: React.DragEvent) => {
+      const { componentToAdd, isResizing, setCurrentTargetId } =
+        useEditorStore.getState();
       if (isResizing) return;
+      const edge = useEditorStore.getState().edge;
       const selectedComponentId = selectedComponentIdSelector(
         useEditorTreeStore.getState(),
       );
@@ -109,7 +101,7 @@ export const useDroppable = ({
 
       setCurrentTargetId(undefined);
     },
-    [isResizing, componentToAdd?.id, id, edge, setCurrentTargetId, onDrop],
+    [id, onDrop],
   );
 
   const handleEdgeSet = (
@@ -121,10 +113,13 @@ export const useDroppable = ({
     },
     threshold: number,
   ) => {
+    const { blockDroppingChildrenInside, name: componentName } =
+      useEditorTreeStore.getState().componentMutableAttrs[id];
+    const { componentToAdd, edge, setEdge } = useEditorStore.getState();
     const { leftDist, rightDist, topDist, bottomDist } = distances;
     const isPopOver = componentToAdd?.name === "PopOver";
-    let isAllowed = !component?.blockDroppingChildrenInside || isPopOver;
-    if (component?.name === "NavLink")
+    let isAllowed = !blockDroppingChildrenInside || isPopOver;
+    if (componentName === "NavLink")
       isAllowed = componentToAdd?.name === "NavLink";
 
     if (
@@ -135,16 +130,26 @@ export const useDroppable = ({
       isAllowed
     ) {
       // If not within 5 pixels of top and bottom edge, set edge to center.
-      setEdge("center");
+      if (edge !== "center") {
+        setEdge("center");
+      }
     } else {
       // Check the closest edge and set it accordingly.
-      const { edge } = getClosestEdge(leftDist, rightDist, topDist, bottomDist);
-      setEdge(edge as Edge);
+      const { edge: newEdge } = getClosestEdge(
+        leftDist,
+        rightDist,
+        topDist,
+        bottomDist,
+      );
+      if (edge !== newEdge) {
+        setEdge(newEdge as Edge);
+      }
     }
   };
 
   const handleDragOver = useCallback(
     (event: React.DragEvent) => {
+      const { currentTargetId, isResizing } = useEditorStore.getState();
       if (isResizing) return;
 
       event.preventDefault();
@@ -168,13 +173,7 @@ export const useDroppable = ({
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [
-      id,
-      currentWindow,
-      currentTargetId,
-      component?.blockDroppingChildrenInside,
-      isResizing,
-    ],
+    [id, currentWindow],
   );
 
   const handleDragEnter = useCallback(
@@ -186,34 +185,29 @@ export const useDroppable = ({
     [id],
   );
 
-  const handleDragLeave = useCallback(
-    (event: any) => {
-      if (isResizing) return;
+  const handleDragLeave = useCallback((event: any) => {
+    const { isResizing, setEdge } = useEditorStore.getState();
+    if (isResizing) return;
 
-      event.preventDefault();
-      event.stopPropagation();
-      setEdge(undefined);
-    },
-    [setEdge, isResizing],
-  );
+    event.preventDefault();
+    event.stopPropagation();
+    setEdge(undefined);
+  }, []);
 
-  const handleDragEnd = useCallback(
-    (event: any) => {
-      if (!event) {
-        return;
-      }
+  const handleDragEnd = useCallback((event: any) => {
+    if (!event) {
+      return;
+    }
 
-      if (isResizing) return;
+    const { isResizing, setEdge } = useEditorStore.getState();
+    if (isResizing) return;
 
-      event.preventDefault();
-      event.stopPropagation();
-      setEdge(undefined);
-    },
-    [setEdge, isResizing],
-  );
+    event.preventDefault();
+    event.stopPropagation();
+    setEdge(undefined);
+  }, []);
 
   return {
-    edge,
     onDrop: handleDrop,
     onDragOver: handleDragOver,
     onDragEnter: handleDragEnter,

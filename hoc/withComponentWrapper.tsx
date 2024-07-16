@@ -96,8 +96,6 @@ export const withComponentWrapper = <T extends Record<string, any>>(
 
     const { droppable, tealOutline } = useEditorShadows({
       componentId: componentTree.id!,
-      isSelected: false,
-      //selectedByOther,
     });
 
     const childStyles = useComputeChildStyles({

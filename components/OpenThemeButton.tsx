@@ -3,17 +3,21 @@ import { useUserConfigStore } from "@/stores/userConfig";
 import { Anchor } from "@mantine/core";
 
 export const OpenThemeButton = () => {
-  const activeTab = useEditorStore((state) => state.activeTab);
-  const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
   const setActiveTab = useEditorStore((state) => state.setActiveTab);
 
-  const isTheme = activeTab === "theme";
-  const _val = isTabPinned ? "layers" : undefined;
+  const onClick = () => {
+    const isTheme = useEditorStore.getState().activeTab === "theme";
+    const _val = useUserConfigStore.getState().isTabPinned
+      ? "layers"
+      : undefined;
+    setActiveTab(isTheme ? _val : "theme");
+  };
+
   return (
     <Anchor
       component="button"
       type="button"
-      onClick={() => setActiveTab(isTheme ? _val : "theme")}
+      onClick={onClick}
       size="xs"
       sx={{ alignSelf: "self-start" }}
     >
