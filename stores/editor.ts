@@ -70,9 +70,10 @@ export const useEditorStore = create<EditorState>()(
   devtools(
     (set) => ({
       edge: undefined,
-      setEdge: (edge) => set({ edge }),
+      setEdge: (edge) => set({ edge }, false, "editor/setEdge"),
       asideSelectedTab: "design",
-      setAsideSelectedTab: (tab) => set({ asideSelectedTab: tab }),
+      setAsideSelectedTab: (tab) =>
+        set({ asideSelectedTab: tab }, false, "editor/setAsideSelectedTab"),
       setActionsResponse: (actionId, response) =>
         set(
           (state) => ({

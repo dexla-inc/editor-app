@@ -157,7 +157,10 @@ export const useDroppable = ({
 
       const { clientX: mouseX, clientY: mouseY } = event;
       const w = currentWindow ?? window;
-      const rect = w.document.getElementById(id)?.getBoundingClientRect()!;
+      const comp =
+        w?.document?.querySelector(`[data-id^="${id}"]`) ??
+        w?.document?.querySelector(`[id^="${id}"]`);
+      const rect = comp?.getBoundingClientRect()!;
 
       if (!mouseX || !mouseY || !rect || currentTargetId !== id) return;
 
