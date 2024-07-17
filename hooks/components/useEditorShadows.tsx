@@ -19,6 +19,7 @@ export const useEditorShadows = ({ componentId }: Props) => {
   const isEditorMode = useEditorTreeStore(
     (state) => !state.isPreviewMode && !state.isLive,
   );
+
   const shadows = useEditorStore(
     useShallow((state) => {
       const baseShadow = GREEN_BASE_SHADOW;
