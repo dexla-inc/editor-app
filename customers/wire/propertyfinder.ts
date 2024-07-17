@@ -15,7 +15,6 @@ Deno.serve(async (req: Request) => {
 
   // Database queries will have RLS policies enforced
   const { data, error } = await supabaseClient.rpc("get_property_listings");
-  console.log("get_property_listings", data, error);
 
   if (error) {
     return new Response(JSON.stringify({ error: error.message }), {
