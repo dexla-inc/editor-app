@@ -9,7 +9,12 @@ import { EditableComponentMapper } from "@/utils/editor";
 import {
   AutocompleteItem,
   AutocompleteProps,
+  Avatar,
+  Group,
   Autocomplete as MantineAutocomplete,
+  MantineColor,
+  SelectItemProps,
+  Text,
 } from "@mantine/core";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
@@ -42,7 +47,13 @@ const AutocompleteComponent = forwardRef(
       props.id!,
     );
 
-    const { dataLabelKey, dataValueKey } = component.onLoad ?? {};
+    const {
+      dataLabelKey,
+      dataValueKey,
+      isAdvanced,
+      dataDescriptionKey,
+      dataImageKey,
+    } = component.onLoad ?? {};
     const { onChange, onItemSubmit, ...restTriggers } = triggers || {};
 
     const { color, backgroundColor } = useChangeState({ bg, textColor });
@@ -61,14 +72,25 @@ const AutocompleteComponent = forwardRef(
 
     let data = [];
 
-    if (dataType === "dynamic") {
-      if (response && dataLabelKey && dataValueKey) {
-        const list = Array.isArray(response) ? response : [response];
-        data = list.map((item: any) => ({
+    if (dataType === "dynamic" && response) {
+      const list = Array.isArray(response) ? response : [response];
+
+      data = list.map((item: any) => {
+        const baseData = {
           label: String(item[dataLabelKey]),
           value: String(item[dataValueKey]),
-        }));
-      }
+        };
+
+        if (isAdvanced) {
+          return {
+            ...baseData,
+            image: String(item[dataImageKey]),
+            description: String(item[dataDescriptionKey]),
+          };
+        }
+
+        return baseData;
+      });
     }
 
     if (dataType === "static") {
@@ -139,6 +161,7 @@ const AutocompleteComponent = forwardRef(
         rightSection={loading || isLoading ? <InputLoader /> : null}
         label={undefined}
         value={value?.label ?? value}
+        {...(isAdvanced ? { itemComponent: AutoCompleteItem } : {})}
       />
     );
   },
@@ -147,4 +170,29 @@ AutocompleteComponent.displayName = "Autocomplete";
 
 export const Autocomplete = memo(
   withComponentWrapper<Props>(AutocompleteComponent),
+);
+
+interface ItemProps extends SelectItemProps {
+  color: MantineColor;
+  description: string;
+  image: string;
+}
+
+const AutoCompleteItem = forwardRef<HTMLDivElement, ItemProps>(
+  ({ description, label, image, ...others }: ItemProps, ref) => (
+    <div ref={ref} {...others}>
+      <Group noWrap>
+        {image && image != "undefined" && <Avatar src={image} />}
+
+        <div>
+          {label && label != "undefined" && <Text>{label}</Text>}
+          {description && description != "undefined" && (
+            <Text size="xs" color="dimmed">
+              {description}
+            </Text>
+          )}
+        </div>
+      </Group>
+    </div>
+  ),
 );
