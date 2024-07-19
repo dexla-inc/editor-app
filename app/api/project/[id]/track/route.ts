@@ -43,45 +43,77 @@ export async function GET(req: Request, context: { params: Params }) {
     );
 
     const components: any[] = [];
-    const { results: pages } = await pageResponse.json();
-    console.log("===>", pages);
-    (pages ?? []).forEach((page: any) => {
+    const pages: any[] = [];
+    const { results = [] } = await pageResponse.json();
+
+    results.forEach((page: any) => {
       const pageState = safeJsonParse(decodeSchema(page.state));
-      if (page.id === pageId) {
-        crawl(
-          pageState.root,
-          (node, context) => {
-            const matchingActions = (node.actions ?? [])
+      let pageHasVariable = false;
+
+      crawl(
+        pageState.root,
+        (node, context) => {
+          const matchingActions =
+            (node.actions ?? [])
               ?.filter((action: any) =>
                 containsVariableId(action.action, variableId!),
               )
               .map((action: any) => ({
+                id: action.id,
                 trigger: action.trigger,
                 actionEvent: action.action.name,
-              }));
+              })) || [];
 
-            const onLoadKeys = Object.keys(node.onLoad ?? {}).filter((key) =>
+          const matchingDataKeys =
+            Object.keys(node.onLoad ?? {}).filter((key) =>
               containsVariableId(node.onLoad[key], variableId!),
-            );
+            ) || [];
 
-            if (matchingActions.length > 0) {
+          if (matchingActions.length || matchingDataKeys.length) {
+            pageHasVariable = true;
+
+            if (page.id === pageId) {
               components.push({
-                componentId: node.id,
+                id: node.id,
+                description: node.description,
                 actions: matchingActions,
-                onLoad: onLoadKeys,
+                onLoad: matchingDataKeys,
               });
             }
-          },
-          {
-            getChildren: (node) => node.children || [],
-          },
-        );
+          }
+        },
+        {
+          getChildren: (node) => node.children || [],
+        },
+      );
+
+      const matchingPageActions =
+        (page.actions ?? [])
+          ?.filter((action: any) => containsVariableId(action, variableId!))
+          .map((action: any) => ({
+            id: action.id,
+            trigger: action.trigger,
+            actionEvent: safeJsonParse(action.action).name,
+          })) || [];
+
+      if (pageHasVariable || matchingPageActions.length) {
+        pages.push({
+          id: page.id,
+          title: page.title,
+          slug: page.slug,
+          actions: matchingPageActions,
+        });
       }
     });
+
+    // Enable for Debugging
+    // console.log(JSON.stringify(components, null, 2));
+    // console.log(JSON.stringify(pages, null, 2));
 
     return Response.json(
       {
         components,
+        pages,
       },
       { status: 200 },
     );

@@ -4,23 +4,22 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 import { useVariableTracking } from "@/hooks/editor/reactQuery/useVariableTracking";
 import {
   Accordion,
-  ActionIcon,
+  Anchor,
   Group,
   List,
   Skeleton,
   Stack,
   Text,
-  Title,
 } from "@mantine/core";
 import { IconArrowRight } from "@tabler/icons-react";
-import { useEditorStore } from "@/stores/editor";
-import context from "react-redux/src/components/Context";
+import { Tab, useEditorStore } from "@/stores/editor";
+import Link from "next/link";
 
 export const VariableInstanceTracker = ({
   innerProps,
   context,
   id,
-}: ContextModalProps<{ variableId: string }>) => {
+}: ContextModalProps<{ variableId: string; onClose: () => void }>) => {
   const accessToken = usePropelAuthStore((state) => state.accessToken);
   const projectId = useEditorTreeStore((state) => state.currentProjectId)!;
   const pageId = useEditorTreeStore((state) => state.currentPageId)!;
@@ -31,19 +30,30 @@ export const VariableInstanceTracker = ({
   const setAsideSelectedTab = useEditorStore(
     (state) => state.setAsideSelectedTab,
   );
+  const setOpenAction = useEditorStore((state) => state.setOpenAction);
 
-  const { data = { components: [] }, isLoading } = useVariableTracking(
-    projectId,
-    pageId,
-    innerProps.variableId,
-    accessToken,
-  );
+  const { data = { components: [], pages: [] }, isLoading } =
+    useVariableTracking(projectId, pageId, innerProps.variableId, accessToken);
 
-  const onClickGoToAction = async (componentId: string) => {
-    console.log(id);
+  const onClickGoToComponentTab = async (
+    componentId: string,
+    tab: Tab,
+    actionId?: string,
+  ) => {
     context.closeModal(id);
+    innerProps.onClose?.();
     await setSelectedComponentIds(() => [componentId]);
-    await setAsideSelectedTab("actions");
+    await setAsideSelectedTab(tab);
+    actionId &&
+      (await setOpenAction({
+        componentId: componentId,
+        actionIds: [actionId],
+      }));
+  };
+
+  const onClickGoToPage = () => {
+    context.closeModal(id);
+    innerProps.onClose?.();
   };
 
   return (
@@ -55,61 +65,87 @@ export const VariableInstanceTracker = ({
             {data.components?.map((comp: any) => {
               const componentElement =
                 iframeWindow?.document?.querySelector(
-                  `[data-id^="${comp.componentId}"]`,
+                  `[data-id^="${comp.id}"]`,
                 ) ??
-                iframeWindow?.document?.querySelector(
-                  `[id^="${comp.componentId}"]`,
-                );
+                iframeWindow?.document?.querySelector(`[id^="${comp.id}"]`);
 
               const foundElementComponentId = (
                 componentElement?.getAttribute("data-id") ??
                 componentElement?.getAttribute("id")! ??
-                comp.componentId
+                comp.id
               ).replace(/-(title|target)$/, "");
 
               return (
-                <Stack key={comp.componentId}>
-                  <Title size="sm" order={3}>
-                    Actions
-                  </Title>
+                <Stack key={comp.id} spacing={0}>
+                  <Text size="sm">{comp.description}</Text>
                   <List
                     styles={{ itemWrapper: { width: "100%" } }}
-                    withPadding
+                    listStyleType="none"
                     px={10}
+                    withPadding
                   >
-                    {comp.actions?.map((action: any) => (
-                      <List.Item key={action.actionEvent}>
-                        <Group position="apart">
-                          <Text size="xs">
-                            {action.trigger} - {action.actionEvent}
-                          </Text>
-                          <ActionIcon
-                            onClick={() =>
-                              onClickGoToAction(foundElementComponentId)
-                            }
-                          >
-                            <IconArrowRight size={16} />
-                          </ActionIcon>
-                        </Group>
-                      </List.Item>
-                    ))}
+                    <List.Item>
+                      <Text size="sm">Actions:</Text>
+                      <List
+                        styles={{ itemWrapper: { width: "100%" } }}
+                        withPadding
+                        listStyleType="none"
+                      >
+                        {comp.actions?.map((action: any) => (
+                          <List.Item key={action.actionEvent}>
+                            <Group position="apart">
+                              <Text size="xs">
+                                {action.trigger} - {action.actionEvent}
+                              </Text>
+                              <Anchor
+                                onClick={() =>
+                                  onClickGoToComponentTab(
+                                    foundElementComponentId,
+                                    "actions",
+                                    action.id,
+                                  )
+                                }
+                              >
+                                <IconArrowRight size={16} />
+                              </Anchor>
+                            </Group>
+                          </List.Item>
+                        ))}
+                      </List>
+                    </List.Item>
                   </List>
-                  <Title size="sm">Data</Title>
                   <List
                     styles={{ itemWrapper: { width: "100%" } }}
                     withPadding
                     px={10}
+                    listStyleType="none"
                   >
-                    {comp.onLoad?.map((key: any) => (
-                      <List.Item key={key}>
-                        <Group position="apart">
-                          <Text size="xs">{key}</Text>
-                          <ActionIcon>
-                            <IconArrowRight size={16} />
-                          </ActionIcon>
-                        </Group>
-                      </List.Item>
-                    ))}
+                    <List.Item>
+                      <Text size="sm">Data:</Text>
+                      <List
+                        styles={{ itemWrapper: { width: "100%" } }}
+                        withPadding
+                        listStyleType="none"
+                      >
+                        {comp.onLoad?.map((key: any) => (
+                          <List.Item key={key}>
+                            <Group position="apart">
+                              <Text size="xs">{key}</Text>
+                              <Anchor
+                                onClick={() =>
+                                  onClickGoToComponentTab(
+                                    foundElementComponentId,
+                                    "data",
+                                  )
+                                }
+                              >
+                                <IconArrowRight size={16} />
+                              </Anchor>
+                            </Group>
+                          </List.Item>
+                        ))}
+                      </List>
+                    </List.Item>
                   </List>
                 </Stack>
               );
@@ -120,16 +156,60 @@ export const VariableInstanceTracker = ({
         <Accordion.Item value="pages">
           <Accordion.Control>Pages</Accordion.Control>
           <Accordion.Panel>
-            Configure components appearance and behavior with vast amount of
-            settings or overwrite any part of component styles
-          </Accordion.Panel>
-        </Accordion.Item>
-
-        <Accordion.Item value="pageActions">
-          <Accordion.Control>Page Actions</Accordion.Control>
-          <Accordion.Panel>
-            With new :focus-visible pseudo-class focus ring appears only when
-            user navigates with keyboard
+            {data.pages?.map((page: any) => {
+              return (
+                <List
+                  key={page.id}
+                  styles={{ itemWrapper: { width: "100%" } }}
+                  withPadding
+                  px={10}
+                  listStyleType="none"
+                >
+                  <List.Item key={page.id}>
+                    <Group position="apart">
+                      <Text size="xs">{page.title}</Text>
+                      <Anchor
+                        component={Link}
+                        href={{
+                          pathname: `/projects/${projectId}/editor/${page.id}`,
+                        }}
+                        onClick={onClickGoToPage}
+                      >
+                        <IconArrowRight size={16} />
+                      </Anchor>
+                    </Group>
+                    <List
+                      styles={{ itemWrapper: { width: "100%" } }}
+                      withPadding
+                      listStyleType="none"
+                    >
+                      {page.actions?.map((action: any) => (
+                        <List.Item key={action.actionEvent}>
+                          <Group position="apart">
+                            <Text size="xs">
+                              {action.trigger} - {action.actionEvent}
+                            </Text>
+                            <Anchor
+                              component={Link}
+                              href={{
+                                pathname: `/projects/${projectId}/editor/${page.id}`,
+                                query: {
+                                  pageActionTrigger: action.trigger,
+                                  pageActionEvent: action.actionEvent,
+                                },
+                              }}
+                              onClick={onClickGoToPage}
+                            >
+                              <IconArrowRight size={16} />
+                            </Anchor>
+                          </Group>
+                        </List.Item>
+                      ))}
+                    </List>
+                  </List.Item>
+                </List>
+              );
+            })}
           </Accordion.Panel>
         </Accordion.Item>
       </Accordion>
