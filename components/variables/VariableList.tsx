@@ -21,9 +21,14 @@ import { modals, openContextModal } from "@mantine/modals";
 
 type Props = {
   projectId: string;
+  parentModalControl: {
+    readonly open: () => void;
+    readonly close: () => void;
+    readonly toggle: () => void;
+  };
 };
 
-export const VariableList = ({ projectId }: Props) => {
+export const VariableList = ({ projectId, parentModalControl }: Props) => {
   const [opened, modal] = useDisclosure(false);
   const [filter, setFilter] = useDebouncedState("", 100);
   const [variableToEdit, setVariableToEdit] = useState(undefined);
@@ -76,9 +81,12 @@ export const VariableList = ({ projectId }: Props) => {
               onClick={() => {
                 openContextModal({
                   modal: "variableInstanceTracker",
-                  title: `Variable ${variable.name} found in`,
+                  title: (
+                    <Text weight="bold">{`Variable "${variable.name}" found in`}</Text>
+                  ),
                   innerProps: {
                     variableId: variable.id,
+                    onClose: parentModalControl.close,
                   },
                 });
               }}

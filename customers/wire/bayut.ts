@@ -45,7 +45,7 @@ Deno.serve(async (req: Request) => {
       Portals: {
         Portal: item.platforms
           ?.split(",")
-          .filter((m) => ["Bayut", "dubizzle"].includes(m))
+          .filter((m: any) => ["Bayut", "dubizzle"].includes(m))
           .map((portal: string) => portal.trim()),
       },
       Last_Updated: item.last_updated,
