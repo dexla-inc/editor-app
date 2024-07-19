@@ -15,6 +15,7 @@ import { MantineProvider } from "@mantine/core";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { darkTheme, theme } from "@/utils/branding";
 import { MantineGlobal } from "@/components/MantineGlobal";
+import { VariableInstanceTracker } from "@/components/variables/VariableInstanceTracker";
 export const EditorProviders = ({ children }: { children: ReactNode }) => {
   const isDarkTheme = useUserConfigStore((state: any) => state.isDarkTheme);
 
@@ -36,6 +37,7 @@ export const EditorProviders = ({ children }: { children: ReactNode }) => {
               modals={{
                 logicFlows: LogicFlowInitialModal,
                 quickAccess: QuickAccessModal,
+                variableInstanceTracker: VariableInstanceTracker,
               }}
             >
               {children}
