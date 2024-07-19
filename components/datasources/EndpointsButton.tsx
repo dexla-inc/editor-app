@@ -21,9 +21,9 @@ export default function EndpointsButton({
 
   const goToEditor = async (projectId: string) => {
     startLoading({
-      id: "editor-load",
-      title: "Editor Is Loading",
-      message: "Wait while the editor is loading",
+      id: "go-to-editor",
+      title: "Loading App",
+      message: "Wait while we load the editor for your project",
     });
 
     const page =
