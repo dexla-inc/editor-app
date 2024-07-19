@@ -165,7 +165,7 @@ export default function EndpointsStep({
           {dataSource?.authenticationScheme === "API_KEY" && (
             <>
               <Col span={4} fw={700}>
-                <Text>API Key Value</Text>
+                <Text size="sm">API Key Value</Text>
               </Col>
               <Col span={8}>
                 <Text size="sm">{accessToken}</Text>
