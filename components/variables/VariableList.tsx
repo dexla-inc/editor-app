@@ -13,6 +13,7 @@ import {
   Table,
   Text,
   TextInput,
+  Tooltip,
 } from "@mantine/core";
 import { useDebouncedState, useDisclosure } from "@mantine/hooks";
 import { IconEdit, IconSearch, IconX } from "@tabler/icons-react";
@@ -76,55 +77,61 @@ export const VariableList = ({ projectId, parentModalControl }: Props) => {
         </td>
         <td style={{ maxWidth: 90 }}>
           <Group spacing={5} position="center">
-            <ActionIcon
-              size="xs"
-              onClick={() => {
-                openContextModal({
-                  modal: "variableInstanceTracker",
-                  title: (
-                    <Text weight="bold">{`Variable "${variable.name}" found in`}</Text>
-                  ),
-                  innerProps: {
-                    variableId: variable.id,
-                    onClose: parentModalControl.close,
-                  },
-                });
-              }}
-            >
-              <IconSearch />
-            </ActionIcon>
-            <ActionIcon
-              size="xs"
-              onClick={() => {
-                setVariableToEdit(variable.id);
-                modal.open();
-              }}
-            >
-              <IconEdit />
-            </ActionIcon>
-            <ActionIcon
-              size="xs"
-              onClick={() => {
-                modals.openConfirmModal({
-                  title: "Delete Variable",
-                  centered: true,
-                  children: (
-                    <Text size="sm">
-                      Are you sure you want to delete the variable
-                      <b>{` "${variable.name}"`}</b>?
-                    </Text>
-                  ),
-                  labels: {
-                    confirm: "Delete variable",
-                    cancel: "Cancel",
-                  },
-                  confirmProps: { color: "red" },
-                  onConfirm: () => deleteVar(variable.id),
-                });
-              }}
-            >
-              <IconX />
-            </ActionIcon>
+            <Tooltip label="Find">
+              <ActionIcon
+                size="xs"
+                onClick={() => {
+                  openContextModal({
+                    modal: "variableInstanceTracker",
+                    title: (
+                      <Text weight="bold">{`Variable "${variable.name}" found in`}</Text>
+                    ),
+                    innerProps: {
+                      variableId: variable.id,
+                      onClose: parentModalControl.close,
+                    },
+                  });
+                }}
+              >
+                <IconSearch />
+              </ActionIcon>
+            </Tooltip>
+            <Tooltip label="Edit">
+              <ActionIcon
+                size="xs"
+                onClick={() => {
+                  setVariableToEdit(variable.id);
+                  modal.open();
+                }}
+              >
+                <IconEdit />
+              </ActionIcon>
+            </Tooltip>
+            <Tooltip label="Delete">
+              <ActionIcon
+                size="xs"
+                onClick={() => {
+                  modals.openConfirmModal({
+                    title: "Delete Variable",
+                    centered: true,
+                    children: (
+                      <Text size="sm">
+                        Are you sure you want to delete the variable
+                        <b>{` "${variable.name}"`}</b>?
+                      </Text>
+                    ),
+                    labels: {
+                      confirm: "Delete variable",
+                      cancel: "Cancel",
+                    },
+                    confirmProps: { color: "red" },
+                    onConfirm: () => deleteVar(variable.id),
+                  });
+                }}
+              >
+                <IconX />
+              </ActionIcon>
+            </Tooltip>
           </Group>
         </td>
       </tr>
