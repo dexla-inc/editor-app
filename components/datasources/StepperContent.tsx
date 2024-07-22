@@ -38,7 +38,9 @@ export default function StepperContent({
   const [dataSource, setDataSource] = useState<DataSourceResponse>(
     {} as DataSourceResponse,
   );
-
+  const [endpoints, setEndpoints] = useState<Array<Endpoint> | undefined>(
+    undefined,
+  );
   const [loginEndpointId, setLoginEndpointId] = useState<string | null>(null);
   const [loginEndpointLabel, setLoginEndpointLabel] = useState<string | null>(
     null,
@@ -77,6 +79,7 @@ export default function StepperContent({
           stopLoading={stopLoading}
           dataSource={dataSource}
           setDataSource={setDataSource}
+          setEndpoints={setEndpoints}
         ></SwaggerStep>
       )}
       {activeStep == 1 && (

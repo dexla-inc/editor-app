@@ -145,7 +145,7 @@ export const useBindingPopover = () => {
     },
     { list: {} } as Record<string, any>,
   );
-
+  console.log(pageActions, selectedComponentActions, isPageAction);
   const actionsList = isPageAction ? pageActions : selectedComponentActions;
 
   const isLogicFlow = nodes.length > 0;

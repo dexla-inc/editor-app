@@ -18,7 +18,7 @@ export const NavbarComponent = () => {
       maw={{ base: NAVBAR_WIDTH }}
       sx={{
         height: `calc(100% - ${HEADER_HEIGHT}px)`,
-        zIndex: 300,
+        zIndex: 200,
       }}
     >
       <MantineNavbar.Section grow py="sm">

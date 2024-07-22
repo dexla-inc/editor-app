@@ -38,7 +38,6 @@ type Props<T extends DataSourceParams | ApiFromAI> = {
 
 export const BasicDetailsInputs = <T extends DataSourceParams | ApiFromAI>({
   form,
-  authenticationScheme,
   setAuthenticationScheme,
 }: Props<T>) => {
   return (

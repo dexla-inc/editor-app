@@ -4,6 +4,7 @@ import { useVariableStore } from "@/stores/variables";
 import { isObjectOrArray } from "@/utils/common";
 import {
   ActionIcon,
+  Button,
   Center,
   Group,
   Modal,
@@ -16,12 +17,18 @@ import {
 import { useDebouncedState, useDisclosure } from "@mantine/hooks";
 import { IconEdit, IconSearch, IconX } from "@tabler/icons-react";
 import { useState } from "react";
+import { modals, openContextModal } from "@mantine/modals";
 
 type Props = {
   projectId: string;
+  parentModalControl: {
+    readonly open: () => void;
+    readonly close: () => void;
+    readonly toggle: () => void;
+  };
 };
 
-export const VariableList = ({ projectId }: Props) => {
+export const VariableList = ({ projectId, parentModalControl }: Props) => {
   const [opened, modal] = useDisclosure(false);
   const [filter, setFilter] = useDebouncedState("", 100);
   const [variableToEdit, setVariableToEdit] = useState(undefined);
@@ -67,8 +74,25 @@ export const VariableList = ({ projectId }: Props) => {
             {isObjectOrArray(value) ? JSON.stringify(value) : value}
           </Text>
         </td>
-        <td style={{ maxWidth: 50 }}>
-          <Group>
+        <td style={{ maxWidth: 90 }}>
+          <Group spacing={5} position="center">
+            <ActionIcon
+              size="xs"
+              onClick={() => {
+                openContextModal({
+                  modal: "variableInstanceTracker",
+                  title: (
+                    <Text weight="bold">{`Variable "${variable.name}" found in`}</Text>
+                  ),
+                  innerProps: {
+                    variableId: variable.id,
+                    onClose: parentModalControl.close,
+                  },
+                });
+              }}
+            >
+              <IconSearch />
+            </ActionIcon>
             <ActionIcon
               size="xs"
               onClick={() => {
@@ -78,7 +102,27 @@ export const VariableList = ({ projectId }: Props) => {
             >
               <IconEdit />
             </ActionIcon>
-            <ActionIcon size="xs" onClick={() => deleteVar(variable.id)}>
+            <ActionIcon
+              size="xs"
+              onClick={() => {
+                modals.openConfirmModal({
+                  title: "Delete Variable",
+                  centered: true,
+                  children: (
+                    <Text size="sm">
+                      Are you sure you want to delete the variable
+                      <b>{` "${variable.name}"`}</b>?
+                    </Text>
+                  ),
+                  labels: {
+                    confirm: "Delete variable",
+                    cancel: "Cancel",
+                  },
+                  confirmProps: { color: "red" },
+                  onConfirm: () => deleteVar(variable.id),
+                });
+              }}
+            >
               <IconX />
             </ActionIcon>
           </Group>
@@ -108,7 +152,7 @@ export const VariableList = ({ projectId }: Props) => {
                 <th>Is Global</th>
                 <th>Default Value</th>
                 <th>Current Value</th>
-                <th style={{ width: 80 }}>Actions</th>
+                <th style={{ width: 90 }}>Actions</th>
               </tr>
             </thead>
             <tbody>{rows}</tbody>

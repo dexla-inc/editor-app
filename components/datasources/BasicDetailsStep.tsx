@@ -18,10 +18,8 @@ import {
   NextStepperClickEvent,
   PreviousStepperClickEvent,
 } from "@/types/dashboardTypes";
-import { ensureHttps } from "@/utils/common";
 import { Divider, Group, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useEffect } from "react";
 
 export interface BasicDetailsStepProps
   extends LoadingStore,
@@ -47,32 +45,23 @@ export default function BasicDetailsStep({
   setAuthenticationScheme,
 }: BasicDetailsStepProps) {
   const { id: projectId } = useEditorParams();
+  if (dataSource?.authenticationScheme) {
+    setAuthenticationScheme(dataSource?.authenticationScheme);
+  }
 
   const form = useForm<DataSourceParams>({
+    initialValues: {
+      name: dataSource?.name || "",
+      baseUrl: dataSource?.baseUrl || "",
+      environment: dataSource?.environment || "",
+      authenticationScheme: dataSource?.authenticationScheme || "NONE",
+      type: "API",
+    },
     validate: {
       baseUrl: (value) => validateBaseUrl(value),
       name: (value) => validateName(value),
     },
   });
-
-  useEffect(() => {
-    form.setValues({
-      name: dataSource?.name || "",
-      baseUrl: dataSource?.baseUrl ? ensureHttps(dataSource.baseUrl) : "",
-      environment: dataSource?.environment || "",
-      authenticationScheme: dataSource?.authenticationScheme || "NONE",
-      type: "API",
-      authValue: dataSource?.authValue,
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    if (dataSource?.authenticationScheme) {
-      setAuthenticationScheme(dataSource?.authenticationScheme);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   function handleNextStep(authScheme: AuthenticationSchemes | undefined) {
     if (authScheme === "NONE") {

@@ -46,7 +46,7 @@ export const VariablesButtonComponent = ({ projectId }: Props) => {
         )}
         {mode === "list" && (
           <Stack mt="xl">
-            <VariableList projectId={projectId} />
+            <VariableList projectId={projectId} parentModalControl={modal} />
           </Stack>
         )}
       </Modal>
