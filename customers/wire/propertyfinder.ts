@@ -15,7 +15,6 @@ Deno.serve(async (req: Request) => {
 
   // Database queries will have RLS policies enforced
   const { data, error } = await supabaseClient.rpc("get_property_listings");
-  console.log("get_property_listings", data, error);
 
   if (error) {
     return new Response(JSON.stringify({ error: error.message }), {
@@ -37,8 +36,8 @@ Deno.serve(async (req: Request) => {
       reference_number: item.reference_number,
       permit_number: item.permit_number,
       dtcm_permit: item.dtcm_permit,
-      offering_type: item.offering_type,
-      property_type: item.property_type,
+      offering_type: propertyPurposeTypes[item.property_purpose],
+      property_type: property_types[item.property_type],
       price_on_application: item.include_price,
       price: item.rental_pricing ?? item.price,
       service_charge: item.service_charge,
@@ -99,3 +98,39 @@ Deno.serve(async (req: Request) => {
     headers: { "Content-Type": "application/json" },
   });
 });
+
+const propertyPurposeTypes = {
+  "Residential Rent": "RR",
+  "Residential Sale": "RS",
+  "Commercial Rent": "CR",
+  "Commercial Sale": "CS",
+};
+
+const property_types = {
+  "Apartment/Flat": "AP",
+  "Bulk Units": "BU",
+  Bungalow: "BW",
+  "Business Centre": "BC",
+  Compound: "CD",
+  "Co-working Space": "CW",
+  Duplex: "DX",
+  Factory: "FA",
+  Farm: "FM",
+  "Full Floor": "FF",
+  "Half Floor": "HF",
+  "Hotel Apartment": "HA",
+  "Labor Camp": "LC",
+  "Land/Plot": "LP",
+  "Office Space": "OF",
+  Penthouse: "PH",
+  Retail: "RE",
+  Restaurant: "RT",
+  Shop: "SH",
+  Showroom: "SR",
+  "Staff Accommodation": "SA",
+  Storage: "ST",
+  Townhouse: "TH",
+  "Villa/House": "VH",
+  Warehouse: "WH",
+  "Whole Building": "WB",
+};

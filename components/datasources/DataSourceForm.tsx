@@ -4,7 +4,15 @@ import {
   DataSourceResponse,
 } from "@/requests/datasources/types";
 import { validateBaseUrl, validateName } from "@/utils/validation";
-import { Button, Flex, Select, Stack, TextInput, Title } from "@mantine/core";
+import {
+  Button,
+  Flex,
+  PasswordInput,
+  Select,
+  Stack,
+  TextInput,
+  Title,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -13,6 +21,7 @@ import { SegmentedControlInput } from "../SegmentedControlInput";
 import { validateSwaggerUrl } from "./SwaggerURLInput";
 import { SwaggerURLInputRevised } from "./SwaggerURLInputRevised";
 import { useEditorTreeStore } from "@/stores/editorTree";
+import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 
 type Props = {
   datasource: DataSourceResponse;
@@ -32,8 +41,8 @@ export const DataSourceForm = ({ datasource }: Props) => {
         values.authenticationScheme === "NONE"
           ? null
           : value === ""
-          ? "You must provide an API key"
-          : null,
+            ? "You must provide an API key"
+            : null,
     },
   });
 
@@ -122,11 +131,23 @@ export const DataSourceForm = ({ datasource }: Props) => {
           }}
         />
         {form.values.type === "SUPABASE" && (
-          <TextInput
+          <PasswordInput
             label="API Key"
+            size="xs"
             description="(Optional)"
             placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6Ikp..."
             {...form.getInputProps("apiKey")}
+            {...AUTOCOMPLETE_OFF_PROPS}
+          />
+        )}
+        {form.values.authenticationScheme === "API_KEY" && (
+          <PasswordInput
+            label="API Key"
+            size="xs"
+            description="(Optional)"
+            placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6Ikp..."
+            {...form.getInputProps("authValue")}
+            {...AUTOCOMPLETE_OFF_PROPS}
           />
         )}
         {/* Need to add access and refresh token config */}
