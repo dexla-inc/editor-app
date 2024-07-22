@@ -38,7 +38,10 @@ import { CSS } from "@dnd-kit/utilities";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import List, { ListRef } from "rc-virtual-list";
 import { cloneObject } from "@/utils/common";
-import { selectedComponentIdSelector } from "@/utils/componentSelectors";
+import {
+  isEditorModeSelector,
+  selectedComponentIdSelector,
+} from "@/utils/componentSelectors";
 import { useEditorStore } from "@/stores/editor";
 import { useShallow } from "zustand/react/shallow";
 import { usePrevious } from "@mantine/hooks";
@@ -102,6 +105,7 @@ export function NavbarLayersSection({ indentationWidth = 12 }: Props) {
   const [overId, setOverId] = useState<UniqueIdentifier | null>(null);
   const [offsetLeft, setOffsetLeft] = useState(0);
   const previousSelectedComponentId = usePrevious(selectedComponentId);
+  const isEditorMode = useEditorTreeStore(isEditorModeSelector);
 
   useEffect(() => {
     const expandedIds = getAllIdsToBeExpanded(
@@ -125,7 +129,7 @@ export function NavbarLayersSection({ indentationWidth = 12 }: Props) {
       const newScrollIndex = flattenedItems.findIndex(
         (component) => component.id === selectedComponentId,
       );
-      if (scrollIndex !== newScrollIndex) {
+      if (scrollIndex !== newScrollIndex && isEditorMode) {
         setScrollIndex(newScrollIndex);
       }
     }

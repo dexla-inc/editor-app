@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useComponentContextMenu } from "@/hooks/components/useComponentContextMenu";
+import { isEditorModeSelector } from "@/utils/componentSelectors";
 
 export const useEditorClickHandler = (componentId: string) => {
   const setSelectedComponentIds = useEditorTreeStore(
@@ -10,6 +11,8 @@ export const useEditorClickHandler = (componentId: string) => {
 
   return useCallback(
     (e: any) => {
+      const isEditorMode = isEditorModeSelector(useEditorTreeStore.getState());
+      if (!isEditorMode) return;
       e.stopPropagation?.();
 
       if (e.ctrlKey || e.metaKey) {

@@ -20,35 +20,38 @@ import {
   getComponentTreeById,
   removeComponent,
   removeComponentFromParent,
-  Component,
 } from "@/utils/editor";
 import { Group, Text, Tooltip, UnstyledButton } from "@mantine/core";
 import { IconGripVertical } from "@tabler/icons-react";
-import { memo, useCallback, useEffect, useMemo, useState } from "react";
+import { memo } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 import { createPortal } from "react-dom";
+import { useShallow } from "zustand/react/shallow";
+import { pick } from "next/dist/lib/pick";
 
-type Props = {
-  component: Component;
-};
-
-const ComponentToolboxInner = ({ component }: Props) => {
+const ComponentToolboxInner = () => {
   const isResizing = useEditorStore((state) => state.isResizing);
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const editorTheme = useThemeStore((state) => state.theme);
-
-  const editorTree = useEditorTreeStore(
-    (state) => state.tree as EditorTreeCopy,
+  const component = useEditorTreeStore(
+    useShallow((state) => {
+      const selectedComponentId = selectedComponentIdSelector(state);
+      return {
+        ...(pick(state.componentMutableAttrs[selectedComponentId!], [
+          "name",
+          "description",
+          "fixedPosition",
+        ]) || {}),
+        id: state.selectedComponentIds?.at(-1),
+      };
+    }),
   );
+
   const setEditorTree = useEditorTreeStore((state) => state.setTree);
   const setSelectedComponentIds = useEditorTreeStore(
     (state) => state.setSelectedComponentIds,
   );
-  const [toolboxStyle, setToolboxStyle] = useState({
-    top: "-24px",
-    left: "0px",
-  });
   const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
   const setIsCustomComponentModalOpen = useUserConfigStore(
     (state) => state.setIsCustomComponentModalOpen,
@@ -68,17 +71,6 @@ const ComponentToolboxInner = ({ component }: Props) => {
 
   const blockedToolboxActions = componentData?.blockedToolboxActions || [];
 
-  const parentTree = useMemo(
-    () =>
-      component.id
-        ? getComponentParent(
-            editorTree.root,
-            component.id?.split("-related-")[0],
-          )
-        : null,
-    [editorTree.root, component.id],
-  );
-
   const onDragStart = useOnDragStart();
 
   const draggable = useDraggable({
@@ -88,37 +80,27 @@ const ComponentToolboxInner = ({ component }: Props) => {
     ghostImagePosition: isTabPinned ? NAVBAR_WIDTH : 0,
   });
 
-  const calculatePosition = useCallback(() => {
-    const comp =
-      iframeWindow?.document.querySelector(`[data-id="${component.id}"]`) ??
-      iframeWindow?.document.getElementById(component.id!);
+  const comp =
+    iframeWindow?.document.querySelector(`[data-id="${component.id}"]`) ??
+    iframeWindow?.document.getElementById(component.id!);
 
-    if (comp) {
-      const compRect = comp.getBoundingClientRect();
-
-      setToolboxStyle({
-        top: `${Math.abs(compRect.top) - 24}px`,
-        left: `${Math.abs(compRect.left)}px`,
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [component.id, editorTree.root]);
-
-  useEffect(() => {
-    calculatePosition();
-  }, [calculatePosition]);
-
-  if (isResizing) {
+  if (isResizing || !comp) {
     return null;
   }
 
-  const haveNonRootParent = parentTree && parentTree.id !== "root";
+  const compRect = comp?.getBoundingClientRect();
+  const toolboxStyle = {
+    top: `${Math.abs(compRect.top) - 24}px`,
+    left: `${Math.abs(compRect.left)}px`,
+  };
 
   const canMove =
     !component.fixedPosition && !blockedToolboxActions.includes("move");
   const canWrapWithContainer = !blockedToolboxActions.includes(
     "wrap-with-container",
   );
+
+  if (!iframeWindow?.document?.body) return null;
 
   return createPortal(
     <>
@@ -156,27 +138,38 @@ const ComponentToolboxInner = ({ component }: Props) => {
             )}
           </UnstyledButton>
         </Tooltip>
-        <Text color="white" size="xs" pr={haveNonRootParent ? 8 : "xs"}>
+        <Text color="white" size="xs" pr={8}>
           {(component.description || "").length > 20
             ? `${component.description?.substring(0, 20)}...`
             : component.description}
         </Text>
-        {haveNonRootParent && (
-          <ActionIconTransparent
-            iconName="IconArrowUp"
-            tooltip="Go up"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              setSelectedComponentIds(() => [parentTree.id!]);
-            }}
-          />
-        )}
+        <ActionIconTransparent
+          iconName="IconArrowUp"
+          tooltip="Go up"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const editorTree = useEditorTreeStore.getState()
+              .tree as EditorTreeCopy;
+            const parentTree = getComponentParent(
+              editorTree.root,
+              component?.id?.split("-related-")?.[0] ?? "",
+            );
+
+            setSelectedComponentIds(() => [parentTree?.id!]);
+          }}
+        />
         {canWrapWithContainer && (
           <ActionIconTransparent
             iconName="IconBoxMargin"
             tooltip="Wrap container"
             onClick={() => {
+              const editorTree = useEditorTreeStore.getState()
+                .tree as EditorTreeCopy;
+              const parentTree = getComponentParent(
+                editorTree.root,
+                component?.id?.split("-related-")?.[0] ?? "",
+              );
               const container = structureMapper["Container"].structure({
                 theme: editorTheme,
               }) as ComponentStructure;
@@ -238,6 +231,8 @@ const ComponentToolboxInner = ({ component }: Props) => {
               iconName={ICON_DELETE}
               tooltip="Delete"
               onClick={() => {
+                const editorTree = useEditorTreeStore.getState()
+                  .tree as EditorTreeCopy;
                 removeComponent(editorTree.root, component.id!);
                 setEditorTree(editorTree, {
                   action: `Removed ${component?.name}`,
