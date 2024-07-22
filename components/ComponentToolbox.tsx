@@ -20,7 +20,6 @@ import {
   getComponentTreeById,
   removeComponent,
   removeComponentFromParent,
-  Component,
 } from "@/utils/editor";
 import { Group, Text, Tooltip, UnstyledButton } from "@mantine/core";
 import { IconGripVertical } from "@tabler/icons-react";
@@ -29,14 +28,17 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 import { createPortal } from "react-dom";
 
-type Props = {
-  component: Component;
-};
-
-const ComponentToolboxInner = ({ component }: Props) => {
+const ComponentToolboxInner = () => {
   const isResizing = useEditorStore((state) => state.isResizing);
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const editorTheme = useThemeStore((state) => state.theme);
+  const component = useEditorTreeStore((state) => {
+    const selectedComponentId = selectedComponentIdSelector(state);
+    return {
+      ...(state.componentMutableAttrs[selectedComponentId!] || {}),
+      id: state.selectedComponentIds?.at(-1),
+    };
+  });
 
   const editorTree = useEditorTreeStore(
     (state) => state.tree as EditorTreeCopy,
@@ -119,6 +121,8 @@ const ComponentToolboxInner = ({ component }: Props) => {
   const canWrapWithContainer = !blockedToolboxActions.includes(
     "wrap-with-container",
   );
+
+  if (!iframeWindow?.document?.body) return null;
 
   return createPortal(
     <>
