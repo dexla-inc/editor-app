@@ -333,10 +333,7 @@ export const generateProjectSlugLink = (
   );
 };
 
-export function extractPagingFromSupabase<T>(
-  contentRange: string,
-  result: T,
-): { results: T; paging: PagingModel } {
+export function extractPagingFromSupabase<T>(contentRange: string, result: T): { results: T; paging: PagingModel } {
   const [rangePart, totalRecordsStr] = contentRange.split("/");
   const [startStr, endStr] = rangePart.split("-");
 
@@ -393,10 +390,3 @@ export function isEmpty(value: any) {
   // Default case for other types
   return false;
 }
-
-export const ensureHttps = (url: string): string => {
-  if (!/^https?:\/\//i.test(url)) {
-    return `https://${url}`;
-  }
-  return url;
-};

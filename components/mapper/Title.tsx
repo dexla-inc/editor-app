@@ -1,7 +1,6 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useContentEditable } from "@/hooks/components/useContentEditable";
 import { useBrandingStyles } from "@/hooks/editor/useBrandingStyles";
-import { isEmpty } from "@/utils/common";
 import { EditableComponentMapper } from "@/utils/editor";
 import {
   Title as MantineTitle,
@@ -25,11 +24,8 @@ const TitleComponent = forwardRef(
 
     const { triggers, variable, order, hideIfDataIsEmpty, ...componentProps } =
       component.props as any;
-
-    const childrenValue = isEmpty(component.onLoad)
-      ? component.props?.children
-      : component.onLoad.children;
-
+    const { children: childrenValue = component.props?.children } =
+      component?.onLoad || {};
     const { style, ...restProps } = props as any;
 
     const tag = useMemo(() => orderToTag(order), [order]);

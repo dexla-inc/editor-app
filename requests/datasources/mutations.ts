@@ -20,7 +20,7 @@ export async function createDataSource(
     params,
   )) as DataSourceResponse;
 
-  const cacheTag = getDatasourcesCacheTag(projectId);
+  const cacheTag = getDatasourceCacheTag(projectId);
   await evictCache(cacheTag);
 
   return response;
@@ -38,10 +38,8 @@ export async function updateDataSource(
     params,
   )) as DataSourceResponse;
 
-  const cacheTag = getDatasourcesCacheTag(projectId);
-  const dataSourceCacheTag = getDatasourceCacheTag(projectId, id);
+  const cacheTag = getDatasourceCacheTag(projectId);
   await evictCache(cacheTag);
-  await evictCache(dataSourceCacheTag);
 
   return response;
 }
@@ -50,7 +48,7 @@ export const deleteDataSource = async (projectId: string, id: string) => {
   const url = `/projects/${projectId}/datasources/${id}`;
   const response = (await del<any>(url)) as any;
 
-  const cacheTag = getDatasourcesCacheTag(projectId);
+  const cacheTag = getDatasourceCacheTag(projectId);
   await evictCache(cacheTag);
 
   return response;
@@ -67,7 +65,7 @@ export const createDataSourceEndpoint = async (
     params,
   )) as CreatedResponse;
 
-  const cacheTag = getDatasourcesCacheTag(projectId);
+  const cacheTag = getDatasourceCacheTag(projectId);
   await evictCache(cacheTag);
 
   return response;
@@ -82,7 +80,7 @@ export const updateDataSourceEndpoint = async (
   const url = `/projects/${projectId}/datasources/${datasourceId}/endpoints/${id}`;
   const response = (await put<Endpoint>(url, params)) as Endpoint;
 
-  const cacheTag = getDatasourcesCacheTag(projectId);
+  const cacheTag = getDatasourceCacheTag(projectId);
   await evictCache(cacheTag);
 
   return response;
@@ -97,7 +95,7 @@ export async function patchDataSourceEndpoint(
   const url = `/projects/${projectId}/datasources/${apiId}/endpoints/${id}`;
   const response = (await patch<Endpoint>(url, params)) as Endpoint;
 
-  const cacheTag = getDatasourcesCacheTag(projectId);
+  const cacheTag = getDatasourceCacheTag(projectId);
   await evictCache(cacheTag);
 
   return response;
@@ -111,14 +109,11 @@ export const deleteDataSourceEndpoint = async (
   const url = `/projects/${projectId}/datasources/${datasourceId}/endpoints/${id}`;
   const response = (await del<Endpoint>(url)) as Endpoint;
 
-  const cacheTag = getDatasourcesCacheTag(projectId);
+  const cacheTag = getDatasourceCacheTag(projectId);
   await evictCache(cacheTag);
 
   return response;
 };
 
-const getDatasourcesCacheTag = (projectId: string) =>
+const getDatasourceCacheTag = (projectId: string) =>
   `/projects/${projectId}/datasources`;
-
-const getDatasourceCacheTag = (projectId: string, id: string) =>
-  `/projects/${projectId}/datasources/${id}`;

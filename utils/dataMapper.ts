@@ -14,8 +14,10 @@ import { CheckboxGroupData as CheckboxGroup } from "@/components/data/CheckboxGr
 import { CountdownButtonData as CountdownButton } from "@/components/data/CountdownButtonData";
 import { ProgressData as Progress } from "@/components/data/ProgressData";
 import { GoogleMapData as GoogleMap } from "@/components/data/GoogleMapData";
-import { SelectData as Select } from "@/components/data/SelectData";
-import { AutocompleteData as Autocomplete } from "@/components/data/AutocompleteData";
+import {
+  SelectData as Autocomplete,
+  SelectData as Select,
+} from "@/components/data/SelectData";
 import { DateInputData as DateInput } from "@/components/data/DateInputData";
 import {
   TextInputData as Textarea,
@@ -39,7 +41,6 @@ import {
 export const dataMapper = {
   Alert,
   Select,
-  Autocomplete,
   Text,
   Title,
   Link,
@@ -65,6 +66,7 @@ export const dataMapper = {
   Container,
   Form: Container,
   Card: Container,
+  Autocomplete,
   Progress,
   GoogleMap,
   Icon,

@@ -4,9 +4,10 @@ import {
   validateSwaggerUrl,
 } from "@/components/datasources/SwaggerURLInput";
 import NextButton from "@/components/NextButton";
+import { useDataSources } from "@/hooks/editor/reactQuery/useDataSources";
 import { useEditorParams } from "@/hooks/editor/useEditorParams";
 import { createDataSource } from "@/requests/datasources/mutations";
-import { DataSourceParams } from "@/requests/datasources/types";
+import { DataSourceParams, Endpoint } from "@/requests/datasources/types";
 import {
   areValuesEqual,
   DataSourceStepperWithoutPreviousProps,
@@ -30,9 +31,14 @@ export default function SwaggerStep({
   stopLoading,
   dataSource,
   setDataSource,
-}: DataSourceStepperWithoutPreviousProps) {
+  setEndpoints,
+}: DataSourceStepperWithoutPreviousProps & {
+  setEndpoints: (endpoints: Endpoint[]) => void;
+}) {
   const { id: projectId } = useEditorParams();
   const theme = useMantineTheme();
+
+  const { invalidate } = useDataSources(projectId);
 
   const form = useForm<DataSourceParams>({
     initialValues: {
@@ -60,7 +66,9 @@ export default function SwaggerStep({
       throw new Error("Failed to create data source");
     }
 
+    invalidate();
     setDataSource && setDataSource(result);
+    setEndpoints(result.changedEndpoints || []);
 
     nextStep();
 
