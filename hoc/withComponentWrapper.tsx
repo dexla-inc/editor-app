@@ -3,7 +3,6 @@ import { ComponentType, Fragment, useRef } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useShallow } from "zustand/react/shallow";
 import { useComputeCurrentState } from "@/hooks/components/useComputeCurrentState";
-import { useEditorStore } from "@/stores/editor";
 import { useComponentContextEventHandler } from "@/hooks/components/useComponentContextMenu";
 import { useTriggers } from "@/hooks/components/useTriggers";
 import { useComputeValue } from "@/hooks/data/useComputeValue";
@@ -67,8 +66,6 @@ export const withComponentWrapper = <T extends Record<string, any>>(
       shareableContent?.parentState,
     );
 
-    const isResizing = useEditorStore((state) => state.isResizing);
-
     const handleContextMenu = useComponentContextEventHandler(
       merge({}, componentTree, component),
     );
@@ -108,14 +105,12 @@ export const withComponentWrapper = <T extends Record<string, any>>(
         onLoad: computedOnLoad ?? {},
       },
       renderTree,
-      ...(isResizing || !isEditorMode ? {} : droppable),
+      ...droppable,
       id,
       style: childStyles,
-      sx: tealOutline,
-      ...(isEditorMode && {
-        onClick: handleClick,
-        onContextMenu: handleContextMenu,
-      }),
+      sx: isEditorMode ? tealOutline : {},
+      onClick: handleClick,
+      onContextMenu: handleContextMenu,
       shareableContent,
     } as any;
 

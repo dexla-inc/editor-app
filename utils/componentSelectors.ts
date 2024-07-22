@@ -10,3 +10,6 @@ export const isSelectedSelector = (id: string) => (state: EditorTreeState) =>
   state.selectedComponentIds?.some(
     (selectedComponentId) => selectedComponentId.split("-related-")[0] === id,
   );
+
+export const isEditorModeSelector = (state: EditorTreeState) =>
+  !state.isPreviewMode && !state.isLive;

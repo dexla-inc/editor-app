@@ -418,14 +418,14 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
               "editorTree/setColumnSpan",
             ),
           columnSpans: {},
-          selectedComponentIds: ["content-wrapper"],
+          selectedComponentIds: [],
           isLive: false,
           setSelectedComponentIds: (cb) => {
             return set(
               (state) => {
                 const selectedComponentIds = cb(
                   state.selectedComponentIds ?? [],
-                ).filter((id) => id !== "content-wrapper");
+                ).filter((id) => !["content-wrapper", "root"].includes(id));
 
                 return {
                   selectedComponentIds,

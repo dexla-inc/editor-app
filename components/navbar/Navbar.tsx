@@ -9,7 +9,7 @@ export const NavbarComponent = () => {
   const isPreviewMode = useEditorTreeStore((state) => state.isPreviewMode);
   const isNavBarVisible = useEditorStore((state) => state.isNavBarVisible);
 
-  if (isPreviewMode || !isNavBarVisible) return undefined;
+  if (isPreviewMode || !isNavBarVisible) return null;
 
   return (
     <MantineNavbar

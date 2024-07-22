@@ -33,7 +33,10 @@ import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { useCallback, useEffect } from "react";
 import { getComponentTreeById } from "@/utils/editor";
 import { cloneObject } from "@/utils/common";
-import { selectedComponentIdSelector } from "@/utils/componentSelectors";
+import {
+  isEditorModeSelector,
+  selectedComponentIdSelector,
+} from "@/utils/componentSelectors";
 
 const determinePasteTarget = (selectedId: string | undefined) => {
   if (!selectedId) return "content-wrapper";
@@ -416,7 +419,8 @@ export const useComponentContextEventHandler = (component: Component) => {
 
   return useCallback(
     (event: any) => {
-      if (event.shiftKey || event.ctrlKey || event.metaKey) {
+      const isEditorMode = isEditorModeSelector(useEditorTreeStore.getState());
+      if (event.shiftKey || event.ctrlKey || event.metaKey || !isEditorMode) {
         return;
       }
 

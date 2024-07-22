@@ -8,7 +8,6 @@ import {
 } from "@/utils/branding";
 import { DROP_INDICATOR_WIDTH } from "@/utils/config";
 import { useMemo } from "react";
-import { useEditorTreeStore } from "@/stores/editorTree";
 import { useShallow } from "zustand/react/shallow";
 
 type Props = {
@@ -16,10 +15,6 @@ type Props = {
 };
 
 export const useEditorShadows = ({ componentId }: Props) => {
-  const isEditorMode = useEditorTreeStore(
-    (state) => !state.isPreviewMode && !state.isLive,
-  );
-
   const shadows = useEditorStore(
     useShallow((state) => {
       const baseShadow = GREEN_BASE_SHADOW;
@@ -92,13 +87,6 @@ export const useEditorShadows = ({ componentId }: Props) => {
     }),
     [shadows],
   );
-
-  if (!isEditorMode) {
-    return {
-      droppable: {},
-      tealOutline: {},
-    };
-  }
 
   return {
     droppable,
