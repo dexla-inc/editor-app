@@ -6,6 +6,7 @@ import { Text as MantineText, TextProps, useMantineTheme } from "@mantine/core";
 import merge from "lodash.merge";
 import { forwardRef, memo, useMemo } from "react";
 import useFontFaceObserver from "use-font-face-observer";
+import { isEmpty } from "@/utils/common";
 
 type Props = EditableComponentMapper & TextProps;
 
@@ -25,8 +26,11 @@ const TextComponent = forwardRef(
       fontTag,
       ...componentProps
     } = component.props as any;
-    const { children: childrenValue = component.props?.children } =
-      component.onLoad;
+
+    const childrenValue = isEmpty(component.onLoad)
+      ? component.props?.children
+      : component.onLoad.children;
+
     const { style, ...restProps } = props as any;
 
     const { textStyle } = useBrandingStyles({ tag: fontTag });
