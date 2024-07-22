@@ -4,7 +4,7 @@ import { useEditorParams } from "@/hooks/editor/useEditorParams";
 import { updateDataSource } from "@/requests/datasources/mutations";
 import { DataSourceParams } from "@/requests/datasources/types";
 import { DataSourceStepperProps } from "@/types/dashboardTypes";
-import { Divider, Group, Stack, TextInput } from "@mantine/core";
+import { Divider, Group, PasswordInput, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 
 interface AuthenticationStepProps extends DataSourceStepperProps {
@@ -83,8 +83,9 @@ export default function AuthenticationApiKey({
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
       <Stack pb={100}>
-        <TextInput
+        <PasswordInput
           label="API Key"
+          size="xs"
           description="The key used to authenticate to the API"
           placeholder="aa982f3c39b17...."
           {...form.getInputProps("authValue")}

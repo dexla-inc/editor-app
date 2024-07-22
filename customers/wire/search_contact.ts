@@ -14,7 +14,7 @@ Deno.serve(async (req: Request) => {
   );
 
   const url = new URL(req.url);
-  const query = url.searchParams.get("search");
+  const query = url.searchParams.get("query");
 
   if (!query) {
     return new Response(
@@ -27,9 +27,7 @@ Deno.serve(async (req: Request) => {
   }
 
   // Database queries will have RLS policies enforced
-  const { data, error } = await supabaseClient.rpc("universal_search", {
-    query,
-  });
+  const { data, error } = await supabaseClient.rpc("search_contact", { query });
 
   if (error) {
     return new Response(JSON.stringify({ error: error.message }), {
