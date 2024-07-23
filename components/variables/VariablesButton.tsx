@@ -24,7 +24,10 @@ export const VariablesButtonComponent = ({ projectId }: Props) => {
       <Modal
         title="Variables"
         opened={opened}
-        onClose={modal.close}
+        onClose={() => {
+          modal.close();
+          setMode("list");
+        }}
         centered
         size="65%"
         withinPortal
@@ -41,7 +44,7 @@ export const VariablesButtonComponent = ({ projectId }: Props) => {
         />
         {mode === "create" && (
           <Stack mt="xl">
-            <VariableForm />
+            <VariableForm setMode={setMode} />
           </Stack>
         )}
         {mode === "list" && (

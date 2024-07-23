@@ -76,8 +76,8 @@ export async function GET(req: Request, context: { params: Params }) {
               components.push({
                 id: node.id,
                 description: node.description,
-                actions: matchingActions,
-                onLoad: matchingDataKeys,
+                ...(matchingActions.length && { actions: matchingActions }),
+                ...(matchingDataKeys.length && { onLoad: matchingDataKeys }),
               });
             }
           }
