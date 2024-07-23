@@ -24,10 +24,6 @@ export const withComponentWrapper = <T extends Record<string, any>>(
     renderTree,
     shareableContent,
   }: WithComponentWrapperProps) => {
-    const isEditorMode = useEditorTreeStore(
-      (state) => !state.isPreviewMode && !state.isLive,
-    );
-
     const component = useEditorTreeStore(
       useShallow(
         (state) => state.componentMutableAttrs[componentTree.id!] ?? {},
@@ -80,7 +76,6 @@ export const withComponentWrapper = <T extends Record<string, any>>(
 
     const propsWithOverwrites = usePropsWithOverwrites(
       { ...component, id, onLoad: computedOnLoad },
-      isEditorMode,
       currentState,
       triggers,
     );
@@ -92,7 +87,7 @@ export const withComponentWrapper = <T extends Record<string, any>>(
     const childStyles = useComputeChildStyles({
       component,
       propsWithOverwrites,
-      isEditorMode,
+      tealOutline,
     });
 
     const handleClick = useEditorClickHandler(id!);
@@ -104,11 +99,10 @@ export const withComponentWrapper = <T extends Record<string, any>>(
         props: propsWithOverwrites,
         onLoad: computedOnLoad ?? {},
       },
-      renderTree,
       ...droppable,
+      ...childStyles,
+      renderTree,
       id,
-      style: childStyles,
-      sx: isEditorMode ? tealOutline : {},
       onClick: handleClick,
       onContextMenu: handleContextMenu,
       shareableContent,

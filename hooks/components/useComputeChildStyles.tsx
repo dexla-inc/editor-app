@@ -1,34 +1,41 @@
 import { GRAY_OUTLINE } from "@/utils/branding";
-import { CSSObject } from "@mantine/core";
+import { CSSObject, Sx } from "@mantine/core";
 import { handleBackground } from "@/hooks/components/handleBackground";
 import { Component } from "@/utils/editor";
 
 type UseComputeChildStylesProps = {
   component: Component;
   propsWithOverwrites: any;
-  isEditorMode: boolean;
+  tealOutline: Sx;
 };
 
 export const useComputeChildStyles = ({
   component,
   propsWithOverwrites,
-  isEditorMode,
+  tealOutline,
 }: UseComputeChildStylesProps): CSSObject => {
   const childStyles: CSSObject = {
     position: "relative",
     ...propsWithOverwrites.style,
-    ...(propsWithOverwrites.disabled &&
-      !isEditorMode && { pointerEvents: "none" }),
-
-    outline:
-      !isEditorMode && propsWithOverwrites.style?.outline === GRAY_OUTLINE
-        ? "none"
-        : propsWithOverwrites.style?.outline,
   };
 
   delete propsWithOverwrites.style;
 
   handleBackground(component, childStyles);
 
-  return childStyles;
+  return {
+    style: childStyles,
+    sx: {
+      ".editor-mode &": {
+        ...tealOutline,
+      },
+      ".preview-mode &": {
+        ...(propsWithOverwrites.disabled && { pointerEvents: "none" }),
+        outline:
+          propsWithOverwrites.style?.outline === GRAY_OUTLINE
+            ? "none"
+            : propsWithOverwrites.style?.outline,
+      },
+    },
+  };
 };

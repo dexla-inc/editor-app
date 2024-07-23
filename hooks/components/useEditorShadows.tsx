@@ -9,6 +9,7 @@ import {
 import { DROP_INDICATOR_WIDTH } from "@/utils/config";
 import { useMemo } from "react";
 import { useShallow } from "zustand/react/shallow";
+import { Sx } from "@mantine/core";
 
 type Props = {
   componentId: string;
@@ -90,6 +91,6 @@ export const useEditorShadows = ({ componentId }: Props) => {
 
   return {
     droppable,
-    tealOutline,
+    tealOutline: tealOutline as Sx,
   };
 };

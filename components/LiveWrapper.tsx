@@ -22,6 +22,7 @@ export const LiveWrapper = ({ children, project }: Props) => {
       <MantineGlobal isLive />
       <Notifications />
       <Box
+        className={"preview-mode"}
         pos="relative"
         style={{
           minHeight: `100vh`,

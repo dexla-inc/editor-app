@@ -2,10 +2,11 @@ import { Component } from "@/utils/editor";
 import merge from "lodash.merge";
 import { useEffect, useMemo, useState } from "react";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
+import { isEditorModeSelector } from "@/utils/componentSelectors";
+import { useEditorTreeStore } from "@/stores/editorTree";
 
 export const usePropsWithOverwrites = (
   component: Component,
-  isEditorMode: boolean,
   currentState: string = "default",
   triggers: any,
 ) => {
@@ -17,6 +18,9 @@ export const usePropsWithOverwrites = (
   }, [currentState]);
 
   const hoverStateFunc = (e: React.MouseEvent<HTMLElement>) => {
+    const isEditorMode = isEditorModeSelector(useEditorTreeStore.getState());
+    if (isEditorMode) return;
+
     if (
       component.id! === e.currentTarget.id &&
       Object.keys(component?.states?.hover ?? {}).length
@@ -26,6 +30,9 @@ export const usePropsWithOverwrites = (
   };
 
   const leaveHoverStateFunc = (e: React.MouseEvent<HTMLElement>) => {
+    const isEditorMode = isEditorModeSelector(useEditorTreeStore.getState());
+    if (isEditorMode) return;
+
     if (
       component.id! === e.currentTarget.id &&
       Object.keys(component?.states?.hover ?? {}).length
@@ -35,9 +42,9 @@ export const usePropsWithOverwrites = (
   };
 
   const omittingProps = ["showBorder", "pages", "theme"];
-  if (isEditorMode) {
-    omittingProps.push("error");
-  }
+  // if (isEditorMode) {
+  //   omittingProps.push("error");
+  // }
 
   return useMemo(() => {
     return merge(
@@ -49,8 +56,8 @@ export const usePropsWithOverwrites = (
           ? component.onLoad.validationMessage ??
             `${component.description} is required`
           : undefined,
-        disabled: !isEditorMode && customCurrentState === "disabled",
-        triggers: !isEditorMode && {
+        disabled: customCurrentState === "disabled",
+        triggers: {
           ...triggers,
           onMouseOver: triggers?.onHover ?? hoverStateFunc,
           onMouseLeave: leaveHoverStateFunc,

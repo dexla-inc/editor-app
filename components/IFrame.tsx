@@ -16,12 +16,15 @@ import {
 } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import { useEditorTreeStore } from "@/stores/editorTree";
+import { isEditorModeSelector } from "@/utils/componentSelectors";
 
 type Props = {
   projectId: string;
 } & BoxProps;
 
 export const IFrame = ({ children, projectId, ...props }: Props) => {
+  const isEditorMode = useEditorTreeStore(isEditorModeSelector);
   const [contentRef, setContentRef] = useState<HTMLIFrameElement>();
   const setIframeWindow = useEditorStore((state) => state.setIframeWindow);
   const navbarWidth = useUserConfigStore((state) => state.navbarWidth);
@@ -131,6 +134,7 @@ export const IFrame = ({ children, projectId, ...props }: Props) => {
             })}
           >
             <Box
+              className={isEditorMode ? "editor-mode" : "preview-mode"}
               component={ScrollArea}
               offsetScrollbars
               id="iframe-content"
