@@ -21,8 +21,8 @@ const AccordionComponent = forwardRef(
         ref={ref}
         {...props}
         {...componentProps}
+        data-id={id}
         styles={{ label: { padding: 0 }, chevron: { display: "none" } }}
-        wrapperProps={{ "data-id": id }}
       >
         {renderData({ renderTree })}
       </MantineAccordion>

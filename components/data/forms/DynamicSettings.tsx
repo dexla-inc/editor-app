@@ -211,16 +211,11 @@ export const DynamicSettings = ({
               form={form}
               formType="data"
             />
-            <Divider mt="md" />
+            <Divider my="md" />
             {children && children({ form, selectableObjectKeys })}
           </>
         )}
       </SidebarSection>
-      <BindingField
-        {...form.getInputProps("onLoad.isVisible")}
-        label="Visibility"
-        fieldType="YesNo"
-      />
     </>
   );
 };
