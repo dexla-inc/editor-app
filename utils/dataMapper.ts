@@ -63,6 +63,7 @@ export const dataMapper = {
   Textarea,
   Image,
   Container,
+  Accordion: Container,
   Form: Container,
   Card: Container,
   Progress,
