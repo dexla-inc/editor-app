@@ -4,8 +4,10 @@ import { VariableSelect } from "@/components/variables/VariableSelect";
 import { FrontEndTypes } from "@/requests/variables/types";
 import { ActionFormProps, ChangeVariableAction } from "@/utils/actions";
 import { ArrayMethods } from "@/types/types";
-import { Select, Stack } from "@mantine/core";
+import { Anchor, Select, Stack, Text } from "@mantine/core";
 import { FieldType } from "@/types/dataBinding";
+import { openContextModal } from "@mantine/modals";
+import { useVariableStore } from "@/stores/variables";
 
 type Props = ActionFormProps<Omit<ChangeVariableAction, "name">>;
 
@@ -84,6 +86,23 @@ export const ChangeVariableActionForm = ({ form, isPageAction }: Props) => {
   const hideInputField = method?.includes("REMOVE");
   const valueFieldType = valueFieldTypeMapper(variableType);
 
+  const onClickFindInstances = () => {
+    {
+      const selectedVariable =
+        useVariableStore.getState().variableList[form.values.variableId];
+      openContextModal({
+        modal: "variableInstanceTracker",
+        title: (
+          <Text weight="bold">{`Variable "${selectedVariable.name}" found in`}</Text>
+        ),
+        innerProps: {
+          variableId: form.values.variableId,
+          onClose: () => {},
+        },
+      });
+    }
+  };
+
   return (
     <Stack spacing="xs">
       <VariableSelect
@@ -93,6 +112,11 @@ export const ChangeVariableActionForm = ({ form, isPageAction }: Props) => {
           form.setValues({ variableType: type, method: "REPLACE_ALL_ITEMS" })
         }
       />
+      {form.values.variableId && (
+        <Anchor size="xs" onClick={onClickFindInstances}>
+          Find Instances
+        </Anchor>
+      )}
       {variableType === "ARRAY" && (
         <ArrayVariableForm form={form} isPageAction={isPageAction} />
       )}
