@@ -10,6 +10,7 @@ import {
 } from "@/components/data/AvatarData";
 import { ChartData as Chart } from "@/components/data/ChartData";
 import { ContainerData as Container } from "@/components/data/ContainerData";
+import { AccordionData as Accordion } from "@/components/data/AccordionData";
 import { CheckboxGroupData as CheckboxGroup } from "@/components/data/CheckboxGroupData";
 import { CountdownButtonData as CountdownButton } from "@/components/data/CountdownButtonData";
 import { ProgressData as Progress } from "@/components/data/ProgressData";
@@ -34,6 +35,7 @@ import {
   TextData as NavLink,
   TextData as Text,
   TextData as Title,
+  TextData as AccordionItem,
 } from "@/components/data/TextData";
 
 export const dataMapper = {
@@ -63,9 +65,10 @@ export const dataMapper = {
   Textarea,
   Image,
   Container,
-  Accordion: Container,
   Form: Container,
   Card: Container,
+  Accordion,
+  AccordionItem,
   Progress,
   GoogleMap,
   Icon,

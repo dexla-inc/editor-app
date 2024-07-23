@@ -1306,7 +1306,7 @@ export const componentMapper: ComponentMapper = {
   },
   AccordionItem: {
     Component: (props) => <AccordionItem {...props} />,
-    modifiers: ["accordionItem", "spacing", "size", "border", "effects"],
+    modifiers: ["spacing", "size", "border", "effects"],
     actionTriggers: [],
     sequentialTriggers: ["onSuccess", "onError"],
   },
