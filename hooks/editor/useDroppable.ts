@@ -11,7 +11,10 @@ import {
 } from "@/utils/editor";
 import debounce from "lodash.debounce";
 import { useCallback } from "react";
-import { selectedComponentIdSelector } from "@/utils/componentSelectors";
+import {
+  isEditorModeSelector,
+  selectedComponentIdSelector,
+} from "@/utils/componentSelectors";
 
 const debouncedDragEnter = debounce((event: any, id: string) => {
   const isResizing = useEditorStore.getState().isResizing;
@@ -80,9 +83,10 @@ export const useDroppable = ({
 }) => {
   const handleDrop = useCallback(
     (event: React.DragEvent) => {
+      const isEditorMode = isEditorModeSelector(useEditorTreeStore.getState());
       const { componentToAdd, isResizing, setCurrentTargetId } =
         useEditorStore.getState();
-      if (isResizing) return;
+      if (isResizing || !isEditorMode) return;
       const edge = useEditorStore.getState().edge;
       const selectedComponentId = selectedComponentIdSelector(
         useEditorTreeStore.getState(),
@@ -104,7 +108,7 @@ export const useDroppable = ({
     [id, onDrop],
   );
 
-  const handleEdgeSet = (
+  const _handleEdgeSet = (
     distances: {
       leftDist: number;
       rightDist: number;
@@ -150,7 +154,8 @@ export const useDroppable = ({
   const handleDragOver = useCallback(
     (event: React.DragEvent) => {
       const { currentTargetId, isResizing } = useEditorStore.getState();
-      if (isResizing) return;
+      const isEditorMode = isEditorModeSelector(useEditorTreeStore.getState());
+      if (isResizing || !isEditorMode) return;
 
       event.preventDefault();
       event.stopPropagation();
@@ -170,9 +175,9 @@ export const useDroppable = ({
       const bottomDist = rect.bottom - mouseY;
 
       if (mouseX <= NAVBAR_WIDTH) {
-        handleEdgeSet({ leftDist, rightDist, topDist, bottomDist }, 2);
+        _handleEdgeSet({ leftDist, rightDist, topDist, bottomDist }, 2);
       } else {
-        handleEdgeSet({ leftDist, rightDist, topDist, bottomDist }, 5);
+        _handleEdgeSet({ leftDist, rightDist, topDist, bottomDist }, 5);
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -183,6 +188,9 @@ export const useDroppable = ({
     (event: any) => {
       event.preventDefault();
       event.stopPropagation();
+      const isEditorMode = isEditorModeSelector(useEditorTreeStore.getState());
+      if (!isEditorMode) return;
+
       debouncedDragEnter(event, id);
     },
     [id],
@@ -190,7 +198,8 @@ export const useDroppable = ({
 
   const handleDragLeave = useCallback((event: any) => {
     const { isResizing, setEdge, edge } = useEditorStore.getState();
-    if (isResizing) return;
+    const isEditorMode = isEditorModeSelector(useEditorTreeStore.getState());
+    if (isResizing || !isEditorMode) return;
 
     event.preventDefault();
     event.stopPropagation();
@@ -200,7 +209,8 @@ export const useDroppable = ({
   }, []);
 
   const handleDragEnd = useCallback((event: any) => {
-    if (!event) {
+    const isEditorMode = isEditorModeSelector(useEditorTreeStore.getState());
+    if (!event || !isEditorMode) {
       return;
     }
 

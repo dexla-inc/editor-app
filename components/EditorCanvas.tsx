@@ -9,14 +9,18 @@ import { Box, Paper } from "@mantine/core";
 import { memo } from "react";
 import { CustomComponentModal } from "@/components/CustomComponentModal";
 import { useUserConfigStore } from "@/stores/userConfig";
-import useEditorHotkeysUndoRedo from "@/hooks/editor/useEditorHotkeysUndoRedo";
 import { RenderTreeFunc } from "@/types/component";
+import { ComponentToolbox } from "@/components/ComponentToolbox";
 
 type Props = {
   projectId: string;
 };
 
 const EditorCanvasComponent = ({ projectId }: Props) => {
+  const isComponentSelected = useEditorTreeStore(
+    (state) =>
+      !!(state.selectedComponentIds && state.selectedComponentIds.length > 0),
+  );
   const editorTree = useEditorTreeStore((state) => state.tree);
   useEditorHotkeys();
 
@@ -89,13 +93,15 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
         // }}
         // onPointerLeave={() => setCursor(undefined)}
       >
-        <IFrame projectId={projectId}>{renderTree(editorTree.root)}</IFrame>
+        <IFrame projectId={projectId}>
+          {renderTree(editorTree.root)}
+          {isComponentSelected && <ComponentToolbox />}
+        </IFrame>
         {isCustomComponentModalOpen && (
           <CustomComponentModal
             isCustomComponentModalOpen={isCustomComponentModalOpen}
           />
         )}
-        {/*<ComponentToolbox component={} />*/}
       </Box>
     </>
   );

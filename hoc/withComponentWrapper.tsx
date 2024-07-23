@@ -3,7 +3,6 @@ import { ComponentType, Fragment, useRef } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useShallow } from "zustand/react/shallow";
 import { useComputeCurrentState } from "@/hooks/components/useComputeCurrentState";
-import { useEditorStore } from "@/stores/editor";
 import { useComponentContextEventHandler } from "@/hooks/components/useComponentContextMenu";
 import { useTriggers } from "@/hooks/components/useTriggers";
 import { useComputeValue } from "@/hooks/data/useComputeValue";
@@ -11,9 +10,7 @@ import { useEditorShadows } from "@/hooks/components/useEditorShadows";
 import { usePropsWithOverwrites } from "@/hooks/components/usePropsWithOverwrites";
 import { useComputeChildStyles } from "@/hooks/components/useComputeChildStyles";
 import { useEditorClickHandler } from "@/hooks/components/useEditorClickHandler";
-import { ComponentToolbox } from "@/components/ComponentToolbox";
 import { WithComponentWrapperProps } from "@/types/component";
-import { Component } from "@/utils/editor";
 import { useRouter } from "next/navigation";
 import merge from "lodash.merge";
 import { withComponentVisibility } from "@/hoc/withComponentVisibility";
@@ -29,10 +26,6 @@ export const withComponentWrapper = <T extends Record<string, any>>(
   }: WithComponentWrapperProps) => {
     const isEditorMode = useEditorTreeStore(
       (state) => !state.isPreviewMode && !state.isLive,
-    );
-
-    const isSelected = useEditorTreeStore(
-      useShallow((state) => state.selectedComponentIds?.includes(id!)),
     );
 
     const component = useEditorTreeStore(
@@ -73,8 +66,6 @@ export const withComponentWrapper = <T extends Record<string, any>>(
       shareableContent?.parentState,
     );
 
-    const isResizing = useEditorStore((state) => state.isResizing);
-
     const handleContextMenu = useComponentContextEventHandler(
       merge({}, componentTree, component),
     );
@@ -106,13 +97,6 @@ export const withComponentWrapper = <T extends Record<string, any>>(
 
     const handleClick = useEditorClickHandler(id!);
 
-    const componentToolboxProps = {
-      id,
-      name: component.name,
-      description: component.description,
-      fixedPosition: component.fixedPosition,
-    } as Component;
-
     const props = {
       component: {
         ...component,
@@ -121,14 +105,12 @@ export const withComponentWrapper = <T extends Record<string, any>>(
         onLoad: computedOnLoad ?? {},
       },
       renderTree,
-      ...(isResizing || !isEditorMode ? {} : droppable),
+      ...droppable,
       id,
       style: childStyles,
-      sx: tealOutline,
-      ...(isEditorMode && {
-        onClick: handleClick,
-        onContextMenu: handleContextMenu,
-      }),
+      sx: isEditorMode ? tealOutline : {},
+      onClick: handleClick,
+      onContextMenu: handleContextMenu,
       shareableContent,
     } as any;
 
@@ -151,9 +133,6 @@ export const withComponentWrapper = <T extends Record<string, any>>(
         >
           <Component ref={ref} {...props} />
         </Wrapper>
-        {isSelected && isEditorMode && component.description !== "Body" && (
-          <ComponentToolbox component={componentToolboxProps} />
-        )}
       </>
     );
   };
