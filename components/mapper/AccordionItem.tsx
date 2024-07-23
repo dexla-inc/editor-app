@@ -16,8 +16,7 @@ const AccordionItemComponent = forwardRef(
       component,
       shareableContent,
     });
-    console.log("props", props);
-    console.log("componentProps", componentProps);
+
     return (
       <MantineAccordion.Item ref={ref} {...props} {...componentProps}>
         {renderData({ renderTree })}

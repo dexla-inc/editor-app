@@ -216,11 +216,6 @@ export const DynamicSettings = ({
           </>
         )}
       </SidebarSection>
-      {/* <BindingField
-        {...form.getInputProps("onLoad.isVisible")}
-        label="Visibility"
-        fieldType="YesNo"
-      /> */}
     </>
   );
 };
