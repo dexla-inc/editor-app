@@ -140,16 +140,15 @@ export const VariableList = ({ projectId, parentModalControl }: Props) => {
 
   return (
     <>
+      <TextInput
+        placeholder="Search"
+        icon={<IconSearch size={14} />}
+        defaultValue={filter}
+        onChange={(event) => {
+          setFilter(event.currentTarget.value);
+        }}
+      />
       <ScrollArea h={300}>
-        <TextInput
-          placeholder="Search"
-          mb="xs"
-          icon={<IconSearch size={14} />}
-          defaultValue={filter}
-          onChange={(event) => {
-            setFilter(event.currentTarget.value);
-          }}
-        />
         {rows.length > 0 && (
           <Table striped highlightOnHover withBorder withColumnBorders>
             <thead>

@@ -5,6 +5,7 @@ import { Select } from "@mantine/core";
 import { useParams, useRouter } from "next/navigation";
 import { memo, useMemo } from "react";
 import { useShallow } from "zustand/react/shallow";
+import { useEditorTreeStore } from "@/stores/editorTree";
 
 const PageSelector = () => {
   const router = useRouter();
@@ -27,9 +28,12 @@ const PageSelector = () => {
     <Select
       label="Page"
       value={selectedPage}
-      onChange={(value) =>
-        router.push(`/projects/${projectId}/editor/${value}`)
-      }
+      onChange={(value) => {
+        const setSelectedComponentIds =
+          useEditorTreeStore.getState().setSelectedComponentIds;
+        setSelectedComponentIds(() => []);
+        router.push(`/projects/${projectId}/editor/${value}`);
+      }}
       size="xs"
       data={pages}
       sx={{
