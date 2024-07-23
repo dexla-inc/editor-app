@@ -377,7 +377,10 @@ export const requiredModifiers: RequiredModifiers = {
   accordionItem: {
     value: "first",
   },
-  accordion: { variant: "default", numberOfItems: 2 },
+  accordion: {
+    variant: "default",
+    numberOfItems: 2,
+  },
   avatar: {
     variant: "filled",
     src: "",

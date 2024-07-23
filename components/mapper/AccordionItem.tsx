@@ -5,20 +5,21 @@ import {
 } from "@mantine/core";
 import { forwardRef, memo } from "react";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { useRenderData } from "@/hooks/components/useRenderData";
 
 type Props = EditableComponentMapper & AccordionItemProps;
 
 const AccordionItemComponent = forwardRef(
   ({ renderTree, shareableContent, component, ...props }: Props, ref) => {
     const { children, bg, ...componentProps } = component.props as any;
+    const { renderData } = useRenderData({
+      component,
+      shareableContent,
+    });
 
     return (
       <MantineAccordion.Item ref={ref} {...props} {...componentProps}>
-        {component.children && component.children.length > 0
-          ? component.children?.map((child) =>
-              renderTree(child, shareableContent),
-            )
-          : children?.toString()}
+        {renderData({ renderTree })}
       </MantineAccordion.Item>
     );
   },

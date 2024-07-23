@@ -4,7 +4,7 @@ import { Component, debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { Group } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import { FieldProps, ValueProps } from "@/types/dataBinding";
 import has from "lodash.has";
 import { useComponentStates } from "@/hooks/editor/useComponentStates";

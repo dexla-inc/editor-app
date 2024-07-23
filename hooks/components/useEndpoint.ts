@@ -82,6 +82,7 @@ export const useEndpoint = ({
       headers,
       cleanParameter,
       body,
+      componentId,
     ],
     queryFn: apiCall,
     ...{

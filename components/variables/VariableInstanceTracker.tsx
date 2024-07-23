@@ -14,6 +14,7 @@ import {
 import { IconArrowRight } from "@tabler/icons-react";
 import { Tab, useEditorStore } from "@/stores/editor";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export const VariableInstanceTracker = ({
   innerProps,
@@ -34,6 +35,17 @@ export const VariableInstanceTracker = ({
 
   const { data = { components: [], pages: [] }, isLoading } =
     useVariableTracking(projectId, pageId, innerProps.variableId, accessToken);
+
+  const selectedTabFlag = !!data.components?.length
+    ? "components"
+    : !!data.pages?.length
+      ? "pages"
+      : null;
+  const [selectedTab, setSelectedTab] = useState(selectedTabFlag);
+
+  useEffect(() => {
+    setSelectedTab(selectedTabFlag);
+  }, [selectedTabFlag]);
 
   const onClickGoToComponentTab = async (
     componentId: string,
@@ -58,9 +70,11 @@ export const VariableInstanceTracker = ({
 
   return (
     <Skeleton visible={isLoading}>
-      <Accordion defaultValue="components">
+      <Accordion value={selectedTab} onChange={setSelectedTab}>
         <Accordion.Item value="components">
-          <Accordion.Control>Components</Accordion.Control>
+          <Accordion.Control disabled={!data.components?.length}>
+            Components
+          </Accordion.Control>
           <Accordion.Panel>
             {data.components?.map((comp: any) => {
               const componentElement =
@@ -78,75 +92,79 @@ export const VariableInstanceTracker = ({
               return (
                 <Stack key={comp.id} spacing={0}>
                   <Text size="sm">{comp.description}</Text>
-                  <List
-                    styles={{ itemWrapper: { width: "100%" } }}
-                    listStyleType="none"
-                    px={10}
-                    withPadding
-                  >
-                    <List.Item>
-                      <Text size="sm">Actions:</Text>
-                      <List
-                        styles={{ itemWrapper: { width: "100%" } }}
-                        withPadding
-                        listStyleType="none"
-                      >
-                        {comp.actions?.map((action: any) => (
-                          <List.Item key={action.actionEvent}>
-                            <Group position="apart">
-                              <Text size="xs">
-                                {action.trigger} - {action.actionEvent}
-                              </Text>
-                              <Anchor
-                                onClick={() =>
-                                  onClickGoToComponentTab(
-                                    foundElementComponentId,
-                                    "actions",
-                                    action.id,
-                                  )
-                                }
-                              >
-                                <IconArrowRight size={16} />
-                              </Anchor>
-                            </Group>
-                          </List.Item>
-                        ))}
-                      </List>
-                    </List.Item>
-                  </List>
-                  <List
-                    styles={{ itemWrapper: { width: "100%" } }}
-                    withPadding
-                    px={10}
-                    listStyleType="none"
-                  >
-                    <List.Item>
-                      <Text size="sm">Data:</Text>
-                      <List
-                        styles={{ itemWrapper: { width: "100%" } }}
-                        withPadding
-                        listStyleType="none"
-                      >
-                        {comp.onLoad?.map((key: any) => (
-                          <List.Item key={key}>
-                            <Group position="apart">
-                              <Text size="xs">{key}</Text>
-                              <Anchor
-                                onClick={() =>
-                                  onClickGoToComponentTab(
-                                    foundElementComponentId,
-                                    "data",
-                                  )
-                                }
-                              >
-                                <IconArrowRight size={16} />
-                              </Anchor>
-                            </Group>
-                          </List.Item>
-                        ))}
-                      </List>
-                    </List.Item>
-                  </List>
+                  {!!comp.actions?.length && (
+                    <List
+                      styles={{ itemWrapper: { width: "100%" } }}
+                      listStyleType="none"
+                      px={10}
+                      withPadding
+                    >
+                      <List.Item>
+                        <Text size="sm">Actions:</Text>
+                        <List
+                          styles={{ itemWrapper: { width: "100%" } }}
+                          withPadding
+                          listStyleType="none"
+                        >
+                          {comp.actions?.map((action: any) => (
+                            <List.Item key={action.actionEvent}>
+                              <Group position="apart">
+                                <Text size="xs">
+                                  {action.trigger} - {action.actionEvent}
+                                </Text>
+                                <Anchor
+                                  onClick={() =>
+                                    onClickGoToComponentTab(
+                                      foundElementComponentId,
+                                      "actions",
+                                      action.id,
+                                    )
+                                  }
+                                >
+                                  <IconArrowRight size={16} />
+                                </Anchor>
+                              </Group>
+                            </List.Item>
+                          ))}
+                        </List>
+                      </List.Item>
+                    </List>
+                  )}
+                  {!!comp.onLoad?.length && (
+                    <List
+                      styles={{ itemWrapper: { width: "100%" } }}
+                      withPadding
+                      px={10}
+                      listStyleType="none"
+                    >
+                      <List.Item>
+                        <Text size="sm">Data:</Text>
+                        <List
+                          styles={{ itemWrapper: { width: "100%" } }}
+                          withPadding
+                          listStyleType="none"
+                        >
+                          {comp.onLoad?.map((key: any) => (
+                            <List.Item key={key}>
+                              <Group position="apart">
+                                <Text size="xs">{key}</Text>
+                                <Anchor
+                                  onClick={() =>
+                                    onClickGoToComponentTab(
+                                      foundElementComponentId,
+                                      "data",
+                                    )
+                                  }
+                                >
+                                  <IconArrowRight size={16} />
+                                </Anchor>
+                              </Group>
+                            </List.Item>
+                          ))}
+                        </List>
+                      </List.Item>
+                    </List>
+                  )}
                 </Stack>
               );
             })}
@@ -154,7 +172,9 @@ export const VariableInstanceTracker = ({
         </Accordion.Item>
 
         <Accordion.Item value="pages">
-          <Accordion.Control>Pages</Accordion.Control>
+          <Accordion.Control disabled={!data.pages?.length}>
+            Pages
+          </Accordion.Control>
           <Accordion.Panel>
             {data.pages?.map((page: any) => {
               return (
