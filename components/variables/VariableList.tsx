@@ -175,7 +175,7 @@ export const VariableList = ({ projectId, parentModalControl }: Props) => {
         )}
       </ScrollArea>
       <Modal title="Edit Variable" opened={opened} onClose={modal.close}>
-        <VariableForm variableId={variableToEdit} />
+        <VariableForm variableId={variableToEdit} setMode={() => {}} />
       </Modal>
     </>
   );

@@ -36,9 +36,10 @@ type VariablesFormValues = {
 
 type Props = {
   variableId?: string;
+  setMode: (mode: string) => void;
 };
 
-export const VariableForm = ({ variableId }: Props) => {
+export const VariableForm = ({ variableId, setMode }: Props) => {
   const variableList = useVariableStore((state) =>
     Object.values(state.variableList),
   );
@@ -48,7 +49,6 @@ export const VariableForm = ({ variableId }: Props) => {
   const { id: projectId } = useEditorParams();
   const { createVariablesMutation, updateVariablesMutation } =
     useVariableMutation(projectId);
-    
 
   const form = useForm<VariablesFormValues>({
     initialValues: {
@@ -73,7 +73,9 @@ export const VariableForm = ({ variableId }: Props) => {
       });
       setVariable({ ...values, id: variableId, name });
     } else {
-      createVariablesMutation.mutate({ ...values });
+      await createVariablesMutation.mutateAsync({ ...values });
+      form.reset();
+      setMode("list");
     }
   };
 
@@ -189,7 +191,8 @@ export const VariableForm = ({ variableId }: Props) => {
               mah={400}
               sx={{ copy: { paddingTop: "20px" } }}
             >
-              {(typeof form.values.value === "string" || typeof form.values.value === "object")
+              {typeof form.values.value === "string" ||
+              typeof form.values.value === "object"
                 ? safeJsonStringify(form.values.value)
                 : String(form.values.value)}
             </Prism>
