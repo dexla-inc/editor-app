@@ -9,9 +9,9 @@ import merge from "lodash.merge";
 import { ChangeEvent, forwardRef, memo, ForwardedRef } from "react";
 import { useInputValue } from "@/hooks/components/useInputValue";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { useShallow } from "zustand/react/shallow";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { safeJsonParse } from "@/utils/common";
+import { isPreviewModeSelector } from "@/utils/componentSelectors";
 
 // This is needed as CheckboxProps omits the ref prop
 interface CheckboxProps extends MantineCheckboxProps {
@@ -21,9 +21,6 @@ type Props = EditableComponentMapper & CheckboxProps;
 
 const CheckboxComponent = forwardRef<HTMLInputElement, Props>(
   ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
-    const isPreviewMode = useEditorTreeStore(
-      useShallow((state) => state.isPreviewMode || state.isLive),
-    );
     const { triggers, bg, textColor, ...componentProps } =
       component.props as any;
     const { optionValue } = component?.onLoad ?? {};
@@ -44,13 +41,18 @@ const CheckboxComponent = forwardRef<HTMLInputElement, Props>(
     const isInsideGroup = shareableContent?.isInsideGroup;
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+      const isPreviewMode = isPreviewModeSelector(
+        useEditorTreeStore.getState(),
+      );
+      if (!isPreviewMode) return;
       const newValue = e.target.checked;
       setValue(newValue);
       triggers?.onChange?.(e);
     };
 
-    const defaultTriggers =
-      isPreviewMode && !isInsideGroup ? { onChange: handleInputChange } : {};
+    const defaultTriggers = !isInsideGroup
+      ? { onChange: handleInputChange }
+      : {};
 
     return (
       <MantineCheckbox
@@ -81,10 +83,10 @@ const CheckboxComponent = forwardRef<HTMLInputElement, Props>(
             labelWrapper: { width: "100%" },
           }),
         }}
-        {...(!isPreviewMode && { wrapperProps: { "data-id": component.id } })}
+        wrapperProps={{ "data-id": component.id }}
         label={
           isInsideGroup && (
-            <div {...(isPreviewMode && { id: component.id })} {...triggers}>
+            <div id={component.id} {...triggers}>
               {component.children?.map((child) =>
                 renderTree(child, {
                   ...shareableContent,

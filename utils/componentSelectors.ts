@@ -13,3 +13,6 @@ export const isSelectedSelector = (id: string) => (state: EditorTreeState) =>
 
 export const isEditorModeSelector = (state: EditorTreeState) =>
   !state.isPreviewMode && !state.isLive;
+
+export const isPreviewModeSelector = (state: EditorTreeState) =>
+  state.isPreviewMode || state.isLive;

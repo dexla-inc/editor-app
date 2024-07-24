@@ -9,8 +9,6 @@ import { EditableComponentMapper, getColorFromTheme } from "@/utils/editor";
 import { ButtonProps, Button as MantineButton } from "@mantine/core";
 import merge from "lodash.merge";
 import { ReactElement, forwardRef, memo } from "react";
-import { useEditorTreeStore } from "@/stores/editorTree";
-import { useShallow } from "zustand/react/shallow";
 
 type Props = EditableComponentMapper & ButtonProps & ReactElement<"Button">;
 
@@ -36,18 +34,6 @@ const ButtonComponent = forwardRef(
       ref,
     );
 
-    const isPreviewMode = useEditorTreeStore(
-      useShallow((state) => state.isPreviewMode || state.isLive),
-    );
-
-    const defaultTriggers = isPreviewMode
-      ? {}
-      : {
-          onClick: (e: any) => {
-            e.preventDefault();
-          },
-        };
-
     const labelTextColor = getColorFromTheme(theme, textColor);
 
     const { buttonStyle } = useBrandingStyles();
@@ -72,9 +58,7 @@ const ButtonComponent = forwardRef(
         {...(icon &&
           iconPosition === "right" && { rightIcon: <Icon name={icon} /> })}
         loading={loading}
-        {...defaultTriggers}
         {...restProps}
-        {...(!isPreviewMode ? { sx: { ...sx } } : {})}
         {...componentProps}
         {...triggers}
         style={customStyle}

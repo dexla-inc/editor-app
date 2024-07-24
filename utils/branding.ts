@@ -455,9 +455,9 @@ const isBorderStyleNotNone = (style: StyleProp) => {
   return borderTypes.some((borderType) => style[borderType] !== "none");
 };
 
-const setComponentBorder = (style: StyleProp = {}, isPreviewMode?: boolean) => {
+const setComponentBorder = (style: StyleProp = {}) => {
   const hasBorder = isBorderWidthNotZero(style) && isBorderStyleNotNone(style);
-  return hasBorder || isPreviewMode ? {} : IDENTIFIER;
+  return hasBorder ? {} : IDENTIFIER;
 };
 
 export {

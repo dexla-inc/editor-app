@@ -2,7 +2,6 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 import { useCallback, useState } from "react";
 
 export const useUndoRedo = () => {
-  const isPreviewMode = useEditorTreeStore((state) => state.isPreviewMode);
   const historyCount = useEditorTreeStore((state) => state.historyCount);
   const setHistoryCount = useEditorTreeStore((state) => state.setHistoryCount);
   const [canRedo, setCanRedo] = useState(false);
@@ -15,5 +14,5 @@ export const useUndoRedo = () => {
     if (historyCount) setHistoryCount(Math.max(0, historyCount - 1));
   }, [setHistoryCount, historyCount]);
 
-  return { undo, redo, canRedo, setCanRedo, isPreviewMode, historyCount };
+  return { undo, redo, canRedo, setCanRedo, historyCount };
 };
