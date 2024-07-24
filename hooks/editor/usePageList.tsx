@@ -1,11 +1,13 @@
-import { useMemo } from "react";
 import { usePageListQuery } from "@/hooks/editor/reactQuery/usePageListQuery";
+import { useMemo } from "react";
+import { useEditorParams } from "./useEditorParams";
 
 export const usePageList = (
-  projectId: string,
+  projectId?: string,
   valueKey: "id" | "slug" = "id",
 ) => {
-  const { data: pageList, isFetched } = usePageListQuery(projectId, null);
+  const { id } = useEditorParams();
+  const { data: pageList, isFetched } = usePageListQuery(projectId || id, null);
 
   const pages = useMemo(
     () =>

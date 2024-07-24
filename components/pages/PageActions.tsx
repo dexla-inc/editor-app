@@ -22,11 +22,12 @@ export default function PageActions({ page, setPage }: Props) {
 
   const removeAction = async (id: string) => {
     if (page) {
+      const updatedActions = (page.actions || []).filter((a) => a.id !== id);
       const patchParms = [
         {
           path: "actions",
           op: "replace",
-          value: [],
+          value: updatedActions,
         },
       ] as PatchParams[];
       const result = await patchPage(page.projectId, page.id, patchParms);
