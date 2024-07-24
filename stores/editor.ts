@@ -28,6 +28,7 @@ export type EditorState = {
   isSaving: boolean;
   isNavBarVisible: boolean;
   activeTab?: SectionId;
+  activeSubTab?: "config" | "actions";
   isStructureCollapsed: boolean;
   pages: PageResponse[];
   copiedAction?: Action[];
@@ -46,6 +47,7 @@ export type EditorState = {
   setIsSaving: (isSaving: boolean) => void;
   setIsNavBarVisible: () => void;
   setActiveTab: (activeTab?: SectionId) => void;
+  setActiveSubTab: (activeTab: "config" | "actions") => void;
   setIsStructureCollapsed: (value: boolean) => void;
   setCopiedAction: (copiedAction?: Action[]) => void;
   isResizing?: boolean;
@@ -62,6 +64,8 @@ export type EditorState = {
   setAsideSelectedTab: (tab: Tab) => void;
   edge?: Edge;
   setEdge: (edge: Edge | undefined) => void;
+  selectedPageActionIds: string[];
+  setSelectedPageActionIds: (actionId: string) => void;
 };
 
 // creates a store with undo/redo capability
@@ -70,10 +74,29 @@ export const useEditorStore = create<EditorState>()(
   devtools(
     (set) => ({
       edge: undefined,
+      activeSubTab: "config",
       setEdge: (edge) => set({ edge }, false, "editor/setEdge"),
       asideSelectedTab: "design",
       setAsideSelectedTab: (tab) =>
         set({ asideSelectedTab: tab }, false, "editor/setAsideSelectedTab"),
+      selectedPageActionIds: [],
+      setSelectedPageActionIds: (actionId) =>
+        set(
+          (state) => {
+            if (state.selectedPageActionIds.includes(actionId)) {
+              return {
+                selectedPageActionIds: state.selectedPageActionIds.filter(
+                  (id) => id !== actionId,
+                ),
+              };
+            }
+            return {
+              selectedPageActionIds: [...state.selectedPageActionIds, actionId],
+            };
+          },
+          false,
+          "editor/setSelectedPageActionId",
+        ),
       setActionsResponse: (actionId, response) =>
         set(
           (state) => ({
@@ -129,6 +152,8 @@ export const useEditorStore = create<EditorState>()(
       isStructureCollapsed: false,
       setActiveTab: (activeTab) =>
         set({ activeTab }, false, "editor/setActiveTab"),
+      setActiveSubTab: (activeSubTab) =>
+        set({ activeSubTab }, false, "editor/setActiveSubTab"),
       setIsStructureCollapsed: (value) =>
         set(
           { isStructureCollapsed: value },

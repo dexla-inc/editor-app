@@ -1,8 +1,8 @@
 import { PageResponse } from "@/requests/pages/types";
 import { Box, SegmentedControl } from "@mantine/core";
-import { useState } from "react";
 import PageActions from "./PageActions";
 import PageConfig from "./PageConfig";
+import { useEditorStore } from "@/stores/editor";
 
 type PageDetailPaneProps = {
   page?: PageResponse | null | undefined;
@@ -11,7 +11,8 @@ type PageDetailPaneProps = {
 
 type Tab = "config" | "actions";
 export default function PageDetailPane({ page, setPage }: PageDetailPaneProps) {
-  const [tab, setTab] = useState<Tab>("config");
+  const activeSubTab = useEditorStore((state) => state.activeSubTab);
+  const setActiveSubTab = useEditorStore((state) => state.setActiveSubTab);
 
   return (
     <Box p="xs" pr={0}>
@@ -27,12 +28,12 @@ export default function PageDetailPane({ page, setPage }: PageDetailPaneProps) {
           },
         ]}
         onChange={(value) => {
-          setTab(value as Tab);
+          setActiveSubTab(value as Tab);
         }}
-        value={tab}
+        value={activeSubTab}
         mb="xs"
       />
-      {tab === "config" ? (
+      {activeSubTab === "config" ? (
         <PageConfig page={page} setPage={setPage} />
       ) : (
         <PageActions page={page} setPage={setPage} />
