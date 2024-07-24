@@ -47,7 +47,8 @@ export const jsonStructure = (props?: any): ComponentStructure => {
                 props: {
                   style: {
                     alignItems: "center",
-                    height: "50px",
+                    marginTop: "20px",
+                    marginBottom: "20px",
                     paddingLeft: "20px",
                     paddingRight: "20px",
                   },
@@ -125,7 +126,8 @@ export const jsonStructure = (props?: any): ComponentStructure => {
                 props: {
                   style: {
                     alignItems: "center",
-                    height: "50px",
+                    marginTop: "20px",
+                    marginBottom: "20px",
                     paddingLeft: "20px",
                     paddingRight: "20px",
                   },

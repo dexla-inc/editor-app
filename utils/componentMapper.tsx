@@ -179,6 +179,7 @@ import {
   IconListCheck,
   IconGradienter,
 } from "@tabler/icons-react";
+import { IconLayoutDistributeHorizontal } from "@tabler/icons-react";
 
 export type ComponentCategoryType =
   | "Layout"
@@ -643,12 +644,26 @@ export const structureMapper: StructureMapper = {
     Draggable: () => (
       <DraggableComponent
         id="AccordionItem"
-        icon={<IconLayoutBottombarCollapse size={LARGE_ICON_SIZE} />}
+        icon={<IconLayoutNavbar size={LARGE_ICON_SIZE} />}
       />
     ),
     category: "Data Display",
-    icon: <IconLayoutBottombarCollapse size={ICON_SIZE} />,
+    icon: <IconLayoutNavbar size={ICON_SIZE} />,
     synonyms: ["Accordion Section", "Accordion Element"],
+    hide: true,
+  },
+  AccordionControl: {
+    structure: (props: any) => AccordionItemStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="AccordionControl"
+        icon={<IconLayoutDistributeHorizontal size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Data Display",
+    icon: <IconLayoutDistributeHorizontal size={ICON_SIZE} />,
+    synonyms: ["Accordion Control", "Accordion Tabs"],
+    hide: true,
   },
   Link: {
     structure: (props: any) => LinkStructure.jsonStructure(props),
@@ -1306,13 +1321,13 @@ export const componentMapper: ComponentMapper = {
   },
   AccordionItem: {
     Component: (props) => <AccordionItem {...props} />,
-    modifiers: ["spacing", "size", "border", "effects"],
+    modifiers: ["layout", "spacing", "size", "border", "effects"],
     actionTriggers: [],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   AccordionControl: {
     Component: (props) => <AccordionControl {...props} />,
-    modifiers: ["spacing", "size", "border", "effects"],
+    modifiers: ["layout", "spacing", "size", "border", "effects"],
     actionTriggers: [],
     sequentialTriggers: ["onSuccess", "onError"],
   },
