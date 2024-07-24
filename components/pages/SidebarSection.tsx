@@ -11,9 +11,9 @@ import {
   UnstyledButton,
   useMantineTheme,
 } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
 import { IconChevronDown, IconTrash } from "@tabler/icons-react";
 import { PropsWithChildren } from "react";
+import { useEditorStore } from "@/stores/editor";
 
 type SidebarSectionProps = {
   id: string;
@@ -36,7 +36,16 @@ export function SidebarSection({
   noPadding,
 }: PropsWithChildren<SidebarSectionProps>) {
   const theme = useMantineTheme();
-  const [isExpanded, { toggle }] = useDisclosure(false);
+  const selectedPageActionIds = useEditorStore(
+    (state) => state.selectedPageActionIds,
+  );
+  const setSelectedPageActionIds = useEditorStore(
+    (state) => state.setSelectedPageActionIds,
+  );
+  const isExpanded = selectedPageActionIds.includes(id);
+  const toggle = () => {
+    setSelectedPageActionIds(id);
+  };
 
   const isDarkTheme = theme.colorScheme === "dark";
 
