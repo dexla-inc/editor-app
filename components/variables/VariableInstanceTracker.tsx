@@ -15,6 +15,7 @@ import { IconArrowRight } from "@tabler/icons-react";
 import { Tab, useEditorStore } from "@/stores/editor";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { usePageListQuery } from "@/hooks/editor/reactQuery/usePageListQuery";
 
 export const VariableInstanceTracker = ({
   innerProps,
@@ -24,6 +25,7 @@ export const VariableInstanceTracker = ({
   const accessToken = usePropelAuthStore((state) => state.accessToken);
   const projectId = useEditorTreeStore((state) => state.currentProjectId)!;
   const pageId = useEditorTreeStore((state) => state.currentPageId)!;
+  const { data: pageListQuery } = usePageListQuery(projectId, null);
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const setSelectedComponentIds = useEditorTreeStore(
     (state) => state.setSelectedComponentIds,
@@ -63,9 +65,22 @@ export const VariableInstanceTracker = ({
       }));
   };
 
-  const onClickGoToPage = () => {
+  const onClickGoToPage = async (pageId: string, action: any) => {
     context.closeModal(id);
     innerProps.onClose?.();
+
+    const {
+      setActiveTab,
+      setActivePage,
+      setActiveSubTab,
+      setSelectedPageActionIds,
+    } = useEditorStore.getState();
+    await setActiveTab("pages");
+    await setActivePage(
+      pageListQuery?.results.find((item) => item.id === pageId),
+    );
+    await setActiveSubTab("actions");
+    await setSelectedPageActionIds(action.id);
   };
 
   return (
@@ -193,7 +208,6 @@ export const VariableInstanceTracker = ({
                         href={{
                           pathname: `/projects/${projectId}/editor/${page.id}`,
                         }}
-                        onClick={onClickGoToPage}
                       >
                         <IconArrowRight size={16} />
                       </Anchor>
@@ -210,15 +224,7 @@ export const VariableInstanceTracker = ({
                               {action.trigger} - {action.actionEvent}
                             </Text>
                             <Anchor
-                              component={Link}
-                              href={{
-                                pathname: `/projects/${projectId}/editor/${page.id}`,
-                                query: {
-                                  pageActionTrigger: action.trigger,
-                                  pageActionEvent: action.actionEvent,
-                                },
-                              }}
-                              onClick={onClickGoToPage}
+                              onClick={() => onClickGoToPage(page.id, action)}
                             >
                               <IconArrowRight size={16} />
                             </Anchor>
