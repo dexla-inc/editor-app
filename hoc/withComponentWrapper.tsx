@@ -4,14 +4,11 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 import { useShallow } from "zustand/react/shallow";
 import { useComputeCurrentState } from "@/hooks/components/useComputeCurrentState";
 import { useComponentContextEventHandler } from "@/hooks/components/useComponentContextMenu";
-import { useTriggers } from "@/hooks/components/useTriggers";
 import { useComputeValue } from "@/hooks/data/useComputeValue";
-import { useEditorShadows } from "@/hooks/components/useEditorShadows";
+import { useEditorDroppableEvents } from "@/hooks/components/useEditorDroppableEvents";
 import { usePropsWithOverwrites } from "@/hooks/components/usePropsWithOverwrites";
 import { useComputeChildStyles } from "@/hooks/components/useComputeChildStyles";
-import { useEditorClickHandler } from "@/hooks/components/useEditorClickHandler";
 import { WithComponentWrapperProps } from "@/types/component";
-import { useRouter } from "next/navigation";
 import merge from "lodash.merge";
 import { withComponentVisibility } from "@/hoc/withComponentVisibility";
 
@@ -66,31 +63,20 @@ export const withComponentWrapper = <T extends Record<string, any>>(
       merge({}, componentTree, component),
     );
 
-    const router = useRouter();
-
-    const triggers = useTriggers({
-      entity: { ...component, id },
-      router,
-      shareableContent,
-    });
-
     const propsWithOverwrites = usePropsWithOverwrites(
       { ...component, id, onLoad: computedOnLoad },
+      shareableContent,
       currentState,
-      triggers,
     );
 
-    const { droppable, tealOutline } = useEditorShadows({
+    const { droppable } = useEditorDroppableEvents({
       componentId: componentTree.id!,
     });
 
     const childStyles = useComputeChildStyles({
-      component,
+      component: { ...component, id: componentTree.id },
       propsWithOverwrites,
-      tealOutline,
     });
-
-    const handleClick = useEditorClickHandler(id!);
 
     const props = {
       component: {
@@ -103,7 +89,6 @@ export const withComponentWrapper = <T extends Record<string, any>>(
       ...childStyles,
       renderTree,
       id,
-      onClick: handleClick,
       onContextMenu: handleContextMenu,
       shareableContent,
     } as any;

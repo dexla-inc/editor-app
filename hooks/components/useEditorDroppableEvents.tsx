@@ -6,7 +6,7 @@ type Props = {
   componentId: string;
 };
 
-export const useEditorShadows = ({ componentId }: Props) => {
+export const useEditorDroppableEvents = ({ componentId }: Props) => {
   const onDrop = useOnDrop();
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const droppable = useDroppable({
