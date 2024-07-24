@@ -1,5 +1,5 @@
 import { SegmentedControlInput } from "@/components/SegmentedControlInput";
-import { useEditorStore } from "@/stores/editor";
+import { usePageList } from "@/hooks/editor/usePageList";
 import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { Select, TextInput } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
@@ -12,7 +12,7 @@ type Props = {
 };
 
 export const UrlOrPageSelector = ({ form }: Props) => {
-  const pages = useEditorStore((state) => state.pages);
+  const pages = usePageList();
 
   const setFieldValue = (value: string) => {
     form.setFieldValue("customLinkUrl", value);
@@ -62,10 +62,7 @@ export const UrlOrPageSelector = ({ form }: Props) => {
           size="xs"
           {...form.getInputProps("customLinkUrl")}
           onChange={setFieldValue}
-          data={pages.map((page) => ({
-            label: page.title,
-            value: `${page.id}|${page.slug}`,
-          }))}
+          data={pages}
         />
       )}
     </>

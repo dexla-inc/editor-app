@@ -1,15 +1,15 @@
-import { ActionIcon, Select } from "@mantine/core";
 import { Icon } from "@/components/Icon";
-import { ICON_SIZE } from "@/utils/config";
-import { actions, ActionType } from "@/utils/actions";
-import startCase from "lodash.startcase";
-import { useForm } from "@mantine/form";
-import { useEffect } from "react";
-import { nanoid } from "nanoid";
-import { PageResponse } from "@/requests/pages/types";
-import isEmpty from "lodash.isempty";
 import { patchPage } from "@/requests/pages/mutations";
+import { PageResponse } from "@/requests/pages/types";
 import { convertToPatchParams } from "@/types/dashboardTypes";
+import { actions, ActionType } from "@/utils/actions";
+import { ICON_SIZE } from "@/utils/config";
+import { ActionIcon, Select } from "@mantine/core";
+import { useForm } from "@mantine/form";
+import isEmpty from "lodash.isempty";
+import startCase from "lodash.startcase";
+import { nanoid } from "nanoid";
+import { useEffect } from "react";
 
 type Props = {
   sequentialTo?: string;
@@ -24,11 +24,19 @@ export const SelectActionForm = ({
   page,
   setPage,
 }: Props) => {
+  const sequentialData = [
+    { value: "onSuccess", label: "On Success" },
+    { value: "onError", label: "On Error" },
+  ].filter(
+    (t) =>
+      !(page.actions ?? []).find((a) =>
+        !!sequentialTo
+          ? a.trigger === t.value && a.sequentialTo === sequentialTo
+          : a.trigger === t.value,
+      ),
+  );
   const triggers = {
-    sequential: [
-      { value: "onSuccess", label: "On Success" },
-      { value: "onError", label: "On Error" },
-    ],
+    sequential: sequentialData,
     page: [{ value: "onPageLoad", label: "On Page Load" }],
   };
 
@@ -36,7 +44,7 @@ export const SelectActionForm = ({
 
   const form = useForm({
     initialValues: {
-      trigger: triggers[triggerType][0].value as any,
+      trigger: triggers[triggerType][0]?.value as any,
       action: {
         name: "" as any,
       } as ActionType,
@@ -61,17 +69,14 @@ export const SelectActionForm = ({
         const patchParams = convertToPatchParams({ actions: updatedActions });
         const result = await patchPage(page.projectId, page.id, patchParams);
         setPage(result);
+        form.reset();
+        close();
       }
     };
 
     updatePage();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.values]);
-
-  // onUpdatePage(updatedPage).then(() => {
-  //   form.reset();
-  //   close();
-  // });
 
   return (
     <>
