@@ -1,4 +1,8 @@
+import { BindingField } from "@/components/editor/BindingField/BindingField";
+import { usePageListQuery } from "@/hooks/editor/reactQuery/usePageListQuery";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 import { ActionFormProps, NavigationAction } from "@/utils/actions";
+import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
 import {
   Button,
   Flex,
@@ -8,13 +12,9 @@ import {
   Text,
   TextInput,
 } from "@mantine/core";
-import { SegmentedControlYesNo } from "../SegmentedControlYesNo";
-import { usePageListQuery } from "@/hooks/editor/reactQuery/usePageListQuery";
 import { ActionIconDefault } from "../ActionIconDefault";
-import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
 import { Icon } from "../Icon";
-import { BindingField } from "@/components/editor/BindingField/BindingField";
-import { useEditorParams } from "@/hooks/editor/useEditorParams";
+import { SegmentedControlYesNo } from "../SegmentedControlYesNo";
 
 type Props = ActionFormProps<Omit<NavigationAction, "name">>;
 
@@ -32,14 +32,15 @@ export const NavigationActionForm = ({ form, isPageAction }: Props) => {
 
   return (
     <Stack>
-      {/* TODO: This should only be visible on page actions */}
-      <SegmentedControlYesNo
-        label="Run in edit mode"
-        {...form.getInputProps("runInEditMode")}
-        onChange={(value) => {
-          form.setFieldValue("runInEditMode", value);
-        }}
-      />
+      {isPageAction && (
+        <SegmentedControlYesNo
+          label="Run in edit mode"
+          {...form.getInputProps("runInEditMode")}
+          onChange={(value) => {
+            form.setFieldValue("runInEditMode", value);
+          }}
+        />
+      )}
       <Select
         size="xs"
         placeholder="Select a page"
@@ -101,6 +102,13 @@ export const NavigationActionForm = ({ form, isPageAction }: Props) => {
           />
         </Group>
       ))}
+      <SegmentedControlYesNo
+        label="Open in new tab"
+        {...form.getInputProps("openInNewTab")}
+        onChange={(value) => {
+          form.setFieldValue("openInNewTab", value);
+        }}
+      />
     </Stack>
   );
 };

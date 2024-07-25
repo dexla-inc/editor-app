@@ -1,42 +1,38 @@
 import { APICallActionForm } from "@/components/actions/APICallActionForm";
 import { ChangeLanguageActionForm } from "@/components/actions/ChangeLanguageActionForm";
 import { ChangeStateActionForm } from "@/components/actions/ChangeStateActionForm";
+import { ChangeVariableActionForm } from "@/components/actions/ChangeVariableActionForm";
 import { CustomJavascriptActionForm } from "@/components/actions/CustomJavascriptActionForm";
 import { DebugActionForm } from "@/components/actions/DebugActionForm";
 import { GoToUrlForm } from "@/components/actions/GoToUrlForm";
 import { NavigationActionForm } from "@/components/actions/NavigationActionForm";
+import { RefreshAPICallActionForm } from "@/components/actions/RefreshAPICallActionForm";
+import { ResetComponentActionForm } from "@/components/actions/ResetComponentActionForm";
+import { ResetVariableActionForm } from "@/components/actions/ResetVariableActionForm";
+import { ShowNotificationActionForm } from "@/components/actions/ShowNotificationActionForm";
 import { TriggerLogicFlowActionForm } from "@/components/actions/TriggerLogicFlowActionForm";
-import { ChangeVariableActionForm } from "@/components/actions/ChangeVariableActionForm";
 import {
   DataSourceAuthResponse,
   DataSourceResponse,
   Endpoint,
 } from "@/requests/datasources/types";
-import { ShowNotificationActionForm } from "@/components/actions/ShowNotificationActionForm";
 import { LogicFlowResponse } from "@/requests/logicflows/types";
 import { PageResponse } from "@/requests/pages/types";
 import { FrontEndTypes } from "@/requests/variables/types";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorTreeStore } from "@/stores/editorTree";
+import { useInputsStore } from "@/stores/inputs";
+import { useThemeStore } from "@/stores/theme";
 import { useVariableStore } from "@/stores/variables";
-import {
-  toBase64,
-  isObject,
-  safeJsonParse,
-} from "@/utils/common";
+import { ComputeValueProps, ValueProps } from "@/types/dataBinding";
+import { ArrayMethods } from "@/types/types";
+import { performFetch, prepareRequestData } from "@/utils/actionsApi";
+import { isObject, safeJsonParse, toBase64 } from "@/utils/common";
 import { Component, getColorFromTheme } from "@/utils/editor";
 import { executeFlow } from "@/utils/logicFlows";
-import { ArrayMethods } from "@/types/types";
 import { UseFormReturnType } from "@mantine/form";
-import { ComputeValueProps, ValueProps } from "@/types/dataBinding";
-import { ResetVariableActionForm } from "@/components/actions/ResetVariableActionForm";
-import { useThemeStore } from "@/stores/theme";
-import { queryClient } from "./reactQuery";
-import { RefreshAPICallActionForm } from "@/components/actions/RefreshAPICallActionForm";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
-import { useInputsStore } from "@/stores/inputs";
-import { ResetComponentActionForm } from "@/components/actions/ResetComponentActionForm";
-import { performFetch, prepareRequestData } from "@/utils/actionsApi";
+import { queryClient } from "./reactQuery";
 
 const triggers = [
   "onClick",
@@ -132,6 +128,7 @@ export interface NavigationAction extends BaseAction {
   pageSlug: string;
   queryStrings?: Array<{ key: string; value: ValueProps }>;
   runInEditMode: boolean;
+  openInNewTab: boolean;
 }
 
 export interface GoToUrlAction extends BaseAction {
@@ -287,7 +284,11 @@ export const useNavigationAction = ({
     url += `?${queryStrings.join("&")}`;
   }
 
-  router.push(url);
+  if (action.openInNewTab) {
+    window.open(url, "_blank");
+  } else {
+    router.push(url);
+  }
 };
 
 export const useGoToUrlAction = async ({
