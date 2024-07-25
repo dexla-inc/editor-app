@@ -35,8 +35,6 @@ export default function PageActions({ page, setPage }: Props) {
     }
   };
 
-  console.log(page?.actions);
-
   const getActionsBySequentialTo = (id: string) => {
     return page?.actions?.filter((a: Action) => a.sequentialTo === id);
   };
