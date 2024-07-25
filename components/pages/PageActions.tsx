@@ -35,14 +35,14 @@ export default function PageActions({ page, setPage }: Props) {
     }
   };
 
-  const getActionsBySequentialToOrId = (id: string) => {
-    return page?.actions?.filter(
-      (a: Action) => a.id === id || a.sequentialTo === id,
-    );
+  console.log(page?.actions);
+
+  const getActionsBySequentialTo = (id: string) => {
+    return page?.actions?.filter((a: Action) => a.sequentialTo === id);
   };
 
   const renderSequentialActions = (action: Action) => {
-    return getActionsBySequentialToOrId(action.id!)?.map(
+    return getActionsBySequentialTo(action.id!)?.map(
       (sequentialAction: Action) => {
         const sequentialActionName = sequentialAction.action.name;
 
@@ -62,33 +62,30 @@ export default function PageActions({ page, setPage }: Props) {
         };
 
         return (
-          sequentialAction.sequentialTo === action.id && (
-            <SidebarSection
-              icon={IconArrowBadgeRight}
-              isAction
-              {...item}
-              removeAction={removeAction}
-              key={item.label}
+          <SidebarSection
+            icon={IconArrowBadgeRight}
+            isAction
+            {...item}
+            removeAction={removeAction}
+            key={item.label}
+          >
+            <ActionSettingsForm
+              action={sequentialAction}
+              page={page!}
+              projectId={projectId}
+              defaultValues={actionMapper(sequentialActionName)?.defaultValues}
+              setPage={setPage}
             >
-              <ActionSettingsForm
-                action={sequentialAction}
-                page={page!}
-                projectId={projectId}
-                defaultValues={
-                  actionMapper(sequentialActionName)?.defaultValues
-                }
-                setPage={setPage}
-              >
-                {({ form }) => (
-                  <ActionForm
-                    form={form}
-                    actionId={sequentialAction.id}
-                    isPageAction
-                  />
-                )}
-              </ActionSettingsForm>
-            </SidebarSection>
-          )
+              {({ form }) => (
+                <ActionForm
+                  form={form}
+                  actionId={sequentialAction.id}
+                  isPageAction
+                />
+              )}
+            </ActionSettingsForm>
+            {renderSequentialActions(sequentialAction)}
+          </SidebarSection>
         );
       },
     );
