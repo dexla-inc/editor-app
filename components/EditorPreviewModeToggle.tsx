@@ -14,7 +14,6 @@ export const EditorPreviewModeToggleComponent = () => {
   const setSelectedComponentIds = useEditorTreeStore(
     (state) => state.setSelectedComponentIds,
   );
-  const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
   const setNavbarWidth = useUserConfigStore((state) => state.setNavbarWidth);
   const [, startTransition] = useTransition();
 
@@ -29,6 +28,7 @@ export const EditorPreviewModeToggleComponent = () => {
           checked={isPreviewMode}
           onChange={(event) => {
             const isPreviewMode = event.currentTarget.checked;
+            const isTabPinned = useUserConfigStore.getState().isTabPinned;
             startTransition(() => {
               setSelectedComponentIds(() => []);
               setPreviewModeEditor(isPreviewMode);

@@ -26,7 +26,6 @@ export const useEditorHotkeys = () => {
   const setSelectedComponentIds = useEditorTreeStore(
     (state) => state.setSelectedComponentIds,
   );
-  const isPreviewMode = useEditorTreeStore((state) => state.isPreviewMode);
 
   const copiedComponent = useEditorStore((state) => state.copiedComponent);
   const setCopiedComponent = useEditorStore(
@@ -38,6 +37,7 @@ export const useEditorHotkeys = () => {
   );
 
   const deleteComponent = useCallback(() => {
+    const isPreviewMode = useEditorTreeStore.getState().isPreviewMode;
     const selectedComponentIds = selectedComponentIdsSelector(
       useEditorTreeStore.getState(),
     );
@@ -108,7 +108,6 @@ export const useEditorHotkeys = () => {
       });
     }
   }, [
-    isPreviewMode,
     editorTree,
     deleteComponentMutableAttr,
     setEditorTree,
@@ -116,6 +115,7 @@ export const useEditorHotkeys = () => {
   ]);
 
   const copySelectedComponent = useCallback(() => {
+    const isPreviewMode = useEditorTreeStore.getState().isPreviewMode;
     const selectedComponentId = selectedComponentIdSelector(
       useEditorTreeStore.getState(),
     );
@@ -127,9 +127,10 @@ export const useEditorHotkeys = () => {
       setCopiedComponent(componentToCopy);
       copyToClipboard(componentToCopy);
     }
-  }, [editorTree.root, isPreviewMode, setCopiedComponent]);
+  }, [editorTree.root, setCopiedComponent]);
 
   const pasteCopiedComponent = useCallback(async () => {
+    const isPreviewMode = useEditorTreeStore.getState().isPreviewMode;
     const clipboardContent = pasteFromClipboard() as ComponentStructure;
     const componentToPaste =
       (clipboardContent as typeof copiedComponent as ComponentStructure) ||
@@ -207,9 +208,10 @@ export const useEditorHotkeys = () => {
     });
     setSelectedComponentIds(() => [newSelectedId]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [copiedComponent, editorTree, isPreviewMode, setEditorTree]);
+  }, [copiedComponent, editorTree, setEditorTree]);
 
   const cutSelectedComponent = useCallback(() => {
+    const isPreviewMode = useEditorTreeStore.getState().isPreviewMode;
     const selectedComponentId = selectedComponentIdSelector(
       useEditorTreeStore.getState(),
     );
@@ -218,7 +220,7 @@ export const useEditorHotkeys = () => {
       copySelectedComponent();
       deleteComponent();
     }
-  }, [copySelectedComponent, deleteComponent, isPreviewMode]);
+  }, [copySelectedComponent, deleteComponent]);
 
   const isMac = window.navigator.userAgent.includes("Mac");
   const deleteHotkey = isMac ? "backspace" : "delete";

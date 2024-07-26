@@ -36,7 +36,9 @@ Deno.serve(async (req: Request) => {
       reference_number: item.reference_number,
       permit_number: item.permit_number,
       dtcm_permit: item.dtcm_permit,
+      // @ts-ignore
       offering_type: propertyPurposeTypes[item.property_purpose],
+      // @ts-ignore
       property_type: property_types[item.property_type],
       price_on_application: item.include_price,
       price: item.rental_pricing ?? item.price,
