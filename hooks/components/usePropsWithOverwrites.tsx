@@ -13,6 +13,7 @@ export const usePropsWithOverwrites = (
   shareableContent: Record<string, any>,
   currentState: string = "default",
 ) => {
+  const isEditorMode = useEditorTreeStore(isEditorModeSelector);
   const router = useRouter();
   const triggers = useTriggers({
     entity: component,
@@ -53,9 +54,9 @@ export const usePropsWithOverwrites = (
   };
 
   const omittingProps = ["showBorder", "pages", "theme"];
-  // if (isEditorMode) {
-  //   omittingProps.push("error");
-  // }
+  if (isEditorMode) {
+    omittingProps.push("error");
+  }
 
   return useMemo(() => {
     return merge(

@@ -10,7 +10,9 @@ export const useComputeCurrentState = (
   currentState: string,
   parentState: string,
 ): string => {
-  const isEditorMode = true;
+  const isEditorMode = useEditorTreeStore(
+    (state) => !state.isPreviewMode && !state.isLive,
+  );
 
   const editorComponentState = useEditorTreeStore(
     useShallow(
