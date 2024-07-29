@@ -235,9 +235,10 @@ export const useEditorHotkeys = () => {
   useHotkeysOnIframe([
     [
       deleteHotkey,
-      (e) => {
+      (e: KeyboardEvent) => {
+        const isPreviewMode = useEditorTreeStore.getState().isPreviewMode;
         // @ts-ignore
-        if (e.target.contentEditable !== "true" && !isPreviewMode) {
+        if (e.target?.contentEditable !== "true" && !isPreviewMode) {
           deleteComponent();
         }
       },
