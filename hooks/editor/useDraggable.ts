@@ -1,5 +1,6 @@
 import { useEditorStore } from "@/stores/editor";
 import { useCallback } from "react";
+import { useEditorTreeStore } from "@/stores/editorTree";
 
 export const useDraggable = ({
   id,
@@ -13,10 +14,13 @@ export const useDraggable = ({
   ghostImagePosition?: number;
 }) => {
   const isResizing = useEditorStore((state) => state.isResizing);
+  const setIsDragging = useEditorTreeStore((state) => state.setIsDragging);
 
   const handleDragStart = useCallback(
     (event: React.DragEvent) => {
       if (isResizing) return;
+
+      setIsDragging(true);
 
       const w = currentWindow ?? window;
       const el = w.document.getElementById(id)!;

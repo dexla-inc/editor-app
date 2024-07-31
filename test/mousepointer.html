@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Gap Representation</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        #parent {
+            display: flex;
+            /*justify-content: space-between;*/
+            /*width: 300px;*/
+            /*margin: 0 auto;*/
+        }
+
+        .box {
+            height: 100px;
+            /*margin: 10px;*/
+            position: relative;
+            background-color: lightgray;
+            border: 1px solid black;
+            width: 100px;
+        }
+        .box::after {
+            content: '';
+            position: absolute;
+            background-color: red;
+            z-index: 1000;
+            display: none;
+        }
+        .box.edge-left {
+            margin-left: var(--gap-size, 0px);
+        }
+        .box.edge-left::after {
+            display: block;
+            width: var(--gap-size, 0px);
+            height: 100%;
+            left: calc(-1 * var(--gap-size, 0px));
+        }
+        .box.edge-right {
+            margin-right: var(--gap-size, 0px);
+        }
+        .box.edge-right::after {
+            display: block;
+            width: var(--gap-size, 0px);
+            height: 100%;
+            right: calc(-1 * var(--gap-size, 0px));
+        }
+        .box.edge-top {
+            margin-top: var(--gap-size, 0px);
+        }
+        .box.edge-top::after {
+            display: block;
+            height: var(--gap-size, 0px);
+            width: 100%;
+            top: calc(-1 * var(--gap-size, 0px));
+        }
+        .box.edge-bottom {
+            margin-bottom: var(--gap-size, 0px);
+        }
+        .box.edge-bottom::after {
+            display: block;
+            height: var(--gap-size, 0px);
+            width: 100%;
+            bottom: calc(-1 * var(--gap-size, 0px));
+        }
+    </style>
+</head>
+<body>
+<div id="parent">
+    <div id="element1" class="box" draggable="true">Element 1</div>
+    <div id="element2" class="box" draggable="true">Element 2</div>
+    <div id="element3" class="box" draggable="true">Element 3</div>
+</div>
+
+
+<script>
+    document.addEventListener('dragover', (event) => {
+        event.preventDefault();
+
+        const elements = document.querySelectorAll('.box');
+        elements.forEach(element => {
+            element.classList.remove('edge-left', 'edge-right', 'edge-top', 'edge-bottom');
+            element.style.setProperty('--gap-size', '0px');
+        });
+
+        const closestElement = getClosestElement(elements, event.clientX, event.clientY);
+        if (closestElement) {
+            addEdgeClass(closestElement, event.clientX, event.clientY);
+        }
+    });
+
+    function getClosestElement(elements, x, y) {
+        let closestElement = null;
+        let closestDistance = Infinity;
+
+        elements.forEach(element => {
+            const rect = element.getBoundingClientRect();
+            const elementCenterX = rect.left + rect.width / 6;
+            const elementCenterY = rect.top + rect.height / 6;
+            const distance = Math.hypot(x - elementCenterX, y - elementCenterY);
+
+            if (distance < closestDistance) {
+                closestDistance = distance;
+                closestElement = element;
+            }
+        });
+
+        return closestElement;
+    }
+
+    function addEdgeClass(element, x, y) {
+        const rect = element.getBoundingClientRect();
+        if (x > rect.left && x < rect.right && y > rect.top && y < rect.bottom) {
+            // Pointer is inside the element, do not show anything
+            return;
+        }
+
+        const threshold = 20;
+
+        const distances = [
+            { side: 'left', distance: Math.abs(x - rect.left) },
+            { side: 'right', distance: Math.abs(x - rect.right) },
+            { side: 'top', distance: Math.abs(y - rect.top) },
+            { side: 'bottom', distance: Math.abs(y - rect.bottom) }
+        ];
+
+        const closestDistance = Math.min(...distances.map(d => d.distance));
+        if (closestDistance <= threshold) {
+            const closestSide = distances.find(d => d.distance === closestDistance).side;
+            element.classList.add(`edge-${closestSide}`);
+            element.style.setProperty('--gap-size', `${closestDistance}px`);
+        }
+    }
+</script>
+</body>
+</html>

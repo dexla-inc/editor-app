@@ -1,6 +1,7 @@
 import { Inter } from "next/font/google";
 import { GlobalProviders } from "@/app/globalProviders";
 import { ReactNode } from "react";
+import "./global.css";
 
 // If loading a variable font, you don't need to specify the font weight
 const inter = Inter({

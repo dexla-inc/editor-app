@@ -47,7 +47,7 @@ const TextComponent = forwardRef(
         {...componentProps}
         {...triggers}
         ref={ref}
-        style={customStyle}
+        sx={customStyle}
       >
         {!hideIfDataIsEmpty && isFontLoaded && String(childrenValue)}
       </MantineText>

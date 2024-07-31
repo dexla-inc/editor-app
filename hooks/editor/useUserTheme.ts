@@ -90,6 +90,11 @@ export const useUserTheme = (projectId: string) => {
             projectBranding?.defaultRadius ?? defaultTheme.radius.md,
           theme: projectBranding?.theme ?? defaultTheme.theme,
           inputSize: projectBranding?.inputSize ?? defaultTheme.inputSize,
+          globalStyles: {
+            ".test": {
+              color: "green",
+            },
+          },
         });
       }
     };

@@ -20,7 +20,7 @@ import {
   selectedComponentIdSelector,
   selectedComponentIdsSelector,
 } from "@/utils/componentSelectors";
-import { cloneObject } from "@/utils/common";
+import { cloneObject, isEmpty } from "@/utils/common";
 
 export type ComponentStructure = {
   children?: ComponentStructure[];
@@ -288,6 +288,52 @@ export const getComponentTreeById = (
   );
 
   return found;
+};
+
+export const getComponentTreeChildrenById = (
+  treeRoot: ComponentTree,
+  id: string,
+): ComponentTree[] => {
+  let found: ComponentTree[] = [];
+
+  crawl(
+    treeRoot,
+    (node, context) => {
+      if (node.id === id) {
+        if (!isEmpty(node.children)) {
+          found = node.children || [];
+        } else {
+          found = [node];
+        }
+
+        context.break();
+      }
+    },
+    { order: "bfs" },
+  );
+
+  return found;
+};
+
+export const updateTree = (
+  treeRoot: ComponentTree,
+  id: string,
+  props: any,
+): ComponentTree => {
+  const copy = cloneObject(treeRoot);
+
+  crawl(
+    copy,
+    (node, context) => {
+      if (node.id === id) {
+        merge(node, props);
+        context.break();
+      }
+    },
+    { order: "bfs" },
+  );
+
+  return copy;
 };
 
 export const getAllComponentsByIds = (

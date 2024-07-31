@@ -1,0 +1,46 @@
+.draggable {
+  &:after {
+    content: '';
+    position: absolute;
+    background-color: red;
+    z-index: 1000;
+    display: block;
+    width: var(--gap-size, 0px);
+  }
+  &.edge-left {
+    margin-left: var(--gap-size, 0px);
+    &:after {
+      display: block;
+      width: var(--gap-size, 0px);
+      height: 100%;
+      left: calc(-1 * var(--gap-size, 0px));
+    }
+  }
+  &.edge-right {
+    margin-right: var(--gap-size, 0px);
+    &:after {
+      display: block;
+      width: var(--gap-size, 0px);
+      height: 100%;
+      right: calc(-1 * var(--gap-size, 0px));
+    }
+  }
+  &.edge-top {
+    margin-top: var(--gap-size, 0px);
+    &:after {
+      display: block;
+      height: var(--gap-size, 0px);
+      width: 100%;
+      top: calc(-1 * var(--gap-size, 0px));
+    }
+  }
+  &.edge-bottom {
+    margin-bottom: var(--gap-size, 0px);
+    &:after {
+      display: block;
+      height: var(--gap-size, 0px);
+      width: 100%;
+      bottom: calc(-1 * var(--gap-size, 0px));
+    }
+  }
+}

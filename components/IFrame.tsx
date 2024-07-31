@@ -18,6 +18,14 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { isEditorModeSelector } from "@/utils/componentSelectors";
+import styled from "styled-components";
+
+const PortalWrapper = styled.div`
+  // Your CSS styles here
+  .test {
+    color: red;
+  }
+`;
 
 type Props = {
   projectId: string;
@@ -125,27 +133,29 @@ export const IFrame = ({ children, projectId, ...props }: Props) => {
       {mountNode &&
         insertionTarget &&
         createPortal(
-          <MantineProvider
-            withNormalizeCSS
-            theme={theme}
-            emotionCache={createCache({
-              container: insertionTarget,
-              key: "iframe-canvas",
-            })}
-          >
-            <Box
-              className={isEditorMode ? "editor-mode" : "preview-mode"}
-              component={ScrollArea}
-              offsetScrollbars
-              id="iframe-content"
-              styles={{
-                root: { overflow: "visible" },
-                viewport: { overflow: "visible!important" },
-              }}
+          <PortalWrapper>
+            <MantineProvider
+              withNormalizeCSS
+              theme={theme}
+              emotionCache={createCache({
+                container: insertionTarget,
+                key: "iframe-canvas",
+              })}
             >
-              {children}
-            </Box>
-          </MantineProvider>,
+              <Box
+                className={isEditorMode ? "editor-mode" : "preview-mode"}
+                component={ScrollArea}
+                offsetScrollbars
+                id="iframe-content"
+                styles={{
+                  root: { overflow: "visible" },
+                  viewport: { overflow: "visible!important" },
+                }}
+              >
+                {children}
+              </Box>
+            </MantineProvider>
+          </PortalWrapper>,
           mountNode,
         )}
     </Box>

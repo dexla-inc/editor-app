@@ -4,13 +4,16 @@ import { useUserConfigStore } from "@/stores/userConfig";
 import { componentMapper } from "@/utils/componentMapper";
 import { NAVBAR_WIDTH } from "@/utils/config";
 import {
+  ComponentTree,
   DropTarget,
   Edge,
   getClosestEdge,
   getComponentTreeById,
+  getComponentTreeChildrenById,
+  updateTree,
 } from "@/utils/editor";
 import debounce from "lodash.debounce";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import {
   isEditorModeSelector,
   selectedComponentIdSelector,
@@ -81,9 +84,13 @@ export const useDroppable = ({
   onDrop: (droppedId: string, dropTarget: DropTarget) => void;
   currentWindow?: Window;
 }) => {
+  const [closestDistance, setClosestDistance] = useState<number | null>(null);
+  const [closestSide, setClosestSide] = useState<string>("");
+
   const handleDrop = useCallback(
     (event: React.DragEvent) => {
       const isEditorMode = isEditorModeSelector(useEditorTreeStore.getState());
+      const setIsDragging = useEditorTreeStore.getState().setIsDragging;
       const { componentToAdd, isResizing, setCurrentTargetId } =
         useEditorStore.getState();
       if (isResizing || !isEditorMode) return;
@@ -104,6 +111,7 @@ export const useDroppable = ({
       }
 
       setCurrentTargetId(undefined);
+      setIsDragging(false);
     },
     [id, onDrop],
   );
@@ -153,32 +161,157 @@ export const useDroppable = ({
 
   const handleDragOver = useCallback(
     (event: React.DragEvent) => {
-      const { currentTargetId, isResizing } = useEditorStore.getState();
+      const { currentTargetId = "", isResizing } = useEditorStore.getState();
+      const { tree } = useEditorTreeStore.getState();
       const isEditorMode = isEditorModeSelector(useEditorTreeStore.getState());
       if (isResizing || !isEditorMode) return;
 
       event.preventDefault();
       event.stopPropagation();
 
-      const { clientX: mouseX, clientY: mouseY } = event;
       const w = currentWindow ?? window;
-      const comp =
-        w?.document?.querySelector(`[data-id^="${id}"]`) ??
-        w?.document?.querySelector(`[id^="${id}"]`);
-      const rect = comp?.getBoundingClientRect()!;
+      const currentTargetChildren = getComponentTreeChildrenById(
+        tree.root,
+        currentTargetId,
+      );
 
-      if (!mouseX || !mouseY || !rect || currentTargetId !== id) return;
+      const childrenIds = currentTargetChildren
+        .map((c) => `[data-id^="${c.id}"],[id^="${c.id}"]`)
+        .join(", ");
 
-      const leftDist = mouseX - rect.left;
-      const rightDist = rect.right - mouseX;
-      const topDist = mouseY - rect.top;
-      const bottomDist = rect.bottom - mouseY;
+      const elements = w?.document.querySelectorAll(childrenIds);
+      let closestElement: Element | null = null;
+      let closestDistance = Infinity;
+      // console.log("===>", currentTargetId, childrenIds, elements);
 
-      if (mouseX <= NAVBAR_WIDTH) {
-        _handleEdgeSet({ leftDist, rightDist, topDist, bottomDist }, 2);
-      } else {
-        _handleEdgeSet({ leftDist, rightDist, topDist, bottomDist }, 5);
+      elements.forEach((element) => {
+        // element.classList.remove(
+        //   "edge-left",
+        //   "edge-right",
+        //   "edge-top",
+        //   "edge-bottom",
+        // );
+        // @ts-ignore
+        element.style.setProperty("--gap-size", "0px");
+
+        const rect = element.getBoundingClientRect();
+        const elementCenterX = rect.left + rect.width / 2;
+        const elementCenterY = rect.top + rect.height / 2;
+        const distance = Math.hypot(
+          event.clientX - elementCenterX,
+          event.clientY - elementCenterY,
+        );
+
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestElement = element;
+        }
+
+        if (closestElement) {
+          addEdgeClass(closestElement, event.clientX, event.clientY);
+        }
+      });
+
+      function addEdgeClass(element: Element, x: number, y: number) {
+        const rect = element.getBoundingClientRect();
+        if (
+          x > rect.left &&
+          x < rect.right &&
+          y > rect.top &&
+          y < rect.bottom
+        ) {
+          // Pointer is inside the element, do not show anything
+          return;
+        }
+
+        const threshold = 200;
+
+        // const { tree: editorTree, setVirtualTree } =
+        //   useEditorTreeStore.getState();
+
+        const distances = [
+          { side: "left", distance: Math.abs(x - rect.left) },
+          { side: "right", distance: Math.abs(x - rect.right) },
+          { side: "top", distance: Math.abs(y - rect.top) },
+          { side: "bottom", distance: Math.abs(y - rect.bottom) },
+        ];
+
+        const closestDistance =
+          Math.floor(Math.min(...distances.map((d) => d.distance)) / 2) * 2;
+        if (closestDistance <= threshold) {
+          const closestSide: any = distances.find(
+            (d) => d.distance === closestDistance,
+          )?.side;
+
+          if (!closestSide) {
+            return;
+          }
+
+          console.log(closestSide, closestDistance);
+
+          element.classList.add(`edge-${closestSide}`);
+          // @ts-ignore
+          element.style.setProperty("--gap-size", `${closestDistance}px`);
+          // console.log(
+          //   {
+          //     closestSide: `margin${closestSide.charAt(0).toUpperCase() + closestSide.slice(1)}`,
+          //   },
+          //   element.id,
+          // );
+          // console.log(
+          //   closestSideSet,
+          //   closestSide,
+          //   closestDistanceSet,
+          //   closestDistance,
+          // );
+
+          // closestDistanceSet = closestDistance;
+          // closestSideSet = closestSide;
+
+          // const style = {
+          //   [`margin${closestSide.charAt(0).toUpperCase() + closestSide.slice(1)}`]: `${closestDistance}px`,
+          //   "&::after": {
+          //     content: '""',
+          //     position: "absolute",
+          //     backgroundColor: "red",
+          //     zIndex: 1000,
+          //     display: "block",
+          //     width: ["top", "bottom"].includes(closestSide)
+          //       ? "100%"
+          //       : `${closestDistance}px`,
+          //     height: !["top", "bottom"].includes(closestSide)
+          //       ? "100%"
+          //       : `${closestDistance}px`,
+          //     [closestSide]: `calc(-1 * ${closestDistance}px)`,
+          //   },
+          // };
+          // const newTreeRoot = updateTree(editorTree.root, element.id, {
+          //   props: { style },
+          // });
+          // // console.log(style);
+          // setVirtualTree(newTreeRoot);
+        }
       }
+
+      // const { clientX: mouseX, clientY: mouseY } = event;
+      //
+      // const comp =
+      //   w?.document?.querySelector(`[data-id^="${id}"]`) ??
+      //   w?.document?.querySelector(`[id^="${id}"]`);
+      // const rect = comp?.getBoundingClientRect()!;
+      //
+      // if (!mouseX || !mouseY || !rect || currentTargetId !== id) return;
+      //
+      // const leftDist = mouseX - rect.left;
+      // const rightDist = rect.right - mouseX;
+      // const topDist = mouseY - rect.top;
+      // const bottomDist = rect.bottom - mouseY;
+      //
+      // if (mouseX <= NAVBAR_WIDTH) {
+      //   _handleEdgeSet({ leftDist, rightDist, topDist, bottomDist }, 2);
+      // } else {
+      //   _handleEdgeSet({ leftDist, rightDist, topDist, bottomDist }, 5);
+      // }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [id, currentWindow],

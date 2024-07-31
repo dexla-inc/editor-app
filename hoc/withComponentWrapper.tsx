@@ -11,6 +11,7 @@ import { useComputeChildStyles } from "@/hooks/components/useComputeChildStyles"
 import { WithComponentWrapperProps } from "@/types/component";
 import merge from "lodash.merge";
 import { withComponentVisibility } from "@/hoc/withComponentVisibility";
+import "./global.scss";
 
 export const withComponentWrapper = <T extends Record<string, any>>(
   Component: ComponentType<T>,
@@ -79,6 +80,7 @@ export const withComponentWrapper = <T extends Record<string, any>>(
     });
 
     const props = {
+      className: "test",
       component: {
         ...component,
         ...componentTree,
