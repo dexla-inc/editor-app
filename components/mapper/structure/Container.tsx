@@ -11,7 +11,7 @@ export const jsonStructure = (props?: any): ComponentStructure => {
   const mergedStyle = {
     ...defaultStyle,
     ...propStyle,
-    width: propStyle?.width || "100%",
+    width: propStyle?.width || "fit-content",
     height: propStyle?.height || "auto",
     minHeight: propStyle?.minHeight || "20px",
   };

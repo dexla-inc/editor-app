@@ -1,20 +1,24 @@
 import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useUserConfigStore } from "@/stores/userConfig";
-import { componentMapper } from "@/utils/componentMapper";
+import { componentMapper, structureMapper } from "@/utils/componentMapper";
 import { NAVBAR_WIDTH } from "@/utils/config";
 import {
+  addParentContainerToIfNeeded,
+  debugTree,
   DropTarget,
   Edge,
   getClosestEdge,
+  getComponentParent,
   getComponentTreeById,
 } from "@/utils/editor";
 import debounce from "lodash.debounce";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import {
   isEditorModeSelector,
   selectedComponentIdSelector,
 } from "@/utils/componentSelectors";
+import { cloneObject } from "@/utils/common";
 
 const debouncedDragEnter = debounce((event: any, id: string) => {
   const isResizing = useEditorStore.getState().isResizing;
@@ -54,11 +58,17 @@ const debouncedDragEnter = debounce((event: any, id: string) => {
       ? true
       : !comp?.props?.blockDroppingChildrenInside;
 
-  if (!isTryingToDropInsideItself && activeComponent && isAllowed) {
+  // console.log("==>", event);
+  if (
+    !isTryingToDropInsideItself &&
+    // activeComponent &&
+    isAllowed &&
+    event.shiftKey
+  ) {
     setCurrentTargetId(id);
-  } else if (!activeComponent) {
-    setCurrentTargetId(id);
-  }
+  } // else if (!activeComponent) {
+  //   setCurrentTargetId(id);
+  // }
 
   if (event.clientX > NAVBAR_WIDTH && !isTabPinned) {
     setActiveTab(undefined);
@@ -81,22 +91,25 @@ export const useDroppable = ({
   onDrop: (droppedId: string, dropTarget: DropTarget) => void;
   currentWindow?: Window;
 }) => {
+  const [dropTargetId, setDropTargetId] = useState<string>(id);
+
   const handleDrop = useCallback(
     (event: React.DragEvent) => {
+      event.preventDefault();
+      event.stopPropagation();
+
       const isEditorMode = isEditorModeSelector(useEditorTreeStore.getState());
       const { componentToAdd, isResizing, setCurrentTargetId } =
         useEditorStore.getState();
-      if (isResizing || !isEditorMode) return;
+      if (isResizing || !isEditorMode || !event.shiftKey) return;
       const edge = useEditorStore.getState().edge;
       const selectedComponentId = selectedComponentIdSelector(
         useEditorTreeStore.getState(),
       );
       const activeId = componentToAdd?.id ?? selectedComponentId;
 
-      event.preventDefault();
-      event.stopPropagation();
       const dropTarget = {
-        id,
+        id: dropTargetId,
         edge: edge ?? "center",
       } as DropTarget;
       if (activeId) {
@@ -105,7 +118,7 @@ export const useDroppable = ({
 
       setCurrentTargetId(undefined);
     },
-    [id, onDrop],
+    [dropTargetId, onDrop],
   );
 
   const _handleEdgeSet = (
@@ -116,7 +129,7 @@ export const useDroppable = ({
       bottomDist: number;
     },
     threshold: number,
-  ) => {
+  ): string => {
     const { blockDroppingChildrenInside, name: componentName } =
       useEditorTreeStore.getState().componentMutableAttrs[id];
     const { componentToAdd, edge, setEdge } = useEditorStore.getState();
@@ -126,39 +139,58 @@ export const useDroppable = ({
     if (componentName === "NavLink")
       isAllowed = componentToAdd?.name === "NavLink";
 
-    if (
-      leftDist > threshold &&
-      rightDist > threshold &&
-      topDist > threshold &&
-      bottomDist > threshold &&
-      isAllowed
-    ) {
-      // If not within 5 pixels of top and bottom edge, set edge to center.
-      if (edge !== "center") {
-        setEdge("center");
-      }
-    } else {
-      // Check the closest edge and set it accordingly.
-      const { edge: newEdge } = getClosestEdge(
-        leftDist,
-        rightDist,
-        topDist,
-        bottomDist,
-      );
-      if (edge !== newEdge) {
-        setEdge(newEdge as Edge);
-      }
-    }
+    // if (
+    //   leftDist > threshold &&
+    //   rightDist > threshold &&
+    //   topDist > threshold &&
+    //   bottomDist > threshold &&
+    //   isAllowed
+    // ) {
+    //   // If not within 5 pixels of top and bottom edge, set edge to center.
+    //   if (edge !== "center") {
+    //     setEdge("center");
+    //   }
+    // } else {
+    //   // Check the closest edge and set it accordingly.
+    //   const { edge: newEdge } = getClosestEdge(
+    //     leftDist,
+    //     rightDist,
+    //     topDist,
+    //     bottomDist,
+    //   );
+    //   if (edge !== newEdge) {
+    //     setEdge(newEdge as Edge);
+    //   }
+    // }
+
+    const { edge: newEdge } = getClosestEdge(
+      leftDist,
+      rightDist,
+      topDist,
+      bottomDist,
+    );
+
+    return String(newEdge);
   };
 
   const handleDragOver = useCallback(
     (event: React.DragEvent) => {
-      const { currentTargetId, isResizing } = useEditorStore.getState();
-      const isEditorMode = isEditorModeSelector(useEditorTreeStore.getState());
-      if (isResizing || !isEditorMode) return;
-
       event.preventDefault();
       event.stopPropagation();
+
+      let edge = "";
+      const { currentTargetId, isResizing } = useEditorStore.getState();
+      const isEditorMode = isEditorModeSelector(useEditorTreeStore.getState());
+      if (
+        isResizing ||
+        !isEditorMode ||
+        !event.shiftKey ||
+        ["root", "content-wrapper", "main-content"].includes(id)
+      )
+        return;
+
+      const { virtualTree: editorTree, setVirtualTree } =
+        useEditorTreeStore.getState();
 
       const { clientX: mouseX, clientY: mouseY } = event;
       const w = currentWindow ?? window;
@@ -167,17 +199,35 @@ export const useDroppable = ({
         w?.document?.querySelector(`[id^="${id}"]`);
       const rect = comp?.getBoundingClientRect()!;
 
-      if (!mouseX || !mouseY || !rect || currentTargetId !== id) return;
+      if (!mouseX || !mouseY || !rect) return;
 
       const leftDist = mouseX - rect.left;
       const rightDist = rect.right - mouseX;
       const topDist = mouseY - rect.top;
       const bottomDist = rect.bottom - mouseY;
 
-      if (mouseX <= NAVBAR_WIDTH) {
-        _handleEdgeSet({ leftDist, rightDist, topDist, bottomDist }, 2);
-      } else {
-        _handleEdgeSet({ leftDist, rightDist, topDist, bottomDist }, 5);
+      // if (mouseX <= NAVBAR_WIDTH) {
+      //   edge = _handleEdgeSet({ leftDist, rightDist, topDist, bottomDist }, 2);
+      // } else {
+      //
+      // }
+
+      edge = _handleEdgeSet({ leftDist, rightDist, topDist, bottomDist }, 5);
+
+      const {
+        treeRoot: newTree,
+        parentAddedFlag,
+        newParentComponent,
+      } = addParentContainerToIfNeeded(
+        cloneObject(editorTree?.root!),
+        id,
+        edge as Edge,
+      );
+
+      if (parentAddedFlag) {
+        console.log(debugTree(newTree), newParentComponent, newTree);
+        setVirtualTree(newTree);
+        setDropTargetId(newParentComponent?.id!);
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -210,6 +260,7 @@ export const useDroppable = ({
 
   const handleDragEnd = useCallback((event: any) => {
     const isEditorMode = isEditorModeSelector(useEditorTreeStore.getState());
+    const { setVirtualTree } = useEditorTreeStore.getState();
     if (!event || !isEditorMode) {
       return;
     }
@@ -219,6 +270,7 @@ export const useDroppable = ({
 
     event.preventDefault();
     event.stopPropagation();
+    setVirtualTree(undefined);
     if (edge !== undefined) {
       setEdge(undefined);
     }

@@ -21,6 +21,7 @@ import {
   selectedComponentIdsSelector,
 } from "@/utils/componentSelectors";
 import { cloneObject } from "@/utils/common";
+import { structureMapper } from "@/utils/componentMapper";
 
 export type ComponentStructure = {
   children?: ComponentStructure[];
@@ -527,6 +528,131 @@ export const getAllChildrenComponents = (
 export const getComponentIndex = (parent: ComponentTree, id: string) => {
   if (!parent) return -1;
   return parent.children?.findIndex((child) => child.id === id) ?? -1;
+};
+
+export const debugTree = (treeRoot: ComponentStructure) => {
+  const result: any[] = [];
+
+  crawl(
+    treeRoot,
+    (node, context) => {
+      const description = {
+        id: node.id,
+        description: node.description,
+        flexDirection: node.props?.style?.flexDirection || "none",
+      };
+      result.push(description);
+    },
+    { order: "bfs" },
+  );
+
+  return result;
+};
+
+export const addParentContainerToIfNeeded = (
+  treeRoot: ComponentStructure,
+  to: string,
+  edge: Edge,
+) => {
+  const containerStructure = structureMapper["Container"].structure;
+
+  // Determine the required flex direction based on the edge
+  const requiredFlexDirection =
+    edge === "left" || edge === "right" ? "row" : "column";
+
+  // Function to create a new parent component with the desired flex direction
+  const createNewParentComponent = () => {
+    return containerStructure({
+      props: {
+        style: {
+          display: "flex",
+          flexDirection: requiredFlexDirection,
+        },
+      },
+    });
+  };
+
+  let needsNewParent = false;
+  let targetParent: ComponentTree | null = null;
+  let grandparent: ComponentStructure | null = null;
+  let newParentComponent: any = null;
+
+  // First crawl to check if a new parent is needed and find the target parent
+  crawl(
+    treeRoot,
+    (node, context) => {
+      if (node.id === to && context.parent) {
+        const currentParentDirection =
+          context.parent.props?.style?.flexDirection;
+
+        // Find grandparent by iterating over context parent to find its parent
+        const parentId = context.parent.id;
+        crawl(
+          treeRoot,
+          (n, ctx) => {
+            if (
+              n.children &&
+              n.children.some((child) => child.id === parentId)
+            ) {
+              grandparent = n;
+              ctx.break();
+            }
+          },
+          { order: "bfs" },
+        );
+
+        const grandparentDirection = grandparent?.props?.style?.flexDirection;
+
+        // Determine if we should add a new parent component
+        const shouldAddParentComponent =
+          (currentParentDirection === "column" &&
+            (edge === "left" || edge === "right")) ||
+          (currentParentDirection === "row" &&
+            (edge === "top" || edge === "bottom"));
+
+        const isGrandparentDirectionCorrect =
+          (grandparentDirection === "row" &&
+            (edge === "left" || edge === "right")) ||
+          (grandparentDirection === "column" &&
+            (edge === "top" || edge === "bottom"));
+
+        if (shouldAddParentComponent && !isGrandparentDirectionCorrect) {
+          needsNewParent = true;
+          targetParent = context.parent;
+          context.break();
+        }
+      }
+    },
+    { order: "bfs" },
+  );
+  newParentComponent = targetParent;
+  // If a new parent is needed, perform the modification
+  if (needsNewParent && targetParent) {
+    crawl(
+      treeRoot,
+      (node, context) => {
+        if (node === targetParent && context.parent?.children) {
+          newParentComponent = createNewParentComponent() as ComponentTree;
+          const parentIndex = context.parent.children.indexOf(node);
+
+          // Move the current parent (including all its children) inside the new parent container
+          newParentComponent.children = [node];
+
+          // Replace the current parent with the new parent container in the parent's children
+          context.parent.children[parentIndex] = newParentComponent;
+
+          context.break();
+        }
+      },
+      { order: "bfs" },
+    );
+  }
+
+  return {
+    treeRoot,
+    parentAddedFlag: needsNewParent,
+    newParentComponent: newParentComponent as ComponentTree,
+  };
 };
 
 export const addComponent = (

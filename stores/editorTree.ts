@@ -74,6 +74,9 @@ const emptyEditorComponentMutableAttrs = {
 
 export type EditorTreeState = {
   tree: EditorTree;
+  virtualTree?: EditorTree;
+  setIsDragging: (isDragging: boolean) => void;
+  setVirtualTree: (tree: any) => void;
   setTree: (
     tree: EditorTreeCopy,
     options?: { onLoad?: boolean; action?: string; skipSave?: boolean },
@@ -395,6 +398,33 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
             });
           },
           tree: emptyEditorTree,
+          virtualTree: undefined,
+          setVirtualTree: (treeRoot: any) => {
+            set(
+              (state) => {
+                const newComponentMutableAttrs =
+                  getTreeComponentMutableProps(treeRoot);
+
+                return {
+                  virtualTree: { ...state.tree, root: treeRoot },
+                  componentMutableAttrs: newComponentMutableAttrs,
+                };
+              },
+              false,
+              "editorTree/setIsDragging",
+            );
+          },
+          setIsDragging: (isDragging) =>
+            set(
+              (state) => {
+                if (isDragging) {
+                  return { virtualTree: state.tree };
+                }
+                return { virtualTree: undefined };
+              },
+              false,
+              "editorTree/setIsDragging",
+            ),
           componentMutableAttrs: emptyEditorComponentMutableAttrs,
           deleteComponentMutableAttr: (id: string) =>
             set(

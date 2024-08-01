@@ -34,7 +34,7 @@ export const useOnDrop = () => {
 
   const onDrop = useCallback(
     (_droppedId: string, dropTarget: DropTarget) => {
-      const { tree: editorTree, setTree: setEditorTree } =
+      const { virtualTree: editorTree, setTree: setEditorTree } =
         useEditorTreeStore.getState();
       const { componentToAdd, isResizing } = useEditorStore.getState();
 
@@ -45,14 +45,14 @@ export const useOnDrop = () => {
         : useEditorTreeStore.getState().componentMutableAttrs[_droppedId];
       dropTarget.id = parseId(dropTarget.id);
       const activeComponentTree = getComponentTreeById(
-        editorTree.root,
+        editorTree!.root,
         activeComponent.id!,
       );
 
       let targetComponent =
         useEditorTreeStore.getState().componentMutableAttrs[dropTarget.id];
       const targetParentComponentTree = getComponentParent(
-        editorTree.root as ComponentStructure,
+        editorTree!.root as ComponentStructure,
         dropTarget.id,
       );
       const isParentContentWrapper =
@@ -63,14 +63,14 @@ export const useOnDrop = () => {
       if (!isMoving && activeComponent.id && componentToAdd && isDroppable) {
         if (componentToAdd.name === "Grid") {
           handleGridComponentAddition(
-            editorTree.root as ComponentStructure,
+            editorTree!.root as ComponentStructure,
             dropTarget,
             targetComponent,
             componentToAdd,
           );
         } else {
           handleComponentAddition(
-            editorTree.root as ComponentStructure,
+            editorTree!.root as ComponentStructure,
             dropTarget,
             targetComponent,
             componentToAdd,
@@ -90,7 +90,7 @@ export const useOnDrop = () => {
           }
 
           handleGridReorderingOrMoving(
-            editorTree.root as ComponentStructure,
+            editorTree!.root as ComponentStructure,
             activeComponent,
             targetComponent,
             dropTarget,
@@ -98,7 +98,7 @@ export const useOnDrop = () => {
           );
         } else {
           handleReorderingOrMoving(
-            editorTree.root as ComponentStructure,
+            editorTree!.root as ComponentStructure,
             activeComponent,
             targetComponent,
             dropTarget,
@@ -106,7 +106,7 @@ export const useOnDrop = () => {
         }
       } else if (isDroppable) {
         handleRootDrop(
-          editorTree.root as ComponentStructure,
+          editorTree!.root as ComponentStructure,
           activeComponent,
           dropTarget,
         );

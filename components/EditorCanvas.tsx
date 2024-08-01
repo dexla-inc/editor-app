@@ -21,7 +21,9 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
     (state) =>
       !!(state.selectedComponentIds && state.selectedComponentIds.length > 0),
   );
-  const editorTree = useEditorTreeStore((state) => state.tree);
+  const editorTree = useEditorTreeStore(
+    (state) => state.virtualTree || state.tree,
+  );
   useEditorHotkeys();
 
   const [canvasRef] = useAutoAnimate();
