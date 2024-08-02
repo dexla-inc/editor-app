@@ -91,7 +91,7 @@ export const useDroppable = ({
   onDrop: (droppedId: string, dropTarget: DropTarget) => void;
   currentWindow?: Window;
 }) => {
-  const [dropTargetId, setDropTargetId] = useState<string>(id);
+  // const [dropTargetId, setDropTargetId] = useState<string>(id);
 
   const handleDrop = useCallback(
     (event: React.DragEvent) => {
@@ -99,7 +99,7 @@ export const useDroppable = ({
       event.stopPropagation();
 
       const isEditorMode = isEditorModeSelector(useEditorTreeStore.getState());
-      const { componentToAdd, isResizing, setCurrentTargetId } =
+      const { componentToAdd, isResizing, setCurrentTargetId, dropTargetId } =
         useEditorStore.getState();
       if (isResizing || !isEditorMode || !event.shiftKey) return;
       const edge = useEditorStore.getState().edge;
@@ -109,8 +109,8 @@ export const useDroppable = ({
       const activeId = componentToAdd?.id ?? selectedComponentId;
 
       const dropTarget = {
-        id: dropTargetId,
-        edge: edge ?? "center",
+        id: dropTargetId || id,
+        edge: "center",
       } as DropTarget;
       if (activeId) {
         onDrop?.(activeId as string, dropTarget);
@@ -118,7 +118,7 @@ export const useDroppable = ({
 
       setCurrentTargetId(undefined);
     },
-    [dropTargetId, onDrop],
+    [onDrop],
   );
 
   const _handleEdgeSet = (
@@ -169,6 +169,9 @@ export const useDroppable = ({
       topDist,
       bottomDist,
     );
+    if (edge !== newEdge) {
+      setEdge(newEdge as Edge);
+    }
 
     return String(newEdge);
   };
@@ -178,8 +181,8 @@ export const useDroppable = ({
       event.preventDefault();
       event.stopPropagation();
 
-      let edge = "";
-      const { currentTargetId, isResizing } = useEditorStore.getState();
+      const { currentTargetId, isResizing, setDropTargetId, setEdge } =
+        useEditorStore.getState();
       const isEditorMode = isEditorModeSelector(useEditorTreeStore.getState());
       if (
         isResizing ||
@@ -212,7 +215,10 @@ export const useDroppable = ({
       //
       // }
 
-      edge = _handleEdgeSet({ leftDist, rightDist, topDist, bottomDist }, 5);
+      const edge = _handleEdgeSet(
+        { leftDist, rightDist, topDist, bottomDist },
+        5,
+      );
 
       const {
         treeRoot: newTree,
@@ -225,7 +231,12 @@ export const useDroppable = ({
       );
 
       if (parentAddedFlag) {
-        console.log(debugTree(newTree), newParentComponent, newTree);
+        console.log(
+          debugTree(newTree),
+          newParentComponent,
+          // `era ${dropTargetId} agora é ${newParentComponent?.id!}`,
+        );
+        setEdge("center");
         setVirtualTree(newTree);
         setDropTargetId(newParentComponent?.id!);
       }

@@ -64,6 +64,8 @@ export type EditorState = {
   setAsideSelectedTab: (tab: Tab) => void;
   edge?: Edge;
   setEdge: (edge: Edge | undefined) => void;
+  dropTargetId: string;
+  setDropTargetId: (dropTargetId: string) => void;
   selectedPageActionIds: string[];
   setSelectedPageActionIds: (actionId: string) => void;
 };
@@ -74,6 +76,9 @@ export const useEditorStore = create<EditorState>()(
   devtools(
     (set) => ({
       edge: undefined,
+      dropTargetId: "",
+      setDropTargetId: (dropTargetId) =>
+        set({ dropTargetId }, false, "editor/setDropTargetId"),
       activeSubTab: "config",
       setEdge: (edge) => set({ edge }, false, "editor/setEdge"),
       asideSelectedTab: "design",
