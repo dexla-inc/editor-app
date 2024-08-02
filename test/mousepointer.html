@@ -3,140 +3,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Gap Representation</title>
+    <title>Draggable Element with Highlight</title>
     <style>
         body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+            height: 100vh;
+            position: relative;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+        }
+        label {
+            margin-bottom: 5px;
+        }
+        input {
+            margin-bottom: 10px;
+            padding: 5px;
+            width: 200px;
+        }
+        button {
+            padding: 5px;
+            width: 100px;
+        }
+        #draggable {
+            width: 100px;
+            height: 100px;
+            background-color: #007bff;
+            color: white;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        #parent {
-            display: flex;
-            /*justify-content: space-between;*/
-            /*width: 300px;*/
-            /*margin: 0 auto;*/
-        }
-
-        .box {
-            height: 100px;
-            /*margin: 10px;*/
-            position: relative;
-            background-color: lightgray;
-            border: 1px solid black;
-            width: 100px;
-        }
-        .box::after {
-            content: '';
+            cursor: grab;
             position: absolute;
-            background-color: red;
-            z-index: 1000;
-            display: none;
         }
-        .box.edge-left {
-            margin-left: var(--gap-size, 0px);
-        }
-        .box.edge-left::after {
-            display: block;
-            width: var(--gap-size, 0px);
-            height: 100%;
-            left: calc(-1 * var(--gap-size, 0px));
-        }
-        .box.edge-right {
-            margin-right: var(--gap-size, 0px);
-        }
-        .box.edge-right::after {
-            display: block;
-            width: var(--gap-size, 0px);
-            height: 100%;
-            right: calc(-1 * var(--gap-size, 0px));
-        }
-        .box.edge-top {
-            margin-top: var(--gap-size, 0px);
-        }
-        .box.edge-top::after {
-            display: block;
-            height: var(--gap-size, 0px);
-            width: 100%;
-            top: calc(-1 * var(--gap-size, 0px));
-        }
-        .box.edge-bottom {
-            margin-bottom: var(--gap-size, 0px);
-        }
-        .box.edge-bottom::after {
-            display: block;
-            height: var(--gap-size, 0px);
-            width: 100%;
-            bottom: calc(-1 * var(--gap-size, 0px));
+        .highlight {
+            position: absolute;
+            background-color: rgba(255, 0, 0, 0.5);
         }
     </style>
 </head>
 <body>
-<div id="parent">
-    <div id="element1" class="box" draggable="true">Element 1</div>
-    <div id="element2" class="box" draggable="true">Element 2</div>
-    <div id="element3" class="box" draggable="true">Element 3</div>
-</div>
 
+<form>
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name">
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email">
+    <button type="submit">Submit</button>
+</form>
+
+<div id="draggable">Drag me</div>
 
 <script>
-    document.addEventListener('dragover', (event) => {
-        event.preventDefault();
+    const draggable = document.getElementById('draggable');
+    let offsetX, offsetY, mouseX, mouseY;
 
-        const elements = document.querySelectorAll('.box');
-        elements.forEach(element => {
-            element.classList.remove('edge-left', 'edge-right', 'edge-top', 'edge-bottom');
-            element.style.setProperty('--gap-size', '0px');
-        });
+    draggable.addEventListener('mousedown', (e) => {
+        offsetX = e.clientX - draggable.getBoundingClientRect().left;
+        offsetY = e.clientY - draggable.getBoundingClientRect().top;
+        draggable.style.cursor = 'grabbing';
 
-        const closestElement = getClosestElement(elements, event.clientX, event.clientY);
-        if (closestElement) {
-            addEdgeClass(closestElement, event.clientX, event.clientY);
-        }
+        const onMouseMove = (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            draggable.style.left = `${mouseX - offsetX}px`;
+            draggable.style.top = `${mouseY - offsetY}px`;
+            highlightEdges();
+        };
+
+        const onMouseUp = () => {
+            document.removeEventListener('mousemove', onMouseMove);
+            document.removeEventListener('mouseup', onMouseUp);
+            draggable.style.cursor = 'grab';
+            clearHighlights();
+            clearMargins();
+        };
+
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
     });
 
-    function getClosestElement(elements, x, y) {
-        let closestElement = null;
-        let closestDistance = Infinity;
-
-        elements.forEach(element => {
-            const rect = element.getBoundingClientRect();
-            const elementCenterX = rect.left + rect.width / 6;
-            const elementCenterY = rect.top + rect.height / 6;
-            const distance = Math.hypot(x - elementCenterX, y - elementCenterY);
-
-            if (distance < closestDistance) {
-                closestDistance = distance;
-                closestElement = element;
+    function highlightEdges() {
+        clearHighlights();
+        const elements = document.elementsFromPoint(mouseX, mouseY);
+        elements.forEach(el => {
+            if (el !== draggable && el !== document.body) {
+                const rect = el.getBoundingClientRect();
+                highlightEdgeIfClose(rect.left, mouseX, rect, 'left', el);
+                highlightEdgeIfClose(rect.right, mouseX, rect, 'right', el);
+                highlightEdgeIfClose(rect.top, mouseY, rect, 'top', el);
+                highlightEdgeIfClose(rect.bottom, mouseY, rect, 'bottom', el);
             }
         });
-
-        return closestElement;
     }
 
-    function addEdgeClass(element, x, y) {
-        const rect = element.getBoundingClientRect();
-        if (x > rect.left && x < rect.right && y > rect.top && y < rect.bottom) {
-            // Pointer is inside the element, do not show anything
-            return;
-        }
-
+    function highlightEdgeIfClose(edge, mouse, rect, position, element) {
         const threshold = 20;
-
-        const distances = [
-            { side: 'left', distance: Math.abs(x - rect.left) },
-            { side: 'right', distance: Math.abs(x - rect.right) },
-            { side: 'top', distance: Math.abs(y - rect.top) },
-            { side: 'bottom', distance: Math.abs(y - rect.bottom) }
-        ];
-
-        const closestDistance = Math.min(...distances.map(d => d.distance));
-        if (closestDistance <= threshold) {
-            const closestSide = distances.find(d => d.distance === closestDistance).side;
-            element.classList.add(`edge-${closestSide}`);
-            element.style.setProperty('--gap-size', `${closestDistance}px`);
+        const distance = Math.abs(edge - mouse);
+        if (distance <= threshold) {
+            const highlight = document.createElement('div');
+            highlight.className = 'highlight';
+            const size = threshold - distance;
+            if (position === 'left' || position === 'right') {
+                highlight.style.width = `${size}px`;
+                highlight.style.height = `${rect.height}px`;
+                highlight.style.top = `${rect.top}px`;
+                highlight.style.left = position === 'left' ? `${rect.left - size}px` : `${rect.right}px`;
+                element.style.marginLeft = position === 'left' ? `${size}px` : null;
+                element.style.marginRight = position === 'right' ? `${size}px` : null;
+            } else {
+                highlight.style.width = `${rect.width}px`;
+                highlight.style.height = `${size}px`;
+                highlight.style.left = `${rect.left}px`;
+                highlight.style.top = position === 'top' ? `${rect.top - size}px` : `${rect.bottom}px`;
+                element.style.marginTop = position === 'top' ? `${size}px` : null;
+                element.style.marginBottom = position === 'bottom' ? `${size}px` : null;
+            }
+            document.body.appendChild(highlight);
         }
+    }
+
+    function clearHighlights() {
+        document.querySelectorAll('.highlight').forEach(el => el.remove());
+    }
+
+    function clearMargins() {
+        document.querySelectorAll('form, input, button').forEach(el => {
+            el.style.marginLeft = null;
+            el.style.marginRight = null;
+            el.style.marginTop = null;
+            el.style.marginBottom = null;
+        });
     }
 </script>
 </body>
