@@ -96,7 +96,7 @@ const NavLinkComponent = forwardRef(
           ...(icon &&
             !labelValue && {
               icon: { width: "100%", marginRight: 0 },
-              children: { display: "hidden" },
+              children: { display: "none" },
             }),
           root: {
             padding: 0,
