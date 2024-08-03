@@ -1,8 +1,18 @@
-import { ActionIcon, Group, MultiSelect, TextInput } from "@mantine/core";
-import { IconPlugConnected } from "@tabler/icons-react";
-import { ICON_SIZE } from "@/utils/config";
 import { LocationField } from "@/components/editor/BindingField/handlers/RulesForm/LocationField";
+import { useComputeValue } from "@/hooks/data/useComputeValue";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { DataType, ValueProps } from "@/types/dataBinding";
+import { ICON_SIZE } from "@/utils/config";
+import { Component, getComponentTreeById } from "@/utils/editor";
+import {
+  ActionIcon,
+  Group,
+  MultiSelect,
+  Select,
+  SelectItem,
+  TextInput,
+} from "@mantine/core";
+import { IconPlugConnected } from "@tabler/icons-react";
 
 type ValueField = {
   value: ValueProps;
@@ -10,7 +20,35 @@ type ValueField = {
   placeholder: string;
   isMultiple: boolean;
   isSingle: boolean;
+  id?: string;
 };
+
+function useGetData(id?: string) {
+  const treeRoot = useEditorTreeStore((state) => state.tree.root);
+  const component = getComponentTreeById(treeRoot, id!);
+
+  const onLoad = useComputeValue({
+    onLoad: (component as Component)?.onLoad ?? {},
+  });
+
+  const dataHandler: Record<string, any[]> = {
+    Select: onLoad.data ?? (component as Component)?.props?.data,
+    Radio:
+      component?.children?.map((child) => {
+        const value =
+          (child as Component)?.onLoad?.value ??
+          (child as Component)?.props?.value;
+        return {
+          value,
+          label: value,
+        };
+      }) ?? [],
+    default: [],
+  };
+  const name = component?.name ?? "default";
+  const data = useComputeValue({ onLoad: dataHandler[name] }) as SelectItem[];
+  return { name, data };
+}
 
 export const ValueField = ({
   placeholder,
@@ -18,7 +56,75 @@ export const ValueField = ({
   isSingle,
   onChange,
   value,
+  id,
 }: ValueField) => {
+  const { name, data } = useGetData(id!);
+
+  function renderField(type: "Single" | "Multiple") {
+    const componentHandler = {
+      Single: () => {
+        if (name === "Radio" || name === "Select") {
+          return (
+            <Select
+              withAsterisk
+              label="Value"
+              placeholder={placeholder}
+              data={data}
+              value={value?.static}
+              onChange={(val) => onChange({ ...value, static: val })}
+              style={{ flexGrow: 1 }}
+              size="xs"
+            />
+          );
+        }
+        return (
+          <TextInput
+            withAsterisk
+            label="Value"
+            placeholder={placeholder}
+            value={value?.static}
+            onChange={(e) => {
+              onChange({ ...value, static: e.target.value });
+            }}
+            style={{ flexGrow: 1 }}
+            size="xs"
+          />
+        );
+      },
+      Multiple: () => {
+        const mergedData = Array.isArray(value?.static)
+          ? [...data, ...value?.static]
+          : data;
+        return (
+          <MultiSelect
+            label="Value"
+            placeholder={placeholder}
+            data={mergedData}
+            value={Array.isArray(value?.static) ? value?.static : []}
+            searchable
+            creatable
+            withAsterisk
+            getCreateLabel={(query) => `+ Create ${query}`}
+            onChange={(val) => {
+              onChange({ ...value, static: val });
+            }}
+            onCreate={(query) => {
+              const item = { value: query, label: query };
+              onChange({
+                ...value,
+                static: [...(value?.static ?? []), item],
+              });
+              return item;
+            }}
+            style={{ flexGrow: 1 }}
+            size="xs"
+          />
+        );
+      },
+    };
+    return componentHandler[type]();
+  }
+
   const isStaticDataType =
     value?.dataType === undefined || value?.dataType === "static";
 
@@ -26,44 +132,8 @@ export const ValueField = ({
     <Group align="flex-start" w="100%" spacing={5}>
       {isStaticDataType && (
         <>
-          {isSingle && (
-            <TextInput
-              withAsterisk
-              label="Value"
-              placeholder={placeholder}
-              value={value?.static}
-              onChange={(e) => {
-                onChange({ ...value, static: e.target.value });
-              }}
-              style={{ flexGrow: 1 }}
-              size="xs"
-            />
-          )}
-          {isMultiple && (
-            <MultiSelect
-              label="Value"
-              placeholder={placeholder}
-              data={Array.isArray(value?.static) ? value?.static : []}
-              value={Array.isArray(value?.static) ? value?.static : []}
-              searchable
-              creatable
-              withAsterisk
-              getCreateLabel={(query) => `+ Create ${query}`}
-              onChange={(val) => {
-                onChange({ ...value, static: val });
-              }}
-              onCreate={(query) => {
-                const item = { value: query, label: query };
-                onChange({
-                  ...value,
-                  static: [...(value?.static ?? []), item],
-                });
-                return item;
-              }}
-              style={{ flexGrow: 1 }}
-              size="xs"
-            />
-          )}
+          {isSingle && renderField("Single")}
+          {isMultiple && renderField("Multiple")}
         </>
       )}
       {isStaticDataType || (

@@ -1,6 +1,6 @@
+import { BindingContextSelector } from "@/components/editor/BindingField/components/BindingContextSelector";
 import { TopLabel } from "@/components/TopLabel";
 import { isEmpty } from "@/utils/common";
-import { BindingContextSelector } from "@/components/editor/BindingField/components/BindingContextSelector";
 import { Anchor, Group, Stack, Text } from "@mantine/core";
 
 type LocationField = {
@@ -42,10 +42,17 @@ export const LocationField = ({
   );
 };
 
-export function extractContextAndAttributes(input: string = "") {
-  const regexWithComment = /(\w+)\[\/\* (.*?) \*\/ ?'.*?'\](.*)/;
+export function extractContextAndAttributes(
+  input: string = "",
+  idOnly: boolean = false,
+) {
+  const regexWithComment = /(\w+)\[\/\* (.*?) \*\/ ?'(.*?)'\](.*)/;
   const regexWithoutComment = /(\w+)\['(.*?)'\](.*)/;
+  const isWithComment = regexWithComment.test(input);
+  const isComponent = input.includes("components");
   let match = input.match(regexWithComment);
+  let context = "";
+  let id: string | undefined = undefined;
 
   if (!match) {
     match = input.match(regexWithoutComment);
@@ -54,12 +61,17 @@ export function extractContextAndAttributes(input: string = "") {
   if (match) {
     const keyword = match[1];
     const comment = match[2];
-    const attributes = match[3];
+    const attributes = isWithComment ? match[4] : match[3];
+    id = isWithComment && isComponent ? match[3] : undefined;
 
     const formattedAttributes = attributes.replace(/\['.*?'\]/, "").trim();
 
-    return `${keyword.charAt(0).toUpperCase() + keyword.slice(1)} - ${comment.charAt(0).toUpperCase() + comment.slice(1)}${formattedAttributes}`;
+    context = `${keyword.charAt(0).toUpperCase() + keyword.slice(1)} - ${comment.charAt(0).toUpperCase() + comment.slice(1)}${formattedAttributes}`;
   }
 
-  return "";
+  if (idOnly) {
+    return id;
+  }
+
+  return context;
 }
