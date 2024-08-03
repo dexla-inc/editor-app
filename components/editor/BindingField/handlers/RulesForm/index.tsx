@@ -12,7 +12,7 @@ import {
 } from "@/components/editor/BindingField/handlers/RulesForm/SelectComparisonRuleField";
 import { ValueField } from "@/components/editor/BindingField/handlers/RulesForm/ValueField";
 import { ruleFormulaFunctions } from "@/hooks/data/useRuleHandler";
-import { DataType, RuleProps } from "@/types/dataBinding";
+import { ConditionProps, DataType, RuleProps } from "@/types/dataBinding";
 import { BG_RULES_CONDITION } from "@/utils/branding";
 import { isEmpty } from "@/utils/common";
 import {
@@ -76,17 +76,20 @@ export const RulesForm = () => {
           fw={400}
           leftIcon={<IconPlus size={15} />}
           variant="default"
-          onClick={() =>
+          onClick={() => {
+            let condition: Partial<ConditionProps> = {
+              rule: "equalTo",
+              value: {},
+            };
+            if (!form.values.rules?.length) {
+              condition.location = form.values.value?.boundCode;
+            }
+
             form.insertListItem("rules", {
-              conditions: [
-                {
-                  rule: "equalTo",
-                  value: {},
-                },
-              ],
+              conditions: [condition],
               result: { dataType: "static", static: defaultValue },
-            })
-          }
+            });
+          }}
         >
           Add Rule
         </Button>
