@@ -1,7 +1,20 @@
+import { useBindingField } from "@/components/editor/BindingField/components/ComponentToBindFromInput";
+import { CurrentValueField } from "@/components/editor/BindingField/components/CurrentValueField";
+import {
+  extractContextAndAttributes,
+  LocationField,
+} from "@/components/editor/BindingField/handlers/RulesForm/LocationField";
+import { ResultField } from "@/components/editor/BindingField/handlers/RulesForm/ResultField";
+import { RuleTitle } from "@/components/editor/BindingField/handlers/RulesForm/RuleTitle";
 import {
   logicalRulesData,
   SelectComparisonRuleField,
 } from "@/components/editor/BindingField/handlers/RulesForm/SelectComparisonRuleField";
+import { ValueField } from "@/components/editor/BindingField/handlers/RulesForm/ValueField";
+import { ruleFormulaFunctions } from "@/hooks/data/useRuleHandler";
+import { ConditionProps, DataType, RuleProps } from "@/types/dataBinding";
+import { BG_RULES_CONDITION } from "@/utils/branding";
+import { isEmpty } from "@/utils/common";
 import {
   Accordion,
   AccordionControlProps,
@@ -12,23 +25,10 @@ import {
   Stack,
   Text,
 } from "@mantine/core";
-import { BG_RULES_CONDITION } from "@/utils/branding";
-import { IconPlus, IconTrash } from "@tabler/icons-react";
-import { DataType, RuleProps } from "@/types/dataBinding";
-import { isEmpty } from "@/utils/common";
 import { useForm } from "@mantine/form";
-import { useEffect } from "react";
-import { useBindingField } from "@/components/editor/BindingField/components/ComponentToBindFromInput";
-import {
-  extractContextAndAttributes,
-  LocationField,
-} from "@/components/editor/BindingField/handlers/RulesForm/LocationField";
-import { ValueField } from "@/components/editor/BindingField/handlers/RulesForm/ValueField";
-import { ResultField } from "@/components/editor/BindingField/handlers/RulesForm/ResultField";
-import { CurrentValueField } from "@/components/editor/BindingField/components/CurrentValueField";
-import { RuleTitle } from "@/components/editor/BindingField/handlers/RulesForm/RuleTitle";
-import { ruleFormulaFunctions } from "@/hooks/data/useRuleHandler";
+import { IconPlus, IconTrash } from "@tabler/icons-react";
 import get from "lodash.get";
+import { useEffect } from "react";
 
 export const RulesForm = () => {
   const {
@@ -69,24 +69,27 @@ export const RulesForm = () => {
       <Flex justify="space-between" align="center">
         <Text size="sm" weight="bold">
           {!form.values.rules?.length &&
-            extractContextAndAttributes(form.values.value?.boundCode)}
+            extractContextAndAttributes(form.values.value?.boundCode).context}
         </Text>
         <Button
           styles={{ root: { justifySelf: "self-end" } }}
           fw={400}
           leftIcon={<IconPlus size={15} />}
           variant="default"
-          onClick={() =>
+          onClick={() => {
+            let condition: Partial<ConditionProps> = {
+              rule: "equalTo",
+              value: {},
+            };
+            if (!form.values.rules?.length) {
+              condition.location = form.values.value?.boundCode;
+            }
+
             form.insertListItem("rules", {
-              conditions: [
-                {
-                  rule: "equalTo",
-                  value: {},
-                },
-              ],
+              conditions: [condition],
               result: { dataType: "static", static: defaultValue },
-            })
-          }
+            });
+          }}
         >
           Add Rule
         </Button>
@@ -134,6 +137,11 @@ export const RulesForm = () => {
                       "hasValue",
                       "doesNotHaveValue",
                     ].includes(condition.rule);
+                    const valueFieldType = isRuleMultiple
+                      ? "Multiple"
+                      : !isRuleValueCheck
+                        ? "Single"
+                        : undefined;
 
                     const { valuePlaceholder } =
                       logicalRulesData.find(
@@ -197,9 +205,12 @@ export const RulesForm = () => {
                               onChange={onSelectLogicalRule}
                             />
                             <ValueField
+                              id={
+                                extractContextAndAttributes(condition.location)
+                                  .id
+                              }
                               placeholder={valuePlaceholder!}
-                              isSingle={!isRuleMultiple && !isRuleValueCheck}
-                              isMultiple={isRuleMultiple}
+                              fieldType={valueFieldType}
                               {...form.getInputProps(
                                 `rules.${ruleIndex}.conditions.${conditionIndex}.value`,
                               )}

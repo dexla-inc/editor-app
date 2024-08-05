@@ -1,6 +1,6 @@
+import { BindingContextSelector } from "@/components/editor/BindingField/components/BindingContextSelector";
 import { TopLabel } from "@/components/TopLabel";
 import { isEmpty } from "@/utils/common";
-import { BindingContextSelector } from "@/components/editor/BindingField/components/BindingContextSelector";
 import { Anchor, Group, Stack, Text } from "@mantine/core";
 
 type LocationField = {
@@ -27,7 +27,7 @@ export const LocationField = ({
       {isEmpty(value) || (
         <Group>
           <Text size="xs" weight="bold">
-            {extractContextAndAttributes(value ?? "")}
+            {extractContextAndAttributes(value ?? "").context}
           </Text>
           <Anchor
             variant="default"
@@ -43,23 +43,18 @@ export const LocationField = ({
 };
 
 export function extractContextAndAttributes(input: string = "") {
-  const regexWithComment = /(\w+)\[\/\* (.*?) \*\/ ?'.*?'\](.*)/;
-  const regexWithoutComment = /(\w+)\['(.*?)'\](.*)/;
-  let match = input.match(regexWithComment);
+  const regex = /(\w+)\[(?:\/\* (.*?) \*\/ ?'(.*?)'|'(.*?)')\](.*)/;
+  const match = input.match(regex);
 
-  if (!match) {
-    match = input.match(regexWithoutComment);
-  }
+  if (!match) return { context: "" };
 
-  if (match) {
-    const keyword = match[1];
-    const comment = match[2];
-    const attributes = match[3];
+  const [, keyword, comment, id, altComment, attributes] = match;
+  const actualComment = comment || altComment;
 
-    const formattedAttributes = attributes.replace(/\['.*?'\]/, "").trim();
+  const context = `${keyword.charAt(0).toUpperCase() + keyword.slice(1)} - ${actualComment.charAt(0).toUpperCase() + actualComment.slice(1)}${attributes.trim()}`;
 
-    return `${keyword.charAt(0).toUpperCase() + keyword.slice(1)} - ${comment.charAt(0).toUpperCase() + comment.slice(1)}${formattedAttributes}`;
-  }
-
-  return "";
+  return {
+    id: input.includes("components") ? id : undefined,
+    context,
+  };
 }
