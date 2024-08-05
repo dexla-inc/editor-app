@@ -30,7 +30,7 @@ import {
   IconTrash,
 } from "@tabler/icons-react";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import { getComponentTreeById } from "@/utils/editor";
 import { cloneObject } from "@/utils/common";
 import {
@@ -51,7 +51,6 @@ export const useComponentContextMenu = () => {
   const editorTheme = useThemeStore((state) => state.theme);
   const copiedProperties = useEditorStore((state) => state.copiedProperties);
   const setEditorTree = useEditorTreeStore((state) => state.setTree);
-  const isPreviewMode = useEditorTreeStore((state) => state.isPreviewMode);
   const updateTreeComponentAttrs = useEditorTreeStore(
     (state) => state.updateTreeComponentAttrs,
   );
@@ -186,11 +185,12 @@ export const useComponentContextMenu = () => {
       setSelectedComponentIds(() => [newSelectedId]);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [isPreviewMode, setEditorTree],
+    [setEditorTree],
   );
 
   const copyComponent = useCallback(
     (component: Component) => {
+      const isPreviewMode = useEditorTreeStore.getState().isPreviewMode;
       const editorTree = useEditorTreeStore.getState().tree as EditorTreeCopy;
 
       const componentToCopy = getComponentTreeById(
@@ -202,10 +202,11 @@ export const useComponentContextMenu = () => {
         copyToClipboard(componentToCopy);
       }
     },
-    [isPreviewMode, setCopiedComponent],
+    [setCopiedComponent],
   );
 
   const pasteComponent = useCallback(async () => {
+    const isPreviewMode = useEditorTreeStore.getState().isPreviewMode;
     const clipboardContent = pasteFromClipboard() as ComponentStructure;
     const componentToPaste =
       (clipboardContent as typeof copiedComponent as ComponentStructure) ||
@@ -285,7 +286,7 @@ export const useComponentContextMenu = () => {
     });
     setSelectedComponentIds(() => [newSelectedId]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [copiedComponent, isPreviewMode, setEditorTree]);
+  }, [copiedComponent, setEditorTree]);
 
   const copyProperties = useCallback(
     (component: Component) => {

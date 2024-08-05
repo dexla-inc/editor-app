@@ -105,7 +105,6 @@ export function NavbarLayersSection({ indentationWidth = 12 }: Props) {
   const [overId, setOverId] = useState<UniqueIdentifier | null>(null);
   const [offsetLeft, setOffsetLeft] = useState(0);
   const previousSelectedComponentId = usePrevious(selectedComponentId);
-  const isEditorMode = useEditorTreeStore(isEditorModeSelector);
 
   useEffect(() => {
     const expandedIds = getAllIdsToBeExpanded(
@@ -129,6 +128,7 @@ export function NavbarLayersSection({ indentationWidth = 12 }: Props) {
       const newScrollIndex = flattenedItems.findIndex(
         (component) => component.id === selectedComponentId,
       );
+      const isEditorMode = isEditorModeSelector(useEditorTreeStore.getState());
       if (scrollIndex !== newScrollIndex && isEditorMode) {
         setScrollIndex(newScrollIndex);
       }

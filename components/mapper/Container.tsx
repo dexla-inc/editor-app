@@ -23,7 +23,7 @@ export const ContainerComponent = forwardRef<HTMLDivElement, Props>(
       ...componentProps
     } = component?.props ?? {};
 
-    const defaultBorder = setComponentBorder(props.style, isPreviewMode);
+    const defaultBorder = setComponentBorder(props.style);
     const gapPx = convertSizeToPx(component?.props?.gap, "gap");
     const customStyle = merge({ width: "100%" }, props.style, defaultBorder, {
       gap: gapPx,

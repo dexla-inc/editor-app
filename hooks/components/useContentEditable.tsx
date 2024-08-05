@@ -5,7 +5,6 @@ import merge from "lodash.merge";
 
 export const useContentEditable = (componentId: string, ref: any) => {
   const [isEditable, setIsEditable] = useState(false);
-  const isPreviewMode = useEditorTreeStore((state) => state.isPreviewMode);
 
   const toggleEdit = useCallback((enable: boolean) => {
     setIsEditable(enable);
@@ -13,14 +12,15 @@ export const useContentEditable = (componentId: string, ref: any) => {
 
   const handleDoubleClick = useCallback(
     (e: React.MouseEvent) => {
-      // TODO: re-enable this
+      const isPreviewMode = useEditorTreeStore.getState().isPreviewMode;
+
       if (!isPreviewMode) {
         e.preventDefault();
         toggleEdit(true);
         ref?.current?.focus();
       }
     },
-    [toggleEdit, isPreviewMode, ref],
+    [toggleEdit, ref],
   );
 
   const exitEditMode = useCallback(() => {
@@ -47,30 +47,30 @@ export const useContentEditable = (componentId: string, ref: any) => {
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
+      const isPreviewMode = useEditorTreeStore.getState().isPreviewMode;
       if (!isPreviewMode && e.key === "Escape") {
         exitEditMode();
       }
     },
-    [exitEditMode, isPreviewMode],
+    [exitEditMode],
   );
 
   const handleBlur = useCallback(
     (e: React.FocusEvent) => {
+      const isPreviewMode = useEditorTreeStore.getState().isPreviewMode;
       if (!isPreviewMode) {
         e.preventDefault();
         exitEditMode();
       }
     },
-    [exitEditMode, isPreviewMode],
+    [exitEditMode],
   );
 
   const contentEditableProps = {
     ref,
-    ...(!isPreviewMode && {
-      contentEditable: isEditable,
-      onDoubleClick: handleDoubleClick,
-      ...(isEditable && { onBlur: handleBlur, onKeyDown: handleKeyDown }),
-    }),
+    contentEditable: isEditable,
+    onDoubleClick: handleDoubleClick,
+    ...(isEditable && { onBlur: handleBlur, onKeyDown: handleKeyDown }),
   };
 
   return contentEditableProps;

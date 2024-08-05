@@ -10,6 +10,7 @@ import { useEndpoints } from "../editor/reactQuery/useDataSourcesEndpoints";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { useEditorStore } from "@/stores/editor";
 import { useDataTransformers } from "@/hooks/data/useDataTransformers";
+import { isEditorModeSelector } from "@/utils/componentSelectors";
 
 const nonDefaultActionTriggers = ["onSuccess", "onError"];
 
@@ -61,6 +62,11 @@ export const useTriggers = ({
         return {
           ...acc,
           [action.trigger]: async (e: any) => {
+            const isEditorMode = isEditorModeSelector(
+              useEditorTreeStore.getState(),
+            );
+            if (isEditorMode) return;
+
             const customComputeValue: ComputeValueProps = (args) => {
               return computeValue<any>(
                 { ...args, shareableContent },

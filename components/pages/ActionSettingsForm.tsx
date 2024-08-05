@@ -46,7 +46,7 @@ export const ActionSettingsForm = ({
 
   const onSubmit = async (values: any) => {
     const updatedActions = page.actions?.map((a) => {
-      if (a.action.name === values.name) {
+      if (a.id === action.id) {
         a.action = { ...a.action, ...values };
       }
       return a;

@@ -93,6 +93,11 @@ const NavLinkComponent = forwardRef(
             icon: { marginRight: 0 },
           }),
           children: { paddingLeft: 0 },
+          ...(icon &&
+            !labelValue && {
+              icon: { width: "100%", marginRight: 0 },
+              children: { display: "none" },
+            }),
           root: {
             padding: 0,
             "&:hover": {

@@ -33,7 +33,9 @@ Deno.serve(async (req: Request) => {
       Property_Ref_No: item.reference_number,
       Permit_Number: item.permit_number,
       Property_Status: item.property_status,
+      // @ts-ignore
       Property_purpose: propertyPurposeTypes[item.property_purpose],
+      // @ts-ignore
       Property_Type: property_types[item.property_type],
       Property_Size: item.property_size,
       Property_Size_Unit: item.property_size_unit,

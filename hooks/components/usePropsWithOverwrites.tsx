@@ -2,21 +2,37 @@ import { Component } from "@/utils/editor";
 import merge from "lodash.merge";
 import { useEffect, useMemo, useState } from "react";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
+import { isEditorModeSelector } from "@/utils/componentSelectors";
+import { useEditorTreeStore } from "@/stores/editorTree";
+import { useEditorClickHandler } from "@/hooks/components/useEditorClickHandler";
+import { useTriggers } from "@/hooks/components/useTriggers";
+import { useRouter } from "next/navigation";
 
 export const usePropsWithOverwrites = (
   component: Component,
-  isEditorMode: boolean,
+  shareableContent: Record<string, any>,
   currentState: string = "default",
-  triggers: any,
 ) => {
+  const isEditorMode = useEditorTreeStore(isEditorModeSelector);
+  const router = useRouter();
+  const triggers = useTriggers({
+    entity: component,
+    router,
+    shareableContent,
+  });
+
   const [customCurrentState, setCustomCurrentState] =
     useState<string>(currentState);
+  const handleClick = useEditorClickHandler(component.id!);
 
   useEffect(() => {
     setCustomCurrentState(currentState);
   }, [currentState]);
 
   const hoverStateFunc = (e: React.MouseEvent<HTMLElement>) => {
+    const isEditorMode = isEditorModeSelector(useEditorTreeStore.getState());
+    if (isEditorMode) return;
+
     if (
       component.id! === e.currentTarget.id &&
       Object.keys(component?.states?.hover ?? {}).length
@@ -26,6 +42,9 @@ export const usePropsWithOverwrites = (
   };
 
   const leaveHoverStateFunc = (e: React.MouseEvent<HTMLElement>) => {
+    const isEditorMode = isEditorModeSelector(useEditorTreeStore.getState());
+    if (isEditorMode) return;
+
     if (
       component.id! === e.currentTarget.id &&
       Object.keys(component?.states?.hover ?? {}).length
@@ -49,9 +68,20 @@ export const usePropsWithOverwrites = (
           ? component.onLoad.validationMessage ??
             `${component.description} is required`
           : undefined,
-        disabled: !isEditorMode && customCurrentState === "disabled",
-        triggers: !isEditorMode && {
+        disabled: customCurrentState === "disabled",
+        triggers: {
           ...triggers,
+          onClick: (e: any) => {
+            const isEditorMode = isEditorModeSelector(
+              useEditorTreeStore.getState(),
+            );
+
+            if (isEditorMode) {
+              handleClick(e);
+            } else {
+              triggers?.onClick?.(e);
+            }
+          },
           onMouseOver: triggers?.onHover ?? hoverStateFunc,
           onMouseLeave: leaveHoverStateFunc,
         },

@@ -44,6 +44,7 @@ const CheckboxComponent = forwardRef<HTMLInputElement, Props>(
     const isInsideGroup = shareableContent?.isInsideGroup;
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+      if (!isPreviewMode) return;
       const newValue = e.target.checked;
       setValue(newValue);
       triggers?.onChange?.(e);
