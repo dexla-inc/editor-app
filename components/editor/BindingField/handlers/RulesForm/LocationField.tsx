@@ -27,7 +27,7 @@ export const LocationField = ({
       {isEmpty(value) || (
         <Group>
           <Text size="xs" weight="bold">
-            {extractContextAndAttributes(value ?? "")}
+            {extractContextAndAttributes(value ?? "").context}
           </Text>
           <Anchor
             variant="default"
@@ -42,36 +42,19 @@ export const LocationField = ({
   );
 };
 
-export function extractContextAndAttributes(
-  input: string = "",
-  idOnly: boolean = false,
-) {
-  const regexWithComment = /(\w+)\[\/\* (.*?) \*\/ ?'(.*?)'\](.*)/;
-  const regexWithoutComment = /(\w+)\['(.*?)'\](.*)/;
-  const isWithComment = regexWithComment.test(input);
-  const isComponent = input.includes("components");
-  let match = input.match(regexWithComment);
-  let context = "";
-  let id: string | undefined = undefined;
+export function extractContextAndAttributes(input: string = "") {
+  const regex = /(\w+)\[(?:\/\* (.*?) \*\/ ?'(.*?)'|'(.*?)')\](.*)/;
+  const match = input.match(regex);
 
-  if (!match) {
-    match = input.match(regexWithoutComment);
-  }
+  if (!match) return { context: "" };
 
-  if (match) {
-    const keyword = match[1];
-    const comment = match[2];
-    const attributes = isWithComment ? match[4] : match[3];
-    id = isWithComment && isComponent ? match[3] : undefined;
+  const [, keyword, comment, id, altComment, attributes] = match;
+  const actualComment = comment || altComment;
 
-    const formattedAttributes = attributes.replace(/\['.*?'\]/, "").trim();
+  const context = `${keyword.charAt(0).toUpperCase() + keyword.slice(1)} - ${actualComment.charAt(0).toUpperCase() + actualComment.slice(1)}${attributes.trim()}`;
 
-    context = `${keyword.charAt(0).toUpperCase() + keyword.slice(1)} - ${comment.charAt(0).toUpperCase() + comment.slice(1)}${formattedAttributes}`;
-  }
-
-  if (idOnly) {
-    return id;
-  }
-
-  return context;
+  return {
+    id: input.includes("components") ? id : undefined,
+    context,
+  };
 }

@@ -69,7 +69,7 @@ export const RulesForm = () => {
       <Flex justify="space-between" align="center">
         <Text size="sm" weight="bold">
           {!form.values.rules?.length &&
-            extractContextAndAttributes(form.values.value?.boundCode)}
+            extractContextAndAttributes(form.values.value?.boundCode).context}
         </Text>
         <Button
           styles={{ root: { justifySelf: "self-end" } }}
@@ -137,6 +137,11 @@ export const RulesForm = () => {
                       "hasValue",
                       "doesNotHaveValue",
                     ].includes(condition.rule);
+                    const valueFieldType = isRuleMultiple
+                      ? "Multiple"
+                      : !isRuleValueCheck
+                        ? "Single"
+                        : undefined;
 
                     const { valuePlaceholder } =
                       logicalRulesData.find(
@@ -200,13 +205,12 @@ export const RulesForm = () => {
                               onChange={onSelectLogicalRule}
                             />
                             <ValueField
-                              id={extractContextAndAttributes(
-                                condition.location,
-                                true,
-                              )}
+                              id={
+                                extractContextAndAttributes(condition.location)
+                                  .id
+                              }
                               placeholder={valuePlaceholder!}
-                              isSingle={!isRuleMultiple && !isRuleValueCheck}
-                              isMultiple={isRuleMultiple}
+                              fieldType={valueFieldType}
                               {...form.getInputProps(
                                 `rules.${ruleIndex}.conditions.${conditionIndex}.value`,
                               )}

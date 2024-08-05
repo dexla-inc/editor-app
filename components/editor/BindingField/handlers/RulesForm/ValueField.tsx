@@ -1,15 +1,12 @@
 import { LocationField } from "@/components/editor/BindingField/handlers/RulesForm/LocationField";
-import { useComputeValue } from "@/hooks/data/useComputeValue";
-import { useEditorTreeStore } from "@/stores/editorTree";
+import { useGetComponentOptions } from "@/hooks/components/useGetComponentOptions";
 import { DataType, ValueProps } from "@/types/dataBinding";
 import { ICON_SIZE } from "@/utils/config";
-import { Component, getComponentTreeById } from "@/utils/editor";
 import {
   ActionIcon,
   Group,
   MultiSelect,
   Select,
-  SelectItem,
   TextInput,
 } from "@mantine/core";
 import { IconPlugConnected } from "@tabler/icons-react";
@@ -18,47 +15,18 @@ type ValueField = {
   value: ValueProps;
   onChange: (val: ValueProps) => void;
   placeholder: string;
-  isMultiple: boolean;
-  isSingle: boolean;
   id?: string;
+  fieldType?: "Single" | "Multiple";
 };
-
-function useGetData(id?: string) {
-  const treeRoot = useEditorTreeStore((state) => state.tree.root);
-  const component = getComponentTreeById(treeRoot, id!);
-
-  const onLoad = useComputeValue({
-    onLoad: (component as Component)?.onLoad ?? {},
-  });
-
-  const dataHandler: Record<string, any[]> = {
-    Select: onLoad.data ?? (component as Component)?.props?.data,
-    Radio:
-      component?.children?.map((child) => {
-        const value =
-          (child as Component)?.onLoad?.value ??
-          (child as Component)?.props?.value;
-        return {
-          value,
-          label: value,
-        };
-      }) ?? [],
-    default: [],
-  };
-  const name = component?.name ?? "default";
-  const data = useComputeValue({ onLoad: dataHandler[name] }) as SelectItem[];
-  return { name, data };
-}
 
 export const ValueField = ({
   placeholder,
-  isMultiple,
-  isSingle,
+  fieldType,
   onChange,
   value,
   id,
 }: ValueField) => {
-  const { name, data } = useGetData(id!);
+  const { name, data } = useGetComponentOptions(id!);
 
   function renderField(type: "Single" | "Multiple") {
     const componentHandler = {
@@ -130,12 +98,7 @@ export const ValueField = ({
 
   return (
     <Group align="flex-start" w="100%" spacing={5}>
-      {isStaticDataType && (
-        <>
-          {isSingle && renderField("Single")}
-          {isMultiple && renderField("Multiple")}
-        </>
-      )}
+      {isStaticDataType && <>{fieldType && renderField(fieldType)}</>}
       {isStaticDataType || (
         <LocationField
           label="Value"
@@ -145,7 +108,7 @@ export const ValueField = ({
           }}
         />
       )}
-      {(isSingle || isMultiple) && (
+      {fieldType && (
         <ActionIcon
           onClick={() => {
             const dataType = isStaticDataType
