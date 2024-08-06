@@ -1,59 +1,30 @@
 import { useEditorStore } from "@/stores/editor";
-import { useCallback, useEffect } from "react";
+import { useCallback, useRef } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
+import { useUserConfigStore } from "@/stores/userConfig";
+import { NAVBAR_WIDTH } from "@/utils/config";
+import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 
-export const useDraggable = ({
-  id,
-  onDragStart,
-  currentWindow,
-  ghostImagePosition,
-}: {
-  id: string;
-  onDragStart: (id: string) => void;
-  currentWindow?: Window;
-  ghostImagePosition?: number;
-}) => {
-  const isResizing = useEditorStore((state) => state.isResizing);
-  const setIsDragging = useEditorTreeStore((state) => state.setIsDragging);
+export const useDraggable = () => {
+  const previousHighlightedElements = useRef<Set<HTMLElement>>(new Set());
 
-  const handleDragStart = useCallback(
-    (event: React.DragEvent) => {
-      if (isResizing) return;
+  const handleDragStart = useCallback((event: React.DragEvent) => {
+    const { isResizing, iframeWindow: w = window } = useEditorStore.getState();
+    if (isResizing) return;
 
-      setIsDragging(true);
+    const setIsDragging = useEditorTreeStore.getState().setIsDragging;
 
-      const w = currentWindow ?? window;
-      const el = w.document.getElementById(id)!;
-      const rect = el?.getBoundingClientRect()!;
+    setIsDragging(true);
 
-      if (rect) {
-        let left = event.pageX - rect.left - w.scrollX;
-        const top = event.pageY - rect.top - w.scrollY;
+    const id = selectedComponentIdSelector(useEditorTreeStore.getState())!;
 
-        if (ghostImagePosition) left = left - ghostImagePosition;
+    const el = w.document.getElementById(id)!;
+    const rect = el?.getBoundingClientRect()!;
 
-        // Hide the original element
-        el.style.display = "none";
-
-        // Create a temporary invisible element
-        const tempEl = el;
-        tempEl.style.display = "block";
-        w.document.body.appendChild(tempEl);
-
-        // Set the drag image to the temporary invisible element
-        event.dataTransfer.setDragImage(tempEl, left, top);
-        event.dataTransfer.effectAllowed = "copyMove";
-
-        // Clean up the temporary element after a short delay
-        setTimeout(() => {
-          w.document.body.removeChild(tempEl);
-        }, 0);
-      }
-
-      onDragStart(id);
-    },
-    [id, onDragStart, currentWindow, isResizing, ghostImagePosition],
-  );
+    if (rect) {
+      event.dataTransfer.effectAllowed = "copyMove";
+    }
+  }, []);
 
   function highlightEdgeIfClose(
     edge: number,
@@ -61,14 +32,12 @@ export const useDraggable = ({
     rect: any,
     position: string,
     element: any,
-    id: string,
   ) {
-    // const updateTreeComponentAttrs =
-    //   useEditorTreeStore.getState().updateTreeComponentAttrs;
     const threshold = 20;
     const distance = Math.abs(edge - mouse);
+    const { iframeWindow: w = window } = useEditorStore.getState();
     if (distance <= threshold) {
-      const highlight = currentWindow?.document.createElement("div")!;
+      const highlight = w?.document.createElement("div")!;
       highlight.className = "highlight";
       highlight.style.position = `absolute`;
       highlight.style.backgroundColor = `rgba(255, 0, 0, 0.5)`;
@@ -84,25 +53,32 @@ export const useDraggable = ({
         highlight.style.top = `${rect.top}px`;
         highlight.style.left =
           position === "left" ? `${rect.left - size}px` : `${rect.right}px`;
-        element.style.marginLeft = position === "left" ? `${size}px` : null;
-        element.style.marginRight = position === "right" ? `${size}px` : null;
+        element.style.marginLeft = position === "left" ? `${size}px` : "";
+        element.style.marginRight = position === "right" ? `${size}px` : "";
       } else {
         highlight.style.width = `${rect.width}px`;
         highlight.style.height = `${size}px`;
         highlight.style.left = `${rect.left}px`;
         highlight.style.top =
           position === "top" ? `${rect.top - size}px` : `${rect.bottom}px`;
-        element.style.marginTop = position === "top" ? `${size}px` : null;
-        element.style.marginBottom = position === "bottom" ? `${size}px` : null;
+        element.style.marginTop = position === "top" ? `${size}px` : "";
+        element.style.marginBottom = position === "bottom" ? `${size}px` : "";
       }
-      currentWindow?.document.body.appendChild(highlight);
+      w?.document.body.appendChild(highlight);
+      previousHighlightedElements.current.add(element);
     }
   }
 
   function clearHighlights() {
-    currentWindow?.document
-      .querySelectorAll(".highlight")
-      .forEach((el) => el.remove());
+    const { iframeWindow: w = window } = useEditorStore.getState();
+    w?.document.querySelectorAll(".highlight").forEach((el) => el.remove());
+    previousHighlightedElements.current.forEach((el) => {
+      el.style.marginLeft = "";
+      el.style.marginRight = "";
+      el.style.marginTop = "";
+      el.style.marginBottom = "";
+    });
+    previousHighlightedElements.current.clear();
   }
 
   return {
@@ -110,6 +86,7 @@ export const useDraggable = ({
     onDragStart: handleDragStart,
 
     onDrag: (e: any) => {
+      const { iframeWindow: w = window } = useEditorStore.getState();
       console.log("draggable->", { x: e.clientX, y: e.clientY });
 
       clearHighlights();
@@ -117,7 +94,7 @@ export const useDraggable = ({
         useEditorTreeStore.getState().componentMutableAttrs;
       const debouncedPosition = { x: e.clientX, y: e.clientY };
 
-      const elements = currentWindow?.document.elementsFromPoint(
+      const elements = w?.document.elementsFromPoint(
         debouncedPosition.x,
         debouncedPosition.y,
       );
@@ -125,9 +102,8 @@ export const useDraggable = ({
       let closestEdge: any = null;
       let minDistance = Infinity;
 
-      // console.log(elements);
       elements?.forEach((el) => {
-        if (el !== currentWindow?.document.body) {
+        if (el !== w?.document.body) {
           const rect = el.getBoundingClientRect();
           const newId = el?.getAttribute("data-id") ?? el?.getAttribute("id")!;
           if (
@@ -137,39 +113,6 @@ export const useDraggable = ({
           ) {
             return;
           }
-          // console.log(el, rect);
-          // highlightEdgeIfClose(
-          //   rect.left,
-          //   debouncedPosition.x,
-          //   rect,
-          //   "left",
-          //   el,
-          //   newId,
-          // );
-          // highlightEdgeIfClose(
-          //   rect.right,
-          //   debouncedPosition.x,
-          //   rect,
-          //   "right",
-          //   el,
-          //   newId,
-          // );
-          // highlightEdgeIfClose(
-          //   rect.top,
-          //   debouncedPosition.y,
-          //   rect,
-          //   "top",
-          //   el,
-          //   newId,
-          // );
-          // highlightEdgeIfClose(
-          //   rect.bottom,
-          //   debouncedPosition.y,
-          //   rect,
-          //   "bottom",
-          //   el,
-          //   newId,
-          // );
 
           const edges = [
             {
@@ -210,7 +153,6 @@ export const useDraggable = ({
           closestEdge.rect,
           closestEdge.position,
           closestEdge.el,
-          closestEdge.newId,
         );
       }
     },

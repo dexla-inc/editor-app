@@ -1,6 +1,4 @@
 import { ActionIconTransparent } from "@/components/ActionIconTransparent";
-import { useDraggable } from "@/hooks/editor/useDraggable";
-import { useOnDragStart } from "@/hooks/editor/useOnDragStart";
 import { useEditorStore } from "@/stores/editor";
 import { useThemeStore } from "@/stores/theme";
 import { useUserConfigStore } from "@/stores/userConfig";
@@ -10,7 +8,7 @@ import {
   componentMapper,
   structureMapper,
 } from "@/utils/componentMapper";
-import { ICON_DELETE, ICON_SIZE, NAVBAR_WIDTH } from "@/utils/config";
+import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
 import {
   ComponentStructure,
   EditorTreeCopy,
@@ -21,7 +19,7 @@ import {
   removeComponent,
   removeComponentFromParent,
 } from "@/utils/editor";
-import { Group, Text, Tooltip, UnstyledButton } from "@mantine/core";
+import { Group, Text, UnstyledButton } from "@mantine/core";
 import { IconGripVertical } from "@tabler/icons-react";
 import { memo } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
@@ -52,7 +50,6 @@ const ComponentToolboxInner = () => {
   const setSelectedComponentIds = useEditorTreeStore(
     (state) => state.setSelectedComponentIds,
   );
-  const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
   const setIsCustomComponentModalOpen = useUserConfigStore(
     (state) => state.setIsCustomComponentModalOpen,
   );
@@ -70,15 +67,6 @@ const ComponentToolboxInner = () => {
   }
 
   const blockedToolboxActions = componentData?.blockedToolboxActions || [];
-
-  const onDragStart = useOnDragStart();
-
-  const draggable = useDraggable({
-    id: component.id || "",
-    onDragStart,
-    currentWindow: iframeWindow,
-    ghostImagePosition: isTabPinned ? NAVBAR_WIDTH : 0,
-  });
 
   const comp =
     iframeWindow?.document.querySelector(`[data-id="${component.id}"]`) ??
@@ -120,24 +108,21 @@ const ComponentToolboxInner = () => {
           borderTopRightRadius: theme.radius.sm,
         })}
       >
-        <Tooltip label="Move" fz="xs">
-          <UnstyledButton
-            sx={{
-              cursor: !canMove ? "default" : "move",
-              alignItems: "center",
-              display: "flex",
-            }}
-            {...(!canMove ? {} : draggable)}
-          >
-            {canMove && (
-              <IconGripVertical
-                size={ICON_SIZE}
-                color="white"
-                strokeWidth={1.5}
-              />
-            )}
-          </UnstyledButton>
-        </Tooltip>
+        <UnstyledButton
+          sx={{
+            cursor: !canMove ? "default" : "move",
+            alignItems: "center",
+            display: "flex",
+          }}
+        >
+          {canMove && (
+            <IconGripVertical
+              size={ICON_SIZE}
+              color="white"
+              strokeWidth={1.5}
+            />
+          )}
+        </UnstyledButton>
         <Text color="white" size="xs" pr={8}>
           {(component.description || "").length > 20
             ? `${component.description?.substring(0, 20)}...`

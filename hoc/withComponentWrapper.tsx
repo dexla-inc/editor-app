@@ -12,6 +12,7 @@ import { WithComponentWrapperProps } from "@/types/component";
 import merge from "lodash.merge";
 import { withComponentVisibility } from "@/hoc/withComponentVisibility";
 import "./global.scss";
+import { useDraggable } from "@/hooks/editor/useDraggable";
 
 export const withComponentWrapper = <T extends Record<string, any>>(
   Component: ComponentType<T>,
@@ -33,18 +34,6 @@ export const withComponentWrapper = <T extends Record<string, any>>(
       shareableContent,
     });
 
-    // Commenting out as liveblocks doesn't work properly since detachment.
-    // const selectedByOther = useEditorTreeStore(
-    //   useShallow((state) => {
-    //     const other = state.liveblocks?.others?.find(({ presence }: any) => {
-    //       return presence.selectedComponentIds?.includes(componentTree.id);
-    //     });
-
-    //     if (!other) return null;
-
-    //     return CURSOR_COLORS[other.connectionId % CURSOR_COLORS.length];
-    //   }),
-    // )!;
     const tooltip = component?.props?.tooltip ?? computedOnLoad?.tooltip;
     const hasTooltip = !!tooltip;
     const initiallyLoading = component?.props?.initiallyLoading;
@@ -74,13 +63,14 @@ export const withComponentWrapper = <T extends Record<string, any>>(
       componentId: componentTree.id!,
     });
 
+    const draggable = useDraggable();
+
     const childStyles = useComputeChildStyles({
       component: { ...component, id: componentTree.id },
       propsWithOverwrites,
     });
 
     const props = {
-      className: "test",
       component: {
         ...component,
         ...componentTree,
@@ -88,6 +78,7 @@ export const withComponentWrapper = <T extends Record<string, any>>(
         onLoad: computedOnLoad ?? {},
       },
       ...droppable,
+      ...draggable,
       ...childStyles,
       renderTree,
       id,
