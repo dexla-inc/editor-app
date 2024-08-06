@@ -1,4 +1,4 @@
-import { GRAY_OUTLINE } from "@/utils/branding";
+import { IDENTIFIER } from "@/utils/branding";
 
 export type Modifiers =
   | "spacing"
@@ -122,6 +122,7 @@ export const requiredModifiers: RequiredModifiers = {
       alignItems: "stretch",
       justifyContent: "flex-start",
       position: "relative",
+      ...IDENTIFIER,
     },
   },
   position: {
@@ -467,12 +468,11 @@ export const requiredModifiers: RequiredModifiers = {
       padding: "8px",
       flexWrap: "wrap",
       height: "100%",
-      outline: GRAY_OUTLINE,
-      outlineOffset: "-2px",
       gridAutoRows: "max-content",
       gridAutoFlow: "row",
       backgroundRepeat: "no-repeat",
       backgroundSize: "cover",
+      ...IDENTIFIER,
     },
   },
   navbar: {

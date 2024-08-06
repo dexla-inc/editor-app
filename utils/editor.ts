@@ -1,6 +1,14 @@
 import { useEditorTreeStore } from "@/stores/editorTree";
+import { RenderTreeFunc } from "@/types/component";
+import { DataType, ValueProps } from "@/types/dataBinding";
+import { MantineThemeExtended } from "@/types/types";
 import { Action } from "@/utils/actions";
-import { GRAY_OUTLINE } from "@/utils/branding";
+import { IDENTIFIER } from "@/utils/branding";
+import { cloneObject } from "@/utils/common";
+import {
+  selectedComponentIdSelector,
+  selectedComponentIdsSelector,
+} from "@/utils/componentSelectors";
 import { GRID_SIZE } from "@/utils/config";
 import { calculateGridSizes } from "@/utils/grid";
 import { CSSObject } from "@mantine/core";
@@ -13,14 +21,6 @@ import { nanoid } from "nanoid";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { CSSProperties } from "react";
 import crawl from "tree-crawl";
-import { MantineThemeExtended } from "../types/types";
-import { DataType, ValueProps } from "@/types/dataBinding";
-import { RenderTreeFunc } from "@/types/component";
-import {
-  selectedComponentIdSelector,
-  selectedComponentIdsSelector,
-} from "@/utils/componentSelectors";
-import { cloneObject } from "@/utils/common";
 
 export type ComponentStructure = {
   children?: ComponentStructure[];
@@ -940,8 +940,7 @@ const addNodeToTarget = (
       span: GRID_SIZE,
       style: {
         height: "auto",
-        outline: GRAY_OUTLINE,
-        outlineOffset: "-2px",
+        ...IDENTIFIER,
       },
     },
     children: [copy],
