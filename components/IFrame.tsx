@@ -19,6 +19,8 @@ import { createPortal } from "react-dom";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { isEditorModeSelector } from "@/utils/componentSelectors";
 import styled from "styled-components";
+import { useDebouncedState } from "@mantine/hooks";
+import { useDebouncedPointerPosition } from "@/hooks/editor/useDebouncedPointerPosition";
 
 const PortalWrapper = styled.div`
   // Your CSS styles here
@@ -43,6 +45,9 @@ export const IFrame = ({ children, projectId, ...props }: Props) => {
   const w = contentRef?.contentWindow;
   const mountNode = w?.document.body;
   const insertionTarget = w?.document.head;
+  // const { draggableRef } = useDebouncedPointerPosition(300);
+
+  const [value, setValue] = useDebouncedState("", 200);
 
   useEffect(() => {
     if (theme?.fontFamily && theme?.headings?.fontFamily) {

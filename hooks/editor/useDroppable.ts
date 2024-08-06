@@ -13,11 +13,17 @@ import {
   updateTree,
 } from "@/utils/editor";
 import debounce from "lodash.debounce";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   isEditorModeSelector,
   selectedComponentIdSelector,
 } from "@/utils/componentSelectors";
+import { useDebouncedState } from "@mantine/hooks";
+
+interface Position {
+  x: number;
+  y: number;
+}
 
 const debouncedDragEnter = debounce((event: any, id: string) => {
   const isResizing = useEditorStore.getState().isResizing;
@@ -86,6 +92,12 @@ export const useDroppable = ({
 }) => {
   const [closestDistance, setClosestDistance] = useState<number | null>(null);
   const [closestSide, setClosestSide] = useState<string>("");
+  const isDragging = useEditorTreeStore((state) => !!state.virtualTree);
+
+  const [debouncedPosition, setDebouncedPosition] = useDebouncedState<Position>(
+    { x: 0, y: 0 },
+    300,
+  );
 
   const handleDrop = useCallback(
     (event: React.DragEvent) => {
@@ -341,6 +353,12 @@ export const useDroppable = ({
     }
   }, []);
 
+  function clearHighlights() {
+    currentWindow?.document
+      .querySelectorAll(".highlight")
+      .forEach((el) => el.remove());
+  }
+
   const handleDragEnd = useCallback((event: any) => {
     const isEditorMode = isEditorModeSelector(useEditorTreeStore.getState());
     if (!event || !isEditorMode) {
@@ -352,16 +370,95 @@ export const useDroppable = ({
 
     event.preventDefault();
     event.stopPropagation();
+    clearHighlights();
+    console.log("RODOU");
     if (edge !== undefined) {
       setEdge(undefined);
     }
   }, []);
 
+  const highlightEdges = () => {
+    const elements = currentWindow?.document.elementsFromPoint(
+      debouncedPosition.x,
+      debouncedPosition.y,
+    );
+    elements?.forEach((el) => {
+      if (el !== currentWindow?.document.body) {
+        const rect = el.getBoundingClientRect();
+        highlightEdgeIfClose(rect.left, debouncedPosition.x, rect, "left", el);
+        highlightEdgeIfClose(
+          rect.right,
+          debouncedPosition.x,
+          rect,
+          "right",
+          el,
+        );
+        highlightEdgeIfClose(rect.top, debouncedPosition.y, rect, "top", el);
+        highlightEdgeIfClose(
+          rect.bottom,
+          debouncedPosition.y,
+          rect,
+          "bottom",
+          el,
+        );
+      }
+    });
+  };
+
+  function highlightEdgeIfClose(
+    edge: number,
+    mouse: number,
+    rect: any,
+    position: string,
+    element: any,
+  ) {
+    const threshold = 20;
+    const distance = Math.abs(edge - mouse);
+    if (distance <= threshold) {
+      const highlight = currentWindow?.document.createElement("div")!;
+      highlight.className = "highlight";
+      const size = threshold - distance;
+      if (position === "left" || position === "right") {
+        highlight.style.width = `${size}px`;
+        highlight.style.height = `${rect.height}px`;
+        highlight.style.top = `${rect.top}px`;
+        highlight.style.left =
+          position === "left" ? `${rect.left - size}px` : `${rect.right}px`;
+        element.style.marginLeft = position === "left" ? `${size}px` : null;
+        element.style.marginRight = position === "right" ? `${size}px` : null;
+      } else {
+        highlight.style.width = `${rect.width}px`;
+        highlight.style.height = `${size}px`;
+        highlight.style.left = `${rect.left}px`;
+        highlight.style.top =
+          position === "top" ? `${rect.top - size}px` : `${rect.bottom}px`;
+        element.style.marginTop = position === "top" ? `${size}px` : null;
+        element.style.marginBottom = position === "bottom" ? `${size}px` : null;
+      }
+      currentWindow?.document.body.appendChild(highlight);
+    }
+  }
+
+  const onDrag = (e: MouseEvent) => {
+    console.log({ x: e.clientX, y: e.clientY });
+    if (isDragging) {
+      setDebouncedPosition({ x: e.clientX, y: e.clientY });
+    }
+  };
+
+  useEffect(() => {
+    console.log(debouncedPosition);
+    highlightEdges();
+  }, [debouncedPosition]);
+
   return {
     onDrop: handleDrop,
-    onDragOver: handleDragOver,
-    onDragEnter: handleDragEnter,
-    onDragLeave: handleDragLeave,
+    onDragOver: (e: any) => {
+      e.preventDefault();
+    },
+    onDragEnter: () => {},
+    onDragLeave: () => {},
     onDragEnd: handleDragEnd,
+    // onDrag: onDrag,
   };
 };
