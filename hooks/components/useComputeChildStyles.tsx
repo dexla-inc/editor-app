@@ -1,16 +1,17 @@
+import { handleBackground } from "@/hooks/components/handleBackground";
+import { useEditorStore } from "@/stores/editor";
 import {
+  componentHasBorder,
   GRAY_OUTLINE,
   GREEN_BASE_SHADOW,
   GREEN_COLOR,
   THIN_GREEN_BASE_SHADOW,
 } from "@/utils/branding";
-import { CSSObject, Sx } from "@mantine/core";
-import { handleBackground } from "@/hooks/components/handleBackground";
-import { Component } from "@/utils/editor";
-import { useEditorStore } from "@/stores/editor";
-import { useShallow } from "zustand/react/shallow";
 import { DROP_INDICATOR_WIDTH } from "@/utils/config";
+import { Component } from "@/utils/editor";
+import { CSSObject, Sx } from "@mantine/core";
 import { useMemo } from "react";
+import { useShallow } from "zustand/react/shallow";
 
 type UseComputeChildStylesProps = {
   component: Component;
@@ -86,27 +87,31 @@ export const useComputeChildStyles = ({
     [shadows],
   );
 
+  const {
+    outline = "none",
+    outlineOffset = "0px",
+    ...otherStyles
+  } = propsWithOverwrites.style || {};
   const childStyles: CSSObject = {
     position: "relative",
-    ...propsWithOverwrites.style,
+    ...otherStyles,
   };
 
   delete propsWithOverwrites.style;
 
   handleBackground(component, childStyles);
+  const hasBorder = componentHasBorder(childStyles);
 
   return {
     style: childStyles,
     sx: {
       ".editor-mode &": {
         ...tealOutline,
+        ...(!hasBorder && { outline, outlineOffset }),
       },
       ".preview-mode &": {
         ...(propsWithOverwrites.disabled && { pointerEvents: "none" }),
-        outline:
-          propsWithOverwrites.style?.outline === GRAY_OUTLINE
-            ? "none"
-            : propsWithOverwrites.style?.outline,
+        outline: outline === GRAY_OUTLINE ? "none" : outline,
       },
     },
   };

@@ -1,14 +1,12 @@
 import { useUserConfigStore } from "@/stores/userConfig";
-import { ValueProps } from "@/types/dataBinding";
-import { splitValueAndUnit } from "@/utils/splitValueAndUnit";
 import { MantineThemeExtended } from "@/types/types";
+import { splitValueAndUnit } from "@/utils/splitValueAndUnit";
 import {
   CSSObject,
   DEFAULT_THEME,
   MantineSize,
   MantineTheme,
 } from "@mantine/core";
-import { CSSProperties } from "react";
 
 export const isDarkTheme = useUserConfigStore.getState().isDarkTheme;
 
@@ -170,21 +168,8 @@ const THIN_GREEN_OUTLINE = `1px solid ${theme.colors.teal[6]}`;
 const THIN_DARK_OUTLINE = `1px solid ${theme.colors.dark[5]}`;
 const SELECTED = `1px solid ${GREEN_COLOR}`;
 const IDENTIFIER = {
-  borderWidth: "1px",
-  borderTopWidth: "1px",
-  borderBottomWidth: "1px",
-  borderLeftWidth: "1px",
-  borderRightWidth: "1px",
-  borderStyle: "dashed",
-  borderTopStyle: "dashed",
-  borderBottomStyle: "dashed",
-  borderLeftStyle: "dashed",
-  borderRightStyle: "dashed",
-  borderColor: GRAY_BORDER_COLOR,
-  borderTopColor: GRAY_BORDER_COLOR,
-  borderBottomColor: GRAY_BORDER_COLOR,
-  borderLeftColor: GRAY_BORDER_COLOR,
-  borderRightColor: GRAY_BORDER_COLOR,
+  outline: GRAY_OUTLINE,
+  outlineOffset: "-2px",
 };
 const HOVERED = theme.colors.gray[1];
 const DARK_MODE = theme.colors.dark[7];
@@ -423,12 +408,8 @@ const getHoverColor = (value: string) => {
   return `${color}.${opacity}`;
 };
 
-type StyleProp = CSSObject & {
-  display?: string | ValueProps;
-} & CSSProperties;
-
-const isBorderWidthNotZero = (style: StyleProp) => {
-  const borderTypes: Array<keyof StyleProp> = [
+const isBorderWidthNotZero = (style: CSSObject) => {
+  const borderTypes: Array<keyof CSSObject> = [
     "borderWidth",
     "borderTopWidth",
     "borderBottomWidth",
@@ -444,8 +425,8 @@ const isBorderWidthNotZero = (style: StyleProp) => {
   });
 };
 
-const isBorderStyleNotNone = (style: StyleProp) => {
-  const borderTypes: Array<keyof StyleProp> = [
+const isBorderStyleNotNone = (style: CSSObject) => {
+  const borderTypes: Array<keyof CSSObject> = [
     "borderStyle",
     "borderTopStyle",
     "borderBottomStyle",
@@ -455,9 +436,8 @@ const isBorderStyleNotNone = (style: StyleProp) => {
   return borderTypes.some((borderType) => style[borderType] !== "none");
 };
 
-const setComponentBorder = (style: StyleProp = {}) => {
-  const hasBorder = isBorderWidthNotZero(style) && isBorderStyleNotNone(style);
-  return hasBorder ? {} : IDENTIFIER;
+const componentHasBorder = (style: CSSObject = {}) => {
+  return isBorderWidthNotZero(style) && isBorderStyleNotNone(style);
 };
 
 export {
@@ -466,11 +446,17 @@ export {
   BORDER,
   BORDER_COLOR,
   BUTTON_HOVER,
+  componentHasBorder,
   DARK_COLOR,
   DARK_MODE,
+  darkTheme,
   DEFAULT_TEXTCOLOR,
+  defaultUsersTheme as defaultTheme,
   DISABLED_HOVER,
   FLEX_HOVER,
+  flexStyles,
+  getHoverColor,
+  globalStyles,
   GRAY_BORDER_COLOR,
   GRAY_COLOR,
   GRAY_OUTLINE,
@@ -479,29 +465,23 @@ export {
   GREEN_BORDER_COLOR,
   GREEN_COLOR,
   HOVERED,
+  hoverStyles,
   IDENTIFIER,
   LIGHT_MODE,
   LINK_COLOR,
   LOGICFLOW_BACKGROUND,
+  nestable,
   ORANGE_BASE_SHADOW,
   ORANGE_BORDER_COLOR,
   ORANGE_COLOR,
   PRIMARY_COLOR,
+  scrollbarStyles,
   SELECTED,
+  theme,
   THIN_DARK_OUTLINE,
   THIN_GRAY_OUTLINE,
   THIN_GREEN_BASE_SHADOW,
   THIN_GREEN_OUTLINE,
   THIN_ORANGE_BASE_SHADOW,
   TRANSPARENT_COLOR,
-  darkTheme,
-  defaultUsersTheme as defaultTheme,
-  flexStyles,
-  getHoverColor,
-  globalStyles,
-  hoverStyles,
-  nestable,
-  scrollbarStyles,
-  setComponentBorder,
-  theme,
 };
