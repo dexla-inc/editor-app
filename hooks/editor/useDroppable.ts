@@ -118,9 +118,9 @@ export const useDroppable = ({
         id,
         edge: edge ?? "center",
       } as DropTarget;
-      if (activeId) {
-        onDrop?.(activeId as string, dropTarget);
-      }
+      // if (activeId) {
+      //   onDrop?.(activeId as string, dropTarget);
+      // }
 
       setCurrentTargetId(undefined);
       setIsDragging(false);
@@ -259,7 +259,7 @@ export const useDroppable = ({
             return;
           }
 
-          console.log(closestSide, closestDistance);
+          // console.log(closestSide, closestDistance);
 
           element.classList.add(`edge-${closestSide}`);
           // @ts-ignore
@@ -371,7 +371,7 @@ export const useDroppable = ({
     event.preventDefault();
     event.stopPropagation();
     clearHighlights();
-    console.log("RODOU");
+    // console.log("RODOU");
     if (edge !== undefined) {
       setEdge(undefined);
     }
@@ -440,16 +440,16 @@ export const useDroppable = ({
   }
 
   const onDrag = (e: MouseEvent) => {
-    console.log({ x: e.clientX, y: e.clientY });
+    // console.log({ x: e.clientX, y: e.clientY });
     if (isDragging) {
       setDebouncedPosition({ x: e.clientX, y: e.clientY });
     }
   };
 
-  useEffect(() => {
-    console.log(debouncedPosition);
-    highlightEdges();
-  }, [debouncedPosition]);
+  // useEffect(() => {
+  //   console.log(debouncedPosition);
+  //   highlightEdges();
+  // }, [debouncedPosition]);
 
   return {
     onDrop: handleDrop,

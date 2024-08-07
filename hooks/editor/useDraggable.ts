@@ -1,8 +1,6 @@
 import { useEditorStore } from "@/stores/editor";
 import { useCallback, useRef } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { useUserConfigStore } from "@/stores/userConfig";
-import { NAVBAR_WIDTH } from "@/utils/config";
 import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 
 export const useDraggable = () => {
@@ -16,9 +14,7 @@ export const useDraggable = () => {
 
     setIsDragging(true);
 
-    const id = selectedComponentIdSelector(useEditorTreeStore.getState())!;
-
-    const el = w.document.getElementById(id)!;
+    const el = event.target as HTMLElement;
     const rect = el?.getBoundingClientRect()!;
 
     if (rect) {
@@ -30,42 +26,80 @@ export const useDraggable = () => {
     edge: number,
     mouse: number,
     rect: any,
-    position: string,
+    position: "top" | "left" | "right" | "bottom",
     element: any,
   ) {
     const threshold = 20;
     const distance = Math.abs(edge - mouse);
     const { iframeWindow: w = window } = useEditorStore.getState();
     if (distance <= threshold) {
-      const highlight = w?.document.createElement("div")!;
-      highlight.className = "highlight";
-      highlight.style.position = `absolute`;
-      highlight.style.backgroundColor = `rgba(255, 0, 0, 0.5)`;
+      // Check if a highlight element already exists within the threshold
+      const existingHighlight = Array.from(
+        previousHighlightedElements.current,
+      ).find((el) => {
+        const elRect = el.getBoundingClientRect();
+        return (
+          Math.abs(elRect[position] - rect[position]) <= threshold &&
+          el.classList.contains("highlight")
+        );
+      });
 
-      function roundToNearestMultipleOf2(number: number) {
-        return Math.round(number / 2) * 2;
-      }
+      if (existingHighlight) {
+        // If an existing highlight element is found, update its size
+        function roundToNearestMultipleOf2(number: number) {
+          return Math.round(number / 2) * 2;
+        }
 
-      const size = roundToNearestMultipleOf2(threshold - distance);
-      if (position === "left" || position === "right") {
-        highlight.style.width = `${size}px`;
-        highlight.style.height = `${rect.height}px`;
-        highlight.style.top = `${rect.top}px`;
-        highlight.style.left =
-          position === "left" ? `${rect.left - size}px` : `${rect.right}px`;
-        element.style.marginLeft = position === "left" ? `${size}px` : "";
-        element.style.marginRight = position === "right" ? `${size}px` : "";
+        const size = roundToNearestMultipleOf2(threshold - distance);
+        if (position === "left" || position === "right") {
+          existingHighlight.style.width = `${size}px`;
+          existingHighlight.style.height = `${rect.height}px`;
+          existingHighlight.style.top = `${rect.top}px`;
+          existingHighlight.style.left =
+            position === "left" ? `${rect.left - size}px` : `${rect.right}px`;
+          element.style.marginLeft = position === "left" ? `${size}px` : "";
+          element.style.marginRight = position === "right" ? `${size}px` : "";
+        } else {
+          existingHighlight.style.width = `${rect.width}px`;
+          existingHighlight.style.height = `${size}px`;
+          existingHighlight.style.left = `${rect.left}px`;
+          existingHighlight.style.top =
+            position === "top" ? `${rect.top - size}px` : `${rect.bottom}px`;
+          element.style.marginTop = position === "top" ? `${size}px` : "";
+          element.style.marginBottom = position === "bottom" ? `${size}px` : "";
+        }
       } else {
-        highlight.style.width = `${rect.width}px`;
-        highlight.style.height = `${size}px`;
-        highlight.style.left = `${rect.left}px`;
-        highlight.style.top =
-          position === "top" ? `${rect.top - size}px` : `${rect.bottom}px`;
-        element.style.marginTop = position === "top" ? `${size}px` : "";
-        element.style.marginBottom = position === "bottom" ? `${size}px` : "";
+        // If no existing highlight element is found, create a new one
+        const highlight = w?.document.createElement("div")!;
+        highlight.className = "highlight";
+        highlight.style.position = `absolute`;
+        highlight.style.backgroundColor = `rgba(255, 0, 0, 0.5)`;
+
+        function roundToNearestMultipleOf2(number: number) {
+          return Math.round(number / 2) * 2;
+        }
+
+        const size = roundToNearestMultipleOf2(threshold - distance);
+        if (position === "left" || position === "right") {
+          highlight.style.width = `${size}px`;
+          highlight.style.height = `${rect.height}px`;
+          highlight.style.top = `${rect.top}px`;
+          highlight.style.left =
+            position === "left" ? `${rect.left - size}px` : `${rect.right}px`;
+          element.style.marginLeft = position === "left" ? `${size}px` : "";
+          element.style.marginRight = position === "right" ? `${size}px` : "";
+        } else {
+          highlight.style.width = `${rect.width}px`;
+          highlight.style.height = `${size}px`;
+          highlight.style.left = `${rect.left}px`;
+          highlight.style.top =
+            position === "top" ? `${rect.top - size}px` : `${rect.bottom}px`;
+          element.style.marginTop = position === "top" ? `${size}px` : "";
+          element.style.marginBottom = position === "bottom" ? `${size}px` : "";
+        }
+        w?.document.body.appendChild(highlight);
+        previousHighlightedElements.current.add(element);
       }
-      w?.document.body.appendChild(highlight);
-      previousHighlightedElements.current.add(element);
     }
   }
 
@@ -87,7 +121,7 @@ export const useDraggable = () => {
 
     onDrag: (e: any) => {
       const { iframeWindow: w = window } = useEditorStore.getState();
-      console.log("draggable->", { x: e.clientX, y: e.clientY });
+      // console.log("draggable->", { x: e.clientX, y: e.clientY });
 
       clearHighlights();
       const componentMutableAttrs =
