@@ -1,7 +1,6 @@
 import { useEditorStore } from "@/stores/editor";
 import { useCallback, useRef } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 
 export const useDraggable = () => {
   const previousHighlightedElements = useRef<Set<HTMLElement>>(new Set());
@@ -33,7 +32,6 @@ export const useDraggable = () => {
     const distance = Math.abs(edge - mouse);
     const { iframeWindow: w = window } = useEditorStore.getState();
     if (distance <= threshold) {
-      // Check if a highlight element already exists within the threshold
       const existingHighlight = Array.from(
         previousHighlightedElements.current,
       ).find((el) => {
@@ -45,7 +43,6 @@ export const useDraggable = () => {
       });
 
       if (existingHighlight) {
-        // If an existing highlight element is found, update its size
         function roundToNearestMultipleOf2(number: number) {
           return Math.round(number / 2) * 2;
         }
@@ -69,7 +66,6 @@ export const useDraggable = () => {
           element.style.marginBottom = position === "bottom" ? `${size}px` : "";
         }
       } else {
-        // If no existing highlight element is found, create a new one
         const highlight = w?.document.createElement("div")!;
         highlight.className = "highlight";
         highlight.style.position = `absolute`;
@@ -121,8 +117,6 @@ export const useDraggable = () => {
 
     onDrag: (e: any) => {
       const { iframeWindow: w = window } = useEditorStore.getState();
-      // console.log("draggable->", { x: e.clientX, y: e.clientY });
-
       clearHighlights();
       const componentMutableAttrs =
         useEditorTreeStore.getState().componentMutableAttrs;
@@ -188,6 +182,44 @@ export const useDraggable = () => {
           closestEdge.position,
           closestEdge.el,
         );
+      }
+
+      // Check if an existing highlight element is beyond the threshold
+      const existingHighlight = Array.from(
+        previousHighlightedElements.current,
+      ).find((el) => el.classList.contains("highlight"));
+
+      if (existingHighlight) {
+        const elRect = existingHighlight.getBoundingClientRect();
+        const position =
+          existingHighlight.style.top || existingHighlight.style.bottom
+            ? "y"
+            : "x";
+        const edge =
+          position === "y"
+            ? elRect.top || elRect.bottom
+            : elRect.left || elRect.right;
+        const distance = Math.abs(
+          position === "y" ? e.clientY - edge : e.clientX - edge,
+        );
+
+        if (distance > 20) {
+          clearHighlights();
+        } else {
+          highlightEdgeIfClose(
+            edge,
+            position === "y" ? e.clientY : e.clientX,
+            elRect,
+            position === "y"
+              ? elRect.top === edge
+                ? "top"
+                : "bottom"
+              : elRect.left === edge
+                ? "left"
+                : "right",
+            existingHighlight,
+          );
+        }
       }
     },
   };
