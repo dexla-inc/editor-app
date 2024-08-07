@@ -4,8 +4,6 @@ import { convertSizeToPx } from "@/utils/defaultSizes";
 import { EditableComponentMapper } from "@/utils/editor";
 import { BoxProps, MantineSize } from "@mantine/core";
 import { forwardRef, memo } from "react";
-import { useEditorTreeStore } from "@/stores/editorTree";
-import { useShallow } from "zustand/react/shallow";
 
 type Props = EditableComponentMapper & BoxProps;
 
@@ -14,24 +12,16 @@ const GridColumnComponent = forwardRef(
     { renderTree, component, shareableContent, style, ...props }: Props,
     ref,
   ) => {
-    const isPreviewMode = useEditorTreeStore(
-      useShallow((state) => state.isPreviewMode || state.isLive),
-    );
-
     // @ts-ignore
     const { gap, triggers, ...componentProps } = component.props;
     const gapPx = convertSizeToPx(gap as MantineSize, "gap");
-
-    const shouldRemoveBorder = isPreviewMode;
-    const { border, ...stylesRest } = style!;
 
     return (
       <GridColumnBase
         key={`${props.id}-${componentProps.span}`}
         style={{
-          ...stylesRest,
+          ...style,
           gap: gapPx,
-          border: shouldRemoveBorder ? "none" : border,
         }}
         {...componentProps}
         {...props}
