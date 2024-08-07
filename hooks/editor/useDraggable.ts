@@ -1,24 +1,41 @@
 import { useEditorStore } from "@/stores/editor";
 import { useCallback, useRef } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
+import { nanoid } from "nanoid";
 
 export const useDraggable = () => {
   const previousHighlightedElements = useRef<Set<HTMLElement>>(new Set());
+  const originalPageSnapshot = useRef<HTMLElement[]>([]);
+  const temporaryDiv = useRef<HTMLElement | null>(null);
+
+  const takeSnapshot = () => {
+    const { iframeWindow: w = window } = useEditorStore.getState();
+    // @ts-ignore
+    originalPageSnapshot.current = Array.from(w?.document.body.children ?? []);
+  };
+
+  const resetPage = () => {
+    const { iframeWindow: w = window } = useEditorStore.getState();
+    w.document.body.innerHTML = "";
+    originalPageSnapshot.current.forEach((el) => {
+      w?.document.body.appendChild(el);
+    });
+  };
 
   const handleDragStart = useCallback((event: React.DragEvent) => {
     const { isResizing, iframeWindow: w = window } = useEditorStore.getState();
     if (isResizing) return;
 
     const setIsDragging = useEditorTreeStore.getState().setIsDragging;
-
     setIsDragging(true);
 
     const el = event.target as HTMLElement;
     const rect = el?.getBoundingClientRect()!;
-
     if (rect) {
       event.dataTransfer.effectAllowed = "copyMove";
     }
+
+    takeSnapshot();
   }, []);
 
   function highlightEdgeIfClose(
@@ -171,6 +188,32 @@ export const useDraggable = () => {
       });
 
       if (closestEdge && minDistance <= 20) {
+        const parentElement = closestEdge.el.parentElement;
+        const parentStyles = getComputedStyle(parentElement);
+        const flexDirection = parentStyles.flexDirection;
+
+        if (
+          flexDirection === "row" &&
+          closestEdge.position === "bottom" &&
+          closestEdge.el !== e.target
+        ) {
+          if (!temporaryDiv.current) {
+            temporaryDiv.current = document.createElement("div");
+            temporaryDiv.current.id = nanoid();
+            temporaryDiv.current.style.height = "1px";
+            temporaryDiv.current.style.width = "100%";
+            parentElement.appendChild(temporaryDiv.current);
+          }
+
+          temporaryDiv.current.appendChild(e.target);
+        } else {
+          if (temporaryDiv.current) {
+            temporaryDiv.current.remove();
+            temporaryDiv.current = null;
+            resetPage();
+          }
+        }
+
         highlightEdgeIfClose(
           closestEdge.rect[closestEdge.position],
           debouncedPosition[
@@ -184,7 +227,6 @@ export const useDraggable = () => {
         );
       }
 
-      // Check if an existing highlight element is beyond the threshold
       const existingHighlight = Array.from(
         previousHighlightedElements.current,
       ).find((el) => el.classList.contains("highlight"));
