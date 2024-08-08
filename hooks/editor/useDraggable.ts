@@ -7,6 +7,13 @@ export const useDraggable = () => {
   const previousHighlightedElements = useRef<Set<HTMLElement>>(new Set());
   const originalPageSnapshot = useRef<HTMLElement[]>([]);
   const temporaryDiv = useRef<HTMLDivElement | null>(null);
+  let closestEdge = useRef<{
+    position: "top" | "left" | "right" | "bottom";
+    distance: number;
+    rect: DOMRect;
+    el: HTMLElement;
+    id: string;
+  } | null>(null);
 
   const takeSnapshot = () => {
     const { iframeWindow: w = window } = useEditorStore.getState();
@@ -138,32 +145,36 @@ export const useDraggable = () => {
       const componentMutableAttrs =
         useEditorTreeStore.getState().componentMutableAttrs;
       const debouncedPosition = { x: e.clientX, y: e.clientY };
+      const currDraggableId =
+        // @ts-ignore
+        e.target.getAttribute("data-id") || e.target.getAttribute("id")!;
+      // console.log(currDraggableId, e.target, e.target.id);
+      const elements = w?.document
+        .elementsFromPoint(debouncedPosition.x, debouncedPosition.y)
+        .filter((item) => {
+          const currItemId = (item.getAttribute("data-id") ||
+            item.getAttribute("id"))!;
+          const filterIds = ["root", "main-content", currDraggableId];
 
-      const elements = w?.document.elementsFromPoint(
-        debouncedPosition.x,
-        debouncedPosition.y,
-      );
+          return (
+            !filterIds.includes(currItemId) &&
+            componentMutableAttrs[currItemId?.split("-related-").at(0)!]
+          );
+        });
 
-      let closestEdge: {
+      let localClosestEdge: {
         position: "top" | "left" | "right" | "bottom";
         distance: number;
         rect: DOMRect;
         el: HTMLElement;
-        newId: string;
+        id: string;
       } | null = null;
       let minDistance = Infinity;
 
       elements?.forEach((el) => {
         if (el !== w?.document.body) {
           const rect = el.getBoundingClientRect();
-          const newId = el?.getAttribute("data-id") ?? el?.getAttribute("id")!;
-          if (
-            !componentMutableAttrs[newId] ||
-            newId === "root" ||
-            newId === "main-content"
-          ) {
-            return;
-          }
+          const itemId = el?.getAttribute("data-id") ?? el?.getAttribute("id")!;
 
           const edges = [
             {
@@ -187,57 +198,93 @@ export const useDraggable = () => {
           edges.forEach((edge) => {
             if (edge.distance < minDistance) {
               minDistance = edge.distance;
-              closestEdge = { ...edge, rect, el: el as HTMLElement, newId };
+              localClosestEdge = {
+                ...edge,
+                rect,
+                el: el as HTMLElement,
+                id: itemId,
+              };
             }
           });
         }
       });
 
-      if (closestEdge && minDistance <= 20) {
+      if (
+        (Object.keys(localClosestEdge ?? {}).length &&
+          // @ts-ignore
+          closestEdge.current?.id !== localClosestEdge.id) ||
         // @ts-ignore
-        const parentElement = closestEdge.el.parentElement;
-        const parentStyles = getComputedStyle(parentElement!);
-        const flexDirection = parentStyles.flexDirection;
+        closestEdge.current?.position !== localClosestEdge.position
+      ) {
+        // @ts-ignore
+        const closestParentElement = localClosestEdge?.el.parentElement;
+        // if parentElement has isTemp, it means it is a temporary div
+        if ("isTemp" in closestParentElement?.dataset!) {
+          return;
+        }
+
+        closestEdge.current = localClosestEdge;
+
+        const parentStyles = getComputedStyle(closestParentElement!);
+        const parentFlexDirection = parentStyles.flexDirection;
+
+        const localTemporaryDiv = w?.document.createElement("div");
+        localTemporaryDiv.id = nanoid();
+        localTemporaryDiv.dataset.isTemp = "true";
+        localTemporaryDiv.style.height = "auto";
+        localTemporaryDiv.style.width = "100%";
 
         if (
-          flexDirection === "row" &&
+          parentFlexDirection === "row" &&
           // @ts-ignore
-          closestEdge.position === "bottom" &&
-          // @ts-ignore
-          closestEdge.el !== e.target
+          localClosestEdge.position === "bottom"
         ) {
-          if (!temporaryDiv.current) {
-            temporaryDiv.current = document.createElement("div");
-            temporaryDiv.current.id = nanoid();
-            temporaryDiv.current.style.height = "auto";
-            temporaryDiv.current.style.width = "100%";
-            parentElement!.appendChild(temporaryDiv.current);
-          }
+          closestParentElement!.insertAdjacentElement(
+            "afterend",
+            localTemporaryDiv,
+          );
+          console.log("colocou BOTTOM");
 
-          temporaryDiv.current.appendChild(e.target as HTMLElement);
+          localTemporaryDiv.appendChild(e.target as HTMLElement);
+        } else if (
+          parentFlexDirection === "row" &&
+          // @ts-ignore
+          localClosestEdge.position === "top"
+        ) {
+          closestParentElement!.insertAdjacentElement(
+            "beforebegin",
+            localTemporaryDiv,
+          );
+          console.log("colocou TOP");
+
+          localTemporaryDiv.appendChild(e.target as HTMLElement);
         } else {
           if (temporaryDiv.current) {
-            temporaryDiv.current.remove();
-            temporaryDiv.current = null;
-            resetPage();
+            // GET THIS BACK
+            // temporaryDiv.current.remove();
+            // temporaryDiv.current = null;
+            // console.log("removeu");
+            // resetPage();
           }
         }
 
         highlightEdgeIfClose(
           // @ts-ignore
-          closestEdge.rect[closestEdge.position],
+          localClosestEdge.rect[localClosestEdge.position],
           debouncedPosition[
             // @ts-ignore
-            closestEdge.position === "left" || closestEdge.position === "right"
+            localClosestEdge.position === "left" ||
+            // @ts-ignore
+            localClosestEdge.position === "right"
               ? "x"
               : "y"
           ],
           // @ts-ignore
-          closestEdge.rect,
+          localClosestEdge.rect,
           // @ts-ignore
-          closestEdge.position,
+          localClosestEdge.position,
           // @ts-ignore
-          closestEdge.el,
+          localClosestEdge.el,
         );
       }
 
