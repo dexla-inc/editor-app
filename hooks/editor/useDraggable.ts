@@ -6,7 +6,7 @@ import { nanoid } from "nanoid";
 export const useDraggable = () => {
   const previousHighlightedElements = useRef<Set<HTMLElement>>(new Set());
   const originalPageSnapshot = useRef<HTMLElement[]>([]);
-  const temporaryDiv = useRef<HTMLElement | null>(null);
+  const temporaryDiv = useRef<HTMLDivElement | null>(null);
 
   const takeSnapshot = () => {
     const { iframeWindow: w = window } = useEditorStore.getState();
@@ -30,7 +30,7 @@ export const useDraggable = () => {
     setIsDragging(true);
 
     const el = event.target as HTMLElement;
-    const rect = el?.getBoundingClientRect()!;
+    const rect = el?.getBoundingClientRect();
     if (rect) {
       event.dataTransfer.effectAllowed = "copyMove";
     }
@@ -41,9 +41,9 @@ export const useDraggable = () => {
   function highlightEdgeIfClose(
     edge: number,
     mouse: number,
-    rect: any,
+    rect: DOMRect,
     position: "top" | "left" | "right" | "bottom",
-    element: any,
+    element: HTMLElement,
   ) {
     const threshold = 20;
     const distance = Math.abs(edge - mouse);
@@ -132,7 +132,7 @@ export const useDraggable = () => {
     draggable: true,
     onDragStart: handleDragStart,
 
-    onDrag: (e: any) => {
+    onDrag: (e: React.DragEvent) => {
       const { iframeWindow: w = window } = useEditorStore.getState();
       clearHighlights();
       const componentMutableAttrs =
@@ -144,7 +144,13 @@ export const useDraggable = () => {
         debouncedPosition.y,
       );
 
-      let closestEdge: any = null;
+      let closestEdge: {
+        position: "top" | "left" | "right" | "bottom";
+        distance: number;
+        rect: DOMRect;
+        el: HTMLElement;
+        newId: string;
+      } | null = null;
       let minDistance = Infinity;
 
       elements?.forEach((el) => {
@@ -161,19 +167,19 @@ export const useDraggable = () => {
 
           const edges = [
             {
-              position: "left",
+              position: "left" as const,
               distance: Math.abs(rect.left - debouncedPosition.x),
             },
             {
-              position: "right",
+              position: "right" as const,
               distance: Math.abs(rect.right - debouncedPosition.x),
             },
             {
-              position: "top",
+              position: "top" as const,
               distance: Math.abs(rect.top - debouncedPosition.y),
             },
             {
-              position: "bottom",
+              position: "bottom" as const,
               distance: Math.abs(rect.bottom - debouncedPosition.y),
             },
           ];
@@ -181,31 +187,34 @@ export const useDraggable = () => {
           edges.forEach((edge) => {
             if (edge.distance < minDistance) {
               minDistance = edge.distance;
-              closestEdge = { ...edge, rect, el, newId };
+              closestEdge = { ...edge, rect, el: el as HTMLElement, newId };
             }
           });
         }
       });
 
       if (closestEdge && minDistance <= 20) {
+        // @ts-ignore
         const parentElement = closestEdge.el.parentElement;
-        const parentStyles = getComputedStyle(parentElement);
+        const parentStyles = getComputedStyle(parentElement!);
         const flexDirection = parentStyles.flexDirection;
 
         if (
           flexDirection === "row" &&
+          // @ts-ignore
           closestEdge.position === "bottom" &&
+          // @ts-ignore
           closestEdge.el !== e.target
         ) {
           if (!temporaryDiv.current) {
             temporaryDiv.current = document.createElement("div");
             temporaryDiv.current.id = nanoid();
-            temporaryDiv.current.style.height = "1px";
+            temporaryDiv.current.style.height = "auto";
             temporaryDiv.current.style.width = "100%";
-            parentElement.appendChild(temporaryDiv.current);
+            parentElement!.appendChild(temporaryDiv.current);
           }
 
-          temporaryDiv.current.appendChild(e.target);
+          temporaryDiv.current.appendChild(e.target as HTMLElement);
         } else {
           if (temporaryDiv.current) {
             temporaryDiv.current.remove();
@@ -215,14 +224,19 @@ export const useDraggable = () => {
         }
 
         highlightEdgeIfClose(
+          // @ts-ignore
           closestEdge.rect[closestEdge.position],
           debouncedPosition[
+            // @ts-ignore
             closestEdge.position === "left" || closestEdge.position === "right"
               ? "x"
               : "y"
           ],
+          // @ts-ignore
           closestEdge.rect,
+          // @ts-ignore
           closestEdge.position,
+          // @ts-ignore
           closestEdge.el,
         );
       }
