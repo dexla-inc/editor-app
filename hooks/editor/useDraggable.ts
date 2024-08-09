@@ -139,7 +139,7 @@ export const useDraggable = () => {
     draggable: true,
     onDragStart: handleDragStart,
 
-    onDrag: (e: React.DragEvent) => {
+    onDrag: (e: React.DragEvent<HTMLDivElement>) => {
       const { iframeWindow: w = window } = useEditorStore.getState();
       clearHighlights();
       const componentMutableAttrs =
@@ -154,7 +154,12 @@ export const useDraggable = () => {
         .filter((item) => {
           const currItemId = (item.getAttribute("data-id") ||
             item.getAttribute("id"))!;
-          const filterIds = ["root", "main-content", currDraggableId];
+          const filterIds = [
+            "root",
+            "main-content",
+            "content-wrapper",
+            currDraggableId,
+          ];
 
           return (
             !filterIds.includes(currItemId) &&
@@ -210,16 +215,25 @@ export const useDraggable = () => {
       });
 
       if (
+        // @ts-ignore
         (Object.keys(localClosestEdge ?? {}).length &&
           // @ts-ignore
           closestEdge.current?.id !== localClosestEdge.id) ||
-        // @ts-ignore
-        closestEdge.current?.position !== localClosestEdge.position
+        (localClosestEdge &&
+          // @ts-ignore
+          closestEdge.current?.position !== localClosestEdge?.position)
       ) {
+        w.document
+          .querySelectorAll("[data-is-temp='true']")
+          .forEach((el) => el.remove());
+        console.log("-===->", localClosestEdge?.el);
         // @ts-ignore
         const closestParentElement = localClosestEdge?.el.parentElement;
         // if parentElement has isTemp, it means it is a temporary div
-        if ("isTemp" in closestParentElement?.dataset!) {
+        if (
+          // !closestParentElement ||
+          "isTemp" in closestParentElement?.dataset!
+        ) {
           return;
         }
 
@@ -258,6 +272,22 @@ export const useDraggable = () => {
           console.log("colocou TOP");
 
           localTemporaryDiv.appendChild(e.target as HTMLElement);
+        } else if (
+          parentFlexDirection === "row" &&
+          // @ts-ignore
+          localClosestEdge.position === "left"
+        ) {
+          // @ts-ignore
+          localClosestEdge?.el.insertAdjacentElement("beforebegin", e.target);
+          console.log("colocou left");
+        } else if (
+          parentFlexDirection === "row" &&
+          // @ts-ignore
+          localClosestEdge.position === "right"
+        ) {
+          // @ts-ignore
+          localClosestEdge?.el.insertAdjacentElement("afterend", e.target);
+          console.log("colocou left");
         } else {
           if (temporaryDiv.current) {
             // GET THIS BACK
