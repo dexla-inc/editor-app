@@ -306,18 +306,20 @@ export const useDraggable = () => {
         }
       }
 
-      highlightEdgeIfClose(
-        localClosestEdge.rect[localClosestEdge.position],
-        debouncedPosition[
-          localClosestEdge.position === "left" ||
-          localClosestEdge.position === "right"
-            ? "x"
-            : "y"
-        ],
-        localClosestEdge.rect,
-        localClosestEdge.position,
-        localClosestEdge.el,
-      );
+      if (Object.keys(localClosestEdge).length) {
+        highlightEdgeIfClose(
+          localClosestEdge.rect[localClosestEdge.position],
+          debouncedPosition[
+            localClosestEdge.position === "left" ||
+            localClosestEdge.position === "right"
+              ? "x"
+              : "y"
+          ],
+          localClosestEdge.rect,
+          localClosestEdge.position,
+          localClosestEdge.el,
+        );
+      }
 
       const existingHighlight = Array.from(
         previousHighlightedElements.current,

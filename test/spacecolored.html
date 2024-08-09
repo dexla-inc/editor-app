@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drag to Highlight Margins and Padding</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .box {
+            width: 100px;
+            height: 100px;
+            background-color: #ccc;
+            padding: 20px;
+            margin: 20px;
+            position: relative;
+            display: inline-block;
+            cursor: grab;
+        }
+
+        .highlight-padding, .highlight-margin {
+            pointer-events: none;
+            position: absolute;
+            box-sizing: content-box; /* Ensure padding/margin is outside of element content */
+        }
+
+        .highlight-padding {
+            border-color: rgba(255, 165, 0, 0.5); /* Orange color */
+            border-style: solid;
+            z-index: 1;
+        }
+
+        .highlight-margin {
+            border-color: rgba(0, 255, 0, 0.5); /* Green color */
+            border-style: solid;
+            z-index: 0;
+        }
+    </style>
+</head>
+<body>
+<div id="draggable" class="box" draggable="true">Drag Me</div>
+<div class="box"></div>
+<div class="box"></div>
+<div class="box"></div>
+
+<script>
+    const draggable = document.getElementById('draggable');
+
+    draggable.addEventListener('dragstart', (event) => {
+        event.dataTransfer.setData('text/plain', null);
+    });
+
+    document.querySelectorAll('.box').forEach(box => {
+        box.addEventListener('dragover', (event) => {
+            event.preventDefault();
+            if (box !== draggable) {
+                highlightElement(box);
+            }
+        });
+
+        box.addEventListener('dragleave', () => {
+            clearHighlight();
+        });
+
+        box.addEventListener('drop', (event) => {
+            event.preventDefault();
+            clearHighlight();
+        });
+    });
+
+    function highlightElement(element) {
+        clearHighlight();
+
+        const computedStyle = getComputedStyle(element);
+        const paddingSize = {
+            top: parseInt(computedStyle.paddingTop),
+            right: parseInt(computedStyle.paddingRight),
+            bottom: parseInt(computedStyle.paddingBottom),
+            left: parseInt(computedStyle.paddingLeft)
+        };
+        const marginSize = {
+            top: parseInt(computedStyle.marginTop),
+            right: parseInt(computedStyle.marginRight),
+            bottom: parseInt(computedStyle.marginBottom),
+            left: parseInt(computedStyle.marginLeft)
+        };
+
+        const paddingHighlight = document.createElement('div');
+        paddingHighlight.className = 'highlight-padding';
+        paddingHighlight.style.top = `${element.offsetTop - marginSize.top}px`;
+        paddingHighlight.style.left = `${element.offsetLeft - marginSize.left}px`;
+        paddingHighlight.style.width = `${element.clientWidth}px`;
+        paddingHighlight.style.height = `${element.clientHeight}px`;
+        paddingHighlight.style.borderWidth = `${paddingSize.top}px ${paddingSize.right}px ${paddingSize.bottom}px ${paddingSize.left}px`;
+
+        const marginHighlight = document.createElement('div');
+        marginHighlight.className = 'highlight-margin';
+        marginHighlight.style.top = `${element.offsetTop - marginSize.top - paddingSize.top}px`;
+        marginHighlight.style.left = `${element.offsetLeft - marginSize.left - paddingSize.left}px`;
+        marginHighlight.style.width = `${element.offsetWidth + paddingSize.left + paddingSize.right}px`;
+        marginHighlight.style.height = `${element.offsetHeight + paddingSize.top + paddingSize.bottom}px`;
+        marginHighlight.style.borderWidth = `${marginSize.top}px ${marginSize.right}px ${marginSize.bottom}px ${marginSize.left}px`;
+
+        document.body.appendChild(marginHighlight);
+        document.body.appendChild(paddingHighlight);
+    }
+
+    function clearHighlight() {
+        document.querySelectorAll('.highlight-padding, .highlight-margin').forEach(el => el.remove());
+    }
+</script>
+</body>
+</html>
