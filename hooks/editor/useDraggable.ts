@@ -221,6 +221,15 @@ export const useDraggable = () => {
 
     onDrag: (e: React.DragEvent) => {
       const { iframeWindow: w = window } = useEditorStore.getState();
+
+      w.document.querySelectorAll("[data-is-temp='true']").forEach((el) => {
+        const element = el as HTMLElement;
+        // Check if the element has no children
+        if (element.childElementCount === 0) {
+          element.style.display = "none";
+        }
+      });
+
       // clearing gaps
       clearHighlights();
       // mouse position
@@ -244,16 +253,7 @@ export const useDraggable = () => {
       ) {
         // Now we want to add a wrapping div to the current dragging element if needed
         // @ts-ignore
-        console.log("-===->", localClosestEdge?.el);
-        // @ts-ignore
         const closestParentElement = localClosestEdge?.el.parentElement;
-        // if parentElement has isTemp, it means it is a temporary div
-        // if (
-        //   // !closestParentElement ||
-        //   "isTemp" in closestParentElement?.dataset!
-        // ) {
-        //   return;
-        // }
 
         closestEdge.current = localClosestEdge;
 
@@ -266,10 +266,6 @@ export const useDraggable = () => {
         localTemporaryDiv.style.height = "auto";
         localTemporaryDiv.style.width = "100%";
 
-        w.document
-          .querySelectorAll("[data-is-temp='true']")
-          .forEach((el) => ((el as HTMLElement).style.display = "none"));
-
         if (
           parentFlexDirection === "row" &&
           // @ts-ignore
@@ -279,7 +275,6 @@ export const useDraggable = () => {
             "afterend",
             localTemporaryDiv,
           );
-          console.log("colocou BOTTOM");
 
           localTemporaryDiv.appendChild(e.target as HTMLElement);
         } else if (
@@ -291,52 +286,36 @@ export const useDraggable = () => {
             "beforebegin",
             localTemporaryDiv,
           );
-          console.log("colocou TOP");
-
           localTemporaryDiv.appendChild(e.target as HTMLElement);
         } else if (
           parentFlexDirection === "row" &&
-          // @ts-ignore
           localClosestEdge.position === "left"
         ) {
-          // @ts-ignore
-          localClosestEdge?.el.insertAdjacentElement("beforebegin", e.target);
-          console.log("colocou left");
+          localClosestEdge?.el.insertAdjacentElement(
+            "beforebegin",
+            e.target as HTMLElement,
+          );
         } else if (
           parentFlexDirection === "row" &&
-          // @ts-ignore
           localClosestEdge.position === "right"
         ) {
-          // @ts-ignore
-          localClosestEdge?.el.insertAdjacentElement("afterend", e.target);
-          console.log("colocou left");
-        } else {
-          if (temporaryDiv.current) {
-            // GET THIS BACK
-            // temporaryDiv.current.remove();
-            // temporaryDiv.current = null;
-            // console.log("removeu");
-            // resetPage();
-          }
+          localClosestEdge?.el.insertAdjacentElement(
+            "afterend",
+            e.target as HTMLElement,
+          );
         }
       }
 
       highlightEdgeIfClose(
-        // @ts-ignore
         localClosestEdge.rect[localClosestEdge.position],
         debouncedPosition[
-          // @ts-ignore
           localClosestEdge.position === "left" ||
-          // @ts-ignore
           localClosestEdge.position === "right"
             ? "x"
             : "y"
         ],
-        // @ts-ignore
         localClosestEdge.rect,
-        // @ts-ignore
         localClosestEdge.position,
-        // @ts-ignore
         localClosestEdge.el,
       );
 
