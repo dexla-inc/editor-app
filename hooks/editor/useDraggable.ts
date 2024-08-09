@@ -3,6 +3,14 @@ import { useCallback, useRef } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { nanoid } from "nanoid";
 
+type ClosesEdge = {
+  position: "top" | "left" | "right" | "bottom";
+  distance: number;
+  rect: DOMRect;
+  el: HTMLElement;
+  id: string;
+};
+
 export const useDraggable = () => {
   const previousHighlightedElements = useRef<Set<HTMLElement>>(new Set());
   const originalPageSnapshot = useRef<HTMLElement[]>([]);
@@ -123,6 +131,78 @@ export const useDraggable = () => {
     }
   }
 
+  const findClosestElementToPointer = (
+    currDraggableId: string,
+    debouncedPosition: any,
+  ): ClosesEdge => {
+    const { iframeWindow: w = window } = useEditorStore.getState();
+    const componentMutableAttrs =
+      useEditorTreeStore.getState().componentMutableAttrs;
+    // gathering all elements that are closer to the mouse position, and filtering the ones I dont want to consider
+    const elements = w?.document
+      .elementsFromPoint(debouncedPosition.x, debouncedPosition.y)
+      .filter((item) => {
+        const currItemId = (item.getAttribute("data-id") ||
+          item.getAttribute("id"))!;
+        const filterIds = [
+          "root",
+          "main-content",
+          "content-wrapper",
+          // do not compute gaps for the dragging element
+          currDraggableId,
+        ];
+
+        return (
+          !filterIds.includes(currItemId) &&
+          componentMutableAttrs[currItemId?.split("-related-").at(0)!]
+        );
+      });
+
+    // the closest edge the current event pointer is closer to
+    let localClosestEdge: ClosesEdge = {} as ClosesEdge;
+    let minDistance = Infinity;
+
+    elements?.forEach((el) => {
+      if (el !== w?.document.body) {
+        const rect = el.getBoundingClientRect();
+        const itemId = el?.getAttribute("data-id") ?? el?.getAttribute("id")!;
+
+        const edges = [
+          {
+            position: "left" as const,
+            distance: Math.abs(rect.left - debouncedPosition.x),
+          },
+          {
+            position: "right" as const,
+            distance: Math.abs(rect.right - debouncedPosition.x),
+          },
+          {
+            position: "top" as const,
+            distance: Math.abs(rect.top - debouncedPosition.y),
+          },
+          {
+            position: "bottom" as const,
+            distance: Math.abs(rect.bottom - debouncedPosition.y),
+          },
+        ];
+
+        edges.forEach((edge) => {
+          if (edge.distance < minDistance) {
+            minDistance = edge.distance;
+            localClosestEdge = {
+              ...edge,
+              rect,
+              el: el as HTMLElement,
+              id: itemId,
+            };
+          }
+        });
+      }
+    });
+
+    return localClosestEdge;
+  };
+
   function clearHighlights() {
     const { iframeWindow: w = window } = useEditorStore.getState();
     w?.document.querySelectorAll(".highlight").forEach((el) => el.remove());
@@ -139,103 +219,41 @@ export const useDraggable = () => {
     draggable: true,
     onDragStart: handleDragStart,
 
-    onDrag: (e: React.DragEvent<HTMLDivElement>) => {
+    onDrag: (e: React.DragEvent) => {
       const { iframeWindow: w = window } = useEditorStore.getState();
+      // clearing gaps
       clearHighlights();
-      const componentMutableAttrs =
-        useEditorTreeStore.getState().componentMutableAttrs;
+      // mouse position
       const debouncedPosition = { x: e.clientX, y: e.clientY };
+      // dragging element id
       const currDraggableId =
         // @ts-ignore
-        e.target.getAttribute("data-id") || e.target.getAttribute("id")!;
-      // console.log(currDraggableId, e.target, e.target.id);
-      const elements = w?.document
-        .elementsFromPoint(debouncedPosition.x, debouncedPosition.y)
-        .filter((item) => {
-          const currItemId = (item.getAttribute("data-id") ||
-            item.getAttribute("id"))!;
-          const filterIds = [
-            "root",
-            "main-content",
-            "content-wrapper",
-            currDraggableId,
-          ];
+        e.target.dataset.id || e.target.getAttribute("id")!;
 
-          return (
-            !filterIds.includes(currItemId) &&
-            componentMutableAttrs[currItemId?.split("-related-").at(0)!]
-          );
-        });
+      const localClosestEdge = findClosestElementToPointer(
+        currDraggableId,
+        debouncedPosition,
+      );
 
-      let localClosestEdge: {
-        position: "top" | "left" | "right" | "bottom";
-        distance: number;
-        rect: DOMRect;
-        el: HTMLElement;
-        id: string;
-      } | null = null;
-      let minDistance = Infinity;
-
-      elements?.forEach((el) => {
-        if (el !== w?.document.body) {
-          const rect = el.getBoundingClientRect();
-          const itemId = el?.getAttribute("data-id") ?? el?.getAttribute("id")!;
-
-          const edges = [
-            {
-              position: "left" as const,
-              distance: Math.abs(rect.left - debouncedPosition.x),
-            },
-            {
-              position: "right" as const,
-              distance: Math.abs(rect.right - debouncedPosition.x),
-            },
-            {
-              position: "top" as const,
-              distance: Math.abs(rect.top - debouncedPosition.y),
-            },
-            {
-              position: "bottom" as const,
-              distance: Math.abs(rect.bottom - debouncedPosition.y),
-            },
-          ];
-
-          edges.forEach((edge) => {
-            if (edge.distance < minDistance) {
-              minDistance = edge.distance;
-              localClosestEdge = {
-                ...edge,
-                rect,
-                el: el as HTMLElement,
-                id: itemId,
-              };
-            }
-          });
-        }
-      });
-
+      // check if localClosestEdge got defined and if it is different from the referenced closestEdge
+      // if so, it means the closest edge changed
       if (
-        // @ts-ignore
-        (Object.keys(localClosestEdge ?? {}).length &&
-          // @ts-ignore
-          closestEdge.current?.id !== localClosestEdge.id) ||
-        (localClosestEdge &&
-          // @ts-ignore
+        Object.keys(localClosestEdge).length &&
+        (closestEdge.current?.id !== localClosestEdge.id ||
           closestEdge.current?.position !== localClosestEdge?.position)
       ) {
-        w.document
-          .querySelectorAll("[data-is-temp='true']")
-          .forEach((el) => el.remove());
+        // Now we want to add a wrapping div to the current dragging element if needed
+        // @ts-ignore
         console.log("-===->", localClosestEdge?.el);
         // @ts-ignore
         const closestParentElement = localClosestEdge?.el.parentElement;
         // if parentElement has isTemp, it means it is a temporary div
-        if (
-          // !closestParentElement ||
-          "isTemp" in closestParentElement?.dataset!
-        ) {
-          return;
-        }
+        // if (
+        //   // !closestParentElement ||
+        //   "isTemp" in closestParentElement?.dataset!
+        // ) {
+        //   return;
+        // }
 
         closestEdge.current = localClosestEdge;
 
@@ -247,6 +265,10 @@ export const useDraggable = () => {
         localTemporaryDiv.dataset.isTemp = "true";
         localTemporaryDiv.style.height = "auto";
         localTemporaryDiv.style.width = "100%";
+
+        w.document
+          .querySelectorAll("[data-is-temp='true']")
+          .forEach((el) => ((el as HTMLElement).style.display = "none"));
 
         if (
           parentFlexDirection === "row" &&
@@ -297,26 +319,26 @@ export const useDraggable = () => {
             // resetPage();
           }
         }
-
-        highlightEdgeIfClose(
-          // @ts-ignore
-          localClosestEdge.rect[localClosestEdge.position],
-          debouncedPosition[
-            // @ts-ignore
-            localClosestEdge.position === "left" ||
-            // @ts-ignore
-            localClosestEdge.position === "right"
-              ? "x"
-              : "y"
-          ],
-          // @ts-ignore
-          localClosestEdge.rect,
-          // @ts-ignore
-          localClosestEdge.position,
-          // @ts-ignore
-          localClosestEdge.el,
-        );
       }
+
+      highlightEdgeIfClose(
+        // @ts-ignore
+        localClosestEdge.rect[localClosestEdge.position],
+        debouncedPosition[
+          // @ts-ignore
+          localClosestEdge.position === "left" ||
+          // @ts-ignore
+          localClosestEdge.position === "right"
+            ? "x"
+            : "y"
+        ],
+        // @ts-ignore
+        localClosestEdge.rect,
+        // @ts-ignore
+        localClosestEdge.position,
+        // @ts-ignore
+        localClosestEdge.el,
+      );
 
       const existingHighlight = Array.from(
         previousHighlightedElements.current,
