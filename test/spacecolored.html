@@ -22,24 +22,22 @@
             position: relative;
             display: inline-block;
             cursor: grab;
+            box-sizing: border-box;
         }
 
-        .highlight-padding, .highlight-margin {
-            pointer-events: none;
+        .highlight {
             position: absolute;
-            box-sizing: content-box; /* Ensure padding/margin is outside of element content */
+            pointer-events: none;
+            border: 2px dashed;
+            z-index: 999;
         }
 
         .highlight-padding {
-            border-color: rgba(255, 165, 0, 0.5); /* Orange color */
-            border-style: solid;
-            z-index: 1;
+            border-color: rgba(255, 165, 0, 0.7); /* Orange color */
         }
 
         .highlight-margin {
-            border-color: rgba(0, 255, 0, 0.5); /* Green color */
-            border-style: solid;
-            z-index: 0;
+            border-color: rgba(0, 255, 0, 0.7); /* Green color */
         }
     </style>
 </head>
@@ -64,9 +62,7 @@
             }
         });
 
-        box.addEventListener('dragleave', () => {
-            clearHighlight();
-        });
+        box.addEventListener('dragleave', clearHighlight);
 
         box.addEventListener('drop', (event) => {
             event.preventDefault();
@@ -77,42 +73,33 @@
     function highlightElement(element) {
         clearHighlight();
 
+        const rect = element.getBoundingClientRect();
         const computedStyle = getComputedStyle(element);
-        const paddingSize = {
-            top: parseInt(computedStyle.paddingTop),
-            right: parseInt(computedStyle.paddingRight),
-            bottom: parseInt(computedStyle.paddingBottom),
-            left: parseInt(computedStyle.paddingLeft)
-        };
-        const marginSize = {
-            top: parseInt(computedStyle.marginTop),
-            right: parseInt(computedStyle.marginRight),
-            bottom: parseInt(computedStyle.marginBottom),
-            left: parseInt(computedStyle.marginLeft)
-        };
 
-        const paddingHighlight = document.createElement('div');
-        paddingHighlight.className = 'highlight-padding';
-        paddingHighlight.style.top = `${element.offsetTop - marginSize.top}px`;
-        paddingHighlight.style.left = `${element.offsetLeft - marginSize.left}px`;
-        paddingHighlight.style.width = `${element.clientWidth}px`;
-        paddingHighlight.style.height = `${element.clientHeight}px`;
-        paddingHighlight.style.borderWidth = `${paddingSize.top}px ${paddingSize.right}px ${paddingSize.bottom}px ${paddingSize.left}px`;
-
+        // Margin highlight
         const marginHighlight = document.createElement('div');
-        marginHighlight.className = 'highlight-margin';
-        marginHighlight.style.top = `${element.offsetTop - marginSize.top - paddingSize.top}px`;
-        marginHighlight.style.left = `${element.offsetLeft - marginSize.left - paddingSize.left}px`;
-        marginHighlight.style.width = `${element.offsetWidth + paddingSize.left + paddingSize.right}px`;
-        marginHighlight.style.height = `${element.offsetHeight + paddingSize.top + paddingSize.bottom}px`;
-        marginHighlight.style.borderWidth = `${marginSize.top}px ${marginSize.right}px ${marginSize.bottom}px ${marginSize.left}px`;
+        marginHighlight.className = 'highlight highlight-margin';
+        marginHighlight.style.top = `${rect.top - parseFloat(computedStyle.marginTop)}px`;
+        marginHighlight.style.left = `${rect.left - parseFloat(computedStyle.marginLeft)}px`;
+        marginHighlight.style.width = `${rect.width + parseFloat(computedStyle.marginLeft) + parseFloat(computedStyle.marginRight)}px`;
+        marginHighlight.style.height = `${rect.height + parseFloat(computedStyle.marginTop) + parseFloat(computedStyle.marginBottom)}px`;
+
+        // Padding highlight
+        const paddingHighlight = document.createElement('div');
+        paddingHighlight.className = 'highlight highlight-padding';
+        paddingHighlight.style.top = `${rect.top}px`;
+        paddingHighlight.style.left = `${rect.left}px`;
+        paddingHighlight.style.width = `${rect.width}px`;
+        paddingHighlight.style.height = `${rect.height}px`;
+        paddingHighlight.style.boxSizing = 'border-box';
+        paddingHighlight.style.borderWidth = `${parseFloat(computedStyle.paddingTop)}px ${parseFloat(computedStyle.paddingRight)}px ${parseFloat(computedStyle.paddingBottom)}px ${parseFloat(computedStyle.paddingLeft)}px`;
 
         document.body.appendChild(marginHighlight);
         document.body.appendChild(paddingHighlight);
     }
 
     function clearHighlight() {
-        document.querySelectorAll('.highlight-padding, .highlight-margin').forEach(el => el.remove());
+        document.querySelectorAll('.highlight').forEach(el => el.remove());
     }
 </script>
 </body>
