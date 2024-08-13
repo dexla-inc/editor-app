@@ -15,6 +15,9 @@ Deno.serve(async (req: Request) => {
 
   const url = new URL(req.url);
   const query = url.searchParams.get("query");
+  const path = url.pathname;
+  const typeMatch = path.match(/\/search_contact\/([^/]+)/);
+  const type = typeMatch ? typeMatch[1] : null;
 
   if (!query) {
     return new Response(
@@ -27,7 +30,10 @@ Deno.serve(async (req: Request) => {
   }
 
   // Database queries will have RLS policies enforced
-  const { data, error } = await supabaseClient.rpc("search_contact", { query });
+  const { data, error } = await supabaseClient.rpc("search_contact", {
+    query,
+    type,
+  });
 
   if (error) {
     return new Response(JSON.stringify({ error: error.message }), {

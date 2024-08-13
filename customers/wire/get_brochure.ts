@@ -8,9 +8,6 @@ Deno.serve(async (req: Request) => {
     Deno.env.get("SUPABASE_URL") ?? "",
     // @ts-ignore
     Deno.env.get("SUPABASE_ANON_KEY") ?? "",
-    {
-      global: { headers: { Authorization: req.headers.get("Authorization")! } },
-    },
   );
 
   // Parse the URL and extract query parameters
@@ -36,6 +33,7 @@ Deno.serve(async (req: Request) => {
       { status: 404 },
     );
   }
+
   if (error) {
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
