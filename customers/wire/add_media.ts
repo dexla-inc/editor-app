@@ -30,11 +30,15 @@ Deno.serve(async (req: Request) => {
       { status: 400 },
     );
   }
+  const requestData = data.map(({ is_main, ...rest }) => ({
+    ...rest,
+    property_listing_id: property_id,
+  }));
 
   // Insert multiple media entries into the media table
   const { data: mediaData, error: mediaError } = await supabaseClient
     .from("media")
-    .insert(data)
+    .insert(requestData)
     .select();
 
   if (mediaError) {
