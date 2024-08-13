@@ -31,8 +31,6 @@ export const ActionSettingsForm = ({
     initialValues: { ...defaultValues, ...action.action },
   });
 
-  console.log("defaultValues", defaultValues, "action", action.action);
-
   const { componentActions } = useActionData<ChangeLanguageAction>();
 
   useEffect(() => {
