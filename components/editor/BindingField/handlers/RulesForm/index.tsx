@@ -66,7 +66,7 @@ export const RulesForm = () => {
 
   return (
     <Stack spacing={15}>
-      <Flex align="center">
+      <Flex justify="space-between" align="center">
         <Text size="sm" weight="bold">
           {!form.values.rules?.length &&
             extractContextAndAttributes(form.values.value?.boundCode).context}
