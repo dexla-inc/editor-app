@@ -15,7 +15,11 @@ import {
   Title,
   Tooltip,
 } from "@mantine/core";
-import { IconExternalLink, IconPlugConnected } from "@tabler/icons-react";
+import {
+  IconExternalLink,
+  IconPlugConnected,
+  IconPlugOff,
+} from "@tabler/icons-react";
 import { BoundCodeForm } from "@/components/editor/BindingField/handlers/BoundCodeForm";
 import { RulesForm } from "@/components/editor/BindingField/handlers/RulesForm";
 import { useBindingField } from "@/components/editor/BindingField/components/ComponentToBindFromInput";
@@ -129,7 +133,13 @@ export default function BindingPopover({
                   },
                 ]}
               />
-              <Button onClick={onClickUnbind}>Unbind</Button>
+              <Button
+                onClick={onClickUnbind}
+                variant="light"
+                leftIcon={<IconPlugOff size={15} />}
+              >
+                Unbind
+              </Button>
             </Flex>
             <ActionIcon variant="light" radius="xl">
               <Icon name="IconCopy" />

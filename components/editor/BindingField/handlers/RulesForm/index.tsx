@@ -66,16 +66,15 @@ export const RulesForm = () => {
 
   return (
     <Stack spacing={15}>
-      <Flex justify="space-between" align="center">
+      <Flex align="center">
         <Text size="sm" weight="bold">
           {!form.values.rules?.length &&
             extractContextAndAttributes(form.values.value?.boundCode).context}
         </Text>
         <Button
-          styles={{ root: { justifySelf: "self-end" } }}
           fw={400}
           leftIcon={<IconPlus size={15} />}
-          variant="default"
+          variant="filled"
           onClick={() => {
             let condition: Partial<ConditionProps> = {
               rule: "equalTo",
