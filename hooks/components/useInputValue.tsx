@@ -26,7 +26,7 @@ export const useInputValue = <T = string,>(
       if (typeof value === "object" && inputValue) {
         newValue = inputValue;
       } else {
-        newValue = value || inputValue;
+        newValue = value ?? inputValue;
       }
     }
 
