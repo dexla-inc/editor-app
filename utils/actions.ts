@@ -205,7 +205,7 @@ export interface ChangeVariableAction extends BaseAction {
   variableType: FrontEndTypes;
   value: ValueProps;
   method?: ArrayMethods;
-  index?: ValueProps;
+  itemIndex?: ValueProps;
   partialUpdate?: boolean;
   path?: ValueProps;
 }
@@ -682,7 +682,7 @@ export const useChangeVariableAction = async ({
       : variableValue;
 
   const setVariable = useVariableStore.getState().setVariable;
-  const index = computeValue<number>({ value: action.index });
+  const index = computeValue<number>({ value: action.itemIndex });
   const path = computeValue<string>({ value: action.path });
   const computedValue = computeValue({ value: action.value });
   let newValue = safeJsonParse(computedValue);

@@ -7,11 +7,11 @@ import {
 } from "@/components/actions/_BaseActionFunctions";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { Action, ChangeLanguageAction } from "@/utils/actions";
+import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 import { Button, Divider, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { useEffect } from "react";
-import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 
 type Props = {
   action: Action;
