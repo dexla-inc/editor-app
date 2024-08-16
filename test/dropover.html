@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Drag and Drop</title>
+    <style>
+      #dropZone {
+        width: 300px;
+        height: 300px;
+        margin: 20px;
+        padding: 20px;
+        border: 2px solid black;
+        position: relative;
+        overflow: hidden;
+      }
+
+      #draggable {
+        width: 100px;
+        height: 100px;
+        background-color: lightblue;
+        position: absolute;
+        cursor: grab;
+        user-select: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="dropZone">
+      <div id="draggable"></div>
+    </div>
+
+    <script>
+      const draggable = document.getElementById("draggable");
+      const dropZone = document.getElementById("dropZone");
+
+      let offsetX, offsetY;
+
+      draggable.addEventListener("mousedown", (event) => {
+        offsetX = event.clientX - draggable.getBoundingClientRect().left;
+        offsetY = event.clientY - draggable.getBoundingClientRect().top;
+        draggable.style.cursor = "grabbing";
+
+        document.addEventListener("mousemove", moveElement);
+        document.addEventListener("mouseup", dropElement);
+      });
+
+      function moveElement(event) {
+        const rect = dropZone.getBoundingClientRect();
+        let left = event.clientX - rect.left - offsetX;
+        let top = event.clientY - rect.top - offsetY;
+
+        // Ensure the element stays within the drop zone
+        left = Math.max(0, Math.min(left, rect.width - draggable.clientWidth));
+        top = Math.max(0, Math.min(top, rect.height - draggable.clientHeight));
+
+        draggable.style.left = `${left}px`;
+        draggable.style.top = `${top}px`;
+      }
+
+      function dropElement() {
+        document.removeEventListener("mousemove", moveElement);
+        document.removeEventListener("mouseup", dropElement);
+        draggable.style.cursor = "grab";
+      }
+    </script>
+  </body>
+</html>

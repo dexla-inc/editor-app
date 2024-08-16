@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Drag and Drop Example</title>
+    <style>
+      .draggable {
+        width: 100px;
+        height: 100px;
+        background-color: #4caf50;
+        margin: 10px;
+        text-align: center;
+        line-height: 100px;
+        color: white;
+        cursor: move;
+        position: absolute;
+      }
+
+      body {
+        height: 100vh;
+        margin: 0;
+        overflow: hidden;
+        position: relative;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="drag1" class="draggable" draggable="true">Drag me</div>
+
+    <script>
+      const draggableElements = document.querySelectorAll(".draggable");
+
+      draggableElements.forEach((elem) => {
+        elem.addEventListener("dragstart", dragStart);
+        elem.addEventListener("dragend", dragEnd);
+      });
+
+      function dragStart(e) {
+        // Save the initial position
+        e.dataTransfer.setData("text/plain", e.target.id);
+      }
+
+      function dragEnd(e) {
+        e.preventDefault();
+        const id = e.dataTransfer.getData("text");
+        const element = document.getElementById(id);
+
+        // Calculate the new position
+        const rect = element.getBoundingClientRect();
+        element.style.left = `${e.pageX - rect.width / 2}px`;
+        element.style.top = `${e.pageY - rect.height / 2}px`;
+      }
+
+      document.body.addEventListener("dragover", (e) => {
+        e.preventDefault();
+      });
+
+      document.body.addEventListener("drop", (e) => {
+        e.preventDefault();
+        const id = e.dataTransfer.getData("text");
+        const element = document.getElementById(id);
+
+        // Calculate the new position
+        const rect = element.getBoundingClientRect();
+        element.style.left = `${e.pageX - rect.width / 2}px`;
+        element.style.top = `${e.pageY - rect.height / 2}px`;
+      });
+    </script>
+  </body>
+</html>

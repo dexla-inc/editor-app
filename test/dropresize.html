@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      .draggable {
+        width: 100px;
+        height: 100px;
+        background-color: lightblue;
+        position: absolute;
+        cursor: move;
+      }
+
+      .drop-zone {
+        width: 200px;
+        height: 200px;
+        border: 2px dashed #999;
+        position: relative;
+        margin: 20px;
+        display: inline-block;
+      }
+    </style>
+    <title>Multiple Drop Zones</title>
+  </head>
+  <body>
+    <div class="drop-zone" id="dropZone1"></div>
+    <div class="drop-zone" id="dropZone2"></div>
+    <div class="drop-zone" id="dropZone3"></div>
+
+    <div class="draggable" draggable="true" id="draggableElement"></div>
+
+    <script>
+      const draggableElement = document.getElementById("draggableElement");
+
+      draggableElement.addEventListener("dragstart", dragStart);
+      draggableElement.addEventListener("dragend", dragEnd);
+
+      document.querySelectorAll(".drop-zone").forEach((dropZone) => {
+        dropZone.addEventListener("dragover", dragOver);
+        dropZone.addEventListener("drop", dropElement);
+      });
+
+      let currentDraggedElement = null;
+
+      function dragStart(e) {
+        currentDraggedElement = e.target;
+        e.dataTransfer.setData("text/plain", null);
+      }
+
+      function dragOver(e) {
+        e.preventDefault();
+      }
+
+      function dropElement(e) {
+        e.preventDefault();
+
+        const dropZoneRect = e.currentTarget.getBoundingClientRect();
+        const draggedRect = currentDraggedElement.getBoundingClientRect();
+        const offsetX = e.clientX - dropZoneRect.left;
+        const offsetY = e.clientY - dropZoneRect.top;
+
+        currentDraggedElement.style.left = `${offsetX}px`;
+        currentDraggedElement.style.top = `${offsetY}px`;
+
+        if (offsetX + draggedRect.width > dropZoneRect.width) {
+          e.currentTarget.style.width = `${offsetX + draggedRect.width}px`;
+        }
+
+        if (offsetY + draggedRect.height > dropZoneRect.height) {
+          e.currentTarget.style.height = `${offsetY + draggedRect.height}px`;
+        }
+
+        e.currentTarget.appendChild(currentDraggedElement);
+        currentDraggedElement = null;
+      }
+
+      function dragEnd() {
+        currentDraggedElement = null;
+      }
+    </script>
+  </body>
+</html>

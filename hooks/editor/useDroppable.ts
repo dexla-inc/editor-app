@@ -83,6 +83,49 @@ export const useDroppable = ({
 }) => {
   const handleDrop = useCallback(
     (event: React.DragEvent) => {
+      // @ts-ignore
+      // const rect = event.target?.getBoundingClientRect();
+      const w = useEditorStore.getState().iframeWindow;
+      const currDraggableId =
+        // @ts-ignore
+        event.target.dataset.id || event.target.getAttribute(" id")!;
+      const componentMutableAttrs =
+        useEditorTreeStore.getState().componentMutableAttrs;
+      const updatedComponentMutableAttrs = {
+        ...componentMutableAttrs,
+        [id]: {
+          ...componentMutableAttrs[id],
+          blockDroppingChildrenInside: true,
+        },
+      };
+
+      const updateTreeComponentAttrs =
+        useEditorTreeStore.getState().updateTreeComponentAttrs;
+
+      // const left = event.pageX - rect.width / 2;
+      // const top = event.pageY - rect.height / 2;
+      // console.log(rect, left, top);
+
+      const elements = w?.document.elementsFromPoint(
+        event.clientX,
+        event.clientY,
+      );
+      // .filter((item) => {
+      //   // @ts-ignore
+      //   const currItemId = (item.dataset.id ||
+      //     item.getAttribute("id"))!;
+      //   const filterIds = [
+      //     currDraggableId,
+      //   ];
+
+      //   return (
+      //     // currItemId &&
+      //     !filterIds.includes(currItemId) &&
+      //     componentMutableAttrs[currItemId?.split("-related-").at(0)!]
+      //   );
+      // });
+      // console.log(currDraggableId, elements);
+
       const isEditorMode = isEditorModeSelector(useEditorTreeStore.getState());
       const { componentToAdd, isResizing, setCurrentTargetId } =
         useEditorStore.getState();
@@ -91,10 +134,64 @@ export const useDroppable = ({
       const selectedComponentId = selectedComponentIdSelector(
         useEditorTreeStore.getState(),
       );
+      const setComponentToAdd = useEditorStore.getState().setComponentToAdd;
       const activeId = componentToAdd?.id ?? selectedComponentId;
+
+      const dropZoneStyles = w?.getComputedStyle(event.target as Element);
+      const paddingLeft = parseFloat(dropZoneStyles?.paddingLeft ?? "0");
+      const paddingTop = parseFloat(dropZoneStyles?.paddingTop ?? "0");
+      const marginLeft = parseFloat(dropZoneStyles?.marginLeft ?? "0");
+      const marginTop = parseFloat(dropZoneStyles?.marginTop ?? "0");
+      const zIndex = parseInt(
+        dropZoneStyles?.zIndex ? dropZoneStyles.zIndex + 10 : "10",
+      );
 
       event.preventDefault();
       event.stopPropagation();
+
+      if (componentToAdd?.id) {
+        // console.log("componentToAdd", componentToAdd);
+        const rect = componentToAdd.props?.style;
+        const left = event.pageX - rect.width / 2 - paddingLeft - marginLeft;
+        const top = event.pageY - rect.height / 2 - paddingTop - marginTop;
+        // console.log(rect, left, top, event.pageX, event.pageY);
+        setComponentToAdd({
+          ...componentToAdd,
+          props: {
+            ...componentToAdd.props,
+            style: {
+              ...componentToAdd.props?.style,
+              top,
+              left,
+              position: "absolute",
+              zIndex,
+            },
+          },
+        });
+      } else {
+        // @ts-ignore
+        // console.log(activeId, event.target.id);
+        const rect = w?.document
+          .getElementById(activeId!)
+          ?.getBoundingClientRect()!;
+        const left = event.pageX - rect.width / 2 - paddingLeft - marginLeft;
+        const top = event.pageY - rect.height / 2 - paddingTop - marginTop;
+        // console.log(rect, left, top, event.pageX, event.pageY);
+        updateTreeComponentAttrs({
+          componentIds: [activeId!],
+          attrs: {
+            props: {
+              style: {
+                top: top < 0 ? 0 : top,
+                left: left < 0 ? 0 : left,
+                position: "absolute",
+                zIndex,
+              },
+            },
+          },
+        });
+      }
+
       const dropTarget = {
         id,
         edge: edge ?? "center",
@@ -209,6 +306,40 @@ export const useDroppable = ({
   }, []);
 
   const handleDragEnd = useCallback((event: any) => {
+    console.log("test");
+    // @ts-ignore
+    const rect = event.target?.getBoundingClientRect();
+    const w = useEditorStore.getState().iframeWindow;
+    const currDraggableId =
+      // @ts-ignore
+      event.target.dataset.id || event.target.getAttribute("id")!;
+    const componentMutableAttrs =
+      useEditorTreeStore.getState().componentMutableAttrs;
+
+    const left = event.pageX - rect.width / 2;
+    const top = event.pageY - rect.height / 2;
+    // console.log(rect, left, top);
+
+    const elements = w?.document.elementsFromPoint(
+      event.clientX,
+      event.clientY,
+    );
+    // .filter((item) => {
+    //   // @ts-ignore
+    //   const currItemId = (item.dataset.id ||
+    //     item.getAttribute("id"))!;
+    //   const filterIds = [
+    //     currDraggableId,
+    //   ];
+
+    //   return (
+    //     // currItemId &&
+    //     !filterIds.includes(currItemId) &&
+    //     componentMutableAttrs[currItemId?.split("-related-").at(0)!]
+    //   );
+    // });
+    // console.log(currDraggableId, elements);
+
     const isEditorMode = isEditorModeSelector(useEditorTreeStore.getState());
     if (!event || !isEditorMode) {
       return;
