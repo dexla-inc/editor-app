@@ -13,13 +13,38 @@ export function constructHeaders(
 ) {
   const contentType = mediaType || "application/json";
 
-  const { Authorization, ...restHeaders } = headers || {};
+  const normalizedHeaders = new Map<string, string>();
+
+  // Iterate through headers to normalize and detect duplicates
+  if (headers) {
+    for (const key in headers) {
+      if (Object.prototype.hasOwnProperty.call(headers, key)) {
+        const lowerCaseKey = key.toLowerCase();
+        if (!normalizedHeaders.has(lowerCaseKey)) {
+          normalizedHeaders.set(lowerCaseKey, key); // Store the original casing
+        }
+      }
+    }
+  }
+
+  // Rebuild headers using the original casing
+  const finalHeaders = Array.from(normalizedHeaders.values()).reduce(
+    (acc, originalKey) => {
+      acc[originalKey] = headers![originalKey];
+      return acc;
+    },
+    {} as Record<string, any>,
+  );
+
+  const { authorization } = finalHeaders;
+
+  console.log("constructHeaders", finalHeaders);
 
   return {
     "Content-Type": contentType,
-    ...restHeaders,
-    ...(Authorization
-      ? { Authorization }
+    ...finalHeaders,
+    ...(authorization
+      ? { Authorization: authorization }
       : authHeaderKey
         ? { Authorization: authHeaderKey }
         : {}),
@@ -37,8 +62,9 @@ export async function performFetch(
 ) {
   const isGetMethodType = methodType === "GET";
 
+  console.log("performFetch", headers);
   const _headers = constructHeaders(mediaType, headers, authHeaderKey);
-
+  console.log("headers", _headers);
   const init: RequestInit = {
     method: methodType,
     headers: _headers,
@@ -73,11 +99,13 @@ export async function performFetch(
 
     // SUPABASE ONLY, NEEDS REFACTORING
     const contentRange = response.headers.get("Content-Range");
-    
+
     if (!contentRange || contentRange.endsWith("/*")) return jsonResponse;
 
-    return extractPagingFromSupabase<typeof jsonResponse>(contentRange, jsonResponse);
-
+    return extractPagingFromSupabase<typeof jsonResponse>(
+      contentRange,
+      jsonResponse,
+    );
   } catch (error) {
     console.error("Failed to parse JSON:", error);
     return null;
