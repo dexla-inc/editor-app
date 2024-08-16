@@ -44,6 +44,7 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
             ref={canvasRef}
             bg="gray.0"
             display="flex"
+            h="100%"
             sx={{ flexDirection: "column" }}
           >
             {componentTree.children?.map((child) =>

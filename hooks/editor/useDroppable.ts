@@ -142,9 +142,9 @@ export const useDroppable = ({
       const paddingTop = parseFloat(dropZoneStyles?.paddingTop ?? "0");
       const marginLeft = parseFloat(dropZoneStyles?.marginLeft ?? "0");
       const marginTop = parseFloat(dropZoneStyles?.marginTop ?? "0");
-      const zIndex = parseInt(
-        dropZoneStyles?.zIndex ? dropZoneStyles.zIndex + 10 : "10",
-      );
+      const zIndex = isNaN(parseInt(dropZoneStyles?.zIndex!))
+        ? 10
+        : parseInt(dropZoneStyles?.zIndex!) + 10;
 
       event.preventDefault();
       event.stopPropagation();
@@ -168,6 +168,7 @@ export const useDroppable = ({
             },
           },
         });
+        console.log("===>", { zIndex });
       } else {
         // @ts-ignore
         // console.log(activeId, event.target.id);
@@ -177,6 +178,7 @@ export const useDroppable = ({
         const left = event.pageX - rect.width / 2 - paddingLeft - marginLeft;
         const top = event.pageY - rect.height / 2 - paddingTop - marginTop;
         // console.log(rect, left, top, event.pageX, event.pageY);
+        console.log("---->", { zIndex });
         updateTreeComponentAttrs({
           componentIds: [activeId!],
           attrs: {
