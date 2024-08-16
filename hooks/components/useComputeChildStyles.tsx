@@ -69,31 +69,21 @@ export const useComputeChildStyles = ({
 
   const tealOutline: Sx = useMemo(
     () => ({
-      pointerEvents: "none",
-      "& > *": {
-        pointerEvents: "auto",
+      "&:before": {
+        ...shadows,
+        content: '""',
+        position: "absolute",
+        left: 0,
+        top: 0,
+        right: 0,
+        bottom: 0,
+        width: "100%",
+        height: "100%",
+        zIndex: 1,
+        pointerEvents: "none",
       },
       "&:hover": {
-        pointerEvents: "auto",
         boxShadow: THIN_GREEN_BASE_SHADOW,
-        "& > *": {
-          pointerEvents: "none",
-        },
-        "&::after": {
-          content: `"${component.name}"`,
-          position: "absolute",
-          top: "0px",
-          left: "0",
-          background: "transparent",
-          color: GREEN_COLOR,
-          padding: "2px 4px",
-          fontSize: "12px",
-          borderRadius: "2px",
-          zIndex: 10000,
-          pointerEvents: "none",
-          whiteSpace: "nowrap",
-          transform: "translateY(-100%)",
-        },
       },
     }),
     [shadows],
