@@ -218,7 +218,9 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
 
                 // WARNING: backwards compatibility, removing height: 100% from main-content, fixes safari issues
                 newComponentMutableAttrs["main-content"].props.style.height =
-                  "auto";
+                  "100%";
+                newComponentMutableAttrs["content-wrapper"].props.style.height =
+                  "100%";
 
                 const newState = {
                   ...state,

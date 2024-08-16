@@ -1,147 +1,66 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Draggable Element with Highlight</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Drag and Log Position</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 0;
-            padding: 20px;
-            height: 100vh;
-            position: relative;
-        }
-        form {
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 20px;
-        }
-        label {
-            margin-bottom: 5px;
-        }
-        input {
-            margin-bottom: 10px;
-            padding: 5px;
-            width: 200px;
-        }
-        button {
-            padding: 5px;
-            width: 100px;
-        }
-        #draggable {
-            width: 100px;
-            height: 100px;
-            background-color: #007bff;
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: grab;
-            position: absolute;
-        }
-        .highlight {
-            position: absolute;
-            background-color: rgba(255, 0, 0, 0.5);
-        }
+      .draggable {
+        width: 100px;
+        height: 100px;
+        background-color: lightblue;
+        position: absolute;
+        cursor: move;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
+    <div id="dragMe" class="draggable" draggable="true"></div>
 
-<form>
-    <label for="name">Name:</label>
-    <input type="text" id="name" name="name">
-    <label for="email">Email:</label>
-    <input type="email" id="email" name="email">
-    <button type="submit">Submit</button>
-</form>
+    <script>
+      const draggable = document.getElementById("dragMe");
+      let shiftX, shiftY;
 
-<div id="draggable">Drag me</div>
+      draggable.addEventListener("dragstart", function (event) {
+        // Calculate shift between mouse position and element's top-left corner
+        const rect = draggable.getBoundingClientRect();
+        shiftX = event.clientX - rect.left;
+        shiftY = event.clientY - rect.top;
 
-<script>
-    const draggable = document.getElementById('draggable');
-    let offsetX, offsetY, mouseX, mouseY;
+        // Hide the default drag image
+        event.dataTransfer.setDragImage(new Image(), 0, 0);
+      });
 
-    draggable.addEventListener('mousedown', (e) => {
-        offsetX = e.clientX - draggable.getBoundingClientRect().left;
-        offsetY = e.clientY - draggable.getBoundingClientRect().top;
-        draggable.style.cursor = 'grabbing';
+      draggable.addEventListener("drag", function (event) {
+        if (event.clientX === 0 && event.clientY === 0) return; // Ignore invalid events
 
-        const onMouseMove = (e) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-            draggable.style.left = `${mouseX - offsetX}px`;
-            draggable.style.top = `${mouseY - offsetY}px`;
-            highlightEdges();
-        };
+        // Calculate new position of the element
+        const newX = event.clientX - shiftX;
+        const newY = event.clientY - shiftY;
 
-        const onMouseUp = () => {
-            document.removeEventListener('mousemove', onMouseMove);
-            document.removeEventListener('mouseup', onMouseUp);
-            draggable.style.cursor = 'grab';
-            clearHighlights();
-            clearMargins();
-        };
+        draggable.style.left = newX + "px";
+        draggable.style.top = newY + "px";
 
-        document.addEventListener('mousemove', onMouseMove);
-        document.addEventListener('mouseup', onMouseUp);
-    });
+        // Log the right-bottom corner position
+        const right = newX + draggable.offsetWidth;
+        const bottom = newY + draggable.offsetHeight;
+        console.log(`Right-Bottom Corner Position - X: ${right}, Y: ${bottom}`);
 
-    function highlightEdges() {
-        clearHighlights();
-        const elements = document.elementsFromPoint(mouseX, mouseY);
-        elements.forEach(el => {
-            if (el !== draggable && el !== document.body) {
-                const rect = el.getBoundingClientRect();
-                highlightEdgeIfClose(rect.left, mouseX, rect, 'left', el);
-                highlightEdgeIfClose(rect.right, mouseX, rect, 'right', el);
-                highlightEdgeIfClose(rect.top, mouseY, rect, 'top', el);
-                highlightEdgeIfClose(rect.bottom, mouseY, rect, 'bottom', el);
-            }
-        });
-    }
+        const cornerElement = document.createElement("div");
+        cornerElement.style.position = "absolute";
+        cornerElement.style.width = "10px";
+        cornerElement.style.height = "10px";
+        cornerElement.style.backgroundColor = "red";
+        cornerElement.style.left = `${right}px`;
+        cornerElement.style.top = `${bottom}px`;
+        document.body.appendChild(cornerElement);
+      });
 
-    function highlightEdgeIfClose(edge, mouse, rect, position, element) {
-        const threshold = 20;
-        const distance = Math.abs(edge - mouse);
-        if (distance <= threshold) {
-            const highlight = document.createElement('div');
-            highlight.className = 'highlight';
-            const size = threshold - distance;
-            if (position === 'left' || position === 'right') {
-                highlight.style.width = `${size}px`;
-                highlight.style.height = `${rect.height}px`;
-                highlight.style.top = `${rect.top}px`;
-                highlight.style.left = position === 'left' ? `${rect.left - size}px` : `${rect.right}px`;
-                element.style.marginLeft = position === 'left' ? `${size}px` : null;
-                element.style.marginRight = position === 'right' ? `${size}px` : null;
-            } else {
-                highlight.style.width = `${rect.width}px`;
-                highlight.style.height = `${size}px`;
-                highlight.style.left = `${rect.left}px`;
-                highlight.style.top = position === 'top' ? `${rect.top - size}px` : `${rect.bottom}px`;
-                element.style.marginTop = position === 'top' ? `${size}px` : null;
-                element.style.marginBottom = position === 'bottom' ? `${size}px` : null;
-            }
-            document.body.appendChild(highlight);
-        }
-    }
-
-    function clearHighlights() {
-        document.querySelectorAll('.highlight').forEach(el => el.remove());
-    }
-
-    function clearMargins() {
-        document.querySelectorAll('form, input, button').forEach(el => {
-            el.style.marginLeft = null;
-            el.style.marginRight = null;
-            el.style.marginTop = null;
-            el.style.marginBottom = null;
-        });
-    }
-</script>
-</body>
+      draggable.addEventListener("dragend", function () {
+        // Ensure the element stays in its last dragged position
+        draggable.style.left = parseInt(draggable.style.left) + "px";
+        draggable.style.top = parseInt(draggable.style.top) + "px";
+      });
+    </script>
+  </body>
 </html>

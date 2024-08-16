@@ -14,7 +14,7 @@ type ClosesEdge = {
 export const useDraggable = () => {
   const previousHighlightedElements = useRef<Set<HTMLElement>>(new Set());
   const originalPageSnapshot = useRef<HTMLElement[]>([]);
-  const temporaryDiv = useRef<HTMLDivElement | null>(null);
+  const lastClosestElement = useRef<HTMLElement | null>(null);
   let closestEdge = useRef<{
     position: "top" | "left" | "right" | "bottom";
     distance: number;
@@ -162,8 +162,34 @@ export const useDraggable = () => {
     let localClosestEdge: ClosesEdge = {} as ClosesEdge;
     let minDistance = Infinity;
 
+    if (elements.length === 0 && closestEdge.current) {
+      lastClosestElement.current = closestEdge.current.el;
+    }
+
+    if (lastClosestElement?.current) {
+      const newDiv = w?.document.getElementById("newdiv");
+      console.log(newDiv);
+      if (!newDiv) {
+        const localTemporaryDiv = w?.document.createElement("div");
+        localTemporaryDiv.id = "newdiv";
+        // localTemporaryDiv.dataset.isTemp = "true";
+        localTemporaryDiv.style.height = "auto";
+        localTemporaryDiv.style.width = "fit-content";
+        localTemporaryDiv.style.border = "1px solid green";
+        lastClosestElement?.current!.insertAdjacentElement(
+          "afterend",
+          localTemporaryDiv,
+        );
+      }
+      if (newDiv) {
+        newDiv.style.width = `${debouncedPosition.x}px`;
+        newDiv.style.height = `${debouncedPosition.y}px`;
+      }
+    }
+
     elements?.forEach((el) => {
       if (el !== w?.document.body) {
+        // console.log(el);
         const rect = el.getBoundingClientRect();
         const itemId = el?.getAttribute("data-id") ?? el?.getAttribute("id")!;
 
@@ -232,13 +258,34 @@ export const useDraggable = () => {
 
       // clearing gaps
       clearHighlights();
-      // mouse position
-      const debouncedPosition = { x: e.clientX, y: e.clientY };
       // dragging element id
       const currDraggableId =
         // @ts-ignore
         e.target.dataset.id || e.target.getAttribute("id")!;
-
+      // mouse position
+      // @ts-ignore
+      const debouncedPosition = {
+        x: e.clientX,
+        y: e.clientY,
+        top:
+          e.pageY -
+          e.clientY -
+          e.target.getBoundingClientRect().top +
+          e.target.offsetHeight,
+        left:
+          e.pageX -
+          e.clientX -
+          e.target.getBoundingClientRect().left +
+          e.target.offsetWidth,
+      };
+      // @ts-ignore
+      console.log(
+        debouncedPosition,
+        e.pageY,
+        e.clientY,
+        e.target.getBoundingClientRect().top,
+        e.target.offsetHeight,
+      );
       const localClosestEdge = findClosestElementToPointer(
         currDraggableId,
         debouncedPosition,
@@ -264,7 +311,8 @@ export const useDraggable = () => {
         localTemporaryDiv.id = nanoid();
         localTemporaryDiv.dataset.isTemp = "true";
         localTemporaryDiv.style.height = "auto";
-        localTemporaryDiv.style.width = "100%";
+        localTemporaryDiv.style.width = "fit-content";
+        localTemporaryDiv.style.border = "1px solid grey";
 
         if (
           parentFlexDirection === "row" &&
