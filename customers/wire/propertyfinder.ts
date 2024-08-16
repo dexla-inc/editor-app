@@ -62,8 +62,10 @@ Deno.serve(async (req: Request) => {
       ),
       plot_size: item.land_size,
       size: item.property_size,
-      bedroom: item.bedroom,
-      bathroom: item.bathroom,
+      bedroom: ["8", "9", "10", "10+"].includes(item.bedroom)
+        ? "7+"
+        : item.bedroom,
+      bathroom: ["8", "9", "10"].includes(item.bathroom) ? "7+" : item.bathroom,
       agent: {
         id: item.agents_id,
         name: item.agents_name,
