@@ -2,9 +2,7 @@ import { handleBackground } from "@/hooks/components/handleBackground";
 import { useEditorStore } from "@/stores/editor";
 import {
   componentHasBorder,
-  GRAY_COLOR,
   GRAY_OUTLINE,
-  GRAY_WHITE_COLOR,
   GREEN_BASE_SHADOW,
   GREEN_COLOR,
   THIN_GREEN_BASE_SHADOW,
