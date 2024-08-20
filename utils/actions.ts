@@ -557,7 +557,7 @@ export const useChangeLanguageAction = ({
 };
 
 export const useCustomJavascriptAction = ({ action, data }: any) => {
-  return new Function(action.body)();
+  return new Function(action.body ?? action.code)();
 };
 
 export type ChangeVariableActionParams = ActionParams & {
