@@ -556,9 +556,8 @@ export const useChangeLanguageAction = ({
   setLanguage(language as string);
 };
 
-// IMPORTANT: do not delete the variable data as it is used in the eval
 export const useCustomJavascriptAction = ({ action, data }: any) => {
-  return new Function(action.code)();
+  return new Function(action.body)();
 };
 
 export type ChangeVariableActionParams = ActionParams & {
