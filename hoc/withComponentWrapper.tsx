@@ -105,6 +105,8 @@ export const withComponentWrapper = <T extends Record<string, any>>(
                 color: component?.props?.tooltipColor,
                 position: component?.props?.tooltipPosition,
                 withArrow: true,
+                multiline: true,
+                ...(tooltip && tooltip.length > 30 && { width: 220 }),
               }
             : initiallyLoading
               ? { visible: true }
