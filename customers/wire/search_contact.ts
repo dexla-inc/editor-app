@@ -15,9 +15,7 @@ Deno.serve(async (req: Request) => {
 
   const url = new URL(req.url);
   const query = url.searchParams.get("query");
-  const path = url.pathname;
-  const typeMatch = path.match(/\/search_contact\/([^/]+)/);
-  const type = typeMatch ? typeMatch[1] : null;
+  const type = url.searchParams.get("type");
 
   if (!query) {
     return new Response(
