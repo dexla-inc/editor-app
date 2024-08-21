@@ -49,6 +49,8 @@ async function handleRequest(req: NextRequest) {
   }
 
   try {
+    console.log("route.ts-decodedUrl", decodedUrl);
+    console.log("route.ts-fetchOptions", fetchOptions);
     const response = await fetch(decodedUrl, fetchOptions);
 
     if (response.ok) {
