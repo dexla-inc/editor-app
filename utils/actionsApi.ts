@@ -38,8 +38,6 @@ export function constructHeaders(
 
   const { authorization } = finalHeaders;
 
-  console.log("constructHeaders", finalHeaders);
-
   return {
     "Content-Type": contentType,
     ...finalHeaders,
@@ -62,9 +60,7 @@ export async function performFetch(
 ) {
   const isGetMethodType = methodType === "GET";
 
-  console.log("performFetch", headers);
   const _headers = constructHeaders(mediaType, headers, authHeaderKey);
-  console.log("headers", _headers);
   const init: RequestInit = {
     method: methodType,
     headers: _headers,
