@@ -472,20 +472,13 @@ export const useApiCallAction = async (
   const endpoint = endpointResults?.find((e) => e.id === action.endpoint)!;
 
   try {
-    const accessToken = useDataSourceStore
-      .getState()
-      .getAuthState(projectId)?.accessToken;
-
-    const { url, header, body } = prepareRequestData(
+    const { url, header, body, authHeaderKey } = prepareRequestData(
       action,
       endpoint,
       computeValue,
     );
 
     let responseJson: any;
-
-    // TODO: Need to do this properly when we support more auth than bearer
-    const authHeaderKey = accessToken ? "Bearer " + accessToken : "";
 
     const fetchUrl = endpoint?.isServerRequest
       ? `/api/proxy?targetUrl=${toBase64(url)}`
