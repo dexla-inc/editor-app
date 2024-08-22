@@ -5,6 +5,8 @@ import { extractPagingFromSupabase, notUndefined } from "@/utils/common";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { ValueProps } from "@/types/dataBinding";
+import { useDataSourceStore } from "@/stores/datasource";
+import { useEditorTreeStore } from "@/stores/editorTree";
 
 export function constructHeaders(
   mediaType?: MediaTypes,
@@ -135,6 +137,18 @@ export const prepareRequestData = (
     ? pick<Record<string, string>, string>(computedValues, headerKeys)
     : undefined;
 
+  const authHeaderKey = (() => {
+    if (header?.Authorization) {
+      return `${header.Authorization}`;
+    }
+    const currentProjectId = useEditorTreeStore.getState()
+      .currentProjectId as string;
+    const accessToken = useDataSourceStore
+      .getState()
+      .getAuthState(currentProjectId)?.accessToken;
+    return accessToken ? `Bearer ${accessToken}` : undefined;
+  })();
+
   const body = bodyKeys.length
     ? pick<Record<string, string>, string>(computedValues, bodyKeys)
     : undefined;
@@ -146,7 +160,7 @@ export const prepareRequestData = (
   //   }
   // });
 
-  return { url, header, body };
+  return { url, header, body, authHeaderKey };
 };
 
 const getVariablesValue = (
