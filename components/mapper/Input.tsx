@@ -2,9 +2,11 @@ import { Icon } from "@/components/Icon";
 import { InputLoader } from "@/components/InputLoader";
 import { PasswordInput } from "@/components/mapper/PasswordInput";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { useBrandingStyles } from "@/hooks/editor/useBrandingStyles";
 import { useChangeState } from "@/hooks/components/useChangeState";
+import { useInputValue } from "@/hooks/components/useInputValue";
+import { useBrandingStyles } from "@/hooks/editor/useBrandingStyles";
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { EditableComponentMapper } from "@/utils/editor";
 import {
   ActionIcon,
@@ -17,8 +19,6 @@ import {
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { forwardRef, memo } from "react";
-import { useEditorTreeStore } from "@/stores/editorTree";
-import { useInputValue } from "@/hooks/components/useInputValue";
 import { useShallow } from "zustand/react/shallow";
 
 type Props = EditableComponentMapper & NumberInputProps & TextInputProps;
@@ -80,7 +80,7 @@ const InputComponent = forwardRef(
 
     // clear input field
     const clearInput = async () => {
-      setValue(_defaultValue);
+      handleChange(_defaultValue);
       const iframeWindow = useEditorStore.getState().iframeWindow;
       const currentWindow = iframeWindow ?? window;
       const inputElement = currentWindow.document.querySelector(
