@@ -15,6 +15,7 @@ Deno.serve(async (req: Request) => {
 
   const url = new URL(req.url);
   const query = url.searchParams.get("query");
+  const search_id = url.searchParams.get("id") ?? null;
 
   if (!query) {
     return new Response(
@@ -28,6 +29,7 @@ Deno.serve(async (req: Request) => {
 
   const { data, error } = await supabaseClient.rpc("search_property", {
     query,
+    search_id,
   });
 
   if (error) {
