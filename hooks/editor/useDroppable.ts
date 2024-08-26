@@ -10,7 +10,7 @@ import {
   getComponentTreeById,
 } from "@/utils/editor";
 import debounce from "lodash.debounce";
-import { useCallback } from "react";
+import { useCallback, useRef } from "react";
 import {
   isEditorModeSelector,
   selectedComponentIdSelector,
@@ -81,11 +81,19 @@ export const useDroppable = ({
   onDrop: (droppedId: string, dropTarget: DropTarget) => void;
   currentWindow?: Window;
 }) => {
+  const position = useRef<any>(null);
+  const dropTarget2 = useRef<any>(null);
+
   const handleDrop = useCallback(
     (event: React.DragEvent) => {
       const isEditorMode = isEditorModeSelector(useEditorTreeStore.getState());
-      const { componentToAdd, isResizing, setCurrentTargetId } =
-        useEditorStore.getState();
+      const setIsDragging = useEditorStore.getState().setIsDragging;
+      const {
+        componentToAdd,
+        isResizing,
+        setCurrentTargetId,
+        setComponentToAdd,
+      } = useEditorStore.getState();
       if (isResizing || !isEditorMode) return;
       const edge = useEditorStore.getState().edge;
       const selectedComponentId = selectedComponentIdSelector(
@@ -95,8 +103,25 @@ export const useDroppable = ({
 
       event.preventDefault();
       event.stopPropagation();
+      console.log(
+        "--->",
+        dropTarget2.current,
+        position.current,
+        componentToAdd,
+      );
+
+      if (componentToAdd) {
+        const newStyles = updateGridPosition(
+          componentToAdd.props?.style,
+          position.current.column,
+          position.current.row,
+        );
+        componentToAdd.props = { ...componentToAdd.props, style: newStyles };
+        setComponentToAdd(componentToAdd);
+      }
+
       const dropTarget = {
-        id,
+        id: dropTarget2.current,
         edge: edge ?? "center",
       } as DropTarget;
       if (activeId) {
@@ -104,6 +129,8 @@ export const useDroppable = ({
       }
 
       setCurrentTargetId(undefined);
+      setIsDragging(false);
+      currentWindow!.document.getElementById("root")!.style.opacity = "1";
     },
     [id, onDrop],
   );
@@ -151,10 +178,69 @@ export const useDroppable = ({
     }
   };
 
+  function getGridCoordinates(element: any, x: any, y: any) {
+    // console.log(element, x, y);
+    const rect = element.getBoundingClientRect();
+    const style = currentWindow?.getComputedStyle(element)!;
+    const gridColumns = style.gridTemplateColumns.split(" ").length;
+    const gridRows = Math.round(rect.height / 10);
+
+    const columnWidth = rect.width / gridColumns;
+    const rowHeight = rect.height / gridRows;
+
+    const column = Math.floor((x - rect.left) / columnWidth) + 1;
+    const row = Math.floor((y - rect.top) / rowHeight) + 1;
+
+    return { column, row };
+  }
+
+  function updateGridPosition(
+    styleObject: any,
+    newColumnStart: any,
+    newRowStart: any,
+  ) {
+    // Helper function to update a single grid value
+    const updateGridValue = (currentValue: any, newStart: any) => {
+      const parts = currentValue.split("/").map((part: any) => part.trim());
+      const currentStart = parseInt(parts[0], 10);
+      const currentEnd = parts[1] ? parseInt(parts[1], 10) : currentStart;
+
+      const diff = currentEnd - currentStart;
+      const newEnd = newStart + diff;
+
+      return `${newStart}/${newEnd}`;
+    };
+
+    // Update gridColumn
+    if (styleObject.gridColumn) {
+      styleObject.gridColumn = updateGridValue(
+        styleObject.gridColumn,
+        newColumnStart,
+      );
+    }
+
+    // Update gridRow
+    if (styleObject.gridRow) {
+      styleObject.gridRow = updateGridValue(styleObject.gridRow, newRowStart);
+    }
+
+    return styleObject;
+  }
+
+  const extractComponentBaseId = (element: HTMLElement): string | undefined => {
+    const rawId = element.dataset.id ?? element.getAttribute("id") ?? undefined;
+    return rawId ? rawId.split("-related-").at(0) : rawId;
+  };
+
   const handleDragOver = useCallback(
     (event: React.DragEvent) => {
       const { currentTargetId, isResizing } = useEditorStore.getState();
       const isEditorMode = isEditorModeSelector(useEditorTreeStore.getState());
+      const selectedComponentId = selectedComponentIdSelector(
+        useEditorTreeStore.getState(),
+      )!;
+      const componentMutableAttrs =
+        useEditorTreeStore.getState().componentMutableAttrs;
       if (isResizing || !isEditorMode) return;
 
       event.preventDefault();
@@ -166,19 +252,72 @@ export const useDroppable = ({
         w?.document?.querySelector(`[data-id^="${id}"]`) ??
         w?.document?.querySelector(`[id^="${id}"]`);
       const rect = comp?.getBoundingClientRect()!;
+      // console.log("1234", comp, currentTargetId);
 
-      if (!mouseX || !mouseY || !rect || currentTargetId !== id) return;
+      const elements =
+        w?.document.elementsFromPoint(mouseX, mouseY).filter((element) => {
+          const comp =
+            componentMutableAttrs[
+              extractComponentBaseId(element as HTMLElement)!
+            ];
 
-      const leftDist = mouseX - rect.left;
-      const rightDist = rect.right - mouseX;
-      const topDist = mouseY - rect.top;
-      const bottomDist = rect.bottom - mouseY;
+          return comp && !comp?.blockDroppingChildrenInside;
+        }) || [];
 
-      if (mouseX <= NAVBAR_WIDTH) {
-        _handleEdgeSet({ leftDist, rightDist, topDist, bottomDist }, 2);
-      } else {
-        _handleEdgeSet({ leftDist, rightDist, topDist, bottomDist }, 5);
-      }
+      const firstValidParentElement = elements.at(0);
+      dropTarget2.current = extractComponentBaseId(
+        firstValidParentElement as HTMLElement,
+      );
+
+      if (!mouseX || !mouseY || !rect) return;
+
+      // const leftDist = mouseX - rect.left;
+      // const rightDist = rect.right - mouseX;
+      // const topDist = mouseY - rect.top;
+      // const bottomDist = rect.bottom - mouseY;
+
+      const currentDraggingElement =
+        currentWindow?.document.getElementById(selectedComponentId) ??
+        currentWindow?.document.querySelector(
+          `[data-id="${selectedComponentId}"]`,
+        );
+
+      // const draggingElementStyles = getComputedStyle(currentDraggingElement!);
+      // const currentWidth = draggingElementStyles.gridColumn;
+      // const currentHeight = draggingElementStyles.gridRow;
+
+      // console.log("====>", draggingElementStyles, currentDraggingElement);
+
+      // if (mouseX <= NAVBAR_WIDTH) {
+      //   _handleEdgeSet({ leftDist, rightDist, topDist, bottomDist }, 2);
+      // } else {
+      //   _handleEdgeSet({ leftDist, rightDist, topDist, bottomDist }, 5);
+      // }
+      const gridContainer = currentWindow?.document.getElementById("root")!;
+      const target = event.target;
+
+      const coordinates = getGridCoordinates(
+        firstValidParentElement,
+        mouseX,
+        mouseY,
+      );
+      // console.log(firstValidParentElement, coordinates);
+      position.current = coordinates;
+
+      // Calculate the grid-based coordinates
+      const testRect = gridContainer.getBoundingClientRect();
+      const x = event.clientX - testRect.left;
+      const y = event.clientY - testRect.top;
+
+      // Calculate the grid column and row
+      const gridColumn = Math.floor(x / (testRect.width / 48)) + 1;
+      const gridRow = Math.floor(y / 10) + 1;
+
+      // console.log(
+      //   `Element dropped over grid coordinates: Column: ${gridColumn}, Row: ${gridRow}`,
+      // );
+
+      // updateGridPosition(currentDraggingElement, gridColumn, gridRow);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [id, currentWindow],
@@ -209,6 +348,8 @@ export const useDroppable = ({
   }, []);
 
   const handleDragEnd = useCallback((event: any) => {
+    currentWindow!.document.getElementById("root")!.style.opacity = "1";
+    const setIsDragging = useEditorStore.getState().setIsDragging;
     const isEditorMode = isEditorModeSelector(useEditorTreeStore.getState());
     if (!event || !isEditorMode) {
       return;
@@ -222,9 +363,30 @@ export const useDroppable = ({
     if (edge !== undefined) {
       setEdge(undefined);
     }
+    setIsDragging(false);
   }, []);
 
+  // const handleDrag = (event: React.DragEvent) => {
+  //   const gridContainer =
+  //     currentWindow?.document.getElementById("iframe-content")!;
+  //
+  //   // Calculate the grid-based coordinates
+  //   const testRect = gridContainer.getBoundingClientRect();
+  //   const x = event.clientX - testRect.left;
+  //   const y = event.clientY - testRect.top;
+  //
+  //   // Calculate the grid column and row
+  //   const gridColumn = Math.floor(x / (testRect.width / 48)) + 1;
+  //   const gridRow = Math.floor(y / 10) + 1;
+  //
+  //   console.log(
+  //     `-Element dropped over grid coordinates: Column: ${gridColumn}, Row: ${gridRow}`,
+  //   );
+  //   // event.target.style.gridColumn = gridColumn;
+  // };
+
   return {
+    // onDrag: handleDrag,
     onDrop: handleDrop,
     onDragOver: handleDragOver,
     onDragEnter: handleDragEnter,

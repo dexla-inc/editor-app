@@ -23,6 +23,9 @@ type Props = {
   projectId: string;
 } & BoxProps;
 
+export const DEFAULT_GRID_SIZE_X = 80;
+export const DEFAULT_GRID_SIZE_Y = 10;
+
 export const IFrame = ({ children, projectId, ...props }: Props) => {
   const isEditorMode = useEditorTreeStore(isEditorModeSelector);
   const [contentRef, setContentRef] = useState<HTMLIFrameElement>();
@@ -45,7 +48,7 @@ export const IFrame = ({ children, projectId, ...props }: Props) => {
   useEffect(() => {
     mountNode?.setAttribute(
       "style",
-      `overflow: visible; margin: 24px 0px 24px 10px;`,
+      `overflow: visible; margin: 24px 10px 24px 10px;`,
     );
 
     const styleTag = document.createElement("style");
@@ -135,13 +138,19 @@ export const IFrame = ({ children, projectId, ...props }: Props) => {
           >
             <Box
               className={isEditorMode ? "editor-mode" : "preview-mode"}
-              component={ScrollArea}
-              offsetScrollbars
+              // component={ScrollArea}
+              // offsetScrollbars
               id="iframe-content"
-              styles={{
-                root: { overflow: "visible" },
-                viewport: { overflow: "visible!important" },
+              sx={{
+                position: "relative",
+                overflow: "visible",
+                width: "100%",
+                height: "100%",
               }}
+              // styles={{
+              //   root: ,
+              //   // viewport: { overflow: "visible!important" },
+              // }}
             >
               {children}
             </Box>

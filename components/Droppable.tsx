@@ -15,6 +15,7 @@ export const Droppable = ({
 }: PropsWithChildren<Props>) => {
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const onDrop = useOnDrop();
+  const isDragging = useEditorStore((state) => state.isDragging);
   const droppable = useDroppable({
     id,
     onDrop,
@@ -22,7 +23,23 @@ export const Droppable = ({
   });
 
   return (
-    <Box id={id} w="calc(100% - 4px)" {...props} {...droppable}>
+    <Box id={id} {...props} {...droppable} p={0}>
+      {isDragging && (
+        <div
+          style={{
+            width: "100%",
+            height: "100%",
+            position: "absolute",
+            backgroundImage: `
+            linear-gradient(to right, #000 1px, transparent 1px),
+            linear-gradient(to bottom, #000 1px, transparent 1px)`,
+            backgroundSize: `calc(100% / 48) 10px`,
+            zIndex: 9999,
+          }}
+        >
+          test
+        </div>
+      )}
       {children}
     </Box>
   );

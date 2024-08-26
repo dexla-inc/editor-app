@@ -21,6 +21,7 @@ import { nanoid } from "nanoid";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { CSSProperties } from "react";
 import crawl from "tree-crawl";
+import set from "lodash.set";
 
 export type ComponentStructure = {
   children?: ComponentStructure[];
@@ -412,9 +413,26 @@ export const getTreeComponentMutableProps = (treeRoot: Component) => {
 };
 
 export const extractComponentMutableAttrs = (
-  component: Partial<ComponentTree>,
+  component: Partial<ComponentStructure>,
 ) => {
-  return omit(component, ["children"]);
+  const omitedKeys = omit(component, ["children"]);
+  if (component.id !== "root" && component.id !== "content-wrapper") {
+    if (!omitedKeys.blockDroppingChildrenInside) {
+      if (component.id === "main-content") {
+        set(omitedKeys, "props.style.display", "grid");
+        set(omitedKeys, "props.style.gridTemplateColumns", "repeat(48, 1fr)");
+        set(omitedKeys, "props.style.gridAutoRows", "10px");
+      } else {
+        set(omitedKeys, "props.style.display", "grid");
+        set(omitedKeys, "props.style.gridTemplateColumns", "subgrid");
+        set(omitedKeys, "props.style.gridAutoRows", "subgrid");
+      }
+    } else {
+      set(omitedKeys, "props.style.display", "grid");
+    }
+  }
+
+  return omitedKeys;
 };
 
 export const updateTreeComponentChildren = (
@@ -527,6 +545,26 @@ export const getAllChildrenComponents = (
 export const getComponentIndex = (parent: ComponentTree, id: string) => {
   if (!parent) return -1;
   return parent.children?.findIndex((child) => child.id === id) ?? -1;
+};
+
+export const addComponent2 = (
+  treeRoot: ComponentStructure,
+  componentToAdd: ComponentStructure,
+  dropTarget: DropTarget,
+): string => {
+  const copyComponentToAdd = cloneObject(componentToAdd);
+  crawl(
+    treeRoot,
+    (node, context) => {
+      if (node.id === dropTarget.id) {
+        node.children = [...(node.children || []), copyComponentToAdd];
+        context.break();
+      }
+    },
+    { order: "bfs" },
+  );
+
+  return copyComponentToAdd.id!;
 };
 
 export const addComponent = (

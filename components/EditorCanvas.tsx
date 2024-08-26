@@ -38,8 +38,10 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
           m={0}
           p={2}
           miw={980}
+          h="100%"
         >
           <Paper
+            h="100%"
             shadow="xs"
             ref={canvasRef}
             bg="gray.0"

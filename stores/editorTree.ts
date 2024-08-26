@@ -35,38 +35,33 @@ const emptyEditorComponentMutableAttrs = {
     id: "root",
     name: "Container",
     description: "Root component",
+    props: {
+      style: {
+        width: "100%",
+        height: "100%",
+      },
+    },
   },
   "content-wrapper": {
     id: "content-wrapper",
-    name: "Grid",
+    name: "Container",
     description: "Body",
     props: {
-      gridSize: GRID_SIZE,
-      ...initialGridValues,
       style: {
-        ...initialGridValues.style,
         gap: "0",
-        minHeight: "20px",
+        width: "100%",
+        height: "100%",
       },
     },
   },
   "main-content": {
     id: "main-content",
-    name: "GridColumn",
+    name: "Container",
     description: "Main Content",
     props: {
-      span: GRID_SIZE,
-      ...initialGridColumnValues,
       style: {
-        ...initialGridColumnValues.style,
-        minHeight: "100vh",
-        paddingLeft: "0px",
-        paddingTop: "0px",
-        paddingRight: "0px",
-        paddingBottom: "0px",
-        backgroundSize: "contain",
-        overflow: "auto",
-        height: "auto",
+        height: "100%",
+        width: "100%",
       },
     },
   },
@@ -212,10 +207,6 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                 const newComponentMutableAttrs = getTreeComponentMutableProps(
                   tree.root,
                 );
-
-                // WARNING: backwards compatibility, removing height: 100% from main-content, fixes safari issues
-                newComponentMutableAttrs["main-content"].props.style.height =
-                  "auto";
 
                 const newState = {
                   ...state,

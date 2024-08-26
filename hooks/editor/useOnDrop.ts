@@ -14,6 +14,7 @@ import {
   moveComponentToDifferentParent,
   removeComponent,
   removeComponentFromParent,
+  addComponent2,
 } from "@/utils/editor";
 import { useCallback } from "react";
 
@@ -36,83 +37,91 @@ export const useOnDrop = () => {
     (_droppedId: string, dropTarget: DropTarget) => {
       const { tree: editorTree, setTree: setEditorTree } =
         useEditorTreeStore.getState();
-      const { componentToAdd, isResizing } = useEditorStore.getState();
+      const { componentToAdd } = useEditorStore.getState();
 
-      if (isResizing) return;
-      // const droppedId = parseId(_droppedId ?? componentToAdd?.id);
-      const activeComponent = componentToAdd
-        ? componentToAdd
-        : useEditorTreeStore.getState().componentMutableAttrs[_droppedId];
-      dropTarget.id = parseId(dropTarget.id);
-      const activeComponentTree = getComponentTreeById(
-        editorTree.root,
-        activeComponent.id!,
-      );
-
-      let targetComponent =
-        useEditorTreeStore.getState().componentMutableAttrs[dropTarget.id];
-      const targetParentComponentTree = getComponentParent(
-        editorTree.root as ComponentStructure,
-        dropTarget.id,
-      );
-      const isParentContentWrapper =
-        targetParentComponentTree?.id === "content-wrapper";
-      const isDroppable =
-        !isParentContentWrapper || dropTarget.edge === "center";
-      const isMoving = !!activeComponentTree;
-      if (!isMoving && activeComponent.id && componentToAdd && isDroppable) {
-        if (componentToAdd.name === "Grid") {
-          handleGridComponentAddition(
-            editorTree.root as ComponentStructure,
-            dropTarget,
-            targetComponent,
-            componentToAdd,
-          );
-        } else {
-          handleComponentAddition(
-            editorTree.root as ComponentStructure,
-            dropTarget,
-            targetComponent,
-            componentToAdd,
-          );
-        }
-      } else if (dropTarget.id !== "root" && isDroppable) {
-        if (activeComponent?.name === "Grid") {
-          const isDopopingInVerticalAxis =
-            dropTarget.edge === "top" || dropTarget.edge === "bottom";
-          let useParentInstead = false;
-          if (
-            isMoving &&
-            isDopopingInVerticalAxis &&
-            targetComponent?.name === "GridColumn"
-          ) {
-            useParentInstead = true;
-          }
-
-          handleGridReorderingOrMoving(
-            editorTree.root as ComponentStructure,
-            activeComponent,
-            targetComponent,
-            dropTarget,
-            useParentInstead,
-          );
-        } else {
-          handleReorderingOrMoving(
-            editorTree.root as ComponentStructure,
-            activeComponent,
-            targetComponent,
-            dropTarget,
-          );
-        }
-      } else if (isDroppable) {
-        handleRootDrop(
+      if (componentToAdd) {
+        addComponent2(
           editorTree.root as ComponentStructure,
-          activeComponent,
+          componentToAdd,
           dropTarget,
         );
+        console.log("onDrop", editorTree, componentToAdd, dropTarget);
+        setEditorTree(editorTree as EditorTreeCopy);
       }
-
-      setEditorTree(editorTree as EditorTreeCopy);
+      // const droppedId = parseId(_droppedId ?? componentToAdd?.id);
+      // const activeComponent = componentToAdd
+      //   ? componentToAdd
+      //   : useEditorTreeStore.getState().componentMutableAttrs[_droppedId];
+      // dropTarget.id = parseId(dropTarget.id);
+      // const activeComponentTree = getComponentTreeById(
+      //   editorTree.root,
+      //   activeComponent.id!,
+      // );
+      //
+      // let targetComponent =
+      //   useEditorTreeStore.getState().componentMutableAttrs[dropTarget.id];
+      // const targetParentComponentTree = getComponentParent(
+      //   editorTree.root as ComponentStructure,
+      //   dropTarget.id,
+      // );
+      // const isParentContentWrapper =
+      //   targetParentComponentTree?.id === "content-wrapper";
+      // const isDroppable =
+      //   !isParentContentWrapper || dropTarget.edge === "center";
+      // const isMoving = !!activeComponentTree;
+      // if (!isMoving && activeComponent.id && componentToAdd && isDroppable) {
+      //   if (componentToAdd.name === "Grid") {
+      //     handleGridComponentAddition(
+      //       editorTree.root as ComponentStructure,
+      //       dropTarget,
+      //       targetComponent,
+      //       componentToAdd,
+      //     );
+      //   } else {
+      //     handleComponentAddition(
+      //       editorTree.root as ComponentStructure,
+      //       dropTarget,
+      //       targetComponent,
+      //       componentToAdd,
+      //     );
+      //   }
+      // } else if (dropTarget.id !== "root" && isDroppable) {
+      //   if (activeComponent?.name === "Grid") {
+      //     const isDopopingInVerticalAxis =
+      //       dropTarget.edge === "top" || dropTarget.edge === "bottom";
+      //     let useParentInstead = false;
+      //     if (
+      //       isMoving &&
+      //       isDopopingInVerticalAxis &&
+      //       targetComponent?.name === "GridColumn"
+      //     ) {
+      //       useParentInstead = true;
+      //     }
+      //
+      //     handleGridReorderingOrMoving(
+      //       editorTree.root as ComponentStructure,
+      //       activeComponent,
+      //       targetComponent,
+      //       dropTarget,
+      //       useParentInstead,
+      //     );
+      //   } else {
+      //     handleReorderingOrMoving(
+      //       editorTree.root as ComponentStructure,
+      //       activeComponent,
+      //       targetComponent,
+      //       dropTarget,
+      //     );
+      //   }
+      // } else if (isDroppable) {
+      //   handleRootDrop(
+      //     editorTree.root as ComponentStructure,
+      //     activeComponent,
+      //     dropTarget,
+      //   );
+      // }
+      //
+      // setEditorTree(editorTree as EditorTreeCopy);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [handleComponentAddition, handleReorderingOrMoving, handleRootDrop],
@@ -155,40 +164,41 @@ export const useOnDrop = () => {
     targetComponent: Component | null,
     componentToAdd: ComponentStructure,
   ) {
-    const targetParent = getComponentParent(treeRoot, dropTarget.id);
-    const isPopOver = componentToAdd.name === "PopOver";
-    if (!targetComponent?.blockDroppingChildrenInside || isPopOver) {
-      addComponent(treeRoot, componentToAdd, dropTarget);
-
-      if (dropTarget.edge !== "center") {
-        handleReorderingOrMoving(
-          treeRoot,
-          componentToAdd,
-          targetComponent,
-          dropTarget,
-        );
-      }
-
-      setSelectedComponentIds(() => [componentToAdd.id!]);
-    } else {
-      if (targetParent) {
-        const dropTargetIndex = getComponentIndex(targetParent, dropTarget.id);
-
-        const newSelectedId = addComponent(
-          treeRoot,
-          componentToAdd,
-          {
-            id: targetParent.id as string,
-            edge: dropTarget.edge,
-          },
-          ["right", "bottom"].includes(dropTarget.edge)
-            ? dropTargetIndex + 1
-            : dropTargetIndex,
-        );
-        setSelectedComponentIds(() => [newSelectedId]);
-      }
-    }
-    setComponentToAdd(undefined);
+    console.log(dropTarget, targetComponent, componentToAdd);
+    // const targetParent = getComponentParent(treeRoot, dropTarget.id);
+    // // const isPopOver = componentToAdd.name === "PopOver";
+    // if (!targetComponent?.blockDroppingChildrenInside) {
+    //   addComponent(treeRoot, componentToAdd, dropTarget);
+    //
+    //   if (dropTarget.edge !== "center") {
+    //     handleReorderingOrMoving(
+    //       treeRoot,
+    //       componentToAdd,
+    //       targetComponent,
+    //       dropTarget,
+    //     );
+    //   }
+    //
+    //   setSelectedComponentIds(() => [componentToAdd.id!]);
+    // } else {
+    //   if (targetParent) {
+    //     const dropTargetIndex = getComponentIndex(targetParent, dropTarget.id);
+    //
+    //     const newSelectedId = addComponent(
+    //       treeRoot,
+    //       componentToAdd,
+    //       {
+    //         id: targetParent.id as string,
+    //         edge: dropTarget.edge,
+    //       },
+    //       ["right", "bottom"].includes(dropTarget.edge)
+    //         ? dropTargetIndex + 1
+    //         : dropTargetIndex,
+    //     );
+    //     setSelectedComponentIds(() => [newSelectedId]);
+    //   }
+    // }
+    // setComponentToAdd(undefined);
   }
 
   function handleGridReorderingOrMoving(

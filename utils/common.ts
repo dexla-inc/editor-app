@@ -170,14 +170,36 @@ export const emptyEditorTree = {
   root: {
     id: "root",
     name: "Container",
+    description: "Root component",
+    props: {
+      style: {
+        width: "100%",
+        height: "100%",
+      },
+    },
     children: [
       {
         id: "content-wrapper",
-        name: "Grid",
+        name: "Container",
+        description: "Body",
+        props: {
+          style: {
+            gap: "0",
+            width: "100%",
+            height: "100%",
+          },
+        },
         children: [
           {
             id: "main-content",
-            name: "GridColumn",
+            name: "Container",
+            description: "Main Content",
+            props: {
+              style: {
+                height: "100%",
+                width: "100%",
+              },
+            },
           },
         ],
       },
@@ -196,34 +218,23 @@ export const emptyEditorAttrsTree = {
     children: [
       {
         id: "content-wrapper",
-        name: "Grid",
+        name: "Container",
         description: "Body",
         props: {
-          gridSize: GRID_SIZE,
-          ...initialGridValues,
-          gap: "0",
           style: {
-            ...initialGridValues.style,
-            minHeight: "20px",
+            height: "100%",
+            width: "100%",
           },
         },
         children: [
           {
             id: "main-content",
-            name: "GridColumn",
+            name: "Container",
             description: "Main Content",
             props: {
-              span: GRID_SIZE,
-              ...initialGridColumnValues,
               style: {
-                ...initialGridColumnValues.style,
-                minHeight: "100vh",
-                paddingLeft: "0px",
-                paddingTop: "0px",
-                paddingRight: "0px",
-                paddingBottom: "0px",
-                backgroundSize: "contain",
-                overflow: "auto",
+                height: "100%",
+                width: "100%",
               },
             },
           },

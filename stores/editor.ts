@@ -66,6 +66,8 @@ export type EditorState = {
   setEdge: (edge: Edge | undefined) => void;
   selectedPageActionIds: string[];
   setSelectedPageActionIds: (actionId: string) => void;
+  isDragging: boolean;
+  setIsDragging: (isDragging: boolean) => void;
 };
 
 // creates a store with undo/redo capability
@@ -73,6 +75,8 @@ export const useEditorStore = create<EditorState>()(
   // @ts-ignore
   devtools(
     (set) => ({
+      isDragging: false,
+      setIsDragging: (isDragging: boolean) => set({ isDragging }),
       edge: undefined,
       activeSubTab: "config",
       setEdge: (edge) => set({ edge }, false, "editor/setEdge"),

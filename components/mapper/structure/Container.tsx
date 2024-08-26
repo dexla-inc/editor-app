@@ -11,9 +11,14 @@ export const jsonStructure = (props?: any): ComponentStructure => {
   const mergedStyle = {
     ...defaultStyle,
     ...propStyle,
-    width: propStyle?.width || "100%",
-    height: propStyle?.height || "auto",
-    minHeight: propStyle?.minHeight || "20px",
+    width: "auto",
+    height: "auto",
+    // minHeight: propStyle?.minHeight || "20px",
+    gridColumn: "1/5",
+    gridRow: "1/10",
+    display: "grid",
+    gridTemplateColumns: "subgrid",
+    gridTemplateRows: "subgrid",
   };
 
   return {

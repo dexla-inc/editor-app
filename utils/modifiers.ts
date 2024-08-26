@@ -178,9 +178,13 @@ export const requiredModifiers: RequiredModifiers = {
     icon: "",
     children: "Button",
     style: {
-      width: "fit-content",
-      paddingLeft: "32px",
-      paddingRight: "32px",
+      width: "auto",
+      height: "auto",
+      // paddingLeft: "32px",
+      // paddingRight: "32px",
+      gridColumn: "1 / 2",
+      gridRow: "1 / 3",
+      display: "subgrid",
     },
   },
   countdownButton: {
