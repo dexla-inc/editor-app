@@ -1,6 +1,7 @@
+import isEmpty from "lodash.isempty";
+import isEqual from "lodash.isequal";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-import isEmpty from "lodash.isempty";
 
 type InputsState = {
   inputValues: Record<string, any>;
@@ -22,7 +23,13 @@ export const useInputsStore = create<InputsState>()(
       inputValues: {},
       setInputValue: (id, value) =>
         set(
-          (state) => ({ inputValues: { ...state.inputValues, [id]: value } }),
+          (state) => {
+            const currentValue = state.inputValues[id];
+            if (!isEqual(currentValue, value)) {
+              return { inputValues: { ...state.inputValues, [id]: value } };
+            }
+            return state;
+          },
           false,
           "setInputValue",
         ),

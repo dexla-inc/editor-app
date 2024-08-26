@@ -2,6 +2,7 @@ import { ActionIconTransparent } from "@/components/ActionIconTransparent";
 import { useDraggable } from "@/hooks/editor/useDraggable";
 import { useOnDragStart } from "@/hooks/editor/useOnDragStart";
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { useThemeStore } from "@/stores/theme";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { theme } from "@/utils/branding";
@@ -10,6 +11,7 @@ import {
   componentMapper,
   structureMapper,
 } from "@/utils/componentMapper";
+import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 import { ICON_DELETE, ICON_SIZE, NAVBAR_WIDTH } from "@/utils/config";
 import {
   ComponentStructure,
@@ -23,12 +25,10 @@ import {
 } from "@/utils/editor";
 import { Group, Text, Tooltip, UnstyledButton } from "@mantine/core";
 import { IconGripVertical } from "@tabler/icons-react";
+import { pick } from "next/dist/lib/pick";
 import { memo } from "react";
-import { useEditorTreeStore } from "@/stores/editorTree";
-import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 import { createPortal } from "react-dom";
 import { useShallow } from "zustand/react/shallow";
-import { pick } from "next/dist/lib/pick";
 
 const ComponentToolboxInner = () => {
   const isResizing = useEditorStore((state) => state.isResizing);
@@ -37,8 +37,9 @@ const ComponentToolboxInner = () => {
   const component = useEditorTreeStore(
     useShallow((state) => {
       const selectedComponentId = selectedComponentIdSelector(state);
+
       return {
-        ...(pick(state.componentMutableAttrs[selectedComponentId!], [
+        ...(pick(state.componentMutableAttrs[selectedComponentId!] ?? {}, [
           "name",
           "description",
           "fixedPosition",

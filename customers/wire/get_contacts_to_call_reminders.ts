@@ -33,7 +33,7 @@ Deno.serve(async (req: Request) => {
 
   const params: {
     p_contact_type: string;
-    p_is_completed?: string;
+    p_is_completed?: boolean;
     p_start_date?: string;
     p_end_date?: string;
     p_offset: number;
@@ -44,7 +44,7 @@ Deno.serve(async (req: Request) => {
     p_limit: limit,
   };
 
-  if (complete) params.p_is_completed = complete;
+  if (complete) params.p_is_completed = complete === "true";
   if (startDate) params.p_start_date = startDate;
   if (endDate) params.p_end_date = endDate;
 
@@ -60,7 +60,7 @@ Deno.serve(async (req: Request) => {
   }
 
   const totalRecords = data[0]?.total_count ?? 0;
-  const results = data.map((item) => ({
+  const results = data.map((item: any) => ({
     task_id: item.task_id,
     property_listing_id: item.property_listing_id,
     contact_id: item.contact_id,
@@ -78,6 +78,7 @@ Deno.serve(async (req: Request) => {
       totalRecords,
       recordsPerPage: limit,
       page: Math.floor(offset / limit) + 1,
+      complete: complete || "false",
     },
   };
 
