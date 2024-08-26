@@ -338,7 +338,7 @@ const Modifier = withModifier(({ selectedComponent }) => {
               onChange={(value) => changeBorderStyle(value)}
             />
           </Stack>
-          {form.values.borderStyle !== "none" && (
+          {form.values?.[getBorderProp("Style")] !== "none" && (
             <>
               {/* Start: Hide if border style is none */}
               <UnitInput
