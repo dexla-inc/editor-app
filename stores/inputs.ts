@@ -1,6 +1,8 @@
+import debounce from "lodash.debounce";
+import isEmpty from "lodash.isempty";
+import isEqual from "lodash.isequal";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-import isEmpty from "lodash.isempty";
 
 type InputsState = {
   inputValues: Record<string, any>;
@@ -18,41 +20,59 @@ const typeHandlers: Record<string, (value: any) => any> = {
 
 export const useInputsStore = create<InputsState>()(
   devtools(
-    (set) => ({
-      inputValues: {},
-      setInputValue: (id, value) =>
-        set(
-          (state) => ({ inputValues: { ...state.inputValues, [id]: value } }),
-          false,
-          "setInputValue",
-        ),
-      resetInputValues: (ids) =>
-        set(
-          (state) => {
-            if (isEmpty(ids)) {
-              return { inputValues: {} };
-            }
+    (set, get) => {
+      const batchedUpdates: Record<string, any> = {};
 
-            const filteredIds = Object.keys(state.inputValues).reduce(
-              (newObj, key) => {
-                newObj[key] = state.inputValues[key];
-                if (ids?.some((prefix) => key.startsWith(prefix))) {
-                  const prevValue = state.inputValues[key];
-                  newObj[key] = typeHandlers[typeof prevValue](prevValue);
-                }
-                return newObj;
-              },
-              {} as Record<string, any>,
-            );
-
-            return {
-              inputValues: filteredIds,
-            };
-          },
+      const flushBatchedUpdates = debounce(() => {
+        set(
+          (state) => ({
+            inputValues: { ...state.inputValues, ...batchedUpdates },
+          }),
           false,
-          "resetInputValues",
-        ),
-    }),
+          "batchedSetInputValue",
+        );
+        Object.keys(batchedUpdates).forEach(
+          (key) => delete batchedUpdates[key],
+        );
+      }, 50);
+
+      return {
+        inputValues: {},
+        setInputValue: (id, value) => {
+          const currentValue = get().inputValues[id];
+          if (!isEqual(currentValue, value)) {
+            batchedUpdates[id] = value;
+            flushBatchedUpdates();
+          }
+        },
+        resetInputValues: (ids) =>
+          set(
+            (state) => {
+              if (isEmpty(ids)) {
+                return { inputValues: {} };
+              }
+
+              const filteredIds = Object.keys(state.inputValues).reduce(
+                (newObj, key) => {
+                  newObj[key] = state.inputValues[key];
+                  if (ids?.some((prefix) => key.startsWith(prefix))) {
+                    const prevValue = state.inputValues[key];
+                    newObj[key] = typeHandlers[typeof prevValue](prevValue);
+                  }
+                  return newObj;
+                },
+                {} as Record<string, any>,
+              );
+
+              return {
+                inputValues: filteredIds,
+              };
+            },
+            false,
+            "resetInputValues",
+          ),
+      };
+    },
     {
       name: "Inputs Store",
     },
