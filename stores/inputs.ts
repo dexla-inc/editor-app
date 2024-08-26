@@ -1,4 +1,3 @@
-import debounce from "lodash.debounce";
 import isEmpty from "lodash.isempty";
 import isEqual from "lodash.isequal";
 import { create } from "zustand";
@@ -20,59 +19,47 @@ const typeHandlers: Record<string, (value: any) => any> = {
 
 export const useInputsStore = create<InputsState>()(
   devtools(
-    (set, get) => {
-      const batchedUpdates: Record<string, any> = {};
-
-      const flushBatchedUpdates = debounce(() => {
+    (set) => ({
+      inputValues: {},
+      setInputValue: (id, value) =>
         set(
-          (state) => ({
-            inputValues: { ...state.inputValues, ...batchedUpdates },
-          }),
+          (state) => {
+            const currentValue = state.inputValues[id];
+            if (!isEqual(currentValue, value)) {
+              return { inputValues: { ...state.inputValues, [id]: value } };
+            }
+            return state;
+          },
           false,
-          "batchedSetInputValue",
-        );
-        Object.keys(batchedUpdates).forEach(
-          (key) => delete batchedUpdates[key],
-        );
-      }, 50);
+          "setInputValue",
+        ),
+      resetInputValues: (ids) =>
+        set(
+          (state) => {
+            if (isEmpty(ids)) {
+              return { inputValues: {} };
+            }
 
-      return {
-        inputValues: {},
-        setInputValue: (id, value) => {
-          const currentValue = get().inputValues[id];
-          if (!isEqual(currentValue, value)) {
-            batchedUpdates[id] = value;
-            flushBatchedUpdates();
-          }
-        },
-        resetInputValues: (ids) =>
-          set(
-            (state) => {
-              if (isEmpty(ids)) {
-                return { inputValues: {} };
-              }
+            const filteredIds = Object.keys(state.inputValues).reduce(
+              (newObj, key) => {
+                newObj[key] = state.inputValues[key];
+                if (ids?.some((prefix) => key.startsWith(prefix))) {
+                  const prevValue = state.inputValues[key];
+                  newObj[key] = typeHandlers[typeof prevValue](prevValue);
+                }
+                return newObj;
+              },
+              {} as Record<string, any>,
+            );
 
-              const filteredIds = Object.keys(state.inputValues).reduce(
-                (newObj, key) => {
-                  newObj[key] = state.inputValues[key];
-                  if (ids?.some((prefix) => key.startsWith(prefix))) {
-                    const prevValue = state.inputValues[key];
-                    newObj[key] = typeHandlers[typeof prevValue](prevValue);
-                  }
-                  return newObj;
-                },
-                {} as Record<string, any>,
-              );
-
-              return {
-                inputValues: filteredIds,
-              };
-            },
-            false,
-            "resetInputValues",
-          ),
-      };
-    },
+            return {
+              inputValues: filteredIds,
+            };
+          },
+          false,
+          "resetInputValues",
+        ),
+    }),
     {
       name: "Inputs Store",
     },
