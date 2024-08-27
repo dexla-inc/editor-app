@@ -1,5 +1,8 @@
-import { useBrandingStyles } from "@/hooks/editor/useBrandingStyles";
+import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useContentEditable } from "@/hooks/components/useContentEditable";
+import { useInputValue } from "@/hooks/components/useInputValue";
+import { useBrandingStyles } from "@/hooks/editor/useBrandingStyles";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { EditableComponentMapper } from "@/utils/editor";
 import {
   Button,
@@ -8,13 +11,9 @@ import {
 } from "@mantine/core";
 import merge from "lodash.merge";
 import { forwardRef, memo } from "react";
-import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { useEditorTreeStore } from "@/stores/editorTree";
-import { useShallow } from "zustand/react/shallow";
-import { useInputValue } from "@/hooks/components/useInputValue";
 
-import { UploadMultipleResponse } from "@/requests/storage/types";
 import { uploadFileInternal } from "@/requests/storage/queries-noauth";
+import { UploadMultipleResponse } from "@/requests/storage/types";
 
 type Props = EditableComponentMapper & FileButtonProps;
 
@@ -34,10 +33,11 @@ const defaultFileProps = {
 
 export const FileButtonComponent = forwardRef(
   ({ component, shareableContent, ...props }: Props, ref) => {
-    const isPreviewMode = useEditorTreeStore(
-      useShallow((state) => state.isPreviewMode || state.isLive),
-    );
-    const { triggers, variable, ...componentProps } = component.props ?? {};
+    const {
+      triggers: { onClick, ...otherTriggers },
+      variable,
+      ...componentProps
+    } = component.props ?? {};
     const { style, ...restProps } = props as any;
     const contentEditableProps = useContentEditable(
       component.id as string,
@@ -59,7 +59,6 @@ export const FileButtonComponent = forwardRef(
     );
 
     const handleChange = async (newValue: File | File[]) => {
-      if (!isPreviewMode) return;
       newValue = Array.isArray(newValue) ? newValue : [newValue];
 
       const response = (await uploadFileInternal(
@@ -76,8 +75,15 @@ export const FileButtonComponent = forwardRef(
       }));
 
       setValue(formattedValue);
-      triggers?.onChange?.({ target: { files: formattedValue } });
+      otherTriggers?.onChange?.({ target: { files: formattedValue } });
     };
+
+    const onButtonClick =
+      (props: any) => (e: React.MouseEvent<HTMLButtonElement>) => {
+        if (onClick) {
+          onClick?.(e, props.onClick);
+        }
+      };
 
     return (
       <>
@@ -87,10 +93,14 @@ export const FileButtonComponent = forwardRef(
           style={customStyle}
           {...restProps}
           ref={ref}
-          {...triggers}
+          {...otherTriggers}
           onChange={handleChange}
         >
-          {(props) => <Button {...props}>{nameValue}</Button>}
+          {(props) => (
+            <Button {...props} onClick={onButtonClick(props)}>
+              {nameValue}
+            </Button>
+          )}
         </MantineFileButton>
       </>
     );
