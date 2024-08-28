@@ -5,12 +5,10 @@ export const useDraggable = ({
   id,
   onDragStart,
   currentWindow,
-  ghostImagePosition,
 }: {
   id: string;
   onDragStart: (id: string) => void;
   currentWindow?: Window;
-  ghostImagePosition?: number;
 }) => {
   const isResizing = useEditorStore((state) => state.isResizing);
 
@@ -46,7 +44,7 @@ export const useDraggable = ({
         rootElement.style.opacity = "0.7";
       }
     },
-    [id, onDragStart, currentWindow, isResizing, ghostImagePosition],
+    [id, onDragStart, currentWindow, isResizing],
   );
 
   return {

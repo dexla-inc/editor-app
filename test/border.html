@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Resizable Button with Pseudo-element Handlers</title>
+    <style>
+      .button-container {
+        display: inline-block;
+        position: relative;
+        padding: 8px 12px;
+        min-width: 100px;
+        min-height: 40px;
+        box-sizing: border-box;
+        box-shadow: 0 0 0 2px #007bff;
+        border-radius: 4px;
+      }
+
+      .button {
+        background-color: #4caf50;
+        border: none;
+        color: white;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: block;
+        font-size: 16px;
+        cursor: pointer;
+        width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+      }
+
+      .button-container::before,
+      .button-container::after {
+        content: "";
+        position: absolute;
+        background-color: white;
+        border: 2px solid #007bff;
+        border-radius: 4px;
+        z-index: 2;
+      }
+
+      .button-container::before {
+        width: 8px;
+        height: 20px;
+        top: 50%;
+        left: 0;
+        transform: translate(-50%, -50%);
+        cursor: ew-resize;
+      }
+
+      .button-container::after {
+        width: 8px;
+        height: 20px;
+        top: 50%;
+        right: 0;
+        transform: translate(50%, -50%);
+        cursor: ew-resize;
+      }
+
+      .button-container .handler-top,
+      .button-container .handler-bottom {
+        content: "";
+        position: absolute;
+        width: 20px;
+        height: 8px;
+        background-color: white;
+        border: 2px solid #007bff;
+        border-radius: 4px;
+        left: 50%;
+        z-index: 2;
+      }
+
+      .button-container .handler-top {
+        top: 0;
+        transform: translate(-50%, -50%);
+        cursor: ns-resize;
+      }
+
+      .button-container .handler-bottom {
+        bottom: 0;
+        transform: translate(-50%, 50%);
+        cursor: ns-resize;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="button-container">
+      <div class="handler-top"></div>
+      <div class="handler-bottom"></div>
+      <button class="button">Testing 2 ></button>
+    </div>
+
+    <script>
+      const container = document.querySelector(".button-container");
+      const button = container.querySelector(".button");
+      let isResizing = false;
+      let currentHandler = null;
+      let startX, startY, startWidth, startHeight;
+
+      container.addEventListener("mousedown", initResize);
+      document.addEventListener("mousemove", resize);
+      document.addEventListener("mouseup", stopResize);
+
+      function initResize(e) {
+        if (e.target === button) return;
+        isResizing = true;
+        currentHandler = e.target;
+        startX = e.clientX;
+        startY = e.clientY;
+        startWidth = container.offsetWidth;
+        startHeight = container.offsetHeight;
+        e.preventDefault();
+      }
+
+      function resize(e) {
+        if (!isResizing) return;
+
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+
+        if (currentHandler === container) {
+          // right handler (::after)
+          container.style.width = `${startWidth + dx}px`;
+        } else if (currentHandler.classList.contains("handler-bottom")) {
+          container.style.height = `${startHeight + dy}px`;
+        } else if (currentHandler === container.firstElementChild) {
+          // left handler (::before)
+          const newWidth = startWidth - dx;
+          container.style.width = `${newWidth}px`;
+        } else if (currentHandler.classList.contains("handler-top")) {
+          const newHeight = startHeight - dy;
+          container.style.height = `${newHeight}px`;
+        }
+      }
+
+      function stopResize() {
+        isResizing = false;
+      }
+    </script>
+  </body>
+</html>
