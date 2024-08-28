@@ -2,7 +2,6 @@ import { Draggable } from "@/components/Draggable";
 import { structureMapper } from "@/utils/componentMapper";
 import { toSpaced } from "@/types/dashboardTypes";
 import { Box, Text } from "@mantine/core";
-import { useEffect, useState } from "react";
 
 type Props = {
   id: string;
@@ -12,20 +11,13 @@ type Props = {
 };
 
 export const DraggableComponent = ({ id, text, data, icon }: Props) => {
-  const [draggableData, setDraggableData] = useState<any>(data);
-
-  useEffect(() => {
-    if (!data) {
-      const component = structureMapper[id];
-      const _data = component.structure({});
-      setDraggableData(_data);
-    } else {
-      setDraggableData(data);
-    }
-  }, [data, id]);
+  let dataCallback = () => {
+    const component = structureMapper[id];
+    return data ? data : component.structure({});
+  };
 
   return (
-    <Draggable id={id} data={draggableData} isDeletable={!!data} sx={{}}>
+    <Draggable id={id} data={dataCallback} isDeletable={!!data} sx={{}}>
       <Box
         h={60}
         sx={{

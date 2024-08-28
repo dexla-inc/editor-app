@@ -36,9 +36,7 @@ export const Droppable = ({
             backgroundSize: `calc(100% / 48) 10px`,
             zIndex: 9999,
           }}
-        >
-          test
-        </div>
+        />
       )}
       {children}
     </Box>

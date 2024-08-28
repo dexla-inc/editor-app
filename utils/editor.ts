@@ -1001,6 +1001,58 @@ const addNodeToTarget = (
   }
 };
 
+export const moveComponent2 = (
+  treeRoot: ComponentStructure,
+  componentId: string,
+  dropTarget: DropTarget,
+) => {
+  let componentToMove: ComponentStructure | null = null;
+  let sourceParent: ComponentStructure | null = null;
+
+  crawl(
+    treeRoot,
+    (node: ComponentStructure, context: any) => {
+      if (node.id === componentId) {
+        componentToMove = node;
+        sourceParent = context.parent;
+        context.break();
+      }
+    },
+    { order: "bfs" },
+  );
+
+  if (!componentToMove) return;
+
+  crawl(
+    treeRoot,
+    (node: ComponentStructure, context: any) => {
+      if (node.id === dropTarget.id) {
+        if (sourceParent === node) {
+          // If the parent remains the same, we don't need to do anything
+          context.break();
+          return;
+        }
+
+        // Remove the component from its current parent
+        if (sourceParent) {
+          sourceParent.children = sourceParent.children?.filter(
+            (child) => child.id !== componentId,
+          );
+        }
+
+        // Add the component to the new parent
+        if (!node.children) {
+          node.children = [];
+        }
+        node.children.push(componentToMove as any);
+
+        context.break();
+      }
+    },
+    { order: "bfs" },
+  );
+};
+
 export const moveComponent = (
   treeRoot: ComponentStructure,
   componentToAdd: ComponentStructure,

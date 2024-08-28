@@ -37,7 +37,7 @@ export const Draggable = ({
   const activeCompany = usePropelAuthStore((state) => state.activeCompany);
 
   const onDragStart = useCallback(() => {
-    setComponentToAdd(data);
+    setComponentToAdd(data());
   }, [data, setComponentToAdd]);
 
   const draggable = useDraggable({

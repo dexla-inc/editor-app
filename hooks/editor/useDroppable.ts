@@ -78,7 +78,11 @@ export const useDroppable = ({
   currentWindow,
 }: {
   id: string;
-  onDrop: (droppedId: string, dropTarget: DropTarget) => void;
+  onDrop: (
+    droppedId: string,
+    dropTarget: DropTarget,
+    position: { gridColumn: number; gridRow: number },
+  ) => void;
   currentWindow?: Window;
 }) => {
   const position = useRef<any>(null);
@@ -103,29 +107,37 @@ export const useDroppable = ({
 
       event.preventDefault();
       event.stopPropagation();
-      console.log(
-        "--->",
-        dropTarget2.current,
-        position.current,
-        componentToAdd,
-      );
 
-      if (componentToAdd) {
-        const newStyles = updateGridPosition(
-          componentToAdd.props?.style,
-          position.current.column,
-          position.current.row,
-        );
-        componentToAdd.props = { ...componentToAdd.props, style: newStyles };
-        setComponentToAdd(componentToAdd);
+      // Remove the preview element if it exists
+      const previewElement =
+        currentWindow?.document.getElementById("preview-element");
+      if (previewElement) {
+        previewElement.remove();
       }
+
+      // if (componentToAdd) {
+      // const newStyles = updateGridPosition(
+      //   componentToAdd.props?.style,
+      //   position.current.column,
+      //   position.current.row,
+      // );
+      // componentToAdd.props = { ...componentToAdd.props, style: newStyles };
+      //   setComponentToAdd(componentToAdd);
+
+      //   // console.log(
+      //   //   "--->",
+      //   //   dropTarget2.current,
+      //   //   position.current,
+      //   //   componentToAdd,
+      //   // );
+      // }
 
       const dropTarget = {
         id: dropTarget2.current,
         edge: edge ?? "center",
       } as DropTarget;
       if (activeId) {
-        onDrop?.(activeId as string, dropTarget);
+        onDrop?.(activeId as string, dropTarget, position.current);
       }
 
       setCurrentTargetId(undefined);
@@ -179,7 +191,6 @@ export const useDroppable = ({
   };
 
   function getGridCoordinates(element: any, x: any, y: any) {
-    // console.log(element, x, y);
     const rect = element.getBoundingClientRect();
     const style = currentWindow?.getComputedStyle(element)!;
     const gridColumns = style.gridTemplateColumns.split(" ").length;
@@ -228,20 +239,28 @@ export const useDroppable = ({
   }
 
   const extractComponentBaseId = (element: HTMLElement): string | undefined => {
-    const rawId = element.dataset.id ?? element.getAttribute("id") ?? undefined;
+    const rawId =
+      element?.dataset?.id ?? element?.getAttribute("id") ?? undefined;
     return rawId ? rawId.split("-related-").at(0) : rawId;
   };
 
   const handleDragOver = useCallback(
     (event: React.DragEvent) => {
-      const { currentTargetId, isResizing } = useEditorStore.getState();
+      const { isResizing } = useEditorStore.getState();
       const isEditorMode = isEditorModeSelector(useEditorTreeStore.getState());
-      const selectedComponentId = selectedComponentIdSelector(
-        useEditorTreeStore.getState(),
-      )!;
       const componentMutableAttrs =
         useEditorTreeStore.getState().componentMutableAttrs;
       if (isResizing || !isEditorMode) return;
+
+      const { componentToAdd } = useEditorStore.getState();
+      const selectedComponentId = selectedComponentIdSelector(
+        useEditorTreeStore.getState(),
+      );
+      const selectedComponent =
+        useEditorTreeStore.getState().componentMutableAttrs[
+          selectedComponentId!
+        ];
+      const component = componentToAdd ?? selectedComponent;
 
       event.preventDefault();
       event.stopPropagation();
@@ -252,7 +271,6 @@ export const useDroppable = ({
         w?.document?.querySelector(`[data-id^="${id}"]`) ??
         w?.document?.querySelector(`[id^="${id}"]`);
       const rect = comp?.getBoundingClientRect()!;
-      // console.log("1234", comp, currentTargetId);
 
       const elements =
         w?.document.elementsFromPoint(mouseX, mouseY).filter((element) => {
@@ -271,53 +289,51 @@ export const useDroppable = ({
 
       if (!mouseX || !mouseY || !rect) return;
 
-      // const leftDist = mouseX - rect.left;
-      // const rightDist = rect.right - mouseX;
-      // const topDist = mouseY - rect.top;
-      // const bottomDist = rect.bottom - mouseY;
-
-      const currentDraggingElement =
-        currentWindow?.document.getElementById(selectedComponentId) ??
-        currentWindow?.document.querySelector(
-          `[data-id="${selectedComponentId}"]`,
-        );
-
-      // const draggingElementStyles = getComputedStyle(currentDraggingElement!);
-      // const currentWidth = draggingElementStyles.gridColumn;
-      // const currentHeight = draggingElementStyles.gridRow;
-
-      // console.log("====>", draggingElementStyles, currentDraggingElement);
-
-      // if (mouseX <= NAVBAR_WIDTH) {
-      //   _handleEdgeSet({ leftDist, rightDist, topDist, bottomDist }, 2);
-      // } else {
-      //   _handleEdgeSet({ leftDist, rightDist, topDist, bottomDist }, 5);
-      // }
-      const gridContainer = currentWindow?.document.getElementById("root")!;
-      const target = event.target;
-
       const coordinates = getGridCoordinates(
         firstValidParentElement,
         mouseX,
         mouseY,
       );
       // console.log(firstValidParentElement, coordinates);
-      position.current = coordinates;
 
-      // Calculate the grid-based coordinates
-      const testRect = gridContainer.getBoundingClientRect();
-      const x = event.clientX - testRect.left;
-      const y = event.clientY - testRect.top;
+      // Position updated
+      const newStyles = updateGridPosition(
+        component.props?.style,
+        coordinates.column,
+        coordinates.row,
+      );
 
-      // Calculate the grid column and row
-      const gridColumn = Math.floor(x / (testRect.width / 48)) + 1;
-      const gridRow = Math.floor(y / 10) + 1;
+      // Remove any existing preview element
+      const existingPreview =
+        currentWindow?.document.getElementById("preview-element");
+      if (existingPreview) {
+        existingPreview.remove();
+      }
 
-      // console.log(
-      //   `Element dropped over grid coordinates: Column: ${gridColumn}, Row: ${gridRow}`,
-      // );
+      // Create and add the new preview element
+      const previewElement = currentWindow?.document.createElement("div");
+      if (previewElement && currentWindow?.document) {
+        previewElement.id = "preview-element";
+        // previewElement.style.position = 'absolute';
+        previewElement.style.display = "grid";
+        previewElement.style.gridTemplateRows = "subgrid";
+        previewElement.style.gridTemplateColumns = "subgrid";
+        previewElement.style.gridColumn = newStyles.gridColumn;
+        previewElement.style.gridRow = newStyles.gridRow;
+        previewElement.style.backgroundColor = "rgba(12, 140, 233, 0.12)"; // Semi-transparent blue
+        previewElement.style.border = "2px solid #0C8CE9";
+        previewElement.style.zIndex = "9990";
+        previewElement.style.width = "auto";
+        previewElement.style.height = "auto";
 
-      // updateGridPosition(currentDraggingElement, gridColumn, gridRow);
+        // const mainContent = currentWindow.document.getElementById('main-content');
+        firstValidParentElement!.appendChild(previewElement);
+      }
+
+      position.current = {
+        gridColumn: newStyles.gridColumn,
+        gridRow: newStyles.gridRow,
+      };
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [id, currentWindow],
@@ -340,6 +356,13 @@ export const useDroppable = ({
     const isEditorMode = isEditorModeSelector(useEditorTreeStore.getState());
     if (isResizing || !isEditorMode) return;
 
+    // Remove the preview element if it exists
+    const previewElement =
+      currentWindow?.document.getElementById("preview-element");
+    if (previewElement) {
+      previewElement.remove();
+    }
+
     event.preventDefault();
     event.stopPropagation();
     if (edge !== undefined) {
@@ -358,6 +381,13 @@ export const useDroppable = ({
     const { isResizing, setEdge, edge } = useEditorStore.getState();
     if (isResizing) return;
 
+    // Remove the preview element if it exists
+    const previewElement =
+      currentWindow?.document.getElementById("preview-element");
+    if (previewElement) {
+      previewElement.remove();
+    }
+
     event.preventDefault();
     event.stopPropagation();
     if (edge !== undefined) {
@@ -366,27 +396,7 @@ export const useDroppable = ({
     setIsDragging(false);
   }, []);
 
-  // const handleDrag = (event: React.DragEvent) => {
-  //   const gridContainer =
-  //     currentWindow?.document.getElementById("iframe-content")!;
-  //
-  //   // Calculate the grid-based coordinates
-  //   const testRect = gridContainer.getBoundingClientRect();
-  //   const x = event.clientX - testRect.left;
-  //   const y = event.clientY - testRect.top;
-  //
-  //   // Calculate the grid column and row
-  //   const gridColumn = Math.floor(x / (testRect.width / 48)) + 1;
-  //   const gridRow = Math.floor(y / 10) + 1;
-  //
-  //   console.log(
-  //     `-Element dropped over grid coordinates: Column: ${gridColumn}, Row: ${gridRow}`,
-  //   );
-  //   // event.target.style.gridColumn = gridColumn;
-  // };
-
   return {
-    // onDrag: handleDrag,
     onDrop: handleDrop,
     onDragOver: handleDragOver,
     onDragEnter: handleDragEnter,

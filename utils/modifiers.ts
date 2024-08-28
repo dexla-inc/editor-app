@@ -114,7 +114,6 @@ export const requiredModifiers: RequiredModifiers = {
     borderWidth: "0px",
   },
   layout: {
-    gap: "xs",
     style: {
       display: "flex",
       flexWrap: "nowrap",
@@ -182,8 +181,8 @@ export const requiredModifiers: RequiredModifiers = {
       height: "auto",
       // paddingLeft: "32px",
       // paddingRight: "32px",
-      gridColumn: "1 / 2",
-      gridRow: "1 / 3",
+      gridColumn: "1 / 5",
+      gridRow: "1 / 5",
       display: "subgrid",
     },
   },
