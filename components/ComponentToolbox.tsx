@@ -162,6 +162,17 @@ const ComponentToolboxInner = () => {
   const handleResize = useCallback(
     (event: React.MouseEvent) => {
       if (isResizing && comp) {
+        const totalColumns = 48;
+        const rowHeight = 10; // in pixels
+        const viewportWidth = iframeWindow?.innerWidth;
+        const viewportHeight = iframeWindow?.innerHeight;
+
+        const columnWidth = viewportWidth! / totalColumns;
+        const cursorColumn = Math.floor(event.clientX / columnWidth) + 1;
+        const cursorRow = Math.floor(event.clientY / rowHeight) + 1;
+
+        console.log(`Cursor is in column ${cursorColumn} and row ${cursorRow}`);
+
         const dx = event.clientX - initialPosition.x;
         const dy = event.clientY - initialPosition.y;
         // console.log("dx", event.clientX, initialPosition.x, dx);
@@ -188,20 +199,20 @@ const ComponentToolboxInner = () => {
               dx < 0
                 ? Math.floor(dx / COLUMN_WIDTH) // Moving left (increasing size)
                 : Math.ceil(dx / COLUMN_WIDTH); // Moving right (decreasing size)
-            console.log({
-              gridColumnStart,
-              newLeftColumns,
-              gridColumnEnd,
-              newValue: `${Math.max(1, gridColumnStart + newLeftColumns)} / ${gridColumnEnd}`,
-            });
-            comp.style.gridColumn = `${Math.max(1, gridColumnStart + newLeftColumns)} / ${gridColumnEnd}`;
+            // console.log({
+            //   gridColumnStart,
+            //   newLeftColumns,
+            //   gridColumnEnd,
+            //   newValue: `${Math.max(1, cursorColumn)} / ${gridColumnEnd}`,
+            // });
+            comp.style.gridColumn = `${Math.max(1, cursorColumn)} / ${gridColumnEnd}`;
             break;
           case "top":
             const newTopRows =
               dy < 0
                 ? Math.ceil(dy / ROW_HEIGHT) // Moving up (increasing size)
                 : Math.floor(dy / ROW_HEIGHT); // Moving down (decreasing size)
-            comp.style.gridRow = `${Math.max(1, gridRowStart + newTopRows)} / ${gridRowEnd}`;
+            comp.style.gridRow = `${Math.max(1, cursorRow)} / ${gridRowEnd}`;
             break;
           case "right":
             const newRightColumns =
@@ -210,7 +221,7 @@ const ComponentToolboxInner = () => {
                 : Math.ceil(dx / COLUMN_WIDTH); // Moving left (decreasing size)
             const newColumnSpan =
               gridColumnEnd - gridColumnStart + newRightColumns;
-            comp.style.gridColumn = `${gridColumnStart} / span ${Math.max(1, newColumnSpan)}`;
+            comp.style.gridColumn = `${gridColumnStart} / ${Math.max(1, cursorColumn)}`;
             break;
           case "bottom":
             const newBottomRows =
@@ -218,7 +229,7 @@ const ComponentToolboxInner = () => {
                 ? Math.floor(dy / ROW_HEIGHT) // Moving down (increasing size)
                 : Math.ceil(dy / ROW_HEIGHT); // Moving up (decreasing size)
             const newRowSpan = gridRowEnd - gridRowStart + newBottomRows;
-            comp.style.gridRow = `${gridRowStart} / span ${Math.max(1, newRowSpan)}`;
+            comp.style.gridRow = `${gridRowStart} / ${Math.max(1, cursorRow)}`;
             break;
         }
       }
