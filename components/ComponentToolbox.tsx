@@ -55,6 +55,10 @@ const ComponentToolboxInner = () => {
   const [resizeDirection, setResizeDirection] = useState("");
   const [initialSize, setInitialSize] = useState({ width: 0, height: 0 });
   const [initialPosition, setInitialPosition] = useState({ x: 0, y: 0 });
+  const [initialGridColumn, setInitialGridColumn] = useState({
+    start: 0,
+    end: 0,
+  });
 
   const setEditorTree = useEditorTreeStore((state) => state.setTree);
   const setSelectedComponentIds = useEditorTreeStore(
@@ -150,6 +154,11 @@ const ComponentToolboxInner = () => {
     setResizeDirection(direction);
     setInitialSize({ width: compRect.width, height: compRect.height });
     setInitialPosition({ x: event.clientX, y: event.clientY });
+    const currentStyle = window.getComputedStyle(comp);
+    const [gridColumnStart, gridColumnEnd] = currentStyle.gridColumn
+      .split(" / ")
+      .map((value) => parseInt(value, 10));
+    setInitialGridColumn({ start: gridColumnStart, end: gridColumnEnd });
     console.log(`Started resizing ${direction}`);
   };
 
@@ -194,29 +203,25 @@ const ComponentToolboxInner = () => {
         // console.log(gridColumnStart, gridColumnEnd)
         switch (resizeDirection) {
           case "left":
-            // if (dx < 3 && dx > -3) {
-            //   return;
-            // }
-            const newLeftColumns =
-              dx < 0
-                ? Math.floor(event.clientX / columnWidth) + 1 // Moving left (increasing size)
-                : Math.ceil(event.clientX / columnWidth) + 1; // Moving right (decreasing size)
-            // console.log({
-            //   gridColumnStart,
-            //   newLeftColumns,
-            //   gridColumnEnd,
-            //   newValue: `${Math.max(1, cursorColumn)} / ${gridColumnEnd}`,
-            // });
+            const columnDiff = Math.round(dx / columnWidth);
+            const newGridColumnStart = Math.max(
+              1,
+              initialGridColumn.start - columnDiff,
+            );
+            const newGridColumnEnd = Math.max(
+              newGridColumnStart + 1,
+              initialGridColumn.end,
+            );
 
             console.log(
               dx < 0 ? "increasing" : "decreasing",
               dx,
               event.clientX,
               cursorColumn,
-              newLeftColumns,
-              `${Math.max(1, newLeftColumns)} / ${gridColumnEnd}`,
+              newGridColumnStart,
+              `${newGridColumnStart} / ${newGridColumnEnd}`,
             );
-            comp.style.gridColumn = `${Math.max(1, newLeftColumns)} / ${gridColumnEnd}`;
+            comp.style.gridColumn = `${newGridColumnStart} / ${newGridColumnEnd}`;
             break;
           case "top":
             const newTopRows =
@@ -245,7 +250,7 @@ const ComponentToolboxInner = () => {
         }
       }
     },
-    [isResizing, comp, resizeDirection, initialPosition],
+    [isResizing, comp, resizeDirection, initialPosition, initialGridColumn],
   );
 
   if (!iframeWindow?.document?.body) return null;
