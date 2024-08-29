@@ -23,7 +23,7 @@ import {
 } from "@/utils/editor";
 import { Group, Text, Tooltip, UnstyledButton, Box } from "@mantine/core";
 import { IconGripVertical } from "@tabler/icons-react";
-import { memo } from "react";
+import { memo, useState } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 import { createPortal } from "react-dom";
@@ -47,6 +47,7 @@ const ComponentToolboxInner = () => {
       };
     }),
   );
+  const [isResizingComponent, setIsResizingComponent] = useState(false);
 
   const setEditorTree = useEditorTreeStore((state) => state.setTree);
   const setSelectedComponentIds = useEditorTreeStore(
@@ -71,9 +72,9 @@ const ComponentToolboxInner = () => {
 
   const blockedToolboxActions = componentData?.blockedToolboxActions || [];
 
-  const comp =
-    iframeWindow?.document.querySelector(`[data-id="${component.id}"]`) ??
-    iframeWindow?.document.getElementById(component.id!);
+  const comp = (iframeWindow?.document.querySelector(
+    `[data-id="${component.id}"]`,
+  ) ?? iframeWindow?.document.getElementById(component.id!)) as HTMLElement;
 
   if (isResizing || !comp) {
     return null;
@@ -82,10 +83,10 @@ const ComponentToolboxInner = () => {
   const compRect = comp?.getBoundingClientRect();
   const boxStyle = {
     position: "absolute" as const,
-    top: `${Math.abs(compRect.top) - 4}px`,
-    left: `${Math.abs(compRect.left) - 4}px`,
-    width: `${compRect.width + 8}px`,
-    height: `${compRect.height + 8}px`,
+    top: `${Math.abs(compRect.top) - 6}px`,
+    left: `${Math.abs(compRect.left) - 6}px`,
+    width: `${compRect.width + 12}px`,
+    height: `${compRect.height + 12}px`,
     border: `2px solid ${theme.colors.blue[5]}`,
     pointerEvents: "none" as const,
     zIndex: 100,
@@ -93,8 +94,8 @@ const ComponentToolboxInner = () => {
 
   const handleStyle = {
     position: "absolute" as const,
-    width: "5px",
-    height: "25px",
+    width: "7px",
+    height: "min(25px, 60%)",
     backgroundColor: "#ffffff",
     border: `2px solid ${theme.colors.blue[5]}`,
     pointerEvents: "auto" as const,
@@ -114,8 +115,8 @@ const ComponentToolboxInner = () => {
       left: "50%",
       transform: "translateX(-50%)",
       cursor: "ns-resize",
-      width: "25px",
-      height: "5px",
+      width: "min(25px, 60%)",
+      height: "7px",
     },
     {
       top: "50%",
@@ -128,25 +129,66 @@ const ComponentToolboxInner = () => {
       left: "50%",
       transform: "translateX(-50%)",
       cursor: "ns-resize",
-      width: "25px",
-      height: "5px",
+      width: "min(25px, 60%)",
+      height: "7px",
     },
   ];
 
-  const handleResize = (direction: string) => {
-    console.log(`Resizing ${direction}`);
+  const handleResizeStart = (direction: string) => {
+    setIsResizingComponent(true);
+    console.log(`Started resizing ${direction}`);
+  };
+
+  const handleResizeEnd = () => {
+    setIsResizingComponent(false);
+    console.log("Ended resizing");
+  };
+
+  const handleResize = (event: React.MouseEvent, direction: string) => {
+    if (isResizingComponent) {
+      // Implement your resize logic here
+      console.log(`Resizing ${direction}`, event.clientX, event.clientY);
+      console.log(comp);
+      if (comp) {
+        const rect = comp.getBoundingClientRect();
+        const dx = event.clientX - rect.left;
+        const dy = event.clientY - rect.top;
+
+        switch (direction) {
+          case "left":
+            comp.style.width = `${rect.width - dx}px`;
+            comp.style.left = `${rect.left + dx}px`;
+            break;
+          case "top":
+            comp.style.height = `${rect.height - dy}px`;
+            comp.style.top = `${rect.top + dy}px`;
+            break;
+          case "right":
+            comp.style.width = `${rect.width + (event.clientX - rect.right)}px`;
+            break;
+          case "bottom":
+            comp.style.height = `${rect.height + (event.clientY - rect.bottom)}px`;
+            break;
+        }
+      }
+    }
   };
 
   if (!iframeWindow?.document?.body) return null;
 
   return createPortal(
     <>
-      <Box style={boxStyle}>
+      <Box
+        style={boxStyle}
+        onMouseMove={(e) => isResizingComponent && handleResize(e, "current")}
+        onMouseUp={handleResizeEnd}
+        onMouseLeave={handleResizeEnd}
+      >
         {handlePositions.map((pos, index) => (
           <Box
             key={index}
             style={{ ...handleStyle, ...pos }}
-            onClick={() => handleResize(Object.keys(pos)[0])}
+            onMouseDown={() => handleResizeStart(Object.keys(pos)[0])}
           />
         ))}
       </Box>
@@ -156,14 +198,14 @@ const ComponentToolboxInner = () => {
         h={24}
         noWrap
         spacing={2}
-        top={`${Math.abs(compRect.top) - 32}px`}
-        left={`${Math.abs(compRect.left)}px`}
+        top={`${Math.abs(compRect.top) - 34}px`}
+        left={`${Math.abs(compRect.left - 6)}px`}
         pos="absolute"
         style={{ zIndex: 200 }}
         bg={theme.colors.blue[5]}
         sx={(theme) => ({
           borderRadius: theme.radius.sm,
-          boxShadow: theme.shadows.md,
+          boxShadow: "0px 0.8px 10.8px 0px #8B8B8B8C",
         })}
       >
         <Text color="white" size="xs">
