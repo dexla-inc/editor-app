@@ -23,15 +23,19 @@ import {
 } from "@/utils/editor";
 import { Group, Text, Tooltip, UnstyledButton, Box } from "@mantine/core";
 import { IconGripVertical } from "@tabler/icons-react";
-import { memo, useState } from "react";
+import { memo, useState, useCallback } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 import { createPortal } from "react-dom";
 import { useShallow } from "zustand/react/shallow";
 import { pick } from "next/dist/lib/pick";
 
+const COLUMN_WIDTH = 48; // 48fr
+const ROW_HEIGHT = 10; // 10px
+
 const ComponentToolboxInner = () => {
   const isResizing = useEditorStore((state) => state.isResizing);
+  const setIsResizing = useEditorStore((state) => state.setIsResizing);
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const editorTheme = useThemeStore((state) => state.theme);
   const component = useEditorTreeStore(
@@ -47,7 +51,10 @@ const ComponentToolboxInner = () => {
       };
     }),
   );
-  const [isResizingComponent, setIsResizingComponent] = useState(false);
+  // const [isResizingComponent, setIsResizingComponent] = useState(false);
+  const [resizeDirection, setResizeDirection] = useState("");
+  const [initialSize, setInitialSize] = useState({ width: 0, height: 0 });
+  const [initialPosition, setInitialPosition] = useState({ x: 0, y: 0 });
 
   const setEditorTree = useEditorTreeStore((state) => state.setTree);
   const setSelectedComponentIds = useEditorTreeStore(
@@ -76,9 +83,9 @@ const ComponentToolboxInner = () => {
     `[data-id="${component.id}"]`,
   ) ?? iframeWindow?.document.getElementById(component.id!)) as HTMLElement;
 
-  if (isResizing || !comp) {
-    return null;
-  }
+  // if (isResizing || !comp) {
+  //   return null;
+  // }
 
   const compRect = comp?.getBoundingClientRect();
   const boxStyle = {
@@ -109,6 +116,7 @@ const ComponentToolboxInner = () => {
       left: "-4px",
       transform: "translateY(-50%)",
       cursor: "ew-resize",
+      direction: "left",
     },
     {
       top: "-4px",
@@ -117,12 +125,14 @@ const ComponentToolboxInner = () => {
       cursor: "ns-resize",
       width: "min(25px, 60%)",
       height: "7px",
+      direction: "top",
     },
     {
       top: "50%",
       right: "-4px",
       transform: "translateY(-50%)",
       cursor: "ew-resize",
+      direction: "right",
     },
     {
       bottom: "-4px",
@@ -131,48 +141,90 @@ const ComponentToolboxInner = () => {
       cursor: "ns-resize",
       width: "min(25px, 60%)",
       height: "7px",
+      direction: "bottom",
     },
   ];
 
-  const handleResizeStart = (direction: string) => {
-    setIsResizingComponent(true);
+  const handleResizeStart = (direction: string, event: React.MouseEvent) => {
+    setIsResizing(true);
+    setResizeDirection(direction);
+    setInitialSize({ width: compRect.width, height: compRect.height });
+    setInitialPosition({ x: event.clientX, y: event.clientY });
     console.log(`Started resizing ${direction}`);
   };
 
   const handleResizeEnd = () => {
-    setIsResizingComponent(false);
+    setIsResizing(false);
+    setResizeDirection("");
     console.log("Ended resizing");
   };
 
-  const handleResize = (event: React.MouseEvent, direction: string) => {
-    if (isResizingComponent) {
-      // Implement your resize logic here
-      console.log(`Resizing ${direction}`, event.clientX, event.clientY);
-      console.log(comp);
-      if (comp) {
-        const rect = comp.getBoundingClientRect();
-        const dx = event.clientX - rect.left;
-        const dy = event.clientY - rect.top;
+  const handleResize = useCallback(
+    (event: React.MouseEvent) => {
+      if (isResizing && comp) {
+        const dx = event.clientX - initialPosition.x;
+        const dy = event.clientY - initialPosition.y;
+        // console.log("dx", event.clientX, initialPosition.x, dx);
+        const currentStyle = window.getComputedStyle(comp);
 
-        switch (direction) {
+        // Parse gridColumn and gridRow
+        const [gridColumnStart, gridColumnEnd] = currentStyle.gridColumn
+          .split(" / ")
+          .map((value) => {
+            const parsed = parseInt(value, 10);
+            return isNaN(parsed) ? 1 : parsed;
+          });
+        const [gridRowStart, gridRowEnd] = currentStyle.gridRow
+          .split(" / ")
+          .map((value) => {
+            const parsed = parseInt(value, 10);
+            return isNaN(parsed) ? 1 : parsed;
+          });
+        // console.log(gridColumnStart, gridColumnEnd)
+        switch (resizeDirection) {
           case "left":
-            comp.style.width = `${rect.width - dx}px`;
-            comp.style.left = `${rect.left + dx}px`;
+            // console.log(dx < 0 ? "increasing" : "decreasing");
+            const newLeftColumns =
+              dx < 0
+                ? Math.floor(dx / COLUMN_WIDTH) // Moving left (increasing size)
+                : Math.ceil(dx / COLUMN_WIDTH); // Moving right (decreasing size)
+            console.log({
+              gridColumnStart,
+              newLeftColumns,
+              gridColumnEnd,
+              newValue: `${Math.max(1, gridColumnStart + newLeftColumns)} / ${gridColumnEnd}`,
+            });
+            comp.style.gridColumn = `${Math.max(1, gridColumnStart + newLeftColumns)} / ${gridColumnEnd}`;
             break;
           case "top":
-            comp.style.height = `${rect.height - dy}px`;
-            comp.style.top = `${rect.top + dy}px`;
+            const newTopRows =
+              dy < 0
+                ? Math.ceil(dy / ROW_HEIGHT) // Moving up (increasing size)
+                : Math.floor(dy / ROW_HEIGHT); // Moving down (decreasing size)
+            comp.style.gridRow = `${Math.max(1, gridRowStart + newTopRows)} / ${gridRowEnd}`;
             break;
           case "right":
-            comp.style.width = `${rect.width + (event.clientX - rect.right)}px`;
+            const newRightColumns =
+              dx > 0
+                ? Math.floor(dx / COLUMN_WIDTH) // Moving right (increasing size)
+                : Math.ceil(dx / COLUMN_WIDTH); // Moving left (decreasing size)
+            const newColumnSpan =
+              gridColumnEnd - gridColumnStart + newRightColumns;
+            comp.style.gridColumn = `${gridColumnStart} / span ${Math.max(1, newColumnSpan)}`;
             break;
           case "bottom":
-            comp.style.height = `${rect.height + (event.clientY - rect.bottom)}px`;
+            const newBottomRows =
+              dy > 0
+                ? Math.floor(dy / ROW_HEIGHT) // Moving down (increasing size)
+                : Math.ceil(dy / ROW_HEIGHT); // Moving up (decreasing size)
+            const newRowSpan = gridRowEnd - gridRowStart + newBottomRows;
+            comp.style.gridRow = `${gridRowStart} / span ${Math.max(1, newRowSpan)}`;
             break;
         }
       }
-    }
-  };
+    },
+    [isResizing, comp, resizeDirection, initialPosition],
+  );
 
   if (!iframeWindow?.document?.body) return null;
 
@@ -180,7 +232,7 @@ const ComponentToolboxInner = () => {
     <>
       <Box
         style={boxStyle}
-        onMouseMove={(e) => isResizingComponent && handleResize(e, "current")}
+        onMouseMove={handleResize}
         onMouseUp={handleResizeEnd}
         onMouseLeave={handleResizeEnd}
       >
@@ -188,11 +240,11 @@ const ComponentToolboxInner = () => {
           <Box
             key={index}
             style={{ ...handleStyle, ...pos }}
-            onMouseDown={() => handleResizeStart(Object.keys(pos)[0])}
+            onMouseDown={(e) => handleResizeStart(pos.direction, e)}
           />
         ))}
       </Box>
-      <Group
+      {/* <Group
         id="toolbox"
         p={10}
         h={24}
@@ -211,8 +263,7 @@ const ComponentToolboxInner = () => {
         <Text color="white" size="xs">
           {component.name}
         </Text>
-        {/* ... rest of the toolbox content ... */}
-      </Group>
+      </Group> */}
     </>,
     iframeWindow?.document?.body as any,
   );
