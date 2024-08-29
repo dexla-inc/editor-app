@@ -171,7 +171,7 @@ const ComponentToolboxInner = () => {
         const cursorColumn = Math.floor(event.clientX / columnWidth) + 1;
         const cursorRow = Math.floor(event.clientY / rowHeight) + 1;
 
-        console.log(`Cursor is in column ${cursorColumn} and row ${cursorRow}`);
+        // console.log(`Cursor is in column ${cursorColumn} and row ${cursorRow}`);
 
         const dx = event.clientX - initialPosition.x;
         const dy = event.clientY - initialPosition.y;
@@ -194,18 +194,29 @@ const ComponentToolboxInner = () => {
         // console.log(gridColumnStart, gridColumnEnd)
         switch (resizeDirection) {
           case "left":
-            // console.log(dx < 0 ? "increasing" : "decreasing");
+            // if (dx < 3 && dx > -3) {
+            //   return;
+            // }
             const newLeftColumns =
               dx < 0
-                ? Math.floor(dx / COLUMN_WIDTH) // Moving left (increasing size)
-                : Math.ceil(dx / COLUMN_WIDTH); // Moving right (decreasing size)
+                ? Math.floor(event.clientX / columnWidth) + 1 // Moving left (increasing size)
+                : Math.ceil(event.clientX / columnWidth) + 1; // Moving right (decreasing size)
             // console.log({
             //   gridColumnStart,
             //   newLeftColumns,
             //   gridColumnEnd,
             //   newValue: `${Math.max(1, cursorColumn)} / ${gridColumnEnd}`,
             // });
-            comp.style.gridColumn = `${Math.max(1, cursorColumn)} / ${gridColumnEnd}`;
+
+            console.log(
+              dx < 0 ? "increasing" : "decreasing",
+              dx,
+              event.clientX,
+              cursorColumn,
+              newLeftColumns,
+              `${Math.max(1, newLeftColumns)} / ${gridColumnEnd}`,
+            );
+            comp.style.gridColumn = `${Math.max(1, newLeftColumns)} / ${gridColumnEnd}`;
             break;
           case "top":
             const newTopRows =
