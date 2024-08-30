@@ -98,46 +98,38 @@ export const useDroppable = ({
         setCurrentTargetId,
         setComponentToAdd,
       } = useEditorStore.getState();
-      if (isResizing || !isEditorMode) return;
-      const edge = useEditorStore.getState().edge;
-      const selectedComponentId = selectedComponentIdSelector(
-        useEditorTreeStore.getState(),
-      );
-      const activeId = componentToAdd?.id ?? selectedComponentId;
 
-      event.preventDefault();
-      event.stopPropagation();
-
-      // Remove the preview element if it exists
       const previewElement =
         currentWindow?.document.getElementById("preview-element");
-      if (previewElement) {
-        previewElement.remove();
-      }
-
-      // if (componentToAdd) {
-      // const newStyles = updateGridPosition(
-      //   componentToAdd.props?.style,
-      //   position.current.column,
-      //   position.current.row,
-      // );
-      // componentToAdd.props = { ...componentToAdd.props, style: newStyles };
-      //   setComponentToAdd(componentToAdd);
-
-      //   // console.log(
-      //   //   "--->",
-      //   //   dropTarget2.current,
-      //   //   position.current,
-      //   //   componentToAdd,
-      //   // );
+      const isPreviewElementOverlapping = previewElement?.dataset.overlapping;
+      // if (isPreviewElementOverlapping) {
+      //   previewElement.remove();
+      //   return;
       // }
 
-      const dropTarget = {
-        id: dropTarget2.current,
-        edge: edge ?? "center",
-      } as DropTarget;
-      if (activeId) {
-        onDrop?.(activeId as string, dropTarget, position.current);
+      if (isResizing || !isEditorMode) return;
+
+      if (!isPreviewElementOverlapping) {
+        const edge = useEditorStore.getState().edge;
+        const selectedComponentId = selectedComponentIdSelector(
+          useEditorTreeStore.getState(),
+        );
+        const activeId = componentToAdd?.id ?? selectedComponentId;
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        const dropTarget = {
+          id: dropTarget2.current,
+          edge: edge ?? "center",
+        } as DropTarget;
+        if (activeId) {
+          onDrop?.(activeId as string, dropTarget, position.current);
+        }
+      }
+      // Remove the preview element if it exists
+      if (previewElement) {
+        previewElement.remove();
       }
 
       setCurrentTargetId(undefined);
@@ -379,6 +371,7 @@ export const useDroppable = ({
         if (overlappingElements.length > 0) {
           previewElement.style.backgroundColor = "rgba(255, 0, 0, 0.1)";
           previewElement.style.borderColor = "#DE4040";
+          previewElement.dataset.overlapping = "true";
         }
       }
 
