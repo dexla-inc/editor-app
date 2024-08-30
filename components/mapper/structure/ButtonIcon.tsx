@@ -8,10 +8,9 @@ export const jsonStructure = (props?: any): ComponentStructure => {
     description: "ButtonIcon",
     props: {
       style: {
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        borderRadius: "4px",
+        gridColumn: "1 / 5",
+        gridRow: "1 / 5",
+        display: "subgrid",
       },
       variant: "filled",
       color: "Primary.6",
