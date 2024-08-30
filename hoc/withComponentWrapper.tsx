@@ -11,9 +11,6 @@ import { useComputeChildStyles } from "@/hooks/components/useComputeChildStyles"
 import { WithComponentWrapperProps } from "@/types/component";
 import merge from "lodash.merge";
 import { withComponentVisibility } from "@/hoc/withComponentVisibility";
-import { useOnDragStart } from "@/hooks/editor/useOnDragStart";
-import { useEditorStore } from "@/stores/editor";
-import { useDraggable } from "@/hooks/editor/useDraggable";
 
 export const withComponentWrapper = <T extends Record<string, any>>(
   Component: ComponentType<T>,
@@ -29,7 +26,6 @@ export const withComponentWrapper = <T extends Record<string, any>>(
         (state) => state.componentMutableAttrs[componentTree.id!] ?? {},
       ),
     );
-    const iframeWindow = useEditorStore((state) => state.iframeWindow);
 
     const computedOnLoad = useComputeValue({
       onLoad: component?.onLoad ?? {},
@@ -73,14 +69,6 @@ export const withComponentWrapper = <T extends Record<string, any>>(
       currentState,
     );
 
-    const onDragStart = useOnDragStart();
-
-    const draggable = useDraggable({
-      id: component.id || "",
-      onDragStart,
-      currentWindow: iframeWindow,
-    });
-
     const { droppable } = useEditorDroppableEvents({
       componentId: componentTree.id!,
     });
@@ -97,7 +85,6 @@ export const withComponentWrapper = <T extends Record<string, any>>(
         props: propsWithOverwrites,
         onLoad: computedOnLoad ?? {},
       },
-      ...draggable,
       ...droppable,
       ...childStyles,
       renderTree,

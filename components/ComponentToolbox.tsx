@@ -65,6 +65,14 @@ const ComponentToolboxInner = () => {
     (state) => state.setIsCustomComponentModalOpen,
   );
 
+  const onDragStart = useOnDragStart();
+
+  const draggable = useDraggable({
+    id: component.id || "",
+    onDragStart,
+    currentWindow: iframeWindow,
+  });
+
   const componentData = componentMapper[component?.name || ""];
   let toolboxActions = componentData?.toolboxActions || [];
 
@@ -78,6 +86,8 @@ const ComponentToolboxInner = () => {
   }
 
   const blockedToolboxActions = componentData?.blockedToolboxActions || [];
+  const canMove =
+    !component.fixedPosition && !blockedToolboxActions.includes("move");
 
   const comp = (iframeWindow?.document.querySelector(
     `[data-id="${component.id}"]`,
@@ -161,6 +171,7 @@ const ComponentToolboxInner = () => {
 
   const handleResize = useCallback(
     (event: React.MouseEvent) => {
+      return;
       if (isResizing && comp) {
         const totalColumns = 48;
         const rowHeight = 10; // in pixels
@@ -266,7 +277,7 @@ const ComponentToolboxInner = () => {
           />
         ))}
       </Box>
-      {/* <Group
+      <Group
         id="toolbox"
         p={10}
         h={24}
@@ -282,10 +293,26 @@ const ComponentToolboxInner = () => {
           boxShadow: "0px 0.8px 10.8px 0px #8B8B8B8C",
         })}
       >
+        <UnstyledButton
+          sx={{
+            cursor: !canMove ? "default" : "move",
+            alignItems: "center",
+            display: "flex",
+          }}
+          {...(!canMove ? {} : draggable)}
+        >
+          {canMove && (
+            <IconGripVertical
+              size={ICON_SIZE}
+              color="white"
+              strokeWidth={1.5}
+            />
+          )}
+        </UnstyledButton>
         <Text color="white" size="xs">
-          {component.name}
+          {component.description}
         </Text>
-      </Group> */}
+      </Group>
     </>,
     iframeWindow?.document?.body as any,
   );

@@ -48,7 +48,7 @@ export const useDraggable = ({
   );
 
   return {
-    draggable: true,
+    draggable: id !== "main-content" ? true : false,
     onDragStart: handleDragStart,
   };
 };
