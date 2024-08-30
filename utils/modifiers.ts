@@ -181,7 +181,7 @@ export const requiredModifiers: RequiredModifiers = {
       height: "auto",
       // paddingLeft: "32px",
       // paddingRight: "32px",
-      gridColumn: "1 / 5",
+      gridColumn: "1 / 10",
       gridRow: "1 / 5",
       display: "subgrid",
     },
