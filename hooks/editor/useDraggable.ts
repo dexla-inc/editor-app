@@ -15,7 +15,7 @@ export const useDraggable = ({
   const handleDragStart = useCallback(
     (event: React.DragEvent) => {
       if (isResizing) return;
-      console.log("not resizing");
+      // console.log("not resizing");
       // Remove the preview element if it exists
       const previewElement =
         currentWindow?.document.getElementById("preview-element");

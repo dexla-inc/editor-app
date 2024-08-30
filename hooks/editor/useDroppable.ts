@@ -244,12 +244,57 @@ export const useDroppable = ({
     return rawId ? rawId.split("-related-").at(0) : rawId;
   };
 
+  function checkOverlap(movable: any) {
+    const movableRect = movable.getBoundingClientRect();
+    const overlappingElements: any[] = [];
+    const componentMutableAttrs =
+      useEditorTreeStore.getState().componentMutableAttrs;
+    const w = currentWindow ?? window;
+
+    const targets = Object.entries(componentMutableAttrs).reduce(
+      (acc, [key, attrs]) => {
+        if (
+          attrs.blockDroppingChildrenInside &&
+          !["root", "content-wrapper", "main-content"].includes(key)
+        ) {
+          const element =
+            w?.document?.querySelector(`[data-id^="${key}"]`) ??
+            w?.document?.querySelector(`[id^="${key}"]`);
+          if (element) {
+            acc.push(element);
+          }
+        }
+        return acc;
+      },
+      [] as Element[],
+    );
+
+    targets.forEach((target) => {
+      const targetRect = target.getBoundingClientRect();
+      if (isOverlapping(movableRect, targetRect)) {
+        overlappingElements.push(target.id);
+      }
+    });
+
+    return overlappingElements;
+  }
+
+  function isOverlapping(rect1: any, rect2: any) {
+    return !(
+      rect1.right < rect2.left ||
+      rect1.left > rect2.right ||
+      rect1.bottom < rect2.top ||
+      rect1.top > rect2.bottom
+    );
+  }
+
   const handleDragOver = useCallback(
     (event: React.DragEvent) => {
       const { isResizing } = useEditorStore.getState();
       const isEditorMode = isEditorModeSelector(useEditorTreeStore.getState());
       const componentMutableAttrs =
         useEditorTreeStore.getState().componentMutableAttrs;
+
       if (isResizing || !isEditorMode) return;
 
       const { componentToAdd } = useEditorStore.getState();
@@ -267,6 +312,7 @@ export const useDroppable = ({
 
       const { clientX: mouseX, clientY: mouseY } = event;
       const w = currentWindow ?? window;
+
       const comp =
         w?.document?.querySelector(`[data-id^="${id}"]`) ??
         w?.document?.querySelector(`[id^="${id}"]`);
@@ -328,6 +374,12 @@ export const useDroppable = ({
 
         // const mainContent = currentWindow.document.getElementById('main-content');
         firstValidParentElement!.appendChild(previewElement);
+        // console.log('===>', previewElement.getBoundingClientRect());
+        const overlappingElements = checkOverlap(previewElement);
+        if (overlappingElements.length > 0) {
+          previewElement.style.backgroundColor = "rgba(255, 0, 0, 0.1)";
+          previewElement.style.borderColor = "#DE4040";
+        }
       }
 
       position.current = {
@@ -345,7 +397,7 @@ export const useDroppable = ({
       event.stopPropagation();
       const isEditorMode = isEditorModeSelector(useEditorTreeStore.getState());
       if (!isEditorMode) return;
-
+      console.log("drag enter", id);
       debouncedDragEnter(event, id);
     },
     [id],
