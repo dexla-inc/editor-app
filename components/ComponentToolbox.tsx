@@ -30,7 +30,7 @@ import { createPortal } from "react-dom";
 import { useShallow } from "zustand/react/shallow";
 import { pick } from "next/dist/lib/pick";
 
-const COLUMN_WIDTH = 48; // 48fr
+const COLUMN_WIDTH = 96; // 96fr
 const ROW_HEIGHT = 10; // 10px
 
 const ComponentToolboxInner = () => {

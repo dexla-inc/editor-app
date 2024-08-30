@@ -420,7 +420,7 @@ export const extractComponentMutableAttrs = (
     if (!omitedKeys.blockDroppingChildrenInside) {
       if (component.id === "main-content") {
         set(omitedKeys, "props.style.display", "grid");
-        set(omitedKeys, "props.style.gridTemplateColumns", "repeat(48, 1fr)");
+        set(omitedKeys, "props.style.gridTemplateColumns", "repeat(96, 1fr)");
         set(omitedKeys, "props.style.gridAutoRows", "10px");
       } else {
         set(omitedKeys, "props.style.display", "grid");
