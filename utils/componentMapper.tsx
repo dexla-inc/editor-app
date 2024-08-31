@@ -41,14 +41,6 @@ import { Rating } from "@/components/mapper/Rating";
 import { Select } from "@/components/mapper/Select";
 import { Switch } from "@/components/mapper/Switch";
 import { Tab } from "@/components/mapper/Tab";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeaderCell,
-  TableRow,
-} from "@/components/mapper/Table";
 import { Tabs } from "@/components/mapper/Tabs";
 import { Text } from "@/components/mapper/Text";
 import { Textarea } from "@/components/mapper/Textarea";
@@ -70,8 +62,9 @@ import * as ButtonStructure from "@/components/mapper/structure/Button";
 import * as ButtonIconStructure from "@/components/mapper/structure/ButtonIcon";
 import * as CardStructure from "@/components/mapper/structure/Card";
 import * as CheckboxStructure from "@/components/mapper/structure/Checkbox";
-import * as CheckboxItemStructure from "@/components/mapper/structure/CheckboxItem";
 import * as CheckboxGroupStructure from "@/components/mapper/structure/CheckboxGroup";
+import * as CheckboxItemStructure from "@/components/mapper/structure/CheckboxItem";
+import * as CodeEmbedStructure from "@/components/mapper/structure/CodeEmbed";
 import * as ContainerStructure from "@/components/mapper/structure/Container";
 import * as CountdownButtonStructure from "@/components/mapper/structure/CountdownButton";
 import * as DateInputStructure from "@/components/mapper/structure/DateInput";
@@ -108,8 +101,6 @@ import * as LineChartStructure from "@/components/mapper/structure/charts/LineCh
 import * as PieChartStructure from "@/components/mapper/structure/charts/PieChart";
 import * as RadarChartStructure from "@/components/mapper/structure/charts/RadarChart";
 import * as RadialChartStructure from "@/components/mapper/structure/charts/RadialChart";
-import * as TableStructure from "@/components/mapper/structure/table/Table";
-import * as TableCellStructure from "@/components/mapper/structure/table/TableCell";
 import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
 import { Component, ComponentStructure } from "@/utils/editor";
 
@@ -120,6 +111,7 @@ import { RadialChart } from "@/components/mapper/charts/RadialChart";
 import { ActionTrigger, SequentialTrigger } from "@/utils/actions";
 import { Modifiers } from "@/utils/modifiers";
 
+import { CodeEmbed } from "@/components/mapper/CodeEmbed";
 import {
   addAccordionItemToolboxAction,
   addColumnToParentToolboxAction,
@@ -129,7 +121,6 @@ import {
   insertRowToolboxAction,
 } from "@/utils/toolboxActions";
 import {
-  IconArrowAutofitContent,
   IconBoxModel,
   IconBrandChrome,
   IconCalendar,
@@ -144,26 +135,30 @@ import {
   IconCircleDot,
   IconClick,
   IconClockHour5,
+  IconCode,
   IconContainer,
   IconCursorText,
-  IconLayoutCards,
   IconExclamationMark,
   IconFile,
   IconFileText,
   IconFileUpload,
   IconForms,
+  IconGradienter,
   IconHeading,
   IconIdBadge,
   IconInputSearch,
   IconJewishStar,
   IconLayoutBottombarCollapse,
+  IconLayoutCards,
   IconLayoutColumns,
+  IconLayoutDistributeHorizontal,
   IconLayoutGrid,
   IconLayoutKanban,
   IconLayoutNavbar,
   IconLayoutSidebar,
   IconLayoutSidebarLeftCollapse,
   IconLink,
+  IconListCheck,
   IconLoader2,
   IconMapPin,
   IconPageBreak,
@@ -173,13 +168,9 @@ import {
   IconSeparator,
   IconSlash,
   IconStackPop,
-  IconTable,
   IconToggleLeft,
   IconUser,
-  IconListCheck,
-  IconGradienter,
 } from "@tabler/icons-react";
-import { IconLayoutDistributeHorizontal } from "@tabler/icons-react";
 
 export type ComponentCategoryType =
   | "Layout"
@@ -932,6 +923,25 @@ export const structureMapper: StructureMapper = {
     icon: <IconMapPin size={ICON_SIZE} />,
     synonyms: ["Google Maps", "Map Plugin"],
   },
+  CodeEmbed: {
+    structure: (props: any) => CodeEmbedStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="CodeEmbed"
+        icon={<IconCode size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Third Party",
+    icon: <IconCode size={ICON_SIZE} />,
+    synonyms: [
+      "Html Code",
+      "Custom Code",
+      "Embed Code",
+      "Embed HTML",
+      "Embed CSS",
+      "Embed JS",
+    ],
+  },
 };
 
 export type ToolboxAction = {
@@ -1461,6 +1471,13 @@ export const componentMapper: ComponentMapper = {
     Component: (props) => <GoogleMapPlugin {...props} />,
     modifiers: ["mapSettings", "size", "border", "effects"],
     actionTriggers: ["onClick"],
+    sequentialTriggers: ["onSuccess", "onError"],
+  },
+  CodeEmbed: {
+    Component: (props) => <CodeEmbed {...props} />,
+    // modifiers: ["mapSettings", "size", "border", "effects"],
+    modifiers: ["effects"],
+    actionTriggers: [],
     sequentialTriggers: ["onSuccess", "onError"],
   },
 };
