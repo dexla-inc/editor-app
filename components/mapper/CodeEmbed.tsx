@@ -2,12 +2,20 @@ import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { EditableComponentMapper } from "@/utils/editor";
 import { Box } from "@mantine/core";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
-import { forwardRef } from "react";
+import { forwardRef, useEffect } from "react";
 
 type Props = EditableComponentMapper & {
   htmlCode: string;
   cssCode: string;
   jsCode: string;
+};
+
+// Function to prefix CSS selectors
+const prefixCssSelectors = (css: string, prefix: string) => {
+  return css.replace(/([^\r\n,{}]+)(,(?=[^}]*{)|\s*{)/g, (match) => {
+    // Don't prefix @-rules
+    return match.startsWith("@") ? match : `${prefix} ${match}`;
+  });
 };
 
 const CodeEmbedComponent = forwardRef<HTMLDivElement, Props>(
@@ -26,22 +34,18 @@ const CodeEmbedComponent = forwardRef<HTMLDivElement, Props>(
     } = component.onLoad ?? {};
     const uniqueClass = `code-embed-${component.id}`;
 
-    if (ref && "current" in ref && ref.current) {
-      // Function to prefix CSS selectors
-      const prefixCssSelectors = (css: string, prefix: string) => {
-        return css.replace(/([^\r\n,{}]+)(,(?=[^}]*{)|\s*{)/g, (match) => {
-          // Don't prefix @-rules
-          return match.startsWith("@") ? match : `${prefix} ${match}`;
-        });
-      };
-      const prefixedCss = prefixCssSelectors(cssCode, `.${uniqueClass}`);
+    useEffect(() => {
+      if (ref && "current" in ref && ref.current) {
+        const prefixedCss = prefixCssSelectors(cssCode, `.${uniqueClass}`);
 
-      ref.current.innerHTML = `
+        ref.current.innerHTML = `
           <style>${prefixedCss}</style>
           ${htmlCode}
           <script>${jsCode}</script>
         `;
-    }
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [ref]);
 
     return (
       <Box
