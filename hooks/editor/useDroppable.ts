@@ -102,10 +102,6 @@ export const useDroppable = ({
       const previewElement =
         currentWindow?.document.getElementById("preview-element");
       const isPreviewElementOverlapping = previewElement?.dataset.overlapping;
-      // if (isPreviewElementOverlapping) {
-      //   previewElement.remove();
-      //   return;
-      // }
 
       if (isResizing || !isEditorMode) return;
 
@@ -239,32 +235,11 @@ export const useDroppable = ({
   function checkOverlap(movable: any) {
     const movableRect = movable.getBoundingClientRect();
     const overlappingElements: any[] = [];
-    const componentMutableAttrs =
-      useEditorTreeStore.getState().componentMutableAttrs;
-    const w = currentWindow ?? window;
+    const elementRects = useEditorStore.getState().elementRects;
 
-    const targets = Object.entries(componentMutableAttrs).reduce(
-      (acc, [key, attrs]) => {
-        if (
-          attrs.blockDroppingChildrenInside &&
-          !["root", "content-wrapper", "main-content"].includes(key)
-        ) {
-          const element =
-            w?.document?.querySelector(`[data-id^="${key}"]`) ??
-            w?.document?.querySelector(`[id^="${key}"]`);
-          if (element) {
-            acc.push(element);
-          }
-        }
-        return acc;
-      },
-      [] as Element[],
-    );
-
-    targets.forEach((target) => {
-      const targetRect = target.getBoundingClientRect();
-      if (isOverlapping(movableRect, targetRect)) {
-        overlappingElements.push(target.id);
+    Object.entries(elementRects).forEach(([key, rect]) => {
+      if (isOverlapping(movableRect, rect)) {
+        overlappingElements.push(key);
       }
     });
 
@@ -332,7 +307,6 @@ export const useDroppable = ({
         mouseX,
         mouseY,
       );
-      // console.log(firstValidParentElement, coordinates);
 
       // Position updated
       const newStyles = updateGridPosition(
@@ -364,9 +338,7 @@ export const useDroppable = ({
         previewElement.style.width = "auto";
         previewElement.style.height = "auto";
 
-        // const mainContent = currentWindow.document.getElementById('main-content');
         firstValidParentElement!.appendChild(previewElement);
-        // console.log('===>', previewElement.getBoundingClientRect());
         const overlappingElements = checkOverlap(previewElement);
         if (overlappingElements.length > 0) {
           previewElement.style.backgroundColor = "rgba(255, 0, 0, 0.1)";

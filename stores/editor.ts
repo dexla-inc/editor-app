@@ -68,6 +68,8 @@ export type EditorState = {
   setSelectedPageActionIds: (actionId: string) => void;
   isDragging: boolean;
   setIsDragging: (isDragging: boolean) => void;
+  elementRects: Record<string, DOMRect>;
+  setElementRects: (elementRects: Record<string, DOMRect>) => void;
 };
 
 // creates a store with undo/redo capability
@@ -75,6 +77,8 @@ export const useEditorStore = create<EditorState>()(
   // @ts-ignore
   devtools(
     (set) => ({
+      elementRects: {},
+      setElementRects: (elementRects) => set({ elementRects }),
       isDragging: false,
       setIsDragging: (isDragging: boolean) => set({ isDragging }),
       edge: undefined,
