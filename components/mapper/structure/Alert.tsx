@@ -1,4 +1,3 @@
-import { defaultTheme } from "@/utils/branding";
 import { structureMapper } from "@/utils/componentMapper";
 import { ComponentStructure } from "@/utils/editor";
 import { nanoid } from "nanoid";
@@ -18,10 +17,6 @@ export const jsonStructure = (props?: any): ComponentStructure => {
         props: {
           children: "Alert title",
           order: 6,
-          style: {
-            gridColumn: "1 / 15",
-            gridRow: "1 / 5",
-          },
         },
       },
       {
@@ -29,10 +24,6 @@ export const jsonStructure = (props?: any): ComponentStructure => {
         id: nanoid(),
         props: {
           children: "Alert text",
-          style: {
-            gridColumn: "1 / 15",
-            gridRow: "5 / 10",
-          },
         },
       },
     ],
@@ -43,7 +34,7 @@ export const jsonStructure = (props?: any): ComponentStructure => {
         display: "grid",
         gridTemplateColumns: "subgrid",
         gridTemplateRows: "subgrid",
-        gridColumn: "1 / 15",
+        gridColumn: "1 / 40",
         gridRow: "1 / 10",
       },
       icon: "IconAlertCircle",

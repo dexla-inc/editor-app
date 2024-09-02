@@ -33,41 +33,22 @@ const AlertComponent = forwardRef(
         style={{ ...props.style }}
         {...triggers}
         styles={{
-          icon: {
-            margin: "0px",
-            display: "grid",
-            gridTemplateColumns: "subgrid",
-            gridTemplateRows: "subgrid",
-            gridColumn: "1 / 2",
-            gridRow: "1 / 4",
-            width: "auto",
-            height: "auto",
-            "*": {
-              display: "grid !important",
-              gridTemplateColumns: "subgrid",
-              gridTemplateRows: "subgrid",
-              gridColumn: "1 / -1",
-              gridRow: "1 / -1",
-            },
-          },
           wrapper: {
-            display: "grid",
-            gridTemplateColumns: "subgrid",
-            gridTemplateRows: "subgrid",
+            display: "flex",
             gridColumn: "1 / -1",
             gridRow: "1 / -1",
           },
+          icon: {
+            margin: "0px",
+          },
           body: {
-            display: "grid",
-            gridTemplateColumns: "subgrid",
-            gridTemplateRows: "subgrid",
-            gridColumn: "2 / -1",
-            gridRow: "1 / -1",
+            width: "100%",
+            height: "100%",
           },
           message: {
+            width: "100%",
+            height: "100%",
             display: "grid",
-            gridTemplateColumns: "subgrid",
-            gridTemplateRows: "subgrid",
             gridColumn: "1 / -1",
             gridRow: "1 / -1",
           },
