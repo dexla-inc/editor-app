@@ -256,12 +256,12 @@ const InputComponent = forwardRef(
             icon={iconName ? <Icon name={iconName} /> : null}
             style={{}}
             styles={{
-              root: {
-                position: "relative",
-                ...pick(customStyle, rootStyleProps),
-                height: "fit-content",
+              root: customStyle,
+              wrapper: {
+                display: "flex",
+                gridColumn: "1 / -1",
+                gridRow: "1 / -1",
               },
-              input: { ...customStyle, minHeight: "auto" },
             }}
             value={value}
             {...restTriggers}

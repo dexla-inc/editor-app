@@ -10,7 +10,13 @@ export const jsonStructure = (props?: any): ComponentStructure => {
     props: {
       ...requiredModifiers.input,
       style: {
-        width: "100%",
+        width: "auto",
+        height: "auto",
+        display: "grid",
+        gridTemplateColumns: "subgrid",
+        gridTemplateRows: "subgrid",
+        gridColumn: "1 / 30",
+        gridRow: "1 / 5",
       },
       ...(props.props || {}),
     },

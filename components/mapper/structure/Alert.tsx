@@ -29,7 +29,7 @@ export const jsonStructure = (props?: any): ComponentStructure => {
     ],
     props: {
       style: {
-        width: "100%",
+        width: "auto",
         height: "auto",
         display: "grid",
         gridTemplateColumns: "subgrid",
