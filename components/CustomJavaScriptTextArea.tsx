@@ -38,6 +38,10 @@ declare var event: {
 declare var others: {
   [key: string]: any;
 };
+
+declare var dexla: {
+  setVariable: (variable: string, value: any) => void;
+};
 `;
 
 export function CustomJavaScriptTextArea({
@@ -142,16 +146,29 @@ export function CustomJavaScriptTextArea({
                   kind: monaco.languages.CompletionItemKind.Variable,
                   insertText: `others['${key}']`,
                 })),
-                ...Object.entries(components).map(([id, component]) => ({
-                  label: `components[${component.description}]`,
-                  kind: monaco.languages.CompletionItemKind.Variable,
-                  insertText: `components[/* ${component.description} */'${id}']`,
-                })),
-                ...Object.entries(actions).map(([id, action]) => ({
-                  label: `actions[${action.name}]`,
-                  kind: monaco.languages.CompletionItemKind.Variable,
-                  insertText: `actions[/* ${action.name} */'${id}']`,
-                })),
+                ...Object.entries(components.list as Record<string, any>).map(
+                  ([id, component]) => ({
+                    label: `components[${component.description}]`,
+                    kind: monaco.languages.CompletionItemKind.Variable,
+                    insertText: `components[/* ${component.description} */'${id}']`,
+                  }),
+                ),
+                ...Object.entries(actions.list as Record<string, any>).map(
+                  ([id, action]) => ({
+                    label: `actions[${action.name}]`,
+                    kind: monaco.languages.CompletionItemKind.Variable,
+                    insertText: `actions[/* ${action.name} */'${id}']`,
+                  }),
+                ),
+                {
+                  label: "dexla.setVariable",
+                  kind: monaco.languages.CompletionItemKind.Function,
+                  insertText: "dexla.setVariable(${1:variable}, ${2:value})",
+                  insertTextRules:
+                    monaco.languages.CompletionItemInsertTextRule
+                      .InsertAsSnippet,
+                  documentation: "Set a variable with the given value",
+                },
               ],
             }),
           }),

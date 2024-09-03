@@ -84,21 +84,6 @@ export const useComputeValue = ({
   }, [onLoad]);
 
   const item = itemTransformer(shareableContent?.relatedComponentsData ?? {});
-  const language = useEditorTreeStore((state) => state.language);
-
-  const getStaticValue = (fieldValue: ValueProps) => {
-    const staticValue = fieldValue?.static;
-    const value = !has(staticValue, language)
-      ? !has(staticValue, "en")
-        ? emptyObject(staticValue)
-          ? undefined
-          : staticValue
-        : // @ts-ignore
-          staticValue?.en
-      : staticValue?.[language];
-
-    return value;
-  };
 
   const { variableKeys, componentKeys, actionKeys, itemKeys, otherKeys } =
     useMemo(() => {
@@ -118,12 +103,6 @@ export const useComputeValue = ({
 
       valuePropsPaths.forEach((fieldValuePath) => {
         const fieldValue = get(onLoad, fieldValuePath) as ValueProps;
-        const staticValue = getStaticValue(fieldValue);
-        if (typeof staticValue === "string") {
-          patterns.forEach(({ pattern, keys }) => {
-            keys.push(...extractKeysFromPattern(pattern, staticValue));
-          });
-        }
         if (fieldValue.dataType === "boundCode" && fieldValue.boundCode) {
           patterns.forEach(({ pattern, keys }) => {
             keys.push(...extractKeysFromPattern(pattern, fieldValue.boundCode));
@@ -191,6 +170,7 @@ export const useComputeValue = ({
   ) as RecordStringAny;
 
   const projectId = useEditorTreeStore.getState().currentProjectId as string;
+  const language = useEditorTreeStore((state) => state.language);
 
   const auth = useDataSourceStore((state) =>
     state.getAuthState(projectId),
@@ -274,10 +254,15 @@ export const useComputeValue = ({
       return get(shareableContent, `data.${fieldValue?.dynamic}`);
     },
     static: (fieldValue: ValueProps) => {
-      const value = getStaticValue(fieldValue);
-      if (typeof value === "string") {
-        return transformBoundCode(value);
-      }
+      const staticValue = fieldValue?.static;
+      const value = !has(staticValue, language)
+        ? !has(staticValue, "en")
+          ? emptyObject(staticValue)
+            ? undefined
+            : staticValue
+          : // @ts-ignore
+            staticValue?.en
+        : staticValue?.[language];
 
       return value;
     },
