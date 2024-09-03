@@ -182,7 +182,8 @@ export type ComponentCategoryType =
   | "Card"
   | "Chart"
   | "Overlays"
-  | "Third Party";
+  | "Third Party"
+  | "Advanced";
 
 export type StructureDefinition = {
   structure: (props: any) => Component;
@@ -931,7 +932,7 @@ export const structureMapper: StructureMapper = {
         icon={<IconCode size={LARGE_ICON_SIZE} />}
       />
     ),
-    category: "Third Party",
+    category: "Advanced",
     icon: <IconCode size={ICON_SIZE} />,
     synonyms: [
       "Html Code",
@@ -1478,6 +1479,6 @@ export const componentMapper: ComponentMapper = {
     // modifiers: ["mapSettings", "size", "border", "effects"],
     modifiers: ["effects"],
     actionTriggers: [],
-    sequentialTriggers: ["onSuccess", "onError"],
+    sequentialTriggers: [],
   },
 };

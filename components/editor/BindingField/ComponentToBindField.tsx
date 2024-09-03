@@ -1,6 +1,7 @@
+import { CustomJavaScriptTextArea } from "@/components/CustomJavaScriptTextArea";
+import { MonacoEditorJson } from "@/components/MonacoEditorJson";
 import { SegmentedControlInput } from "@/components/SegmentedControlInput";
 import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
-import { MonacoEditorJson } from "@/components/MonacoEditorJson";
 import { NumberInput, Select, TextInput } from "@mantine/core";
 
 export const ComponentToBindField = {
@@ -13,4 +14,5 @@ export const ComponentToBindField = {
   Segmented: SegmentedControlInput,
   Select: Select,
   Number: NumberInput,
+  CustomJs: CustomJavaScriptTextArea,
 };
