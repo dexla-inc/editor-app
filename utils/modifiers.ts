@@ -179,11 +179,11 @@ export const requiredModifiers: RequiredModifiers = {
     style: {
       width: "auto",
       height: "auto",
-      // paddingLeft: "32px",
-      // paddingRight: "32px",
       gridColumn: "1 / 10",
       gridRow: "1 / 5",
-      display: "subgrid",
+      display: "grid",
+      gridTemplateColumns: "subgrid",
+      gridTemplateRows: "subgrid",
     },
   },
   countdownButton: {
