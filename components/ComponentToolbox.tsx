@@ -97,11 +97,11 @@ const ComponentToolboxInner = () => {
   const canMove =
     !component.fixedPosition && !blockedToolboxActions.includes("move");
 
-  useEffect(() => {
-    const comp =
-      iframeWindow?.document.querySelector(`[data-id="${component.id}"]`) ??
-      iframeWindow?.document.getElementById(component.id!);
+  const comp = (iframeWindow?.document.querySelector(
+    `[data-id="${component.id}"]`,
+  ) ?? iframeWindow?.document.getElementById(component.id!)) as HTMLElement;
 
+  useEffect(() => {
     if (comp) {
       const newRect = comp.getBoundingClientRect();
       setCompRect(newRect);
@@ -172,12 +172,24 @@ const ComponentToolboxInner = () => {
     },
   ];
 
+  const resizeBoxStartCoords = useRef<any>(null);
   const handleResizeStart = (direction: string, event: React.MouseEvent) => {
     setIsResizing(true);
     setResizeDirection(direction);
+    const resizeBoxRect = iframeWindow?.document
+      .getElementById("resize-box")
+      ?.getBoundingClientRect();
+    resizeBoxStartCoords.current = {
+      startWidth: resizeBoxRect!.width,
+      startHeight: resizeBoxRect!.height,
+      startX: event.clientX,
+      startY: event.clientY,
+      startTop: resizeBoxRect!.top,
+      startLeft: resizeBoxRect!.left,
+    };
     setInitialSize({ width: compRect!.width, height: compRect!.height });
     setInitialPosition({ x: event.clientX, y: event.clientY });
-    console.log(`Started resizing ${direction}`);
+    console.log(`Started resizing ${direction}`, event.target);
   };
 
   const handleResizeEnd = () => {
@@ -188,9 +200,80 @@ const ComponentToolboxInner = () => {
 
   const handleResize = useCallback(
     (event: React.MouseEvent) => {
-      // ... (rest of the handleResize function remains unchanged)
+      if (isResizing && comp) {
+        console.log("resizeBoxStartCoords", resizeBoxStartCoords.current);
+        const resizeBoxElement =
+          iframeWindow?.document.getElementById("resize-box")!;
+
+        const totalColumns = 96;
+        const rowHeight = 10; // in pixels
+        const viewportWidth = iframeWindow?.innerWidth;
+        const viewportHeight = iframeWindow?.innerHeight;
+
+        const columnWidth = viewportWidth! / totalColumns;
+        const cursorColumn = Math.floor(event.clientX / columnWidth) + 1;
+        const cursorRow = Math.floor(event.clientY / rowHeight) + 1;
+
+        // console.log(`Cursor is in column ${cursorColumn} and row ${cursorRow}`);
+
+        const dx = event.clientX - initialPosition.x;
+        const dy = event.clientY - initialPosition.y;
+        // console.log("dx", event.clientX, initialPosition.x, dx);
+        const currentStyle = window.getComputedStyle(comp);
+
+        // Parse gridColumn and gridRow
+        const [gridColumnStart, gridColumnEnd] = currentStyle.gridColumn
+          .split(" / ")
+          .map((value) => {
+            const parsed = parseInt(value, 10);
+            return isNaN(parsed) ? 1 : parsed;
+          });
+        const [gridRowStart, gridRowEnd] = currentStyle.gridRow
+          .split(" / ")
+          .map((value) => {
+            const parsed = parseInt(value, 10);
+            return isNaN(parsed) ? 1 : parsed;
+          });
+        // console.log(gridColumnStart, gridColumnEnd)
+        switch (resizeDirection) {
+          case "left":
+            // comp.style.gridColumn = `${Math.max(1, newLeftColumns)} / ${gridColumnEnd}`;
+            resizeBoxElement.style.width = `${resizeBoxStartCoords?.current!.startWidth + (resizeBoxStartCoords.current!.startX - event.clientX)}px`;
+            resizeBoxElement.style.left = `${resizeBoxStartCoords?.current!.startLeft + (event.clientX - resizeBoxStartCoords.current!.startX)}px`;
+            break;
+          case "top":
+            const newTopRows =
+              dy < 0
+                ? Math.ceil(dy / ROW_HEIGHT) // Moving up (increasing size)
+                : Math.floor(dy / ROW_HEIGHT); // Moving down (decreasing size)
+            // comp.style.gridRow = `${Math.max(1, cursorRow)} / ${gridRowEnd}`;
+
+            resizeBoxElement.style.height = `${resizeBoxStartCoords?.current!.startHeight + (resizeBoxStartCoords.current!.startY - event.clientY)}px`;
+            resizeBoxElement.style.top = `${resizeBoxStartCoords?.current!.startTop + (event.clientY - resizeBoxStartCoords.current!.startY)}px`;
+            break;
+          case "right":
+            const newRightColumns =
+              dx > 0
+                ? Math.floor(dx / COLUMN_WIDTH) // Moving right (increasing size)
+                : Math.ceil(dx / COLUMN_WIDTH); // Moving left (decreasing size)
+            const newColumnSpan =
+              gridColumnEnd - gridColumnStart + newRightColumns;
+            // comp.style.gridColumn = `${gridColumnStart} / ${Math.max(1, cursorColumn)}`;
+            resizeBoxElement.style.width = `${resizeBoxStartCoords?.current!.startWidth + (event.clientX - resizeBoxStartCoords.current!.startX)}px`;
+            break;
+          case "bottom":
+            const newBottomRows =
+              dy > 0
+                ? Math.floor(dy / ROW_HEIGHT) // Moving down (increasing size)
+                : Math.ceil(dy / ROW_HEIGHT); // Moving up (decreasing size)
+            const newRowSpan = gridRowEnd - gridRowStart + newBottomRows;
+            // comp.style.gridRow = `${gridRowStart} / ${Math.max(1, cursorRow)}`;
+            resizeBoxElement.style.height = `${resizeBoxStartCoords?.current!.startHeight + (event.clientY - resizeBoxStartCoords.current!.startY)}px`;
+            break;
+        }
+      }
     },
-    [isResizing, compRect, resizeDirection, initialPosition],
+    [isResizing, comp, resizeDirection, initialPosition],
   );
 
   if (!iframeWindow?.document?.body || !compRect) return null;
@@ -198,6 +281,7 @@ const ComponentToolboxInner = () => {
   return createPortal(
     <>
       <Box
+        id="resize-box"
         style={boxStyle}
         onMouseMove={handleResize}
         onMouseUp={handleResizeEnd}
@@ -211,7 +295,7 @@ const ComponentToolboxInner = () => {
           />
         ))}
       </Box>
-      <Group
+      {/* <Group
         id="toolbox"
         p={10}
         h={24}
@@ -246,7 +330,7 @@ const ComponentToolboxInner = () => {
         <Text color="white" size="xs">
           {component.description}
         </Text>
-      </Group>
+      </Group> */}
     </>,
     iframeWindow?.document?.body as any,
   );

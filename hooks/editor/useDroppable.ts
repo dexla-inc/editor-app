@@ -362,7 +362,7 @@ export const useDroppable = ({
       event.stopPropagation();
       const isEditorMode = isEditorModeSelector(useEditorTreeStore.getState());
       if (!isEditorMode) return;
-      console.log("drag enter", id);
+      // console.log("drag enter", id);
       debouncedDragEnter(event, id);
     },
     [id],

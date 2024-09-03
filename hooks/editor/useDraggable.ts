@@ -27,14 +27,11 @@ export const useDraggable = ({
       const setIsDragging = useEditorStore.getState().setIsDragging;
 
       const w = currentWindow ?? window;
-      const el = w.document.getElementById(id)!;
+      const el = w.document.createElement("div");
       const rect = el?.getBoundingClientRect()!;
 
       if (rect) {
-        const left = rect.width;
-        const top = rect.height;
-
-        event.dataTransfer.setDragImage(el, left, top);
+        event.dataTransfer.setDragImage(new Image(), 0, 0);
         event.dataTransfer.effectAllowed = "copyMove";
       }
 
