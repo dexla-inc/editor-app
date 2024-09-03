@@ -144,58 +144,54 @@ const InputComponent = forwardRef(
               style={{
                 ...customStyle,
                 overflow: "hidden",
-                position: "relative",
+                backgroundColor: "transparent",
+                border: "none",
               }}
+              id={id}
             >
-              <ActionIcon
-                size={customStyle.height}
-                variant="transparent"
-                style={{ border: "none" }}
-                onClick={decreaseNumber}
-              >
-                –
-              </ActionIcon>
-
-              <MantineNumberInput
-                hideControls
-                type="number"
-                autoComplete="off"
-                id={component.id}
-                {...componentProps}
-                style={{}}
-                styles={{
-                  root: {
-                    display: "inline",
-                    flex: "1 !important",
-                    width: "min-content",
-                    height: customStyle.height,
-                  },
-                  wrapper: { height: "inherit" },
-                  input: {
-                    border: "none",
-                    textAlign: "center",
-                    backgroundColor,
-                    color,
-                    padding: "0px",
-                    minHeight: "auto",
-                    height: "inherit",
-                  },
+              <div
+                style={{
+                  display: "flex",
+                  gridArea: "1 / 1 / -1 / -1",
+                  gap: "5px",
                 }}
-                value={parseToNumber(value)}
-                {...restTriggers}
-                onChange={handleChange}
-                label={undefined}
-                wrapperProps={{ "data-id": id }}
-              />
-
-              <ActionIcon
-                size={customStyle.height}
-                variant="transparent"
-                style={{ border: "none" }}
-                onClick={increaseNumber}
               >
-                +
-              </ActionIcon>
+                <ActionIcon
+                  size={customStyle.height}
+                  variant="transparent"
+                  style={{ border: "none" }}
+                  onClick={decreaseNumber}
+                >
+                  –
+                </ActionIcon>
+
+                <MantineNumberInput
+                  hideControls
+                  type="number"
+                  autoComplete="off"
+                  id={component.id}
+                  {...componentProps}
+                  style={{}}
+                  styles={{
+                    root: {
+                      flex: 1,
+                    },
+                  }}
+                  value={parseToNumber(value)}
+                  {...restTriggers}
+                  onChange={handleChange}
+                  label={undefined}
+                />
+
+                <ActionIcon
+                  size={customStyle.height}
+                  variant="transparent"
+                  style={{ border: "none" }}
+                  onClick={increaseNumber}
+                >
+                  +
+                </ActionIcon>
+              </div>
             </Group>
           </>
         ) : type === "number" ? (
@@ -208,12 +204,11 @@ const InputComponent = forwardRef(
             icon={iconName ? <Icon name={iconName} /> : null}
             style={{}}
             styles={{
-              root: {
-                position: "relative",
-                ...pick(customStyle, rootStyleProps),
-                height: "fit-content",
+              root: customStyle,
+              wrapper: {
+                display: "flex",
+                gridArea: "1 / 1 / -1 / -1",
               },
-              input: { ...customStyle, minHeight: "auto" },
             }}
             min={0}
             value={parseToNumber(value)}
@@ -259,8 +254,7 @@ const InputComponent = forwardRef(
               root: customStyle,
               wrapper: {
                 display: "flex",
-                gridColumn: "1 / -1",
-                gridRow: "1 / -1",
+                gridArea: "1 / 1 / -1 / -1",
               },
             }}
             value={value}

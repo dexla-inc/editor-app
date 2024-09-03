@@ -35,8 +35,7 @@ const AlertComponent = forwardRef(
         styles={{
           wrapper: {
             display: "flex",
-            gridColumn: "1 / -1",
-            gridRow: "1 / -1",
+            gridArea: "1 / 1 / -1 / -1",
           },
           icon: {
             margin: "0px",
@@ -49,8 +48,7 @@ const AlertComponent = forwardRef(
             width: "100%",
             height: "100%",
             display: "grid",
-            gridColumn: "1 / -1",
-            gridRow: "1 / -1",
+            gridArea: "1 / 1 / -1 / -1",
           },
         }}
       >
