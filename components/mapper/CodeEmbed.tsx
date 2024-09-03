@@ -1,4 +1,6 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { useEditorTreeStore } from "@/stores/editorTree";
+import { isPreviewModeSelector } from "@/utils/componentSelectors";
 import { EditableComponentMapper } from "@/utils/editor";
 import { Box } from "@mantine/core";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
@@ -33,19 +35,32 @@ const CodeEmbedComponent = forwardRef<HTMLDivElement, Props>(
       jsCode = js,
     } = component.onLoad ?? {};
     const uniqueClass = `code-embed-${component.id}`;
-
     useEffect(() => {
       if (ref && "current" in ref && ref.current) {
         const prefixedCss = prefixCssSelectors(cssCode, `.${uniqueClass}`);
+        const isPreviewMode = isPreviewModeSelector(
+          useEditorTreeStore.getState(),
+        );
 
         ref.current.innerHTML = `
           <style>${prefixedCss}</style>
           ${htmlCode}
-          <script>${jsCode}</script>
         `;
+
+        // Create and append the script element
+        if (isPreviewMode) {
+          const script = document.createElement("script");
+          script.type = "text/javascript";
+          script.textContent = `
+          (function() {
+            ${jsCode}
+          })();
+        `;
+          ref.current.appendChild(script);
+        }
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [ref]);
+    }, [ref, component?.onLoad]);
 
     return (
       <Box

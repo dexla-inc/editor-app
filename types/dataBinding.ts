@@ -1,5 +1,5 @@
-import { Component } from "@/utils/editor";
 import { Endpoint } from "@/requests/datasources/types";
+import { Component } from "@/utils/editor";
 
 export type BindingTab = "components" | "variables" | "actions" | "others";
 
@@ -84,7 +84,8 @@ export type FieldType =
   | "Number"
   | "Options"
   | "Select"
-  | "Segmented";
+  | "Segmented"
+  | "CustomJs";
 
 export type FieldProps = {
   name: string;
