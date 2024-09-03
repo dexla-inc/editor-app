@@ -1,8 +1,8 @@
+import { useBindingPopover } from "@/hooks/data/useBindingPopover";
 import { useMantineTheme } from "@mantine/core";
 import Editor from "@monaco-editor/react";
 import debounce from "lodash.debounce";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useBindingPopover } from "@/hooks/data/useBindingPopover";
 
 type JsProps = {
   language: "javascript" | "typescript" | "json";
@@ -113,6 +113,7 @@ export function CustomJavaScriptTextArea({
         contextmenu: false,
         wordWrap: "on",
         wordWrapColumn: -1,
+        fixedOverflowWidgets: true,
       }}
       beforeMount={async (monaco) => {
         monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
@@ -127,32 +128,32 @@ export function CustomJavaScriptTextArea({
         // Auto-completion configuration
         setCompletionDisposable(
           monaco.languages.registerCompletionItemProvider("typescript", {
-            provideCompletionItems: () => {
-              return {
-                suggestions: [
-                  ...Object.entries(variables).map(([id, variable]) => ({
+            provideCompletionItems: () => ({
+              suggestions: [
+                ...Object.entries(variables.list as Record<string, any>).map(
+                  ([id, variable]) => ({
                     label: `variables[${variable.name}]`,
                     kind: monaco.languages.CompletionItemKind.Keyword,
                     insertText: `variables[/* ${variable.name} */'${id}']`,
-                  })),
-                  ...Object.keys(others).map((key) => ({
-                    label: `others[${key}]`,
-                    kind: monaco.languages.CompletionItemKind.Variable,
-                    insertText: `others['${key}']`,
-                  })),
-                  ...Object.entries(components).map(([id, component]) => ({
-                    label: `components[${component.description}]`,
-                    kind: monaco.languages.CompletionItemKind.Variable,
-                    insertText: `components[/* ${component.description} */'${id}']`,
-                  })),
-                  ...Object.entries(actions).map(([id, action]) => ({
-                    label: `actions[${action.name}]`,
-                    kind: monaco.languages.CompletionItemKind.Variable,
-                    insertText: `actions[/* ${action.name} */'${id}']`,
-                  })),
-                ],
-              };
-            },
+                  }),
+                ),
+                ...Object.keys(others).map((key) => ({
+                  label: `others[${key}]`,
+                  kind: monaco.languages.CompletionItemKind.Variable,
+                  insertText: `others['${key}']`,
+                })),
+                ...Object.entries(components).map(([id, component]) => ({
+                  label: `components[${component.description}]`,
+                  kind: monaco.languages.CompletionItemKind.Variable,
+                  insertText: `components[/* ${component.description} */'${id}']`,
+                })),
+                ...Object.entries(actions).map(([id, action]) => ({
+                  label: `actions[${action.name}]`,
+                  kind: monaco.languages.CompletionItemKind.Variable,
+                  insertText: `actions[/* ${action.name} */'${id}']`,
+                })),
+              ],
+            }),
           }),
         );
       }}

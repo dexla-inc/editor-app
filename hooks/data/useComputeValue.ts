@@ -1,18 +1,18 @@
-import { useVariableStore } from "@/stores/variables";
-import { useDataSourceStore } from "@/stores/datasource";
-import { useCallback, useMemo } from "react";
-import get from "lodash.get";
-import { ValueProps } from "@/types/dataBinding";
-import set from "lodash.set";
-import { cloneObject, emptyObject, safeJsonParse } from "@/utils/common";
-import { useInputsStore } from "@/stores/inputs";
-import { useShallow } from "zustand/react/shallow";
-import { pick } from "next/dist/lib/pick";
-import { useEditorTreeStore } from "@/stores/editorTree";
-import { useOldRouter } from "@/hooks/data/useOldRouter";
 import { useDataTransformers } from "@/hooks/data/useDataTransformers";
-import has from "lodash.has";
+import { useOldRouter } from "@/hooks/data/useOldRouter";
 import { useRuleHandler } from "@/hooks/data/useRuleHandler";
+import { useDataSourceStore } from "@/stores/datasource";
+import { useEditorTreeStore } from "@/stores/editorTree";
+import { useInputsStore } from "@/stores/inputs";
+import { useVariableStore } from "@/stores/variables";
+import { ValueProps } from "@/types/dataBinding";
+import { cloneObject, emptyObject, safeJsonParse } from "@/utils/common";
+import get from "lodash.get";
+import has from "lodash.has";
+import set from "lodash.set";
+import { pick } from "next/dist/lib/pick";
+import { useCallback, useMemo } from "react";
+import { useShallow } from "zustand/react/shallow";
 
 type RecordStringAny = Record<string, any>;
 
@@ -84,6 +84,21 @@ export const useComputeValue = ({
   }, [onLoad]);
 
   const item = itemTransformer(shareableContent?.relatedComponentsData ?? {});
+  const language = useEditorTreeStore((state) => state.language);
+
+  const getStaticValue = (fieldValue: ValueProps) => {
+    const staticValue = fieldValue?.static;
+    const value = !has(staticValue, language)
+      ? !has(staticValue, "en")
+        ? emptyObject(staticValue)
+          ? undefined
+          : staticValue
+        : // @ts-ignore
+          staticValue?.en
+      : staticValue?.[language];
+
+    return value;
+  };
 
   const { variableKeys, componentKeys, actionKeys, itemKeys, otherKeys } =
     useMemo(() => {
@@ -103,6 +118,12 @@ export const useComputeValue = ({
 
       valuePropsPaths.forEach((fieldValuePath) => {
         const fieldValue = get(onLoad, fieldValuePath) as ValueProps;
+        const staticValue = getStaticValue(fieldValue);
+        if (typeof staticValue === "string") {
+          patterns.forEach(({ pattern, keys }) => {
+            keys.push(...extractKeysFromPattern(pattern, staticValue));
+          });
+        }
         if (fieldValue.dataType === "boundCode" && fieldValue.boundCode) {
           patterns.forEach(({ pattern, keys }) => {
             keys.push(...extractKeysFromPattern(pattern, fieldValue.boundCode));
@@ -170,7 +191,6 @@ export const useComputeValue = ({
   ) as RecordStringAny;
 
   const projectId = useEditorTreeStore.getState().currentProjectId as string;
-  const language = useEditorTreeStore((state) => state.language);
 
   const auth = useDataSourceStore((state) =>
     state.getAuthState(projectId),
@@ -254,15 +274,10 @@ export const useComputeValue = ({
       return get(shareableContent, `data.${fieldValue?.dynamic}`);
     },
     static: (fieldValue: ValueProps) => {
-      const staticValue = fieldValue?.static;
-      const value = !has(staticValue, language)
-        ? !has(staticValue, "en")
-          ? emptyObject(staticValue)
-            ? undefined
-            : staticValue
-          : // @ts-ignore
-            staticValue?.en
-        : staticValue?.[language];
+      const value = getStaticValue(fieldValue);
+      if (typeof value === "string") {
+        return transformBoundCode(value);
+      }
 
       return value;
     },

@@ -19,16 +19,19 @@ export const CodeEmbedData = ({
       name: "htmlCode",
       label: "HTML",
       fieldType: "TextArea" as const,
+      defaultLanguage: "html",
     },
     {
       name: "cssCode",
       label: "CSS",
       fieldType: "TextArea" as const,
+      defaultLanguage: "css",
     },
     {
       name: "jsCode",
       label: "JavaScript",
-      fieldType: "TextArea" as const,
+      fieldType: "CustomJs" as const,
+      // defaultLanguage: "javascript",
     },
   ];
 

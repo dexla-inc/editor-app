@@ -1,6 +1,10 @@
 import { ComponentToBindWrapper } from "@/components/editor/BindingField/components/ComponentToBindWrapper";
-import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
+import { ComponentToBindField } from "@/components/editor/BindingField/ComponentToBindField";
+import { Icon } from "@/components/Icon";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { FieldType, ValueProps } from "@/types/dataBinding";
+import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
+import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
 import {
   Button,
   Group,
@@ -11,13 +15,9 @@ import {
   TextInput,
   TextInputProps,
 } from "@mantine/core";
-import { Icon } from "@/components/Icon";
-import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
-import { createContext, useContext } from "react";
-import { ComponentToBindField } from "@/components/editor/BindingField/ComponentToBindField";
 import { EditorProps } from "@monaco-editor/react";
-import { useEditorTreeStore } from "@/stores/editorTree";
 import merge from "lodash.merge";
+import { createContext, useContext } from "react";
 
 // Need to extend input props depending on fieldType
 type BaseProps = {
@@ -45,7 +45,7 @@ type FieldTypeProps<T extends FieldType> = BaseProps &
         ? Omit<SegmentedControlProps, "onChange" | "value">
         : T extends "Select"
           ? Omit<SelectProps, "onChange" | "value">
-          : T extends "TextArea"
+          : T extends "TextArea" | "CustomJs"
             ? Omit<EditorProps, "onChange" | "value">
             : {});
 
@@ -144,6 +144,29 @@ ComponentToBindFromInput.TextArea = function ComponentToBindFromTextArea() {
   return (
     <ComponentToBindField.TextArea
       {...defaultProps}
+      {...AUTOCOMPLETE_OFF_PROPS}
+      value={value}
+      onChange={inputOnChange}
+    />
+  );
+};
+
+ComponentToBindFromInput.CustomJs = function ComponentToBindFromCustomJs() {
+  const {
+    staticValue,
+    inputOnChange,
+    fieldType,
+    isPageAction,
+    label,
+    ...defaultProps
+  } = useBindingField<"CustomJs">();
+  const value =
+    typeof staticValue === "string" ? staticValue : JSON.stringify(staticValue);
+
+  return (
+    <ComponentToBindField.CustomJs
+      {...defaultProps}
+      language="typescript"
       {...AUTOCOMPLETE_OFF_PROPS}
       value={value}
       onChange={inputOnChange}
