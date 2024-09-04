@@ -3,13 +3,8 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 import { useVariableStore } from "@/stores/variables";
 import { isPreviewModeSelector } from "@/utils/componentSelectors";
 import { EditableComponentMapper } from "@/utils/editor";
+import merge from "lodash.merge";
 import { useCallback, useEffect, useMemo } from "react";
-
-const prefixCssSelectors = (css: string, prefix: string) => {
-  return css.replace(/([^\r\n,{}]+)(,(?=[^}]*{)|\s*{)/g, (match) => {
-    return match.startsWith("@") ? match : `${prefix} ${match}`;
-  });
-};
 
 export const useCodeInjection = (
   ref: React.RefObject<HTMLIFrameElement>,
@@ -74,12 +69,16 @@ export const useCodeInjection = (
     `);
       ref.current.contentDocument?.close();
     },
-    [ref, createScriptContent],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [ref],
   );
 
   useEffect(() => {
-    const { htmlCode, cssCode, jsCode } =
-      component?.onLoad ?? component?.props ?? {};
+    const { htmlCode, cssCode, jsCode } = merge(
+      {},
+      component?.props,
+      component?.onLoad,
+    );
     let args: Parameters<typeof injectContent> = [htmlCode, cssCode];
     if (isPreviewMode) {
       args.push(jsCode);

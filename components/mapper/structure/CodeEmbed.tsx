@@ -11,4 +11,5 @@ export const jsonStructure = (props?: any): ComponentStructure => ({
     jsCode: "// Custom JavaScript here",
     ...(props.props || {}),
   },
+  blockDroppingChildrenInside: true,
 });
