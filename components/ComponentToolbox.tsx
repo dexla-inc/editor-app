@@ -336,7 +336,7 @@ const ComponentToolboxInner = () => {
           />
         ))}
       </Box>
-      {/* <Group
+      <Group
         id="toolbox"
         p={10}
         h={24}
@@ -371,7 +371,7 @@ const ComponentToolboxInner = () => {
         <Text color="white" size="xs">
           {component.description}
         </Text>
-      </Group> */}
+      </Group>
     </>,
     iframeWindow?.document?.body as any,
   );
