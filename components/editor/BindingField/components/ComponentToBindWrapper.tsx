@@ -1,4 +1,7 @@
+import BindingModal from "@/components/editor/BindingField/components/BindingModal";
 import BindingPopover from "@/components/editor/BindingField/components/BindingPopover";
+import { useBindingField } from "@/components/editor/BindingField/components/ComponentToBindFromInput";
+import { DynamicForm } from "@/components/editor/BindingField/handlers/DynamicForm";
 import { TopLabel } from "@/components/TopLabel";
 import {
   Flex,
@@ -8,8 +11,6 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { useBindingField } from "@/components/editor/BindingField/components/ComponentToBindFromInput";
-import { DynamicForm } from "@/components/editor/BindingField/handlers/DynamicForm";
 
 type Props = {
   children: React.ReactNode;
@@ -17,6 +18,7 @@ type Props = {
 
 export const ComponentToBindWrapper = ({ children }: Props) => {
   const { label, value } = useBindingField<"Text">();
+  const isCodeEmbed = ["HTML", "CSS", "JavaScript"].includes(label as string);
 
   const [
     isBindingPopOverOpen,
@@ -48,13 +50,21 @@ export const ComponentToBindWrapper = ({ children }: Props) => {
             />
           )}
           {(value?.dataType === "static" || !value?.dataType) && children}
-          <BindingPopover
-            controls={{
-              isOpen: isBindingPopOverOpen,
-              onClose: onCloseBindingPopOver,
-              onOpen: onOpenBindingPopOver,
-            }}
-          />
+          {!isCodeEmbed ? (
+            <BindingPopover
+              controls={{
+                isOpen: isBindingPopOverOpen,
+                onClose: onCloseBindingPopOver,
+                onOpen: onOpenBindingPopOver,
+              }}
+            />
+          ) : (
+            <BindingModal
+              isOpen={isBindingPopOverOpen}
+              onOpen={onOpenBindingPopOver}
+              onClose={onCloseBindingPopOver}
+            />
+          )}
         </DynamicForm>
       </Flex>
     </Stack>
