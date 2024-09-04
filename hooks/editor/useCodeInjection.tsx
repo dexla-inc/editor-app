@@ -1,5 +1,4 @@
 import { useCodeInjectionContext } from "@/contexts/CodeInjectionProvider";
-import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useVariableStore } from "@/stores/variables";
 import { isPreviewModeSelector } from "@/utils/componentSelectors";
@@ -13,29 +12,15 @@ const prefixCssSelectors = (css: string, prefix: string) => {
 };
 
 export const useCodeInjection = (
-  ref: React.RefObject<HTMLDivElement>,
+  ref: React.RefObject<HTMLIFrameElement>,
   component: EditableComponentMapper["component"],
-  uniqueClass: string,
 ) => {
-  const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const isPreviewMode = useMemo(
     () => isPreviewModeSelector(useEditorTreeStore.getState()),
     [],
   );
 
   const { handleSetVariable } = useCodeInjectionContext();
-
-  const injectHtmlAndCss = useCallback(
-    (htmlCode: string, cssCode: string) => {
-      if (!ref.current) return;
-      const prefixedCss = prefixCssSelectors(cssCode, `.${uniqueClass}`);
-      ref.current.innerHTML = `
-      <style>${prefixedCss}</style>
-      ${htmlCode}
-    `;
-    },
-    [ref, uniqueClass],
-  );
 
   const createScriptContent = useCallback((jsCode: string) => {
     const variables = Object.entries(
@@ -61,6 +46,7 @@ export const useCodeInjection = (
             const variablePattern = /variables\\[s*(?:\\/\\*[\\s\\S]*?\\*\\/\\s*)?'(.*?)'\\s*\\]/g;
             const variableId = [...variable.matchAll(variablePattern)][0][1];
             w.postMessage({ type: 'SET_VARIABLE', variableId, value }, '*');
+            w.parent.postMessage({ type: 'SET_VARIABLE', variableId, value }, '*');
           }
         };
         Object.freeze(dexla);
@@ -69,13 +55,24 @@ export const useCodeInjection = (
     `;
   }, []);
 
-  const injectJavaScript = useCallback(
-    (jsCode: string) => {
+  const injectContent = useCallback(
+    (htmlCode: string, cssCode: string, jsCode?: string) => {
       if (!ref.current) return;
-      const script = document.createElement("script");
-      script.type = "text/javascript";
-      script.textContent = createScriptContent(jsCode);
-      ref.current.appendChild(script);
+      ref.current.style.width = "auto";
+      ref.current.style.height = "auto";
+      ref.current.style.border = "none";
+      ref.current.contentDocument?.open();
+      ref.current.contentDocument?.write(`
+      <!DOCTYPE html>
+      <head>
+        <style>${cssCode}</style>
+      </head>
+      <body>
+        ${htmlCode}
+        ${jsCode ? `<script>${createScriptContent(jsCode)}</script>` : ""}
+      </body>
+    `);
+      ref.current.contentDocument?.close();
     },
     [ref, createScriptContent],
   );
@@ -83,11 +80,11 @@ export const useCodeInjection = (
   useEffect(() => {
     const { htmlCode, cssCode, jsCode } =
       component?.onLoad ?? component?.props ?? {};
+    let args: Parameters<typeof injectContent> = [htmlCode, cssCode];
+    if (isPreviewMode) {
+      args.push(jsCode);
+    }
 
-    injectHtmlAndCss(htmlCode, cssCode);
-
-    if (!isPreviewMode) return;
-
-    injectJavaScript(jsCode);
-  }, [component, injectHtmlAndCss, injectJavaScript, isPreviewMode]);
+    injectContent(...args);
+  }, [component, injectContent, isPreviewMode]);
 };

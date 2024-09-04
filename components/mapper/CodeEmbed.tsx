@@ -2,7 +2,6 @@ import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useCodeInjection } from "@/hooks/editor/useCodeInjection";
 import { EditableComponentMapper } from "@/utils/editor";
 import { Box } from "@mantine/core";
-import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { forwardRef } from "react";
 
 type Props = EditableComponentMapper & {
@@ -11,26 +10,17 @@ type Props = EditableComponentMapper & {
   jsCode: string;
 };
 
-const CodeEmbedComponent = forwardRef<HTMLDivElement, Props>(
+const CodeEmbedComponent = forwardRef<HTMLIFrameElement, Props>(
   ({ component, ...props }, ref) => {
-    const uniqueClass = `code-embed-${component.id}`;
+    useCodeInjection(ref as React.RefObject<HTMLIFrameElement>, component);
 
-    useCodeInjection(
-      ref as React.RefObject<HTMLDivElement>,
-      component,
-      uniqueClass,
-    );
-
-    const { triggers, ...componentProps } = component.props ?? {};
+    const { triggers, htmlCode, cssCode, jsCode, ...componentProps } =
+      component.props ?? {};
 
     return (
-      <Box
-        className={uniqueClass}
-        ref={ref}
-        {...omit(props, ["style"])}
-        {...triggers}
-        {...componentProps}
-      />
+      <Box {...triggers} {...props} {...componentProps}>
+        <iframe ref={ref} />
+      </Box>
     );
   },
 );
