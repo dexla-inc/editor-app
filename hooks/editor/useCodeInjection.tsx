@@ -1,3 +1,4 @@
+import { useCodeInjectionContext } from "@/contexts/CodeInjectionProvider";
 import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useVariableStore } from "@/stores/variables";
@@ -16,21 +17,13 @@ export const useCodeInjection = (
   component: EditableComponentMapper["component"],
   uniqueClass: string,
 ) => {
-  const iframeWindow = useEditorStore.getState().iframeWindow;
+  const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const isPreviewMode = useMemo(
     () => isPreviewModeSelector(useEditorTreeStore.getState()),
     [],
   );
 
-  const handleSetVariable = useCallback((variableId: string, value: any) => {
-    const variableList = useVariableStore.getState().variableList;
-    const selectedVariable = variableList[variableId];
-    if (selectedVariable) {
-      useVariableStore.getState().setVariable({ ...selectedVariable, value });
-    } else {
-      console.error("Variable not found:", variableId);
-    }
-  }, []);
+  const { handleSetVariable } = useCodeInjectionContext();
 
   const injectHtmlAndCss = useCallback(
     (htmlCode: string, cssCode: string) => {
@@ -96,19 +89,5 @@ export const useCodeInjection = (
     if (!isPreviewMode) return;
 
     injectJavaScript(jsCode);
-
-    const handleMessage = (event: MessageEvent) => {
-      if (event.data && event.data.type === "SET_VARIABLE") {
-        handleSetVariable(event.data.variableId, event.data.value);
-      }
-    };
-
-    const targetWindow = iframeWindow || window;
-    targetWindow.addEventListener("message", handleMessage);
-
-    return () => {
-      targetWindow.removeEventListener("message", handleMessage);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [component, injectHtmlAndCss, injectJavaScript, handleSetVariable]);
+  }, [component, injectHtmlAndCss, injectJavaScript, isPreviewMode]);
 };
