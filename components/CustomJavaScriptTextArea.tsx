@@ -9,6 +9,7 @@ type JsProps = {
   value?: string;
   onChange?: any;
   selectedItem?: string;
+  height?: string | number;
 };
 
 const RETURN_ERROR_CODE = 1108;
@@ -49,6 +50,7 @@ export function CustomJavaScriptTextArea({
   value = "",
   onChange,
   selectedItem,
+  height = "150px",
 }: JsProps) {
   const { actions, variables, components, others } = useBindingPopover();
 
@@ -103,7 +105,7 @@ export function CustomJavaScriptTextArea({
   return (
     <Editor
       width="100%"
-      height="150px"
+      height={height}
       defaultLanguage={defaultLanguage ?? "javascript"}
       onChange={debouncedOnChange}
       onMount={(editor) => {
