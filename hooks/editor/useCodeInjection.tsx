@@ -9,6 +9,7 @@ import { useCallback, useEffect, useMemo } from "react";
 export const useCodeInjection = (
   ref: React.RefObject<HTMLIFrameElement>,
   component: EditableComponentMapper["component"],
+  props: Record<string, any>,
 ) => {
   const isPreviewMode = useMemo(
     () => isPreviewModeSelector(useEditorTreeStore.getState()),
@@ -16,6 +17,27 @@ export const useCodeInjection = (
   );
 
   const { handleSetVariable } = useCodeInjectionContext();
+
+  const events = merge({}, component.props?.triggers, props);
+  const applyEventHandlers = useCallback(
+    (doc: Document) => {
+      const applyHandlers = (element: Element) => {
+        Object.entries(events)?.forEach(([eventName, handler]) => {
+          try {
+            element.addEventListener(
+              eventName.substring(2).toLowerCase(),
+              handler as EventListener,
+            );
+          } catch (error) {
+            console.error("invalid event handler", error);
+          }
+        });
+      };
+
+      applyHandlers(doc.documentElement);
+    },
+    [events],
+  );
 
   const createScriptContent = useCallback((jsCode: string) => {
     const variables = Object.entries(
@@ -68,6 +90,7 @@ export const useCodeInjection = (
       </body>
     `);
       ref.current.contentDocument?.close();
+      !jsCode && applyEventHandlers(ref.current.contentDocument!);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [ref],

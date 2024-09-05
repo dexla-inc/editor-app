@@ -8,20 +8,16 @@ type Props = EditableComponentMapper & BoxProps;
 
 const CodeEmbedComponent = forwardRef<HTMLIFrameElement, Props>(
   ({ component, ...props }, ref) => {
-    useCodeInjection(ref as React.RefObject<HTMLIFrameElement>, component);
+    useCodeInjection(
+      ref as React.RefObject<HTMLIFrameElement>,
+      component,
+      props,
+    );
 
     const { triggers, htmlCode, cssCode, jsCode, ...componentProps } =
       component.props ?? {};
 
-    return (
-      <Box
-        component="iframe"
-        ref={ref}
-        {...triggers}
-        {...props}
-        {...componentProps}
-      />
-    );
+    return <Box component="iframe" ref={ref} {...props} {...componentProps} />;
   },
 );
 
