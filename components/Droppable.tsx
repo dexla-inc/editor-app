@@ -24,18 +24,20 @@ export const Droppable = ({
 
   return (
     <Box id={id} {...props} {...droppable} p={0}>
-      <div
-        style={{
-          width: "100%",
-          height: "100%",
-          position: "absolute",
-          backgroundImage: `
+      {isDragging && (
+        <div
+          style={{
+            width: "100%",
+            height: "100%",
+            position: "absolute",
+            backgroundImage: `
             linear-gradient(to right, #000 1px, transparent 1px),
             linear-gradient(to bottom, #000 1px, transparent 1px)`,
-          backgroundSize: `calc(100% / 96) 10px`,
-          // zIndex: 9999,
-        }}
-      />
+            backgroundSize: `calc(100% / 96) 10px`,
+            // zIndex: 9999,
+          }}
+        />
+      )}
       {children}
     </Box>
   );
