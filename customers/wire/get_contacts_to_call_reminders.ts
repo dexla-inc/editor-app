@@ -60,7 +60,7 @@ Deno.serve(async (req: Request) => {
   }
 
   const totalRecords = data[0]?.total_count ?? 0;
-  const results = data.map((item) => ({
+  const results = data.map((item: any) => ({
     task_id: item.task_id,
     property_listing_id: item.property_listing_id,
     contact_id: item.contact_id,

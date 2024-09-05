@@ -18,7 +18,7 @@ export const Droppable = ({
   const isDragging = useEditorStore((state) => state.isDragging);
   const droppable = useDroppable({
     id,
-    onDrop,
+    onDrop: onDrop as any,
     currentWindow: id === "root" ? iframeWindow : undefined,
   });
 

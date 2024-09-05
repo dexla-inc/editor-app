@@ -11,7 +11,7 @@ export const useEditorDroppableEvents = ({ componentId }: Props) => {
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const droppable = useDroppable({
     id: componentId,
-    onDrop,
+    onDrop: onDrop as any,
     currentWindow: iframeWindow,
   });
 
