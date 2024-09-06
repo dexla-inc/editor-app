@@ -12,22 +12,29 @@ export const useDraggable = ({
   currentWindow?: Window;
 }) => {
   const isResizing = useEditorStore((state) => state.isResizing);
+  const gridParentElement = useEditorStore((state) => state.gridParentElement);
+
+  const windowMap: any = {
+    canvas: () => currentWindow?.document,
+    modal: () =>
+      currentWindow?.document.querySelector(".iframe-canvas-Modal-body"),
+  };
+
+  const w = windowMap[gridParentElement]();
 
   const handleDragStart = useCallback(
     (event: React.DragEvent) => {
       if (isResizing) return;
       // console.log("not resizing");
       // Remove the preview element if it exists
-      const previewElement =
-        currentWindow?.document.getElementById("preview-element");
+      const previewElement = w?.querySelector("#preview-element");
       if (previewElement) {
         previewElement.remove();
       }
 
       const setIsDragging = useEditorStore.getState().setIsDragging;
 
-      const w = currentWindow ?? window;
-      const el = w.document.createElement("div");
+      const el = w.createElement("div");
       const rect = el?.getBoundingClientRect()!;
 
       if (rect) {
@@ -68,7 +75,7 @@ export const useDraggable = ({
         rootElement.style.opacity = "0.7";
       }
     },
-    [id, onDragStart, currentWindow, isResizing],
+    [id, onDragStart, w, isResizing],
   );
 
   return {

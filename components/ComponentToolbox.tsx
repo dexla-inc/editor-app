@@ -1,43 +1,23 @@
-import { ActionIconTransparent } from "@/components/ActionIconTransparent";
 import { useDraggable } from "@/hooks/editor/useDraggable";
 import { useOnDragStart } from "@/hooks/editor/useOnDragStart";
 import { useEditorStore } from "@/stores/editor";
-import { useThemeStore } from "@/stores/theme";
-import { useUserConfigStore } from "@/stores/userConfig";
 import { theme } from "@/utils/branding";
-import {
-  ToolboxAction,
-  componentMapper,
-  structureMapper,
-} from "@/utils/componentMapper";
-import { ICON_DELETE, ICON_SIZE, NAVBAR_WIDTH } from "@/utils/config";
-import {
-  ComponentStructure,
-  EditorTreeCopy,
-  addComponent,
-  getComponentIndex,
-  getComponentParent,
-  getComponentTreeById,
-  removeComponent,
-  removeComponentFromParent,
-} from "@/utils/editor";
-import { Group, Text, Tooltip, UnstyledButton, Box } from "@mantine/core";
+import { componentMapper } from "@/utils/componentMapper";
+import { ICON_SIZE } from "@/utils/config";
+import { Group, Text, UnstyledButton, Box } from "@mantine/core";
 import { IconGripVertical } from "@tabler/icons-react";
-import { memo, useState, useCallback, useEffect, useRef } from "react";
+import { memo, useCallback, useRef } from "react";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 import { createPortal } from "react-dom";
 import { useShallow } from "zustand/react/shallow";
 import { pick } from "next/dist/lib/pick";
 
-const COLUMN_WIDTH = 96; // 96fr
-const ROW_HEIGHT = 10; // 10px
-
 const ComponentToolboxInner = () => {
   const isResizing = useEditorStore((state) => state.isResizing);
   const setIsResizing = useEditorStore((state) => state.setIsResizing);
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
-  const editorTheme = useThemeStore((state) => state.theme);
+  const gridParentElement = useEditorStore((state) => state.gridParentElement);
   const component = useEditorTreeStore(
     useShallow((state) => {
       const selectedComponentId = selectedComponentIdSelector(state);
@@ -59,26 +39,20 @@ const ComponentToolboxInner = () => {
       return componentProps;
     }),
   );
-  // const [resizeDirection, setResizeDirection] = useState("");
-  const [initialSize, setInitialSize] = useState({ width: 0, height: 0 });
-  const [initialPosition, setInitialPosition] = useState({ x: 0, y: 0 });
-  const [compRect, setCompRect] = useState<DOMRect | null>(null);
 
-  const setEditorTree = useEditorTreeStore((state) => state.setTree);
-  const setSelectedComponentIds = useEditorTreeStore(
-    (state) => state.setSelectedComponentIds,
-  );
-  const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
-  const setIsCustomComponentModalOpen = useUserConfigStore(
-    (state) => state.setIsCustomComponentModalOpen,
-  );
+  const windowMap: any = {
+    canvas: iframeWindow?.document,
+    modal: iframeWindow?.document.querySelector(".iframe-canvas-Modal-body"),
+  };
+
+  const w = windowMap[gridParentElement];
 
   const onDragStart = useOnDragStart();
 
   const draggable = useDraggable({
     id: component.id || "",
     onDragStart,
-    currentWindow: iframeWindow,
+    currentWindow: w,
   });
 
   const componentData = componentMapper[component?.name || ""];
@@ -97,31 +71,42 @@ const ComponentToolboxInner = () => {
   const canMove =
     !component.fixedPosition && !blockedToolboxActions.includes("move");
 
-  const comp = (iframeWindow?.document.querySelector(
-    `[data-id="${component.id}"]`,
-  ) ?? iframeWindow?.document.getElementById(component.id!)) as HTMLElement;
+  function getRelativeBoundingClientRect(element: any, parent: any) {
+    if (!parent || !element) return {};
 
-  useEffect(() => {
-    if (comp) {
-      const newRect = comp.getBoundingClientRect();
-      setCompRect(newRect);
-    }
-  }, [
-    component.id,
-    component.props?.style?.gridColumn,
-    component.props?.style?.gridRow,
-  ]);
+    const elementRect = element.getBoundingClientRect();
+    const parentRect =
+      gridParentElement === "canvas"
+        ? { top: 0, left: 0, x: 0, y: 0 }
+        : parent.getBoundingClientRect();
+
+    return {
+      top: elementRect.top - parentRect.top,
+      right: elementRect.right - elementRect.left,
+      bottom: elementRect.bottom - parentRect.top,
+      left: elementRect.left - parentRect.left,
+      width: elementRect.width,
+      height: elementRect.height,
+      x: elementRect.x - parentRect.x,
+      y: elementRect.y - parentRect.y,
+    };
+  }
+  console.log(w);
+
+  const comp = (w.querySelector(`[data-id="${component.id}"]`) ??
+    w.querySelector(`#${component.id!}`)) as HTMLElement;
+  const compRect = getRelativeBoundingClientRect(comp, w);
 
   const boxStyle = compRect
     ? {
         position: "absolute" as const,
-        top: `${Math.abs(compRect.top) - 8}px`,
-        left: `${Math.abs(compRect.left) - 8}px`,
+        top: `${Math.abs(compRect.top!) - 8}px`,
+        left: `${Math.abs(compRect.left!) - 8}px`,
         width: `${compRect.width + 14}px`,
         height: `${compRect.height + 16}px`,
         border: `2px solid ${theme.colors.blue[5]}`,
         pointerEvents: "none" as const,
-        zIndex: 100,
+        zIndex: 1050,
       }
     : {};
 
@@ -177,8 +162,8 @@ const ComponentToolboxInner = () => {
   const handleResizeStart = (direction: string, event: React.MouseEvent) => {
     setIsResizing(true);
     resizeDirection.current = direction;
-    const resizeBoxRect = iframeWindow?.document
-      .getElementById("resize-box")
+    const resizeBoxRect = w
+      .querySelector("#resize-box")
       ?.getBoundingClientRect();
     resizeBoxStartCoords.current = {
       startWidth: resizeBoxRect!.width,
@@ -188,23 +173,17 @@ const ComponentToolboxInner = () => {
       startTop: resizeBoxRect!.top,
       startLeft: resizeBoxRect!.left,
     };
-    // setInitialSize({ width: compRect!.width, height: compRect!.height });
-    // setInitialPosition({ x: event.clientX, y: event.clientY });
-    console.log(`Started resizing ${direction}`, event.target);
   };
 
   const handleResizeEnd = () => {
     setIsResizing(false);
     // @ts-ignore
     resizeDirection.current = null;
-    // setResizeDirection("");
-    console.log("Ended resizing");
     const { updateTreeComponentAttrs, componentMutableAttrs } =
       useEditorTreeStore.getState();
-    const componentAttrs = componentMutableAttrs[comp.id!];
-    console.log("--->", compNewCoords.current);
+    const componentAttrs = componentMutableAttrs[component.id!];
     updateTreeComponentAttrs({
-      componentIds: [comp.id!],
+      componentIds: [component.id!],
       attrs: {
         props: {
           style: { ...componentAttrs?.props?.style, ...compNewCoords.current },
@@ -216,12 +195,11 @@ const ComponentToolboxInner = () => {
   const handleResize = useCallback(
     (event: React.MouseEvent) => {
       if (isResizing && comp) {
-        const resizeBoxElement =
-          iframeWindow?.document.getElementById("resize-box")!;
+        const resizeBoxElement = w.querySelector("#resize-box")!;
 
         const totalColumns = 96;
         const rowHeight = 10; // in pixels
-        const viewportWidth = iframeWindow?.innerWidth;
+        const viewportWidth = w?.innerWidth;
 
         const columnWidth = viewportWidth! / totalColumns;
         const currentStyle = window.getComputedStyle(comp);
@@ -314,10 +292,10 @@ const ComponentToolboxInner = () => {
         }
       }
     },
-    [isResizing, comp, resizeDirection, initialPosition, iframeWindow],
+    [isResizing, comp, resizeDirection, w],
   );
 
-  if (!iframeWindow?.document?.body || !compRect) return null;
+  if (!w || !compRect) return null;
 
   return createPortal(
     <>
@@ -342,10 +320,10 @@ const ComponentToolboxInner = () => {
         h={24}
         noWrap
         spacing={2}
-        top={`${Math.abs(compRect.top) - 34}px`}
-        left={`${Math.abs(compRect.left - 6)}px`}
+        top={`${Math.abs(compRect.top!) - 34}px`}
+        left={`${Math.abs(compRect.left! - 6)}px`}
         pos="absolute"
-        style={{ zIndex: 200 }}
+        style={{ zIndex: 350 }}
         bg={theme.colors.blue[5]}
         sx={(theme) => ({
           borderRadius: theme.radius.sm,
@@ -373,7 +351,7 @@ const ComponentToolboxInner = () => {
         </Text>
       </Group>
     </>,
-    iframeWindow?.document?.body as any,
+    w?.body ?? (w as any),
   );
 };
 

@@ -21,16 +21,19 @@ export const DrawerComponent = forwardRef(
           isSizeFullScreen,
           title,
         }) => {
+          const { triggers, ...restComponentProps } = componentProps;
           return (
             <MantineDrawer
               ref={ref}
               withinPortal
+              portalProps={{ ["data-id"]: props.id }}
               trapFocus={false}
               lockScroll={false}
               target={target}
               {...sizeProps}
               {...props}
-              {...componentProps}
+              {...triggers}
+              {...restComponentProps}
               title={title}
               opened={isPreviewMode ? true : showInEditor}
               onClose={handleClose}
@@ -38,6 +41,7 @@ export const DrawerComponent = forwardRef(
                 title: { ...titleStyle },
                 body: { height: "fit-content", padding: 0 },
                 ...(isSizeFullScreen && { inner: { left: 0 } }),
+                inner: {},
               }}
             >
               {component.children?.map((child) =>

@@ -256,6 +256,7 @@ const InputComponent = forwardRef(
                 display: "flex",
                 gridArea: "1 / 1 / -1 / -1",
               },
+              input: { height: "auto" },
             }}
             value={value}
             {...restTriggers}

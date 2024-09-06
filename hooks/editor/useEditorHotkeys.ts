@@ -46,13 +46,7 @@ export const useEditorHotkeys = () => {
       selectedComponentIds.length > 0 &&
       !isPreviewMode
     ) {
-      const modals = Object.values(
-        useEditorTreeStore.getState().componentMutableAttrs,
-      ).filter((c) => c.name === "Modal");
-      const targetModal = modals.find(
-        (modal) => modal.id === selectedComponentIds[0],
-      );
-      selectedComponentIds.map((selectedComponentId) => {
+      selectedComponentIds.map(async (selectedComponentId) => {
         const comp =
           useEditorTreeStore.getState().componentMutableAttrs[
             selectedComponentId
@@ -96,11 +90,7 @@ export const useEditorHotkeys = () => {
           );
         }
         deleteComponentMutableAttr(selectedComponentId);
-        if (targetModal) {
-          setSelectedComponentIds(() => [targetModal.id!]);
-        } else {
-          setSelectedComponentIds(() => []);
-        }
+        await setSelectedComponentIds(() => []);
         const editorTreeCopy = cloneObject(editorTree);
         setEditorTree(editorTreeCopy, {
           action: `Removed ${comp?.name}`,

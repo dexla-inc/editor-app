@@ -85,8 +85,16 @@ export const useDroppable = ({
   ) => void;
   currentWindow?: Window;
 }) => {
+  const gridParentElement = useEditorStore((state) => state.gridParentElement);
   const position = useRef<any>(null);
   const dropTarget2 = useRef<any>(null);
+
+  const windowMap: any = {
+    canvas: currentWindow?.document,
+    modal: currentWindow?.document.querySelector(".iframe-canvas-Modal-body"),
+  };
+
+  const w = windowMap[gridParentElement];
 
   const handleDrop = useCallback(
     (event: React.DragEvent) => {
@@ -99,8 +107,7 @@ export const useDroppable = ({
         setComponentToAdd,
       } = useEditorStore.getState();
 
-      const previewElement =
-        currentWindow?.document.getElementById("preview-element");
+      const previewElement = w?.querySelector("#preview-element");
       const isPreviewElementOverlapping = previewElement?.dataset.overlapping;
 
       if (isResizing || !isEditorMode) return;
@@ -130,57 +137,14 @@ export const useDroppable = ({
 
       setCurrentTargetId(undefined);
       setIsDragging(false);
-      currentWindow!.document.getElementById("root")!.style.opacity = "1";
+      w!.querySelector("#root")!.style.opacity = "1";
     },
     [id, onDrop],
   );
 
-  const _handleEdgeSet = (
-    distances: {
-      leftDist: number;
-      rightDist: number;
-      topDist: number;
-      bottomDist: number;
-    },
-    threshold: number,
-  ) => {
-    const { blockDroppingChildrenInside, name: componentName } =
-      useEditorTreeStore.getState().componentMutableAttrs[id];
-    const { componentToAdd, edge, setEdge } = useEditorStore.getState();
-    const { leftDist, rightDist, topDist, bottomDist } = distances;
-    const isPopOver = componentToAdd?.name === "PopOver";
-    let isAllowed = !blockDroppingChildrenInside || isPopOver;
-    if (componentName === "NavLink")
-      isAllowed = componentToAdd?.name === "NavLink";
-
-    if (
-      leftDist > threshold &&
-      rightDist > threshold &&
-      topDist > threshold &&
-      bottomDist > threshold &&
-      isAllowed
-    ) {
-      // If not within 5 pixels of top and bottom edge, set edge to center.
-      if (edge !== "center") {
-        setEdge("center");
-      }
-    } else {
-      // Check the closest edge and set it accordingly.
-      const { edge: newEdge } = getClosestEdge(
-        leftDist,
-        rightDist,
-        topDist,
-        bottomDist,
-      );
-      if (edge !== newEdge) {
-        setEdge(newEdge as Edge);
-      }
-    }
-  };
-
   function getGridCoordinates(element: any, x: any, y: any) {
     const rect = element.getBoundingClientRect();
-    const style = currentWindow?.getComputedStyle(element)!;
+    const style = w?.getComputedStyle(element)!;
     const gridColumns = style.gridTemplateColumns.split(" ").length;
     const gridRows = Math.round(rect.height / 10);
 
@@ -211,7 +175,7 @@ export const useDroppable = ({
     };
 
     // Update gridColumn
-    if (styleObject.gridColumn) {
+    if (styleObject?.gridColumn) {
       styleObject.gridColumn = updateGridValue(
         styleObject.gridColumn,
         newColumnStart,
@@ -219,7 +183,7 @@ export const useDroppable = ({
     }
 
     // Update gridRow
-    if (styleObject.gridRow) {
+    if (styleObject?.gridRow) {
       styleObject.gridRow = updateGridValue(styleObject.gridRow, newRowStart);
     }
 
@@ -278,15 +242,15 @@ export const useDroppable = ({
       event.stopPropagation();
 
       const { clientX: mouseX, clientY: mouseY } = event;
-      const w = currentWindow ?? window;
+      // const w = w ?? window;
 
       const comp =
-        w?.document?.querySelector(`[data-id^="${id}"]`) ??
-        w?.document?.querySelector(`[id^="${id}"]`);
+        w?.querySelector(`[data-id^="${id}"]`) ??
+        w?.querySelector(`[id^="${id}"]`);
       const rect = comp?.getBoundingClientRect()!;
 
       const elements =
-        w?.document.elementsFromPoint(mouseX, mouseY).filter((element) => {
+        w?.elementsFromPoint(mouseX, mouseY).filter((element: any) => {
           const comp =
             componentMutableAttrs[
               extractComponentBaseId(element as HTMLElement)!
@@ -316,15 +280,14 @@ export const useDroppable = ({
       );
 
       // Remove any existing preview element
-      const existingPreview =
-        currentWindow?.document.getElementById("preview-element");
+      const existingPreview = w?.getElementById("preview-element");
       if (existingPreview) {
         existingPreview.remove();
       }
 
       // Create and add the new preview element
-      const previewElement = currentWindow?.document.createElement("div");
-      if (previewElement && currentWindow?.document) {
+      const previewElement = w?.createElement("div");
+      if (previewElement && w) {
         previewElement.id = "preview-element";
         // previewElement.style.position = 'absolute';
         previewElement.style.display = "grid";
@@ -353,7 +316,7 @@ export const useDroppable = ({
       };
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [id, currentWindow],
+    [id, w],
   );
 
   const handleDragEnter = useCallback(
@@ -374,8 +337,7 @@ export const useDroppable = ({
     if (isResizing || !isEditorMode) return;
 
     // Remove the preview element if it exists
-    const previewElement =
-      currentWindow?.document.getElementById("preview-element");
+    const previewElement = w?.getElementById("preview-element");
     if (previewElement) {
       previewElement.remove();
     }
@@ -388,7 +350,7 @@ export const useDroppable = ({
   }, []);
 
   const handleDragEnd = useCallback((event: any) => {
-    currentWindow!.document.getElementById("root")!.style.opacity = "1";
+    w!.getElementById("root")!.style.opacity = "1";
     const setIsDragging = useEditorStore.getState().setIsDragging;
     const isEditorMode = isEditorModeSelector(useEditorTreeStore.getState());
     if (!event || !isEditorMode) {
@@ -399,8 +361,7 @@ export const useDroppable = ({
     if (isResizing) return;
 
     // Remove the preview element if it exists
-    const previewElement =
-      currentWindow?.document.getElementById("preview-element");
+    const previewElement = w?.getElementById("preview-element");
     if (previewElement) {
       previewElement.remove();
     }

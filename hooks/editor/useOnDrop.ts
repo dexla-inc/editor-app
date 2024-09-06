@@ -50,7 +50,7 @@ export const useOnDrop = () => {
         ...(component.props?.style ?? {}),
         ...position,
       });
-      console.log("pos=>", component.props);
+      // console.log("pos=>", component.props);
 
       if (componentToAdd) {
         addComponent2(
