@@ -28,6 +28,8 @@ export const ComponentToBindWrapper = ({ children }: Props) => {
   const theme = useMantineTheme();
   const styles = useTextInputStyles(theme);
 
+  const BindingContext = isCodeEmbed ? BindingModal : BindingPopover;
+
   return (
     <Stack spacing={0} w="100%">
       {label && <TopLabel text={String(label)} required />}
@@ -50,21 +52,13 @@ export const ComponentToBindWrapper = ({ children }: Props) => {
             />
           )}
           {(value?.dataType === "static" || !value?.dataType) && children}
-          {!isCodeEmbed ? (
-            <BindingPopover
-              controls={{
-                isOpen: isBindingPopOverOpen,
-                onClose: onCloseBindingPopOver,
-                onOpen: onOpenBindingPopOver,
-              }}
-            />
-          ) : (
-            <BindingModal
-              isOpen={isBindingPopOverOpen}
-              onOpen={onOpenBindingPopOver}
-              onClose={onCloseBindingPopOver}
-            />
-          )}
+          <BindingContext
+            controls={{
+              isOpen: isBindingPopOverOpen,
+              onClose: onCloseBindingPopOver,
+              onOpen: onOpenBindingPopOver,
+            }}
+          />
         </DynamicForm>
       </Flex>
     </Stack>

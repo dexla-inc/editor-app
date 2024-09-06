@@ -31,7 +31,7 @@ export const CodeEmbedData = ({
       name: "jsCode",
       label: "JavaScript",
       fieldType: "CustomJs" as const,
-      // defaultLanguage: "javascript",
+      language: "typescript",
     },
   ];
 
