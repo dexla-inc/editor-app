@@ -14,8 +14,7 @@ const CodeEmbedComponent = forwardRef<HTMLIFrameElement, Props>(
       props,
     );
 
-    const { triggers, htmlCode, cssCode, jsCode, ...componentProps } =
-      component.props ?? {};
+    const { triggers, ...componentProps } = component.props ?? {};
 
     return <Box component="iframe" ref={ref} {...props} {...componentProps} />;
   },

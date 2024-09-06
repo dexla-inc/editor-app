@@ -91,6 +91,9 @@ const TextareaModifier = dynamic(
   () => import("@/components/modifiers/Textarea"),
 );
 const ChartModifier = dynamic(() => import("@/components/modifiers/Chart"));
+const CodeEmbedModifier = dynamic(
+  () => import("@/components/modifiers/CodeEmbed"),
+);
 
 type SectionsMapper = {
   [key in Modifiers]: any;
@@ -158,4 +161,5 @@ export const modifierSectionMapper: SectionsMapper = {
     Modifier: AutocompleteModifier,
     icon: "IconInputSearch",
   },
+  codeEmbed: { Modifier: CodeEmbedModifier, icon: "IconCode" },
 };

@@ -5,12 +5,11 @@ import { ActionIcon, Modal, Tooltip } from "@mantine/core";
 import { IconArrowsMaximize } from "@tabler/icons-react";
 
 type Props = {
-  isOpen: boolean;
-  onOpen: () => void;
-  onClose: () => void;
+  controls: { isOpen: boolean; onOpen: () => void; onClose: () => void };
 };
 
-export default function BindingModal({ isOpen, onOpen, onClose }: Props) {
+export default function BindingModal({ controls }: Props) {
+  const { isOpen, onOpen, onClose } = controls;
   const {
     staticValue,
     inputOnChange,
@@ -35,6 +34,7 @@ export default function BindingModal({ isOpen, onOpen, onClose }: Props) {
           value={staticValue}
           onChange={inputOnChange}
           height="450px"
+          fixedOverflowWidgets={false}
         />
       </Modal>
     </>
