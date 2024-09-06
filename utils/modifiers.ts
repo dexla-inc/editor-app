@@ -46,7 +46,8 @@ export type Modifiers =
   | "navbar"
   | "progress"
   | "countdownButton"
-  | "autocomplete";
+  | "autocomplete"
+  | "codeEmbed";
 
 type RequiredModifiers = {
   [K in Modifiers]: Record<string, any>;
@@ -486,6 +487,15 @@ export const requiredModifiers: RequiredModifiers = {
     color: "Primary.6",
     size: "xs",
     animate: true,
+  },
+  codeEmbed: {
+    style: {
+      height: "auto",
+      width: "100%",
+      border: "none",
+      overflow: "hidden",
+      display: "block",
+    },
   },
 };
 

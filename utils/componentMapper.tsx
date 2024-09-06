@@ -1476,7 +1476,7 @@ export const componentMapper: ComponentMapper = {
   },
   CodeEmbed: {
     Component: (props) => <CodeEmbed {...props} />,
-    modifiers: ["effects"],
+    modifiers: ["codeEmbed", "effects"],
     actionTriggers: [],
     sequentialTriggers: [],
   },

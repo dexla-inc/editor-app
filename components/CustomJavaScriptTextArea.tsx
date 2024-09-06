@@ -10,6 +10,7 @@ type JsProps = {
   onChange?: any;
   selectedItem?: string;
   height?: string | number;
+  fixedOverflowWidgets?: boolean;
 };
 
 const RETURN_ERROR_CODE = 1108;
@@ -51,6 +52,7 @@ export function CustomJavaScriptTextArea({
   onChange,
   selectedItem,
   height = "150px",
+  fixedOverflowWidgets = true,
 }: JsProps) {
   const { actions, variables, components, others } = useBindingPopover();
 
@@ -119,7 +121,7 @@ export function CustomJavaScriptTextArea({
         contextmenu: false,
         wordWrap: "on",
         wordWrapColumn: -1,
-        fixedOverflowWidgets: true,
+        fixedOverflowWidgets,
       }}
       beforeMount={async (monaco) => {
         monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
