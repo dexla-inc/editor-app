@@ -4,7 +4,7 @@ import React, { createContext, useContext, useEffect } from "react";
 
 type CodeInjectionContextType = {
   handleSetVariable: (variableId: string, value: any) => void;
-  handleGetVariable: (variableId: string) => any;
+  handleGetVariable: (variableId: string, variablePath?: string) => any;
 };
 
 const CodeInjectionContext = createContext<
@@ -16,9 +16,14 @@ export const CodeInjectionProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
 
-  const handleGetVariable = (id: string) => {
+  const handleGetVariable = (id: string, path?: string) => {
     const variable = useVariableStore.getState().variableList[id];
-    return variable?.value ?? variable?.defaultValue ?? undefined;
+    const value = variable?.value ?? variable?.defaultValue ?? undefined;
+
+    if (value && path) {
+      return eval(`(function() { return ${value}${path}; })()`);
+    }
+    return value;
   };
 
   const handleSetVariable = (variableId: string, value: any) => {

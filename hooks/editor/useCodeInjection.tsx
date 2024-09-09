@@ -36,24 +36,17 @@ export const useCodeInjection = (
   );
 
   const createScriptContent = useCallback((jsCode: string) => {
-    // First, replace dexla.setVariable calls
     const transformedJsCode = jsCode.replace(
-      /dexla\.(getVariable|setVariable)\s*\(\s*variables\[(\/\*[\s\S]*?\*\/\s*)?'([^']+)'\]/g,
-      (match, method, comment, variableId) => {
-        const variableKey = `"variables[${comment || ""}'${variableId}']"`;
-        if (method === "getVariable") {
-          return `await dexla.getVariable(${variableKey})`;
-        } else {
-          return `dexla.setVariable(${variableKey}`;
+      /(?:dexla\.setVariable\s*\(\s*(variables\[(?:\/\*[\s\S]*?\*\/\s*)?'[^']+'\](?:\.[.\w]+|\[[^\]]+\])*)\s*,)|(?<!['"`).\w])(variables\[(?:\/\*[\s\S]*?\*\/\s*)?'[^']+'\](?:\.[.\w]+|\[[^\]]+\])*)/g,
+      (match, setVariableArg, standaloneVariable) => {
+        if (setVariableArg) {
+          // Case 1: dexla.setVariable function
+          return `dexla.setVariable("${setVariableArg}", `;
+        } else if (standaloneVariable) {
+          // Case 2: Standalone variables
+          return `await dexla.getVariable("${standaloneVariable}")`;
         }
-      },
-    );
-
-    // Transform standalone variable access
-    const finalJsCode = transformedJsCode.replace(
-      /(?<!dexla\.(?:get|set)Variable\s*\(\s*)(?<!["'])variables\[(\/\*[\s\S]*?\*\/\s*)'([^']+)'\]/g,
-      (match, comment, variableId) => {
-        return `await dexla.getVariable("variables[${comment}'${variableId}']")`;
+        return match;
       },
     );
 
@@ -67,8 +60,8 @@ export const useCodeInjection = (
             w.parent.postMessage({ type: 'SET_VARIABLE', params: [variableId, value] }, '*');
           },
           getVariable: (variable) => {
-            const variablePattern = /variables\\[s*(?:\\/\\*[\\s\\S]*?\\*\\/\\s*)?'(.*?)'\\s*\\]/g;
-            const variableId = [...variable.matchAll(variablePattern)][0][1];
+            const [_, variableId, variablePath] = variable.match(/variables\\[(?:\\/\\*[\\s\\S]*?\\*\\/\\s*)?'([^']+)'\\](.*)/);
+
             return new Promise((resolve) => {
               const messageHandler = (event) => {
                 if (event.data.type === 'GET_VARIABLE_RESPONSE' && event.data.variableId === variableId) {
@@ -77,14 +70,14 @@ export const useCodeInjection = (
                 }
               };
               w.addEventListener('message', messageHandler);
-              w.parent.postMessage({ type: 'GET_VARIABLE', params: [variableId] }, '*');
+              w.parent.postMessage({ type: 'GET_VARIABLE', params: [variableId, variablePath] }, '*');
             });
           },
         };
         Object.freeze(dexla);
 
         (async () => {
-          ${finalJsCode}
+          ${transformedJsCode}
         })();
       })(window);
     `;
