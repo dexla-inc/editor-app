@@ -12,6 +12,7 @@ import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 import { createPortal } from "react-dom";
 import { useShallow } from "zustand/react/shallow";
 import { pick } from "next/dist/lib/pick";
+import { getRelativeBoundingClientRect } from "@/utils/dnd";
 
 const ComponentToolboxInner = () => {
   const isResizing = useEditorStore((state) => state.isResizing);
@@ -41,11 +42,12 @@ const ComponentToolboxInner = () => {
   );
 
   const windowMap: any = {
-    canvas: iframeWindow?.document,
-    modal: iframeWindow?.document.querySelector(".iframe-canvas-Modal-body"),
+    canvas: () => iframeWindow?.document,
+    modal: () =>
+      iframeWindow?.document.querySelector(".iframe-canvas-Modal-body"),
   };
 
-  const w = windowMap[gridParentElement];
+  const w = windowMap[gridParentElement]();
 
   const onDragStart = useOnDragStart();
 
@@ -71,30 +73,12 @@ const ComponentToolboxInner = () => {
   const canMove =
     !component.fixedPosition && !blockedToolboxActions.includes("move");
 
-  function getRelativeBoundingClientRect(element: any, parent: any) {
-    if (!parent || !element) return {};
-
-    const elementRect = element.getBoundingClientRect();
-    const parentRect =
-      gridParentElement === "canvas"
-        ? { top: 0, left: 0, x: 0, y: 0 }
-        : parent.getBoundingClientRect();
-
-    return {
-      top: elementRect.top - parentRect.top,
-      right: elementRect.right - elementRect.left,
-      bottom: elementRect.bottom - parentRect.top,
-      left: elementRect.left - parentRect.left,
-      width: elementRect.width,
-      height: elementRect.height,
-      x: elementRect.x - parentRect.x,
-      y: elementRect.y - parentRect.y,
-    };
-  }
-  console.log(w);
-
-  const comp = (w.querySelector(`[data-id="${component.id}"]`) ??
-    w.querySelector(`#${component.id!}`)) as HTMLElement;
+  const comp = (iframeWindow?.document.querySelector(
+    `[data-id^="${component.id}"]`,
+  ) ??
+    iframeWindow?.document.querySelector(
+      `[id^="${component.id!}"]`,
+    )) as HTMLElement;
   const compRect = getRelativeBoundingClientRect(comp, w);
 
   const boxStyle = compRect
@@ -162,9 +146,10 @@ const ComponentToolboxInner = () => {
   const handleResizeStart = (direction: string, event: React.MouseEvent) => {
     setIsResizing(true);
     resizeDirection.current = direction;
-    const resizeBoxRect = w
-      .querySelector("#resize-box")
-      ?.getBoundingClientRect();
+    const resizeBoxRect = getRelativeBoundingClientRect(
+      iframeWindow?.document.getElementById("resize-box"),
+      w,
+    );
     resizeBoxStartCoords.current = {
       startWidth: resizeBoxRect!.width,
       startHeight: resizeBoxRect!.height,
@@ -199,7 +184,10 @@ const ComponentToolboxInner = () => {
 
         const totalColumns = 96;
         const rowHeight = 10; // in pixels
-        const viewportWidth = w?.innerWidth;
+        const viewportWidth =
+          gridParentElement === "canvas"
+            ? w?.innerWidth
+            : parseInt(getComputedStyle(w).width);
 
         const columnWidth = viewportWidth! / totalColumns;
         const currentStyle = window.getComputedStyle(comp);
