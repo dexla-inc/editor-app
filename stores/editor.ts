@@ -70,8 +70,8 @@ export type EditorState = {
   setIsDragging: (isDragging: boolean) => void;
   elementRects: Record<string, DOMRect>;
   setElementRects: (elementRects: Record<string, DOMRect>) => void;
-  gridParentElement: any;
-  setGridParentElement: (element: any) => void;
+  gridParentElement: string;
+  setGridParentElement: (element: string) => void;
 };
 
 // creates a store with undo/redo capability
@@ -79,9 +79,9 @@ export const useEditorStore = create<EditorState>()(
   // @ts-ignore
   devtools(
     (set) => ({
-      gridParentElement: null,
-      setGridParentElement: (gridParentElement: any) =>
-        set({ gridParentElement }),
+      gridParentElement: "canvas",
+      setGridParentElement: (gridParentElement) =>
+        set({ gridParentElement }, false, "editor/setGridParentElement"),
       elementRects: {},
       setElementRects: (elementRects) => set({ elementRects }),
       isDragging: false,

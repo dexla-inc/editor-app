@@ -33,8 +33,18 @@ export const Draggable = ({
   const { id: projectId } = useEditorParams();
   const theme = useMantineTheme();
 
+  const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const setComponentToAdd = useEditorStore((state) => state.setComponentToAdd);
+  const gridParentElement = useEditorStore((state) => state.gridParentElement);
   const activeCompany = usePropelAuthStore((state) => state.activeCompany);
+
+  const windowMap: any = {
+    canvas: () => iframeWindow?.document,
+    modal: () =>
+      iframeWindow?.document.querySelector(".iframe-canvas-Modal-body"),
+  };
+
+  const w = windowMap[gridParentElement]();
 
   const onDragStart = useCallback(() => {
     setComponentToAdd(data());
@@ -43,6 +53,7 @@ export const Draggable = ({
   const draggable = useDraggable({
     id: `add-${id}`,
     onDragStart,
+    currentWindow: w,
   });
 
   const styles = {

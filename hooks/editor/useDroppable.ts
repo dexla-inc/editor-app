@@ -85,66 +85,57 @@ export const useDroppable = ({
   ) => void;
   currentWindow?: Window;
 }) => {
-  const gridParentElement = useEditorStore((state) => state.gridParentElement);
   const position = useRef<any>(null);
   const dropTarget2 = useRef<any>(null);
 
-  const windowMap: any = {
-    canvas: currentWindow?.document,
-    modal: currentWindow?.document.querySelector(".iframe-canvas-Modal-body"),
+  const w = currentWindow?.document;
+
+  const handleDrop = (event: React.DragEvent) => {
+    const isEditorMode = isEditorModeSelector(useEditorTreeStore.getState());
+    const setIsDragging = useEditorStore.getState().setIsDragging;
+    const {
+      componentToAdd,
+      isResizing,
+      setCurrentTargetId,
+      setComponentToAdd,
+    } = useEditorStore.getState();
+
+    const previewElement = w?.getElementById("preview-element");
+    const isPreviewElementOverlapping = previewElement?.dataset.overlapping;
+
+    if (isResizing || !isEditorMode) return;
+
+    if (!isPreviewElementOverlapping) {
+      const edge = useEditorStore.getState().edge;
+      const selectedComponentId = selectedComponentIdSelector(
+        useEditorTreeStore.getState(),
+      );
+      const activeId = componentToAdd?.id ?? selectedComponentId;
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      const dropTarget = {
+        id: dropTarget2.current,
+        edge: edge ?? "center",
+      } as DropTarget;
+      if (activeId) {
+        onDrop?.(activeId as string, dropTarget, position.current);
+      }
+    }
+    // Remove the preview element if it exists
+    if (previewElement) {
+      previewElement.remove();
+    }
+
+    setCurrentTargetId(undefined);
+    setIsDragging(false);
+    w!.getElementById("root")!.style.opacity = "1";
   };
-
-  const w = windowMap[gridParentElement];
-
-  const handleDrop = useCallback(
-    (event: React.DragEvent) => {
-      const isEditorMode = isEditorModeSelector(useEditorTreeStore.getState());
-      const setIsDragging = useEditorStore.getState().setIsDragging;
-      const {
-        componentToAdd,
-        isResizing,
-        setCurrentTargetId,
-        setComponentToAdd,
-      } = useEditorStore.getState();
-
-      const previewElement = w?.querySelector("#preview-element");
-      const isPreviewElementOverlapping = previewElement?.dataset.overlapping;
-
-      if (isResizing || !isEditorMode) return;
-
-      if (!isPreviewElementOverlapping) {
-        const edge = useEditorStore.getState().edge;
-        const selectedComponentId = selectedComponentIdSelector(
-          useEditorTreeStore.getState(),
-        );
-        const activeId = componentToAdd?.id ?? selectedComponentId;
-
-        event.preventDefault();
-        event.stopPropagation();
-
-        const dropTarget = {
-          id: dropTarget2.current,
-          edge: edge ?? "center",
-        } as DropTarget;
-        if (activeId) {
-          onDrop?.(activeId as string, dropTarget, position.current);
-        }
-      }
-      // Remove the preview element if it exists
-      if (previewElement) {
-        previewElement.remove();
-      }
-
-      setCurrentTargetId(undefined);
-      setIsDragging(false);
-      w!.querySelector("#root")!.style.opacity = "1";
-    },
-    [id, onDrop],
-  );
 
   function getGridCoordinates(element: any, x: any, y: any) {
     const rect = element.getBoundingClientRect();
-    const style = w?.getComputedStyle(element)!;
+    const style = currentWindow?.getComputedStyle(element)!;
     const gridColumns = style.gridTemplateColumns.split(" ").length;
     const gridRows = Math.round(rect.height / 10);
 
@@ -193,7 +184,7 @@ export const useDroppable = ({
   const extractComponentBaseId = (element: HTMLElement): string | undefined => {
     const rawId =
       element?.dataset?.id ?? element?.getAttribute("id") ?? undefined;
-    return rawId ? rawId.split("-related-").at(0) : rawId;
+    return rawId ? rawId.replace("-body", "").split("-related-").at(0) : rawId;
   };
 
   function checkOverlap(movable: any) {
@@ -242,7 +233,6 @@ export const useDroppable = ({
       event.stopPropagation();
 
       const { clientX: mouseX, clientY: mouseY } = event;
-      // const w = w ?? window;
 
       const comp =
         w?.querySelector(`[data-id^="${id}"]`) ??
@@ -271,7 +261,12 @@ export const useDroppable = ({
         mouseX,
         mouseY,
       );
-
+      console.log(
+        "before",
+        component.props?.style,
+        coordinates.column,
+        coordinates.row,
+      );
       // Position updated
       const newStyles = updateGridPosition(
         component.props?.style,
@@ -309,13 +304,15 @@ export const useDroppable = ({
           previewElement.dataset.overlapping = "true";
         }
       }
-
+      console.log({
+        gridColumn: newStyles.gridColumn,
+        gridRow: newStyles.gridRow,
+      });
       position.current = {
         gridColumn: newStyles.gridColumn,
         gridRow: newStyles.gridRow,
       };
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [id, w],
   );
 
@@ -325,7 +322,6 @@ export const useDroppable = ({
       event.stopPropagation();
       const isEditorMode = isEditorModeSelector(useEditorTreeStore.getState());
       if (!isEditorMode) return;
-      // console.log("drag enter", id);
       debouncedDragEnter(event, id);
     },
     [id],
