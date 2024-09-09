@@ -30,9 +30,9 @@ export const useCodeInjection = (
         });
       };
 
-      applyHandlers(doc.documentElement);
+      !isPreviewMode && applyHandlers(doc.documentElement);
     },
-    [events],
+    [events, isPreviewMode],
   );
 
   const createScriptContent = useCallback((jsCode: string) => {
@@ -91,7 +91,7 @@ export const useCodeInjection = (
   }, []);
 
   const injectContent = useCallback(
-    (htmlCode: string, cssCode: string, jsCode?: string) => {
+    (htmlCode: string) => {
       if (!ref.current) return;
       ref.current.style.width = "100%";
       ref.current.style.border = "none";
@@ -99,16 +99,24 @@ export const useCodeInjection = (
       const parser = new DOMParser();
       const doc = parser.parseFromString(htmlCode, "text/html");
 
-      // Add CSS to the head
-      const styleElement = doc.createElement("style");
-      styleElement.textContent = cssCode;
-      doc.head.appendChild(styleElement);
+      const scriptTag = doc.body.querySelector("script");
+      if (scriptTag) {
+        const originalScript = scriptTag.textContent || "";
+        const newScriptContent = createScriptContent(originalScript);
+        scriptTag.textContent = newScriptContent;
+      }
 
-      // Add JS code to the body
-      if (jsCode) {
-        const scriptElement = doc.createElement("script");
-        scriptElement.textContent = createScriptContent(jsCode);
-        doc.body.appendChild(scriptElement);
+      if (!isPreviewMode) {
+        // Add a transparent overlay to prevent interactions
+        const overlay = doc.createElement("div");
+        overlay.style.position = "fixed";
+        overlay.style.top = "0";
+        overlay.style.left = "0";
+        overlay.style.width = "100%";
+        overlay.style.height = "100%";
+        overlay.style.zIndex = "9999";
+        overlay.style.pointerEvents = "auto"; // Ensure the overlay captures all pointer events
+        doc.body.appendChild(overlay);
       }
 
       // Write the modified HTML to the iframe
@@ -116,19 +124,14 @@ export const useCodeInjection = (
       ref.current.contentDocument?.write(doc.documentElement.outerHTML);
       ref.current.contentDocument?.close();
 
-      !jsCode && applyEventHandlers(ref.current.contentDocument!);
+      applyEventHandlers(ref.current.contentDocument!);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [ref],
   );
 
   useEffect(() => {
-    const { htmlCode, cssCode, jsCode } = component?.onLoad ?? {};
-    let args: Parameters<typeof injectContent> = [htmlCode, cssCode];
-    if (isPreviewMode) {
-      args.push(jsCode);
-    }
-
-    injectContent(...args);
-  }, [component, injectContent, isPreviewMode]);
+    const { htmlCode } = component?.onLoad ?? {};
+    injectContent(htmlCode);
+  }, [component, injectContent]);
 };

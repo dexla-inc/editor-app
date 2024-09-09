@@ -18,7 +18,6 @@ type Props = {
 
 export const ComponentToBindWrapper = ({ children }: Props) => {
   const { label, value } = useBindingField<"Text">();
-  const isCodeEmbed = ["HTML", "CSS", "JavaScript"].includes(label as string);
 
   const [
     isBindingPopOverOpen,
@@ -28,7 +27,7 @@ export const ComponentToBindWrapper = ({ children }: Props) => {
   const theme = useMantineTheme();
   const styles = useTextInputStyles(theme);
 
-  const BindingContext = isCodeEmbed ? BindingModal : BindingPopover;
+  const BindingContext = label === "HTML Code" ? BindingModal : BindingPopover;
 
   return (
     <Stack spacing={0} w="100%">

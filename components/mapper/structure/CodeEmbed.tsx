@@ -4,13 +4,21 @@ import { nanoid } from "nanoid";
 
 const htmlCode = `<!DOCTYPE html>
 <html>
-    <head>
-        <!-- Add headers here -->
-    </head>
-    <body>
-        <!-- Add content here -->
-        <div>Embedded content here</div>
-    </body>
+  <head>
+    <!-- Add headers here -->
+
+    <style>
+        /* Add styles here */
+    </style>
+  </head>
+  <body>
+    <!-- Add content here -->
+    <div>Embedded content here</div>
+
+    <script>
+      // Add custom scripts below
+    </script>
+  </body>
 </html>`;
 
 export const jsonStructure = (props?: any): ComponentStructure => ({
@@ -23,8 +31,6 @@ export const jsonStructure = (props?: any): ComponentStructure => ({
   },
   onLoad: {
     htmlCode: { dataType: "static", static: htmlCode },
-    cssCode: { dataType: "static", static: "/* Custom CSS here */" },
-    jsCode: { dataType: "static", static: "// Custom JavaScript here" },
   },
   blockDroppingChildrenInside: true,
 });

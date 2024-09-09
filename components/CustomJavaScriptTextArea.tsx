@@ -5,7 +5,7 @@ import debounce from "lodash.debounce";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 type JsProps = {
-  language: "javascript" | "typescript" | "json";
+  language: "javascript" | "typescript" | "json" | "html";
   value?: string;
   onChange?: any;
   selectedItem?: string;

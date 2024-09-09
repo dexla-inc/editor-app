@@ -17,21 +17,9 @@ export const CodeEmbedData = ({
   const staticFields = [
     {
       name: "htmlCode",
-      label: "HTML",
-      fieldType: "TextArea" as const,
-      defaultLanguage: "html",
-    },
-    {
-      name: "cssCode",
-      label: "CSS",
-      fieldType: "TextArea" as const,
-      defaultLanguage: "css",
-    },
-    {
-      name: "jsCode",
-      label: "JavaScript",
+      label: "HTML Code",
       fieldType: "CustomJs" as const,
-      language: "typescript",
+      language: "html",
     },
   ];
 
