@@ -420,7 +420,7 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
           columnSpans: {},
           selectedComponentIds: [],
           isLive: false,
-          setSelectedComponentIds: (cb) => {
+          setSelectedComponentIds: async (cb) => {
             return set(
               (state) => {
                 const selectedComponentIds = cb(
