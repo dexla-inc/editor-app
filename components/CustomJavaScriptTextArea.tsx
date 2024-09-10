@@ -5,7 +5,7 @@ import debounce from "lodash.debounce";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 type JsProps = {
-  language: "javascript" | "typescript" | "json";
+  language: "javascript" | "typescript" | "json" | "html";
   value?: string;
   onChange?: any;
   selectedItem?: string;
@@ -135,47 +135,50 @@ export function CustomJavaScriptTextArea({
 
         // Auto-completion configuration
         setCompletionDisposable(
-          monaco.languages.registerCompletionItemProvider("typescript", {
-            provideCompletionItems: () => ({
-              suggestions: [
-                ...Object.entries(variables.list as Record<string, any>).map(
-                  ([id, variable]) => ({
-                    label: `variables[${variable.name}]`,
-                    kind: monaco.languages.CompletionItemKind.Keyword,
-                    insertText: `variables[/* ${variable.name} */'${id}']`,
-                  }),
-                ),
-                ...Object.keys(others).map((key) => ({
-                  label: `others[${key}]`,
-                  kind: monaco.languages.CompletionItemKind.Variable,
-                  insertText: `others['${key}']`,
-                })),
-                ...Object.entries(components.list as Record<string, any>).map(
-                  ([id, component]) => ({
-                    label: `components[${component.description}]`,
+          monaco.languages.registerCompletionItemProvider(
+            ["typescript", "html"],
+            {
+              provideCompletionItems: () => ({
+                suggestions: [
+                  ...Object.entries(variables.list as Record<string, any>).map(
+                    ([id, variable]) => ({
+                      label: `variables[${variable.name}]`,
+                      kind: monaco.languages.CompletionItemKind.Keyword,
+                      insertText: `variables[/* ${variable.name} */'${id}']`,
+                    }),
+                  ),
+                  ...Object.keys(others).map((key) => ({
+                    label: `others[${key}]`,
                     kind: monaco.languages.CompletionItemKind.Variable,
-                    insertText: `components[/* ${component.description} */'${id}']`,
-                  }),
-                ),
-                ...Object.entries(actions.list as Record<string, any>).map(
-                  ([id, action]) => ({
-                    label: `actions[${action.name}]`,
-                    kind: monaco.languages.CompletionItemKind.Variable,
-                    insertText: `actions[/* ${action.name} */'${id}']`,
-                  }),
-                ),
-                {
-                  label: "dexla.setVariable",
-                  kind: monaco.languages.CompletionItemKind.Function,
-                  insertText: "dexla.setVariable(${1:variable}, ${2:value})",
-                  insertTextRules:
-                    monaco.languages.CompletionItemInsertTextRule
-                      .InsertAsSnippet,
-                  documentation: "Set a variable with the given value",
-                },
-              ],
-            }),
-          }),
+                    insertText: `others['${key}']`,
+                  })),
+                  ...Object.entries(components.list as Record<string, any>).map(
+                    ([id, component]) => ({
+                      label: `components[${component.description}]`,
+                      kind: monaco.languages.CompletionItemKind.Variable,
+                      insertText: `components[/* ${component.description} */'${id}']`,
+                    }),
+                  ),
+                  ...Object.entries(actions.list as Record<string, any>).map(
+                    ([id, action]) => ({
+                      label: `actions[${action.name}]`,
+                      kind: monaco.languages.CompletionItemKind.Variable,
+                      insertText: `actions[/* ${action.name} */'${id}']`,
+                    }),
+                  ),
+                  {
+                    label: "dexla.setVariable",
+                    kind: monaco.languages.CompletionItemKind.Function,
+                    insertText: "dexla.setVariable(${1:variable}, ${2:value})",
+                    insertTextRules:
+                      monaco.languages.CompletionItemInsertTextRule
+                        .InsertAsSnippet,
+                    documentation: "Set a variable with the given value",
+                  },
+                ],
+              }),
+            },
+          ),
         );
       }}
     />

@@ -12,7 +12,7 @@ export const useCodeInjection = (
 ) => {
   const isPreviewMode = isPreviewModeSelector(useEditorTreeStore.getState());
 
-  const { handleSetVariable, handleGetVariable, variables } =
+  const { handleSetVariable, handleGetVariables, variables } =
     useCodeInjectionContext();
 
   const events = merge({}, component.props?.triggers, props);
@@ -38,54 +38,40 @@ export const useCodeInjection = (
 
   const createScriptContent = useCallback((jsCode: string) => {
     const transformedJsCode = jsCode.replace(
-      /(?:dexla\.setVariable\s*\(\s*(variables\[(?:\/\*[\s\S]*?\*\/\s*)?'[^']+'\](?:\.[.\w]+|\[[^\]]+\])*)\s*,)|(?<!['"`).\w])(variables\[(?:\/\*[\s\S]*?\*\/\s*)?'[^']+'\](?:\.[.\w]+|\[[^\]]+\])*)/g,
-      (match, setVariableArg, standaloneVariable) => {
-        if (setVariableArg) {
-          // Case 1: dexla.setVariable function
-          return `dexla.setVariable("${setVariableArg}", `;
-        } else if (standaloneVariable) {
-          // Case 2: Standalone variables
-          return `await dexla.getVariable("${standaloneVariable}")`;
-        }
-        return match;
+      /dexla\.setVariable\s*\(\s*(variables\[(?:\/\*[\s\S]*?\*\/\s*)?'[^']+'\](?:\.[.\w]+|\[[^\]]+\])*)\s*,/g,
+      (match, setVariableArg) => {
+        // Only transform setVariable calls
+        return `dexla.setVariable("${setVariableArg}", `;
       },
     );
 
     return `
       (function(w) {
+        const variables = new Proxy({}, {
+          get: (target, prop) => w.variables()[prop],
+          set: (target, prop, value) => {
+            w.variables()[prop] = value;
+            w.postMessage({ type: 'SET_VARIABLE', params: [prop, value] }, '*');
+            w.parent.postMessage({ type: 'SET_VARIABLE', params: [prop, value] }, '*');
+          }
+        });
         const dexla = {
           setVariable: (variable, value) => {
             const variablePattern = /variables\\[s*(?:\\/\\*[\\s\\S]*?\\*\\/\\s*)?'(.*?)'\\s*\\]/g;
             const variableId = [...variable.matchAll(variablePattern)][0][1];
-            w.postMessage({ type: 'SET_VARIABLE', params: {variableId, value} }, '*');
-            w.parent.postMessage({ type: 'SET_VARIABLE', params: [variableId, value] }, '*');
-          },
-          getVariable: (variable) => {
-            const [_, variableId, variablePath] = variable.match(/variables\\[(?:\\/\\*[\\s\\S]*?\\*\\/\\s*)?'([^']+)'\\](.*)/);
-
-            return new Promise((resolve) => {
-              const messageHandler = (event) => {
-                if (event.data.type === 'GET_VARIABLE_RESPONSE' && event.data.variableId === variableId) {
-                  w.removeEventListener('message', messageHandler);
-                  resolve(event.data.value);
-                }
-              };
-              w.addEventListener('message', messageHandler);
-              w.parent.postMessage({ type: 'GET_VARIABLE', params: [variableId, variablePath] }, '*');
-            });
-          },
+            variables[variableId] = value;
+          }
         };
         Object.freeze(dexla);
 
-        (async () => {
-          ${transformedJsCode}
-        })();
+        ${transformedJsCode}
+        
       })(window);
     `;
   }, []);
 
   const injectContent = useCallback(
-    (htmlCode: string, cssCode: string, jsCode?: string) => {
+    (htmlCode: string) => {
       if (!ref.current) return;
       ref.current.style.width = "100%";
       ref.current.style.border = "none";
@@ -93,36 +79,28 @@ export const useCodeInjection = (
       const parser = new DOMParser();
       const doc = parser.parseFromString(htmlCode, "text/html");
 
-      // Add CSS to the head
-      const styleElement = doc.createElement("style");
-      styleElement.textContent = cssCode;
-      doc.head.appendChild(styleElement);
-
-      // Add JS code to the body
-      if (jsCode) {
-        const scriptElement = doc.createElement("script");
-        scriptElement.textContent = createScriptContent(jsCode);
-        doc.body.appendChild(scriptElement);
+      const scriptTag = doc.body.querySelector("script");
+      if (scriptTag) {
+        const originalScript = scriptTag.textContent || "";
+        const newScriptContent = createScriptContent(originalScript);
+        scriptTag.textContent = isPreviewMode ? newScriptContent : "";
       }
+
+      // @ts-ignore
+      ref.current.contentWindow!.variables = handleGetVariables;
 
       // Write the modified HTML to the iframe
       ref.current.contentDocument?.open();
       ref.current.contentDocument?.write(doc.documentElement.outerHTML);
       ref.current.contentDocument?.close();
 
-      !jsCode && applyEventHandlers(ref.current.contentDocument!);
+      !isPreviewMode && applyEventHandlers(ref.current.contentDocument!);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [ref],
   );
 
   useEffect(() => {
-    const { htmlCode, cssCode, jsCode } = component?.onLoad ?? {};
-    let args: Parameters<typeof injectContent> = [htmlCode, cssCode];
-    if (isPreviewMode) {
-      args.push(jsCode);
-    }
-
-    injectContent(...args);
-  }, [component, injectContent, isPreviewMode, variables]);
+    injectContent(component.onLoad?.htmlCode);
+  }, [component, injectContent]);
 };
