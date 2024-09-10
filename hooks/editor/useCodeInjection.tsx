@@ -12,7 +12,8 @@ export const useCodeInjection = (
 ) => {
   const isPreviewMode = isPreviewModeSelector(useEditorTreeStore.getState());
 
-  const { handleSetVariable, handleGetVariable } = useCodeInjectionContext();
+  const { handleSetVariable, handleGetVariable, variables } =
+    useCodeInjectionContext();
 
   const events = merge({}, component.props?.triggers, props);
   const applyEventHandlers = useCallback(
@@ -123,5 +124,5 @@ export const useCodeInjection = (
     }
 
     injectContent(...args);
-  }, [component, injectContent, isPreviewMode]);
+  }, [component, injectContent, isPreviewMode, variables]);
 };

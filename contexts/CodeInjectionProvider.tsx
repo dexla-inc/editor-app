@@ -5,6 +5,7 @@ import React, { createContext, useContext, useEffect } from "react";
 type CodeInjectionContextType = {
   handleSetVariable: (variableId: string, value: any) => void;
   handleGetVariable: (variableId: string, variablePath?: string) => any;
+  variables: Record<string, any>;
 };
 
 const CodeInjectionContext = createContext<
@@ -15,20 +16,24 @@ export const CodeInjectionProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
+  const variables = useVariableStore((state) => state.variableList);
 
   const handleGetVariable = (id: string, path?: string) => {
-    const variable = useVariableStore.getState().variableList[id];
+    const variable = variables[id];
     const value = variable?.value ?? variable?.defaultValue ?? undefined;
 
     if (value && path) {
-      return eval(`(function() { return ${value}${path}; })()`);
+      try {
+        return new Function(`return (${value})${path}`)();
+      } catch (error) {
+        return undefined;
+      }
     }
     return value;
   };
 
   const handleSetVariable = (variableId: string, value: any) => {
-    const variableList = useVariableStore.getState().variableList;
-    const selectedVariable = variableList[variableId];
+    const selectedVariable = variables[variableId];
     if (selectedVariable) {
       useVariableStore.getState().setVariable({ ...selectedVariable, value });
     } else {
@@ -71,7 +76,7 @@ export const CodeInjectionProvider: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     <CodeInjectionContext.Provider
-      value={{ handleSetVariable, handleGetVariable }}
+      value={{ handleSetVariable, handleGetVariable, variables }}
     >
       {children}
     </CodeInjectionContext.Provider>
