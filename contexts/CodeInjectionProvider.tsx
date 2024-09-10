@@ -38,7 +38,6 @@ export const CodeInjectionProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
   const handlers = {
-    // GET_VARIABLE: handleGetVariable,
     SET_VARIABLE: handleSetVariable,
   };
 
