@@ -12,7 +12,7 @@ export const useCodeInjection = (
 ) => {
   const isPreviewMode = isPreviewModeSelector(useEditorTreeStore.getState());
 
-  const { handleSetVariable, handleGetVariable, variables } =
+  const { handleSetVariable, handleGetVariables, variables } =
     useCodeInjectionContext();
 
   const events = merge({}, component.props?.triggers, props);
@@ -38,49 +38,28 @@ export const useCodeInjection = (
 
   const createScriptContent = useCallback((jsCode: string) => {
     const transformedJsCode = jsCode.replace(
-      /(?:dexla\.setVariable\s*\(\s*(variables\[(?:\/\*[\s\S]*?\*\/\s*)?'[^']+'\](?:\.[.\w]+|\[[^\]]+\])*)\s*,)|(?<!['"`).\w])(variables\[(?:\/\*[\s\S]*?\*\/\s*)?'[^']+'\](?:\.[.\w]+|\[[^\]]+\])*)/g,
-      (match, setVariableArg, standaloneVariable) => {
-        if (setVariableArg) {
-          // Case 1: dexla.setVariable function
-          return `dexla.setVariable("${setVariableArg}", `;
-        } else if (standaloneVariable) {
-          // Case 2: Standalone variables
-          return `await dexla.getVariable("${standaloneVariable}")`;
-        }
-        return match;
+      /dexla\.setVariable\s*\(\s*(variables\[(?:\/\*[\s\S]*?\*\/\s*)?'[^']+'\](?:\.[.\w]+|\[[^\]]+\])*)\s*,/g,
+      (match, setVariableArg) => {
+        // Only transform setVariable calls
+        return `dexla.setVariable("${setVariableArg}", `;
       },
     );
 
     return `
-      (function(w) {
+      (function(w,variables) {
         const dexla = {
           setVariable: (variable, value) => {
             const variablePattern = /variables\\[s*(?:\\/\\*[\\s\\S]*?\\*\\/\\s*)?'(.*?)'\\s*\\]/g;
             const variableId = [...variable.matchAll(variablePattern)][0][1];
             w.postMessage({ type: 'SET_VARIABLE', params: {variableId, value} }, '*');
             w.parent.postMessage({ type: 'SET_VARIABLE', params: [variableId, value] }, '*');
-          },
-          getVariable: (variable) => {
-            const [_, variableId, variablePath] = variable.match(/variables\\[(?:\\/\\*[\\s\\S]*?\\*\\/\\s*)?'([^']+)'\\](.*)/);
-
-            return new Promise((resolve) => {
-              const messageHandler = (event) => {
-                if (event.data.type === 'GET_VARIABLE_RESPONSE' && event.data.variableId === variableId) {
-                  w.removeEventListener('message', messageHandler);
-                  resolve(event.data.value);
-                }
-              };
-              w.addEventListener('message', messageHandler);
-              w.parent.postMessage({ type: 'GET_VARIABLE', params: [variableId, variablePath] }, '*');
-            });
-          },
+          }
         };
         Object.freeze(dexla);
 
-        (async () => {
-          ${transformedJsCode}
-        })();
-      })(window);
+        ${transformedJsCode}
+        
+      })(window, window.variables());
     `;
   }, []);
 
@@ -105,6 +84,9 @@ export const useCodeInjection = (
         doc.body.appendChild(scriptElement);
       }
 
+      // @ts-ignore
+      ref.current.contentWindow!.variables = handleGetVariables;
+
       // Write the modified HTML to the iframe
       ref.current.contentDocument?.open();
       ref.current.contentDocument?.write(doc.documentElement.outerHTML);
@@ -124,5 +106,5 @@ export const useCodeInjection = (
     }
 
     injectContent(...args);
-  }, [component, injectContent, isPreviewMode, variables]);
+  }, [component, injectContent, isPreviewMode]);
 };
