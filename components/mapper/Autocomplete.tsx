@@ -40,7 +40,7 @@ const AutocompleteComponent = forwardRef(
 
     const componentProps = { ...restComponentProps, placeholder };
 
-    const [value, setValue] = useInputValue<AutocompleteItem>(
+    const [value, setValue] = useInputValue<string>(
       {
         value: component.onLoad?.value ?? "",
       },
@@ -67,68 +67,55 @@ const AutocompleteComponent = forwardRef(
       componentId: component.id!,
       onLoad: component.onLoad,
       dataType,
-      enabled: !!value,
+      enabled: true,
     });
 
-    let data = [];
-
-    if (dataType === "dynamic" && response) {
-      const list = Array.isArray(response) ? response : [response];
-
-      data = list.map((item: any) => {
-        const baseData = {
-          label: String(item[dataLabelKey]),
-          value: String(item[dataValueKey]),
-        };
-
-        if (isAdvanced) {
-          return {
-            ...baseData,
-            image: String(item[dataImageKey]),
-            description: String(item[dataDescriptionKey]),
-          };
-        }
-
-        return baseData;
-      });
-    }
-
-    if (dataType === "static") {
-      data = component.onLoad?.data ?? component.props?.data ?? [];
-    }
-
-    const [timeoutId, setTimeoutId] = useState(null);
-
-    const handleChange = (item: any) => {
-      setValue(item);
-
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
-
-      const newTimeoutId = setTimeout(() => {
-        if (onChange && item) {
-          onChange(item);
-        }
-      }, 200);
-
-      setTimeoutId(newTimeoutId as any);
-    };
-
-    const [itemSubmitted, setItemSubmitted] = useState(false);
-
-    const handleItemSubmit = (item: AutocompleteItem) => {
-      setItemSubmitted(true);
-      setValue(item);
-    };
+    const [data, setData] = useState<AutocompleteItem[]>([]);
 
     useEffect(() => {
-      if (itemSubmitted && onItemSubmit && value) {
-        onItemSubmit && onItemSubmit(value?.value);
-        setItemSubmitted(false);
+      if (dataType === "dynamic" && response) {
+        const list = Array.isArray(response) ? response : [response];
+
+        const formattedData = list.map((item: any) => {
+          const baseData = {
+            label: String(item[dataLabelKey]),
+            value: String(item[dataValueKey]),
+          };
+
+          if (isAdvanced) {
+            return {
+              ...baseData,
+              image: String(item[dataImageKey]),
+              description: String(item[dataDescriptionKey]),
+            };
+          }
+
+          return baseData;
+        });
+
+        setData(formattedData);
+      } else if (dataType === "static") {
+        setData(component.onLoad?.data ?? component.props?.data ?? []);
       }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [itemSubmitted]);
+    }, [
+      response,
+      dataType,
+      dataLabelKey,
+      dataValueKey,
+      isAdvanced,
+      dataImageKey,
+      dataDescriptionKey,
+    ]);
+
+    const handleChange = (item: string) => {
+      setValue(item);
+      onChange && onChange(item);
+    };
+
+    const handleItemSubmit = (item: string) => {
+      setValue(item);
+      onItemSubmit && onItemSubmit(item);
+    };
 
     return (
       <MantineAutocomplete
@@ -156,11 +143,13 @@ const AutocompleteComponent = forwardRef(
         }}
         withinPortal={false}
         data={data}
-        filter={() => true}
+        filter={(value, item) =>
+          item.label.toLowerCase().includes(value.toLowerCase().trim())
+        }
         dropdownComponent={CustomDropdown}
         rightSection={loading || isLoading ? <InputLoader /> : null}
         label={undefined}
-        value={value?.label ?? value}
+        value={value}
         {...(isAdvanced ? { itemComponent: AutoCompleteItem } : {})}
       />
     );
