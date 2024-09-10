@@ -4,7 +4,7 @@ import React, { createContext, useContext, useEffect } from "react";
 
 type CodeInjectionContextType = {
   handleSetVariable: (variableId: string, value: any) => void;
-  handleGetVariable: (variableId: string, variablePath?: string) => any;
+  handleGetVariables: () => Record<string, any>;
   variables: Record<string, any>;
 };
 
@@ -16,24 +16,21 @@ export const CodeInjectionProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
-  const variables = useVariableStore((state) => state.variableList);
+  const variables = useVariableStore((state) =>
+    Object.values(state.variableList).reduce(
+      (curr, item) => {
+        curr[item.id] = item.value ?? item.defaultValue ?? undefined;
+        return curr;
+      },
+      {} as Record<string, any>,
+    ),
+  );
 
-  const handleGetVariable = (id: string, path?: string) => {
-    const variable = variables[id];
-    const value = variable?.value ?? variable?.defaultValue ?? undefined;
-
-    if (value && path) {
-      try {
-        return new Function(`return (${value})${path}`)();
-      } catch (error) {
-        return undefined;
-      }
-    }
-    return value;
-  };
+  const handleGetVariables = () => variables;
 
   const handleSetVariable = (variableId: string, value: any) => {
-    const selectedVariable = variables[variableId];
+    const selectedVariable =
+      useVariableStore.getState().variableList[variableId];
     if (selectedVariable) {
       useVariableStore.getState().setVariable({ ...selectedVariable, value });
     } else {
@@ -41,7 +38,6 @@ export const CodeInjectionProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
   const handlers = {
-    GET_VARIABLE: handleGetVariable,
     SET_VARIABLE: handleSetVariable,
   };
 
@@ -52,16 +48,6 @@ export const CodeInjectionProvider: React.FC<{ children: React.ReactNode }> = ({
         const handler = handlers[type as keyof typeof handlers];
         // @ts-ignore
         const result = handler(...params);
-        if (type === "GET_VARIABLE") {
-          event.source?.postMessage(
-            {
-              type: "GET_VARIABLE_RESPONSE",
-              variableId: params[0],
-              value: result,
-            },
-            { targetOrigin: "*" },
-          );
-        }
       }
     };
 
@@ -76,7 +62,7 @@ export const CodeInjectionProvider: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     <CodeInjectionContext.Provider
-      value={{ handleSetVariable, handleGetVariable, variables }}
+      value={{ handleSetVariable, handleGetVariables, variables }}
     >
       {children}
     </CodeInjectionContext.Provider>
