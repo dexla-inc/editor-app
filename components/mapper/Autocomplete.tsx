@@ -116,7 +116,7 @@ const AutocompleteComponent = forwardRef(
           item.label?.toLowerCase().includes(value?.toLowerCase()?.trim()),
         );
         setFilteredData(filtered);
-      }, 2000),
+      }, 200),
       [data],
     );
 
