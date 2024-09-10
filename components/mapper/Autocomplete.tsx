@@ -18,8 +18,9 @@ import {
 } from "@mantine/core";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
-import { forwardRef, memo, useEffect, useState } from "react";
+import { forwardRef, memo, useEffect, useState, useCallback } from "react";
 import { useInputValue } from "@/hooks/components/useInputValue";
+import debounce from "lodash.debounce";
 
 type Props = EditableComponentMapper & AutocompleteProps;
 
@@ -71,6 +72,7 @@ const AutocompleteComponent = forwardRef(
     });
 
     const [data, setData] = useState<AutocompleteItem[]>([]);
+    const [filteredData, setFilteredData] = useState<AutocompleteItem[]>([]);
 
     useEffect(() => {
       if (dataType === "dynamic" && response) {
@@ -107,6 +109,24 @@ const AutocompleteComponent = forwardRef(
       dataDescriptionKey,
     ]);
 
+    // Debounced filter function
+    const debouncedFilter = useCallback(
+      debounce((value: string) => {
+        const filtered = data.filter((item) =>
+          item.label?.toLowerCase().includes(value?.toLowerCase()?.trim()),
+        );
+        setFilteredData(filtered);
+      }, 2000),
+      [data],
+    );
+
+    // Use useEffect to call the debounced function
+    useEffect(() => {
+      debouncedFilter(value);
+      // Cancel the debounce on useEffect cleanup
+      return () => debouncedFilter.cancel();
+    }, [value, debouncedFilter]);
+
     const handleChange = (item: string) => {
       setValue(item);
       onChange && onChange(item);
@@ -142,10 +162,8 @@ const AutocompleteComponent = forwardRef(
           input: customStyle,
         }}
         withinPortal={false}
-        data={data}
-        filter={(value, item) =>
-          item.label.toLowerCase().includes(value.toLowerCase().trim())
-        }
+        data={filteredData}
+        filter={() => true} // We're handling filtering ourselves
         dropdownComponent={CustomDropdown}
         rightSection={loading || isLoading ? <InputLoader /> : null}
         label={undefined}
