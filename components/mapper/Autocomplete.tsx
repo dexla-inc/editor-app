@@ -68,7 +68,7 @@ const AutocompleteComponent = forwardRef(
       componentId: component.id!,
       onLoad: component.onLoad,
       dataType,
-      enabled: true,
+      enabled: !!value,
     });
 
     const [data, setData] = useState<AutocompleteItem[]>([]);
