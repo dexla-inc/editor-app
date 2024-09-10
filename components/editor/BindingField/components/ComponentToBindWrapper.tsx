@@ -18,7 +18,7 @@ type Props = {
 
 export const ComponentToBindWrapper = ({ children }: Props) => {
   const { label, value } = useBindingField<"Text">();
-  const isCodeEmbed = ["HTML", "CSS", "JavaScript"].includes(label as string);
+  const isCodeEmbed = label === "HTML Code";
 
   const [
     isBindingPopOverOpen,

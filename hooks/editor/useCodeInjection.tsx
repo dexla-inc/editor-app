@@ -46,25 +46,32 @@ export const useCodeInjection = (
     );
 
     return `
-      (function(w,variables) {
+      (function(w) {
+        const variables = new Proxy({}, {
+          get: (target, prop) => w.variables()[prop],
+          set: (target, prop, value) => {
+            w.variables()[prop] = value;
+            w.postMessage({ type: 'SET_VARIABLE', params: [prop, value] }, '*');
+            w.parent.postMessage({ type: 'SET_VARIABLE', params: [prop, value] }, '*');
+          }
+        });
         const dexla = {
           setVariable: (variable, value) => {
             const variablePattern = /variables\\[s*(?:\\/\\*[\\s\\S]*?\\*\\/\\s*)?'(.*?)'\\s*\\]/g;
             const variableId = [...variable.matchAll(variablePattern)][0][1];
-            w.postMessage({ type: 'SET_VARIABLE', params: {variableId, value} }, '*');
-            w.parent.postMessage({ type: 'SET_VARIABLE', params: [variableId, value] }, '*');
+            variables[variableId] = value;
           }
         };
         Object.freeze(dexla);
 
         ${transformedJsCode}
         
-      })(window, window.variables());
+      })(window);
     `;
   }, []);
 
   const injectContent = useCallback(
-    (htmlCode: string, cssCode: string, jsCode?: string) => {
+    (htmlCode: string) => {
       if (!ref.current) return;
       ref.current.style.width = "100%";
       ref.current.style.border = "none";
@@ -72,16 +79,11 @@ export const useCodeInjection = (
       const parser = new DOMParser();
       const doc = parser.parseFromString(htmlCode, "text/html");
 
-      // Add CSS to the head
-      const styleElement = doc.createElement("style");
-      styleElement.textContent = cssCode;
-      doc.head.appendChild(styleElement);
-
-      // Add JS code to the body
-      if (jsCode) {
-        const scriptElement = doc.createElement("script");
-        scriptElement.textContent = createScriptContent(jsCode);
-        doc.body.appendChild(scriptElement);
+      const scriptTag = doc.body.querySelector("script");
+      if (scriptTag) {
+        const originalScript = scriptTag.textContent || "";
+        const newScriptContent = createScriptContent(originalScript);
+        scriptTag.textContent = isPreviewMode ? newScriptContent : "";
       }
 
       // @ts-ignore
@@ -92,19 +94,13 @@ export const useCodeInjection = (
       ref.current.contentDocument?.write(doc.documentElement.outerHTML);
       ref.current.contentDocument?.close();
 
-      !jsCode && applyEventHandlers(ref.current.contentDocument!);
+      !isPreviewMode && applyEventHandlers(ref.current.contentDocument!);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [ref],
   );
 
   useEffect(() => {
-    const { htmlCode, cssCode, jsCode } = component?.onLoad ?? {};
-    let args: Parameters<typeof injectContent> = [htmlCode, cssCode];
-    if (isPreviewMode) {
-      args.push(jsCode);
-    }
-
-    injectContent(...args);
-  }, [component, injectContent, isPreviewMode]);
+    injectContent(component.onLoad?.htmlCode);
+  }, [component, injectContent]);
 };
