@@ -158,6 +158,7 @@ ComponentToBindFromInput.CustomJs = function ComponentToBindFromCustomJs() {
     fieldType,
     isPageAction,
     label,
+    language,
     ...defaultProps
   } = useBindingField<"CustomJs">();
   const value =
@@ -166,7 +167,7 @@ ComponentToBindFromInput.CustomJs = function ComponentToBindFromCustomJs() {
   return (
     <ComponentToBindField.CustomJs
       {...defaultProps}
-      language="typescript"
+      language={(language as any) ?? "typescript"}
       {...AUTOCOMPLETE_OFF_PROPS}
       value={value}
       onChange={inputOnChange}
