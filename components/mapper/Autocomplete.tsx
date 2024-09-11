@@ -72,7 +72,7 @@ const AutocompleteComponent = forwardRef(
       enabled: !!value,
     });
 
-    let data: any[] = [];
+    let data = [];
 
     if (dataType === "dynamic" && response) {
       const list = Array.isArray(response) ? response : [response];
@@ -109,28 +109,30 @@ const AutocompleteComponent = forwardRef(
       }
 
       const newTimeoutId = setTimeout(() => {
-        let newValue = item;
-        if (typeof item === "string") {
-          newValue =
-            data.find(
-              (dataItem: any) =>
-                dataItem.label === item || dataItem.value === item,
-            ) || item;
+        setValue(item);
+        if (onChange && item) {
+          onChange(item);
         }
-        setValue(newValue);
-        if (onChange && newValue) {
-          onChange(newValue);
-        }
-      }, 200);
+      }, 800);
 
       setTimeoutId(newTimeoutId as any);
     };
 
+    const [itemSubmitted, setItemSubmitted] = useState(false);
+
     const handleItemSubmit = (item: AutocompleteItem) => {
+      setItemSubmitted(true);
       setTypingValue(item);
       setValue(item);
-      onItemSubmit && onItemSubmit(item);
     };
+
+    useEffect(() => {
+      if (itemSubmitted && onItemSubmit && value) {
+        onItemSubmit && onItemSubmit(value?.value);
+        setItemSubmitted(false);
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [itemSubmitted]);
 
     return (
       <MantineAutocomplete
