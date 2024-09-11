@@ -113,7 +113,7 @@ const AutocompleteComponent = forwardRef(
         if (onChange && item) {
           onChange(item);
         }
-      }, 200);
+      }, 800);
 
       setTimeoutId(newTimeoutId as any);
     };
