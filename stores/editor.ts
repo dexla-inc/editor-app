@@ -139,8 +139,7 @@ export const useEditorStore = create<EditorState>()(
         set({ sequentialTo }, false, "editor/setSequentialTo"),
       setCopiedComponent: (copiedComponent) =>
         set({ copiedComponent }, false, "editor/setCopiedComponent"),
-
-      setIframeWindow: (iframeWindow) =>
+      setIframeWindow: async (iframeWindow) =>
         set({ iframeWindow }, false, "editor/setIframeWindow"),
       setCurrentTargetId: (currentTargetId) =>
         set({ currentTargetId }, false, "editor/setCurrentTargetId"),
