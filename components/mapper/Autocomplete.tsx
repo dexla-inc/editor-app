@@ -47,6 +47,8 @@ const AutocompleteComponent = forwardRef(
       props.id!,
     );
 
+    const [typingValue, setTypingValue] = useState(value);
+
     const {
       dataLabelKey,
       dataValueKey,
@@ -100,13 +102,14 @@ const AutocompleteComponent = forwardRef(
     const [timeoutId, setTimeoutId] = useState(null);
 
     const handleChange = (item: any) => {
-      setValue(item);
+      setTypingValue(item);
 
       if (timeoutId) {
         clearTimeout(timeoutId);
       }
 
       const newTimeoutId = setTimeout(() => {
+        setValue(item);
         if (onChange && item) {
           onChange(item);
         }
@@ -119,6 +122,7 @@ const AutocompleteComponent = forwardRef(
 
     const handleItemSubmit = (item: AutocompleteItem) => {
       setItemSubmitted(true);
+      setTypingValue(item);
       setValue(item);
     };
 
@@ -160,7 +164,7 @@ const AutocompleteComponent = forwardRef(
         dropdownComponent={CustomDropdown}
         rightSection={loading || isLoading ? <InputLoader /> : null}
         label={undefined}
-        value={value?.label ?? value}
+        value={typingValue?.label ?? typingValue}
         {...(isAdvanced ? { itemComponent: AutoCompleteItem } : {})}
       />
     );
