@@ -52,6 +52,7 @@ const GridComponent = forwardRef(
         ref={ref}
         display="grid"
         {...componentProps}
+        onClick={triggers?.onClick}
         {...props}
         pos="relative"
         style={{
