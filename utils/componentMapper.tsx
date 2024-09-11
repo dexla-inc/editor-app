@@ -1117,7 +1117,7 @@ export const componentMapper: ComponentMapper = {
   Autocomplete: {
     Component: (props) => <Autocomplete {...props} />,
     modifiers: ["autocomplete", "spacing", "size", "border", "effects"],
-    actionTriggers: ["onItemSubmit", "onChange"],
+    actionTriggers: ["onItemSubmit", "onChange", "onBlur"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Progress: {
