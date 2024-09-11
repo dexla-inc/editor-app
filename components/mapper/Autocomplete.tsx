@@ -18,9 +18,8 @@ import {
 } from "@mantine/core";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
-import { forwardRef, memo, useEffect, useState, useCallback } from "react";
+import { forwardRef, memo, useEffect, useState } from "react";
 import { useInputValue } from "@/hooks/components/useInputValue";
-import debounce from "lodash.debounce";
 
 type Props = EditableComponentMapper & AutocompleteProps;
 
@@ -41,7 +40,7 @@ const AutocompleteComponent = forwardRef(
 
     const componentProps = { ...restComponentProps, placeholder };
 
-    const [value, setValue] = useInputValue<string>(
+    const [value, setValue] = useInputValue<AutocompleteItem>(
       {
         value: component.onLoad?.value ?? "",
       },
@@ -71,71 +70,65 @@ const AutocompleteComponent = forwardRef(
       enabled: !!value,
     });
 
-    const [data, setData] = useState<AutocompleteItem[]>([]);
-    const [filteredData, setFilteredData] = useState<AutocompleteItem[]>([]);
+    let data = [];
 
-    useEffect(() => {
-      if (dataType === "dynamic" && response) {
-        const list = Array.isArray(response) ? response : [response];
+    if (dataType === "dynamic" && response) {
+      const list = Array.isArray(response) ? response : [response];
 
-        const formattedData = list.map((item: any) => {
-          const baseData = {
-            label: String(item[dataLabelKey]),
-            value: String(item[dataValueKey]),
+      data = list.map((item: any) => {
+        const baseData = {
+          label: String(item[dataLabelKey]),
+          value: String(item[dataValueKey]),
+        };
+
+        if (isAdvanced) {
+          return {
+            ...baseData,
+            image: String(item[dataImageKey]),
+            description: String(item[dataDescriptionKey]),
           };
+        }
 
-          if (isAdvanced) {
-            return {
-              ...baseData,
-              image: String(item[dataImageKey]),
-              description: String(item[dataDescriptionKey]),
-            };
-          }
+        return baseData;
+      });
+    }
 
-          return baseData;
-        });
+    if (dataType === "static") {
+      data = component.onLoad?.data ?? component.props?.data ?? [];
+    }
 
-        setData(formattedData);
-      } else if (dataType === "static") {
-        setData(component.onLoad?.data ?? component.props?.data ?? []);
+    const [timeoutId, setTimeoutId] = useState(null);
+
+    const handleChange = (item: any) => {
+      setValue(item);
+
+      if (timeoutId) {
+        clearTimeout(timeoutId);
       }
-    }, [
-      response,
-      dataType,
-      dataLabelKey,
-      dataValueKey,
-      isAdvanced,
-      dataImageKey,
-      dataDescriptionKey,
-    ]);
 
-    // Debounced filter function
-    const debouncedFilter = useCallback(
-      debounce((value: string) => {
-        const filtered = data.filter((item) =>
-          item.label?.toLowerCase().includes(value?.toLowerCase()?.trim()),
-        );
-        setFilteredData(filtered);
-      }, 200),
-      [data],
-    );
+      const newTimeoutId = setTimeout(() => {
+        if (onChange && item) {
+          onChange(item);
+        }
+      }, 200);
 
-    // Use useEffect to call the debounced function
+      setTimeoutId(newTimeoutId as any);
+    };
+
+    const [itemSubmitted, setItemSubmitted] = useState(false);
+
+    const handleItemSubmit = (item: AutocompleteItem) => {
+      setItemSubmitted(true);
+      setValue(item);
+    };
+
     useEffect(() => {
-      debouncedFilter(value);
-      // Cancel the debounce on useEffect cleanup
-      return () => debouncedFilter.cancel();
-    }, [value, debouncedFilter]);
-
-    const handleChange = (item: string) => {
-      setValue(item);
-      onChange && onChange(item);
-    };
-
-    const handleItemSubmit = (item: string) => {
-      setValue(item);
-      onItemSubmit && onItemSubmit(item);
-    };
+      if (itemSubmitted && onItemSubmit && value) {
+        onItemSubmit && onItemSubmit(value?.value);
+        setItemSubmitted(false);
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [itemSubmitted]);
 
     return (
       <MantineAutocomplete
@@ -162,12 +155,12 @@ const AutocompleteComponent = forwardRef(
           input: customStyle,
         }}
         withinPortal={false}
-        data={filteredData}
-        filter={() => true} // We're handling filtering ourselves
+        data={data}
+        filter={() => true}
         dropdownComponent={CustomDropdown}
         rightSection={loading || isLoading ? <InputLoader /> : null}
         label={undefined}
-        value={value}
+        value={value?.label ?? value}
         {...(isAdvanced ? { itemComponent: AutoCompleteItem } : {})}
       />
     );
