@@ -6,13 +6,15 @@ import {
   Flex,
   Input,
   Popover,
+  Stack,
   TextInput,
   Tooltip,
 } from "@mantine/core";
-import { useClickOutside } from "@mantine/hooks";
+import { useClickOutside, useDisclosure } from "@mantine/hooks";
 import { IconX } from "@tabler/icons-react";
 import debounce from "lodash.debounce";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { SegmentedControlInput } from "./SegmentedControlInput";
 
 type Props = {
   friendlyName?: string;
@@ -34,7 +36,12 @@ export const ColorSelector = ({
   const [hexa, setHexa] = useState<string>("");
   const [friendlyName, setFriendlyName] = useState<string>("");
   const [opened, setOpened] = useState(false);
-  const ref = useClickOutside(() => setOpened(false));
+  const [isShadesMain, { open: switchToMain, close: switchToShades }] =
+    useDisclosure(true);
+  const ref = useClickOutside(() => {
+    setOpened(false);
+    switchToMain();
+  });
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedOnChange = useCallback(
@@ -88,6 +95,7 @@ export const ColorSelector = ({
   return (
     <Flex align="center" ref={ref}>
       <Popover
+        width="100%"
         withArrow
         zIndex="20"
         opened={opened}
@@ -113,23 +121,38 @@ export const ColorSelector = ({
           </Tooltip>
         </Popover.Target>
         <Popover.Dropdown>
-          <ColorPicker format="hexa" value={hexa} onChange={setHexa} />
-          <Input
-            size={size ? "xs" : "sm"}
-            value={hexa}
-            mt="sm"
-            placeholder="#FFFFFF"
-            onChange={(e) => {
-              let _value = e.target.value;
-              if (_value && !_value.startsWith("#")) {
-                _value = `#${_value}`;
-              }
-              // Update the hexa value state only if the input is either empty or starts with a "#"
-              if (_value === "" || _value.startsWith("#")) {
-                setHexa(_value);
-              }
-            }}
-          />
+          <Stack spacing="xs">
+            <SegmentedControlInput
+              value={isShadesMain ? "main" : "shades"}
+              data={[
+                {
+                  label: "main",
+                  value: "main",
+                },
+                {
+                  label: "shades",
+                  value: "shades",
+                },
+              ]}
+              onChange={isShadesMain ? switchToShades : switchToMain}
+            />
+            {isShadesMain ? (
+              <ShadePicker
+                onChange={setHexa}
+                isShadesMain={isShadesMain}
+                value={hexa}
+                size={size}
+              />
+            ) : (
+              <ShadesList
+                onChange={setHexa}
+                isShadesMain={isShadesMain}
+                value={hexa}
+                size={size}
+                shades={[]}
+              />
+            )}
+          </Stack>
         </Popover.Dropdown>
         <Tooltip label="Click to edit name">
           <TextInput
@@ -153,3 +176,83 @@ export const ColorSelector = ({
     </Flex>
   );
 };
+
+type ShadePickerProps = {
+  value?: string;
+  size?: number;
+  onChange?: (value: string) => void;
+  isShadesMain: boolean;
+};
+function ShadePicker({
+  value,
+  size,
+  onChange,
+  isShadesMain,
+}: ShadePickerProps) {
+  return (
+    <Stack>
+      <ColorPicker format="hexa" value={value} onChange={onChange} />
+      <Input
+        size={size ? "xs" : "sm"}
+        value={value}
+        mt="sm"
+        placeholder="#FFFFFF"
+        onChange={(e) => {
+          let _value = e.target.value;
+          if (_value && !_value.startsWith("#")) {
+            _value = `#${_value}`;
+          }
+          // Update the hexa value state only if the input is either empty or starts with a "#"
+          if (_value === "" || _value.startsWith("#")) {
+            onChange?.(_value);
+          }
+        }}
+      />
+    </Stack>
+  );
+}
+
+function ShadesList({
+  value,
+  size,
+  onChange,
+  isShadesMain,
+  shades,
+}: ShadePickerProps & { shades: string[] }) {
+  return (
+    <Stack>
+      {shades.map((shade) => (
+        <ShadePopover
+          key={shade}
+          value={shade}
+          size={size}
+          onChange={onChange}
+          isShadesMain={isShadesMain}
+        />
+      ))}
+    </Stack>
+  );
+}
+
+function ShadePopover({
+  value = "#00000000",
+  size,
+  onChange,
+  isShadesMain,
+}: ShadePickerProps) {
+  return (
+    <Popover width="100%" withArrow>
+      <Popover.Target>
+        <ColorSwatch color={value} size={size} />
+      </Popover.Target>
+      <Popover.Dropdown>
+        <ShadePicker
+          value={value}
+          size={size}
+          onChange={onChange}
+          isShadesMain={isShadesMain}
+        />
+      </Popover.Dropdown>
+    </Popover>
+  );
+}

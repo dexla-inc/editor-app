@@ -20,7 +20,6 @@ import { useAppStore } from "@/stores/app";
 import { useThemeStore } from "@/stores/theme";
 import { ICON_SIZE, INPUT_SIZE } from "@/utils/config";
 import { gapSizes, inputSizes, radiusSizes } from "@/utils/defaultSizes";
-import { getGoogleFonts } from "@/utils/getGoogleFonts";
 import { useGoogleFonts } from "@flyyer/use-googlefonts";
 import {
   ActionIcon,
@@ -35,7 +34,8 @@ import {
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { IconArrowsMaximize, IconSearch } from "@tabler/icons-react";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
+import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { useEffect, useState } from "react";
 type EditorNavbarThemesSectionProps = {
   isActive: boolean;
@@ -112,9 +112,36 @@ export const EditorNavbarThemesSection =
       },
     });
 
+    const sanitizeColors = (colors: ThemeResponse["colors"]) =>
+      colors.map((color) => ({
+        ...omit(color, ["brightness"]),
+        name: color.name + ".6",
+        friendlyName: color.friendlyName + ".6",
+      }));
+
+    const categorizeColors = ({
+      colors,
+      colorShades,
+    }: Pick<ThemeResponse, "colorShades" | "colors">) => {
+      return colorShades.reduce(
+        (curr, color) => {
+          const [family] = color.friendlyName.split(".");
+          const index = curr.findIndex((c) => c[family]);
+          if (index === -1) {
+            curr.push({ [family]: [color] });
+          } else {
+            curr[index][family].push(color);
+          }
+          return curr;
+        },
+        [] as Record<string, ThemeResponse["colorShades"]>[],
+      );
+    };
+
     const form = useForm<ThemeResponse>({
       initialValues: {
         colors: userTheme?.colors ?? [],
+        colorShades: [],
         fonts: userTheme?.fonts ?? [],
         responsiveBreakpoints: userTheme?.responsiveBreakpoints ?? [],
         faviconUrl: userTheme?.faviconUrl ?? "",
