@@ -26,6 +26,7 @@ const GridColumnComponent = forwardRef(
         {...componentProps}
         {...props}
         id={component.id}
+        {...triggers}
       >
         {component.children &&
           component.children.length > 0 &&
