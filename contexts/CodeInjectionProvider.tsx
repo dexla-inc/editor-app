@@ -4,8 +4,6 @@ import React, { createContext, useContext, useEffect } from "react";
 
 type CodeInjectionContextType = {
   handleSetVariable: (variableId: string, value: any) => void;
-  handleGetVariables: () => Record<string, any>;
-  variables: Record<string, any>;
 };
 
 const CodeInjectionContext = createContext<
@@ -16,17 +14,6 @@ export const CodeInjectionProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
-  const variables = useVariableStore((state) =>
-    Object.values(state.variableList).reduce(
-      (curr, item) => {
-        curr[item.id] = item.value ?? item.defaultValue ?? undefined;
-        return curr;
-      },
-      {} as Record<string, any>,
-    ),
-  );
-
-  const handleGetVariables = () => variables;
 
   const handleSetVariable = (variableId: string, value: any) => {
     const selectedVariable =
@@ -61,9 +48,7 @@ export const CodeInjectionProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [iframeWindow]);
 
   return (
-    <CodeInjectionContext.Provider
-      value={{ handleSetVariable, handleGetVariables, variables }}
-    >
+    <CodeInjectionContext.Provider value={{ handleSetVariable }}>
       {children}
     </CodeInjectionContext.Provider>
   );
