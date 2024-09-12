@@ -33,10 +33,12 @@ export const useOnDrop = () => {
   );
 
   const onDrop = useCallback(
-    (_droppedId: string, dropTarget: DropTarget) => {
+    async (_droppedId: string, dropTarget: DropTarget) => {
       const { tree: editorTree, setTree: setEditorTree } =
         useEditorTreeStore.getState();
-      const { componentToAdd, isResizing } = useEditorStore.getState();
+      const { componentToAdd, isResizing, setIframeWindow } =
+        useEditorStore.getState();
+      let newSelectedId = undefined;
 
       if (isResizing) return;
       // const droppedId = parseId(_droppedId ?? componentToAdd?.id);
@@ -69,7 +71,7 @@ export const useOnDrop = () => {
             componentToAdd,
           );
         } else {
-          handleComponentAddition(
+          newSelectedId = handleComponentAddition(
             editorTree.root as ComponentStructure,
             dropTarget,
             targetComponent,
@@ -112,7 +114,13 @@ export const useOnDrop = () => {
         );
       }
 
-      setEditorTree(editorTree as EditorTreeCopy);
+      await setEditorTree(editorTree as EditorTreeCopy);
+
+      // Forcing new component selection right after setEditorTree
+      if (newSelectedId) {
+        await setSelectedComponentIds(() => [""]);
+        await setSelectedComponentIds(() => [newSelectedId]);
+      }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [handleComponentAddition, handleReorderingOrMoving, handleRootDrop],
@@ -157,8 +165,9 @@ export const useOnDrop = () => {
   ) {
     const targetParent = getComponentParent(treeRoot, dropTarget.id);
     const isPopOver = componentToAdd.name === "PopOver";
+    let newSelectedId = undefined;
     if (!targetComponent?.blockDroppingChildrenInside || isPopOver) {
-      addComponent(treeRoot, componentToAdd, dropTarget);
+      newSelectedId = addComponent(treeRoot, componentToAdd, dropTarget);
 
       if (dropTarget.edge !== "center") {
         handleReorderingOrMoving(
@@ -174,7 +183,7 @@ export const useOnDrop = () => {
       if (targetParent) {
         const dropTargetIndex = getComponentIndex(targetParent, dropTarget.id);
 
-        const newSelectedId = addComponent(
+        newSelectedId = addComponent(
           treeRoot,
           componentToAdd,
           {
@@ -185,10 +194,11 @@ export const useOnDrop = () => {
             ? dropTargetIndex + 1
             : dropTargetIndex,
         );
-        setSelectedComponentIds(() => [newSelectedId]);
+        setSelectedComponentIds(() => [newSelectedId!]);
       }
     }
     setComponentToAdd(undefined);
+    return newSelectedId;
   }
 
   function handleGridReorderingOrMoving(
