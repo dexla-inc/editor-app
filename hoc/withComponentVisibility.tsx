@@ -3,8 +3,7 @@ import { WithComponentWrapperProps } from "@/types/component";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useShallow } from "zustand/react/shallow";
 import { useComputeValue } from "@/hooks/data/useComputeValue";
-import useFontFaceObserver from "use-font-face-observer";
-import { useMantineTheme } from "@mantine/core";
+import get from "lodash.get";
 
 export const withComponentVisibility = <T extends Record<string, any>>(
   Component: ComponentType<T>,
@@ -28,8 +27,13 @@ export const withComponentVisibility = <T extends Record<string, any>>(
       shareableContent,
     });
 
-    if (computedOnLoad.isVisible === false) {
-      return null;
+    const dataType = get(onLoad, "isVisible.dataType", "");
+    const isVisibleValue = get(onLoad, `isVisible.${dataType}`);
+
+    if (isVisibleValue !== undefined) {
+      if (computedOnLoad.isVisible === false) {
+        return null;
+      }
     }
 
     // @ts-ignore
