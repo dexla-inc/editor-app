@@ -1,3 +1,5 @@
+import { getUserThemeColors } from "@/hooks/editor/useUserTheme";
+import { ThemeResponse } from "@/requests/themes/types";
 import { LARGE_ICON_SIZE } from "@/utils/config";
 import {
   ActionIcon,
@@ -7,6 +9,7 @@ import {
   Input,
   Popover,
   Stack,
+  Text,
   TextInput,
   Tooltip,
 } from "@mantine/core";
@@ -16,25 +19,32 @@ import debounce from "lodash.debounce";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { SegmentedControlInput } from "./SegmentedControlInput";
 
-type Props = {
-  friendlyName?: string;
-  hex?: string;
-  isDefault: boolean;
-  onValueChange?: (value: { friendlyName: string; hex: string }) => void;
-  deleteColor?: () => void;
-  size?: number;
+type ListProps = {
+  onValueChange: (value: ThemeResponse["colorShades"]) => void;
+  deleteShades: () => void;
+  colors: ThemeResponse["colorShades"];
 };
 
+interface Props extends ListProps {
+  size?: number;
+}
+
 export const ColorSelector = ({
-  hex: fetchedHex = "",
-  friendlyName: fetchedFriendlyName = "",
-  isDefault,
   onValueChange,
-  deleteColor,
+  deleteShades: deleteColor,
   size,
+  colors,
 }: Props) => {
+  const {
+    hex: fetchedHex = "",
+    name: fetchedName = "",
+    friendlyName: fetchedFriendlyName = "",
+    isDefault,
+  } = colors[6] ?? colors[0] ?? {};
+
   const [hexa, setHexa] = useState<string>("");
   const [friendlyName, setFriendlyName] = useState<string>("");
+  const index = useRef<number>(0);
   const [opened, setOpened] = useState(false);
   const [isShadesMain, { open: switchToMain, close: switchToShades }] =
     useDisclosure(true);
@@ -58,7 +68,22 @@ export const ColorSelector = ({
   const debouncedOnValueChangeRef = useRef(
     debounce((hex, name) => {
       if (onValueChangeRef.current) {
-        onValueChangeRef.current({ friendlyName: name, hex });
+        const newColor = {
+          isDefault,
+          friendlyName: `${name}.${index.current}`,
+          hex,
+          name: isDefault ? fetchedName : `${name}.${index.current}`,
+        };
+        let newColors = colors;
+        if (newColors.length <= 1) {
+          onValueChangeRef.current(
+            getUserThemeColors([
+              { isDefault, hex, name, friendlyName: name, brightness: 0 },
+            ]),
+          );
+        }
+        newColors[index.current] = newColor;
+        onValueChangeRef.current(newColors);
       }
     }, 100),
   );
@@ -74,9 +99,11 @@ export const ColorSelector = ({
 
   useEffect(() => {
     const hexToHexa = fetchedHex.length === 7 ? fetchedHex + "ff" : fetchedHex;
+    const [friendlyName, i] = fetchedFriendlyName.split(".");
 
     setHexa(hexToHexa);
-    setFriendlyName(fetchedFriendlyName);
+    setFriendlyName(friendlyName);
+    index.current = Number(i);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchedHex, fetchedFriendlyName]);
 
@@ -149,7 +176,7 @@ export const ColorSelector = ({
                 isShadesMain={isShadesMain}
                 value={hexa}
                 size={size}
-                shades={[]}
+                shades={colors}
               />
             )}
           </Stack>
@@ -218,16 +245,17 @@ function ShadesList({
   onChange,
   isShadesMain,
   shades,
-}: ShadePickerProps & { shades: string[] }) {
+}: ShadePickerProps & { shades: any[] }) {
   return (
     <Stack>
-      {shades.map((shade) => (
+      {shades.map((shade, index) => (
         <ShadePopover
-          key={shade}
-          value={shade}
+          key={shade.hex}
+          value={shade.hex}
           size={size}
           onChange={onChange}
           isShadesMain={isShadesMain}
+          index={index + 1}
         />
       ))}
     </Stack>
@@ -239,20 +267,52 @@ function ShadePopover({
   size,
   onChange,
   isShadesMain,
-}: ShadePickerProps) {
+  index,
+}: ShadePickerProps & { index: number }) {
   return (
-    <Popover width="100%" withArrow>
-      <Popover.Target>
-        <ColorSwatch color={value} size={size} />
-      </Popover.Target>
-      <Popover.Dropdown>
-        <ShadePicker
-          value={value}
-          size={size}
-          onChange={onChange}
-          isShadesMain={isShadesMain}
-        />
-      </Popover.Dropdown>
-    </Popover>
+    <Flex align="center" justify="center" gap="xs">
+      <Text size="xs">{index}</Text>
+      <Popover withArrow>
+        <Popover.Target>
+          <ColorSwatch
+            color={value}
+            size={size ? size : 36}
+            radius="0px"
+            withShadow={false}
+            sx={(theme) => ({
+              flex: "none",
+              borderTopLeftRadius: theme.radius.sm,
+              borderBottomLeftRadius: theme.radius.sm,
+              borderRight: "0px",
+            })}
+          />
+        </Popover.Target>
+        <Popover.Dropdown>
+          <ShadePicker
+            value={value}
+            size={size}
+            onChange={onChange}
+            isShadesMain={isShadesMain}
+          />
+        </Popover.Dropdown>
+      </Popover>
+      <TextInput
+        size={size ? "xs" : "sm"}
+        style={{ width: "100%", borderLeft: "0px" }}
+        radius="0px 4px 4px 0px"
+        value={value}
+        placeholder="#FFFFFF"
+        onChange={(e) => {
+          let _value = e.target.value;
+          if (_value && !_value.startsWith("#")) {
+            _value = `#${_value}`;
+          }
+          // Update the hexa value state only if the input is either empty or starts with a "#"
+          if (_value === "" || _value.startsWith("#")) {
+            onChange?.(_value);
+          }
+        }}
+      />
+    </Flex>
   );
 }

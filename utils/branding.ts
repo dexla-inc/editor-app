@@ -440,6 +440,37 @@ const componentHasBorder = (style: CSSObject = {}) => {
   return isBorderWidthNotZero(style) && isBorderStyleNotNone(style);
 };
 
+function rgbaToHex(rgba: string) {
+  // Regular expression to match RGB or RGBA strings
+  const rgbaRegex =
+    /^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d*(?:\.\d+)?))?\)$/;
+
+  // Extract values from the RGBA string
+  const match = rgba.match(rgbaRegex);
+
+  if (!match) return rgba;
+
+  const toHex = (x: string) => {
+    const num = Math.round(parseFloat(x));
+    return num.toString(16).padStart(2, "0");
+  };
+
+  // Convert RGB components
+  const r = toHex(match[1]).toUpperCase();
+  const g = toHex(match[2]).toUpperCase();
+  const b = toHex(match[3]).toUpperCase();
+
+  // If alpha is provided, convert it; otherwise, return the RGB hex
+  if (match[4] !== undefined) {
+    const a = toHex(
+      Math.round(parseFloat(match[4]) * 255).toString(),
+    ).toUpperCase();
+    return `#${r}${g}${b}${a}`;
+  }
+
+  return `#${r}${g}${b}`;
+}
+
 export {
   BG_COLOR,
   BINDER_BACKGROUND,
@@ -475,6 +506,7 @@ export {
   ORANGE_BORDER_COLOR,
   ORANGE_COLOR,
   PRIMARY_COLOR,
+  rgbaToHex,
   scrollbarStyles,
   SELECTED,
   theme,
