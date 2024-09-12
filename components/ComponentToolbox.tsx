@@ -49,7 +49,6 @@ const ComponentToolboxInner = () => {
     }),
   );
 
-  // useEditorTreeStore((state) => state.tree);
   const setEditorTree = useEditorTreeStore((state) => state.setTree);
   const setSelectedComponentIds = useEditorTreeStore(
     (state) => state.setSelectedComponentIds,
