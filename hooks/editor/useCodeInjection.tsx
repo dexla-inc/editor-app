@@ -1,5 +1,6 @@
 import { useCodeInjectionContext } from "@/contexts/CodeInjectionProvider";
 import { useEditorTreeStore } from "@/stores/editorTree";
+import { useVariableStore } from "@/stores/variables";
 import { isPreviewModeSelector } from "@/utils/componentSelectors";
 import { EditableComponentMapper } from "@/utils/editor";
 import merge from "lodash.merge";
@@ -11,9 +12,21 @@ export const useCodeInjection = (
   props: Record<string, any>,
 ) => {
   const isPreviewMode = isPreviewModeSelector(useEditorTreeStore.getState());
+  const variables = useVariableStore((state) =>
+    Object.values(state?.variableList ?? {}).reduce(
+      (curr, item) => {
+        console.log(item);
+        if (item.id) {
+          curr[item.id] = item?.value ?? item?.defaultValue ?? undefined;
+        }
 
-  const { handleSetVariable, handleGetVariables, variables } =
-    useCodeInjectionContext();
+        return curr;
+      },
+      {} as Record<string, any>,
+    ),
+  );
+
+  useCodeInjectionContext();
 
   const events = merge({}, component.props?.triggers, props);
   const applyEventHandlers = useCallback(
@@ -87,7 +100,7 @@ export const useCodeInjection = (
       }
 
       // @ts-ignore
-      ref.current.contentWindow!.variables = handleGetVariables;
+      ref.current.contentWindow!.variables = () => variables;
 
       // Write the modified HTML to the iframe
       ref.current.contentDocument?.open();
