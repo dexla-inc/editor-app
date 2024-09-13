@@ -1,6 +1,5 @@
-import { useInputsStore } from "@/stores/inputs";
-import isEmpty from "lodash.isempty";
 import { useCallback, useEffect } from "react";
+import { useInputsStore } from "@/stores/inputs";
 import { useShallow } from "zustand/react/shallow";
 
 export const useInputValue = <T = string,>(
@@ -22,11 +21,12 @@ export const useInputValue = <T = string,>(
 
   useEffect(() => {
     let newValue = value;
+
     if (typeof value !== "boolean") {
-      if (typeof value === "object" && !isEmpty(inputValue)) {
+      if (typeof value === "object" && inputValue) {
         newValue = inputValue;
       } else {
-        newValue = value ?? inputValue;
+        newValue = value || inputValue;
       }
     }
 

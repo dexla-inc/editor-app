@@ -249,7 +249,6 @@ export const useEditorHotkeys = () => {
     [
       "mod+V",
       (e) => {
-        const isPreviewMode = useEditorTreeStore.getState().isPreviewMode;
         // @ts-ignore
         if (e.target.contentEditable !== "true" && !isPreviewMode) {
           pasteCopiedComponent();

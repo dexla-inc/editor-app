@@ -5,8 +5,6 @@ import { extractPagingFromSupabase, notUndefined } from "@/utils/common";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { ValueProps } from "@/types/dataBinding";
-import { useDataSourceStore } from "@/stores/datasource";
-import { useEditorTreeStore } from "@/stores/editorTree";
 
 export function constructHeaders(
   mediaType?: MediaTypes,
@@ -15,36 +13,13 @@ export function constructHeaders(
 ) {
   const contentType = mediaType || "application/json";
 
-  const normalizedHeaders = new Map<string, string>();
-
-  // Iterate through headers to normalize and detect duplicates
-  if (headers) {
-    for (const key in headers) {
-      if (Object.prototype.hasOwnProperty.call(headers, key)) {
-        const lowerCaseKey = key.toLowerCase();
-        if (!normalizedHeaders.has(lowerCaseKey)) {
-          normalizedHeaders.set(lowerCaseKey, key); // Store the original casing
-        }
-      }
-    }
-  }
-
-  // Rebuild headers using the original casing
-  const finalHeaders = Array.from(normalizedHeaders.values()).reduce(
-    (acc, originalKey) => {
-      acc[originalKey] = headers![originalKey];
-      return acc;
-    },
-    {} as Record<string, any>,
-  );
-
-  const { authorization } = finalHeaders;
+  const { Authorization, ...restHeaders } = headers || {};
 
   return {
     "Content-Type": contentType,
-    ...finalHeaders,
-    ...(authorization
-      ? { Authorization: authorization }
+    ...restHeaders,
+    ...(Authorization
+      ? { Authorization }
       : authHeaderKey
         ? { Authorization: authHeaderKey }
         : {}),
@@ -63,6 +38,7 @@ export async function performFetch(
   const isGetMethodType = methodType === "GET";
 
   const _headers = constructHeaders(mediaType, headers, authHeaderKey);
+
   const init: RequestInit = {
     method: methodType,
     headers: _headers,
@@ -137,18 +113,6 @@ export const prepareRequestData = (
     ? pick<Record<string, string>, string>(computedValues, headerKeys)
     : undefined;
 
-  const authHeaderKey = (() => {
-    if (header?.Authorization) {
-      return `${header.Authorization}`;
-    }
-    const currentProjectId = useEditorTreeStore.getState()
-      .currentProjectId as string;
-    const accessToken = useDataSourceStore
-      .getState()
-      .getAuthState(currentProjectId)?.accessToken;
-    return accessToken ? `Bearer ${accessToken}` : undefined;
-  })();
-
   const body = bodyKeys.length
     ? pick<Record<string, string>, string>(computedValues, bodyKeys)
     : undefined;
@@ -160,7 +124,7 @@ export const prepareRequestData = (
   //   }
   // });
 
-  return { url, header, body, authHeaderKey };
+  return { url, header, body };
 };
 
 const getVariablesValue = (

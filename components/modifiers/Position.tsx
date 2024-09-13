@@ -63,7 +63,7 @@ const Modifier = withModifier(({ selectedComponent }) => {
               });
             }}
           />
-          {["absolute", "sticky", "fixed"]?.includes(
+          {["absolute", "sticky", "fixed"].includes(
             form.values.position as string,
           ) && (
             <>

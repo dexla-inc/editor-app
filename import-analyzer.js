@@ -31,6 +31,7 @@ sourceFiles.forEach((sourceFile) => {
 });
 
 // Generate and print the report
+// console.log(Object.keys(importsByFile));
 
 const reportPath = "./importsReport.json";
 
@@ -39,3 +40,5 @@ fs.writeFileSync(
   reportPath,
   JSON.stringify(Object.keys(importsByFile), null, 2),
 );
+
+console.log(`Report saved to ${reportPath}`);

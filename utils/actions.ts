@@ -205,7 +205,7 @@ export interface ChangeVariableAction extends BaseAction {
   variableType: FrontEndTypes;
   value: ValueProps;
   method?: ArrayMethods;
-  itemIndex?: ValueProps;
+  index?: ValueProps;
   partialUpdate?: boolean;
   path?: ValueProps;
 }
@@ -472,13 +472,20 @@ export const useApiCallAction = async (
   const endpoint = endpointResults?.find((e) => e.id === action.endpoint)!;
 
   try {
-    const { url, header, body, authHeaderKey } = prepareRequestData(
+    const accessToken = useDataSourceStore
+      .getState()
+      .getAuthState(projectId)?.accessToken;
+
+    const { url, header, body } = prepareRequestData(
       action,
       endpoint,
       computeValue,
     );
 
     let responseJson: any;
+
+    // TODO: Need to do this properly when we support more auth than bearer
+    const authHeaderKey = accessToken ? "Bearer " + accessToken : "";
 
     const fetchUrl = endpoint?.isServerRequest
       ? `/api/proxy?targetUrl=${toBase64(url)}`
@@ -549,8 +556,9 @@ export const useChangeLanguageAction = ({
   setLanguage(language as string);
 };
 
+// IMPORTANT: do not delete the variable data as it is used in the eval
 export const useCustomJavascriptAction = ({ action, data }: any) => {
-  return new Function(action.body ?? action.code)();
+  return new Function(action.code)();
 };
 
 export type ChangeVariableActionParams = ActionParams & {
@@ -674,7 +682,7 @@ export const useChangeVariableAction = async ({
       : variableValue;
 
   const setVariable = useVariableStore.getState().setVariable;
-  const index = computeValue<number>({ value: action.itemIndex });
+  const index = computeValue<number>({ value: action.index });
   const path = computeValue<string>({ value: action.path });
   const computedValue = computeValue({ value: action.value });
   let newValue = safeJsonParse(computedValue);

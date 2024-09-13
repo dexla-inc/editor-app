@@ -345,7 +345,7 @@ export function extractPagingFromSupabase<T>(
   const end = parseInt(endStr, 10);
 
   const recordsPerPage = end - start + 1;
-  const page = Math.ceil(end / recordsPerPage);
+  const page = Math.floor(start / recordsPerPage) + 1;
 
   const pagingModel: PagingModel = {
     totalRecords: totalRecords,

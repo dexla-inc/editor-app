@@ -106,6 +106,10 @@ export async function GET(req: Request, context: { params: Params }) {
       }
     });
 
+    // Enable for Debugging
+    // console.log(JSON.stringify(components, null, 2));
+    // console.log(JSON.stringify(pages, null, 2));
+
     return Response.json(
       {
         components,

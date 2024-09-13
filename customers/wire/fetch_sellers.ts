@@ -13,22 +13,8 @@ Deno.serve(async (req: Request) => {
     },
   );
 
-  // Extract query parameters
-  const url = new URL(req.url);
-  const p_id = url.searchParams.get("id") ?? null;
-  const p_limit = url.searchParams.get("limit") ?? null;
-  const p_page = url.searchParams.get("page") ?? "1";
-  const p_order = url.searchParams.get("order") || "";
-  const p_search = url.searchParams.get("search") ?? "";
-
   // Database queries will have RLS policies enforced
-  const { data, error } = await supabaseClient.rpc("fetch_sellers", {
-    p_limit,
-    p_page,
-    p_order,
-    p_search,
-    p_id,
-  });
+  const { data, error } = await supabaseClient.rpc("fetch_sellers");
 
   if (error) {
     return new Response(JSON.stringify({ error: error.message }), {

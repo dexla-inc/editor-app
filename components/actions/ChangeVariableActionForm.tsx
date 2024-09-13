@@ -2,12 +2,12 @@ import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
 import { BindingField } from "@/components/editor/BindingField/BindingField";
 import { VariableSelect } from "@/components/variables/VariableSelect";
 import { FrontEndTypes } from "@/requests/variables/types";
-import { useVariableStore } from "@/stores/variables";
-import { FieldType } from "@/types/dataBinding";
-import { ArrayMethods } from "@/types/types";
 import { ActionFormProps, ChangeVariableAction } from "@/utils/actions";
+import { ArrayMethods } from "@/types/types";
 import { Anchor, Select, Stack, Text } from "@mantine/core";
+import { FieldType } from "@/types/dataBinding";
 import { openContextModal } from "@mantine/modals";
+import { useVariableStore } from "@/stores/variables";
 
 type Props = ActionFormProps<Omit<ChangeVariableAction, "name">>;
 
@@ -51,7 +51,7 @@ export const ArrayVariableForm = ({ form, isPageAction }: Props) => {
           type="number"
           label="Index"
           isPageAction={isPageAction}
-          {...form.getInputProps("itemIndex")}
+          {...form.getInputProps("index")}
         />
       )}
       {method.value === "UPDATE_ONE_ITEM" && (
@@ -60,6 +60,15 @@ export const ArrayVariableForm = ({ form, isPageAction }: Props) => {
             label="Partial Update"
             {...form.getInputProps("partialUpdate")}
           />
+          {form.values.partialUpdate && (
+            <BindingField
+              fieldType="Text"
+              required
+              label="Path"
+              isPageAction={isPageAction}
+              {...form.getInputProps("path")}
+            />
+          )}
         </>
       )}
     </>

@@ -72,9 +72,10 @@ export const RulesForm = () => {
             extractContextAndAttributes(form.values.value?.boundCode).context}
         </Text>
         <Button
+          styles={{ root: { justifySelf: "self-end" } }}
           fw={400}
           leftIcon={<IconPlus size={15} />}
-          variant="filled"
+          variant="default"
           onClick={() => {
             let condition: Partial<ConditionProps> = {
               rule: "equalTo",

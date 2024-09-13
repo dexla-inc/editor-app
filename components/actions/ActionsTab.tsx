@@ -30,8 +30,7 @@ export const ActionsTab = () => {
     );
   };
 
-  const renderSequentialActions = (action: Action, depth: number = 0) => {
-    if (depth > 10) return null;
+  const renderSequentialActions = (action: Action) => {
     return getActionsBySequentialToOrId(action.id!)?.map(
       (sequentialAction: Action) => {
         const sequentialActionName = sequentialAction.action.name;
@@ -68,7 +67,7 @@ export const ActionsTab = () => {
                   <ActionForm form={form} actionId={sequentialAction.id} />
                 )}
               </ActionSettingsForm>
-              {renderSequentialActions(sequentialAction, depth + 1)}
+              {renderSequentialActions(sequentialAction)}
             </SidebarSection>
           )
         );

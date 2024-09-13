@@ -81,13 +81,9 @@ export const ChangeHistoryPopover: FC = () => {
           // Check if the related target (the element the pointer is moving to) is within the popover dropdown
           if (
             e.relatedTarget &&
-            e.relatedTarget instanceof HTMLElement &&
-            typeof e.relatedTarget.closest === "function"
+            (e.relatedTarget as HTMLElement).closest(".popover-dropdown")
           ) {
-            const closestElement = e.relatedTarget.closest(".popover-dropdown");
-            if (closestElement) {
-              return;
-            }
+            return;
           }
           close();
         }}

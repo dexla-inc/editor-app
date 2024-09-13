@@ -1,17 +1,17 @@
-import { useBrandingStyles } from "@/hooks/editor/useBrandingStyles";
-import { useEditorStore } from "@/stores/editor";
-import { useEditorTreeStore } from "@/stores/editorTree";
-import { useInputsStore } from "@/stores/inputs";
 import { useVariableStore } from "@/stores/variables";
-import { RuleItemProps } from "@/types/dataBinding";
-import { structureMapper } from "@/utils/componentMapper";
+import { useBrandingStyles } from "@/hooks/editor/useBrandingStyles";
+import { useShallow } from "zustand/react/shallow";
+import { useEditorTreeStore } from "@/stores/editorTree";
+import { useEditorStore } from "@/stores/editor";
 import {
   Component,
   ComponentTree,
   getAllComponentsByName,
 } from "@/utils/editor";
+import { structureMapper } from "@/utils/componentMapper";
+import { useInputsStore } from "@/stores/inputs";
 import { useEffect } from "react";
-import { useShallow } from "zustand/react/shallow";
+import { ConditionProps, RuleItemProps } from "@/types/dataBinding";
 
 type Props = {
   component: ComponentTree & Component;
@@ -27,12 +27,7 @@ export const ModalAndDrawerWrapper = ({ component, children }: Props) => {
   const resetInputValues = useInputsStore((state) => state.resetInputValues);
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
 
-  const {
-    size,
-    titleTag: tag,
-    triggers,
-    ...componentProps
-  } = component.props as any;
+  const { size, titleTag: tag, ...componentProps } = component.props as any;
   const {
     title = componentProps?.title,
     showInEditor = componentProps?.showInEditor,
@@ -104,7 +99,7 @@ export const ModalAndDrawerWrapper = ({ component, children }: Props) => {
     }
   };
   return (
-    <div {...triggers}>
+    <>
       {children &&
         children({
           isPreviewMode,
@@ -117,7 +112,7 @@ export const ModalAndDrawerWrapper = ({ component, children }: Props) => {
           sizeProps,
           isSizeFullScreen,
         })}
-    </div>
+    </>
   );
 };
 

@@ -50,12 +50,7 @@ Deno.serve(async (req: Request) => {
     const limit = parseInt(p_limit, 10);
     const currentPage = parseInt(p_page, 10);
     const prevPage = currentPage > 1 ? currentPage - 1 : currentPage;
-    const nextPage = data.totalCount === limit ? currentPage + 1 : currentPage;
-    const page_offset = (currentPage - 1) * limit;
-    const start = data.totalCount > 0 ? page_offset + 1 : 0;
-    const end = Math.min(start + limit - 1, data.totalCount);
-
-    const pageText = `${start} - ${end} of ${data.totalCount}`;
+    const nextPage = data.length === limit ? currentPage + 1 : currentPage;
 
     // @ts-ignore
     response.pagination = {
@@ -63,7 +58,6 @@ Deno.serve(async (req: Request) => {
       currentPage,
       nextPage,
       totalPages: data.totalPages,
-      pageText,
     };
   }
 

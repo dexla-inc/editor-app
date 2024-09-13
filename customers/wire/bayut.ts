@@ -40,7 +40,7 @@ Deno.serve(async (req: Request) => {
       Property_Size: item.property_size,
       Property_Size_Unit: item.property_size_unit,
       plotArea: item.land_size,
-      Bedrooms: item.bedroom === 0 ? -1 : item.bedroom,
+      Bedrooms: item.bedroom,
       Bathrooms: item.bathroom,
       Features: item.private_amenities,
       Off_plan: item.completion_status === "off_plan" ? "Yes" : "No",

@@ -1,12 +1,12 @@
-import { useEditorClickHandler } from "@/hooks/components/useEditorClickHandler";
-import { useTriggers } from "@/hooks/components/useTriggers";
-import { useEditorTreeStore } from "@/stores/editorTree";
-import { isEditorModeSelector } from "@/utils/componentSelectors";
 import { Component } from "@/utils/editor";
 import merge from "lodash.merge";
-import { omit } from "next/dist/shared/lib/router/utils/omit";
-import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
+import { omit } from "next/dist/shared/lib/router/utils/omit";
+import { isEditorModeSelector } from "@/utils/componentSelectors";
+import { useEditorTreeStore } from "@/stores/editorTree";
+import { useEditorClickHandler } from "@/hooks/components/useEditorClickHandler";
+import { useTriggers } from "@/hooks/components/useTriggers";
+import { useRouter } from "next/navigation";
 
 export const usePropsWithOverwrites = (
   component: Component,
@@ -71,7 +71,7 @@ export const usePropsWithOverwrites = (
         disabled: customCurrentState === "disabled",
         triggers: {
           ...triggers,
-          onClick: (e: any, func?: (...args: any[]) => void) => {
+          onClick: (e: any) => {
             const isEditorMode = isEditorModeSelector(
               useEditorTreeStore.getState(),
             );
@@ -80,7 +80,6 @@ export const usePropsWithOverwrites = (
               handleClick(e);
             } else {
               triggers?.onClick?.(e);
-              func?.(e);
             }
           },
           onMouseOver: triggers?.onHover ?? hoverStateFunc,
