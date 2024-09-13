@@ -75,7 +75,7 @@ const CountdownButtonComponent = forwardRef(
       {
         color: labelTextColor,
       },
-      count > 0 ?? component.states?.disabled,
+      count > 0 ? component.states?.disabled : {},
     );
 
     const { sx, ...restProps } = props;

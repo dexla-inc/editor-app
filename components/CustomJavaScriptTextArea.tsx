@@ -1,14 +1,16 @@
+import { useBindingPopover } from "@/hooks/data/useBindingPopover";
 import { useMantineTheme } from "@mantine/core";
 import Editor from "@monaco-editor/react";
 import debounce from "lodash.debounce";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useBindingPopover } from "@/hooks/data/useBindingPopover";
 
 type JsProps = {
-  language: "javascript" | "typescript" | "json";
+  language: "javascript" | "typescript" | "json" | "html";
   value?: string;
   onChange?: any;
   selectedItem?: string;
+  height?: string | number;
+  fixedOverflowWidgets?: boolean;
 };
 
 const RETURN_ERROR_CODE = 1108;
@@ -38,6 +40,10 @@ declare var event: {
 declare var others: {
   [key: string]: any;
 };
+
+declare var dexla: {
+  setVariable: (variable: string, value: any) => void;
+};
 `;
 
 export function CustomJavaScriptTextArea({
@@ -45,6 +51,8 @@ export function CustomJavaScriptTextArea({
   value = "",
   onChange,
   selectedItem,
+  height = "150px",
+  fixedOverflowWidgets = true,
 }: JsProps) {
   const { actions, variables, components, others } = useBindingPopover();
 
@@ -99,7 +107,7 @@ export function CustomJavaScriptTextArea({
   return (
     <Editor
       width="100%"
-      height="150px"
+      height={height}
       defaultLanguage={defaultLanguage ?? "javascript"}
       onChange={debouncedOnChange}
       onMount={(editor) => {
@@ -113,6 +121,7 @@ export function CustomJavaScriptTextArea({
         contextmenu: false,
         wordWrap: "on",
         wordWrapColumn: -1,
+        fixedOverflowWidgets,
       }}
       beforeMount={async (monaco) => {
         monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
@@ -126,34 +135,50 @@ export function CustomJavaScriptTextArea({
 
         // Auto-completion configuration
         setCompletionDisposable(
-          monaco.languages.registerCompletionItemProvider("typescript", {
-            provideCompletionItems: () => {
-              return {
+          monaco.languages.registerCompletionItemProvider(
+            ["typescript", "html"],
+            {
+              provideCompletionItems: () => ({
                 suggestions: [
-                  ...Object.entries(variables).map(([id, variable]) => ({
-                    label: `variables[${variable.name}]`,
-                    kind: monaco.languages.CompletionItemKind.Keyword,
-                    insertText: `variables[/* ${variable.name} */'${id}']`,
-                  })),
+                  ...Object.entries(variables.list as Record<string, any>).map(
+                    ([id, variable]) => ({
+                      label: `variables[${variable.name}]`,
+                      kind: monaco.languages.CompletionItemKind.Keyword,
+                      insertText: `variables[/* ${variable.name} */'${id}']`,
+                    }),
+                  ),
                   ...Object.keys(others).map((key) => ({
                     label: `others[${key}]`,
                     kind: monaco.languages.CompletionItemKind.Variable,
                     insertText: `others['${key}']`,
                   })),
-                  ...Object.entries(components).map(([id, component]) => ({
-                    label: `components[${component.description}]`,
-                    kind: monaco.languages.CompletionItemKind.Variable,
-                    insertText: `components[/* ${component.description} */'${id}']`,
-                  })),
-                  ...Object.entries(actions).map(([id, action]) => ({
-                    label: `actions[${action.name}]`,
-                    kind: monaco.languages.CompletionItemKind.Variable,
-                    insertText: `actions[/* ${action.name} */'${id}']`,
-                  })),
+                  ...Object.entries(components.list as Record<string, any>).map(
+                    ([id, component]) => ({
+                      label: `components[${component.description}]`,
+                      kind: monaco.languages.CompletionItemKind.Variable,
+                      insertText: `components[/* ${component.description} */'${id}']`,
+                    }),
+                  ),
+                  ...Object.entries(actions.list as Record<string, any>).map(
+                    ([id, action]) => ({
+                      label: `actions[${action.name}]`,
+                      kind: monaco.languages.CompletionItemKind.Variable,
+                      insertText: `actions[/* ${action.name} */'${id}']`,
+                    }),
+                  ),
+                  {
+                    label: "dexla.setVariable",
+                    kind: monaco.languages.CompletionItemKind.Function,
+                    insertText: "dexla.setVariable(${1:variable}, ${2:value})",
+                    insertTextRules:
+                      monaco.languages.CompletionItemInsertTextRule
+                        .InsertAsSnippet,
+                    documentation: "Set a variable with the given value",
+                  },
                 ],
-              };
+              }),
             },
-          }),
+          ),
         );
       }}
     />

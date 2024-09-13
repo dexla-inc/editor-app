@@ -1,17 +1,18 @@
 "use client";
 
+import { ProgressBar } from "@/components/ProgressBar";
+import { CodeInjectionProvider } from "@/contexts/CodeInjectionProvider";
+import { useEditorTreeStore } from "@/stores/editorTree";
+import { queryClient } from "@/utils/reactQuery";
 import {
   dehydrate,
   HydrationBoundary,
   QueryClientProvider,
 } from "@tanstack/react-query";
-import { queryClient } from "@/utils/reactQuery";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import Script from "next/script";
 import { ReactNode, useEffect, useState } from "react";
 import TagManager from "react-gtm-module";
-import Script from "next/script";
-import { ProgressBar } from "@/components/ProgressBar";
-import { useEditorTreeStore } from "@/stores/editorTree";
 
 const GTM_ID = "GTM-P3DVFXMS";
 const nodeEnv = process.env.NODE_ENV;
@@ -62,7 +63,9 @@ export const GlobalProviders = ({ children }: { children: ReactNode }) => {
       )}
       <QueryClientProvider client={queryClient}>
         <HydrationBoundary state={dehydratedState}>
-          <ProgressBar>{children}</ProgressBar>
+          <CodeInjectionProvider>
+            <ProgressBar>{children}</ProgressBar>
+          </CodeInjectionProvider>
         </HydrationBoundary>
       </QueryClientProvider>
       <SpeedInsights />

@@ -420,12 +420,18 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
           columnSpans: {},
           selectedComponentIds: [],
           isLive: false,
-          setSelectedComponentIds: (cb) => {
+          setSelectedComponentIds: async (cb) => {
             return set(
               (state) => {
                 const selectedComponentIds = cb(
                   state.selectedComponentIds ?? [],
-                ).filter((id) => !["content-wrapper", "root"].includes(id));
+                )
+                  .map((id) =>
+                    id === "content-wrapper" || id === "root"
+                      ? "main-content"
+                      : id,
+                  )
+                  .filter((id, index, self) => self.indexOf(id) === index);
 
                 return {
                   selectedComponentIds,

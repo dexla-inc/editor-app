@@ -47,6 +47,8 @@ const AutocompleteComponent = forwardRef(
       props.id!,
     );
 
+    const [typingValue, setTypingValue] = useState(value);
+
     const {
       dataLabelKey,
       dataValueKey,
@@ -70,7 +72,7 @@ const AutocompleteComponent = forwardRef(
       enabled: !!value,
     });
 
-    let data = [];
+    let data: any[] = [];
 
     if (dataType === "dynamic" && response) {
       const list = Array.isArray(response) ? response : [response];
@@ -100,35 +102,35 @@ const AutocompleteComponent = forwardRef(
     const [timeoutId, setTimeoutId] = useState(null);
 
     const handleChange = (item: any) => {
-      setValue(item);
+      setTypingValue(item);
 
       if (timeoutId) {
         clearTimeout(timeoutId);
       }
 
       const newTimeoutId = setTimeout(() => {
-        if (onChange && item) {
-          onChange(item);
+        let newValue = item;
+        if (typeof item === "string") {
+          newValue =
+            data.find(
+              (dataItem: any) =>
+                dataItem.label === item || dataItem.value === item,
+            ) || item;
+        }
+        setValue(newValue);
+        if (onChange && newValue) {
+          onChange(newValue);
         }
       }, 200);
 
       setTimeoutId(newTimeoutId as any);
     };
 
-    const [itemSubmitted, setItemSubmitted] = useState(false);
-
     const handleItemSubmit = (item: AutocompleteItem) => {
-      setItemSubmitted(true);
+      setTypingValue(item);
       setValue(item);
+      onItemSubmit && onItemSubmit(item);
     };
-
-    useEffect(() => {
-      if (itemSubmitted && onItemSubmit && value) {
-        onItemSubmit && onItemSubmit(value?.value);
-        setItemSubmitted(false);
-      }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [itemSubmitted]);
 
     return (
       <MantineAutocomplete
@@ -160,7 +162,7 @@ const AutocompleteComponent = forwardRef(
         dropdownComponent={CustomDropdown}
         rightSection={loading || isLoading ? <InputLoader /> : null}
         label={undefined}
-        value={value?.label ?? value}
+        value={typingValue?.label ?? typingValue}
         {...(isAdvanced ? { itemComponent: AutoCompleteItem } : {})}
       />
     );
