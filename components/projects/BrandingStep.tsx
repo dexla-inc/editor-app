@@ -4,7 +4,7 @@ import NextButton from "@/components/NextButton";
 import { useProjectQuery } from "@/hooks/editor/reactQuery/useProjectQuery";
 import { generateThemeFromScreenshot } from "@/requests/ai/queries";
 import { saveBasicTheme, saveTheme } from "@/requests/themes/mutations";
-import { ThemeResponse } from "@/requests/themes/types";
+import { ExtendedUserTheme, ThemeResponse } from "@/requests/themes/types";
 import { useThemeStore } from "@/stores/theme";
 import {
   LoadingStore,
@@ -245,6 +245,37 @@ export default function BrandingStep({
     }
   };
 
+  const isMainColorFamily = (family: string) =>
+    [
+      "Primary",
+      "PrimaryText",
+      "Secondary",
+      "SecondaryText",
+      "Tertiary",
+      "TertiaryText",
+    ].includes(family);
+
+  const handleColorChange = (
+    newColors: ExtendedUserTheme["colorFamilies"][0],
+    index: number,
+  ) => {
+    const newColorFamilies = colorFamilies.map((color, i) =>
+      i === index ? newColors : color,
+    );
+    setColorFamilies(newColorFamilies);
+    setThemeResponse((prevThemeResponse) => {
+      if (!prevThemeResponse) {
+        return prevThemeResponse;
+      }
+      prevThemeResponse = setFormColorShadesFromColorFamilies({
+        ...prevThemeResponse,
+        colorFamilies: newColorFamilies,
+      });
+
+      return prevThemeResponse;
+    });
+  };
+
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
       <Stack spacing={40} my={25}>
@@ -274,39 +305,16 @@ export default function BrandingStep({
             <Stack sx={{ width: "100%" }}>
               <Title order={4}>Main Colors</Title>
               {colorFamilies
-                .filter(
-                  (t) =>
-                    t.family === "Primary" ||
-                    t.family === "PrimaryText" ||
-                    t.family === "Secondary" ||
-                    t.family === "SecondaryText" ||
-                    t.family === "Tertiary" ||
-                    t.family === "TertiaryText",
-                )
+                .filter((t) => isMainColorFamily(t.family))
                 .map((colorFamily, index) => {
                   return (
                     <ColorSelector
                       key={`color-${index}`}
                       colorFamily={colorFamily}
                       index={index}
-                      onValueChange={(newColors) => {
-                        const newColorFamilies = colorFamilies.map(
-                          (color, i) => (i === index ? newColors : color),
-                        );
-                        setColorFamilies(newColorFamilies);
-                        setThemeResponse((prevThemeResponse) => {
-                          if (!prevThemeResponse) {
-                            return prevThemeResponse;
-                          }
-                          prevThemeResponse =
-                            setFormColorShadesFromColorFamilies({
-                              ...prevThemeResponse,
-                              colorFamilies: newColorFamilies,
-                            });
-
-                          return prevThemeResponse;
-                        });
-                      }}
+                      onValueChange={(newColors) =>
+                        handleColorChange(newColors, index)
+                      }
                     />
                   );
                 })}
