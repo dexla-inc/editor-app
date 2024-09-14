@@ -13,12 +13,16 @@ import { TypographyModal } from "@/components/navbar/EditorNavbarThemesSection/T
 import { useGoogleFontsQuery } from "@/hooks/editor/reactQuery/useGoogleFontsQuery";
 import { useProjectQuery } from "@/hooks/editor/reactQuery/useProjectQuery";
 import { useEditorParams } from "@/hooks/editor/useEditorParams";
-import { getUserThemeColors } from "@/hooks/editor/useUserTheme";
 import { CardStyle } from "@/requests/projects/types";
 import { saveTheme } from "@/requests/themes/mutations";
-import { ThemeResponse } from "@/requests/themes/types";
+import { ExtendedUserTheme } from "@/requests/themes/types";
 import { useAppStore } from "@/stores/app";
 import { useThemeStore } from "@/stores/theme";
+import {
+  convertThemeColors,
+  createUserThemeColors,
+  setFormColorShadesFromColorFamilies,
+} from "@/utils/branding";
 import { ICON_SIZE, INPUT_SIZE } from "@/utils/config";
 import { gapSizes, inputSizes, radiusSizes } from "@/utils/defaultSizes";
 import { useGoogleFonts } from "@flyyer/use-googlefonts";
@@ -36,7 +40,7 @@ import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { IconArrowsMaximize, IconSearch } from "@tabler/icons-react";
 import { useMutation } from "@tanstack/react-query";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 type EditorNavbarThemesSectionProps = {
   isActive: boolean;
 };
@@ -113,18 +117,19 @@ export const EditorNavbarThemesSection =
     });
 
     const isColorMatch = (
-      color: ThemeResponse["colorShades"][0],
+      colors: ExtendedUserTheme["colorShades"],
       searchValue?: string,
     ) => {
       if (!searchValue) return true;
-      return (
-        color.name?.toLowerCase().includes(searchValue) ||
-        color.hex?.toLowerCase().includes(searchValue) ||
-        color.friendlyName?.toLowerCase().includes(searchValue)
+      return colors.some(
+        (color) =>
+          color.name?.toLowerCase().includes(searchValue) ||
+          color.hex?.toLowerCase().includes(searchValue) ||
+          color.friendlyName?.toLowerCase().includes(searchValue),
       );
     };
 
-    const form = useForm<ThemeResponse>({
+    const form = useForm<ExtendedUserTheme>({
       initialValues: {
         colors: userTheme?.colors ?? [],
         colorShades: userTheme?.colorShades ?? [],
@@ -142,40 +147,13 @@ export const EditorNavbarThemesSection =
         hasCompactButtons: userTheme?.hasCompactButtons ?? true,
         defaultFont: userTheme?.defaultFont ?? "Arial, sans-serif",
         theme: userTheme?.theme ?? "LIGHT",
+        colorFamilies: convertThemeColors(userTheme),
       },
       validate: {},
     });
 
-    const oldColors = getUserThemeColors(form.values.colors);
-    const processColors = useCallback(
-      (colorShades: ThemeResponse["colorShades"], searchValue?: string) => {
-        const uniqueColors = [
-          ...new Map(
-            [...oldColors, ...colorShades].map((color) => [color.name, color]),
-          ).values(),
-        ];
-        return uniqueColors.reduce(
-          (curr, color) => {
-            if (!isColorMatch(color, searchValue)) return curr;
-            const [family] = color.friendlyName.split(".");
-            if (curr[family]) {
-              curr[family].push(color);
-            } else {
-              curr[family] = [color];
-            }
-            return curr;
-          },
-          {} as Record<string, ThemeResponse["colorShades"]>,
-        );
-      },
-      [oldColors],
-    );
-
-    let [searchValue, setSearchValue] = useState<string>("");
-
-    const searchResults = useMemo(
-      () => processColors(form.values.colorShades, searchValue),
-      [form.values.colorShades, searchValue, processColors],
+    const [searchResults, setSearchResults] = useState(
+      form.values.colorFamilies,
     );
 
     const { data: googleFontsData = [] } = useGoogleFontsQuery();
@@ -220,8 +198,10 @@ export const EditorNavbarThemesSection =
           label: weight,
         })) || [];
 
-    const onSubmit = async (values: ThemeResponse) => {
-      mutate({ params: values, projectId: projectId });
+    const onSubmit = async (values: ExtendedUserTheme) => {
+      const newValues: Omit<ExtendedUserTheme, "colorFamilies"> =
+        setFormColorShadesFromColorFamilies(values);
+      mutate({ params: newValues, projectId: projectId });
     };
 
     // const selectedTagFontWeights =
@@ -250,35 +230,43 @@ export const EditorNavbarThemesSection =
               icon={<IconSearch size={ICON_SIZE} />}
               onChange={(event) => {
                 const value = event.currentTarget.value?.toLowerCase();
-                setSearchValue(value);
+                // if (!value) setSearchResults(form.values.colorFamilies);
+                setSearchResults(
+                  form.values.colorFamilies.filter((color) =>
+                    isColorMatch(color.colors, value),
+                  ),
+                );
               }}
               mb="xs"
             />
-            {Object.entries(searchResults).map(([name, colors], index) => (
-              <ColorSelector
-                key={`color-${name}`}
-                size={30}
-                colors={colors}
-                onValueChange={(newColors) => {
-                  const existingColors = processColors(form.values.colorShades);
-                  existingColors[name] = newColors;
-                  form.setFieldValue(
-                    "colorShades",
-                    Object.values(existingColors).flat(),
-                  );
-                }}
-                deleteShades={() => {
-                  const updatedColorShades = form.values.colorShades.filter(
-                    (shade) =>
-                      !colors.some(
-                        (color) => color.friendlyName === shade.friendlyName,
-                      ),
-                  );
-                  console.log(updatedColorShades);
-                  form.setFieldValue("colorShades", updatedColorShades);
-                }}
-              />
-            ))}
+            {searchResults.map((colorFamily, index) => {
+              const familyIndex = form.values.colorFamilies.findIndex(
+                (c) => c.family === colorFamily.family,
+              );
+              return (
+                <ColorSelector
+                  key={`color-${colorFamily.family}-${index}`}
+                  size={30}
+                  colorFamily={colorFamily}
+                  index={familyIndex}
+                  onValueChange={(newColors, i) => {
+                    setSearchResults((prev) =>
+                      prev.map((color, i) => (i === index ? newColors : color)),
+                    );
+                    form.setFieldValue(`colorFamilies.${i}`, newColors);
+                  }}
+                  deleteFamily={() => {
+                    const newFamilies = form.values.colorFamilies.filter(
+                      (_, i) => i !== familyIndex,
+                    );
+                    setSearchResults((prev) =>
+                      prev.filter((_, i) => i !== index),
+                    );
+                    form.setFieldValue("colorFamilies", newFamilies);
+                  }}
+                />
+              );
+            })}
 
             <Button
               mt="md"
@@ -287,17 +275,21 @@ export const EditorNavbarThemesSection =
               fullWidth
               compact
               onClick={() => {
-                const oldColors = form.values.colorShades;
-                const newColors = getUserThemeColors([
-                  {
-                    name: "New Color",
-                    friendlyName: "New Color",
-                    hex: "#00000000",
-                    isDefault: false,
-                    brightness: 0,
-                  },
-                ]);
-                form.setFieldValue("colorShades", [...oldColors, ...newColors]);
+                const newIndex = form.values.colorFamilies.length + 1;
+                const newColorFamily = {
+                  family: `New Color-${newIndex}`,
+                  colors: createUserThemeColors([
+                    {
+                      name: `New Color-${newIndex}`,
+                      friendlyName: `New Color-${newIndex}`,
+                      hex: "#00000000",
+                      isDefault: false,
+                      brightness: 0,
+                    },
+                  ]),
+                };
+                form.insertListItem("colorFamilies", newColorFamily);
+                setSearchResults([...searchResults, newColorFamily]);
               }}
             >
               Add Color

@@ -1,11 +1,10 @@
 import { useProjectQuery } from "@/hooks/editor/reactQuery/useProjectQuery";
-import { ThemeResponse } from "@/requests/themes/types";
 import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useThemeStore } from "@/stores/theme";
 import { MantineThemeExtended } from "@/types/types";
-import { defaultTheme, rgbaToHex } from "@/utils/branding";
-import { omit } from "next/dist/shared/lib/router/utils/omit";
+import { convertThemeColors, defaultTheme } from "@/utils/branding";
+import { Tuple } from "@mantine/core";
 import { useEffect, useState } from "react";
 
 export const useUserTheme = (projectId: string) => {
@@ -55,30 +54,15 @@ export const useUserTheme = (projectId: string) => {
               };
             }, {} as any),
           },
-          colors: {
-            ...projectBranding?.colors.reduce((userColors, color) => {
-              const hex = color.hex.substring(0, 7);
-              return {
-                ...userColors,
-                [color.name]: [
-                  defaultTheme.fn.lighten(hex, 0.9),
-                  defaultTheme.fn.lighten(hex, 0.8),
-                  defaultTheme.fn.lighten(hex, 0.7),
-                  defaultTheme.fn.lighten(hex, 0.6),
-                  defaultTheme.fn.lighten(hex, 0.5),
-                  color.hex.startsWith("#000000")
-                    ? "#323232"
-                    : defaultTheme.fn.lighten(hex, 0.4), // Custom hover for black
-                  color.hex,
-                  color.hex.startsWith("#FFFFFF")
-                    ? "#F5F8F8"
-                    : defaultTheme.fn.darken(hex, 0.1), // Custom hover for white
-                  defaultTheme.fn.darken(hex, 0.2),
-                  defaultTheme.fn.darken(hex, 0.3),
-                ],
-              };
-            }, {}),
-          },
+          colors: convertThemeColors(projectBranding, true).reduce(
+            (acc, colorFamily) => {
+              const hexColors = colorFamily.colors.map((color) => color.hex);
+              acc[colorFamily.family] = hexColors as Tuple<string, 10>;
+              return acc;
+            },
+            {} as typeof defaultTheme.colors,
+          ),
+
           primaryColor: "Primary",
           logoUrl: projectBranding?.logoUrl,
           faviconUrl: projectBranding?.faviconUrl,
@@ -107,44 +91,4 @@ export const useUserTheme = (projectId: string) => {
   }, [internalTheme, setTheme]);
 
   return internalTheme as MantineThemeExtended;
-};
-
-const setHexColors = (hexaValue: string) => {
-  const hex = hexaValue.substring(0, 7);
-  return [
-    rgbaToHex(defaultTheme.fn.lighten(hex, 0.9)),
-    rgbaToHex(defaultTheme.fn.lighten(hex, 0.8)),
-    rgbaToHex(defaultTheme.fn.lighten(hex, 0.7)),
-    rgbaToHex(defaultTheme.fn.lighten(hex, 0.6)),
-    rgbaToHex(defaultTheme.fn.lighten(hex, 0.5)),
-    hexaValue.startsWith("#000000")
-      ? "#323232ff"
-      : rgbaToHex(defaultTheme.fn.lighten(hex, 0.4)), // Custom hover for black
-    hexaValue,
-    hexaValue.startsWith("#FFFFFF")
-      ? "#F5F8F8ff"
-      : rgbaToHex(defaultTheme.fn.darken(hex, 0.1)), // Custom hover for white
-    rgbaToHex(defaultTheme.fn.darken(hex, 0.2)),
-    rgbaToHex(defaultTheme.fn.darken(hex, 0.3)),
-  ];
-};
-
-export const getUserThemeColors = (colors: ThemeResponse["colors"]) => {
-  return colors.reduce(
-    (acc, color) => {
-      const hexaValues = setHexColors(color.hex);
-      const colorWithoutBrightness = omit(color, ["brightness"]);
-      const data = Array(10)
-        .fill(colorWithoutBrightness)
-        .map(({ name, friendlyName, hex, isDefault }, index) => ({
-          name: `${name}.${index}`,
-          friendlyName: `${friendlyName}.${index}`,
-          hex: hexaValues[index],
-          isDefault,
-        }));
-      acc.push(...data);
-      return acc;
-    },
-    [] as ThemeResponse["colorShades"],
-  );
 };

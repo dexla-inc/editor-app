@@ -30,6 +30,14 @@ export interface ThemeResponse extends ThemeMutationParams, IResponse {
   websiteUrl?: string;
 }
 
+type ProcessedColors = {
+  family: string;
+  colors: ThemeResponse["colorShades"];
+};
+export interface ExtendedUserTheme extends ThemeResponse {
+  colorFamilies: ProcessedColors[];
+}
+
 export type Color = {
   name: string;
   friendlyName: string;

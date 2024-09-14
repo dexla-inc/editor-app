@@ -4,11 +4,8 @@ import NextButton from "@/components/NextButton";
 import { useProjectQuery } from "@/hooks/editor/reactQuery/useProjectQuery";
 import { generateThemeFromScreenshot } from "@/requests/ai/queries";
 import { saveBasicTheme, saveTheme } from "@/requests/themes/mutations";
-import { Color, ThemeResponse } from "@/requests/themes/types";
+import { ThemeResponse } from "@/requests/themes/types";
 import { useThemeStore } from "@/stores/theme";
-import { convertToBase64, safeJsonParse } from "@/utils/common";
-import { componentMapper } from "@/utils/componentMapper";
-import { ICON_SIZE } from "@/utils/config";
 import {
   LoadingStore,
   NextStepperClickEvent,
@@ -16,6 +13,13 @@ import {
   fonts,
   isWebsite,
 } from "@/types/dashboardTypes";
+import {
+  convertThemeColors,
+  setFormColorShadesFromColorFamilies,
+} from "@/utils/branding";
+import { convertToBase64, safeJsonParse } from "@/utils/common";
+import { componentMapper } from "@/utils/componentMapper";
+import { ICON_SIZE } from "@/utils/config";
 import { Component } from "@/utils/editor";
 import {
   Anchor,
@@ -32,6 +36,7 @@ import {
   Text,
   TextInput,
   Title,
+  Tuple,
   useMantineTheme,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -53,22 +58,6 @@ export interface BrandingStepProps
 type BrandingParams = {
   websiteUrl: string;
 };
-
-function updateThemeResponseColor(
-  themeResponse: ThemeResponse,
-  colorIndex: number,
-  updatedColor: Color,
-): ThemeResponse {
-  // Deep clone the themeResponse object
-  const updatedThemeResponse: ThemeResponse = safeJsonParse(
-    JSON.stringify(themeResponse),
-  );
-
-  // Update the color
-  updatedThemeResponse.colors[colorIndex] = updatedColor;
-
-  return updatedThemeResponse;
-}
 
 function updateThemeResponseFontFamily(
   themeResponse: ThemeResponse,
@@ -102,6 +91,9 @@ export default function BrandingStep({
   screenshots,
 }: BrandingStepProps) {
   const [websiteUrlError, setWebsiteUrlError] = useState("");
+  const [colorFamilies, setColorFamilies] = useState(
+    convertThemeColors(themeResponse),
+  );
   const mantineTheme = useMantineTheme();
 
   const renderTree = (component: Component) => {
@@ -150,26 +142,14 @@ export default function BrandingStep({
         ...theme,
         colors: {
           ...theme.colors,
-          ...themeResponse?.colors.reduce((userColors, color) => {
-            const hex = color.hex.substring(0, 7);
-            return {
-              ...userColors,
-              [color.name]: [
-                theme.fn.lighten(hex, 0.9),
-                theme.fn.lighten(hex, 0.8),
-                theme.fn.lighten(hex, 0.7),
-                theme.fn.lighten(hex, 0.6),
-                theme.fn.lighten(hex, 0.5),
-                theme.fn.lighten(hex, 0.4),
-                color.hex,
-                color.hex.startsWith("#FFFFFF")
-                  ? "#F5F8F8"
-                  : theme.fn.darken(hex, 0.1), // Custom hover for white
-                theme.fn.darken(hex, 0.2),
-                theme.fn.darken(hex, 0.3),
-              ],
-            };
-          }, {}),
+          ...convertThemeColors(themeResponse).reduce(
+            (acc, colorFamily) => {
+              const hexColors = colorFamily.colors.map((color) => color.hex);
+              acc[colorFamily.family] = hexColors as Tuple<string, 10>;
+              return acc;
+            },
+            {} as typeof theme.colors,
+          ),
         },
         primaryColor: "Primary",
       });
@@ -289,50 +269,47 @@ export default function BrandingStep({
             }
           }}
         />
-        {themeResponse && (
+        {colorFamilies && (
           <Flex sx={{ width: "100%" }} justify="space-between" gap="xl">
             <Stack sx={{ width: "100%" }}>
               <Title order={4}>Main Colors</Title>
-              {themeResponse?.colors
+              {colorFamilies
                 .filter(
                   (t) =>
-                    t.name === "Primary" ||
-                    t.name === "PrimaryText" ||
-                    t.name === "Secondary" ||
-                    t.name === "SecondaryText" ||
-                    t.name === "Tertiary" ||
-                    t.name === "TertiaryText",
+                    t.family === "Primary" ||
+                    t.family === "PrimaryText" ||
+                    t.family === "Secondary" ||
+                    t.family === "SecondaryText" ||
+                    t.family === "Tertiary" ||
+                    t.family === "TertiaryText",
                 )
-                .map(({ friendlyName, hex, name }, index) => (
-                  <ColorSelector
-                    key={`color-${name}`}
-                    friendlyName={friendlyName}
-                    hex={hex}
-                    isDefault={themeResponse.colors[index]?.isDefault ?? false}
-                    onValueChange={(value) => {
-                      setThemeResponse((prevThemeResponse) => {
-                        if (!prevThemeResponse) {
-                          return prevThemeResponse;
-                        }
-
-                        const updatedColor = {
-                          ...prevThemeResponse.colors[index],
-                          friendlyName: value.friendlyName,
-                          hex: value.hex,
-                          name: !prevThemeResponse.colors[index]?.isDefault
-                            ? value.friendlyName
-                            : prevThemeResponse.colors[index].name,
-                        };
-
-                        return updateThemeResponseColor(
-                          prevThemeResponse,
-                          index,
-                          updatedColor,
+                .map((colorFamily, index) => {
+                  return (
+                    <ColorSelector
+                      key={`color-${index}`}
+                      colorFamily={colorFamily}
+                      index={index}
+                      onValueChange={(newColors) => {
+                        const newColorFamilies = colorFamilies.map(
+                          (color, i) => (i === index ? newColors : color),
                         );
-                      });
-                    }}
-                  />
-                ))}
+                        setColorFamilies(newColorFamilies);
+                        setThemeResponse((prevThemeResponse) => {
+                          if (!prevThemeResponse) {
+                            return prevThemeResponse;
+                          }
+                          prevThemeResponse =
+                            setFormColorShadesFromColorFamilies({
+                              ...prevThemeResponse,
+                              colorFamilies: newColorFamilies,
+                            });
+
+                          return prevThemeResponse;
+                        });
+                      }}
+                    />
+                  );
+                })}
               {/* <Button
                 type="button"
                 fullWidth
@@ -355,7 +332,7 @@ export default function BrandingStep({
                 data={fonts.map((f) => f)}
                 onChange={(value) => {
                   const updatedThemeResponse = updateThemeResponseFontFamily(
-                    themeResponse,
+                    (themeResponse ?? {}) as ThemeResponse,
                     value as string,
                   );
                   setThemeResponse(updatedThemeResponse);
