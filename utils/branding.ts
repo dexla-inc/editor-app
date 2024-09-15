@@ -514,31 +514,45 @@ const createUserThemeColors = (colors: ExtendedUserTheme["colors"]) => {
   );
 };
 
+const fetchUniqueColors = (
+  userTheme?: Omit<ExtendedUserTheme, "colorFamilies">,
+) => {
+  const oldColors = createUserThemeColors(userTheme?.colors ?? []);
+  const colorShades = userTheme?.colorShades ?? [];
+  // Create a Map to store unique colors, prioritizing colorShades
+  const uniqueColorsMap = new Map<
+    string,
+    ExtendedUserTheme["colorShades"][0]
+  >();
+  colorShades.forEach((color) => {
+    uniqueColorsMap.set(color.name, color);
+  });
+
+  oldColors.forEach((color) => {
+    if (!uniqueColorsMap.has(color.name)) {
+      uniqueColorsMap.set(color.name, color);
+    }
+  });
+
+  return Array.from(uniqueColorsMap.values());
+};
+
 const convertThemeColors = (
   userTheme?: Omit<ExtendedUserTheme, "colorFamilies">,
   useName?: boolean,
 ) => {
-  const oldColors = createUserThemeColors(userTheme?.colors ?? []);
-  const colorShades = userTheme?.colorShades ?? [];
-  const uniqueColors = [
-    ...new Map(
-      [...oldColors, ...colorShades].map((color) => [color.name, color]),
-    ).values(),
-  ];
-  return uniqueColors.reduce(
-    (curr, color) => {
-      const field = useName ? "name" : "friendlyName";
-      const [family] = color[field].split(".");
-      const index = curr.findIndex((c) => c.family === family);
-      if (index !== -1) {
-        curr[index].colors.push(color);
-      } else {
-        curr.push({ family, colors: [color] });
-      }
-      return curr;
-    },
-    [] as ExtendedUserTheme["colorFamilies"],
-  );
+  // Convert the map values back to an array
+  const uniqueColors = fetchUniqueColors(userTheme);
+  const colorMap = new Map<string, ExtendedUserTheme["colorFamilies"][0]>();
+  uniqueColors.forEach((color) => {
+    const field = useName ? "name" : "friendlyName";
+    const [family] = color[field].split(".");
+    if (!colorMap.has(family)) {
+      colorMap.set(family, { family, colors: [] });
+    }
+    colorMap.get(family)!.colors.push(color);
+  });
+  return Array.from(colorMap.values());
 };
 
 const setFormColorShadesFromColorFamilies = (values: ExtendedUserTheme) => {

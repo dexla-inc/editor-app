@@ -42,10 +42,9 @@ export const ColorSelector = ({
   const {
     hex: fetchedHex = "",
     name: fetchedName = "",
-    friendlyName: fetchedFriendlyName = "",
     isDefault,
   } = colorFamily.colors[6] ?? {};
-
+  const [defaultFamilyName] = fetchedName.split(".");
   const [hexa, setHexa] = useState(hexToHexa(fetchedHex));
   const [newColors, setNewColors] = useState(colorFamily.colors);
   const [opened, { toggle, close }] = useDisclosure(false);
@@ -55,15 +54,14 @@ export const ColorSelector = ({
     close();
     switchToMain();
   });
-  const [friendlyName, setFriendlyName] = useState(
-    fetchedFriendlyName.split(".")[0],
-  );
+
+  const [friendlyName, setFriendlyName] = useState(colorFamily.family);
 
   const onNameChange = (name: string) => {
     setNewColors((prev) =>
       prev.map((c, i) => ({
         ...c,
-        name: isDefault ? fetchedName : `${name}.${i}`,
+        name: isDefault ? `${defaultFamilyName}.${i}` : `${name}.${i}`,
         friendlyName: `${name}.${i}`,
       })),
     );
@@ -76,7 +74,7 @@ export const ColorSelector = ({
         {
           isDefault,
           hex,
-          name: isDefault ? fetchedName : friendlyName,
+          name: isDefault ? defaultFamilyName : friendlyName,
           friendlyName,
           brightness: 0,
         },
@@ -264,7 +262,7 @@ function ShadesList({
             onChange(updatedShades);
           }}
           onHexaInputChange={onHexaInputChange}
-          index={index + 1}
+          index={index}
         />
       ))}
     </Stack>

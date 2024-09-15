@@ -199,8 +199,7 @@ export const EditorNavbarThemesSection =
         })) || [];
 
     const onSubmit = async (values: ExtendedUserTheme) => {
-      const newValues: Omit<ExtendedUserTheme, "colorFamilies"> =
-        setFormColorShadesFromColorFamilies(values);
+      const newValues = setFormColorShadesFromColorFamilies(values);
       mutate({ params: newValues, projectId: projectId });
     };
 
