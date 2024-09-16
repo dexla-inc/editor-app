@@ -4,27 +4,24 @@ import { UnitInput } from "@/components/UnitInput";
 import { SelectFont } from "@/components/navbar/EditorNavbarThemesSection/SelectFont";
 import { pixelMetrics } from "@/components/navbar/EditorNavbarThemesSection/index";
 import { useGoogleFontsQuery } from "@/hooks/editor/reactQuery/useGoogleFontsQuery";
-import { ThemeResponse } from "@/requests/themes/types";
+import { ExtendedUserTheme } from "@/requests/themes/types";
 import { INPUT_SIZE } from "@/utils/config";
-import { getGoogleFonts } from "@/utils/getGoogleFonts";
 import {
   Button,
   Container,
   Group,
   Modal,
   Select,
-  SelectItem,
   Stack,
   Table,
   TextInput,
   Title,
 } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
-import { useQuery } from "@tanstack/react-query";
 
 type TypographyModalProps = {
   controls: { opened: boolean; close: () => void };
-  form: UseFormReturnType<ThemeResponse>;
+  form: UseFormReturnType<ExtendedUserTheme>;
   onSubmit: () => void;
   currentFontIndex: number;
 };

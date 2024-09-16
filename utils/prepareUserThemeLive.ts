@@ -1,6 +1,7 @@
-import { defaultTheme } from "@/utils/branding";
-import { MantineThemeExtended } from "@/types/types";
 import { ThemeResponse } from "@/requests/themes/types";
+import { MantineThemeExtended } from "@/types/types";
+import { convertThemeColors, defaultTheme } from "@/utils/branding";
+import { Tuple } from "@mantine/core";
 
 export const prepareUserThemeLive = (projectBranding: ThemeResponse) => {
   const defaultFontFamily =
@@ -11,6 +12,7 @@ export const prepareUserThemeLive = (projectBranding: ThemeResponse) => {
     defaultTheme.fontFamily ??
     "Open Sans";
 
+  // @ts-ignore
   const userTheme: MantineThemeExtended = {
     fontFamily: defaultFontFamily,
     fonts: projectBranding?.fonts,
@@ -28,31 +30,14 @@ export const prepareUserThemeLive = (projectBranding: ThemeResponse) => {
         };
       }, {} as any),
     },
-    // @ts-ignore
-    colors: {
-      ...projectBranding?.colors.reduce((userColors, color) => {
-        const hex = color.hex.substring(0, 7);
-        return {
-          ...userColors,
-          [color.name]: [
-            defaultTheme.fn.lighten(hex, 0.9),
-            defaultTheme.fn.lighten(hex, 0.8),
-            defaultTheme.fn.lighten(hex, 0.7),
-            defaultTheme.fn.lighten(hex, 0.6),
-            defaultTheme.fn.lighten(hex, 0.5),
-            color.hex.startsWith("#000000")
-              ? "#323232"
-              : defaultTheme.fn.lighten(hex, 0.4), // Custom hover for black
-            color.hex,
-            color.hex.startsWith("#FFFFFF")
-              ? "#F5F8F8"
-              : defaultTheme.fn.darken(hex, 0.1), // Custom hover for white
-            defaultTheme.fn.darken(hex, 0.2),
-            defaultTheme.fn.darken(hex, 0.3),
-          ],
-        };
-      }, {}),
-    },
+    colors: convertThemeColors(projectBranding, true).reduce(
+      (acc, colorFamily) => {
+        const hexColors = colorFamily.colors.map((color) => color.hex);
+        acc[colorFamily.family] = hexColors as Tuple<string, 10>;
+        return acc;
+      },
+      {} as typeof defaultTheme.colors,
+    ),
     primaryColor: "Primary",
     logoUrl: projectBranding?.logoUrl,
     faviconUrl: projectBranding?.faviconUrl,

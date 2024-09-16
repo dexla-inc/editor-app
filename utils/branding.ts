@@ -1,3 +1,4 @@
+import { ExtendedUserTheme } from "@/requests/themes/types";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { MantineThemeExtended } from "@/types/types";
 import { splitValueAndUnit } from "@/utils/splitValueAndUnit";
@@ -7,6 +8,7 @@ import {
   MantineSize,
   MantineTheme,
 } from "@mantine/core";
+import { omit } from "next/dist/shared/lib/router/utils/omit";
 
 export const isDarkTheme = useUserConfigStore.getState().isDarkTheme;
 
@@ -440,6 +442,124 @@ const componentHasBorder = (style: CSSObject = {}) => {
   return isBorderWidthNotZero(style) && isBorderStyleNotNone(style);
 };
 
+// Theme colors setup
+function rgbaToHex(rgba: string) {
+  // Regular expression to match RGB or RGBA strings
+  const rgbaRegex =
+    /^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d*(?:\.\d+)?))?\)$/;
+
+  // Extract values from the RGBA string
+  const match = rgba.match(rgbaRegex);
+
+  if (!match) return rgba;
+
+  const toHex = (x: string) => {
+    const num = Math.round(parseFloat(x));
+    return num.toString(16).padStart(2, "0");
+  };
+
+  // Convert RGB components
+  const r = toHex(match[1]).toUpperCase();
+  const g = toHex(match[2]).toUpperCase();
+  const b = toHex(match[3]).toUpperCase();
+
+  // If alpha is provided, convert it; otherwise, return the RGB hex
+  if (match[4] !== undefined) {
+    const a = toHex(
+      Math.round(parseFloat(match[4]) * 255).toString(),
+    ).toUpperCase();
+    return `#${r}${g}${b}${a}`;
+  }
+
+  return `#${r}${g}${b}`;
+}
+
+const setHexColors = (hexaValue: string) => {
+  const hex = hexaValue.substring(0, 7);
+  return [
+    rgbaToHex(defaultUsersTheme.fn.lighten(hex, 0.9)),
+    rgbaToHex(defaultUsersTheme.fn.lighten(hex, 0.8)),
+    rgbaToHex(defaultUsersTheme.fn.lighten(hex, 0.7)),
+    rgbaToHex(defaultUsersTheme.fn.lighten(hex, 0.6)),
+    rgbaToHex(defaultUsersTheme.fn.lighten(hex, 0.5)),
+    hexaValue.startsWith("#000000")
+      ? "#323232ff"
+      : rgbaToHex(defaultUsersTheme.fn.lighten(hex, 0.4)), // Custom hover for black
+    hexaValue,
+    hexaValue.startsWith("#FFFFFF")
+      ? "#F5F8F8ff"
+      : rgbaToHex(defaultUsersTheme.fn.darken(hex, 0.1)), // Custom hover for white
+    rgbaToHex(defaultUsersTheme.fn.darken(hex, 0.2)),
+    rgbaToHex(defaultUsersTheme.fn.darken(hex, 0.3)),
+  ];
+};
+
+const createUserThemeColors = (colors: ExtendedUserTheme["colors"]) => {
+  return colors.reduce(
+    (acc, color) => {
+      const hexaValues = setHexColors(color.hex);
+      const colorWithoutBrightness = omit(color, ["brightness"]);
+      const data = Array(10)
+        .fill(colorWithoutBrightness)
+        .map(({ name, friendlyName, hex, isDefault }, index) => ({
+          name: `${name}.${index}`,
+          friendlyName: `${friendlyName}.${index}`,
+          hex: hexaValues[index],
+          isDefault,
+        }));
+      acc.push(...data);
+      return acc;
+    },
+    [] as ExtendedUserTheme["colorShades"],
+  );
+};
+
+const fetchUniqueColors = (
+  userTheme?: Omit<ExtendedUserTheme, "colorFamilies">,
+) => {
+  const oldColors = createUserThemeColors(userTheme?.colors ?? []);
+  const colorShades = userTheme?.colorShades ?? [];
+  // Create a Map to store unique colors, prioritizing colorShades
+  const uniqueColorsMap = new Map<
+    string,
+    ExtendedUserTheme["colorShades"][0]
+  >();
+  colorShades.forEach((color) => {
+    uniqueColorsMap.set(color.name, color);
+  });
+
+  oldColors.forEach((color) => {
+    if (!uniqueColorsMap.has(color.name)) {
+      uniqueColorsMap.set(color.name, color);
+    }
+  });
+
+  return Array.from(uniqueColorsMap.values());
+};
+
+const convertThemeColors = (
+  userTheme?: Omit<ExtendedUserTheme, "colorFamilies">,
+  useName?: boolean,
+) => {
+  // Convert the map values back to an array
+  const uniqueColors = fetchUniqueColors(userTheme);
+  const colorMap = new Map<string, ExtendedUserTheme["colorFamilies"][0]>();
+  uniqueColors.forEach((color) => {
+    const field = useName ? "name" : "friendlyName";
+    const [family] = color[field].split(".");
+    if (!colorMap.has(family)) {
+      colorMap.set(family, { family, colors: [] });
+    }
+    colorMap.get(family)!.colors.push(color);
+  });
+  return Array.from(colorMap.values());
+};
+
+const setFormColorShadesFromColorFamilies = (values: ExtendedUserTheme) => {
+  const colorShades = values.colorFamilies.flatMap((family) => family.colors);
+  return omit({ ...values, colorShades }, ["colorFamilies"]);
+};
+
 export {
   BG_COLOR,
   BINDER_BACKGROUND,
@@ -447,6 +567,8 @@ export {
   BORDER_COLOR,
   BUTTON_HOVER,
   componentHasBorder,
+  convertThemeColors,
+  createUserThemeColors,
   DARK_COLOR,
   DARK_MODE,
   darkTheme,
@@ -475,8 +597,10 @@ export {
   ORANGE_BORDER_COLOR,
   ORANGE_COLOR,
   PRIMARY_COLOR,
+  rgbaToHex,
   scrollbarStyles,
   SELECTED,
+  setFormColorShadesFromColorFamilies,
   theme,
   THIN_DARK_OUTLINE,
   THIN_GRAY_OUTLINE,
