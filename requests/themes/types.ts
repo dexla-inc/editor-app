@@ -8,6 +8,7 @@ export type ThemeQueryParams = {
 
 export type ThemeMutationParams = {
   colors: Color[];
+  colorShades: Omit<Color, "brightness">[];
   fonts: Font[];
   responsiveBreakpoints: ResponsiveBreakpoint[];
   faviconUrl: string;
@@ -27,6 +28,14 @@ export type ThemeMutationParams = {
 export interface ThemeResponse extends ThemeMutationParams, IResponse {
   id?: string;
   websiteUrl?: string;
+}
+
+type ProcessedColors = {
+  family: string;
+  colors: ThemeResponse["colorShades"];
+};
+export interface ExtendedUserTheme extends ThemeResponse {
+  colorFamilies: ProcessedColors[];
 }
 
 export type Color = {

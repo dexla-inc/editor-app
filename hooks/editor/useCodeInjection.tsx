@@ -15,7 +15,6 @@ export const useCodeInjection = (
   const variables = useVariableStore((state) =>
     Object.values(state?.variableList ?? {}).reduce(
       (curr, item) => {
-        console.log(item);
         if (item.id) {
           curr[item.id] = item?.value ?? item?.defaultValue ?? undefined;
         }
