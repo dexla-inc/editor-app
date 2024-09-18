@@ -6,6 +6,7 @@ import {
 import { DataSourceEndpoint } from "@/components/datasources/DataSourceEndpoint";
 import { useEditorParams } from "@/hooks/editor/useEditorParams";
 import { ApiFromAI } from "@/requests/datasources/types";
+import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { Button, Flex, Select, Stack, TextInput, Title } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import Link from "next/link";
@@ -53,6 +54,7 @@ export default function ApiInfoForm({ api, title }: Props) {
           onChange={(event) => {
             form.setFieldValue("name", event.currentTarget.value);
           }}
+          {...AUTOCOMPLETE_OFF_PROPS}
         />
       )}
       {api.baseUrl && (

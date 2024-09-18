@@ -5,6 +5,7 @@ import {
   EnvironmentTypes,
 } from "@/requests/datasources/types";
 import { isWebsite } from "@/types/dashboardTypes";
+import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { Select, TextInput } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 
@@ -48,6 +49,7 @@ export const BasicDetailsInputs = <T extends DataSourceParams | ApiFromAI>({
         description="The name of your API."
         placeholder="Internal API"
         {...form.getInputProps("name")}
+        {...AUTOCOMPLETE_OFF_PROPS}
       />
       <TextInput
         label="Base URL"

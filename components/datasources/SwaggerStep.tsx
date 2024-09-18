@@ -54,7 +54,7 @@ export default function SwaggerStep({
 
     setIsLoading && setIsLoading(true);
 
-    const result = await createDataSource(projectId, "API", values);
+    const result = await createDataSource(projectId, values);
 
     if (!result) {
       throw new Error("Failed to create data source");

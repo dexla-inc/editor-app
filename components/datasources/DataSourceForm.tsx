@@ -37,7 +37,7 @@ export const DataSourceForm = ({ datasource }: Props) => {
       swaggerUrl: (value) => (value ? validateSwaggerUrl(value) : null),
       baseUrl: (value) => validateBaseUrl(value),
       name: (value) => validateName(value),
-      authValue: (value, values) =>
+      apiKey: (value, values) =>
         values.authenticationScheme === "NONE"
           ? null
           : value === ""
@@ -62,6 +62,8 @@ export const DataSourceForm = ({ datasource }: Props) => {
     }
   };
 
+  console.log(form.values);
+
   useEffect(() => {
     form.setValues({
       name: datasource.name,
@@ -69,7 +71,6 @@ export const DataSourceForm = ({ datasource }: Props) => {
       baseUrl: datasource.baseUrl,
       environment: datasource.environment,
       authenticationScheme: datasource.authenticationScheme,
-      authValue: datasource.authValue,
       apiKey: datasource.apiKey,
       type: datasource.type,
     });
@@ -110,6 +111,7 @@ export const DataSourceForm = ({ datasource }: Props) => {
           label="API Description"
           placeholder="Internal API"
           {...form.getInputProps("name")}
+          {...AUTOCOMPLETE_OFF_PROPS}
         />
         <TextInput
           label="Base URL"
@@ -130,23 +132,14 @@ export const DataSourceForm = ({ datasource }: Props) => {
             form.setFieldValue("authenticationScheme", value as any);
           }}
         />
-        {form.values.type === "SUPABASE" && (
+        {(form.values.authenticationScheme === "API_KEY" ||
+          form.values.type === "SUPABASE") && (
           <PasswordInput
             label="API Key"
             size="xs"
             description="(Optional)"
             placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6Ikp..."
             {...form.getInputProps("apiKey")}
-            {...AUTOCOMPLETE_OFF_PROPS}
-          />
-        )}
-        {form.values.authenticationScheme === "API_KEY" && (
-          <PasswordInput
-            label="API Key"
-            size="xs"
-            description="(Optional)"
-            placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6Ikp..."
-            {...form.getInputProps("authValue")}
             {...AUTOCOMPLETE_OFF_PROPS}
           />
         )}
