@@ -3,6 +3,10 @@ import { StateSelector } from "@/components/aside/StateSelector";
 import { Tab, useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { componentMapper } from "@/utils/componentMapper";
+import {
+  selectedComponentIdSelector,
+  selectedComponentIdsSelector,
+} from "@/utils/componentSelectors";
 import { dataMapper } from "@/utils/dataMapper";
 import {
   Box,
@@ -14,13 +18,9 @@ import {
 } from "@mantine/core";
 import intersection from "lodash.intersection";
 import { memo, useEffect } from "react";
+import { useShallow } from "zustand/react/shallow";
 import { useEditorTreeStore } from "../../stores/editorTree";
 import { ActionsTab, Data, modifierSectionMapper } from "./dynamicModifiers";
-import { useShallow } from "zustand/react/shallow";
-import {
-  selectedComponentIdSelector,
-  selectedComponentIdsSelector,
-} from "@/utils/componentSelectors";
 
 const EditorAsideSections = () => {
   const setOpenAction = useEditorStore((state) => state.setOpenAction);
@@ -41,6 +41,19 @@ const EditorAsideSections = () => {
     useShallow((state) => {
       const selectedComponentId = selectedComponentIdSelector(state);
       return state.componentMutableAttrs[selectedComponentId!]?.name;
+    }),
+  );
+
+  const hasActionsTriggers = useEditorTreeStore(
+    useShallow((state) => {
+      const selectedComponentId = selectedComponentIdSelector(state);
+      return (
+        (
+          componentMapper[
+            state.componentMutableAttrs[selectedComponentId!]?.name
+          ]?.actionTriggers ?? []
+        ).length > 0
+      );
     }),
   );
 
@@ -110,9 +123,7 @@ const EditorAsideSections = () => {
       label: "Actions",
       value: "actions",
     },
-  ].filter(
-    (item) => item.value !== "data" || (item.value === "data" && DataSection),
-  );
+  ].filter((_, i) => [true, !!DataSection, hasActionsTriggers][i]);
 
   return (
     <Stack>
