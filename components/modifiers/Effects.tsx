@@ -1,13 +1,25 @@
+import { Icon } from "@/components/Icon";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
+import { TopLabel } from "@/components/TopLabel";
+import { UnitInput } from "@/components/UnitInput";
 import { withModifier } from "@/hoc/withModifier";
+import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
+import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
 import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { Group, NumberInput, Select, Stack } from "@mantine/core";
+import {
+  Button,
+  Flex,
+  Group,
+  NumberInput,
+  Select,
+  SelectItem,
+  Stack,
+  TextInput,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
 import { useEffect } from "react";
-import { UnitInput } from "@/components/UnitInput";
-import { TopLabel } from "@/components/TopLabel";
 
 const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm();
@@ -24,10 +36,37 @@ const Modifier = withModifier(({ selectedComponent }) => {
         tooltipPosition: selectedComponent.props?.tooltipPosition,
         skeletonMinWidth: selectedComponent.props?.skeletonMinWidth,
         skeletonMinHeight: selectedComponent.props?.skeletonMinHeight,
+        customAttributes: selectedComponent.props?.customAttributes ?? [],
       }),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedComponent]);
+
+  const addNewCustomProp = () => {
+    form.insertListItem("customAttributes", {
+      label: "",
+      value: "",
+    });
+  };
+
+  const customAttributes = form.values.customAttributes as SelectItem[];
+
+  const updateCustomAttributes = () => {
+    debouncedTreeComponentAttrsUpdate({
+      attrs: { props: { customAttributes } },
+    });
+  };
+
+  const deleteCustomAttr = (index: number) => {
+    form.removeListItem("customAttributes", index);
+    debouncedTreeComponentAttrsUpdate({
+      attrs: {
+        props: {
+          customAttributes: customAttributes.filter((_, i) => i !== index),
+        },
+      },
+    });
+  };
 
   return (
     <form key={selectedComponent?.id}>
@@ -151,6 +190,59 @@ const Modifier = withModifier(({ selectedComponent }) => {
               />
             ))}
           </Group>
+        </Stack>
+        <Stack mt={10} spacing="xs">
+          <Flex align="center" justify="space-between">
+            <TopLabel text="Custom Props" />
+            <Button
+              type="button"
+              compact
+              onClick={addNewCustomProp}
+              variant="default"
+              sx={{ marginRight: 0 }}
+              leftIcon={<Icon name="IconPlus" size={ICON_SIZE} />}
+            >
+              Add
+            </Button>
+          </Flex>
+          <Stack spacing="xs">
+            {customAttributes?.map(({ label, value }, index) => (
+              <Group key={index} spacing={8} noWrap>
+                <TextInput
+                  size="xs"
+                  placeholder="label"
+                  value={label}
+                  onChange={(e) =>
+                    form.setFieldValue(
+                      `customAttributes.${index}.label`,
+                      e.target.value,
+                    )
+                  }
+                  onBlur={updateCustomAttributes}
+                  {...AUTOCOMPLETE_OFF_PROPS}
+                />
+                <TextInput
+                  size="xs"
+                  placeholder="value"
+                  value={value}
+                  onChange={(e) =>
+                    form.setFieldValue(
+                      `customAttributes.${index}.value`,
+                      e.target.value,
+                    )
+                  }
+                  onBlur={updateCustomAttributes}
+                  {...AUTOCOMPLETE_OFF_PROPS}
+                />
+
+                <Icon
+                  name={ICON_DELETE}
+                  onClick={() => deleteCustomAttr(index)}
+                  style={{ cursor: "pointer" }}
+                />
+              </Group>
+            ))}
+          </Stack>
         </Stack>
       </Stack>
     </form>
