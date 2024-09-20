@@ -1,14 +1,14 @@
 import { useDataSources } from "@/hooks/editor/reactQuery/useDataSources";
 import { getSwagger } from "@/requests/datasources/queries";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { ActionIconDefault } from "../ActionIconDefault";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { DataSourceTypes } from "@/requests/datasources/types";
+import { Box, Flex, Loader } from "@mantine/core";
 
 type Props = {
   datasourceId: string;
-  setIsLoading: Dispatch<SetStateAction<boolean>>;
   updated: number;
   baseUrl: string;
   apiKey: string;
@@ -17,7 +17,6 @@ type Props = {
 
 export const DataSourceEndpointsRefetch = ({
   datasourceId,
-  setIsLoading,
   updated,
   baseUrl,
   apiKey,
@@ -29,13 +28,14 @@ export const DataSourceEndpointsRefetch = ({
   const { invalidate: invalidate } = useDataSources(projectId);
   const lastUpdated = new Date(updated).toLocaleString();
   const accessToken = usePropelAuthStore.getState().accessToken;
+  const [loading, setLoading] = useState(false);
 
   // refactor this as we support more types
   const relativeUrl = type === "SUPABASE" ? "/rest/v1/" : "/";
 
   const refetchSwagger = async () => {
     try {
-      setIsLoading(true);
+      setLoading(true);
       const swaggerResponse = await fetch(
         `/api/swagger2openapi?projectId=${projectId}&baseUrl=${encodeURIComponent(baseUrl)}&relativeUrl=${relativeUrl}&apiKey=${encodeURIComponent(
           apiKey,
@@ -54,15 +54,21 @@ export const DataSourceEndpointsRefetch = ({
     } catch (e) {
       console.error(e);
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
   return (
-    <ActionIconDefault
-      tooltip={`API last updated: ${lastUpdated}`}
-      iconName="IconRefresh"
-      onClick={refetchSwagger}
-    />
+    <Flex w="30px" h="30px" display="flex" justify="center" align="center">
+      {loading ? (
+        <Loader size="xs" />
+      ) : (
+        <ActionIconDefault
+          tooltip={`API last updated: ${lastUpdated}`}
+          iconName="IconRefresh"
+          onClick={refetchSwagger}
+        />
+      )}
+    </Flex>
   );
 };

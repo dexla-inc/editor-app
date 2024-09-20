@@ -3,7 +3,7 @@ import swagger2openapi from "swagger2openapi";
 import { validateRequiredParams } from "@/app/api/helper";
 
 export async function GET(request: Request) {
-  const internalStorageBaseUrl = process.env.NEXT_PUBLIC_BASE_URL as string;
+  const storageBaseUrl = process.env.NEXT_PUBLIC_BASE_URL as string;
 
   // Get base URL, auth value, and access token dynamically from the request
   const { searchParams } = new URL(request.url);
@@ -60,7 +60,7 @@ export async function GET(request: Request) {
     formData.append("file", blob, "openapi.json");
 
     // Step 5: Upload the JSON file to the internal storage endpoint
-    const storageUrl = `${internalStorageBaseUrl}/projects/${projectId}/storage`;
+    const storageUrl = `${storageBaseUrl}/projects/${projectId}/storage`;
 
     const uploadResponse = await fetch(storageUrl, {
       method: "POST",

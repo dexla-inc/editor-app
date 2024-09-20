@@ -84,7 +84,6 @@ export const DataSourceForm = ({ datasource }: Props) => {
           form.values.type === "SWAGGER") && (
           <DataSourceEndpointsRefetch
             datasourceId={datasource.id}
-            setIsLoading={setIsLoading}
             updated={datasource.updated}
             baseUrl={datasource.baseUrl}
             apiKey={datasource.apiKey as string}
