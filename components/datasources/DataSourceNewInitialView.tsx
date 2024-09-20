@@ -1,28 +1,28 @@
 import MantineStyledButton from "@/components/datasources/DataSourceOptionButton";
 import { useEditorParams } from "@/hooks/editor/useEditorParams";
-import { Container, Flex, Title } from "@mantine/core";
+import { Flex, Stack, Title } from "@mantine/core";
 
 export default function DataSourceNewInitialView() {
   const { id: projectId } = useEditorParams();
   return (
-    <Container py="xl">
+    <Stack p="xl">
       <Title order={3} pb="xl">
         How do you want to add a datasource?
       </Title>
       <Flex gap="xl">
         <MantineStyledButton
-          title="Use Swagger"
+          title="OpenAPI"
           description="Copy and paste your swagger file to get started."
           caption="Great for internal APIs"
           logoUrl="/swagger_logo.svg"
           href={`/projects/${projectId}/settings/datasources/swagger`}
         />
         <MantineStyledButton
-          title="Build with AI"
-          description="Type what API you want and watch it build."
-          caption="Great for public APIs"
-          logoUrl="/openai_log.png"
-          href={`/projects/${projectId}/settings/datasources/ai`}
+          title="Supabase"
+          description="Connect to your Supabase database."
+          caption="Great for Postgres databases"
+          logoUrl="/supabase_logo.png"
+          href={`/projects/${projectId}/settings/datasources/supabase`}
         />
         <MantineStyledButton
           title="Add Manually"
@@ -31,7 +31,14 @@ export default function DataSourceNewInitialView() {
           logoUrl="/manual-api-icon.svg"
           href={`/projects/${projectId}/settings/datasources/manual`}
         />
+        <MantineStyledButton
+          title="Build with AI"
+          description="Type what API you want and watch it build."
+          caption="Great for public APIs"
+          logoUrl="/openai_log.png"
+          href={`/projects/${projectId}/settings/datasources/ai`}
+        />
       </Flex>
-    </Container>
+    </Stack>
   );
 }

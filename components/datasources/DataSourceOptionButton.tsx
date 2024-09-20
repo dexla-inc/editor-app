@@ -1,5 +1,6 @@
-import { BUTTON_HOVER } from "@/utils/branding";
+import { BINDER_BACKGROUND, BUTTON_HOVER, FLEX_HOVER } from "@/utils/branding";
 import {
+  Card,
   Paper,
   Stack,
   Text,
@@ -36,13 +37,13 @@ export default function MantineStyledButton({
         cursor: "pointer",
       }}
     >
-      <Paper
+      <Card
         p="xl"
         radius="sm"
         shadow="xs"
         sx={{
           width: "100%",
-          "&:hover": { backgroundColor: BUTTON_HOVER },
+          "&:hover": { backgroundColor: BINDER_BACKGROUND },
         }}
       >
         <Stack align="center">
@@ -59,7 +60,7 @@ export default function MantineStyledButton({
               }}
             />
           )}
-          <Title>{title}</Title>
+          <Title order={2}>{title}</Title>
           <Stack spacing={0}>
             <Text align="center">{description}</Text>
             <Text size="sm" c="dimmed" align="center">
@@ -67,7 +68,7 @@ export default function MantineStyledButton({
             </Text>
           </Stack>
         </Stack>
-      </Paper>
+      </Card>
     </UnstyledButton>
   );
 }

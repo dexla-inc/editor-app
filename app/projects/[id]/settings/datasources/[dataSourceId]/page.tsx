@@ -50,7 +50,7 @@ import { useOldRouter } from "@/hooks/data/useOldRouter";
 
 export default function DataSourcePage() {
   const {
-    query: { id, name, dataSourceId, type },
+    query: { id, name, dataSourceId },
   } = useOldRouter();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const startLoading = useAppStore((state) => state.startLoading);
@@ -136,7 +136,7 @@ export default function DataSourcePage() {
 
       form.validate();
 
-      const result = await getSwagger(id, dataSourceId, swaggerUrl);
+      const result = await getSwagger(id, dataSourceId);
 
       setDataSource(result);
 
@@ -212,7 +212,7 @@ export default function DataSourcePage() {
                     ></SuccessAlert>
                   </>
                 )}
-                {type !== "manual" && (
+                {dataSource.type === "SWAGGER" && (
                   <SwaggerURLInput
                     isLoading={isLoading}
                     swaggerUrl={swaggerUrl}

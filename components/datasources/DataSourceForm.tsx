@@ -22,6 +22,7 @@ import { validateSwaggerUrl } from "./SwaggerURLInput";
 import { SwaggerURLInputRevised } from "./SwaggerURLInputRevised";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
+import { DataSourceEndpointsRefetch } from "./DataSourceEndpointsRefetch";
 
 type Props = {
   datasource: DataSourceResponse;
@@ -62,8 +63,6 @@ export const DataSourceForm = ({ datasource }: Props) => {
     }
   };
 
-  console.log(form.values);
-
   useEffect(() => {
     form.setValues({
       name: datasource.name,
@@ -81,6 +80,17 @@ export const DataSourceForm = ({ datasource }: Props) => {
     <form onSubmit={form.onSubmit(onSubmit)}>
       <Flex justify="space-between">
         <Title order={6}>Details</Title>
+        {(form.values.type === "SUPABASE" ||
+          form.values.type === "SWAGGER") && (
+          <DataSourceEndpointsRefetch
+            datasourceId={datasource.id}
+            setIsLoading={setIsLoading}
+            updated={datasource.updated}
+            baseUrl={datasource.baseUrl}
+            apiKey={datasource.apiKey as string}
+            type={datasource.type}
+          />
+        )}
       </Flex>
       <Stack>
         <SegmentedControlInput
