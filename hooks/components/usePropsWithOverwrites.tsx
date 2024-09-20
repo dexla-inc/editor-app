@@ -3,6 +3,7 @@ import { useTriggers } from "@/hooks/components/useTriggers";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { isEditorModeSelector } from "@/utils/componentSelectors";
 import { Component } from "@/utils/editor";
+import { SelectItem } from "@mantine/core";
 import merge from "lodash.merge";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { useRouter } from "next/navigation";
@@ -53,15 +54,26 @@ export const usePropsWithOverwrites = (
     }
   };
 
-  const omittingProps = ["showBorder", "pages", "theme"];
+  const omittingProps = ["showBorder", "pages", "theme", "customAttributes"];
   if (isEditorMode) {
     omittingProps.push("error");
   }
+
+  const customAttributes = (
+    (component.props?.customAttributes ?? []) as SelectItem[]
+  ).reduce((acc: Record<string, string>, curr) => {
+    if (curr?.label) {
+      acc[curr?.label] = curr?.value ?? "";
+    }
+
+    return acc;
+  }, {});
 
   return useMemo(() => {
     return merge(
       {},
       omit(component.props ?? {}, omittingProps),
+      customAttributes,
       component.states?.[customCurrentState],
       {
         error: component.props?.hasError
