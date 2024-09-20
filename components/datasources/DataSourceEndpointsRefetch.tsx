@@ -1,11 +1,11 @@
 import { useDataSources } from "@/hooks/editor/reactQuery/useDataSources";
 import { getSwagger } from "@/requests/datasources/queries";
-import { Dispatch, SetStateAction, useState } from "react";
-import { ActionIconDefault } from "../ActionIconDefault";
+import { useState } from "react";
+import { ActionIconDefault } from "@/components/ActionIconDefault";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { DataSourceTypes } from "@/requests/datasources/types";
-import { Box, Flex, Loader } from "@mantine/core";
+import { Flex, Loader } from "@mantine/core";
 
 type Props = {
   datasourceId: string;

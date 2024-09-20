@@ -53,7 +53,7 @@ export default function DataSourceSupabaseForm() {
 
       // Make API call to swagger2openapi
       const swaggerResponse = await fetch(
-        `/api/swagger2openapi?baseUrl=${encodeURIComponent(values.baseUrl as string)}&relativeUrl=/rest/v1/&apiKey=${encodeURIComponent(
+        `/api/swagger2openapi?projectId=${projectId}&baseUrl=${encodeURIComponent(values.baseUrl as string)}&relativeUrl=/rest/v1/&apiKey=${encodeURIComponent(
           values.apiKey as string,
         )}&accessToken=${encodeURIComponent(accessToken)}&type=SUPABASE`,
       );
