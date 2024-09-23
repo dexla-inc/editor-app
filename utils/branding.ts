@@ -546,7 +546,7 @@ const convertThemeColors = (
   const colorMap = new Map<string, ExtendedUserTheme["colorFamilies"][0]>();
   uniqueColors.forEach((color) => {
     const field = useName ? "name" : "friendlyName";
-    const [family] = color[field].split(".");
+    const family = color[field].match(/^[a-zA-Z\s]+/)?.[0]?.trim() ?? "";
     if (!colorMap.has(family)) {
       colorMap.set(family, { family, colors: [] });
     }
