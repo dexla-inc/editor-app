@@ -27,22 +27,37 @@ const injectScripts = (scripts: string[], container: HTMLElement) => {
 
 export const useCustomCode = (project: ProjectResponse) => {
   useEffect(() => {
-    if (project && project.customCode) {
-      const customCode = JSON.parse(
-        decodeSchema(project.customCode),
-      ) as CustomCode;
+    const handleLoad = () => {
+      if (project && project.customCode) {
+        const customCode = JSON.parse(
+          decodeSchema(project.customCode),
+        ) as CustomCode;
 
-      // Initialize arrays to hold scripts for head and body
-      const headScripts: string[] = [];
-      const bodyScripts: string[] = [];
+        // Initialize arrays to hold scripts for head and body
+        const headScripts: string[] = [];
+        const bodyScripts: string[] = [];
 
-      // Extract scripts from customCode
-      extractScripts(customCode.headCode, headScripts);
-      extractScripts(customCode.footerCode, bodyScripts);
+        // Extract scripts from customCode
+        extractScripts(customCode.headCode, headScripts);
+        extractScripts(customCode.footerCode, bodyScripts);
 
-      // Inject scripts
-      injectScripts(headScripts, document.head);
-      injectScripts(bodyScripts, document.body);
+        // Inject scripts
+        injectScripts(headScripts, document.head);
+        injectScripts(bodyScripts, document.body);
+      }
+    };
+
+    if (document.readyState === "complete") {
+      // Document is already loaded, call handleLoad immediately
+      handleLoad();
+    } else {
+      // Add event listener for window load
+      window.addEventListener("load", handleLoad);
+
+      // Cleanup event listener on component unmount
+      return () => {
+        window.removeEventListener("load", handleLoad);
+      };
     }
   }, [project]);
 };
