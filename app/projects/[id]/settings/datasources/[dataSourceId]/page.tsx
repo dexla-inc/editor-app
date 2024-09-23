@@ -50,7 +50,7 @@ import { useOldRouter } from "@/hooks/data/useOldRouter";
 
 export default function DataSourcePage() {
   const {
-    query: { id, name, dataSourceId, type },
+    query: { id, name, dataSourceId },
   } = useOldRouter();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const startLoading = useAppStore((state) => state.startLoading);
@@ -78,19 +78,18 @@ export default function DataSourcePage() {
   const [loginEndpointObj, setLoginEndpointObj] = useState<
     Endpoint | undefined
   >(undefined);
-  const [authValue, setAuthValue] = useState<string | null>(null);
 
   const form = useForm<DataSourceParams>({
     validate: {
       swaggerUrl: (value) => (value ? validateSwaggerUrl(value) : null),
       baseUrl: (value) => validateBaseUrl(value),
       name: (value) => validateName(value),
-      authValue: (value, values) =>
+      apiKey: (value, values) =>
         values.authenticationScheme === "NONE"
           ? null
           : value === ""
-          ? "You must provide an API key"
-          : null,
+            ? "You must provide an API key"
+            : null,
     },
   });
 
@@ -137,7 +136,7 @@ export default function DataSourcePage() {
 
       form.validate();
 
-      const result = await getSwagger(id, dataSourceId, swaggerUrl);
+      const result = await getSwagger(id, dataSourceId);
 
       setDataSource(result);
 
@@ -171,8 +170,6 @@ export default function DataSourcePage() {
       setDataSource(result);
       setSwaggerUrl(result.swaggerUrl);
       setAuthenticationScheme(result.authenticationScheme);
-
-      result.authValue && setAuthValue(result.authValue);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataSourceId, id]);
@@ -215,7 +212,7 @@ export default function DataSourcePage() {
                     ></SuccessAlert>
                   </>
                 )}
-                {type !== "manual" && (
+                {dataSource.type === "SWAGGER" && (
                   <SwaggerURLInput
                     isLoading={isLoading}
                     swaggerUrl={swaggerUrl}
@@ -231,10 +228,9 @@ export default function DataSourcePage() {
                     label="API Key"
                     description="The key used to authenticate to the API"
                     placeholder="aa982f3c39b17...."
-                    {...form.getInputProps("authValue")}
+                    {...form.getInputProps("apiKey")}
                     onChange={(e) => {
-                      form.setFieldValue("authValue", e.target.value);
-                      setAuthValue(e.target.value);
+                      form.setFieldValue("apiKey", e.target.value);
                     }}
                   />
                 )}

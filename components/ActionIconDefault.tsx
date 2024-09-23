@@ -31,8 +31,15 @@ export const ActionIconDefaultComponent = ({
   id,
   ...props
 }: Props) => {
+  const isLongTooltip = tooltip && tooltip.length > 30;
+
   return (
-    <Tooltip label={tooltip} withArrow disabled={!tooltip}>
+    <Tooltip
+      label={tooltip}
+      withArrow
+      disabled={!tooltip}
+      {...(isLongTooltip && { multiline: true, width: 150 })}
+    >
       {href ? (
         <ActionIcon
           id={id}

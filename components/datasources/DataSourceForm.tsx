@@ -22,6 +22,7 @@ import { validateSwaggerUrl } from "./SwaggerURLInput";
 import { SwaggerURLInputRevised } from "./SwaggerURLInputRevised";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
+import { DataSourceEndpointsRefetch } from "./DataSourceEndpointsRefetch";
 
 type Props = {
   datasource: DataSourceResponse;
@@ -37,7 +38,7 @@ export const DataSourceForm = ({ datasource }: Props) => {
       swaggerUrl: (value) => (value ? validateSwaggerUrl(value) : null),
       baseUrl: (value) => validateBaseUrl(value),
       name: (value) => validateName(value),
-      authValue: (value, values) =>
+      apiKey: (value, values) =>
         values.authenticationScheme === "NONE"
           ? null
           : value === ""
@@ -69,7 +70,6 @@ export const DataSourceForm = ({ datasource }: Props) => {
       baseUrl: datasource.baseUrl,
       environment: datasource.environment,
       authenticationScheme: datasource.authenticationScheme,
-      authValue: datasource.authValue,
       apiKey: datasource.apiKey,
       type: datasource.type,
     });
@@ -80,6 +80,16 @@ export const DataSourceForm = ({ datasource }: Props) => {
     <form onSubmit={form.onSubmit(onSubmit)}>
       <Flex justify="space-between">
         <Title order={6}>Details</Title>
+        {(form.values.type === "SUPABASE" ||
+          form.values.type === "SWAGGER") && (
+          <DataSourceEndpointsRefetch
+            datasourceId={datasource.id}
+            updated={datasource.updated}
+            baseUrl={datasource.baseUrl}
+            apiKey={datasource.apiKey as string}
+            type={datasource.type}
+          />
+        )}
       </Flex>
       <Stack>
         <SegmentedControlInput
@@ -110,6 +120,7 @@ export const DataSourceForm = ({ datasource }: Props) => {
           label="API Description"
           placeholder="Internal API"
           {...form.getInputProps("name")}
+          {...AUTOCOMPLETE_OFF_PROPS}
         />
         <TextInput
           label="Base URL"
@@ -130,23 +141,14 @@ export const DataSourceForm = ({ datasource }: Props) => {
             form.setFieldValue("authenticationScheme", value as any);
           }}
         />
-        {form.values.type === "SUPABASE" && (
+        {(form.values.authenticationScheme === "API_KEY" ||
+          form.values.type === "SUPABASE") && (
           <PasswordInput
             label="API Key"
             size="xs"
             description="(Optional)"
             placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6Ikp..."
             {...form.getInputProps("apiKey")}
-            {...AUTOCOMPLETE_OFF_PROPS}
-          />
-        )}
-        {form.values.authenticationScheme === "API_KEY" && (
-          <PasswordInput
-            label="API Key"
-            size="xs"
-            description="(Optional)"
-            placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6Ikp..."
-            {...form.getInputProps("authValue")}
             {...AUTOCOMPLETE_OFF_PROPS}
           />
         )}

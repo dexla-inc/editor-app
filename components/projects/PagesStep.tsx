@@ -135,7 +135,7 @@ export default function PagesStep({
 
       const baseUrl = "https://visnduvexezenksqpvmo.supabase.co/rest/v1/";
 
-      const dataSource = await createDataSource(projectId, "API", {
+      const dataSource = await createDataSource(projectId, {
         name: "Example API",
         baseUrl,
         environment: "staging",

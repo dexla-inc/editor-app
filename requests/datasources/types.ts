@@ -29,7 +29,6 @@ export type DataSourceParams = {
   authenticationScheme?: AuthenticationSchemes;
   environment?: string;
   swaggerUrl?: string;
-  authValue?: string;
   apiKey?: string;
 };
 
@@ -45,7 +44,6 @@ export interface DataSourceResponse {
   isTested: boolean;
   changedEndpoints?: Endpoint[];
   deletedEndpoints?: Endpoint[];
-  authValue?: string;
   apiKey?: string;
   endpoints?: Endpoint[];
   auth?: DataSourceAuthResponse;

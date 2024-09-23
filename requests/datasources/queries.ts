@@ -1,16 +1,9 @@
 import { DataSourceResponse } from "@/requests/datasources/types";
 import { get } from "@/utils/api";
-import { buildQueryString } from "@/types/dashboardTypes";
 import { evictCache } from "@/requests/cache/queries-noauth";
 
-export const getSwagger = async (
-  projectId: string,
-  id: string,
-  swaggerUrl: string,
-) => {
+export const getSwagger = async (projectId: string, id: string) => {
   let url = `/projects/${projectId}/datasources/${id}/swagger`;
-
-  url += buildQueryString({ swaggerUrl });
 
   const response = (await get<DataSourceResponse>(
     url,

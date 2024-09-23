@@ -26,12 +26,11 @@ export default function AuthenticationApiKey({
   const form = useForm<DataSourceParams>({
     validateInputOnBlur: true,
     initialValues: {
-      authValue: undefined,
+      apiKey: undefined,
       type: "API",
     },
     validate: {
-      authValue: (value) =>
-        value === "" ? "You must provide an API key" : null,
+      apiKey: (value) => (value === "" ? "You must provide an API key" : null),
     },
   });
 
@@ -88,9 +87,9 @@ export default function AuthenticationApiKey({
           size="xs"
           description="The key used to authenticate to the API"
           placeholder="aa982f3c39b17...."
-          {...form.getInputProps("authValue")}
+          {...form.getInputProps("apiKey")}
           onChange={(e) => {
-            form.setFieldValue("authValue", e.target.value);
+            form.setFieldValue("apiKey", e.target.value);
             setAccessToken(e.target.value);
           }}
         />

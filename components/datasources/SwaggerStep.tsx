@@ -54,7 +54,7 @@ export default function SwaggerStep({
 
     setIsLoading && setIsLoading(true);
 
-    const result = await createDataSource(projectId, "API", values);
+    const result = await createDataSource(projectId, values);
 
     if (!result) {
       throw new Error("Failed to create data source");
@@ -118,7 +118,9 @@ export default function SwaggerStep({
           title="Let's get started!"
           text="Instead of manually adding your API endpoints, you can import via swagger to save you time. When you add new API endpoints you will just need to refetch. We can show you how to do this later."
         />
-        <SwaggerURLInput isLoading={isLoading} form={form} />
+        {dataSource?.type == "SWAGGER" && (
+          <SwaggerURLInput isLoading={isLoading} form={form} />
+        )}
         <Divider></Divider>
 
         <Flex align="center" gap="md" justify="space-between">

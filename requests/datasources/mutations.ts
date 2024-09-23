@@ -11,10 +11,9 @@ import { evictCache } from "@/requests/cache/queries-noauth";
 
 export async function createDataSource(
   projectId: string,
-  type: DataSourceTypes,
   params: DataSourceParams,
 ): Promise<DataSourceResponse> {
-  const url = `/projects/${projectId}/datasources/${type}`;
+  const url = `/projects/${projectId}/datasources`;
   const response = (await post<DataSourceResponse>(
     url,
     params,

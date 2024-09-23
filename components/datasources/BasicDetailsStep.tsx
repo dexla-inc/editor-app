@@ -62,7 +62,7 @@ export default function BasicDetailsStep({
       environment: dataSource?.environment || "",
       authenticationScheme: dataSource?.authenticationScheme || "NONE",
       type: "API",
-      authValue: dataSource?.authValue,
+      apiKey: dataSource?.apiKey,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

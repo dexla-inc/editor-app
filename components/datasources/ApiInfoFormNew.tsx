@@ -6,7 +6,16 @@ import { useEditorParams } from "@/hooks/editor/useEditorParams";
 import { createDataSource } from "@/requests/datasources/mutations";
 import { DataSourceParams } from "@/requests/datasources/types";
 import { useAppStore } from "@/stores/app";
-import { Box, Button, Flex, Select, Stack, TextInput } from "@mantine/core";
+import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
+import {
+  Box,
+  Button,
+  Flex,
+  Group,
+  Select,
+  Stack,
+  TextInput,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useRouter } from "next/navigation";
 
@@ -39,11 +48,9 @@ export default function ApiInfoFormNew() {
         message: "Your datasource is saving",
       });
 
-      const result = await createDataSource(projectId, "API", values);
+      const result = await createDataSource(projectId, values);
 
-      router.push(
-        `/projects/${projectId}/settings/datasources/${result.id}?type=manual`,
-      );
+      router.push(`/projects/${projectId}/settings/datasources/${result.id}`);
 
       if (!result) {
         throw new Error("Failed to create datasource");
@@ -73,6 +80,7 @@ export default function ApiInfoFormNew() {
           description="The name of your API."
           placeholder="Main API"
           {...form.getInputProps("name")}
+          {...AUTOCOMPLETE_OFF_PROPS}
         />
         <TextInput
           label="Base URL"
@@ -92,9 +100,9 @@ export default function ApiInfoFormNew() {
           ]}
           {...form.getInputProps("authenticationScheme")}
         />
-        <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+        <Group position="right">
           <Button type="submit">Save</Button>
-        </Box>
+        </Group>
       </Stack>
     </form>
   );
