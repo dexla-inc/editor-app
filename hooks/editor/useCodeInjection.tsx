@@ -132,30 +132,33 @@ export const useCodeInjection = (
         scriptTag.remove(); // Remove script tag from the document
       });
 
+      // Set variables in the iframe's window
       // @ts-ignore
       ref.current.contentWindow!.variables = () => variables;
 
-      // Write the modified HTML (without scripts) to the iframe
-      ref.current.contentDocument?.open();
-      ref.current.contentDocument?.write(doc.documentElement.outerHTML);
-      ref.current.contentDocument?.close();
+      const iframeDoc = ref.current.contentDocument;
+      if (iframeDoc) {
+        // Clear existing content
+        iframeDoc.head.innerHTML = "";
+        iframeDoc.body.innerHTML = "";
 
-      // Wait for the iframe to load
-      ref.current.onload = () => {
-        // Inject scripts after iframe content has loaded
+        // Append new content
+        iframeDoc.head.append(...doc.head.childNodes);
+        iframeDoc.body.append(...doc.body.childNodes);
+
+        // Inject scripts
         scripts.forEach((scriptContent) => {
-          const scriptElement =
-            ref.current!.contentDocument!.createElement("script");
+          const scriptElement = iframeDoc.createElement("script");
           scriptElement.type = "text/javascript";
           scriptElement.text = scriptContent;
-          ref.current!.contentDocument!.body.appendChild(scriptElement);
+          iframeDoc.body.appendChild(scriptElement);
         });
 
         // Apply event handlers if not in preview mode
         if (!isPreviewMode) {
-          applyEventHandlers(ref.current!.contentDocument!);
+          applyEventHandlers(iframeDoc);
         }
-      };
+      }
     },
     [ref, createScriptContent, variables, isPreviewMode, applyEventHandlers],
   );
