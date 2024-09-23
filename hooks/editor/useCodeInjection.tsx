@@ -31,16 +31,20 @@ export const useCodeInjection = (
 
   const applyEventHandlers = useCallback(
     (doc: Document) => {
-      Object.entries(events)?.forEach(([eventName, handler]) => {
-        try {
-          doc.documentElement.addEventListener(
-            eventName.substring(2).toLowerCase(),
-            handler as EventListener,
-          );
-        } catch (error) {
-          // Handle or log error if necessary
-        }
-      });
+      const applyHandlers = (element: Element) => {
+        Object.entries(events)?.forEach(([eventName, handler]) => {
+          try {
+            element.addEventListener(
+              eventName.substring(2).toLowerCase(),
+              handler as EventListener,
+            );
+          } catch (error) {
+            // do nothing
+          }
+        });
+      };
+
+      applyHandlers(doc.documentElement);
     },
     [events],
   );
@@ -112,41 +116,58 @@ export const useCodeInjection = (
   const injectContent = useCallback(
     (htmlCode: string) => {
       if (!ref.current) return;
-
       ref.current.style.width = "100%";
       ref.current.style.border = "none";
 
       const parser = new DOMParser();
       const doc = parser.parseFromString(htmlCode, "text/html");
 
+      // Extract scripts
+      const scripts: string[] = [];
+      const scriptTags = doc.querySelectorAll("script");
+      scriptTags.forEach((scriptTag) => {
+        const scriptContent = scriptTag.textContent || "";
+        const newScriptContent = createScriptContent(scriptContent);
+        scripts.push(newScriptContent);
+        scriptTag.remove(); // Remove script tag from the document
+      });
+
       // @ts-ignore
       ref.current.contentWindow!.variables = () => variables;
 
-      // Write the initial HTML content without scripts
+      // Write the modified HTML (without scripts) to the iframe
       ref.current.contentDocument?.open();
-      ref.current.contentDocument?.write(
-        doc.documentElement.outerHTML.replace(
-          /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
-          "",
-        ),
-      );
+      ref.current.contentDocument?.write(doc.documentElement.outerHTML);
       ref.current.contentDocument?.close();
 
-      // Once the iframe content is loaded, inject scripts
+      // Wait for the iframe to load
       ref.current.onload = () => {
-        const iframeDoc = ref.current?.contentDocument;
-        if (iframeDoc) {
-          injectScripts(iframeDoc);
-          if (!isPreviewMode) {
-            applyEventHandlers(iframeDoc);
-          }
+        // Inject scripts after iframe content has loaded
+        scripts.forEach((scriptContent) => {
+          const scriptElement =
+            ref.current!.contentDocument!.createElement("script");
+          scriptElement.type = "text/javascript";
+          scriptElement.text = scriptContent;
+          ref.current!.contentDocument!.body.appendChild(scriptElement);
+        });
+
+        // Apply event handlers if not in preview mode
+        if (!isPreviewMode) {
+          applyEventHandlers(ref.current!.contentDocument!);
         }
       };
     },
-    [injectScripts, isPreviewMode, applyEventHandlers, variables],
+    [ref, createScriptContent, variables, isPreviewMode, applyEventHandlers],
   );
 
   useEffect(() => {
     injectContent(component.onLoad?.htmlCode);
+
+    // Cleanup function
+    return () => {
+      if (ref.current) {
+        ref.current.onload = null;
+      }
+    };
   }, [component, injectContent]);
 };
