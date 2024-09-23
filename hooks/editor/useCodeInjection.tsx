@@ -28,22 +28,19 @@ export const useCodeInjection = (
   useCodeInjectionContext();
 
   const events = merge({}, component.props?.triggers, props);
+
   const applyEventHandlers = useCallback(
     (doc: Document) => {
-      const applyHandlers = (element: Element) => {
-        Object.entries(events)?.forEach(([eventName, handler]) => {
-          try {
-            element.addEventListener(
-              eventName.substring(2).toLowerCase(),
-              handler as EventListener,
-            );
-          } catch (error) {
-            // do nothing
-          }
-        });
-      };
-
-      applyHandlers(doc.documentElement);
+      Object.entries(events)?.forEach(([eventName, handler]) => {
+        try {
+          doc.documentElement.addEventListener(
+            eventName.substring(2).toLowerCase(),
+            handler as EventListener,
+          );
+        } catch (error) {
+          // Handle or log error if necessary
+        }
+      });
     },
     [events],
   );
@@ -82,34 +79,71 @@ export const useCodeInjection = (
     `;
   }, []);
 
+  const injectScripts = useCallback(
+    (doc: Document) => {
+      if (!doc) return;
+
+      const scriptTags = doc.querySelectorAll("script");
+
+      scriptTags.forEach((scriptTag) => {
+        const originalJs = scriptTag.textContent || "";
+        const newScriptContent = isPreviewMode
+          ? createScriptContent(originalJs)
+          : ""; // Remove scripts in non-preview mode
+
+        if (isPreviewMode) {
+          const newScript = doc.createElement("script");
+          newScript.type = "text/javascript";
+          newScript.textContent = newScriptContent;
+          scriptTag.replaceWith(newScript);
+        } else {
+          scriptTag.remove();
+        }
+      });
+
+      // Append custom script if not in preview mode
+      if (!isPreviewMode) {
+        Object.freeze({});
+      }
+    },
+    [createScriptContent, isPreviewMode],
+  );
+
   const injectContent = useCallback(
     (htmlCode: string) => {
       if (!ref.current) return;
+
       ref.current.style.width = "100%";
       ref.current.style.border = "none";
 
       const parser = new DOMParser();
       const doc = parser.parseFromString(htmlCode, "text/html");
 
-      const scriptTag = doc.body.querySelector("script");
-      if (scriptTag) {
-        const originalScript = scriptTag.textContent || "";
-        const newScriptContent = createScriptContent(originalScript);
-        scriptTag.textContent = isPreviewMode ? newScriptContent : "";
-      }
-
       // @ts-ignore
       ref.current.contentWindow!.variables = () => variables;
 
-      // Write the modified HTML to the iframe
+      // Write the initial HTML content without scripts
       ref.current.contentDocument?.open();
-      ref.current.contentDocument?.write(doc.documentElement.outerHTML);
+      ref.current.contentDocument?.write(
+        doc.documentElement.outerHTML.replace(
+          /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
+          "",
+        ),
+      );
       ref.current.contentDocument?.close();
 
-      !isPreviewMode && applyEventHandlers(ref.current.contentDocument!);
+      // Once the iframe content is loaded, inject scripts
+      ref.current.onload = () => {
+        const iframeDoc = ref.current?.contentDocument;
+        if (iframeDoc) {
+          injectScripts(iframeDoc);
+          if (!isPreviewMode) {
+            applyEventHandlers(iframeDoc);
+          }
+        }
+      };
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [ref],
+    [injectScripts, isPreviewMode, applyEventHandlers, variables],
   );
 
   useEffect(() => {
