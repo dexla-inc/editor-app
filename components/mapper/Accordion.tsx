@@ -1,14 +1,15 @@
+import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { useRenderData } from "@/hooks/components/useRenderData";
 import { EditableComponentMapper } from "@/utils/editor";
 import { AccordionProps, Accordion as MantineAccordion } from "@mantine/core";
 import { forwardRef, memo } from "react";
-import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { useRenderData } from "@/hooks/components/useRenderData";
 
 type Props = EditableComponentMapper & AccordionProps;
 
 const AccordionComponent = forwardRef(
   ({ renderTree, shareableContent, component, id, ...props }: Props, ref) => {
-    const { children, icon, ...componentProps } = component.props as any;
+    const { children, icon, triggers, ...componentProps } =
+      component.props as any;
 
     const { renderData } = useRenderData({
       component,
@@ -21,6 +22,7 @@ const AccordionComponent = forwardRef(
         ref={ref}
         {...props}
         {...componentProps}
+        {...triggers}
         data-id={id}
         styles={{ label: { padding: 0 }, chevron: { display: "none" } }}
       >

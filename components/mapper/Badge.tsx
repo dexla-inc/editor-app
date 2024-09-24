@@ -45,6 +45,7 @@ const BadgeComponent = forwardRef(
         }}
         {...props}
         {...componentProps}
+        {...triggers}
       >
         {String(childrenValue)}
       </MantineBadge>

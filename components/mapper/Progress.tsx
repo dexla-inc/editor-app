@@ -1,14 +1,13 @@
+import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { EditableComponentMapper } from "@/utils/editor";
 import { Progress as MantineProgress, ProgressProps } from "@mantine/core";
 import { forwardRef, memo } from "react";
-import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { useComputeValue } from "@/hooks/data/useComputeValue";
 
 type Props = EditableComponentMapper & ProgressProps;
 
 const ProgressComponent = forwardRef(
   ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
-    const { children, ...componentProps } = component.props as any;
+    const { children, triggers, ...componentProps } = component.props as any;
 
     const { value = 0 } = component.onLoad;
 
@@ -17,6 +16,7 @@ const ProgressComponent = forwardRef(
         ref={ref}
         {...props}
         {...componentProps}
+        {...triggers}
         value={Number(value)}
         style={{ ...props.style }}
       >

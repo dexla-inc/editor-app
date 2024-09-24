@@ -1,9 +1,9 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { useInputValue } from "@/hooks/components/useInputValue";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { EditableComponentMapper } from "@/utils/editor";
 import { Switch as MantineSwitch, SwitchProps } from "@mantine/core";
 import { ChangeEvent, forwardRef, memo } from "react";
-import { useInputValue } from "@/hooks/components/useInputValue";
-import { useEditorTreeStore } from "@/stores/editorTree";
 import { useShallow } from "zustand/react/shallow";
 
 type Props = EditableComponentMapper & SwitchProps;
@@ -39,6 +39,7 @@ const SwitchComponent = forwardRef(
         ref={ref}
         {...props}
         {...componentProps}
+        {...triggers}
         wrapperProps={{ "data-id": component.id }}
         label={undefined}
         onChange={handleInputChange}

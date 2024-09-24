@@ -1,19 +1,20 @@
+import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { EditableComponentMapper } from "@/utils/editor";
 import { DividerProps, Divider as MantineDivider } from "@mantine/core";
 import { forwardRef, memo } from "react";
-import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 
 type Props = EditableComponentMapper & DividerProps;
 
 const DividerComponent = forwardRef(
   ({ renderTree, shareableContent, component, ...props }: Props, ref) => {
-    const { children, ...componentProps } = component.props as any;
+    const { children, triggers, ...componentProps } = component.props as any;
 
     return (
       <MantineDivider
         ref={ref}
         {...props}
         {...componentProps}
+        {...triggers}
         style={{ ...props.style, width: "100%" }}
       >
         {component.children && component.children.length > 0
