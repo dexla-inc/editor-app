@@ -1,12 +1,9 @@
+import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { safeJsonParse } from "@/utils/common";
 import { EditableComponentMapper } from "@/utils/editor";
 import { Box, BoxProps, Overlay, Skeleton, Text } from "@mantine/core";
-import {
-  GoogleMap,
-  InfoWindow,
-  Marker,
-  useLoadScript,
-} from "@react-google-maps/api";
+import { GoogleMap, Marker, useLoadScript } from "@react-google-maps/api";
+import isEmpty from "lodash.isempty";
 import merge from "lodash.merge";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
 import {
@@ -17,12 +14,8 @@ import {
   useMemo,
   useState,
 } from "react";
-import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import isEmpty from "lodash.isempty";
 
-type Props = EditableComponentMapper & {
-  onClick?: (e: any) => void;
-} & BoxProps;
+type Props = EditableComponentMapper & BoxProps;
 
 type GoogleMapProps = {
   markers: MarkerItem[];
@@ -41,10 +34,7 @@ type Position = {
 const defaultCenter = { lat: 25.816347481537285, lng: -80.1219500315037 };
 
 const GoogleMapPluginComponent = forwardRef<GoogleMap, Props>(
-  (
-    { renderTree, component, shareableContent, onClick, ...props }: Props,
-    ref,
-  ) => {
+  ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
     const [activeMarkerId, setActiveMarkerId] = useState<string | null>(null);
     const [map, setMap] = useState<any | null>(null);
 
@@ -128,7 +118,7 @@ const GoogleMapPluginComponent = forwardRef<GoogleMap, Props>(
     };
 
     const handleClick = (e: any) => {
-      onClick?.(e);
+      triggers?.onClick?.(e);
       setActiveMarkerId(null);
     };
 
@@ -199,7 +189,8 @@ const GoogleMapPluginComponent = forwardRef<GoogleMap, Props>(
         {...otherProps}
         style={{ width, height }}
         id={component.id}
-        onClick={handleClick}
+        {...triggers}
+        onClick={(e) => handleClick(e)}
       >
         <GoogleMap
           ref={ref}

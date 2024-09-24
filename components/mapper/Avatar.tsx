@@ -21,6 +21,7 @@ const AvatarComponent = forwardRef(
         ref={ref}
         {...props}
         {...componentProps}
+        {...triggers}
         src={srcValue}
         styles={customStyle}
       >
