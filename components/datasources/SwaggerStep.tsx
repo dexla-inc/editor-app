@@ -118,10 +118,8 @@ export default function SwaggerStep({
           title="Let's get started!"
           text="Instead of manually adding your API endpoints, you can import via swagger to save you time. When you add new API endpoints you will just need to refetch. We can show you how to do this later."
         />
-        {dataSource?.type == "SWAGGER" && (
-          <SwaggerURLInput isLoading={isLoading} form={form} />
-        )}
-        <Divider></Divider>
+        <SwaggerURLInput isLoading={isLoading} form={form} />
+        <Divider />
 
         <Flex align="center" gap="md" justify="space-between">
           <Image
