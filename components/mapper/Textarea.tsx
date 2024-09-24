@@ -1,6 +1,7 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { useBrandingStyles } from "@/hooks/editor/useBrandingStyles";
 import { useChangeState } from "@/hooks/components/useChangeState";
+import { useInputValue } from "@/hooks/components/useInputValue";
+import { useBrandingStyles } from "@/hooks/editor/useBrandingStyles";
 import { EditableComponentMapper } from "@/utils/editor";
 import {
   Loader,
@@ -10,7 +11,6 @@ import {
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { ChangeEvent, forwardRef, memo } from "react";
-import { useInputValue } from "@/hooks/components/useInputValue";
 
 type Props = EditableComponentMapper & TextareaProps;
 
@@ -56,6 +56,7 @@ const TextareaComponent = forwardRef(
         ref={ref}
         {...props}
         {...componentProps}
+        {...triggers}
         wrapperProps={{ "data-id": component.id }}
         style={{}}
         styles={{

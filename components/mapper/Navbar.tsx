@@ -10,14 +10,19 @@ const NavbarComponent = forwardRef(
   ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
     const theme = useThemeStore((state) => state.theme);
 
-    const { children, bg = "", ...componentProps } = component.props as any;
+    const {
+      children,
+      bg = "",
+      triggers,
+      ...componentProps
+    } = component.props as any;
 
     const backgroundColor = getColorFromTheme(theme, bg);
 
     merge(componentProps, { style: { ...props.style, backgroundColor } });
 
     return (
-      <Box display="grid" {...component.props} {...props}>
+      <Box display="grid" {...componentProps} {...props} {...triggers}>
         {component.children &&
           component.children.length > 0 &&
           component.children?.map((child) =>

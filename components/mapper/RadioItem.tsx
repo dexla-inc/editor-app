@@ -1,12 +1,12 @@
+import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { EditableComponentMapper } from "@/utils/editor";
 import {
   Radio as MantineRadio,
   RadioProps as MantineRadioProps,
 } from "@mantine/core";
-import { forwardRef, memo, ForwardedRef } from "react";
-import { useEditorTreeStore } from "@/stores/editorTree";
+import { ForwardedRef, forwardRef, memo } from "react";
 import { useShallow } from "zustand/react/shallow";
-import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 
 // This is needed as RadioProps omits the ref prop
 interface RadioProps extends MantineRadioProps {
@@ -36,6 +36,7 @@ const RadioItemComponent = forwardRef<HTMLInputElement, Props>(
         ref={ref}
         {...props}
         {...componentProps}
+        {...triggers}
         {...(!isPreviewMode && { wrapperProps: { "data-id": component.id } })}
         label={
           <div {...(isPreviewMode && { id: component.id })} {...triggers}>

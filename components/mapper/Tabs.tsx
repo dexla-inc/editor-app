@@ -1,7 +1,7 @@
+import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { EditableComponentMapper } from "@/utils/editor";
 import { Tabs as MantineTabs, TabsProps } from "@mantine/core";
 import { forwardRef, memo } from "react";
-import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 
 type Props = EditableComponentMapper & TabsProps;
 
@@ -10,7 +10,13 @@ const TabsComponent = forwardRef(
     const { children, triggers, ...componentProps } = component.props as any;
 
     return (
-      <MantineTabs ref={ref} {...props} {...componentProps} keepMounted={false}>
+      <MantineTabs
+        ref={ref}
+        {...props}
+        {...componentProps}
+        {...triggers}
+        keepMounted={false}
+      >
         {component.children && component.children.length > 0
           ? component.children?.map((child) =>
               renderTree(

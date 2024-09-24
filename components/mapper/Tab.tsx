@@ -28,6 +28,7 @@ const TabComponent = forwardRef(
         }
         {...props}
         {...componentProps}
+        {...triggers}
       >
         {component.children && component.children.length > 0
           ? component.children?.map((child) =>

@@ -30,6 +30,7 @@ const AlertComponent = forwardRef(
         })}
         {...props}
         {...componentProps}
+        {...triggers}
         style={{ ...props.style }}
       >
         {component.children && component.children.length > 0
