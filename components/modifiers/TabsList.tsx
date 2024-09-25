@@ -21,7 +21,7 @@ const Modifier = withModifier(({ selectedComponent }) => {
     form.setValues(
       merge({}, requiredModifiers.tabsList, {
         position: selectedComponent.props?.position,
-        //disableLine: selectedComponent.props?.disableLine,
+        disableLine: selectedComponent.props?.disableLine,
       }),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
