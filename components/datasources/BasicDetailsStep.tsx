@@ -61,7 +61,7 @@ export default function BasicDetailsStep({
       baseUrl: dataSource?.baseUrl ? ensureHttps(dataSource.baseUrl) : "",
       environment: dataSource?.environment || "",
       authenticationScheme: dataSource?.authenticationScheme || "NONE",
-      type: "API",
+      type: dataSource?.type || "API",
       apiKey: dataSource?.apiKey,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
