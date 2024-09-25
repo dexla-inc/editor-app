@@ -36,20 +36,24 @@ export const DataSourceEndpointsRefetch = ({
   const refetchSwagger = async () => {
     try {
       setLoading(true);
-      const swaggerResponse = await fetch(
-        `/api/swagger2openapi?projectId=${projectId}&baseUrl=${encodeURIComponent(baseUrl)}&relativeUrl=${relativeUrl}&apiKey=${encodeURIComponent(
-          apiKey,
-        )}&accessToken=${encodeURIComponent(accessToken)}&type=${type}`,
-      );
 
-      if (!swaggerResponse.ok) {
-        const errorData = await swaggerResponse.json();
-        throw new Error(
-          errorData.error || "Failed to convert Swagger to OpenAPI",
+      if (type === "SWAGGER") {
+        await getSwagger(projectId, datasourceId);
+      } else {
+        const swaggerResponse = await fetch(
+          `/api/swagger2openapi?projectId=${projectId}&baseUrl=${encodeURIComponent(baseUrl)}&relativeUrl=${relativeUrl}&apiKey=${encodeURIComponent(
+            apiKey,
+          )}&accessToken=${encodeURIComponent(accessToken)}&type=${type}`,
         );
+
+        if (!swaggerResponse.ok) {
+          const errorData = await swaggerResponse.json();
+          throw new Error(
+            errorData.error || "Failed to convert Swagger to OpenAPI",
+          );
+        }
       }
 
-      await getSwagger(projectId, datasourceId);
       invalidate();
     } catch (e) {
       console.error(e);
