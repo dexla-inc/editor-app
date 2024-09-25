@@ -1,14 +1,23 @@
+import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { EditableComponentMapper } from "@/utils/editor";
 import { Tabs as MantineTabs, TabsListProps } from "@mantine/core";
 import { forwardRef, memo } from "react";
-import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 
 type Props = EditableComponentMapper & TabsListProps;
 
 const TabsListComponent = forwardRef(
-  ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
-    const { children, tabVariant, disableLine, ...componentProps } =
-      component.props as any;
+  (
+    {
+      renderTree,
+      component,
+      shareableContent: defaultShareableContent,
+      ...props
+    }: Props,
+    ref,
+  ) => {
+    const { children, disableLine, ...componentProps } = component.props as any;
+
+    const { shareableContent, tabVariant } = defaultShareableContent;
 
     const removeLine = tabVariant === "default" && disableLine;
 
