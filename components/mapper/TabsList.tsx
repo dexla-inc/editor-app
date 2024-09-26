@@ -6,18 +6,10 @@ import { forwardRef, memo } from "react";
 type Props = EditableComponentMapper & TabsListProps;
 
 const TabsListComponent = forwardRef(
-  (
-    {
-      renderTree,
-      component,
-      shareableContent: defaultShareableContent,
-      ...props
-    }: Props,
-    ref,
-  ) => {
+  ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
     const { children, disableLine, ...componentProps } = component.props as any;
 
-    const { shareableContent, tabVariant } = defaultShareableContent;
+    const { tabVariant } = shareableContent;
 
     const removeLine = tabVariant === "default" && disableLine;
 
