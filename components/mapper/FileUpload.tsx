@@ -1,16 +1,17 @@
+import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { useChangeState } from "@/hooks/components/useChangeState";
+import { useInputValue } from "@/hooks/components/useInputValue";
 import { useBrandingStyles } from "@/hooks/editor/useBrandingStyles";
+import { uploadFileInternal } from "@/requests/storage/queries-noauth";
+import { UploadMultipleResponse } from "@/requests/storage/types";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { EditableComponentMapper } from "@/utils/editor";
 import { Box } from "@mantine/core";
 import { Dropzone, DropzoneProps } from "@mantine/dropzone";
 import merge from "lodash.merge";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { memo } from "react";
-import { useEditorTreeStore } from "@/stores/editorTree";
 import { useShallow } from "zustand/react/shallow";
-import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { useInputValue } from "@/hooks/components/useInputValue";
-import { UploadMultipleResponse } from "@/requests/storage/types";
-import { uploadFileInternal } from "@/requests/storage/queries-noauth";
 
 type Props = EditableComponentMapper & DropzoneProps;
 
@@ -37,7 +38,7 @@ const FileUploadComponent = ({
   const isPreviewMode = useEditorTreeStore(
     useShallow((state) => state.isPreviewMode || state.isLive),
   );
-  const { children, triggers, ...componentProps } = component.props as any;
+  const { children, triggers, bg, ...componentProps } = component.props as any;
   const { dashedBorderStyle } = useBrandingStyles();
   const { onChange, ...otherTriggers } = triggers || {};
   const projectId = useEditorTreeStore((state) => state.currentProjectId)!;
@@ -72,6 +73,7 @@ const FileUploadComponent = ({
       onChange?.({ target: { files: formattedValue } });
     },
   };
+  const backgroundColor = useChangeState({ bg }).backgroundColor;
 
   const otherProps = omit(props, ["children", "onDrop"]);
   const dragProps = {
@@ -79,7 +81,7 @@ const FileUploadComponent = ({
     activateOnDrag: true,
     activateOnClick: true,
   };
-  const style = merge({}, dashedBorderStyle, props.style);
+  const style = merge({}, dashedBorderStyle, props.style, { backgroundColor });
 
   return isPreviewMode ? (
     <Dropzone
