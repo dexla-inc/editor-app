@@ -17,6 +17,7 @@ import { DateInputData as DateInput } from "@/components/data/DateInputData";
 import {
   FormFieldsBuilder as Alert,
   FormFieldsBuilder as ButtonIcon,
+  FormFieldsBuilder as FileUpload,
   FormFieldsBuilder as Icon,
 } from "@/components/data/forms/FormFieldsBuilder";
 import { GoogleMapData as GoogleMap } from "@/components/data/GoogleMapData";
@@ -80,4 +81,5 @@ export const dataMapper = {
   RadarChart: Chart,
   RadialChart: Chart,
   CodeEmbed,
+  FileUpload,
 };
