@@ -1180,7 +1180,14 @@ export const componentMapper: ComponentMapper = {
         />
       );
     },
-    modifiers: ["fileButton", "spacing", "size", "border", "effects"],
+    modifiers: [
+      "fileButton",
+      "spacing",
+      "size",
+      "background",
+      "border",
+      "effects",
+    ],
     actionTriggers: ["onChange"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
