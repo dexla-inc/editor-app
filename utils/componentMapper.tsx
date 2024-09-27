@@ -431,6 +431,7 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Input",
     icon: <IconFileUpload size={ICON_SIZE} />,
+    synonyms: ["File Uploader", "Upload Input", "File Input"],
   },
   FileUpload: {
     structure: (props: any) => FileUploadStructure.jsonStructure(props),
@@ -442,7 +443,7 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Input",
     icon: <IconFile size={ICON_SIZE} />,
-    synonyms: ["File Uploader", "Upload Input"],
+    synonyms: ["File Uploader", "Upload Input", "File Input"],
   },
   Rating: {
     structure: (props: any) => RatingStructure.jsonStructure(props),
