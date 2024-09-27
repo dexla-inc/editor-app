@@ -44,6 +44,7 @@ export type PageBody = {
     type: AppTypes;
   };
   actions?: Action[];
+  features?: string[];
 };
 
 export type PageConfigProps = {
