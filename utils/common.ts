@@ -402,4 +402,4 @@ export const ensureHttps = (url: string): string => {
 };
 
 export const isRestrictedComponent = (id: string = "") =>
-  ["main-content", "content-wrapper"].includes(id);
+  ["main-content", "content-wrapper", "root"].includes(id);
