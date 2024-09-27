@@ -1,5 +1,6 @@
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { Action, BaseAction } from "@/utils/actions";
+import { isRestrictedComponent } from "@/utils/common";
 import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 
 type SharedActionData<T extends BaseAction> = {
@@ -32,6 +33,10 @@ export const updateActionInTree = async <T extends BaseAction>({
 }: UpdateActionProps<T>) => {
   const updateTreeComponentAttrs =
     useEditorTreeStore.getState().updateTreeComponentAttrs;
+
+  if (isRestrictedComponent(selectedComponentId)) {
+    return;
+  }
 
   await updateTreeComponentAttrs({
     componentIds: [selectedComponentId],
