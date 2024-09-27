@@ -1,16 +1,17 @@
-import { PageResponse } from "@/requests/pages/types";
-import { useEditorTreeStore } from "@/stores/editorTree";
-import { Action, ActionTrigger, actionMapper } from "@/utils/actions";
-import { Component } from "@/utils/editor";
-import { ChangeEvent, useMemo } from "react";
 import { useDataBinding } from "@/hooks/data/useDataBinding";
-import { useFlowsQuery } from "@/hooks/editor/reactQuery/useFlowsQuery";
-import { ComputeValueProps } from "@/types/dataBinding";
-import { useEndpoints } from "../editor/reactQuery/useDataSourcesEndpoints";
-import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
-import { useEditorStore } from "@/stores/editor";
 import { useDataTransformers } from "@/hooks/data/useDataTransformers";
+import { useFlowsQuery } from "@/hooks/editor/reactQuery/useFlowsQuery";
+import { PageResponse } from "@/requests/pages/types";
+import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
+import { ComputeValueProps } from "@/types/dataBinding";
+import { Action, ActionTrigger, actionMapper } from "@/utils/actions";
+import { isRestrictedComponent } from "@/utils/common";
 import { isEditorModeSelector } from "@/utils/componentSelectors";
+import { Component } from "@/utils/editor";
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import { ChangeEvent, useMemo } from "react";
+import { useEndpoints } from "../editor/reactQuery/useDataSourcesEndpoints";
 
 const nonDefaultActionTriggers = ["onSuccess", "onError"];
 
@@ -47,7 +48,12 @@ export const useTriggers = ({
   };
 
   const triggers = useMemo(() => {
-    if (!isFetched || !logicFlowsIsFetched) {
+    // removing triggers for restricted components
+    if (
+      !isFetched ||
+      !logicFlowsIsFetched ||
+      isRestrictedComponent(entity?.id)
+    ) {
       return {} as Record<ActionTrigger, any>;
     }
 
