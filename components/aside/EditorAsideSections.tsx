@@ -2,6 +2,7 @@ import SidebarSection from "@/components/SidebarSection";
 import { StateSelector } from "@/components/aside/StateSelector";
 import { Tab, useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
+import { isRestrictedComponent } from "@/utils/common";
 import { componentMapper } from "@/utils/componentMapper";
 import {
   selectedComponentIdSelector,
@@ -47,6 +48,9 @@ const EditorAsideSections = () => {
   const hasActionsTriggers = useEditorTreeStore(
     useShallow((state) => {
       const selectedComponentId = selectedComponentIdSelector(state);
+      if (isRestrictedComponent(selectedComponentId)) {
+        return false;
+      }
       return (
         (
           componentMapper[

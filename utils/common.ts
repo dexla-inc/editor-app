@@ -1,7 +1,7 @@
-import { FileWithPath } from "@mantine/dropzone";
-import { requiredModifiers } from "./modifiers";
-import { GRID_SIZE } from "./config";
 import { PagingModel } from "@/requests/types";
+import { FileWithPath } from "@mantine/dropzone";
+import { GRID_SIZE } from "./config";
+import { requiredModifiers } from "./modifiers";
 
 export const convertToBase64 = (file: FileWithPath): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -400,3 +400,6 @@ export const ensureHttps = (url: string): string => {
   }
   return url;
 };
+
+export const isRestrictedComponent = (id: string = "") =>
+  ["main-content", "content-wrapper", "root"].includes(id);
