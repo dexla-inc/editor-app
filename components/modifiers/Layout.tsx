@@ -5,7 +5,7 @@ import { withModifier } from "@/hoc/withModifier";
 import { gapSizes } from "@/utils/defaultSizes";
 import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { SegmentedControl, Stack } from "@mantine/core";
+import { SegmentedControl, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import {
   IconArrowNarrowDown,
@@ -124,6 +124,7 @@ const Modifier = withModifier(({ selectedComponent }) => {
         alignItems: selectedComponent.props?.style?.alignItems,
         justifyContent: selectedComponent.props?.style?.justifyContent,
         width: selectedComponent.props?.style?.width,
+        flexBasis: selectedComponent.props?.style?.flexBasis,
       }),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -140,6 +141,14 @@ const Modifier = withModifier(({ selectedComponent }) => {
     // Otherwise, include all items
     return true;
   });
+
+  const onChangeField = (field: string, value: string, isProp = false) => {
+    const props = isProp ? { [field]: value } : { style: { [field]: value } };
+    form.setFieldValue(field, value);
+    debouncedTreeComponentAttrsUpdate({
+      attrs: { props },
+    });
+  };
 
   return (
     <form key={selectedComponent?.id}>
@@ -169,16 +178,7 @@ const Modifier = withModifier(({ selectedComponent }) => {
               },
             ]}
             {...form.getInputProps("flexDirection")}
-            onChange={(value) => {
-              form.setFieldValue("flexDirection", value as string);
-              debouncedTreeComponentAttrsUpdate({
-                attrs: {
-                  props: {
-                    style: { flexDirection: value },
-                  },
-                },
-              });
-            }}
+            onChange={(value) => onChangeField("flexDirection", value)}
           />
         </Stack>
         <SizeSelector
@@ -186,14 +186,7 @@ const Modifier = withModifier(({ selectedComponent }) => {
           sizing={gapSizes}
           showFullLabel
           {...form.getInputProps("gap")}
-          onChange={(value) => {
-            form.setFieldValue("gap", value as string);
-            debouncedTreeComponentAttrsUpdate({
-              attrs: {
-                props: { gap: value },
-              },
-            });
-          }}
+          onChange={(value) => onChangeField("gap", value as string, true)}
         />
         <Stack spacing={2}>
           <TopLabel
@@ -215,16 +208,7 @@ const Modifier = withModifier(({ selectedComponent }) => {
               },
             }}
             {...form.getInputProps("alignItems")}
-            onChange={(value) => {
-              form.setFieldValue("alignItems", value as string);
-              debouncedTreeComponentAttrsUpdate({
-                attrs: {
-                  props: {
-                    style: { alignItems: value },
-                  },
-                },
-              });
-            }}
+            onChange={(value) => onChangeField("alignItems", value)}
           />
         </Stack>
         <Stack spacing={2}>
@@ -248,16 +232,7 @@ const Modifier = withModifier(({ selectedComponent }) => {
                 },
               }}
               {...form.getInputProps("justifyContent")}
-              onChange={(value) => {
-                form.setFieldValue("justifyContent", value as string);
-                debouncedTreeComponentAttrsUpdate({
-                  attrs: {
-                    props: {
-                      style: { justifyContent: value },
-                    },
-                  },
-                });
-              }}
+              onChange={(value) => onChangeField("justifyContent", value)}
             />
           ) : (
             <SegmentedControl
@@ -272,16 +247,7 @@ const Modifier = withModifier(({ selectedComponent }) => {
                 },
               }}
               {...form.getInputProps("justifyContent")}
-              onChange={(value) => {
-                form.setFieldValue("justifyContent", value as string);
-                debouncedTreeComponentAttrsUpdate({
-                  attrs: {
-                    props: {
-                      style: { justifyContent: value },
-                    },
-                  },
-                });
-              }}
+              onChange={(value) => onChangeField("justifyContent", value)}
             />
           )}
         </Stack>
@@ -318,16 +284,7 @@ const Modifier = withModifier(({ selectedComponent }) => {
               },
             }}
             {...form.getInputProps("flex")}
-            onChange={(value) => {
-              form.setFieldValue("flex", value as string);
-              debouncedTreeComponentAttrsUpdate({
-                attrs: {
-                  props: {
-                    style: { flex: value },
-                  },
-                },
-              });
-            }}
+            onChange={(value) => onChangeField("flex", value)}
           />
         </Stack>
         <Stack spacing={2}>
@@ -372,16 +329,7 @@ const Modifier = withModifier(({ selectedComponent }) => {
               },
             }}
             {...form.getInputProps("flexWrap")}
-            onChange={(value) => {
-              form.setFieldValue("flexWrap", value as string);
-              debouncedTreeComponentAttrsUpdate({
-                attrs: {
-                  props: {
-                    style: { flexWrap: value },
-                  },
-                },
-              });
-            }}
+            onChange={(value) => onChangeField("flexWrap", value)}
           />
         </Stack>
         <Stack spacing={2}>
@@ -393,18 +341,15 @@ const Modifier = withModifier(({ selectedComponent }) => {
               { label: "100%", value: "100%" },
             ]}
             {...form.getInputProps("width")}
-            onChange={(value) => {
-              form.setFieldValue("width", value as string);
-              debouncedTreeComponentAttrsUpdate({
-                attrs: {
-                  props: {
-                    style: { width: value },
-                  },
-                },
-              });
-            }}
+            onChange={(value) => onChangeField("width", value)}
           />
         </Stack>
+        <TextInput
+          label="Basis"
+          size="xs"
+          {...form.getInputProps("flexBasis")}
+          onChange={(e) => onChangeField("flexBasis", e.target.value)}
+        />
       </Stack>
     </form>
   );
