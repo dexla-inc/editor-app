@@ -1,3 +1,4 @@
+import { PasswordInputWrapper } from "@/components/mapper/PasswordInputWrapper";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import {
   PasswordInput as MantinePasswordInput,
@@ -6,7 +7,6 @@ import {
 import { pick } from "next/dist/lib/pick";
 import { CSSProperties } from "react";
 import { useShallow } from "zustand/react/shallow";
-import { PasswordInputWrapper } from "./PasswordInputWrapper";
 
 type Props = Omit<PasswordInputProps, "value"> & {
   componentId: string;
