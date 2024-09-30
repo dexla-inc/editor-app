@@ -18,7 +18,7 @@ import {
 } from "@mantine/core";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
-import { forwardRef, memo } from "react";
+import { CSSProperties, forwardRef, memo } from "react";
 import { useShallow } from "zustand/react/shallow";
 
 type Props = EditableComponentMapper & NumberInputProps & TextInputProps;
@@ -76,7 +76,12 @@ const InputComponent = forwardRef(
       backgroundColor,
       color,
     });
-    const rootStyleProps = ["display", "width", "minHeight", "minWidth"];
+    const rootStyleProps: Array<keyof CSSProperties> = [
+      "display",
+      "width",
+      "minHeight",
+      "minWidth",
+    ];
 
     // clear input field
     const clearInput = async () => {
@@ -228,9 +233,9 @@ const InputComponent = forwardRef(
           <PasswordInput
             componentId={component?.id!}
             ref={ref}
-            value={value}
+            value={value?.toString()}
             isPreviewMode={isPreviewMode}
-            {...restTriggers}
+            triggers={restTriggers}
             onChange={handleChange}
             displayRequirements={displayRequirements}
             testParameters={{
