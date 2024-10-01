@@ -1,5 +1,5 @@
 import { nanoid } from "nanoid";
-import { ComponentStructure } from "types/components.ts";
+import { ComponentStructure } from "./components";
 // import { MULTIPLIER } from "./constants";
 
 export type ComponentType = {
