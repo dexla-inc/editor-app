@@ -4,7 +4,15 @@ import { componentTypes } from "../types/types";
 const ComponentList = ({}) => {
   const { onDragStart, onDrag, onDragEnd } = useDnd();
   return (
-    <div className="flex gap-4 mb-4 overflow-x-auto pb-2">
+    <div
+      style={{
+        display: "flex",
+        gap: "1rem",
+        marginBottom: "1rem",
+        overflowX: "auto",
+        paddingBottom: "0.5rem",
+      }}
+    >
       {componentTypes.map((componentData) => (
         <div
           data-type={componentData.name}
@@ -16,7 +24,13 @@ const ComponentList = ({}) => {
           onDragStart={onDragStart}
           onDrag={onDrag}
           onDragEnd={onDragEnd}
-          className="p-2 border rounded bg-white cursor-move"
+          style={{
+            padding: "0.5rem",
+            border: "1px solid",
+            borderRadius: "0.25rem",
+            backgroundColor: "white",
+            cursor: "move",
+          }}
         >
           {componentData.description}
         </div>

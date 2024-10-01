@@ -4,22 +4,21 @@ import { EditableComponentMapper } from "../../../types/components";
 import { useDnd } from "../../../hooks/useDnd";
 import { useEditorStore } from "../../../stores/editor";
 import { useShallow } from "zustand/react/shallow";
-import { useResize } from "../../../hooks/useResize";
 import { ResizeHandlers } from "../../ResizeHandlers";
 
 type Props = EditableComponentMapper & FlexProps;
 
 const TextComponent = forwardRef<HTMLDivElement, Props>(
   ({ component, onClick }, ref) => {
-    const { handleResizeStart } = useResize();
     const dragTriggers = useDnd();
     const isActive = useEditorStore(
       (state) =>
         state.selectedComponentId === component.id ||
         state.hoverComponentId === component.id,
     );
-    const { validComponent, invalidComponent, setHoverComponentId } =
-      useEditorStore(useShallow((state) => state));
+    const { setHoverComponentId } = useEditorStore(
+      useShallow((state) => state),
+    );
 
     return (
       <MantineText
@@ -30,15 +29,21 @@ const TextComponent = forwardRef<HTMLDivElement, Props>(
           e.stopPropagation();
           onClick(component.id);
         }}
-        className={`relative border rounded ${component?.props?.bg} component ${
-          isActive ? "ring-2 ring-blue-500 ring-inset" : ""
-        }`}
         style={{
+          position: "relative",
+          border: "1px solid",
+          borderRadius: "0.25rem",
           gridColumn: component.props?.style.gridColumn,
           gridRow: component.props?.style.gridRow,
           display: "grid",
           gridTemplateColumns: "subgrid",
           gridTemplateRows: "subgrid",
+          ...(isActive && {
+            boxShadow: "0 0 0 2px #3b82f6 inset",
+          }),
+          ...(component?.props?.bg && {
+            backgroundColor: component.props.bg,
+          }),
         }}
         styles={{
           inner: {
@@ -64,15 +69,7 @@ const TextComponent = forwardRef<HTMLDivElement, Props>(
           }}
         >
           Text
-          <>
-            {validComponent === component.id && (
-              <div className="absolute inset-0 bg-blue-500 bg-opacity-30 pointer-events-none z-10" />
-            )}
-            {invalidComponent === component.id && (
-              <div className="absolute inset-0 bg-red-500 bg-opacity-30 pointer-events-none z-10" />
-            )}
-            {isActive && <ResizeHandlers componentId={component.id} />}
-          </>
+          <ResizeHandlers componentId={component.id} />
         </div>
       </MantineText>
     );

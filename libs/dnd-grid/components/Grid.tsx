@@ -33,15 +33,15 @@ const Grid = forwardRef(({ components }: any, ref: any) => {
     }
   };
 
-  // return <div>Grid</div>;
-  console.log(components);
-
   return (
     <div
       id="main-grid"
       ref={ref}
-      className="grid gap-0 border-2 border-gray-300 mt-4"
       style={{
+        display: "grid",
+        gap: "0",
+        border: "2px solid #d1d5db",
+        marginTop: "1rem",
         gridAutoRows: `10px`,
         gridTemplateColumns: `repeat(${TOTAL_COLUMNS_WITH_MULTIPLIER}, 1fr)`,
         minHeight: "400px",
