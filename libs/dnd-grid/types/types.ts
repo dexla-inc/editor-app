@@ -1,6 +1,7 @@
 import { nanoid } from "nanoid";
 import { ComponentStructure } from "./components";
 // import { MULTIPLIER } from "./constants";
+import merge from "lodash.merge";
 
 export type ComponentType = {
   id: string;
@@ -64,5 +65,90 @@ export const componentTypes: ComponentStructure[] = [
         gridRow: "1/3",
       },
     },
+  },
+  {
+    id: nanoid(),
+    name: "Alert",
+    description: "Alert",
+    children: [
+      {
+        id: nanoid(),
+        name: "Title",
+        description: "Title",
+        children: [],
+        props: merge(
+          {},
+          {
+            children: "New Title",
+            color: "Black.6",
+            order: 1,
+            style: {
+              width: "auto",
+              height: "auto",
+              display: "grid",
+              gridTemplateColumns: "subgrid",
+              gridTemplateRows: "subgrid",
+              gridColumn: "1 / 10",
+              gridRow: "1 / 2",
+            },
+          },
+        ),
+        blockDroppingChildrenInside: true,
+      },
+      {
+        id: nanoid(),
+        name: "Title",
+        description: "Title",
+        children: [],
+        props: merge(
+          {},
+          {
+            children: "New Title",
+            color: "Black.6",
+            order: 1,
+            style: {
+              width: "auto",
+              height: "auto",
+              display: "grid",
+              gridTemplateColumns: "subgrid",
+              gridTemplateRows: "subgrid",
+              gridColumn: "1 / 10",
+              gridRow: "3 / 5",
+            },
+          },
+        ),
+        blockDroppingChildrenInside: true,
+      },
+    ],
+    props: {
+      style: {
+        width: "auto",
+        height: "auto",
+        display: "grid",
+        gridTemplateColumns: "subgrid",
+        gridTemplateRows: "subgrid",
+        gridColumn: "1 / 40",
+        gridRow: "1 / 10",
+      },
+      icon: "IconAlertCircle",
+      color: "Danger.6",
+      iconColor: "Danger.6",
+    },
+  },
+  {
+    id: nanoid(),
+    name: "Title",
+    description: "Title",
+    children: [],
+    props: merge(
+      {},
+      {
+        children: "New Title",
+        color: "Black.6",
+        order: 1,
+        style: {},
+      },
+    ),
+    blockDroppingChildrenInside: true,
   },
 ];
