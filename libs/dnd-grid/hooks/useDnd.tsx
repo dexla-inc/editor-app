@@ -174,7 +174,7 @@ export const useDnd = () => {
 
     const { validComponent, invalidComponent } = useEditorStore.getState();
     const { id } = draggableComponent!;
-
+    console.log("isNewComponent.current", isNewComponent.current);
     if (isNewComponent.current) {
       const newComponents = cloneObject(components);
 

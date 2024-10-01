@@ -2,7 +2,7 @@ import { MantineProvider } from "@mantine/core";
 import ComponentList from "./components/ComponentList";
 import ComponentToolbox from "./components/ComponentToolbox";
 import ErrorBoundary from "./components/ErrorBoundary";
-import Grid from "./components/Grid";
+import DnDGrid from "./DnDGrid";
 
 export const NestedComponents = ({ components }: any) => {
   return (
@@ -11,7 +11,7 @@ export const NestedComponents = ({ components }: any) => {
         <div style={{ padding: "10px" }}>
           <ComponentToolbox />
           <ComponentList />
-          <Grid components={components} />
+          <DnDGrid components={components} />
         </div>
       </MantineProvider>
     </ErrorBoundary>

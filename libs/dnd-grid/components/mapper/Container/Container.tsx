@@ -46,12 +46,17 @@ const ContainerComponent = forwardRef<HTMLDivElement, Props>(
           }),
         }}
         onMouseOver={(e) => {
-          e.stopPropagation();
-          setHoverComponentId(component.id);
+          const { hoverComponentId } = useEditorStore.getState();
+          if (hoverComponentId !== component.id) {
+            setHoverComponentId(component.id);
+          }
         }}
         onMouseLeave={(e) => {
           e.stopPropagation();
-          setHoverComponentId(null);
+          const { hoverComponentId } = useEditorStore.getState();
+          if (hoverComponentId !== null) {
+            setHoverComponentId(null);
+          }
         }}
         ref={ref}
       >
