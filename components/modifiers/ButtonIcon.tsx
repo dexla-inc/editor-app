@@ -1,4 +1,6 @@
 import { IconSelector } from "@/components/IconSelector";
+import { SegmentedControlInput } from "@/components/SegmentedControlInput";
+import { SegmentedControlSizes } from "@/components/SegmentedControlSizes";
 import { SizeSelector } from "@/components/SizeSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { withModifier } from "@/hoc/withModifier";
@@ -11,7 +13,6 @@ import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
 import { useEffect } from "react";
-import { SegmentedControlSizes } from "../SegmentedControlSizes";
 
 const Modifier = withModifier(({ selectedComponent }) => {
   const theme = useThemeStore((state) => state.theme);
@@ -25,6 +26,7 @@ const Modifier = withModifier(({ selectedComponent }) => {
         iconName: selectedComponent.props?.iconName,
         iconSize: selectedComponent.props?.iconSize,
         iconColor: selectedComponent.props?.iconColor,
+        type: selectedComponent.props?.type,
       }),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -53,6 +55,24 @@ const Modifier = withModifier(({ selectedComponent }) => {
                     height: inputSizes[value],
                     width: inputSizes[value],
                   },
+                },
+              },
+            });
+          }}
+        />
+        <SegmentedControlInput
+          label="Type"
+          data={[
+            { label: "Button", value: "button" },
+            { label: "Submit", value: "submit" },
+          ]}
+          {...form.getInputProps("type")}
+          onChange={(value) => {
+            form.setFieldValue("type", value as string);
+            debouncedTreeComponentAttrsUpdate({
+              attrs: {
+                props: {
+                  type: value,
                 },
               },
             });

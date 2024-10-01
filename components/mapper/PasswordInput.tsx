@@ -1,11 +1,12 @@
+import { PasswordInputWrapper } from "@/components/mapper/PasswordInputWrapper";
+import { useEditorTreeStore } from "@/stores/editorTree";
+import { ActionTrigger } from "@/utils/actions";
 import {
   PasswordInput as MantinePasswordInput,
   PasswordInputProps,
 } from "@mantine/core";
 import { pick } from "next/dist/lib/pick";
-import { PasswordInputWrapper } from "./PasswordInputWrapper";
 import { CSSProperties } from "react";
-import { useEditorTreeStore } from "@/stores/editorTree";
 import { useShallow } from "zustand/react/shallow";
 
 type Props = Omit<PasswordInputProps, "value"> & {
@@ -21,6 +22,7 @@ type Props = Omit<PasswordInputProps, "value"> & {
   props: any;
   componentProps: any;
   rootStyleProps: Array<keyof CSSProperties>;
+  triggers: Record<ActionTrigger, any>;
 };
 
 export const PasswordInput = ({
@@ -37,6 +39,7 @@ export const PasswordInput = ({
   props,
   componentProps,
   rootStyleProps,
+  triggers,
 }: Props) => {
   const isPreviewMode = useEditorTreeStore(
     useShallow((state) => state.isPreviewMode || state.isLive),
@@ -53,6 +56,7 @@ export const PasswordInput = ({
       <MantinePasswordInput
         {...props}
         {...componentProps}
+        {...triggers}
         ref={ref}
         id={componentId}
         icon={iconName ? <Icon name={iconName} /> : null}
