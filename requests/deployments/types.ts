@@ -32,6 +32,7 @@ export type DeploymentPage = IResponse & {
   id: string;
   projectId: string;
   title: string;
+  description: string;
   slug: string;
   authenticatedOnly: boolean;
   authenticatedUserRole?: string;

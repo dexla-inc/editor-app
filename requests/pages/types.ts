@@ -49,6 +49,7 @@ export type PageBody = {
 
 export type PageConfigProps = {
   title: string;
+  description: string;
   slug: string;
   authenticatedOnly: boolean;
 };

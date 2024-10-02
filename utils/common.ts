@@ -62,41 +62,6 @@ export const allEqual = <T>(array: T[]): boolean => {
 
 export type UrlType = "project" | "live" | "editor";
 
-export const getProjectType = (href: string): UrlType => {
-  // Pattern to match editor URLs globally, not limited to a specific domain
-  const editorPattern = new RegExp("/editor/[0-9a-fA-F]{32}$");
-
-  // Specific patterns to identify project URLs within the 'dexla-inc.vercel.app' domain
-  // and to accommodate for different project types like projects, playground, and team
-  const projectPattern = new RegExp(
-    "dexla-inc.vercel.app/(projects|playground|team)/[0-9a-fA-F]{32}",
-  );
-
-  if (editorPattern.test(href)) {
-    // This now catches any URL ending with '/editor/' followed by a 32-char hex string, across any domain
-    return "editor";
-  } else if (href.includes("dexla-inc.vercel.app")) {
-    if (projectPattern.test(href)) {
-      // Matches specific project types within the 'dexla-inc.vercel.app' domain
-      return "project";
-    } else {
-      // Other URLs within 'dexla-inc.vercel.app' that don't match the editor or project patterns
-      return "project"; // Assuming generic project type for any non-editor URLs within this domain
-    }
-  } else if (
-    // Checks for URLs starting with specific substrings indicating a 'project'
-    href.startsWith("http://localhost:3000") ||
-    href.startsWith("https://dev-app.dexla.ai") ||
-    href.startsWith("https://beta.dexla.ai") ||
-    href.startsWith("https://app.dexla.ai")
-  ) {
-    return "project";
-  } else {
-    // Defaults to 'live' for URLs that don't match any of the above conditions
-    return "live";
-  }
-};
-
 export function safeJsonParse(str: any) {
   if (typeof str !== "string") return str;
   try {
