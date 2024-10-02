@@ -23,7 +23,7 @@ export async function generateMetadata({ params: { page } }: PageProps) {
   const deploymentPage = await getDeploymentPage(url, currentSlug);
   return {
     title: deploymentPage.title,
-    description: deploymentPage.title,
+    description: deploymentPage.description ?? deploymentPage.title,
     icons: {
       icon: deploymentPage.project?.faviconUrl ?? "/favicon.ico",
     },

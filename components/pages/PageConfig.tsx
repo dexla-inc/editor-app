@@ -15,7 +15,14 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 import { convertToPatchParams } from "@/types/dashboardTypes";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
-import { Button, Group, Stack, TextInput, Tooltip } from "@mantine/core";
+import {
+  Button,
+  Group,
+  Stack,
+  Textarea,
+  TextInput,
+  Tooltip,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconArrowLeft } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
@@ -41,6 +48,7 @@ export default function PageConfig({ page, setPage }: Props) {
   const form = useForm<PageConfigProps>({
     initialValues: {
       title: "",
+      description: "",
       slug: "",
       authenticatedOnly: false,
     },
@@ -51,6 +59,8 @@ export default function PageConfig({ page, setPage }: Props) {
           : value.length > 50
             ? "Title too long"
             : null,
+      description: (value) =>
+        value.length > 200 ? "Description too long" : null,
       slug: (value) =>
         value === ""
           ? "You must provide a slug"
@@ -176,6 +186,7 @@ export default function PageConfig({ page, setPage }: Props) {
   useEffect(() => {
     if (page) {
       form.setFieldValue("title", page.title);
+      if (page.description) form.setFieldValue("description", page.description);
       form.setFieldValue("slug", page.slug?.toLowerCase());
       form.setFieldValue("queryStrings", page.queryStrings);
       form.setFieldValue("authenticatedOnly", page.authenticatedOnly);
@@ -220,7 +231,6 @@ export default function PageConfig({ page, setPage }: Props) {
           onChange={(event) => {
             form.getInputProps("title").onChange(event);
           }}
-          size="xs"
           {...AUTOCOMPLETE_OFF_PROPS}
         />
         <TextInput
@@ -241,9 +251,7 @@ export default function PageConfig({ page, setPage }: Props) {
             form.setFieldValue("slug", newSlug);
             form.setTouched({ slug: true });
           }}
-          size="xs"
         />
-
         <Tooltip
           label="Set sign-in page in settings"
           // @ts-ignore
@@ -258,6 +266,15 @@ export default function PageConfig({ page, setPage }: Props) {
           </Stack>
         </Tooltip>
 
+        <Textarea
+          label="Description"
+          placeholder="The description of the page for SEO"
+          {...form.getInputProps("description")}
+          onChange={(event) => {
+            form.getInputProps("description").onChange(event);
+          }}
+          size="xs"
+        />
         {/* <QueryStringsForm queryStringState={queryStringState} /> */}
 
         {page ? (
