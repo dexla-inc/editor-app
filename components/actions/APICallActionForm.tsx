@@ -1,17 +1,17 @@
 import EmptyDatasourcesPlaceholder from "@/components/datasources/EmptyDatasourcesPlaceholder";
 import { EndpointRequestInputs } from "@/components/EndpointRequestInputs";
 import { EndpointSelect } from "@/components/EndpointSelect";
+import { SegmentedControlInput } from "@/components/SegmentedControlInput";
+import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
+import { useEndpoints } from "@/hooks/editor/reactQuery/useDataSourcesEndpoints";
+import { useEditorParams } from "@/hooks/editor/useEditorParams";
 import {
   ActionFormProps,
   APICallAction,
   EndpointAuthType,
 } from "@/utils/actions";
 import { Stack } from "@mantine/core";
-import { SegmentedControlInput } from "@/components/SegmentedControlInput";
-import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
 import { useEffect } from "react";
-import { useEndpoints } from "@/hooks/editor/reactQuery/useDataSourcesEndpoints";
-import { useEditorParams } from "@/hooks/editor/useEditorParams";
 
 type Props = ActionFormProps<Omit<APICallAction, "name" | "datasource">>;
 
@@ -25,7 +25,7 @@ export const APICallActionForm = ({ form, isPageAction }: Props) => {
   );
 
   useEffect(() => {
-    if (!selectedEndpoint?.relativeUrl) return;
+    if (!selectedEndpoint?.relativeUrl || !!form.values.authType) return;
 
     if (
       ["auth/v1/token", "api/login/token"].includes(
