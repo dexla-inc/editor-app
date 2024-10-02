@@ -1,6 +1,6 @@
 import crawl from "tree-crawl";
-import { cloneObject } from "./common";
-import { ComponentStructure } from "../types/components";
+import { cloneObject } from "@/utils/common";
+import { ComponentStructure } from "@/utils/editor";
 
 export const updateComponentPosition = (
   components: any,
@@ -122,8 +122,8 @@ export const updateComponentSize = (
     updatedComponents,
     (node: ComponentStructure) => {
       if (node.id === componentId) {
-        node.props.style.gridColumn = newGridColumn;
-        node.props.style.gridRow = newGridRow;
+        node.props!.style.gridColumn = newGridColumn;
+        node.props!.style.gridRow = newGridRow;
       }
     },
     { order: "bfs" },

@@ -1,16 +1,16 @@
-import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { useDnd } from "../../../hooks/useDnd";
-import { useEditorStore } from "../../../stores/editor";
-import { useShallow } from "zustand/react/shallow";
-import { ResizeHandlers } from "../../ResizeHandlers";
-import { Title as MantineTitle, TitleProps } from "@mantine/core";
+import { AlertProps, Alert as MantineAlert } from "@mantine/core";
 import { forwardRef, memo } from "react";
-import { EditableComponentMapper } from "../../../types/components";
+import { useDnd } from "@/libs/dnd-grid/hooks/useDnd";
+import { useEditorStore } from "@/libs/dnd-grid/stores/editor";
+import { useShallow } from "zustand/react/shallow";
+import { ResizeHandlers } from "@/libs/dnd-grid/components/ResizeHandlers";
+import { EditableComponentMapper } from "@/utils/editor";
 
-type Props = EditableComponentMapper & TitleProps;
+type Props = EditableComponentMapper & Omit<AlertProps, "title">;
 
-const TitleComponent = forwardRef(
-  ({ renderTree, onClick, component }: Props, ref: any) => {
+const AlertComponent = forwardRef<HTMLDivElement, Props>(
+  ({ component, renderTree }, ref) => {
+    const { triggers } = component.props!;
     const dragTriggers = useDnd();
     const isActive = useEditorStore(
       (state) =>
@@ -22,16 +22,14 @@ const TitleComponent = forwardRef(
     );
 
     return (
-      <MantineTitle
+      <MantineAlert
+        id={component.id}
         ref={ref}
-        key={`${component.id}`}
         draggable
         {...dragTriggers}
-        onClick={(e) => {
-          e.stopPropagation();
-          onClick(component.id);
-        }}
+        {...triggers}
         style={{
+          overflow: "visible",
           position: "relative",
           border: "1px solid",
           borderRadius: "0.25rem",
@@ -49,27 +47,31 @@ const TitleComponent = forwardRef(
         }}
         styles={{
           wrapper: {
-            display: "flex",
+            display: "grid",
+            gridTemplateColumns: "subgrid",
+            gridTemplateRows: "subgrid",
             gridArea: "1 / 1 / -1 / -1",
           },
           icon: {
             margin: "0px",
           },
           body: {
-            width: "100%",
-            height: "100%",
+            display: "grid",
+            gridTemplateColumns: "subgrid",
+            gridTemplateRows: "subgrid",
+            gridArea: "1 / 1 / -1 / -1",
           },
           message: {
-            width: "100%",
-            height: "100%",
             display: "grid",
+            gridTemplateColumns: "subgrid",
+            gridTemplateRows: "subgrid",
             gridArea: "1 / 1 / -1 / -1",
           },
         }}
         onMouseOver={(e) => {
           const { hoverComponentId } = useEditorStore.getState();
           if (hoverComponentId !== component.id) {
-            setHoverComponentId(component.id);
+            setHoverComponentId(component.id ?? null);
           }
         }}
         onMouseLeave={(e) => {
@@ -80,24 +82,13 @@ const TitleComponent = forwardRef(
           }
         }}
       >
-        Title
+        {component.children &&
+          component.children.map((child) => renderTree(child))}
         <ResizeHandlers componentId={component.id} />
-      </MantineTitle>
+      </MantineAlert>
     );
   },
 );
+AlertComponent.displayName = "Alert";
 
-TitleComponent.displayName = "Title";
-
-const orderToTag = (order: number) => {
-  return {
-    1: "H1",
-    2: "H2",
-    3: "H3",
-    4: "H4",
-    5: "H5",
-    6: "H6",
-  }[order];
-};
-
-export const Title = memo(withComponentWrapper<Props>(TitleComponent));
+export const Alert = memo(AlertComponent);

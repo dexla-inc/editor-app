@@ -1,5 +1,3 @@
-import { componentTypes } from "../types/types";
-import { nanoid } from "nanoid";
 import {
   addComponent,
   getAllIds,
@@ -7,11 +5,11 @@ import {
   getParentId,
   updateComponentPosition,
 } from "../utils/editor";
-import { cloneObject } from "../utils/common";
 import { useRef } from "react";
 import { useEditorStore } from "../stores/editor";
 import { getElementsOver, getGridCoordinates } from "../utils/engines/position";
-import { ComponentStructure } from "../types/components";
+import { structureMapper } from "../utils/componentMapper";
+import { cloneObject } from "@/utils/common";
 
 export const useDnd = () => {
   const {
@@ -63,8 +61,8 @@ export const useDnd = () => {
         id: componentData?.id,
         props: {
           style: {
-            gridColumn: componentData?.props.style.gridColumn || "",
-            gridRow: componentData?.props.style.gridRow || "",
+            gridColumn: componentData?.props?.style?.gridColumn || "",
+            gridRow: componentData?.props?.style?.gridRow || "",
           },
         },
         // @ts-ignore
@@ -74,16 +72,9 @@ export const useDnd = () => {
       // add new components here
       const type = el.getAttribute("data-type");
       if (type) {
-        const component = componentTypes.find((c) => c.name === type);
-        if (component) {
-          const newComponent: ComponentStructure = {
-            ...component,
-            id: nanoid(),
-          };
-
-          setDraggableComponent(newComponent);
-          isNewComponent.current = true;
-        }
+        const newComponent = structureMapper[type].structure({});
+        setDraggableComponent(newComponent);
+        isNewComponent.current = true;
       }
     }
 
@@ -102,8 +93,8 @@ export const useDnd = () => {
     const parentId = getParentId(components, currComponentId!);
 
     setCoords({
-      gridColumn: componentData?.props.style.gridColumn || "",
-      gridRow: componentData?.props.style.gridRow || "",
+      gridColumn: componentData?.props?.style?.gridColumn || "",
+      gridRow: componentData?.props?.style?.gridRow || "",
       parentId: parentId || "",
     });
   };
@@ -150,14 +141,14 @@ export const useDnd = () => {
 
     const newComponents = cloneObject(components);
 
-    const updatingComponent = document.getElementById(draggableComponent!.id)!;
+    const updatingComponent = document.getElementById(draggableComponent!.id!)!;
     updatingComponent.style.gridColumn = coords.gridColumn;
     updatingComponent.style.gridRow = coords.gridRow;
-    moveElement(draggableComponent!.id, coords.parentId);
+    moveElement(draggableComponent!.id!, coords.parentId);
 
-    updateComponentPosition(newComponents, draggableComponent!.id, coords);
+    updateComponentPosition(newComponents, draggableComponent!.id!, coords);
 
-    setSelectedComponentId(draggableComponent!.id);
+    setSelectedComponentId(draggableComponent!.id!);
     setComponents(newComponents);
     setInvalidComponent(null);
     setValidComponent(null);
@@ -174,7 +165,7 @@ export const useDnd = () => {
 
     const { validComponent, invalidComponent } = useEditorStore.getState();
     const { id } = draggableComponent!;
-    console.log("isNewComponent.current", isNewComponent.current);
+
     if (isNewComponent.current) {
       const newComponents = cloneObject(components);
 
@@ -184,7 +175,7 @@ export const useDnd = () => {
       return;
     }
 
-    const el = document.getElementById(id)!;
+    const el = document.getElementById(id!)!;
 
     const {
       column: rawColumn,
@@ -220,7 +211,7 @@ export const useDnd = () => {
     el.style.gridRow = gridRow;
     moveElement(id!, parentId);
 
-    const elementRects = getElementRects(id);
+    const elementRects = getElementRects(id!);
 
     const overlappingIds = checkOverlap(el, elementRects);
     const fittingIds = checkFitsInside(el, elementRects);

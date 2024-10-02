@@ -2,7 +2,7 @@ import { jsonStructure as accordionItemSchema } from "@/components/mapper/struct
 import { jsonStructure as tabSchema } from "@/components/mapper/structure/Tab";
 import { jsonStructure as tabsPanelSchema } from "@/components/mapper/structure/TabsPanel";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { structureMapper } from "@/utils/componentMapper";
+import { structureMapper } from "@/libs/dnd-flex/utils/componentMapper";
 import {
   Component,
   ComponentStructure,

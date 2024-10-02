@@ -1,15 +1,16 @@
 import { FlexProps, Text as MantineText } from "@mantine/core";
 import { forwardRef, memo } from "react";
-import { EditableComponentMapper } from "../../../types/components";
-import { useDnd } from "../../../hooks/useDnd";
-import { useEditorStore } from "../../../stores/editor";
+import { EditableComponentMapper } from "@/utils/editor";
+import { useDnd } from "@/libs/dnd-grid/hooks/useDnd";
+import { useEditorStore } from "@/libs/dnd-grid/stores/editor";
 import { useShallow } from "zustand/react/shallow";
-import { ResizeHandlers } from "../../ResizeHandlers";
+import { ResizeHandlers } from "@/libs/dnd-grid/components/ResizeHandlers";
 
 type Props = EditableComponentMapper & FlexProps;
 
 const TextComponent = forwardRef<HTMLDivElement, Props>(
-  ({ component, onClick }, ref) => {
+  ({ component }, ref) => {
+    const { triggers } = component.props!;
     const dragTriggers = useDnd();
     const isActive = useEditorStore(
       (state) =>
@@ -25,10 +26,7 @@ const TextComponent = forwardRef<HTMLDivElement, Props>(
         id={component.id}
         draggable
         {...dragTriggers}
-        onClick={(e) => {
-          e.stopPropagation();
-          onClick(component.id);
-        }}
+        {...triggers}
         style={{
           position: "relative",
           border: "1px solid",
@@ -45,16 +43,10 @@ const TextComponent = forwardRef<HTMLDivElement, Props>(
             backgroundColor: component.props.bg,
           }),
         }}
-        styles={{
-          inner: {
-            display: "flex",
-            gridArea: "1 / 1 / -1 / -1",
-          },
-        }}
         onMouseOver={(e) => {
           const { hoverComponentId } = useEditorStore.getState();
           if (hoverComponentId !== component.id) {
-            setHoverComponentId(component.id);
+            setHoverComponentId(component.id ?? null);
           }
         }}
         onMouseLeave={(e) => {

@@ -1,15 +1,16 @@
-import { ButtonProps, Button as MantineButton } from "@mantine/core";
-import { ReactElement, forwardRef, memo, Ref } from "react";
-import { EditableComponentMapper } from "../../../types/components";
-import { useDnd } from "../../../hooks/useDnd";
-import { useEditorStore } from "../../../stores/editor";
+import { FlexProps, Flex as MantineFlex } from "@mantine/core";
+import { forwardRef, memo } from "react";
+import { EditableComponentMapper } from "@/utils/editor";
+import { useDnd } from "@/libs/dnd-grid/hooks/useDnd";
+import { useEditorStore } from "@/libs/dnd-grid/stores/editor";
 import { useShallow } from "zustand/react/shallow";
-import { ResizeHandlers } from "../../ResizeHandlers";
+import { ResizeHandlers } from "@/libs/dnd-grid/components/ResizeHandlers";
 
-type Props = EditableComponentMapper & ButtonProps & ReactElement<"Button">;
+type Props = EditableComponentMapper & FlexProps;
 
-const ButtonComponent = forwardRef<HTMLButtonElement, Props>(
-  ({ component, onClick }, ref) => {
+const ContainerComponent = forwardRef<HTMLDivElement, Props>(
+  ({ component, renderTree }, ref) => {
+    const { triggers } = component.props!;
     const dragTriggers = useDnd();
     const isActive = useEditorStore(
       (state) =>
@@ -21,14 +22,11 @@ const ButtonComponent = forwardRef<HTMLButtonElement, Props>(
     );
 
     return (
-      <MantineButton
+      <MantineFlex
         id={component.id}
         draggable
         {...dragTriggers}
-        onClick={(e) => {
-          e.stopPropagation();
-          onClick(component.id);
-        }}
+        {...triggers}
         style={{
           position: "relative",
           border: "1px solid",
@@ -45,17 +43,10 @@ const ButtonComponent = forwardRef<HTMLButtonElement, Props>(
             backgroundColor: component.props.bg,
           }),
         }}
-        styles={{
-          inner: {
-            display: "flex",
-            gridArea: "1 / 1 / -1 / -1",
-          },
-        }}
         onMouseOver={(e) => {
-          e.stopPropagation();
           const { hoverComponentId } = useEditorStore.getState();
           if (hoverComponentId !== component.id) {
-            setHoverComponentId(component.id);
+            setHoverComponentId(component.id ?? null);
           }
         }}
         onMouseLeave={(e) => {
@@ -67,12 +58,13 @@ const ButtonComponent = forwardRef<HTMLButtonElement, Props>(
         }}
         ref={ref}
       >
-        Button
+        {component.children &&
+          component.children.map((child) => renderTree(child))}
         <ResizeHandlers componentId={component.id} />
-      </MantineButton>
+      </MantineFlex>
     );
   },
 );
-ButtonComponent.displayName = "Button";
+ContainerComponent.displayName = "Container";
 
-export const Button = memo(ButtonComponent);
+export const Container = memo(ContainerComponent);

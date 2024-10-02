@@ -4,7 +4,7 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 import { useInputsStore } from "@/stores/inputs";
 import { useVariableStore } from "@/stores/variables";
 import { RuleItemProps } from "@/types/dataBinding";
-import { structureMapper } from "@/utils/componentMapper";
+import { structureMapper } from "@/libs/dnd-flex/utils/componentMapper";
 import {
   Component,
   ComponentTree,

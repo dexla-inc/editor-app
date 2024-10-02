@@ -10,7 +10,7 @@ import {
   ToolboxAction,
   componentMapper,
   structureMapper,
-} from "@/utils/componentMapper";
+} from "@/libs/dnd-flex/utils/componentMapper";
 import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 import { ICON_DELETE, ICON_SIZE, NAVBAR_WIDTH } from "@/utils/config";
 import {

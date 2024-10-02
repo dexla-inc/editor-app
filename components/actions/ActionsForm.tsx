@@ -8,7 +8,7 @@ import {
   SequentialTrigger,
   actions,
 } from "@/utils/actions";
-import { componentMapper } from "@/utils/componentMapper";
+import { componentMapper } from "@/libs/dnd-flex/utils/componentMapper";
 import { ICON_SIZE } from "@/utils/config";
 import { ActionIcon, Button, Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";

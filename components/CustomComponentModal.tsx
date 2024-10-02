@@ -2,7 +2,7 @@ import { upsertCustomComponent } from "@/requests/components/mutations";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
-import { structureMapper } from "@/utils/componentMapper";
+import { structureMapper } from "@/libs/dnd-flex/utils/componentMapper";
 import { encodeSchema } from "@/utils/compression";
 import { ICON_SIZE } from "@/utils/config";
 import {

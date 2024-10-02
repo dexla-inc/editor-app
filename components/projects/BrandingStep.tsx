@@ -18,7 +18,7 @@ import {
   setFormColorShadesFromColorFamilies,
 } from "@/utils/branding";
 import { convertToBase64, safeJsonParse } from "@/utils/common";
-import { componentMapper } from "@/utils/componentMapper";
+import { componentMapper } from "@/libs/dnd-flex/utils/componentMapper";
 import { ICON_SIZE } from "@/utils/config";
 import { Component } from "@/utils/editor";
 import {
