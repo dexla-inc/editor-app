@@ -1,10 +1,13 @@
 {
   "extends": [
     "next/core-web-vitals",
-    "plugin:@tanstack/eslint-plugin-query/recommended"
+    "plugin:@tanstack/eslint-plugin-query/recommended",
+    "plugin:storybook/recommended"
   ],
+  "ignorePatterns": ["!.storybook"],
   "rules": {
-    "react/display-name": "off"
+    "react/display-name": "off",
+    "react/no-unescaped-entities": 0
   },
   "plugins": ["@tanstack/query"]
 }
