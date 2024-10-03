@@ -1,6 +1,6 @@
 import { Shell } from "@/components/AppShell";
 import { Cursor } from "@/components/Cursor";
-import { EditorCanvas } from "@/components/EditorCanvas";
+import { EditorCanvas } from "@/libs/dnd-grid/components/EditorCanvas";
 import { useGetPageData } from "@/hooks/editor/reactQuery/useGetPageData";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { usePropelAuthStore } from "@/stores/propelAuth";
@@ -11,6 +11,7 @@ import { Global } from "@mantine/core";
 import { memo, useEffect, useState } from "react";
 import { useInputsStore } from "@/stores/inputs";
 import { withPageOnLoad } from "@/hoc/withPageOnLoad";
+import { CustomComponentModal } from "@/components/CustomComponentModal";
 
 type Props = {
   projectId: string;
@@ -29,6 +30,9 @@ const Editor = ({ projectId, pageId }: Props) => {
     (state) => state.setPageLoadTimestamp,
   );
   const resetInputValues = useInputsStore((state) => state.resetInputValues);
+  const isCustomComponentModalOpen = useUserConfigStore(
+    (state) => state.isCustomComponentModalOpen,
+  );
 
   useGetPageData({ projectId, pageId });
 
@@ -64,6 +68,11 @@ const Editor = ({ projectId, pageId }: Props) => {
       <Shell pos="relative" projectId={projectId}>
         <Global styles={globalStyles(isDarkTheme)} />
         <EditorCanvas projectId={projectId} />
+        {isCustomComponentModalOpen && (
+          <CustomComponentModal
+            isCustomComponentModalOpen={isCustomComponentModalOpen}
+          />
+        )}
       </Shell>
       {liveblocks.others.map(({ connectionId, presence }) => {
         const cursor = presence.cursor as { x: number; y: number };

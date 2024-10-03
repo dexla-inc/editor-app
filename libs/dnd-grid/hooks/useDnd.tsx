@@ -54,7 +54,7 @@ export const useDnd = () => {
     const el = e.target as HTMLElement;
     const currComponentId = el.getAttribute("id");
     const componentData = getComponentById(components, currComponentId!);
-
+    console.log("componentData==>", components, currComponentId, componentData);
     if (componentData) {
       setDraggableComponent({
         name: componentData?.name,

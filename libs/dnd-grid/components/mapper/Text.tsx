@@ -21,18 +21,22 @@ const TextComponent = forwardRef<HTMLDivElement, Props>(
       useShallow((state) => state),
     );
 
+    const { style, ...componentProps } = component.props ?? {};
+
     return (
       <MantineText
         id={component.id}
         draggable
         {...dragTriggers}
         {...triggers}
+        {...componentProps}
         style={{
+          ...style,
           position: "relative",
           border: "1px solid",
           borderRadius: "0.25rem",
-          gridColumn: component.props?.style.gridColumn,
-          gridRow: component.props?.style.gridRow,
+          // gridColumn: component.props?.style.gridColumn,
+          // gridRow: component.props?.style.gridRow,
           display: "grid",
           gridTemplateColumns: "subgrid",
           gridTemplateRows: "subgrid",
