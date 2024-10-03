@@ -7,8 +7,6 @@ import { HEADER_HEIGHT } from "@/utils/config";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Box, Paper } from "@mantine/core";
 import { memo } from "react";
-import { CustomComponentModal } from "@/components/CustomComponentModal";
-import { useUserConfigStore } from "@/stores/userConfig";
 import { RenderTreeFunc } from "@/types/component";
 import { ComponentToolbox } from "@/components/ComponentToolbox";
 
@@ -25,9 +23,6 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
   useEditorHotkeys();
 
   const [canvasRef] = useAutoAnimate();
-  const isCustomComponentModalOpen = useUserConfigStore(
-    (state) => state.isCustomComponentModalOpen,
-  );
 
   const renderTree: RenderTreeFunc = (componentTree, shareableContent) => {
     if (componentTree.id === "root") {
@@ -97,11 +92,6 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
           {renderTree(editorTree.root)}
           {isComponentSelected && <ComponentToolbox />}
         </IFrame>
-        {isCustomComponentModalOpen && (
-          <CustomComponentModal
-            isCustomComponentModalOpen={isCustomComponentModalOpen}
-          />
-        )}
       </Box>
     </>
   );

@@ -11,7 +11,11 @@ export const DnDGrid = ({ components: propComponents }: any) => {
     }
   }, [propComponents]);
 
-  return <Grid components={components} />;
+  return (
+    <div style={{ background: "white", margin: "1rem" }}>
+      <Grid components={components} />
+    </div>
+  );
 };
 
 export default DnDGrid;
