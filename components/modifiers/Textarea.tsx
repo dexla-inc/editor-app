@@ -2,7 +2,7 @@ import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { Stack, TextInput } from "@mantine/core";
+import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
 import { useEffect } from "react";
@@ -18,6 +18,7 @@ const Modifier = withModifier(({ selectedComponent }) => {
         autosize: selectedComponent?.props?.autosize,
         withAsterisk: selectedComponent?.props?.withAsterisk,
         bg: selectedComponent?.props?.bg,
+        textColor: selectedComponent?.props?.textColor,
       }),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -49,6 +50,20 @@ const Modifier = withModifier(({ selectedComponent }) => {
               attrs: {
                 props: {
                   autosize: value,
+                },
+              },
+            });
+          }}
+        />
+        <ThemeColorSelector
+          label="Text Color"
+          {...form.getInputProps("textColor")}
+          onChange={(value: string) => {
+            form.setFieldValue("textColor", value);
+            debouncedTreeComponentAttrsUpdate({
+              attrs: {
+                props: {
+                  textColor: value,
                 },
               },
             });
