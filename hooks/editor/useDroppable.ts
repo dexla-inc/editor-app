@@ -1,7 +1,7 @@
 import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useUserConfigStore } from "@/stores/userConfig";
-import { componentMapper } from "@/utils/componentMapper";
+import { componentMapper } from "@/libs/dnd-flex/utils/componentMapper";
 import { NAVBAR_WIDTH } from "@/utils/config";
 import {
   DropTarget,

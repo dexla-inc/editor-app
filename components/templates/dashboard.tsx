@@ -6,7 +6,7 @@ import {
 } from "@/requests/datasources/queries-noauth";
 import { createLogicFlow } from "@/requests/logicflows/mutations";
 import { createVariable } from "@/requests/variables/mutations";
-import { structureMapper } from "@/utils/componentMapper";
+import { structureMapper } from "@/libs/dnd-flex/utils/componentMapper";
 import { encodeSchema } from "@/utils/compression";
 import { px } from "@mantine/core";
 import { nanoid } from "nanoid";

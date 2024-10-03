@@ -14,7 +14,7 @@ import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
 import { useEffect } from "react";
 import { selectedComponentIdSelector } from "@/utils/componentSelectors";
-import { structureMapper } from "@/utils/componentMapper";
+import { structureMapper } from "@/libs/dnd-flex/utils/componentMapper";
 
 const createItem = (itemPosition: number) => {
   return structureMapper["AccordionItem"].structure({
