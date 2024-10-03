@@ -9,7 +9,7 @@ import {
   ComponentCategoryType,
   componentMapper,
   structureMapper,
-} from "@/libs/dnd-grid/utils/componentMapper";
+} from "@/libs/dnd-flex/utils/componentMapper";
 import { decodeSchema } from "@/utils/compression";
 import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
 import { toSpaced } from "@/types/dashboardTypes";
