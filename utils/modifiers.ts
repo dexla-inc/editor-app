@@ -172,6 +172,7 @@ export const requiredModifiers: RequiredModifiers = {
       height: "fit-content",
     },
     bg: "White.6",
+    textColor: "Black.6",
   },
   button: {
     type: "button",

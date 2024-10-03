@@ -18,13 +18,12 @@ const AccordionComponent = forwardRef(
 
     return (
       <MantineAccordion
-        chevron={null}
         ref={ref}
         {...props}
         {...componentProps}
         {...triggers}
         data-id={id}
-        styles={{ label: { padding: 0 }, chevron: { display: "none" } }}
+        styles={{ label: { padding: 0 } }}
       >
         {renderData({ renderTree })}
       </MantineAccordion>
