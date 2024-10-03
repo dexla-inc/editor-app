@@ -1,4 +1,4 @@
-import * as ChartStructure from "@/components/mapper/structure/charts/Chart";
+import * as ChartStructure from "@/libs/dnd-flex/components/mapper/structure/charts/Chart";
 import { ComponentStructure } from "@/utils/editor";
 import { nanoid } from "nanoid";
 
@@ -7,15 +7,15 @@ export const jsonStructure = (props?: any): ComponentStructure => {
 
   return {
     id: nanoid(),
-    name: "PieChart",
-    description: "PieChart",
+    name: "RadialChart",
+    description: "RadialChart",
     children: [],
     props: {
       ...chartProps,
-      type: "donut",
-      series: [44, 55, 13],
+      type: "radialBar",
+      series: [76],
       options: {
-        labels: ["Jan", "Feb", "Mar"],
+        labels: ["Progress"],
       },
     },
     blockDroppingChildrenInside: true,

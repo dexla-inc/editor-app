@@ -1,4 +1,4 @@
-import { jsonStructure as headerStructure } from "@/components/mapper/structure/table/TableActionsRow";
+import { jsonStructure as headerStructure } from "@/libs/dnd-flex/components/mapper/structure/table/TableActionsRow";
 import { ComponentStructure } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { nanoid } from "nanoid";

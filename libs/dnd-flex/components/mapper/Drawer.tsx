@@ -1,7 +1,7 @@
 import { EditableComponentMapper } from "@/utils/editor";
 import { DrawerProps, Drawer as MantineDrawer } from "@mantine/core";
 import { forwardRef, memo } from "react";
-import { ModalAndDrawerWrapper } from "@/components/mapper/ModalAndDrawerWrapper";
+import { ModalAndDrawerWrapper } from "@/libs/dnd-flex/components/mapper/ModalAndDrawerWrapper";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 
 type Props = EditableComponentMapper & Omit<DrawerProps, "opened">;

@@ -1,4 +1,4 @@
-import { PasswordInputWrapper } from "@/components/mapper/PasswordInputWrapper";
+import { PasswordInputWrapper } from "@/libs/dnd-flex/components/mapper/PasswordInputWrapper";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { ActionTrigger } from "@/utils/actions";
 import {

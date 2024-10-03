@@ -2,7 +2,7 @@ import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { EditableComponentMapper } from "@/utils/editor";
 import { Modal as MantineModal, ModalProps } from "@mantine/core";
 import { forwardRef, memo } from "react";
-import { ModalAndDrawerWrapper } from "@/components/mapper/ModalAndDrawerWrapper";
+import { ModalAndDrawerWrapper } from "@/libs/dnd-flex/components/mapper/ModalAndDrawerWrapper";
 import { convertSizeToPx } from "@/utils/defaultSizes";
 import merge from "lodash.merge";
 

@@ -1,6 +1,6 @@
-import { jsonStructure as accordionItemSchema } from "@/components/mapper/structure/AccordionItem";
-import { jsonStructure as tabSchema } from "@/components/mapper/structure/Tab";
-import { jsonStructure as tabsPanelSchema } from "@/components/mapper/structure/TabsPanel";
+import { jsonStructure as accordionItemSchema } from "@/libs/dnd-flex/components/mapper/structure/AccordionItem";
+import { jsonStructure as tabSchema } from "@/libs/dnd-flex/components/mapper/structure/Tab";
+import { jsonStructure as tabsPanelSchema } from "@/libs/dnd-flex/components/mapper/structure/TabsPanel";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { structureMapper } from "@/libs/dnd-flex/utils/componentMapper";
 import {

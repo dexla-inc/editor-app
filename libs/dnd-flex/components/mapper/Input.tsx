@@ -1,6 +1,6 @@
 import { Icon } from "@/components/Icon";
 import { InputLoader } from "@/components/InputLoader";
-import { PasswordInput } from "@/components/mapper/PasswordInput";
+import { PasswordInput } from "@/libs/dnd-flex/components/mapper/PasswordInput";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useChangeState } from "@/hooks/components/useChangeState";
 import { useInputValue } from "@/hooks/components/useInputValue";

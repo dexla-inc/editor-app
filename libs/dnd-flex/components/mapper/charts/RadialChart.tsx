@@ -1,4 +1,7 @@
-import { Chart, getChartColor } from "@/components/mapper/charts/Chart";
+import {
+  Chart,
+  getChartColor,
+} from "@/libs/dnd-flex/components/mapper/charts/Chart";
 import { useThemeStore } from "@/stores/theme";
 import { EditableComponentMapper } from "@/utils/editor";
 import merge from "lodash.merge";

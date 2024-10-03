@@ -1,6 +1,6 @@
 import { Icon } from "@/components/Icon";
 import { InputLoader } from "@/components/InputLoader";
-import { CustomDropdown } from "@/components/mapper/CustomSelectDropdown";
+import { CustomDropdown } from "@/libs/dnd-flex/components/mapper/CustomSelectDropdown";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useBrandingStyles } from "@/hooks/editor/useBrandingStyles";
 import { useChangeState } from "@/hooks/components/useChangeState";
