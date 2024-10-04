@@ -3,7 +3,7 @@ import { useVariableStore } from "@/stores/variables";
 import { isPreviewModeSelector } from "@/utils/componentSelectors";
 import { EditableComponentMapper } from "@/utils/editor";
 import merge from "lodash.merge";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect } from "react";
 
 export const useCodeInjection = (
   ref: React.RefObject<HTMLIFrameElement>,
@@ -146,8 +146,6 @@ export const useCodeInjection = (
     },
     [ref, createScriptContent, variables, isPreviewMode, applyEventHandlers],
   );
-
-  const cleanupRef = useRef<(() => void) | null>(null);
 
   useEffect(() => {
     injectContent(component.onLoad?.htmlCode);
