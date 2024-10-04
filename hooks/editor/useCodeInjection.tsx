@@ -1,10 +1,9 @@
-import { useCodeInjectionContext } from "@/contexts/CodeInjectionProvider";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useVariableStore } from "@/stores/variables";
 import { isPreviewModeSelector } from "@/utils/componentSelectors";
 import { EditableComponentMapper } from "@/utils/editor";
 import merge from "lodash.merge";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 export const useCodeInjection = (
   ref: React.RefObject<HTMLIFrameElement>,
@@ -24,8 +23,6 @@ export const useCodeInjection = (
       {} as Record<string, any>,
     ),
   );
-
-  useCodeInjectionContext();
 
   const events = merge({}, component.props?.triggers, props);
 
@@ -83,39 +80,9 @@ export const useCodeInjection = (
     `;
   }, []);
 
-  const injectScripts = useCallback(
-    (doc: Document) => {
-      if (!doc) return;
-
-      const scriptTags = doc.querySelectorAll("script");
-
-      scriptTags.forEach((scriptTag) => {
-        const originalJs = scriptTag.textContent || "";
-        const newScriptContent = isPreviewMode
-          ? createScriptContent(originalJs)
-          : ""; // Remove scripts in non-preview mode
-
-        if (isPreviewMode) {
-          const newScript = doc.createElement("script");
-          newScript.type = "text/javascript";
-          newScript.textContent = newScriptContent;
-          scriptTag.replaceWith(newScript);
-        } else {
-          scriptTag.remove();
-        }
-      });
-
-      // Append custom script if not in preview mode
-      if (!isPreviewMode) {
-        Object.freeze({});
-      }
-    },
-    [createScriptContent, isPreviewMode],
-  );
-
   const injectContent = useCallback(
     (htmlCode: string) => {
-      if (!ref.current) return;
+      if (!ref.current || !htmlCode) return;
       ref.current.style.width = "100%";
       ref.current.style.border = "none";
 
@@ -123,12 +90,11 @@ export const useCodeInjection = (
       const doc = parser.parseFromString(htmlCode, "text/html");
 
       // Extract scripts
-      const scripts: string[] = [];
+      let combinedScriptContent = "";
       const scriptTags = doc.querySelectorAll("script");
       scriptTags.forEach((scriptTag) => {
         const scriptContent = scriptTag.textContent || "";
-        const newScriptContent = createScriptContent(scriptContent);
-        scripts.push(newScriptContent);
+        combinedScriptContent += scriptContent + "\n";
         scriptTag.remove(); // Remove script tag from the document
       });
 
@@ -146,22 +112,42 @@ export const useCodeInjection = (
         iframeDoc.head.append(...doc.head.childNodes);
         iframeDoc.body.append(...doc.body.childNodes);
 
-        // Inject scripts
-        scripts.forEach((scriptContent) => {
-          const scriptElement = iframeDoc.createElement("script");
-          scriptElement.type = "text/javascript";
-          scriptElement.text = scriptContent;
-          iframeDoc.body.appendChild(scriptElement);
-        });
-
         // Apply event handlers if not in preview mode
         if (!isPreviewMode) {
           applyEventHandlers(iframeDoc);
+        }
+
+        // Remove existing script with the specific ID if it exists
+        const existingScript = iframeDoc.getElementById("injected-script");
+        if (existingScript) {
+          existingScript.remove();
+        }
+
+        // Create and inject the new script
+        const newScriptContent = createScriptContent(combinedScriptContent);
+        const scriptElement = iframeDoc.createElement("script");
+        scriptElement.id = "injected-script";
+        scriptElement.type = "text/javascript";
+        scriptElement.defer = true;
+        scriptElement.text = newScriptContent;
+
+        // Deprioritize script loading by using requestIdleCallback
+        if (window.requestIdleCallback) {
+          window.requestIdleCallback(() => {
+            iframeDoc.body.appendChild(scriptElement);
+          });
+        } else {
+          // Fallback for browsers that don't support requestIdleCallback
+          setTimeout(() => {
+            iframeDoc.body.appendChild(scriptElement);
+          }, 0);
         }
       }
     },
     [ref, createScriptContent, variables, isPreviewMode, applyEventHandlers],
   );
+
+  const cleanupRef = useRef<(() => void) | null>(null);
 
   useEffect(() => {
     injectContent(component.onLoad?.htmlCode);
@@ -169,8 +155,22 @@ export const useCodeInjection = (
     // Cleanup function
     return () => {
       if (ref.current) {
+        // Remove the onload event listener
         ref.current.onload = null;
+
+        // Clear the iframe content
+        if (ref.current.contentDocument) {
+          ref.current.contentDocument.head.innerHTML = "";
+          ref.current.contentDocument.body.innerHTML = "";
+        }
+
+        // Remove any event listeners added to the iframe's document
+        if (ref.current.contentWindow) {
+          ref.current.contentWindow.removeEventListener("message", () => {});
+        }
+
+        // ref.current.remove();
       }
     };
-  }, [component, injectContent]);
+  }, [component, injectContent, ref]);
 };

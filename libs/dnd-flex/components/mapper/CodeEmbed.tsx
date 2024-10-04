@@ -7,7 +7,7 @@ import { forwardRef } from "react";
 type Props = EditableComponentMapper & BoxProps;
 
 const CodeEmbedComponent = forwardRef<HTMLIFrameElement, Props>(
-  ({ component, ...props }, ref) => {
+  ({ component, shareableContent, ...props }, ref) => {
     useCodeInjection(
       ref as React.RefObject<HTMLIFrameElement>,
       component,
