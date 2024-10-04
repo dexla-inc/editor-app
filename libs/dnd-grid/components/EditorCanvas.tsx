@@ -152,9 +152,11 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
   // );
 
   return (
-    <ErrorBoundary>
-      <DnDGrid components={store} />
-    </ErrorBoundary>
+    <IFrame projectId={projectId}>
+      <ErrorBoundary>
+        <DnDGrid components={store} />
+      </ErrorBoundary>
+    </IFrame>
   );
 };
 
