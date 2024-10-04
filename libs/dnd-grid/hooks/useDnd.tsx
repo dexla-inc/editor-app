@@ -6,12 +6,14 @@ import {
   updateComponentPosition,
 } from "../utils/editor";
 import { useRef } from "react";
-import { useEditorStore } from "../stores/editor";
+import { useEditorStore as useSharedEditorStore } from "@/stores/editor";
 import { getElementsOver, getGridCoordinates } from "../utils/engines/position";
 import { structureMapper } from "../utils/componentMapper";
 import { cloneObject } from "@/utils/common";
+import { useEditorStore } from "@/libs/dnd-grid/stores/editor";
 
 export const useDnd = () => {
+  const iframeWindow = useSharedEditorStore((state) => state.iframeWindow);
   const {
     setComponents,
     components,
@@ -34,7 +36,7 @@ export const useDnd = () => {
     const targets = allIds.reduce(
       (acc, id) => {
         if (currComponentId !== id) {
-          const element = document.getElementById(id);
+          const element = iframeWindow?.document.getElementById(id);
           if (element) {
             const targetRect = element.getBoundingClientRect();
             acc[id] = targetRect;
@@ -141,7 +143,9 @@ export const useDnd = () => {
 
     const newComponents = cloneObject(components);
 
-    const updatingComponent = document.getElementById(draggableComponent!.id!)!;
+    const updatingComponent = iframeWindow?.document.getElementById(
+      draggableComponent!.id!,
+    )!;
     updatingComponent.style.gridColumn = coords.gridColumn;
     updatingComponent.style.gridRow = coords.gridRow;
     moveElement(draggableComponent!.id!, coords.parentId);
@@ -175,7 +179,7 @@ export const useDnd = () => {
       return;
     }
 
-    const el = document.getElementById(id!)!;
+    const el = iframeWindow?.document.getElementById(id!)!;
 
     const {
       column: rawColumn,
@@ -256,8 +260,9 @@ function fitsInside(innerRect: any, outerRect: any) {
 }
 
 function moveElement(elementId: string, newParentId: string) {
-  const element = document.getElementById(elementId);
-  const newParent = document.getElementById(newParentId);
+  const iframeWindow = useSharedEditorStore.getState().iframeWindow;
+  const element = iframeWindow?.document.getElementById(elementId);
+  const newParent = iframeWindow?.document.getElementById(newParentId);
 
   if (element && newParent) {
     newParent.appendChild(element);
