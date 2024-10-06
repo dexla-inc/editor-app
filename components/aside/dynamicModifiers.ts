@@ -94,6 +94,9 @@ const ChartModifier = dynamic(() => import("@/components/modifiers/Chart"));
 const CodeEmbedModifier = dynamic(
   () => import("@/components/modifiers/CodeEmbed"),
 );
+const ColorPickerModifier = dynamic(
+  () => import("@/components/modifiers/ColorPicker"),
+);
 
 type SectionsMapper = {
   [key in Modifiers]: any;
@@ -162,4 +165,5 @@ export const modifierSectionMapper: SectionsMapper = {
     icon: "IconInputSearch",
   },
   codeEmbed: { Modifier: CodeEmbedModifier, icon: "IconCode" },
+  colorPicker: { Modifier: ColorPickerModifier, icon: "IconFilter" },
 };

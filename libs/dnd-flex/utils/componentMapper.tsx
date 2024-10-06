@@ -64,6 +64,7 @@ import * as CheckboxStructure from "@/libs/dnd-flex/components/mapper/structure/
 import * as CheckboxGroupStructure from "@/libs/dnd-flex/components/mapper/structure/CheckboxGroup";
 import * as CheckboxItemStructure from "@/libs/dnd-flex/components/mapper/structure/CheckboxItem";
 import * as CodeEmbedStructure from "@/libs/dnd-flex/components/mapper/structure/CodeEmbed";
+import * as ColorPickerStructure from "@/libs/dnd-flex/components/mapper/structure/ColorPicker";
 import * as ContainerStructure from "@/libs/dnd-flex/components/mapper/structure/Container";
 import * as CountdownButtonStructure from "@/libs/dnd-flex/components/mapper/structure/CountdownButton";
 import * as DateInputStructure from "@/libs/dnd-flex/components/mapper/structure/DateInput";
@@ -110,7 +111,9 @@ import { RadialChart } from "@/libs/dnd-flex/components/mapper/charts/RadialChar
 import { ActionTrigger, SequentialTrigger } from "@/utils/actions";
 import { Modifiers } from "@/utils/modifiers";
 
+import { DraggableComponent } from "@/components/DraggableComponent";
 import { CodeEmbed } from "@/libs/dnd-flex/components/mapper/CodeEmbed";
+import { ColorPicker } from "@/libs/dnd-flex/components/mapper/ColorPicker";
 import {
   addAccordionItemToolboxAction,
   addColumnToParentToolboxAction,
@@ -135,6 +138,7 @@ import {
   IconClick,
   IconClockHour5,
   IconCode,
+  IconColorFilter,
   IconContainer,
   IconCursorText,
   IconExclamationMark,
@@ -170,7 +174,6 @@ import {
   IconToggleLeft,
   IconUser,
 } from "@tabler/icons-react";
-import { DraggableComponent } from "@/components/DraggableComponent";
 
 export type ComponentCategoryType =
   | "Layout"
@@ -944,6 +947,18 @@ export const structureMapper: StructureMapper = {
       "Embed JS",
     ],
   },
+  ColorPicker: {
+    structure: (props: any) => ColorPickerStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="ColorPicker"
+        icon={<IconColorFilter size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Input",
+    icon: <IconColorFilter size={ICON_SIZE} />,
+    synonyms: ["Color Picker", "Color Selector", "Color Swatch"],
+  },
 };
 
 export type ToolboxAction = {
@@ -1487,5 +1502,11 @@ export const componentMapper: ComponentMapper = {
     modifiers: ["codeEmbed", "effects"],
     actionTriggers: [],
     sequentialTriggers: [],
+  },
+  ColorPicker: {
+    Component: (props) => <ColorPicker {...props} />,
+    modifiers: ["colorPicker", "effects"],
+    actionTriggers: ["onChange"],
+    sequentialTriggers: ["onSuccess", "onError"],
   },
 };
