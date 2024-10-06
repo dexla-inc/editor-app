@@ -1,6 +1,6 @@
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 import { useInputsStore } from "@/stores/inputs";
+import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 import { useShallow } from "zustand/react/shallow";
 
 export const useEventData = () => {
@@ -24,6 +24,7 @@ export const useEventData = () => {
     Switch: "checked",
     FileButton: "files",
     FileUpload: "files",
+    ColorPicker: "value",
   };
 
   const eventKey = eventKeyMapper?.[selectedComponentName];

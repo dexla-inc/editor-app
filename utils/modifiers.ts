@@ -47,7 +47,8 @@ export type Modifiers =
   | "progress"
   | "countdownButton"
   | "autocomplete"
-  | "codeEmbed";
+  | "codeEmbed"
+  | "colorPicker";
 
 type RequiredModifiers = {
   [K in Modifiers]: Record<string, any>;
@@ -497,6 +498,10 @@ export const requiredModifiers: RequiredModifiers = {
       overflow: "hidden",
       display: "block",
     },
+  },
+  colorPicker: {
+    size: "sm",
+    radius: "xs",
   },
 };
 
