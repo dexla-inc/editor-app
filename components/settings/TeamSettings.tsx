@@ -12,7 +12,6 @@ import {
   Button,
   Container,
   Flex,
-  LoadingOverlay,
   Modal,
   Select,
   Stack,
@@ -21,6 +20,7 @@ import {
   Title,
   useMantineTheme,
 } from "@mantine/core";
+import LoadingOverlay from "@/components/LoadingOverlay";
 import { IconCircleCheck, IconCircleX } from "@tabler/icons-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -162,7 +162,7 @@ export default function TeamSettings({ projectId }: Props) {
             </tbody>
           </Table>
           {/* Change this over to use a table skeleton */}
-          <LoadingOverlay visible={isLoading} zIndex={1000} radius="sm" />
+          <LoadingOverlay visible={isLoading} radius="sm" />
         </Stack>
         <Modal
           opened={isInviteModalOpen}

@@ -14,12 +14,12 @@ import {
   Card,
   Divider,
   Group,
-  LoadingOverlay,
   Menu,
   Stack,
   Text,
   useMantineTheme,
 } from "@mantine/core";
+import LoadingOverlay from "@/components/LoadingOverlay";
 import { IconCopy, IconDots, IconEdit, IconTrashX } from "@tabler/icons-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import dayjs from "dayjs";
@@ -105,7 +105,6 @@ export const LogicFlowCard = ({ flow, onEdit, onClick }: FlowCardProps) => {
     >
       <LoadingOverlay
         visible={deleteFlow.isPending || duplicateFlow.isPending}
-        overlayBlur={2}
       />
       <Group position="apart" align="flex-start">
         <Stack spacing={0}>
@@ -165,8 +164,8 @@ export const LogicFlowCard = ({ flow, onEdit, onClick }: FlowCardProps) => {
                 a.type === "counter"
                   ? a.count > 0
                   : a.type !== "counter"
-                  ? true
-                  : false,
+                    ? true
+                    : false,
               )
               .map((a) => {
                 const NodeAvatar =

@@ -10,7 +10,7 @@ import {
   APICallAction,
   EndpointAuthType,
 } from "@/utils/actions";
-import { Stack } from "@mantine/core";
+import { Stack, TextInput } from "@mantine/core";
 import { useEffect } from "react";
 
 type Props = ActionFormProps<Omit<APICallAction, "name" | "datasource">>;
@@ -78,6 +78,12 @@ export const APICallActionForm = ({ form, isPageAction }: Props) => {
                 form.setFieldValue("showLoader", value);
               }}
             />
+            {form.values.showLoader && (
+              <TextInput
+                label="Loader Text"
+                {...form.getInputProps("loaderText")}
+              />
+            )}
             <EndpointRequestInputs
               selectedEndpoint={selectedEndpoint}
               form={form}

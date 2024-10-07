@@ -10,9 +10,9 @@ import {
   Box,
   Flex,
   Header,
-  LoadingOverlay,
   Navbar,
 } from "@mantine/core";
+import LoadingOverlay from "@/components/LoadingOverlay";
 
 import Link from "next/link";
 
