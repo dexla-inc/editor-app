@@ -7,8 +7,11 @@ import {
 } from "../utils/editor";
 import { useRef } from "react";
 import { useEditorStore as useSharedEditorStore } from "@/stores/editor";
-import { getElementsOver, getGridCoordinates } from "../utils/engines/position";
-import { structureMapper } from "../utils/componentMapper";
+import {
+  getElementsOver,
+  getGridCoordinates,
+} from "@/libs/dnd-grid/utils/engines/position";
+import { structureMapper } from "@/libs/dnd-grid/utils/componentMapper";
 import { cloneObject } from "@/utils/common";
 import { useEditorStore } from "@/libs/dnd-grid/stores/editor";
 
