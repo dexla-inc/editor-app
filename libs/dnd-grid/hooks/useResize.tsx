@@ -1,8 +1,9 @@
 import { useState, useRef, useCallback, useEffect } from "react";
-import { useEditorStore } from "../stores/editor";
-import { getAllIds, updateComponentSize } from "../utils/editor";
-import { checkOverlap } from "../utils/engines/overlap";
-import { getGridCoordinates } from "../utils/engines/position";
+import { useEditorStore } from "@/libs/dnd-grid/stores/editor";
+import { getAllIds, updateComponentSize } from "@/libs/dnd-grid/utils/editor";
+import { checkOverlap } from "@/libs/dnd-grid/utils/engines/overlap";
+import { getGridCoordinates } from "@/libs/dnd-grid/utils/engines/position";
+import { useEditorStore as useSharedEditorStore } from "@/stores/editor";
 
 interface GridCoords {
   gridColumn: string;
@@ -38,8 +39,9 @@ export const useResize = () => {
         setElementRects,
         setIsInteracting,
       } = useEditorStore.getState();
+      const { iframeWindow } = useSharedEditorStore.getState();
 
-      const el = document.getElementById(currComponentId)!;
+      const el = iframeWindow?.document.getElementById(currComponentId)!;
 
       setIsResizing(true);
       setSelectedComponentId(currComponentId);
@@ -60,7 +62,7 @@ export const useResize = () => {
         e.clientX - 10,
         e.clientY - 10,
       );
-      parentElement.current = document.getElementById(
+      parentElement.current = iframeWindow?.document.getElementById(
         parentId,
       ) as HTMLDivElement;
 
@@ -68,7 +70,7 @@ export const useResize = () => {
       const allIds = getAllIds(components);
       const targets = allIds.reduce<Record<string, DOMRect>>((acc, id) => {
         if (currComponentId !== id) {
-          const element = document.getElementById(id);
+          const element = iframeWindow?.document.getElementById(id);
           if (element) {
             acc[id] = element.getBoundingClientRect();
           }
@@ -139,11 +141,11 @@ export const useResize = () => {
   const handleResize = useCallback(
     (e: MouseEvent) => {
       if (!isResizing) return;
-
+      const { iframeWindow } = useSharedEditorStore.getState();
       const { selectedComponentId } = useEditorStore.getState();
       if (!selectedComponentId) return;
 
-      const el = document.getElementById(selectedComponentId)!;
+      const el = iframeWindow?.document.getElementById(selectedComponentId)!;
 
       const { column, row } = getGridCoordinates(
         selectedComponentId,

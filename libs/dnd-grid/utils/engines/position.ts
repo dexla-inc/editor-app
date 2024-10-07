@@ -1,5 +1,6 @@
-import { useEditorStore } from "../../stores/editor";
-import { getAllIds } from "../editor";
+import { useEditorStore } from "@/libs/dnd-grid/stores/editor";
+import { getAllIds } from "@/libs/dnd-grid/utils/editor";
+import { useEditorStore as useSharedEditorStore } from "@/stores/editor";
 
 // Define the structure of the result returned by getGridCoordinates
 interface GridCoordinateResult {
@@ -16,9 +17,10 @@ interface GridCoordinateResult {
  */
 export const getElementsOver = (x: number, y: number): Element[] => {
   const { components } = useEditorStore.getState();
+  const { iframeWindow } = useSharedEditorStore.getState();
   const allIds = getAllIds(components);
 
-  return document
+  return iframeWindow?.document
     .elementsFromPoint(x, y)
     .filter((el) => allIds.includes(el.id));
 };
@@ -105,11 +107,12 @@ const getDropZoneElement = (
  * @returns boolean indicating if the element is a valid drop zone
  */
 const isValidDropZone = (el: HTMLElement, currentId: string): boolean => {
+  const { iframeWindow } = useSharedEditorStore.getState();
   const elId = el.id;
   // Exclude the current element
   if (elId === currentId) return false;
 
-  const currentElement = document.getElementById(currentId);
+  const currentElement = iframeWindow?.document.getElementById(currentId);
   if (!currentElement) return false;
 
   // Get bounding rectangles for both elements
