@@ -6,7 +6,8 @@ import {
   EditableComponentMapper,
   getAllComponentsByName,
 } from "@/utils/editor";
-import { FlexProps, LoadingOverlay, Flex as MantineFlex } from "@mantine/core";
+import { FlexProps, Flex as MantineFlex } from "@mantine/core";
+import LoadingOverlay from "@/components/LoadingOverlay";
 import { FormEvent, forwardRef, memo } from "react";
 import { useInputsStore } from "@/stores/inputs";
 import { useShallow } from "zustand/react/shallow";
@@ -26,6 +27,7 @@ const FormComponent = forwardRef(
       loading,
       dataType = "static",
       gap,
+      loaderText,
       ...componentProps
     } = component.props as any;
     const { onSubmit, ...otherTriggers } = triggers || {};
@@ -127,7 +129,7 @@ const FormComponent = forwardRef(
         pos="relative"
       >
         {renderData({ renderTree })}
-        <LoadingOverlay visible={loading} zIndex={1000} radius="sm" />
+        <LoadingOverlay visible={loading} radius="sm" text={loaderText} />
       </MantineFlex>
     );
   },

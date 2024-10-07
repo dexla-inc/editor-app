@@ -5,7 +5,7 @@ import { useVariableStore } from "@/stores/variables";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useDataSources } from "@/hooks/editor/reactQuery/useDataSources";
 import { useVariableListQuery } from "@/hooks/editor/reactQuery/useVariableListQuery";
-import { LoadingOverlay } from "@mantine/core";
+import LoadingOverlay from "@/components/LoadingOverlay";
 import UnauthorisedPage from "@/components/UnauthorisedPage";
 import { PageProps } from "@/types/app";
 import { useEffect } from "react";
