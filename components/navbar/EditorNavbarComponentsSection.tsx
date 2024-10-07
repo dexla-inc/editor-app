@@ -1,18 +1,19 @@
 import { DraggableComponent } from "@/components/DraggableComponent";
 import GridItemComponent from "@/components/navbar/ComponentGridItem";
 import { useCustomComponentList } from "@/hooks/editor/reactQuery/useCustomComponentList";
-import { CustomComponentResponse } from "@/requests/components/types";
-import { useEditorTreeStore } from "@/stores/editorTree";
-import { usePropelAuthStore } from "@/stores/propelAuth";
-import { useThemeStore } from "@/stores/theme";
 import {
   ComponentCategoryType,
   componentMapper,
   structureMapper,
-} from "@/utils/componentMapper";
+} from "@/libs/dnd-flex/utils/componentMapper";
+import { CustomComponentResponse } from "@/requests/components/types";
+import { useEditorTreeStore } from "@/stores/editorTree";
+import { usePropelAuthStore } from "@/stores/propelAuth";
+import { useThemeStore } from "@/stores/theme";
+import { toSpaced } from "@/types/dashboardTypes";
+import { safeJsonParse } from "@/utils/common";
 import { decodeSchema } from "@/utils/compression";
 import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
-import { toSpaced } from "@/types/dashboardTypes";
 import { Component } from "@/utils/editor";
 import createCache from "@emotion/cache";
 import {
@@ -28,7 +29,6 @@ import {
 } from "@mantine/core";
 import { IconFrustum, IconSearch } from "@tabler/icons-react";
 import { useCallback, useRef, useState } from "react";
-import { safeJsonParse } from "@/utils/common";
 
 type DraggableComponentData = {
   id: string;
@@ -196,7 +196,8 @@ const filterComponents = (
   query: string,
 ) => {
   const lowerCaseQuery = query.toLowerCase();
-  return components.filter(
+  const sortedComponents = sortComponents(components);
+  return sortedComponents.filter(
     ({ id, synonyms = [], hide }) =>
       (query
         ? id.toLowerCase().includes(lowerCaseQuery) ||
@@ -205,4 +206,8 @@ const filterComponents = (
           )
         : true) && !hide,
   );
+};
+
+const sortComponents = (components: DraggableComponentData[]) => {
+  return components.sort((a, b) => a.id.localeCompare(b.id));
 };

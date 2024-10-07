@@ -28,6 +28,7 @@ import {
   TextData as AccordionItem,
   TextData as Badge,
   TextData as Button,
+  TextData as ColorPicker,
   TextData as FileButton,
   TextData as Link,
   TextData as NavLink,
@@ -82,4 +83,5 @@ export const dataMapper = {
   RadialChart: Chart,
   CodeEmbed,
   FileUpload,
+  ColorPicker,
 };

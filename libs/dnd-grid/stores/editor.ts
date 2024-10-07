@@ -1,6 +1,6 @@
+import { ComponentStructure } from "@/utils/editor";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
-import { ComponentStructure } from "../types/components";
 
 type Coordinates = { gridColumn: string; gridRow: string; parentId: string };
 

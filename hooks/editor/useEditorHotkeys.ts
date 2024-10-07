@@ -2,7 +2,7 @@ import { useHotkeysOnIframe } from "@/hooks/editor/useHotkeysOnIframe";
 import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { copyToClipboard, pasteFromClipboard } from "@/utils/clipboard";
-import { structureMapper } from "@/utils/componentMapper";
+import { structureMapper } from "@/libs/dnd-flex/utils/componentMapper";
 import {
   ComponentStructure,
   EditorTreeCopy,

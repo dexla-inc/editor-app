@@ -24,13 +24,13 @@ export const Default: Story = {
   args: {
     components: {
       id: "main-grid",
-      name: "container",
+      name: "Container",
       description: "Container",
       blockDroppingChildrenInside: false,
       children: [
         {
           id: "V7BXq3wbqGhduq57Pj_04",
-          name: "container",
+          name: "Container",
           description: "Container",
           blockDroppingChildrenInside: false,
           props: {
@@ -44,7 +44,7 @@ export const Default: Story = {
           children: [
             {
               id: "oGFqO5RNPd1u1ptj-FbIK",
-              name: "button",
+              name: "Button",
               description: "Button",
               blockDroppingChildrenInside: true,
               props: {
@@ -58,7 +58,7 @@ export const Default: Story = {
             },
             {
               id: "JzVEIvdwuNVUIgLCe0C_o",
-              name: "text",
+              name: "Text",
               description: "Text",
               blockDroppingChildrenInside: true,
               props: {

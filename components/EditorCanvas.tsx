@@ -2,7 +2,7 @@ import { Droppable } from "@/components/Droppable";
 import { IFrame } from "@/components/IFrame";
 import useEditorHotkeys from "@/hooks/editor/useEditorHotkeys";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { componentMapper } from "@/utils/componentMapper";
+import { componentMapper } from "@/libs/dnd-flex/utils/componentMapper";
 import { HEADER_HEIGHT } from "@/utils/config";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Box, Paper } from "@mantine/core";

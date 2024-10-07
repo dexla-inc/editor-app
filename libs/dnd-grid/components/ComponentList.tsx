@@ -1,5 +1,6 @@
 import { useDnd } from "../hooks/useDnd";
-import { componentTypes } from "../types/types";
+
+const componentTypes = ["Button", "Container", "Text", "Alert", "Title"];
 
 const ComponentList = ({}) => {
   const { onDragStart, onDrag, onDragEnd } = useDnd();
@@ -13,14 +14,11 @@ const ComponentList = ({}) => {
         paddingBottom: "0.5rem",
       }}
     >
-      {componentTypes.map((componentData) => (
+      {componentTypes.map((name) => (
         <div
-          data-type={componentData.name}
-          key={componentData.name}
+          data-type={name}
+          key={name}
           draggable
-          // onDragStart={(e) => {
-          //   e.dataTransfer.setData('text/plain', JSON.stringify({ type: componentData.type }));
-          // }}
           onDragStart={onDragStart}
           onDrag={onDrag}
           onDragEnd={onDragEnd}
@@ -32,7 +30,7 @@ const ComponentList = ({}) => {
             cursor: "move",
           }}
         >
-          {componentData.description}
+          {name}
         </div>
       ))}
     </div>

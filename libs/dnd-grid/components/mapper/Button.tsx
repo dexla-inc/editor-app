@@ -1,0 +1,76 @@
+import { ButtonProps, Button as MantineButton } from "@mantine/core";
+import { ReactElement, forwardRef, memo, Ref } from "react";
+import { EditableComponentMapper } from "@/utils/editor";
+import { useDnd } from "@/libs/dnd-grid/hooks/useDnd";
+import { useEditorStore } from "@/libs/dnd-grid/stores/editor";
+import { useShallow } from "zustand/react/shallow";
+import { ResizeHandlers } from "@/libs/dnd-grid/components/ResizeHandlers";
+
+type Props = EditableComponentMapper & ButtonProps & ReactElement<"Button">;
+
+const ButtonComponent = forwardRef<HTMLButtonElement, Props>(
+  ({ component }, ref) => {
+    const { triggers } = component.props!;
+    const dragTriggers = useDnd();
+    const isActive = useEditorStore(
+      (state) =>
+        state.selectedComponentId === component.id ||
+        state.hoverComponentId === component.id,
+    );
+    const { setHoverComponentId } = useEditorStore(
+      useShallow((state) => state),
+    );
+
+    return (
+      <MantineButton
+        id={component.id}
+        draggable
+        {...dragTriggers}
+        {...triggers}
+        style={{
+          position: "relative",
+          border: "1px solid",
+          borderRadius: "0.25rem",
+          gridColumn: component.props?.style.gridColumn,
+          gridRow: component.props?.style.gridRow,
+          display: "grid",
+          gridTemplateColumns: "subgrid",
+          gridTemplateRows: "subgrid",
+          ...(isActive && {
+            boxShadow: "0 0 0 2px #3b82f6 inset",
+          }),
+          ...(component?.props?.bg && {
+            backgroundColor: component.props.bg,
+          }),
+        }}
+        styles={{
+          inner: {
+            display: "flex",
+            gridArea: "1 / 1 / -1 / -1",
+          },
+        }}
+        onMouseOver={(e) => {
+          e.stopPropagation();
+          const { hoverComponentId } = useEditorStore.getState();
+          if (hoverComponentId !== component.id) {
+            setHoverComponentId(component.id ?? null);
+          }
+        }}
+        onMouseLeave={(e) => {
+          e.stopPropagation();
+          const { hoverComponentId } = useEditorStore.getState();
+          if (hoverComponentId !== null) {
+            setHoverComponentId(null);
+          }
+        }}
+        ref={ref}
+      >
+        Button
+        <ResizeHandlers componentId={component.id} />
+      </MantineButton>
+    );
+  },
+);
+ButtonComponent.displayName = "Button";
+
+export const Button = memo(ButtonComponent);
