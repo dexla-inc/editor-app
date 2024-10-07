@@ -1,10 +1,9 @@
-import { useCodeInjectionContext } from "@/contexts/CodeInjectionProvider";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useVariableStore } from "@/stores/variables";
 import { isPreviewModeSelector } from "@/utils/componentSelectors";
 import { EditableComponentMapper } from "@/utils/editor";
 import merge from "lodash.merge";
-import { useCallback, useEffect } from "react";
+import { useCallback, useMemo, useEffect } from "react";
 
 export const useCodeInjection = (
   ref: React.RefObject<HTMLIFrameElement>,
@@ -18,42 +17,18 @@ export const useCodeInjection = (
         if (item.id) {
           curr[item.id] = item?.value ?? item?.defaultValue ?? undefined;
         }
-
         return curr;
       },
       {} as Record<string, any>,
     ),
   );
 
-  useCodeInjectionContext();
-
   const events = merge({}, component.props?.triggers, props);
-
-  const applyEventHandlers = useCallback(
-    (doc: Document) => {
-      const applyHandlers = (element: Element) => {
-        Object.entries(events)?.forEach(([eventName, handler]) => {
-          try {
-            element.addEventListener(
-              eventName.substring(2).toLowerCase(),
-              handler as EventListener,
-            );
-          } catch (error) {
-            // do nothing
-          }
-        });
-      };
-
-      applyHandlers(doc.documentElement);
-    },
-    [events],
-  );
 
   const createScriptContent = useCallback((jsCode: string) => {
     const transformedJsCode = jsCode.replace(
       /dexla\.setVariable\s*\(\s*(variables\[(?:\/\*[\s\S]*?\*\/\s*)?'[^']+'\](?:\.[.\w]+|\[[^\]]+\])*)\s*,/g,
       (match, setVariableArg) => {
-        // Only transform setVariable calls
         return `dexla.setVariable("${setVariableArg}", `;
       },
     );
@@ -78,99 +53,69 @@ export const useCodeInjection = (
         Object.freeze(dexla);
 
         ${transformedJsCode}
-        
       })(window);
     `;
   }, []);
 
-  const injectScripts = useCallback(
-    (doc: Document) => {
-      if (!doc) return;
+  const injectEventHandlers = useCallback(() => {
+    if (isPreviewMode || !ref.current || !ref.current.contentDocument) return;
 
-      const scriptTags = doc.querySelectorAll("script");
-
-      scriptTags.forEach((scriptTag) => {
-        const originalJs = scriptTag.textContent || "";
-        const newScriptContent = isPreviewMode
-          ? createScriptContent(originalJs)
-          : ""; // Remove scripts in non-preview mode
-
-        if (isPreviewMode) {
-          const newScript = doc.createElement("script");
-          newScript.type = "text/javascript";
-          newScript.textContent = newScriptContent;
-          scriptTag.replaceWith(newScript);
-        } else {
-          scriptTag.remove();
+    const applyHandlers = (element: Element) => {
+      Object.entries(events)?.forEach(([eventName, handler]) => {
+        try {
+          element.addEventListener(
+            eventName.substring(2).toLowerCase(),
+            handler as EventListener,
+          );
+        } catch (error) {
+          // do nothing
         }
       });
+    };
 
-      // Append custom script if not in preview mode
-      if (!isPreviewMode) {
-        Object.freeze({});
-      }
-    },
-    [createScriptContent, isPreviewMode],
-  );
+    applyHandlers(ref.current.contentDocument.documentElement);
+  }, [events, isPreviewMode, ref]);
 
-  const injectContent = useCallback(
-    (htmlCode: string) => {
-      if (!ref.current) return;
-      ref.current.style.width = "100%";
-      ref.current.style.border = "none";
+  const injectedHtmlCode = useMemo(() => {
+    if (!component.onLoad?.htmlCode) return "";
 
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(htmlCode, "text/html");
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(component.onLoad.htmlCode, "text/html");
+    // Extract scripts
+    const scripts: string[] = [];
+    const scriptTags = doc.querySelectorAll("script:not([src])");
 
-      // Extract scripts
-      const scripts: string[] = [];
-      const scriptTags = doc.querySelectorAll("script");
-      scriptTags.forEach((scriptTag) => {
-        const scriptContent = scriptTag.textContent || "";
-        const newScriptContent = createScriptContent(scriptContent);
-        scripts.push(newScriptContent);
-        scriptTag.remove(); // Remove script tag from the document
-      });
+    scriptTags.forEach((scriptTag) => {
+      let scriptContent = scriptTag.textContent || "";
+      // Insert variables at the beginning of each script
+      const newScriptContent = createScriptContent(scriptContent);
+      scripts.push(newScriptContent);
+      scriptTag.remove(); // Remove script tag from the document
+    });
 
-      // Set variables in the iframe's window
+    // Inject scripts
+    const scriptElement = doc.createElement("script");
+    scriptElement.type = "text/javascript";
+    scriptElement.text = scripts.join("\n");
+    doc.body.appendChild(scriptElement);
+
+    return doc.documentElement.outerHTML;
+  }, [component.onLoad?.htmlCode, createScriptContent]);
+
+  // Inject variables into iframe
+  useEffect(() => {
+    if (ref.current) {
       // @ts-ignore
       ref.current.contentWindow!.variables = () => variables;
+    }
+  }, [ref, variables]);
 
-      const iframeDoc = ref.current.contentDocument;
-      if (iframeDoc) {
-        // Clear existing content
-        iframeDoc.head.innerHTML = "";
-        iframeDoc.body.innerHTML = "";
-
-        // Append new content
-        iframeDoc.head.append(...doc.head.childNodes);
-        iframeDoc.body.append(...doc.body.childNodes);
-
-        // Inject scripts
-        scripts.forEach((scriptContent) => {
-          const scriptElement = iframeDoc.createElement("script");
-          scriptElement.type = "text/javascript";
-          scriptElement.text = scriptContent;
-          iframeDoc.body.appendChild(scriptElement);
-        });
-
-        // Apply event handlers if not in preview mode
-        if (!isPreviewMode) {
-          applyEventHandlers(iframeDoc);
-        }
-      }
-    },
-    [ref, createScriptContent, variables, isPreviewMode, applyEventHandlers],
-  );
-
+  // Call injectEventHandlers after the content has been loaded
   useEffect(() => {
-    injectContent(component.onLoad?.htmlCode);
+    if (ref.current) {
+      ref.current.onload = injectEventHandlers;
+    }
+  }, [ref, injectEventHandlers]);
 
-    // Cleanup function
-    return () => {
-      if (ref.current) {
-        ref.current.onload = null;
-      }
-    };
-  }, [component, injectContent]);
+  return injectedHtmlCode;
 };

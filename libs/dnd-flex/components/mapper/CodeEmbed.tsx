@@ -2,21 +2,28 @@ import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useCodeInjection } from "@/hooks/editor/useCodeInjection";
 import { EditableComponentMapper } from "@/utils/editor";
 import { Box, BoxProps } from "@mantine/core";
-import { forwardRef } from "react";
+import { forwardRef, useRef } from "react";
 
 type Props = EditableComponentMapper & BoxProps;
 
 const CodeEmbedComponent = forwardRef<HTMLIFrameElement, Props>(
-  ({ component, ...props }, ref) => {
-    useCodeInjection(
+  ({ component, shareableContent, style, sx, ...props }, ref) => {
+    const injectedHtmlCode = useCodeInjection(
       ref as React.RefObject<HTMLIFrameElement>,
       component,
       props,
     );
 
-    const { triggers, ...componentProps } = component.props ?? {};
-
-    return <Box component="iframe" ref={ref} {...props} {...componentProps} />;
+    return (
+      <Box
+        ref={ref}
+        component="iframe"
+        srcDoc={injectedHtmlCode}
+        {...props}
+        sx={sx}
+        style={style}
+      />
+    );
   },
 );
 
