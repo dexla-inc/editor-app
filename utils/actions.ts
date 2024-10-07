@@ -174,6 +174,7 @@ export interface APICallAction extends BaseAction {
   endpoint: string;
   authConfig: Omit<DataSourceAuthResponse, "type">;
   showLoader?: boolean;
+  loaderText?: string;
   datasources: DataSourceResponse[];
   binds?: {
     header: { [key: string]: any };
@@ -433,13 +434,17 @@ const handleSuccess = async (props: APICallActionParams) => {
   });
 };
 
-const setLoadingState = (componentId: string, isLoading: boolean) => {
+const setLoadingState = (
+  componentId: string,
+  isLoading: boolean,
+  loaderText?: string,
+) => {
   const updateTreeComponentAttrs =
     useEditorTreeStore.getState().updateTreeComponentAttrs;
 
   updateTreeComponentAttrs({
     componentIds: [componentId],
-    attrs: { props: { loading: isLoading } },
+    attrs: { props: { loading: isLoading, loaderText } },
     save: false,
   });
 };
@@ -466,7 +471,7 @@ export const useApiCallAction = async (
   const projectId = useEditorTreeStore.getState().currentProjectId as string;
 
   if (entity?.props && action.showLoader) {
-    setLoadingState(entity.id!, true);
+    setLoadingState(entity.id!, true, action.loaderText);
   }
 
   const endpoint = endpointResults?.find((e) => e.id === action.endpoint)!;
@@ -750,6 +755,7 @@ export const actionMapper = (actionName: string) => {
       defaultValues: {
         authConfig: useDataSourceStore.getState().apiAuthConfig,
         showLoader: true,
+        loaderText: undefined,
         datasources: [],
         binds: {
           header: {},

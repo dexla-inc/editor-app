@@ -4,13 +4,8 @@ import { useStorageQuery } from "@/hooks/editor/reactQuery/useStorageQuery";
 import { useEditorParams } from "@/hooks/editor/useEditorParams";
 import { uploadFile } from "@/requests/storage/mutations";
 import { ICON_SIZE } from "@/utils/config";
-import {
-  FileButton,
-  Group,
-  LoadingOverlay,
-  Stack,
-  TextInput,
-} from "@mantine/core";
+import { FileButton, Group, Stack, TextInput } from "@mantine/core";
+import LoadingOverlay from "@/components/LoadingOverlay";
 import { IconSearch } from "@tabler/icons-react";
 import { useCallback, useState } from "react";
 
@@ -38,11 +33,7 @@ export const AssetImageOverview = () => {
 
   return (
     <Stack spacing="xs" mih={200}>
-      <LoadingOverlay
-        visible={isLoading}
-        overlayOpacity={0.3}
-        loaderProps={{ variant: "dots" }}
-      />
+      <LoadingOverlay visible={isLoading} />
       <Group noWrap>
         <TextInput
           icon={<IconSearch size={ICON_SIZE} />}
