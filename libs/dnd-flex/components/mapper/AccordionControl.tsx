@@ -18,7 +18,6 @@ const AccordionControlComponent = forwardRef(
         {...props}
         {...componentProps}
         {...triggers}
-        style={{ padding: 0 }}
       >
         {component.children && component.children.length > 0
           ? component.children?.map((child) =>
