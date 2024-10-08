@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import Grid from "./components/Grid";
 import { useEditorStore } from "./stores/editor";
 
-export const DnDGrid = ({ components: propComponents }: any) => {
+export const DnDGrid = ({ components: propComponents, iframeWindow }: any) => {
   const { components } = useEditorStore();
 
   useEffect(() => {
@@ -10,6 +10,10 @@ export const DnDGrid = ({ components: propComponents }: any) => {
       useEditorStore.setState({ components: propComponents });
     }
   }, [propComponents]);
+
+  useEffect(() => {
+    useEditorStore.setState({ iframeWindow });
+  }, [iframeWindow]);
 
   return (
     <div style={{ background: "white", margin: "1rem" }}>

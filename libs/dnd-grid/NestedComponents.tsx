@@ -1,10 +1,10 @@
 import { MantineProvider } from "@mantine/core";
-import ComponentList from "./components/ComponentList";
-import ComponentToolbox from "./components/ComponentToolbox";
-import ErrorBoundary from "./components/ErrorBoundary";
-import DnDGrid from "./DnDGrid";
+import ComponentList from "@/libs/dnd-grid/components/ComponentList";
+import ComponentToolbox from "@/libs/dnd-grid/components/ComponentToolbox";
+import ErrorBoundary from "@/libs/dnd-grid/components/ErrorBoundary";
+import DnDGrid from "@/libs/dnd-grid/DnDGrid";
 
-export const NestedComponents = ({ components }: any) => {
+export const NestedComponents = ({ components, iframeWindow }: any) => {
   return (
     <ErrorBoundary>
       <MantineProvider>

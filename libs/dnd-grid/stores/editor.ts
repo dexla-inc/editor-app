@@ -26,6 +26,8 @@ interface State {
   setCoords: (coords: Coordinates) => void;
   hoverComponentId: string | null;
   setHoverComponentId: (id: string | null) => void;
+  iframeWindow: any;
+  setIframeWindow: (iframeWindow: any) => void;
 }
 
 interface ElementRects {
@@ -81,6 +83,9 @@ export const useEditorStore = create<State>()(
         hoverComponentId: null,
         setHoverComponentId: (hoverComponentId: string | null) =>
           set({ hoverComponentId }, false, "setHoverComponentId"),
+        iframeWindow: null,
+        setIframeWindow: (iframeWindow: any) =>
+          set({ iframeWindow }, false, "setIframeWindow"),
       }),
       {
         name: "editor-storage",
