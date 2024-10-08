@@ -1,4 +1,4 @@
-import { DraggableComponent } from "@/components/DraggableComponent";
+import { DraggableComponent } from "@/libs/dnd-grid/components/DraggableComponent";
 import GridItemComponent from "@/components/navbar/ComponentGridItem";
 import { useCustomComponentList } from "@/hooks/editor/reactQuery/useCustomComponentList";
 import { CustomComponentResponse } from "@/requests/components/types";
