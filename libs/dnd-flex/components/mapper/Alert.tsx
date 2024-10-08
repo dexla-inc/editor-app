@@ -10,10 +10,11 @@ type Props = EditableComponentMapper & Omit<AlertProps, "title">;
 
 const AlertComponent = forwardRef(
   ({ renderTree, shareableContent, component, ...props }: Props, ref) => {
-    const { icon, iconColor, triggers, ...componentProps } =
+    const { icon, iconColor, color, triggers, ...componentProps } =
       component.props as any;
     const { children: childrenValue } = component?.onLoad;
     const theme = useThemeStore((state) => state.theme);
+    const colorHex = get(theme.colors, color);
     const iconColorHex = get(theme.colors, iconColor);
 
     return (
@@ -30,6 +31,9 @@ const AlertComponent = forwardRef(
         })}
         {...props}
         {...componentProps}
+        sx={{
+          backgroundColor: colorHex,
+        }}
         {...triggers}
         style={{ ...props.style }}
       >
