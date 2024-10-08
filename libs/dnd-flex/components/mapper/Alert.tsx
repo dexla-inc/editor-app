@@ -28,14 +28,16 @@ const AlertComponent = forwardRef(
               color={iconColorHex}
             />
           ),
-          root: {
-            backgroundColor: colorHex,
-          },
         })}
         {...props}
         {...componentProps}
         {...triggers}
         style={{ ...props.style }}
+        styles={{
+          root: {
+            backgroundColor: colorHex,
+          },
+        }}
       >
         {component.children && component.children.length > 0
           ? component.children?.map((child) =>
