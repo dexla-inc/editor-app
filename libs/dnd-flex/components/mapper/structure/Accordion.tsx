@@ -37,6 +37,7 @@ export const jsonStructure = (props?: any): ComponentStructure => {
               style: {
                 width: "100%",
                 height: "auto",
+                padding: "20px",
               },
             },
             children: [
@@ -47,10 +48,6 @@ export const jsonStructure = (props?: any): ComponentStructure => {
                 props: {
                   style: {
                     alignItems: "center",
-                    marginTop: "20px",
-                    marginBottom: "20px",
-                    paddingLeft: "20px",
-                    paddingRight: "20px",
                   },
                 },
                 children: [
@@ -116,6 +113,7 @@ export const jsonStructure = (props?: any): ComponentStructure => {
               style: {
                 width: "100%",
                 height: "auto",
+                padding: "20px",
               },
             },
             children: [
@@ -126,10 +124,6 @@ export const jsonStructure = (props?: any): ComponentStructure => {
                 props: {
                   style: {
                     alignItems: "center",
-                    marginTop: "20px",
-                    marginBottom: "20px",
-                    paddingLeft: "20px",
-                    paddingRight: "20px",
                   },
                 },
                 children: [
