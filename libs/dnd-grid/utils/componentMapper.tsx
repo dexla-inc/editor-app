@@ -1,4 +1,4 @@
-import { DraggableComponent } from "@/components/DraggableComponent";
+import { DraggableComponent } from "@/libs/dnd-grid/components/DraggableComponent";
 // import { Accordion } from "@/components/mapper/Accordion";
 // import { AccordionControl } from "@/components/mapper/AccordionControl";
 // import { AccordionItem } from "@/components/mapper/AccordionItem";

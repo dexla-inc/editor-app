@@ -15,19 +15,25 @@ import { cloneObject } from "@/utils/common";
 import { useEditorStore } from "@/libs/dnd-grid/stores/editor";
 
 export const useDnd = () => {
-  const {
-    setComponents,
-    components,
-    setInvalidComponent,
-    setValidComponent,
-    setSelectedComponentId,
-    setIsInteracting,
-    setDraggableComponent,
-    draggableComponent,
-    setCoords,
-    coords,
-    iframeWindow,
-  } = useEditorStore();
+  const setComponents = useEditorStore((state) => state.setComponents);
+  const components = useEditorStore((state) => state.components);
+  const setInvalidComponent = useEditorStore(
+    (state) => state.setInvalidComponent,
+  );
+  const setValidComponent = useEditorStore((state) => state.setValidComponent);
+  const setSelectedComponentId = useEditorStore(
+    (state) => state.setSelectedComponentId,
+  );
+  const setIsInteracting = useEditorStore((state) => state.setIsInteracting);
+  const setDraggableComponent = useEditorStore(
+    (state) => state.setDraggableComponent,
+  );
+  const draggableComponent = useEditorStore(
+    (state) => state.draggableComponent,
+  );
+  const setCoords = useEditorStore((state) => state.setCoords);
+  const coords = useEditorStore((state) => state.coords);
+  const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const dragOffset = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const isNewComponent = useRef<boolean>(false);
 
@@ -75,8 +81,10 @@ export const useDnd = () => {
     } else {
       // add new components here
       const type = el.getAttribute("data-type");
+      console.log("add new components here", type);
       if (type) {
         const newComponent = structureMapper[type].structure({});
+        console.log("newComponent==>", newComponent);
         setDraggableComponent(newComponent);
         isNewComponent.current = true;
       }
@@ -170,6 +178,7 @@ export const useDnd = () => {
     }
 
     const { validComponent, invalidComponent } = useEditorStore.getState();
+    console.log("draggableComponent==>", draggableComponent);
     const { id } = draggableComponent!;
 
     if (isNewComponent.current) {
