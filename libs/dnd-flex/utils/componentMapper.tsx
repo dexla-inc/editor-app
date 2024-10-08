@@ -174,6 +174,7 @@ import {
   IconToggleLeft,
   IconUser,
 } from "@tabler/icons-react";
+import { DraggableComponent } from "@/libs/dnd-flex/components/DraggableComponent";
 
 export type ComponentCategoryType =
   | "Layout"
