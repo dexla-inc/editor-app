@@ -15,6 +15,7 @@ import { ContainerData as Container } from "@/components/data/ContainerData";
 import { CountdownButtonData as CountdownButton } from "@/components/data/CountdownButtonData";
 import { DateInputData as DateInput } from "@/components/data/DateInputData";
 import {
+  FormFieldsBuilder as AccordionControl,
   FormFieldsBuilder as Alert,
   FormFieldsBuilder as ButtonIcon,
   FormFieldsBuilder as FileUpload,
@@ -84,4 +85,5 @@ export const dataMapper = {
   CodeEmbed,
   FileUpload,
   ColorPicker,
+  AccordionControl,
 };
