@@ -28,12 +28,12 @@ const AlertComponent = forwardRef(
               color={iconColorHex}
             />
           ),
+          root: {
+            backgroundColor: colorHex,
+          },
         })}
         {...props}
         {...componentProps}
-        sx={{
-          backgroundColor: colorHex,
-        }}
         {...triggers}
         style={{ ...props.style }}
       >
