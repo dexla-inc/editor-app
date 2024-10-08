@@ -8,13 +8,14 @@ import {
   IconHandMove,
 } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
-import { useEditorStore } from "../stores/editor";
+import { useEditorStore } from "@/libs/dnd-grid/stores/editor";
 
 const ComponentToolbox = () => {
   const {
     selectedComponentId: id,
     components,
     isInteracting,
+    iframeWindow,
   } = useEditorStore();
   const [position, setPosition] = useState({ top: 0, left: 0 });
 
@@ -29,7 +30,7 @@ const ComponentToolbox = () => {
 
   useEffect(() => {
     if (id) {
-      const element = document.getElementById(id);
+      const element = iframeWindow?.document.getElementById(id);
       if (element) {
         const rect = element.getBoundingClientRect();
         setPosition({
@@ -38,7 +39,7 @@ const ComponentToolbox = () => {
         });
       }
     }
-  }, [id, components]);
+  }, [id, components, iframeWindow]);
 
   if (!id || isInteracting) {
     return null;

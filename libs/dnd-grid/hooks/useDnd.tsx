@@ -4,9 +4,8 @@ import {
   getComponentById,
   getParentId,
   updateComponentPosition,
-} from "../utils/editor";
+} from "@/libs/dnd-grid/utils/editor";
 import { useRef } from "react";
-import { useEditorStore as useSharedEditorStore } from "@/stores/editor";
 import {
   getElementsOver,
   getGridCoordinates,
@@ -16,7 +15,6 @@ import { cloneObject } from "@/utils/common";
 import { useEditorStore } from "@/libs/dnd-grid/stores/editor";
 
 export const useDnd = () => {
-  const iframeWindow = useSharedEditorStore((state) => state.iframeWindow);
   const {
     setComponents,
     components,
@@ -28,6 +26,7 @@ export const useDnd = () => {
     draggableComponent,
     setCoords,
     coords,
+    iframeWindow,
   } = useEditorStore();
   const dragOffset = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const isNewComponent = useRef<boolean>(false);
@@ -263,7 +262,7 @@ function fitsInside(innerRect: any, outerRect: any) {
 }
 
 function moveElement(elementId: string, newParentId: string) {
-  const iframeWindow = useSharedEditorStore.getState().iframeWindow;
+  const iframeWindow = useEditorStore.getState().iframeWindow;
   const element = iframeWindow?.document.getElementById(elementId);
   const newParent = iframeWindow?.document.getElementById(newParentId);
 

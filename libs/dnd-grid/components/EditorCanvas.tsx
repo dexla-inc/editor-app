@@ -11,7 +11,7 @@ import { RenderTreeFunc } from "@/types/component";
 import { ComponentToolbox } from "@/components/ComponentToolbox";
 import DnDGrid from "@/libs/dnd-grid/DnDGrid";
 import ErrorBoundary from "@/libs/dnd-grid/components/ErrorBoundary";
-
+import { useEditorStore } from "@/stores/editor";
 type Props = {
   projectId: string;
 };
@@ -151,10 +151,12 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
   //   </>
   // );
 
+  const iframeWindow = useEditorStore((state) => state.iframeWindow);
+
   return (
     <IFrame projectId={projectId}>
       <ErrorBoundary>
-        <DnDGrid components={store} />
+        <DnDGrid components={store} iframeWindow={iframeWindow} />
       </ErrorBoundary>
     </IFrame>
   );

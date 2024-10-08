@@ -3,7 +3,6 @@ import { useEditorStore } from "@/libs/dnd-grid/stores/editor";
 import { getAllIds, updateComponentSize } from "@/libs/dnd-grid/utils/editor";
 import { checkOverlap } from "@/libs/dnd-grid/utils/engines/overlap";
 import { getGridCoordinates } from "@/libs/dnd-grid/utils/engines/position";
-import { useEditorStore as useSharedEditorStore } from "@/stores/editor";
 
 interface GridCoords {
   gridColumn: string;
@@ -21,7 +20,7 @@ export const useResize = () => {
   });
   const parentElement = useRef<HTMLDivElement | null>(null);
   const initialOverlappingElements = useRef<string[]>([]);
-
+  const { iframeWindow } = useEditorStore.getState();
   /**
    * Initializes the resizing process by setting up necessary states and references.
    */
@@ -32,6 +31,7 @@ export const useResize = () => {
       currComponentId: string,
     ) => {
       e.preventDefault();
+      console.log("initializeResize==>", e);
       const {
         selectedComponentId,
         components,
@@ -39,8 +39,6 @@ export const useResize = () => {
         setElementRects,
         setIsInteracting,
       } = useEditorStore.getState();
-      const { iframeWindow } = useSharedEditorStore.getState();
-
       const el = iframeWindow?.document.getElementById(currComponentId)!;
 
       setIsResizing(true);
@@ -82,7 +80,7 @@ export const useResize = () => {
       // Store initial overlapping elements to detect new overlaps during resizing
       initialOverlappingElements.current = checkOverlap(el, 5);
     },
-    [],
+    [iframeWindow],
   );
 
   /**
@@ -141,7 +139,7 @@ export const useResize = () => {
   const handleResize = useCallback(
     (e: MouseEvent) => {
       if (!isResizing) return;
-      const { iframeWindow } = useSharedEditorStore.getState();
+
       const { selectedComponentId } = useEditorStore.getState();
       if (!selectedComponentId) return;
 
@@ -188,7 +186,7 @@ export const useResize = () => {
         gridRow: el.style.gridRow,
       };
     },
-    [isResizing],
+    [isResizing, iframeWindow],
   );
 
   /**
@@ -221,14 +219,23 @@ export const useResize = () => {
    */
   useEffect(() => {
     if (isResizing) {
-      window.addEventListener("mousemove", handleResize as any);
-      window.addEventListener("mouseup", finalizeResize);
+      iframeWindow?.document.body.addEventListener(
+        "mousemove",
+        handleResize as any,
+      );
+      iframeWindow?.document.body.addEventListener("mouseup", finalizeResize);
     }
     return () => {
-      window.removeEventListener("mousemove", handleResize as any);
-      window.removeEventListener("mouseup", finalizeResize);
+      iframeWindow?.document.body.removeEventListener(
+        "mousemove",
+        handleResize as any,
+      );
+      iframeWindow?.document.body.removeEventListener(
+        "mouseup",
+        finalizeResize,
+      );
     };
-  }, [isResizing, handleResize, finalizeResize]);
+  }, [isResizing, handleResize, finalizeResize, iframeWindow]);
 
   return {
     handleResizeStart,
