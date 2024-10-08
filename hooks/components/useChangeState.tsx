@@ -2,10 +2,7 @@ import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useThemeStore } from "@/stores/theme";
 import { getHoverColor } from "@/utils/branding";
-import {
-  componentMapper,
-  structureMapper,
-} from "@/libs/dnd-flex/utils/componentMapper";
+import { componentMapper, structureMapper } from "@/utils/componentMapper";
 import {
   Component,
   debouncedTreeComponentAttrsUpdate,

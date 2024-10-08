@@ -1,5 +1,5 @@
 import { Draggable } from "@/libs/dnd-flex/components/Draggable";
-import { structureMapper } from "@/libs/dnd-flex/utils/componentMapper";
+import { structureMapper } from "@/utils/componentMapper";
 import { toSpaced } from "@/types/dashboardTypes";
 import { Box, Text } from "@mantine/core";
 import { useEffect, useState } from "react";

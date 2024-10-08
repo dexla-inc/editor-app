@@ -499,6 +499,10 @@ export const requiredModifiers: RequiredModifiers = {
       overflow: "hidden",
       display: "block",
     },
+    colorPicker: {
+      size: "sm",
+      radius: "xs",
+    },
   },
   colorPicker: {
     size: "sm",
