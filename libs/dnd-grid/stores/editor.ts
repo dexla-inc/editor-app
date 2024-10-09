@@ -92,6 +92,6 @@ export const useEditorStore = create<State>()(
         partialize: (state: State) => ({ components: state.components }),
       },
     ),
-    { name: "EditorStore" },
+    { name: "DnDGridStore" },
   ),
 );

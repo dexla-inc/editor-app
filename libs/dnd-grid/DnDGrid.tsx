@@ -3,16 +3,16 @@ import Grid from "./components/Grid";
 import { useEditorStore } from "./stores/editor";
 
 export const DnDGrid = ({ components: propComponents, iframeWindow }: any) => {
-  const { components } = useEditorStore();
+  const components = useEditorStore((state) => state.components);
 
   useEffect(() => {
     if (propComponents) {
-      useEditorStore.setState({ components: propComponents });
+      useEditorStore.getState().setComponents(propComponents);
     }
   }, [propComponents]);
 
   useEffect(() => {
-    useEditorStore.setState({ iframeWindow });
+    useEditorStore.getState().setIframeWindow(iframeWindow);
   }, [iframeWindow]);
 
   return (

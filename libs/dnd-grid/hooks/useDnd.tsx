@@ -64,7 +64,7 @@ export const useDnd = () => {
     const el = e.target as HTMLElement;
     const currComponentId = el.getAttribute("id");
     const componentData = getComponentById(components, currComponentId!);
-    console.log("componentData==>", components, currComponentId, componentData);
+
     if (componentData) {
       setDraggableComponent({
         name: componentData?.name,
@@ -81,10 +81,8 @@ export const useDnd = () => {
     } else {
       // add new components here
       const type = el.getAttribute("data-type");
-      console.log("add new components here", type);
       if (type) {
         const newComponent = structureMapper[type].structure({});
-        console.log("newComponent==>", newComponent);
         setDraggableComponent(newComponent);
         isNewComponent.current = true;
       }
@@ -158,10 +156,10 @@ export const useDnd = () => {
     )!;
     updatingComponent.style.gridColumn = coords.gridColumn;
     updatingComponent.style.gridRow = coords.gridRow;
-    moveElement(draggableComponent!.id!, coords.parentId);
+    // moveElement(draggableComponent!.id!, coords.parentId);
 
     updateComponentPosition(newComponents, draggableComponent!.id!, coords);
-
+    // console.log("newComponents", newComponents);
     setSelectedComponentId(draggableComponent!.id!);
     setComponents(newComponents);
     setInvalidComponent(null);
@@ -178,7 +176,6 @@ export const useDnd = () => {
     }
 
     const { validComponent, invalidComponent } = useEditorStore.getState();
-    console.log("draggableComponent==>", draggableComponent);
     const { id } = draggableComponent!;
 
     if (isNewComponent.current) {
@@ -230,8 +227,6 @@ export const useDnd = () => {
 
     const overlappingIds = checkOverlap(el, elementRects);
     const fittingIds = checkFitsInside(el, elementRects);
-
-    // console.log({ overlappingIds, fittingIds });
 
     if (JSON.stringify(overlappingIds) === JSON.stringify(fittingIds)) {
       setCoords({ gridColumn, gridRow, parentId });

@@ -11,31 +11,31 @@ export const NestedComponents = ({ components }: any) => {
   const mountNode = contentRef?.contentWindow?.document.body;
 
   return (
-    <ErrorBoundary>
-      <MantineProvider>
-        <div style={{ padding: "10px" }}>
-          <ComponentToolbox />
-          <ComponentList />
-          <Box
-            id="iframe-canvas"
-            ref={setContentRef as any}
-            component="iframe"
-            style={{ width: "100%", height: "500px", border: "none" }}
-            allow="clipboard-read; clipboard-write"
-          >
-            {mountNode &&
-              createPortal(
-                <Box id="iframe-content">
+    <MantineProvider>
+      <div style={{ padding: "10px" }}>
+        <ComponentToolbox />
+        <ComponentList />
+        <Box
+          id="iframe-canvas"
+          ref={setContentRef as any}
+          component="iframe"
+          style={{ width: "100%", height: "500px", border: "none" }}
+          allow="clipboard-read; clipboard-write"
+        >
+          {mountNode &&
+            createPortal(
+              <Box id="iframe-content">
+                <ErrorBoundary>
                   <DnDGrid
                     components={components}
                     iframeWindow={contentRef.contentWindow}
                   />
-                </Box>,
-                mountNode,
-              )}
-          </Box>
-        </div>
-      </MantineProvider>
-    </ErrorBoundary>
+                </ErrorBoundary>
+              </Box>,
+              mountNode,
+            )}
+        </Box>
+      </div>
+    </MantineProvider>
   );
 };

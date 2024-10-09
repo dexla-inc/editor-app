@@ -8,7 +8,12 @@ import merge from "lodash.merge";
 
 const Grid = forwardRef(
   ({ components }: { components: ComponentStructure }, ref: any) => {
-    const { setSelectedComponentId, setHoverComponentId } = useEditorStore();
+    const setSelectedComponentId = useEditorStore(
+      (state) => state.setSelectedComponentId,
+    );
+    const setHoverComponentId = useEditorStore(
+      (state) => state.setHoverComponentId,
+    );
     const { onDrop, onDragOver } = useDnd();
     const renderComponent = (component: ComponentStructure) => {
       const CustomComponent = componentMapper[component.name].Component;
