@@ -18,9 +18,16 @@ export const getElementsOver = (x: number, y: number): Element[] => {
   const { components, iframeWindow } = useEditorStore.getState();
   const allIds = getAllIds(components);
 
+  // console.log("iframeWindow?.document", iframeWindow?.document);
+  // console.log("allIds", allIds);
+  // console.log(
+  //   "iframeWindow?.document.elementsFromPoint(x, y)",
+  //   iframeWindow?.document.elementsFromPoint(x, y).filter((el: Element) => allIds.includes(el.id)),
+  // );
+
   return iframeWindow?.document
     .elementsFromPoint(x, y)
-    .filter((el) => allIds.includes(el.id));
+    .filter((el: Element) => allIds.includes(el.id));
 };
 
 /**

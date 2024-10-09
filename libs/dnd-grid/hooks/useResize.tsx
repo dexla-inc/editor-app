@@ -20,7 +20,7 @@ export const useResize = () => {
   });
   const parentElement = useRef<HTMLDivElement | null>(null);
   const initialOverlappingElements = useRef<string[]>([]);
-  const { iframeWindow } = useEditorStore.getState();
+  const iframeWindow = useEditorStore((state) => state.iframeWindow);
   /**
    * Initializes the resizing process by setting up necessary states and references.
    */
