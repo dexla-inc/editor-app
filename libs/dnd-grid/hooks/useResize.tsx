@@ -1,8 +1,9 @@
 import { useState, useRef, useCallback, useEffect } from "react";
-import { useEditorStore } from "@/libs/dnd-grid/stores/editor";
+import { useDndGridStore } from "@/libs/dnd-grid/stores/dndGridStore";
 import { getAllIds, updateComponentSize } from "@/libs/dnd-grid/utils/editor";
 import { checkOverlap } from "@/libs/dnd-grid/utils/engines/overlap";
 import { getGridCoordinates } from "@/libs/dnd-grid/utils/engines/position";
+import { useEditorStore } from "@/stores/editor";
 
 interface GridCoords {
   gridColumn: string;
@@ -31,14 +32,13 @@ export const useResize = () => {
       currComponentId: string,
     ) => {
       e.preventDefault();
-      console.log("initializeResize==>", e);
       const {
         selectedComponentId,
         components,
         setSelectedComponentId,
         setElementRects,
         setIsInteracting,
-      } = useEditorStore.getState();
+      } = useDndGridStore.getState();
       const el = iframeWindow?.document.getElementById(currComponentId)!;
 
       setIsResizing(true);
@@ -140,7 +140,7 @@ export const useResize = () => {
     (e: MouseEvent) => {
       if (!isResizing) return;
 
-      const { selectedComponentId } = useEditorStore.getState();
+      const { selectedComponentId } = useDndGridStore.getState();
       if (!selectedComponentId) return;
 
       const el = iframeWindow?.document.getElementById(selectedComponentId)!;
@@ -200,7 +200,7 @@ export const useResize = () => {
         selectedComponentId,
         setComponents,
         setIsInteracting,
-      } = useEditorStore.getState();
+      } = useDndGridStore.getState();
       if (!selectedComponentId) return;
 
       const updatedComponents = updateComponentSize(

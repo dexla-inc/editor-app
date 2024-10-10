@@ -8,15 +8,16 @@ import {
   IconHandMove,
 } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
-import { useEditorStore } from "@/libs/dnd-grid/stores/editor";
+import { useDndGridStore } from "@/libs/dnd-grid/stores/dndGridStore";
+import { useEditorStore } from "@/stores/editor";
 
 const ComponentToolbox = () => {
   const {
     selectedComponentId: id,
     components,
     isInteracting,
-    iframeWindow,
-  } = useEditorStore();
+  } = useDndGridStore();
+  const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const [position, setPosition] = useState({ top: 0, left: 0 });
 
   const leftIcon = { Icon: IconArrowUp, label: "Button" };
