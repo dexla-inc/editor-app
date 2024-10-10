@@ -12,27 +12,28 @@ import {
 } from "@/libs/dnd-grid/utils/engines/position";
 import { structureMapper } from "@/libs/dnd-grid/utils/componentMapper";
 import { cloneObject } from "@/utils/common";
-import { useEditorStore } from "@/libs/dnd-grid/stores/editor";
+import { useDndGridStore } from "@/libs/dnd-grid/stores/dndGridStore";
+import { useEditorStore } from "@/stores/editor";
 
-export const useDnd = () => {
-  const setComponents = useEditorStore((state) => state.setComponents);
-  const components = useEditorStore((state) => state.components);
-  const setInvalidComponent = useEditorStore(
+export const useDnd = (debug?: string) => {
+  const setComponents = useDndGridStore((state) => state.setComponents);
+  const components = useDndGridStore((state) => state.components);
+  const setInvalidComponent = useDndGridStore(
     (state) => state.setInvalidComponent,
   );
-  const setValidComponent = useEditorStore((state) => state.setValidComponent);
-  const setSelectedComponentId = useEditorStore(
+  const setValidComponent = useDndGridStore((state) => state.setValidComponent);
+  const setSelectedComponentId = useDndGridStore(
     (state) => state.setSelectedComponentId,
   );
-  const setIsInteracting = useEditorStore((state) => state.setIsInteracting);
-  const setDraggableComponent = useEditorStore(
+  const setIsInteracting = useDndGridStore((state) => state.setIsInteracting);
+  const setDraggableComponent = useDndGridStore(
     (state) => state.setDraggableComponent,
   );
-  const draggableComponent = useEditorStore(
+  const draggableComponent = useDndGridStore(
     (state) => state.draggableComponent,
   );
-  const setCoords = useEditorStore((state) => state.setCoords);
-  const coords = useEditorStore((state) => state.coords);
+  const setCoords = useDndGridStore((state) => state.setCoords);
+  const coords = useDndGridStore((state) => state.coords);
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const dragOffset = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const isNewComponent = useRef<boolean>(false);
@@ -126,8 +127,6 @@ export const useDnd = () => {
     const movableRect = movable.getBoundingClientRect();
     const overlappingElements: any[] = [];
 
-    // console.log(movableRect, elementRects);
-
     Object.entries(elementRects).forEach(([key, rect]) => {
       const parentComponent = getComponentById(components, key);
       if (
@@ -156,10 +155,8 @@ export const useDnd = () => {
     )!;
     updatingComponent.style.gridColumn = coords.gridColumn;
     updatingComponent.style.gridRow = coords.gridRow;
-    // moveElement(draggableComponent!.id!, coords.parentId);
 
     updateComponentPosition(newComponents, draggableComponent!.id!, coords);
-    // console.log("newComponents", newComponents);
     setSelectedComponentId(draggableComponent!.id!);
     setComponents(newComponents);
     setInvalidComponent(null);
@@ -175,7 +172,7 @@ export const useDnd = () => {
       return;
     }
 
-    const { validComponent, invalidComponent } = useEditorStore.getState();
+    const { validComponent, invalidComponent } = useDndGridStore.getState();
     const { id } = draggableComponent!;
 
     if (isNewComponent.current) {

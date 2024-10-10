@@ -2,7 +2,7 @@ import { FlexProps, Flex as MantineFlex } from "@mantine/core";
 import { forwardRef, memo } from "react";
 import { EditableComponentMapper } from "@/utils/editor";
 import { useDnd } from "@/libs/dnd-grid/hooks/useDnd";
-import { useEditorStore } from "@/libs/dnd-grid/stores/editor";
+import { useDndGridStore } from "@/libs/dnd-grid/stores/dndGridStore";
 import { useShallow } from "zustand/react/shallow";
 import { ResizeHandlers } from "@/libs/dnd-grid/components/ResizeHandlers";
 
@@ -12,12 +12,12 @@ const ContainerComponent = forwardRef<HTMLDivElement, Props>(
   ({ component, renderTree }, ref) => {
     const { triggers } = component.props!;
     const dragTriggers = useDnd();
-    const isActive = useEditorStore(
+    const isActive = useDndGridStore(
       (state) =>
         state.selectedComponentId === component.id ||
         state.hoverComponentId === component.id,
     );
-    const { setHoverComponentId } = useEditorStore(
+    const { setHoverComponentId } = useDndGridStore(
       useShallow((state) => state),
     );
 
@@ -44,14 +44,14 @@ const ContainerComponent = forwardRef<HTMLDivElement, Props>(
           }),
         }}
         onMouseOver={(e) => {
-          const { hoverComponentId } = useEditorStore.getState();
+          const { hoverComponentId } = useDndGridStore.getState();
           if (hoverComponentId !== component.id) {
             setHoverComponentId(component.id ?? null);
           }
         }}
         onMouseLeave={(e) => {
           e.stopPropagation();
-          const { hoverComponentId } = useEditorStore.getState();
+          const { hoverComponentId } = useDndGridStore.getState();
           if (hoverComponentId !== null) {
             setHoverComponentId(null);
           }
