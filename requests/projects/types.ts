@@ -3,6 +3,7 @@ import { AppTypes, UserRoles } from "@/types/dashboardTypes";
 import { ProjectApp } from "@/types/projectApps";
 import { ProjectTypes } from "@/types/projectTypes";
 import { EnvironmentTypes } from "@/requests/datasources/types";
+import { CssTypes } from "@/types/types";
 
 export type RegionTypes = "FRANCE_CENTRAL" | "US_CENTRAL" | "UK_SOUTH";
 
@@ -19,6 +20,7 @@ export interface ProjectParams extends ProjectUpdateParams {
     type: AppTypes;
   };
   metadata?: Record<string, any>;
+  cssType?: CssTypes;
 }
 
 export type ProjectUpdateParams = {
@@ -59,6 +61,7 @@ export type ProjectResponse = {
   metadata?: Record<string, any>;
   apps?: ProjectApp[];
   liveUrls?: Record<EnvironmentTypes, LiveUrl>;
+  cssType?: CssTypes;
 };
 
 type LiveUrl = {

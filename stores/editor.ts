@@ -117,7 +117,6 @@ export const useEditorStore = create<EditorState>()(
       collapsedItemsCount: 0,
       pages: [],
       selectedComponentId: "content-wrapper",
-      projectId: "",
       actionsResponse: {},
       setCopiedProperties: (copiedProperties) =>
         set({ copiedProperties }, false, "editor/setCopiedProperties"),
