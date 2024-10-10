@@ -44,6 +44,7 @@ export default function PageConfig({ page, setPage }: Props) {
   const resetTree = useEditorTreeStore((state) => state.resetTree);
   const { invalidate } = usePageListQuery(projectId, null);
   const { data: project } = useProjectQuery(projectId);
+  const cssType = useEditorTreeStore((state) => state.cssType);
 
   const form = useForm<PageConfigProps>({
     initialValues: {
@@ -51,6 +52,7 @@ export default function PageConfig({ page, setPage }: Props) {
       description: "",
       slug: "",
       authenticatedOnly: false,
+      cssType: cssType,
     },
     validate: {
       title: (value) =>
@@ -168,6 +170,7 @@ export default function PageConfig({ page, setPage }: Props) {
         type: "PAGE",
       },
       queryStrings: {},
+      cssType: cssType,
     });
 
     form.setFieldValue("copyFrom", {

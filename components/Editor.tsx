@@ -12,18 +12,21 @@ import { memo, useEffect, useState } from "react";
 import { useInputsStore } from "@/stores/inputs";
 import { withPageOnLoad } from "@/hoc/withPageOnLoad";
 import { CustomComponentModal } from "@/components/CustomComponentModal";
+import { CssTypes } from "@/types/types";
 
 type Props = {
   projectId: string;
   pageId: string;
+  cssType: CssTypes;
 };
 
-const Editor = ({ projectId, pageId }: Props) => {
+const Editor = ({ projectId, pageId, cssType = "FLEX" }: Props) => {
   const setCurrentPageAndProjectIds = useEditorTreeStore(
     (state) => state.setCurrentPageAndProjectIds,
   );
   const liveblocks = useEditorTreeStore((state) => state.liveblocks);
   const setCurrentUser = useEditorTreeStore((state) => state.setCurrentUser);
+  const setCssType = useEditorTreeStore((state) => state.setCssType);
   const isDarkTheme = useUserConfigStore((state) => state.isDarkTheme);
   const user = usePropelAuthStore((state) => state.user);
   const setPageLoadTimestamp = useEditorTreeStore(
@@ -40,6 +43,7 @@ const Editor = ({ projectId, pageId }: Props) => {
 
   useEffect(() => {
     setCurrentPageAndProjectIds(projectId, pageId);
+    setCssType(cssType);
     setPageLoadTimestamp(Date.now());
     resetInputValues();
 

@@ -22,6 +22,7 @@ import merge from "lodash.merge";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import setObj from "lodash.set";
+import { CssTypes } from "@/types/types";
 
 const client = createClient({
   publicApiKey: process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY ?? "",
@@ -139,6 +140,8 @@ export type EditorTreeState = {
   setRelatedComponentsData: (props: Record<string, any>) => void;
   language: string;
   setLanguage: (isSaving: string) => void;
+  setCssType: (type: CssTypes) => void;
+  cssType: CssTypes;
 };
 
 const updatePageStateFunc = async (
@@ -502,6 +505,9 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
           language: "en",
           setLanguage: (language) =>
             set({ language }, false, "editorTree/setLanguage"),
+          setCssType: (type: CssTypes) =>
+            set({ cssType: type }, false, "editorTree/setCssType"),
+          cssType: "FLEX",
         }),
         {
           name: "editor-tree-config",

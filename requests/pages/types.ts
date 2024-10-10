@@ -1,6 +1,7 @@
 import { IResponse, PagingParams } from "@/requests/types";
 import { Action } from "@/utils/actions";
 import { AppTypes } from "@/types/dashboardTypes";
+import { CssTypes } from "@/types/types";
 
 export type PageAIResponse = {
   name: string;
@@ -9,6 +10,7 @@ export type PageAIResponse = {
 
 export interface PageResponse extends PageBody {
   id: string;
+  cssType: CssTypes;
   [key: string]: any;
 }
 
@@ -52,6 +54,7 @@ export type PageConfigProps = {
   description: string;
   slug: string;
   authenticatedOnly: boolean;
+  cssType: CssTypes;
 };
 
 export type PageActionProps = {

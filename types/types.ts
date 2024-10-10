@@ -48,3 +48,5 @@ export type ArrayMethods =
   | "REMOVE_AT_START"
   | "REMOVE_AT_LAST"
   | "TOGGLE_ITEM";
+
+export type CssTypes = "FLEX" | "GRID";
