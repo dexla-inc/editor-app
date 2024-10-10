@@ -49,7 +49,12 @@ const PageEditor = ({ params: { id: projectId, page: pageId } }: PageProps) => {
   const { data: editorPage } = usePageQuery(projectId, pageId);
 
   return status === "authorised" || userAssignedRole === "DEXLA_ADMIN" ? (
-    <Editor page={editorPage!} projectId={projectId} pageId={pageId} />
+    <Editor
+      cssType={editorPage?.cssType!}
+      page={editorPage!}
+      projectId={projectId}
+      pageId={pageId}
+    />
   ) : status === "unauthorised" ? (
     <UnauthorisedPage />
   ) : (
