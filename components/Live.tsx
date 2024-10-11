@@ -140,7 +140,7 @@ export const LiveComponent = ({ page, pageState }: Props) => {
 
   return (
     <>
-      <NextTopLoader height={4} color={theme?.colors?.Primary[6]} />
+      <NextTopLoader color={theme?.colors?.Primary[6] ?? "teal"} />
       <LiveWrapper project={page.project}>
         {renderTree(editorTree.root)}
       </LiveWrapper>
