@@ -167,7 +167,7 @@ export const useDnd = (debug?: string) => {
     setValidComponent(null);
   };
 
-  const onDrag = async (e: React.DragEvent) => {
+  const onDrag = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
 
@@ -191,7 +191,7 @@ export const useDnd = (debug?: string) => {
 
     if (isNewComponent.current) {
       addComponent(editorTree.root, draggableComponent!, "main-grid");
-      await setComponents(editorTree, {
+      setComponents(editorTree, {
         action: `Added ${draggableComponent?.description} component`,
       });
       isNewComponent.current = false;
@@ -213,8 +213,6 @@ export const useDnd = (debug?: string) => {
     // Enforce minimum column and row start values
     let column = Math.max(rawColumn, 0);
     let row = Math.max(rawRow, 0);
-
-    console.log("column", column, "row", row);
 
     const [columnStart, columnEnd] = el.style.gridColumn.split("/");
     const columnSize = parseInt(columnEnd) - parseInt(columnStart);

@@ -23,7 +23,6 @@ import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import setObj from "lodash.set";
 import { CssTypes } from "@/types/types";
-import { createComputed } from "zustand-computed";
 
 const client = createClient({
   publicApiKey: process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY ?? "",
@@ -185,18 +184,14 @@ const updatePageStateFunc = async (
 
 export const debouncedUpdatePageState = debounce(updatePageStateFunc, 200);
 
-const computedState = createComputed((state: EditorTreeState) => ({
-  tree: state.cssType === "GRID" ? emptyCssGridTree : emptyCssGridTree,
-}));
-
 // creates a store with undo/redo capability
 export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
   // @ts-ignore
   liveblocks(
     devtools(
       persist(
-        computedState((set, get) => ({
-          setTree: async (tree, options) => {
+        (set, get) => ({
+          setTree: (tree, options) => {
             set(
               (state: EditorTreeState) => {
                 if (
@@ -250,8 +245,7 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                 };
 
                 // also set the pageLoadComponentMutableAttrs if it's an onLoad with componentMutableAttrs
-                console.log("newState", newState);
-                return cloneObject(newState);
+                return newState;
               },
               false,
               "editorTree/setTree",
@@ -405,7 +399,9 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
             });
           },
           // tree: get().cssType === "GRID" ? emptyEditorTree : emptyEditorTree,
-          tree: get()?.cssType === "GRID" ? emptyCssGridTree : emptyCssGridTree,
+          tree: (get()?.cssType === "GRID"
+            ? emptyCssGridTree
+            : emptyCssGridTree) as any,
           componentMutableAttrs: emptyEditorComponentMutableAttrs,
           deleteComponentMutableAttr: (id: string) =>
             set(
@@ -516,7 +512,7 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
           setCssType: (type: CssTypes) =>
             set({ cssType: type }, false, "editorTree/setCssType"),
           cssType: "FLEX",
-        })),
+        }),
         {
           name: "editor-tree-config",
           partialize: (state) => {

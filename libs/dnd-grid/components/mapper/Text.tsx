@@ -13,10 +13,11 @@ const TextComponent = forwardRef<HTMLDivElement, Props>(
   ({ component }, ref) => {
     const { triggers } = component.props!;
     const dragTriggers = useDnd();
+    const isSelected = useEditorTreeStore((state) =>
+      state.selectedComponentIds?.includes(component.id ?? ""),
+    );
     const isActive = useDndGridStore(
-      (state) =>
-        state.selectedComponentId === component.id ||
-        state.hoverComponentId === component.id,
+      (state) => isSelected || state.hoverComponentId === component.id,
     );
     const { setHoverComponentId } = useDndGridStore(
       useShallow((state) => state),
