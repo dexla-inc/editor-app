@@ -8,6 +8,7 @@ type FetchType = {
   headers?: object;
   isStream?: boolean;
   skipAuth?: boolean;
+  cache?: RequestCache;
 };
 
 export const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
@@ -23,6 +24,7 @@ async function doFetch<Type>({
   body,
   headers = {},
   isStream,
+  cache = "default",
 }: FetchType): Promise<Type | ReadableStream<Uint8Array> | null> {
   return new Promise(async (resolve, reject) => {
     let response = null;
@@ -38,6 +40,7 @@ async function doFetch<Type>({
       }
       response = await fetch(`${baseURL}${url}`, {
         method,
+        cache,
         headers: {
           ...(contentType ? { "Content-Type": contentType } : {}),
           ...(bearerToken ? { Authorization: bearerToken } : {}),
@@ -81,6 +84,7 @@ async function doFetch<Type>({
 export async function get<Type>(
   url: FetchType["url"],
   headers?: object,
+  cache?: RequestCache,
   isStream?: boolean,
 ): Promise<Type | ReadableStream<Uint8Array> | null> {
   return doFetch<Type | ReadableStream<Uint8Array> | null>({
@@ -88,6 +92,7 @@ export async function get<Type>(
     method: "GET",
     headers,
     isStream,
+    cache,
   });
 }
 

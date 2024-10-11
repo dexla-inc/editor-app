@@ -1,5 +1,5 @@
 import { ErrorAlert, SuccessAlert } from "@/components/Alerts";
-import { getDataSourceAuth } from "@/requests/datasources/queries-noauth";
+import { getDataSourceAuth } from "@/requests/datasources/queries";
 import {
   DataSourceAuthResponse,
   RequestBody,
@@ -93,8 +93,8 @@ export const TestUserLogin = ({
             parameter.name.includes("password")
               ? "password"
               : parameter.name.includes("email")
-              ? "email"
-              : "text"
+                ? "email"
+                : "text"
           }
           onChange={(event) =>
             handleInputChange(parameter.name, event.currentTarget.value)

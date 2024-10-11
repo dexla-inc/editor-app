@@ -16,10 +16,7 @@ export type AuthState = {
 type DataSourceState = {
   apiAuthConfig?: Record<string, Omit<DataSourceAuthResponse, "type">>; // datasourceId -> authConfig
   clearApiAuthConfig: (projectId: string) => void;
-  setApiAuthConfig: (
-    projectId: string,
-    data: PagingResponse<DataSourceResponse>,
-  ) => void;
+  setApiAuthConfig: (data: DataSourceResponse[]) => void;
   hasTokenExpired: (projectId: string) => boolean;
   refreshAccessToken: (
     projectId: string,
@@ -168,11 +165,8 @@ export const useDataSourceStore = create<DataSourceState>()(
             },
           });
         },
-        setApiAuthConfig: (
-          projectId: string,
-          data: PagingResponse<DataSourceResponse>,
-        ) => {
-          const apiAuthConfig = data.results.reduce<
+        setApiAuthConfig: (data: DataSourceResponse[]) => {
+          const apiAuthConfig = data.reduce<
             Record<string, Omit<DataSourceAuthResponse, "type">>
           >((acc, dataSourceResponse) => {
             if (dataSourceResponse.auth) {

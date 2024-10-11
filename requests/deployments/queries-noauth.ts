@@ -18,7 +18,7 @@ export const getDeploymentPage = async (
   slug: string,
   cache?: RequestCache,
 ) => {
-  const url = `/projects/${projectId}/deployments/page?slug=${slug}`;
+  const url = `/projects/${projectId}/deployments/page?slug=${slug}`; // &include=datasources,logicflows,variables
 
   const response = (await getWithoutAuth<DeploymentPage>(
     url,
