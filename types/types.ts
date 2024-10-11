@@ -17,7 +17,6 @@ export interface MantineThemeExtended extends MantineTheme {
   faviconUrl?: string;
   logoUrl?: string;
   logos?: Logo[];
-  colorLabels?: StringMappedExtendedMantineThemeColors;
 }
 
 interface CustomColors {
