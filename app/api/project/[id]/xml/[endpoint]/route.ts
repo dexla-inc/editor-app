@@ -1,4 +1,4 @@
-import { getDataSourceEndpoint } from "@/requests/datasources/queries-noauth";
+import { getDataSourceEndpoint } from "@/requests/datasources/queries";
 import { getDeploymentPage } from "@/requests/deployments/queries-noauth";
 import { toQueryString } from "@/types/dashboardTypes";
 import { performFetch } from "@/utils/actionsApi";

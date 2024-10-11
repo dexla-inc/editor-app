@@ -21,7 +21,7 @@ import { SettingsTabHeader } from "@/components/settings/SettingsTabHeader";
 import { SettingsTabs } from "@/components/settings/SettingsTabs";
 import { updateDataSource } from "@/requests/datasources/mutations";
 import { getSwagger } from "@/requests/datasources/queries";
-import { getDataSource } from "@/requests/datasources/queries-noauth";
+import { getDataSource } from "@/requests/datasources/queries";
 import {
   AuthenticationSchemes,
   DataSourceParams,

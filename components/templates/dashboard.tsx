@@ -3,7 +3,7 @@ import { tileMapper } from "@/components/templates/tiles";
 import {
   getDataSourceEndpoints,
   getDataSources,
-} from "@/requests/datasources/queries-noauth";
+} from "@/requests/datasources/queries";
 import { createLogicFlow } from "@/requests/logicflows/mutations";
 import { createVariable } from "@/requests/variables/mutations";
 import { structureMapper } from "@/libs/dnd-flex/utils/componentMapper";
