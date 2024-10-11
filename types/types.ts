@@ -17,6 +17,7 @@ export interface MantineThemeExtended extends MantineTheme {
   faviconUrl?: string;
   logoUrl?: string;
   logos?: Logo[];
+  colorLabels?: StringMappedExtendedMantineThemeColors;
 }
 
 interface CustomColors {
@@ -37,6 +38,10 @@ interface CustomColors {
 }
 
 type ExtendedMantineThemeColors = CustomColors & MantineTheme["colors"];
+
+export type StringMappedExtendedMantineThemeColors = {
+  [Key in keyof ExtendedMantineThemeColors]: string;
+};
 
 export type ArrayMethods =
   | "REPLACE_ALL_ITEMS"

@@ -1,4 +1,5 @@
 import { OpenThemeButton } from "@/components/OpenThemeButton";
+import { TopLabel } from "@/components/TopLabel";
 import { useThemeStore } from "@/stores/theme";
 import {
   Box,
@@ -12,7 +13,6 @@ import {
   Stack,
 } from "@mantine/core";
 import { forwardRef } from "react";
-import { TopLabel } from "@/components/TopLabel";
 
 type ColorsArray = Array<{ label: string; value: string | null | undefined }>;
 
@@ -105,7 +105,9 @@ export const ThemeColorSelector = ({ isGradient, ...props }: Props) => {
       const [compColor, compIndex] = selectProps.value?.split(".") ?? [];
       const isColorIndexNotSame = compColor === color && compIndex !== "6";
       const colorValue = isColorIndexNotSame ? selectProps.value : `${color}.6`;
-      const _data = [{ label: color, value: colorValue }];
+      const _data = [
+        { label: theme?.colorLabels?.[color] ?? color, value: colorValue },
+      ];
 
       return all.concat(_data);
     }, []);

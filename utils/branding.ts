@@ -1,6 +1,9 @@
 import { ExtendedUserTheme } from "@/requests/themes/types";
 import { useUserConfigStore } from "@/stores/userConfig";
-import { MantineThemeExtended } from "@/types/types";
+import {
+  MantineThemeExtended,
+  StringMappedExtendedMantineThemeColors,
+} from "@/types/types";
 import { splitValueAndUnit } from "@/utils/splitValueAndUnit";
 import {
   CSSObject,
@@ -537,6 +540,24 @@ const fetchUniqueColors = (
   return Array.from(uniqueColorsMap.values());
 };
 
+const sortString = (str: string) =>
+  str.replace(/(\s*\.\d+|\s+\d+)$/, "").trim();
+
+const getColorLabels = (
+  userTheme?: Omit<ExtendedUserTheme, "colorFamilies">,
+) => {
+  const uniqueColors = fetchUniqueColors(userTheme);
+  const colorLabels = uniqueColors.reduce((acc, color) => {
+    const name = sortString(color.name);
+    const friendlyName = sortString(color.friendlyName);
+    if (!acc[name]) {
+      acc[name] = friendlyName;
+    }
+    return acc;
+  }, {} as StringMappedExtendedMantineThemeColors);
+  return colorLabels;
+};
+
 const convertThemeColors = (
   userTheme?: Omit<ExtendedUserTheme, "colorFamilies">,
   useName?: boolean,
@@ -546,7 +567,7 @@ const convertThemeColors = (
   const colorMap = new Map<string, ExtendedUserTheme["colorFamilies"][0]>();
   uniqueColors.forEach((color) => {
     const field = useName ? "name" : "friendlyName";
-    const family = color[field].replace(/(\s*\.\d+|\s+\d+)$/, "").trim();
+    const family = sortString(color[field]);
     if (!colorMap.has(family)) {
       colorMap.set(family, { family, colors: [] });
     }
@@ -577,6 +598,7 @@ export {
   DISABLED_HOVER,
   FLEX_HOVER,
   flexStyles,
+  getColorLabels,
   getHoverColor,
   globalStyles,
   GRAY_BORDER_COLOR,

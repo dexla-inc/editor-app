@@ -3,7 +3,11 @@ import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useThemeStore } from "@/stores/theme";
 import { MantineThemeExtended } from "@/types/types";
-import { convertThemeColors, defaultTheme } from "@/utils/branding";
+import {
+  convertThemeColors,
+  defaultTheme,
+  getColorLabels,
+} from "@/utils/branding";
 import { Tuple } from "@mantine/core";
 import { useEffect, useState } from "react";
 
@@ -62,7 +66,7 @@ export const useUserTheme = (projectId: string) => {
             },
             {} as typeof defaultTheme.colors,
           ),
-
+          colorLabels: getColorLabels(projectBranding),
           primaryColor: "Primary",
           logoUrl: projectBranding?.logoUrl,
           faviconUrl: projectBranding?.faviconUrl,
