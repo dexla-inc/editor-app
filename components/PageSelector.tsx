@@ -1,14 +1,12 @@
 import { useEditorParams } from "@/hooks/editor/useEditorParams";
 import { usePageList } from "@/hooks/editor/usePageList";
-import { useEditorStore } from "@/stores/editor";
 import { Select } from "@mantine/core";
-import { useParams, useRouter } from "next/navigation";
 import { memo, useMemo } from "react";
-import { useShallow } from "zustand/react/shallow";
 import { useEditorTreeStore } from "@/stores/editorTree";
+import { useRouterWithLoader } from "@/hooks/useRouterWithLoader";
 
 const PageSelector = () => {
-  const router = useRouter();
+  const router = useRouterWithLoader();
   const { id: projectId, page: pageId } = useEditorParams();
   const pages = usePageList(projectId);
 

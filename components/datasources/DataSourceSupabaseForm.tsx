@@ -10,11 +10,11 @@ import { usePropelAuthStore } from "@/stores/propelAuth";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { Box, Button, Group, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useRouter } from "next/navigation";
+import { useRouterWithLoader } from "@/hooks/useRouterWithLoader";
 import { useState } from "react";
 
 export default function DataSourceSupabaseForm() {
-  const router = useRouter();
+  const router = useRouterWithLoader();
   const { id: projectId } = useEditorParams();
 
   const startLoading = useAppStore((state) => state.startLoading);

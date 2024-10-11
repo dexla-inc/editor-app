@@ -9,7 +9,7 @@ import {
   convertToPatchParams,
 } from "@/types/dashboardTypes";
 import { Button, Divider, Flex, Group, Stack, TextInput } from "@mantine/core";
-import { useRouter } from "next/navigation";
+import { useRouterWithLoader } from "@/hooks/useRouterWithLoader";
 
 interface ProjectInfoStepProps extends LoadingStore, PreviousStepperClickEvent {
   projectId: string;
@@ -38,7 +38,7 @@ export default function ProjectInfoStep({
   region = "US_CENTRAL",
   setRegion,
 }: ProjectInfoStepProps) {
-  const router = useRouter();
+  const router = useRouterWithLoader();
 
   const onSubmit = async () => {
     try {
