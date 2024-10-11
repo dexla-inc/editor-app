@@ -1,8 +1,13 @@
-import { EnvironmentTypes } from "@/requests/datasources/types";
+import {
+  DataSourceResponse,
+  EnvironmentTypes,
+} from "@/requests/datasources/types";
 import { Action } from "@/utils/actions";
-import { ProjectResponse } from "../projects/types";
-import { ThemeResponse } from "../themes/types";
-import { IResponse } from "../types";
+import { ProjectResponse } from "@/requests/projects/types";
+import { ThemeResponse } from "@/requests/themes/types";
+import { IResponse } from "@/requests/types";
+import { VariableResponse } from "@/requests/variables/types";
+import { LogicFlowResponse } from "@/requests/logicflows/types";
 
 export type DeploymentParams = {
   commitMessage?: string;
@@ -40,6 +45,9 @@ export type DeploymentPage = IResponse & {
   actions?: Action[];
   project: ProjectResponse;
   branding: ThemeResponse;
+  datasources: DataSourceResponse[];
+  variables: VariableResponse[];
+  logicFlows: LogicFlowResponse[];
 };
 
 export type DeploymentPageHistory = IResponse & {

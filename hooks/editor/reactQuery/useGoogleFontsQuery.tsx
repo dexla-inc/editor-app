@@ -1,6 +1,3 @@
-import { getDataSources } from "@/requests/datasources/queries-noauth";
-import { DataSourceResponse } from "@/requests/datasources/types";
-import { PagingResponse } from "@/requests/types";
 import { useQuery } from "@tanstack/react-query";
 import { queryClient } from "@/utils/reactQuery";
 import { GoogleFont, getGoogleFonts } from "@/utils/getGoogleFonts";

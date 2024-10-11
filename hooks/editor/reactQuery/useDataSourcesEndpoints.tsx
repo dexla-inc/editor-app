@@ -1,4 +1,4 @@
-import { useDataSources } from "./useDataSources";
+import { useDataSources } from "@/hooks/editor/reactQuery/useDataSources";
 import { useMemo } from "react";
 
 export const useEndpoints = (projectId: string, datasourceId?: string) => {

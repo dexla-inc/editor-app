@@ -42,7 +42,7 @@ const PageEditor = ({ params: { id: projectId, page: pageId } }: PageProps) => {
 
   useEffect(() => {
     if (datasources) {
-      setApiAuthConfig(projectId, datasources);
+      setApiAuthConfig(datasources.results);
     }
   }, [datasources, setApiAuthConfig, projectId]);
 

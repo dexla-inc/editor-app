@@ -92,7 +92,7 @@ export const LiveComponent = ({ page, pageState }: Props) => {
 
   useEffect(() => {
     if (datasources) {
-      setApiAuthConfig(projectId, datasources);
+      setApiAuthConfig(datasources.results);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [datasources]);
