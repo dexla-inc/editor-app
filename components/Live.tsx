@@ -18,6 +18,7 @@ import { useInputsStore } from "@/stores/inputs";
 import { useDataSources } from "@/hooks/editor/reactQuery/useDataSources";
 import { useVariableListQuery } from "@/hooks/editor/reactQuery/useVariableListQuery";
 import { withPageOnLoad } from "@/hoc/withPageOnLoad";
+import NextTopLoader from "nextjs-toploader";
 
 type Props = {
   page: DeploymentPage;
@@ -138,9 +139,12 @@ export const LiveComponent = ({ page, pageState }: Props) => {
   }
 
   return (
-    <LiveWrapper project={page.project}>
-      {renderTree(editorTree.root)}
-    </LiveWrapper>
+    <>
+      <NextTopLoader color={theme?.colors?.Primary[6] ?? "teal"} />
+      <LiveWrapper project={page.project}>
+        {renderTree(editorTree.root)}
+      </LiveWrapper>
+    </>
   );
 };
 

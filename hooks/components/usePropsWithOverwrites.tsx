@@ -6,7 +6,7 @@ import { Component } from "@/utils/editor";
 import { SelectItem } from "@mantine/core";
 import merge from "lodash.merge";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
-import { useRouter } from "next/navigation";
+import { useRouterWithLoader } from "@/hooks/useRouterWithLoader";
 import { useEffect, useMemo, useState } from "react";
 
 export const usePropsWithOverwrites = (
@@ -15,7 +15,7 @@ export const usePropsWithOverwrites = (
   currentState: string = "default",
 ) => {
   const isEditorMode = useEditorTreeStore(isEditorModeSelector);
-  const router = useRouter();
+  const router = useRouterWithLoader();
   const triggers = useTriggers({
     entity: component,
     router,

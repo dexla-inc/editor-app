@@ -1,6 +1,5 @@
 "use client";
 
-import { ProgressBar } from "@/components/ProgressBar";
 import { CodeInjectionProvider } from "@/contexts/CodeInjectionProvider";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { queryClient } from "@/utils/reactQuery";
@@ -63,9 +62,7 @@ export const GlobalProviders = ({ children }: { children: ReactNode }) => {
       )}
       <QueryClientProvider client={queryClient}>
         <HydrationBoundary state={dehydratedState}>
-          <CodeInjectionProvider>
-            <ProgressBar>{children}</ProgressBar>
-          </CodeInjectionProvider>
+          <CodeInjectionProvider>{children}</CodeInjectionProvider>
         </HydrationBoundary>
       </QueryClientProvider>
       <SpeedInsights />

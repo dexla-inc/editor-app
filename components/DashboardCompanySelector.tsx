@@ -2,7 +2,8 @@ import { Menu, Stack } from "@mantine/core";
 
 import DashboardCompanySelectorPopover from "@/components/DashboardCompanySelectorPopover";
 import { usePropelAuthStore } from "@/stores/propelAuth";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
+import { useRouterWithLoader } from "@/hooks/useRouterWithLoader";
 
 export const DashboardCompanySelector = () => {
   const companies = usePropelAuthStore((state) => state.companies);
@@ -10,7 +11,7 @@ export const DashboardCompanySelector = () => {
   const setActiveCompany = usePropelAuthStore(
     (state) => state.setActiveCompany,
   );
-  const router = useRouter();
+  const router = useRouterWithLoader();
   const pathname = usePathname();
 
   const handleCompanyClick = (orgId: string) => {

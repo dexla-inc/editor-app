@@ -24,15 +24,15 @@ import {
 import { IconSearch } from "@tabler/icons-react";
 import debounce from "lodash.debounce";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useCreateTemplateProject } from "@/hooks/editor/useCreateTemplateProject";
 import { usePropelAuth } from "@/hooks/editor/usePropelAuth";
 import { invalidateQueries } from "@/hooks/editor/reactQuery/useProjectQuery";
 import Image from "next/image";
+import { useRouterWithLoader } from "@/hooks/useRouterWithLoader";
 
 export default function Page() {
-  const router = useRouter();
+  const router = useRouterWithLoader();
   const [search, setSearch] = useState<string>("");
   const debouncedSearch = debounce((query) => setSearch(query), 100);
   const user = usePropelAuthStore((state) => state.user);

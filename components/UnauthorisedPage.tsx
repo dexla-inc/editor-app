@@ -1,10 +1,10 @@
 import { Title, Text, Button, Flex, Stack, Group } from "@mantine/core";
-import { useRouter } from "next/navigation";
 import { Icon } from "./Icon";
 import { useAppStore } from "@/stores/app";
+import { useRouterWithLoader } from "@/hooks/useRouterWithLoader";
 
 export default function UnauthorisedPage() {
-  const router = useRouter();
+  const router = useRouterWithLoader();
   const refreshPage = () => window.location.reload();
   const stopLoading = useAppStore((state) => state.stopLoading);
 

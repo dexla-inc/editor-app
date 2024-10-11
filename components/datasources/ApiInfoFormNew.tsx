@@ -17,10 +17,10 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useRouter } from "next/navigation";
+import { useRouterWithLoader } from "@/hooks/useRouterWithLoader";
 
 export default function ApiInfoFormNew() {
-  const router = useRouter();
+  const router = useRouterWithLoader();
   const { id: projectId } = useEditorParams();
 
   const startLoading = useAppStore((state) => state.startLoading);

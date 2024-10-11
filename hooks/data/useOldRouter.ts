@@ -1,14 +1,10 @@
-import {
-  useParams,
-  usePathname,
-  useRouter,
-  useSearchParams,
-} from "next/navigation";
+import { useParams, usePathname, useSearchParams } from "next/navigation";
+import { useRouterWithLoader } from "@/hooks/useRouterWithLoader";
 
 export const useOldRouter = () => {
   const searchParams = useSearchParams();
   const asPath = usePathname();
-  const router = useRouter();
+  const router = useRouterWithLoader();
   const params = new URLSearchParams(searchParams?.toString());
   const queryParams = useParams<Record<string, string>>();
   const query: Record<string, string> = { ...queryParams };
