@@ -1,4 +1,4 @@
-import { getDataSourceEndpoints } from "@/requests/datasources/queries";
+import { getDataSourceEndpoints } from "@/requests/datasources/queries-noauth";
 import { Endpoint } from "@/requests/datasources/types";
 import { PagingResponse } from "@/requests/types";
 import { queryClient } from "@/utils/reactQuery";
