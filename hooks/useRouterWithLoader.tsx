@@ -6,7 +6,7 @@ export const useRouterWithLoader = () => {
   const router = useRouter();
   const pathname = usePathname();
 
-  const pushWithLoader = (href: string, options: any) => {
+  const pushWithLoader = (href: string, options?: any) => {
     NProgress.start();
     return router.push(href, options);
   };
