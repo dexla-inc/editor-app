@@ -12478,11 +12478,6 @@ yocto-queue@^1.0.0:
   resolved "https://registry.yarnpkg.com/yocto-queue/-/yocto-queue-1.1.1.tgz#fef65ce3ac9f8a32ceac5a634f74e17e5b232110"
   integrity sha512-b4JR1PFR10y1mKjhHY9LaGo6tmrgjit7hxVIeAmyMw3jegXR4dhYqLaQF5zMXZxY7tLpMyJeLjr1C4rLmkVe8g==
 
-zustand-computed@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/zustand-computed/-/zustand-computed-2.0.0.tgz#274849cb37c075217a0621b104a9a315f16ac016"
-  integrity sha512-AB5vCzeFEycD+y5Xk7M1zJIGmahA6eMCAZNEGhdpLlbgYsnIG+6VP3azLm3dxLs84fi1WHZ6smfmvBwqVRDk/g==
-
 zustand@^4.4.1:
   version "4.5.2"
   resolved "https://registry.yarnpkg.com/zustand/-/zustand-4.5.2.tgz#fddbe7cac1e71d45413b3682cdb47b48034c3848"

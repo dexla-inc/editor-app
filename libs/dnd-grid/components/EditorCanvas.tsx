@@ -106,4 +106,4 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
   );
 };
 
-export const EditorCanvas = EditorCanvasComponent;
+export const EditorCanvas = memo(EditorCanvasComponent);
