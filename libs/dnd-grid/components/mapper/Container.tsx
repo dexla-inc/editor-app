@@ -5,6 +5,7 @@ import { useDnd } from "@/libs/dnd-grid/hooks/useDnd";
 import { useDndGridStore } from "@/libs/dnd-grid/stores/dndGridStore";
 import { useShallow } from "zustand/react/shallow";
 import { ResizeHandlers } from "@/libs/dnd-grid/components/ResizeHandlers";
+import { useEditorTreeStore } from "@/stores/editorTree";
 
 type Props = EditableComponentMapper & FlexProps;
 
@@ -12,10 +13,11 @@ const ContainerComponent = forwardRef<HTMLDivElement, Props>(
   ({ component, renderTree }, ref) => {
     const { triggers } = component.props!;
     const dragTriggers = useDnd();
+    const isSelected = useEditorTreeStore((state) =>
+      state.selectedComponentIds?.includes(component.id ?? ""),
+    );
     const isActive = useDndGridStore(
-      (state) =>
-        state.selectedComponentId === component.id ||
-        state.hoverComponentId === component.id,
+      (state) => isSelected || state.hoverComponentId === component.id,
     );
     const { setHoverComponentId } = useDndGridStore(
       useShallow((state) => state),

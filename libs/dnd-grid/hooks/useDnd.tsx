@@ -14,31 +14,16 @@ import { structureMapper } from "@/libs/dnd-grid/utils/componentMapper";
 import { cloneObject } from "@/utils/common";
 import { useDndGridStore } from "@/libs/dnd-grid/stores/dndGridStore";
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 
 export const useDnd = (debug?: string) => {
-  const setComponents = useDndGridStore((state) => state.setComponents);
-  const components = useDndGridStore((state) => state.components);
-  const setInvalidComponent = useDndGridStore(
-    (state) => state.setInvalidComponent,
-  );
-  const setValidComponent = useDndGridStore((state) => state.setValidComponent);
-  const setSelectedComponentId = useDndGridStore(
-    (state) => state.setSelectedComponentId,
-  );
-  const setIsInteracting = useDndGridStore((state) => state.setIsInteracting);
-  const setDraggableComponent = useDndGridStore(
-    (state) => state.setDraggableComponent,
-  );
-  const draggableComponent = useDndGridStore(
-    (state) => state.draggableComponent,
-  );
-  const setCoords = useDndGridStore((state) => state.setCoords);
-  const coords = useDndGridStore((state) => state.coords);
-  const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const dragOffset = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const isNewComponent = useRef<boolean>(false);
 
   const getElementRects = (currComponentId: string) => {
+    const { root: components } = useEditorTreeStore.getState().tree;
+    const { iframeWindow } = useEditorStore.getState();
+
     const allIds = getAllIds(components, {
       filterFromParent: currComponentId,
     });
@@ -60,6 +45,10 @@ export const useDnd = (debug?: string) => {
 
   const onDragStart = (e: React.DragEvent) => {
     e.stopPropagation();
+    const { setIsInteracting, setDraggableComponent, setCoords } =
+      useDndGridStore.getState();
+    const { root: components } = useEditorTreeStore.getState().tree;
+
     setIsInteracting(true);
 
     const el = e.target as HTMLElement;
@@ -124,6 +113,8 @@ export const useDnd = (debug?: string) => {
   }
 
   function checkFitsInside(movable: any, elementRects: any) {
+    const { root: components } = useEditorTreeStore.getState().tree;
+
     const movableRect = movable.getBoundingClientRect();
     const overlappingElements: any[] = [];
 
@@ -148,7 +139,18 @@ export const useDnd = (debug?: string) => {
     e.preventDefault();
     e.stopPropagation();
 
-    const newComponents = cloneObject(components);
+    const {
+      setTree: setComponents,
+      tree: editorTree,
+      setSelectedComponentIds,
+    } = useEditorTreeStore.getState();
+    const { iframeWindow } = useEditorStore.getState();
+    const {
+      draggableComponent,
+      coords,
+      setInvalidComponent,
+      setValidComponent,
+    } = useDndGridStore.getState();
 
     const updatingComponent = iframeWindow?.document.getElementById(
       draggableComponent!.id!,
@@ -156,16 +158,28 @@ export const useDnd = (debug?: string) => {
     updatingComponent.style.gridColumn = coords.gridColumn;
     updatingComponent.style.gridRow = coords.gridRow;
 
-    updateComponentPosition(newComponents, draggableComponent!.id!, coords);
-    setSelectedComponentId(draggableComponent!.id!);
-    setComponents(newComponents);
+    updateComponentPosition(editorTree.root, draggableComponent!.id!, coords);
+    setSelectedComponentIds(() => [draggableComponent?.id!]);
+    setComponents(editorTree, {
+      action: `Updated ${draggableComponent?.description} component`,
+    });
     setInvalidComponent(null);
     setValidComponent(null);
   };
 
-  const onDrag = (e: React.DragEvent) => {
+  const onDrag = async (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
+
+    const { setTree: setComponents, tree: editorTree } =
+      useEditorTreeStore.getState();
+    const { iframeWindow } = useEditorStore.getState();
+    const {
+      draggableComponent,
+      setInvalidComponent,
+      setValidComponent,
+      setCoords,
+    } = useDndGridStore.getState();
 
     const elementsOver = getElementsOver(e.clientX, e.clientY);
     if (!elementsOver.find((item) => item.id === "main-grid")) {
@@ -176,10 +190,10 @@ export const useDnd = (debug?: string) => {
     const { id } = draggableComponent!;
 
     if (isNewComponent.current) {
-      const newComponents = cloneObject(components);
-
-      addComponent(newComponents, draggableComponent!, "main-grid");
-      setComponents(newComponents);
+      addComponent(editorTree.root, draggableComponent!, "main-grid");
+      await setComponents(editorTree, {
+        action: `Added ${draggableComponent?.description} component`,
+      });
       isNewComponent.current = false;
       return;
     }
@@ -199,6 +213,8 @@ export const useDnd = (debug?: string) => {
     // Enforce minimum column and row start values
     let column = Math.max(rawColumn, 0);
     let row = Math.max(rawRow, 0);
+
+    console.log("column", column, "row", row);
 
     const [columnStart, columnEnd] = el.style.gridColumn.split("/");
     const columnSize = parseInt(columnEnd) - parseInt(columnStart);
@@ -236,6 +252,8 @@ export const useDnd = (debug?: string) => {
   };
 
   const onDragEnd = () => {
+    const { setIsInteracting, setInvalidComponent, setValidComponent } =
+      useDndGridStore.getState();
     setIsInteracting(false);
     setInvalidComponent(null);
     setValidComponent(null);
@@ -263,7 +281,7 @@ function fitsInside(innerRect: any, outerRect: any) {
 }
 
 function moveElement(elementId: string, newParentId: string) {
-  const iframeWindow = useEditorStore.getState().iframeWindow;
+  const { iframeWindow } = useEditorStore.getState();
   const element = iframeWindow?.document.getElementById(elementId);
   const newParent = iframeWindow?.document.getElementById(newParentId);
 

@@ -4,6 +4,7 @@ import { getAllIds, updateComponentSize } from "@/libs/dnd-grid/utils/editor";
 import { checkOverlap } from "@/libs/dnd-grid/utils/engines/overlap";
 import { getGridCoordinates } from "@/libs/dnd-grid/utils/engines/position";
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 
 interface GridCoords {
   gridColumn: string;
@@ -32,17 +33,18 @@ export const useResize = () => {
       currComponentId: string,
     ) => {
       e.preventDefault();
+      const { setElementRects, setIsInteracting } = useDndGridStore.getState();
       const {
-        selectedComponentId,
-        components,
-        setSelectedComponentId,
-        setElementRects,
-        setIsInteracting,
-      } = useDndGridStore.getState();
+        tree: editorTree,
+        setSelectedComponentIds,
+        selectedComponentIds,
+      } = useEditorTreeStore.getState();
+      const components = editorTree.root;
       const el = iframeWindow?.document.getElementById(currComponentId)!;
+      const selectedComponentId = selectedComponentIds?.at(0);
 
       setIsResizing(true);
-      setSelectedComponentId(currComponentId);
+      setSelectedComponentIds(() => [currComponentId]);
       setIsInteracting(true);
 
       const componentStyles = window.getComputedStyle(el);
@@ -140,7 +142,8 @@ export const useResize = () => {
     (e: MouseEvent) => {
       if (!isResizing) return;
 
-      const { selectedComponentId } = useDndGridStore.getState();
+      const { selectedComponentIds } = useEditorTreeStore.getState();
+      const selectedComponentId = selectedComponentIds?.at(0);
       if (!selectedComponentId) return;
 
       const el = iframeWindow?.document.getElementById(selectedComponentId)!;
@@ -195,21 +198,23 @@ export const useResize = () => {
   const finalizeResize = useCallback(() => {
     if (isResizing) {
       setIsResizing(false);
+      const { setIsInteracting } = useDndGridStore.getState();
       const {
-        components,
-        selectedComponentId,
-        setComponents,
-        setIsInteracting,
-      } = useDndGridStore.getState();
+        tree: editorTree,
+        setTree: setComponents,
+        selectedComponentIds,
+      } = useEditorTreeStore.getState();
+      const selectedComponentId = selectedComponentIds?.at(0);
+
       if (!selectedComponentId) return;
 
-      const updatedComponents = updateComponentSize(
-        components,
+      updateComponentSize(
+        editorTree.root,
         selectedComponentId,
         lastValidGridCoords.current.gridColumn,
         lastValidGridCoords.current.gridRow,
       );
-      setComponents(updatedComponents);
+      setComponents(editorTree);
       setIsInteracting(false);
     }
   }, [isResizing]);

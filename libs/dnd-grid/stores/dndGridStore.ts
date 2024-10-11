@@ -5,11 +5,6 @@ import { devtools } from "zustand/middleware";
 type Coordinates = { gridColumn: string; gridRow: string; parentId: string };
 
 interface State {
-  components: ComponentStructure;
-  setComponents: (components: ComponentStructure) => void;
-  selectedComponentId: string | null;
-  setSelectedComponentId: (id: string | null) => void;
-  resetTree: () => void;
   elementRects: ElementRects;
   setElementRects: (elementRects: ElementRects) => void;
   validComponent: string | null;
@@ -32,31 +27,11 @@ interface ElementRects {
   [key: string]: DOMRect;
 }
 
-const initialTree = {
-  id: "main-grid",
-  name: "container",
-  description: "Container",
-  blockDroppingChildrenInside: false,
-  children: [],
-} as unknown as ComponentStructure;
-
 export const useDndGridStore = create<State>()(
   devtools(
     (set) => ({
-      components: initialTree,
-      selectedComponentId: null,
       validComponent: null,
       invalidComponent: null,
-      setComponents: (components: ComponentStructure) =>
-        set({ components }, false, "setComponents"),
-      setSelectedComponentId: (id: string | null) =>
-        set({ selectedComponentId: id }, false, "setSelectedComponentId"),
-      resetTree: () =>
-        set(
-          { components: initialTree, selectedComponentId: null },
-          false,
-          "resetTree",
-        ),
       elementRects: {} as ElementRects,
       setElementRects: (elementRects: ElementRects) =>
         set({ elementRects }, false, "setElementRects"),

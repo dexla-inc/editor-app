@@ -51,10 +51,8 @@ export const addComponent = (
   componentToAdd: ComponentStructure,
   targetId: string,
 ): ComponentStructure => {
-  const updatedComponents = { ...components };
-
   crawl(
-    updatedComponents,
+    components,
     (node: ComponentStructure) => {
       if (node.id === targetId) {
         if (!node.children) {
@@ -69,7 +67,7 @@ export const addComponent = (
     },
   );
 
-  return updatedComponents;
+  return components;
 };
 
 export const getAllIds = (

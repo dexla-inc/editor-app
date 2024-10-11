@@ -10,13 +10,14 @@ import {
 import { useEffect, useState } from "react";
 import { useDndGridStore } from "@/libs/dnd-grid/stores/dndGridStore";
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 
 const ComponentToolbox = () => {
-  const {
-    selectedComponentId: id,
-    components,
-    isInteracting,
-  } = useDndGridStore();
+  const components = useEditorTreeStore((state) => state.tree.root);
+  const isInteracting = useDndGridStore((state) => state.isInteracting);
+  const id = useEditorTreeStore(
+    (state) => state.selectedComponentIds?.[0] ?? "",
+  );
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const [position, setPosition] = useState({ top: 0, left: 0 });
 
