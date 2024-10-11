@@ -9,6 +9,7 @@ import { redirect } from "next/navigation";
 import { EditorTreeCopy } from "@/utils/editor";
 import { Viewport } from "next";
 import { Suspense } from "react";
+import NextTopLoader from "nextjs-toploader";
 
 export async function generateMetadata({ params: { page } }: PageProps) {
   if (page?.includes?.("_next")) {

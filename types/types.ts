@@ -38,6 +38,10 @@ interface CustomColors {
 
 type ExtendedMantineThemeColors = CustomColors & MantineTheme["colors"];
 
+export type StringMappedExtendedMantineThemeColors = {
+  [Key in keyof ExtendedMantineThemeColors]: string;
+};
+
 export type ArrayMethods =
   | "REPLACE_ALL_ITEMS"
   | "UPDATE_ONE_ITEM"

@@ -62,7 +62,6 @@ export const useUserTheme = (projectId: string) => {
             },
             {} as typeof defaultTheme.colors,
           ),
-
           primaryColor: "Primary",
           logoUrl: projectBranding?.logoUrl,
           faviconUrl: projectBranding?.faviconUrl,

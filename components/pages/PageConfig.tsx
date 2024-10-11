@@ -4,12 +4,7 @@ import { usePageListQuery } from "@/hooks/editor/reactQuery/usePageListQuery";
 import { useProjectQuery } from "@/hooks/editor/reactQuery/useProjectQuery";
 import { useEditorParams } from "@/hooks/editor/useEditorParams";
 import { createPage, deletePage, patchPage } from "@/requests/pages/mutations";
-import {
-  PageBody,
-  PageConfigProps,
-  PageParams,
-  PageResponse,
-} from "@/requests/pages/types";
+import { PageConfigProps, PageResponse } from "@/requests/pages/types";
 import { useAppStore } from "@/stores/app";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { convertToPatchParams } from "@/types/dashboardTypes";
@@ -25,7 +20,7 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconArrowLeft } from "@tabler/icons-react";
-import { useRouter } from "next/navigation";
+import { useRouterWithLoader } from "@/hooks/useRouterWithLoader";
 import { useEffect, useState } from "react";
 import slugify from "slugify";
 
@@ -38,7 +33,7 @@ export default function PageConfig({ page, setPage }: Props) {
   const [isLoading, setIsLoading] = useState(false);
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
-  const router = useRouter();
+  const router = useRouterWithLoader();
   const { id: projectId } = useEditorParams();
   const [slug, setSlug] = useState("");
   const resetTree = useEditorTreeStore((state) => state.resetTree);

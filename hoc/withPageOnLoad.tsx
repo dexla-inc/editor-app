@@ -1,5 +1,6 @@
 import { useTriggers } from "@/hooks/components/useTriggers";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
+import { useRouterWithLoader } from "@/hooks/useRouterWithLoader";
 import { useEffect, useState } from "react";
 import { DeploymentPage } from "@/requests/deployments/types";
 import { PageResponse } from "@/requests/pages/types";
@@ -13,7 +14,7 @@ type Props = {
 export const withPageOnLoad = <T extends {}>(WrappedComponent: any) => {
   const PageOnLoadWrapper = (props: Props & T) => {
     const { page, projectId } = props;
-    const router = useRouter();
+    const router = useRouterWithLoader();
     const pathName = usePathname();
 
     const { onPageLoad } = useTriggers({

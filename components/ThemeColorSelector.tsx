@@ -1,5 +1,9 @@
 import { OpenThemeButton } from "@/components/OpenThemeButton";
+import { TopLabel } from "@/components/TopLabel";
+import { useProjectQuery } from "@/hooks/editor/reactQuery/useProjectQuery";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { useThemeStore } from "@/stores/theme";
+import { getColorLabels } from "@/utils/branding";
 import {
   Box,
   ColorSwatch,
@@ -11,8 +15,7 @@ import {
   SelectProps,
   Stack,
 } from "@mantine/core";
-import { forwardRef } from "react";
-import { TopLabel } from "@/components/TopLabel";
+import { forwardRef, useMemo } from "react";
 
 type ColorsArray = Array<{ label: string; value: string | null | undefined }>;
 
@@ -53,6 +56,12 @@ type Props = {
 
 export const ThemeColorSelector = ({ isGradient, ...props }: Props) => {
   const theme = useThemeStore((state) => state.theme);
+  const projectId = useEditorTreeStore((state) => state.currentProjectId);
+  const projectBranding = useProjectQuery(projectId).data?.branding;
+  const colorLabels = useMemo(
+    () => getColorLabels(projectBranding),
+    [projectBranding],
+  );
 
   const excludeColors = new Set([
     "blue",
@@ -105,7 +114,7 @@ export const ThemeColorSelector = ({ isGradient, ...props }: Props) => {
       const [compColor, compIndex] = selectProps.value?.split(".") ?? [];
       const isColorIndexNotSame = compColor === color && compIndex !== "6";
       const colorValue = isColorIndexNotSame ? selectProps.value : `${color}.6`;
-      const _data = [{ label: color, value: colorValue }];
+      const _data = [{ label: colorLabels[color] ?? color, value: colorValue }];
 
       return all.concat(_data);
     }, []);

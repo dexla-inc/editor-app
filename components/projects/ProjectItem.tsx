@@ -15,10 +15,10 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { ProjectItemMenu } from "./ProjectItemMenu";
 import { useEditorTreeStore } from "@/stores/editorTree";
+import { useRouterWithLoader } from "@/hooks/useRouterWithLoader";
 
 type ProjectItemProps = {
   project: ProjectResponse;
@@ -31,7 +31,7 @@ export function ProjectItem({
   goToEditor,
   onDeleteProject,
 }: ProjectItemProps) {
-  const router = useRouter();
+  const router = useRouterWithLoader();
   const theme = useMantineTheme();
   const [isHovered, setIsHovered] = useState(false);
   const company = usePropelAuthStore((state) => state.activeCompany);
