@@ -5,12 +5,13 @@ import { useDndGridStore } from "@/libs/dnd-grid/stores/dndGridStore";
 import { componentMapper } from "@/libs/dnd-grid/utils/componentMapper";
 import { ComponentStructure } from "@/utils/editor";
 import merge from "lodash.merge";
+import { useEditorTreeStore } from "@/stores/editorTree";
 
 const Grid = forwardRef(({}: any, ref: any) => {
-  const components = useDndGridStore((state) => state.components);
-  // const treeRoot = useEditorTreeStore((state) => state.tree.root);
-  const setSelectedComponentId = useDndGridStore(
-    (state) => state.setSelectedComponentId,
+  const editorTree = useEditorTreeStore((state) => state.tree);
+  const components = editorTree.root;
+  const setSelectedComponentIds = useEditorTreeStore(
+    (state) => state.setSelectedComponentIds,
   );
   const setHoverComponentId = useDndGridStore(
     (state) => state.setHoverComponentId,
@@ -21,7 +22,7 @@ const Grid = forwardRef(({}: any, ref: any) => {
 
     const onClick = (e: React.MouseEvent<HTMLDivElement>) => {
       e.stopPropagation();
-      setSelectedComponentId(component.id!);
+      setSelectedComponentIds(() => [component.id!]);
     };
 
     if (CustomComponent) {
@@ -61,7 +62,7 @@ const Grid = forwardRef(({}: any, ref: any) => {
       onMouseDown={() => {
         const { isInteracting } = useDndGridStore.getState();
         if (!isInteracting) {
-          setSelectedComponentId(null);
+          setSelectedComponentIds(() => []);
         }
       }}
       onMouseOver={(e) => {

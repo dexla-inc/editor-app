@@ -1,6 +1,7 @@
 import { useDndGridStore } from "@/libs/dnd-grid/stores/dndGridStore";
 import { getAllIds } from "@/libs/dnd-grid/utils/editor";
 import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 
 // Define the structure of the result returned by getGridCoordinates
 interface GridCoordinateResult {
@@ -16,7 +17,8 @@ interface GridCoordinateResult {
  * @returns Array of elements under the point that are valid components
  */
 export const getElementsOver = (x: number, y: number): Element[] => {
-  const { components } = useDndGridStore.getState();
+  const { tree: editorTree } = useEditorTreeStore.getState();
+  const components = editorTree.root;
   const { iframeWindow } = useEditorStore.getState();
   const allIds = getAllIds(components);
 
