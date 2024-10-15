@@ -1,16 +1,16 @@
 import { IconSelector } from "@/components/IconSelector";
 import { withModifier } from "@/hoc/withModifier";
+import { inputSizes } from "@/utils/defaultSizes";
 import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { Stack, TextInput } from "@mantine/core";
+import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import merge from "lodash.merge";
 import { useEffect } from "react";
 import { SegmentedControlInput } from "../SegmentedControlInput";
+import { SegmentedControlSizes } from "../SegmentedControlSizes";
 import { SegmentedControlYesNo } from "../SegmentedControlYesNo";
 import { ThemeColorSelector } from "../ThemeColorSelector";
-import { SegmentedControlSizes } from "../SegmentedControlSizes";
-import { inputSizes } from "@/utils/defaultSizes";
 
 const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm();
@@ -23,6 +23,7 @@ const Modifier = withModifier(({ selectedComponent }) => {
         radius: selectedComponent?.props?.radius,
         size: selectedComponent?.props?.size,
         withAsterisk: selectedComponent?.props?.withAsterisk,
+        withTimeZone: selectedComponent?.props?.withTimeZone,
         clearable: selectedComponent?.props?.clearable,
         icon: selectedComponent?.props?.icon,
         iconPosition: selectedComponent?.props?.iconPosition,
@@ -56,6 +57,20 @@ const Modifier = withModifier(({ selectedComponent }) => {
               attrs: {
                 props: {
                   withAsterisk: value,
+                },
+              },
+            });
+          }}
+        />
+        <SegmentedControlYesNo
+          label="Include Time Zone Information"
+          {...form.getInputProps("withTimeZone")}
+          onChange={(value) => {
+            form.setFieldValue("withTimeZone", value);
+            debouncedTreeComponentAttrsUpdate({
+              attrs: {
+                props: {
+                  withTimeZone: value,
                 },
               },
             });

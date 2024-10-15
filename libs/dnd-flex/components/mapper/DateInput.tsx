@@ -1,5 +1,9 @@
 import { Icon } from "@/components/Icon";
+import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { useChangeState } from "@/hooks/components/useChangeState";
+import { useInputValue } from "@/hooks/components/useInputValue";
 import { useBrandingStyles } from "@/hooks/editor/useBrandingStyles";
+import { getNewDate, setDate } from "@/utils/date";
 import { EditableComponentMapper } from "@/utils/editor";
 import {
   DatePickerInputProps,
@@ -7,12 +11,8 @@ import {
 } from "@mantine/dates";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
-import { memo } from "react";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
-import { useChangeState } from "@/hooks/components/useChangeState";
-import { useInputValue } from "@/hooks/components/useInputValue";
-import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { getNewDate, setDate } from "@/utils/date";
+import { memo } from "react";
 
 type Props = EditableComponentMapper & DatePickerInputProps;
 
@@ -31,10 +31,15 @@ const DateInputComponent = ({
     bg,
     textColor,
     placeholderColor,
+    withTimeZone,
     ...restComponentProps
   } = component.props as any;
 
-  const { placeholder = component.props?.placeholder } = component?.onLoad;
+  const {
+    type: typeValue,
+    valueFormat: valueFormatValue,
+    placeholder = component.props?.placeholder,
+  } = component?.onLoad;
 
   const componentProps = { ...restComponentProps, placeholder };
   const { borderStyle, inputStyle } = useBrandingStyles();
@@ -47,7 +52,6 @@ const DateInputComponent = ({
   const customStyle = merge({}, borderStyle, inputStyle, props.style);
   const isPositionLeft =
     !iconPosition || (iconPosition && iconPosition === "left");
-  const { type: typeValue, valueFormat: valueFormatValue } = component?.onLoad;
 
   const rootStyleProps = ["display", "width", "minHeight", "minWidth"];
 
@@ -57,29 +61,33 @@ const DateInputComponent = ({
     },
     props.id!,
   );
-
   const { onChange, ...restTriggers } = triggers || {};
 
-  const handleChange = (value: Date | Date[] | null) => {
+  const formatValue = (value: Date | Date[] | null) => {
     // Date Range check
     let formattedValue;
 
     if (Array.isArray(value)) {
       if (value.length === 2 && value[0] && value[1]) {
-        formattedValue = getNewDate(value, valueFormatValue);
+        formattedValue = getNewDate(value, valueFormatValue, withTimeZone);
       } else if (value[0] === null && value[1] === null) {
-        formattedValue = getNewDate(value, valueFormatValue);
+        formattedValue = getNewDate(value, valueFormatValue, withTimeZone);
       } else {
         console.warn("Incomplete date range:", value);
         return;
       }
     } else if (value instanceof Date) {
       // Handle single date picker scenario
-      formattedValue = getNewDate(value, valueFormatValue);
+      formattedValue = getNewDate(value, valueFormatValue, withTimeZone);
     }
 
-    onChange?.({ target: { value: formattedValue ?? "" } });
-    setValue(formattedValue ?? "");
+    return formattedValue;
+  };
+
+  const handleChange = (value: Date | Date[] | null) => {
+    const formattedValue = formatValue(value) ?? "";
+    onChange?.({ target: { value: formattedValue } });
+    setValue(formattedValue);
   };
 
   const dateInputValue = setDate(value, typeValue, valueFormatValue);

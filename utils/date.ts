@@ -5,7 +5,10 @@ import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(advancedFormat);
 dayjs.extend(customParseFormat);
 
-function formatDate(date: Date, format: string) {
+function formatDate(date: Date, format: string, withTimeZone = false) {
+  if (withTimeZone) {
+    return new Date(date).toISOString();
+  }
   return dayjs(date).format(format);
 }
 
@@ -80,10 +83,14 @@ const parseDateString = (date: string, format: string) => {
   return newDate.isValid() ? newDate.toDate() : null;
 };
 
-export const getNewDate = (date: Date | Date[], format: string) => {
+export const getNewDate = (
+  date: Date | Date[],
+  format: string,
+  withTimeZone: boolean,
+) => {
   if (Array.isArray(date)) {
     const newDate = date.filter((d) => !!d);
-    return newDate.map((d) => formatDate(d, format));
+    return newDate.map((d) => formatDate(d, format, withTimeZone));
   }
-  return formatDate(date, format);
+  return formatDate(date, format, withTimeZone);
 };

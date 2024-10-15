@@ -431,6 +431,7 @@ export const requiredModifiers: RequiredModifiers = {
     description: "",
     withAsterisk: false,
     clearable: false,
+    withTimeZone: false,
     icon: "",
     iconPosition: "left",
     color: "Neutral.6",
