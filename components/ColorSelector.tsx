@@ -76,7 +76,6 @@ export const ColorSelector = ({
           hex,
           name: isDefault ? defaultFamilyName : friendlyName,
           friendlyName,
-          brightness: 0,
         },
       ]),
     );
