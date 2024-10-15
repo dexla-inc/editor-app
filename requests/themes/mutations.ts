@@ -1,6 +1,6 @@
 import { BrandingAITheme } from "@/requests/projects/types";
 import { ThemeResponse } from "@/requests/themes/types";
-import { del, patch, post } from "@/utils/api";
+import { del, get, patch, post } from "@/utils/api";
 import { buildQueryString } from "@/types/dashboardTypes";
 import { evictCache } from "@/requests/cache/queries-noauth";
 import { PatchParams } from "../types";
@@ -40,9 +40,6 @@ export async function saveTheme(
 
   const response = (await post<ThemeResponse>(url, params)) as ThemeResponse;
 
-  const cacheTag = getCacheTag(projectId);
-  await evictCache(cacheTag);
-
   return response;
 }
 
@@ -62,9 +59,6 @@ export const patchTheme = async (id: string, params: PatchParams[]) => {
   const url = `/projects/${id}/themes`;
   const response = (await patch<ThemeResponse>(url, params)) as ThemeResponse;
 
-  const cacheTag = getCacheTag(id);
-  await evictCache(cacheTag);
-
   return response;
 };
 
@@ -73,5 +67,3 @@ export const deleteTheme = async (id: string) => {
 
   return response;
 };
-
-const getCacheTag = (projectId: string) => `/projects/${projectId}`;
