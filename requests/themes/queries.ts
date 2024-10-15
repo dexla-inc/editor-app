@@ -1,8 +1,8 @@
 import { ThemeResponse } from "@/requests/themes/types";
-import { getWithoutAuth } from "@/utils/apiLive";
+import { get } from "@/utils/api";
 
 export const getTheme = async (projectId: string) => {
-  const response = (await getWithoutAuth<ThemeResponse>(
+  const response = (await get<ThemeResponse>(
     `/projects/${projectId}/themes`,
   )) as ThemeResponse;
 

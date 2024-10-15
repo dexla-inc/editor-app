@@ -1,4 +1,4 @@
-import { getTheme } from "@/requests/themes/queries-noauth";
+import { getTheme } from "@/requests/themes/queries";
 import { ThemeResponse } from "@/requests/themes/types";
 import { useQuery } from "@tanstack/react-query";
 import { queryClient } from "@/utils/reactQuery";
