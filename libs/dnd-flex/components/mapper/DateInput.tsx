@@ -86,7 +86,7 @@ const DateInputComponent = ({
 
   const handleChange = (value: Date | Date[] | null) => {
     const formattedValue = formatValue(value) ?? "";
-    onChange?.({ target: { formattedValue } });
+    onChange?.({ target: { value: formattedValue } });
     setValue(formattedValue);
   };
 
