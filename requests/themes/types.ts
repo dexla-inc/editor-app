@@ -7,7 +7,6 @@ export type ThemeQueryParams = {
 };
 
 export type ThemeMutationParams = {
-  colors: Color[];
   colorShades: Omit<Color, "brightness">[];
   fonts: Font[];
   responsiveBreakpoints: ResponsiveBreakpoint[];
