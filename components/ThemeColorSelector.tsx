@@ -84,7 +84,9 @@ export const ThemeColorSelector = ({ isGradient, ...props }: Props) => {
 
   // If a color is selected and it's not 'transparent', determine the color
   if (props.value && props.value !== "transparent") {
-    const [color, index] = props.value.split(".");
+    const lastDotIndex = props.value.lastIndexOf(".");
+    const color = props.value.slice(0, lastDotIndex);
+    const index = props.value.slice(lastDotIndex + 1);
     [selectedColor, selectedIndex] = [color, Number(index)];
   }
 
@@ -111,8 +113,8 @@ export const ThemeColorSelector = ({ isGradient, ...props }: Props) => {
   const data: ColorsArray = (Object.keys(theme.colors) ?? [])
     .filter((color) => !excludeColors.has(color))
     .reduce<ColorsArray>((all, color: string) => {
-      const [compColor, compIndex] = selectProps.value?.split(".") ?? [];
-      const isColorIndexNotSame = compColor === color && compIndex !== "6";
+      const isColorIndexNotSame =
+        selectedColor === color && selectedIndex !== 6;
       const colorValue = isColorIndexNotSame ? selectProps.value : `${color}.6`;
       const _data = [{ label: colorLabels[color] ?? color, value: colorValue }];
 
