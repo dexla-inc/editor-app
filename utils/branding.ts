@@ -497,13 +497,12 @@ const setHexColors = (hexaValue: string) => {
   ];
 };
 
-const createUserThemeColors = (colors: ExtendedUserTheme["colors"]) => {
+const createUserThemeColors = (colors: ExtendedUserTheme["colorShades"]) => {
   return colors.reduce(
     (acc, color) => {
       const hexaValues = setHexColors(color.hex);
-      const colorWithoutBrightness = omit(color, ["brightness"]);
       const data = Array(10)
-        .fill(colorWithoutBrightness)
+        .fill(color)
         .map(({ name, friendlyName, hex, isDefault }, index) => ({
           name: `${name}.${index}`,
           friendlyName: `${friendlyName}.${index}`,
@@ -520,7 +519,6 @@ const createUserThemeColors = (colors: ExtendedUserTheme["colors"]) => {
 const fetchUniqueColors = (
   userTheme?: Omit<ExtendedUserTheme, "colorFamilies">,
 ) => {
-  const oldColors = createUserThemeColors(userTheme?.colors ?? []);
   const colorShades = userTheme?.colorShades ?? [];
   // Create a Map to store unique colors, prioritizing colorShades
   const uniqueColorsMap = new Map<
@@ -529,12 +527,6 @@ const fetchUniqueColors = (
   >();
   colorShades.forEach((color) => {
     uniqueColorsMap.set(color.name, color);
-  });
-
-  oldColors.forEach((color) => {
-    if (!uniqueColorsMap.has(color.name)) {
-      uniqueColorsMap.set(color.name, color);
-    }
   });
 
   return Array.from(uniqueColorsMap.values());
@@ -546,8 +538,7 @@ const sortString = (str: string) =>
 const getColorLabels = (
   userTheme?: Omit<ExtendedUserTheme, "colorFamilies">,
 ) => {
-  const uniqueColors = fetchUniqueColors(userTheme);
-  const colorLabels = uniqueColors.reduce((acc, color) => {
+  const colorLabels = (userTheme?.colorShades ?? []).reduce((acc, color) => {
     const name = sortString(color.name);
     const friendlyName = sortString(color.friendlyName);
     if (!acc[name]) {

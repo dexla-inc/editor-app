@@ -131,7 +131,6 @@ export const EditorNavbarThemesSection =
 
     const form = useForm<ExtendedUserTheme>({
       initialValues: {
-        colors: userTheme?.colors ?? [],
         colorShades: userTheme?.colorShades ?? [],
         fonts: userTheme?.fonts ?? [],
         responsiveBreakpoints: userTheme?.responsiveBreakpoints ?? [],
@@ -283,7 +282,6 @@ export const EditorNavbarThemesSection =
                       friendlyName: `New Color-${newIndex}`,
                       hex: "#00000000",
                       isDefault: false,
-                      brightness: 0,
                     },
                   ]),
                 };
