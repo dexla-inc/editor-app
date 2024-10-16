@@ -22,7 +22,7 @@ const NavbarComponent = forwardRef(
     merge(componentProps, { style: { ...props.style, backgroundColor } });
 
     return (
-      <Box display="grid" {...componentProps} {...props} {...triggers}>
+      <Box display="grid" {...props} {...componentProps} {...triggers}>
         {component.children &&
           component.children.length > 0 &&
           component.children?.map((child) =>

@@ -134,7 +134,7 @@ export const deletePage = async (id: string, pageId: string) => {
 export const rollbackState = async (
   projectId: string,
   pageId: string,
-  type: "deployment" | "page",
+  type: "deployment" | "page" | "deployment_page",
   id: string,
 ) => {
   const url = `/projects/${projectId}/pages/${pageId}/state/history?type=${type}&id=${id}`;

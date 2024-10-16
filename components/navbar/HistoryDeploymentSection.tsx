@@ -27,7 +27,12 @@ export const HistoryDeploymentSection = ({}) => {
   const handleRollbackPageState = useCallback(
     async (id: string) => {
       try {
-        const result = await rollbackState(projectId, pageId, "deployment", id);
+        const result = await rollbackState(
+          projectId,
+          pageId,
+          "deployment_page",
+          id,
+        );
         const decodedSchema = decodeSchema(result.state);
         const parsedTree = JSON.parse(decodedSchema);
 
