@@ -44,7 +44,8 @@ export const ColorSelector = ({
     name: fetchedName = "",
     isDefault,
   } = colorFamily.colors[6] ?? {};
-  const [defaultFamilyName] = fetchedName.split(".");
+  const lastDotIndex = fetchedName.lastIndexOf(".");
+  const defaultFamilyName = fetchedName.slice(0, lastDotIndex);
   const [hexa, setHexa] = useState(hexToHexa(fetchedHex));
   const [newColors, setNewColors] = useState(colorFamily.colors);
   const [opened, { toggle, close }] = useDisclosure(false);
@@ -56,12 +57,13 @@ export const ColorSelector = ({
   });
 
   const [friendlyName, setFriendlyName] = useState(colorFamily.family);
+  const retainFetchedName = isDefault || !!defaultFamilyName;
 
   const onNameChange = (name: string) => {
     setNewColors((prev) =>
       prev.map((c, i) => ({
         ...c,
-        name: isDefault ? `${defaultFamilyName}.${i}` : `${name}.${i}`,
+        name: retainFetchedName ? `${defaultFamilyName}.${i}` : `${name}.${i}`,
         friendlyName: `${name}.${i}`,
       })),
     );
@@ -74,7 +76,7 @@ export const ColorSelector = ({
         {
           isDefault,
           hex,
-          name: isDefault ? defaultFamilyName : friendlyName,
+          name: retainFetchedName ? defaultFamilyName : friendlyName,
           friendlyName,
         },
       ]),
