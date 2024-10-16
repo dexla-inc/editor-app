@@ -24,6 +24,7 @@ export const useGridStyling = ({ component }: Props) => {
     display: "grid",
     gridTemplateColumns: "subgrid",
     gridTemplateRows: "subgrid",
+    padding: "0",
     ...(isActive && {
       boxShadow: "0 0 0 2px #3b82f6 inset",
     }),
