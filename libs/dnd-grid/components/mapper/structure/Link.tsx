@@ -14,8 +14,8 @@ export const jsonStructure = (props?: any): ComponentStructure => {
   const combinedProps = merge({}, requiredModifiers.link, props.props, {
     children: content,
     style: {
-      width: "fit-content",
-      height: "fit-content",
+      gridColumn: "1/6",
+      gridRow: "1/2",
     },
   });
 

@@ -34,7 +34,6 @@ import {
 } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
-import { useCallback } from "react";
 
 const defaultTextValues = requiredModifiers.text;
 

@@ -21,14 +21,19 @@ const Modifier = withModifier(({ selectedComponent }) => {
 
   useEffect(() => {
     form.setValues(
-      merge({}, requiredModifiers.badge, {
-        type: selectedComponent.props?.type,
-        size: selectedComponent.props?.size,
-        radius: selectedComponent.props?.radius,
-        color: selectedComponent.props?.color,
-        bg: selectedComponent.props?.bg,
-        fontTag: selectedComponent.props?.fontTag ?? "P",
-      }),
+      merge(
+        {},
+        requiredModifiers.badge,
+        { size: "md" },
+        {
+          type: selectedComponent.props?.type,
+          size: selectedComponent.props?.size,
+          radius: selectedComponent.props?.radius,
+          color: selectedComponent.props?.color,
+          bg: selectedComponent.props?.bg,
+          fontTag: selectedComponent.props?.fontTag ?? "P",
+        },
+      ),
     );
 
     setBackgroundType(

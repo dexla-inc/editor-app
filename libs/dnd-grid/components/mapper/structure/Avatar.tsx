@@ -1,16 +1,22 @@
 import { ComponentStructure } from "@/utils/editor";
-import { requiredModifiers } from "@/utils/modifiers";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): ComponentStructure => {
   return {
     id: nanoid(),
-    name: "Icon",
-    description: "Icon",
+    name: "Avatar",
+    description: "Avatar",
     children: [],
+    onLoad: {
+      children: { static: "TM", dataType: "static" },
+    },
     props: {
-      ...requiredModifiers.icon,
-      size: "md",
+      color: "Primary.6",
+      radius: "xl",
+      style: {
+        gridColumn: "1/4",
+        gridRow: "1/4",
+      },
       ...(props.props || {}),
     },
     blockDroppingChildrenInside: true,

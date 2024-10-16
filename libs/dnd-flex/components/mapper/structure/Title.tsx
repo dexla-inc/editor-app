@@ -6,14 +6,14 @@ import merge from "lodash.merge";
 export const jsonStructure = (props?: any): ComponentStructure => {
   const { order = 1, ...rest } = props.props || {};
 
-  const defaultValues = requiredModifiers.text;
+  const defaultTextValues = requiredModifiers.text;
 
   return {
     id: nanoid(),
     name: "Title",
     description: "Title",
     children: [],
-    props: merge({}, defaultValues, {
+    props: merge({}, defaultTextValues, {
       children: "New Title",
       color: "Black.6",
       order: order,

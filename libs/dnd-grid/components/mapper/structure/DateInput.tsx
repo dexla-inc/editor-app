@@ -11,6 +11,10 @@ export const jsonStructure = (props?: any): ComponentStructure => {
       ...requiredModifiers.dateInput,
       placeholder: "DD MMM YYYY",
       size: "sm",
+      style: {
+        gridColumn: "1/18",
+        gridRow: "1/4",
+      },
       ...(props.props || {}),
     },
     onLoad: {

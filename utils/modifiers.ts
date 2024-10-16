@@ -77,8 +77,6 @@ export const requiredModifiers: RequiredModifiers = {
   },
   text: {
     style: {
-      width: "fit-content",
-      height: "fit-content",
       letterSpacing: "0px",
       wordSpacing: "0px",
       whiteSpace: "normal",
@@ -169,9 +167,6 @@ export const requiredModifiers: RequiredModifiers = {
     hideIfDataIsEmpty: false,
     withAsterisk: false,
     autosize: false,
-    style: {
-      height: "fit-content",
-    },
     bg: "White.6",
     textColor: "Black.6",
   },
@@ -203,15 +198,12 @@ export const requiredModifiers: RequiredModifiers = {
   link: {
     color: "Primary.6",
     style: {
-      width: "fit-content",
-      height: "fit-content",
       fontWeight: 500,
       letterSpacing: "0px",
     },
     fontTag: "P",
   },
   icon: {
-    size: "md",
     name: "IconArrowNarrowRight",
     color: "Primary.6",
     bg: "transparent",
@@ -221,7 +213,6 @@ export const requiredModifiers: RequiredModifiers = {
     label: "Divider",
     labelPosition: "center",
     orientation: "horizontal",
-    size: "xs",
     variant: "solid",
   },
   select: {
@@ -297,14 +288,12 @@ export const requiredModifiers: RequiredModifiers = {
     checked: false,
     withAsterisk: false,
     labelSpacing: "0",
-    size: "sm",
   },
   checkboxGroup: {
     label: "A label",
     withAsterisk: false,
     labelSpacing: "0",
     workLikeRadio: false,
-    size: "sm",
   },
   table: {
     dataType: "dynamic",
@@ -374,8 +363,6 @@ export const requiredModifiers: RequiredModifiers = {
     color: "Black.6",
     iconColor: "Black.6",
     textAlign: "left",
-    width: "100%",
-    height: "auto",
     padding: "10px",
   },
   accordionItem: {
@@ -410,9 +397,6 @@ export const requiredModifiers: RequiredModifiers = {
   tabsPanel: { value: "first" },
   tabsList: {
     position: "left",
-    style: {
-      flexWrap: "wrap",
-    },
   },
   alert: {
     title: "Alert",
@@ -421,7 +405,6 @@ export const requiredModifiers: RequiredModifiers = {
   badge: {
     color: "PrimaryText.6",
     bg: "Primary.6",
-    size: "md",
     radius: "xl",
   },
   dateInput: {
@@ -488,7 +471,6 @@ export const requiredModifiers: RequiredModifiers = {
   },
   progress: {
     color: "Primary.6",
-    size: "xs",
     animate: true,
   },
   codeEmbed: {
@@ -499,10 +481,9 @@ export const requiredModifiers: RequiredModifiers = {
       overflow: "hidden",
       display: "block",
     },
-    colorPicker: {
-      size: "sm",
-      radius: "xs",
-    },
+  },
+  colorPicker: {
+    radius: "xs",
   },
   colorPicker: {
     size: "sm",

@@ -13,14 +13,19 @@ const Modifier = withModifier(({ selectedComponent }) => {
 
   useEffect(() => {
     form.setValues(
-      merge({}, requiredModifiers.divider, {
-        label: selectedComponent.props?.label,
-        labelPosition: selectedComponent.props?.labelPosition,
-        orientation: selectedComponent.props?.orientation,
-        size: selectedComponent.props?.size,
-        variant: selectedComponent.props?.variant,
-        color: selectedComponent.props?.color,
-      }),
+      merge(
+        {},
+        requiredModifiers.divider,
+        { size: "xs" },
+        {
+          label: selectedComponent.props?.label,
+          labelPosition: selectedComponent.props?.labelPosition,
+          orientation: selectedComponent.props?.orientation,
+          size: selectedComponent.props?.size,
+          variant: selectedComponent.props?.variant,
+          color: selectedComponent.props?.color,
+        },
+      ),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedComponent]);

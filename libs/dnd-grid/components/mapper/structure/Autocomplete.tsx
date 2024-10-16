@@ -3,21 +3,27 @@ import { requiredModifiers } from "@/utils/modifiers";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): ComponentStructure => {
-  const defaultValues = requiredModifiers.textarea;
-
   return {
     id: nanoid(),
-    name: "Textarea",
-    description: "Textarea",
+    name: "Autocomplete",
+    description: "Autocomplete",
     props: {
-      ...defaultValues,
+      ...requiredModifiers.autocomplete,
       style: {
-        height: "fit-content",
+        gridColumn: "1/30",
+        gridRow: "1/4",
       },
       ...(props.props || {}),
     },
+    onLoad: {
+      data: {
+        dataType: "static",
+        static: {
+          en: [],
+        },
+      },
+    },
     states: { disabled: { bg: "Neutral.6", textColor: "Neutral.9" } },
-    children: [],
     blockDroppingChildrenInside: true,
   };
 };
