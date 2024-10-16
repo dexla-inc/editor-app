@@ -741,7 +741,9 @@ export const getColorFromTheme = (
   if (colorName === "transparent") {
     return "transparent";
   }
-  const [section, index] = colorName.split(".");
+  const lastDotIndex = colorName.lastIndexOf(".");
+  const section = colorName.slice(0, lastDotIndex);
+  const index = colorName.slice(lastDotIndex + 1);
   const colorSection = theme.colors[section];
   return index !== undefined && colorSection
     ? colorSection[Number(index)]
