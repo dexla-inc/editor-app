@@ -1,4 +1,4 @@
-import { structureMapper } from "@/utils/componentMapper";
+import { structureMapper } from "@/libs/dnd-flex/utils/componentMapper";
 import { ComponentStructure } from "@/utils/editor";
 import { nanoid } from "nanoid";
 

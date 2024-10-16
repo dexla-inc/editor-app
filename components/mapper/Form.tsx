@@ -1,6 +1,6 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { structureMapper } from "@/utils/componentMapper";
+import { structureMapper } from "@/libs/dnd-flex/utils/componentMapper";
 import { convertSizeToPx } from "@/utils/defaultSizes";
 import {
   EditableComponentMapper,

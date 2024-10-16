@@ -1,7 +1,7 @@
 "use client";
 
 import { LiveWrapper } from "@/components/LiveWrapper";
-import { componentMapper } from "@/utils/componentMapper";
+import { componentMapper } from "@/libs/dnd-flex/utils/componentMapper";
 import { ComponentTree, EditorTreeCopy } from "@/utils/editor";
 import { Box } from "@mantine/core";
 import { useCallback, useMemo, useState } from "react";

@@ -2,7 +2,7 @@ import { getColorValue } from "@/utils/branding";
 import { ComponentStructure } from "@/utils/editor";
 import { px } from "@mantine/core";
 import { nanoid } from "nanoid";
-import { structureMapper } from "@/utils/componentMapper";
+import { structureMapper } from "@/libs/dnd-flex/utils/componentMapper";
 import { useThemeStore } from "@/stores/theme";
 
 export const jsonStructure = (props?: any): ComponentStructure => {
