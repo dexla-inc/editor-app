@@ -59,7 +59,7 @@ const ComponentToolbox = () => {
         alignItems: "center",
         position: "absolute",
         zIndex: 200,
-        top: `${position.top - 30}px`,
+        top: `${position.top - 55}px`,
         left: `${position.left}px`,
       }}
     >
