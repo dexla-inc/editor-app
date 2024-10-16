@@ -1,4 +1,3 @@
-import { defaultTheme } from "@/utils/branding";
 import { structureMapper } from "@/utils/componentMapper";
 import { ComponentStructure } from "@/utils/editor";
 import { nanoid } from "nanoid";

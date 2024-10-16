@@ -96,12 +96,12 @@ import * as TabsStructure from "@/libs/dnd-flex/components/mapper/structure/Tabs
 import * as TextStructure from "@/libs/dnd-flex/components/mapper/structure/Text";
 import * as TextareaStructure from "@/libs/dnd-flex/components/mapper/structure/Textarea";
 import * as TitleStructure from "@/components/mapper/structure/Title";
-import * as AreaChartStructure from "@/libs/dnd-flex/components/mapper/structure/charts/AreaChart";
-import * as BarChartStructure from "@/libs/dnd-flex/components/mapper/structure/charts/BarChart";
-import * as LineChartStructure from "@/libs/dnd-flex/components/mapper/structure/charts/LineChart";
-import * as PieChartStructure from "@/libs/dnd-flex/components/mapper/structure/charts/PieChart";
-import * as RadarChartStructure from "@/libs/dnd-flex/components/mapper/structure/charts/RadarChart";
-import * as RadialChartStructure from "@/libs/dnd-flex/components/mapper/structure/charts/RadialChart";
+import * as AreaChartStructure from "@/components/mapper/structure/charts/AreaChart";
+import * as BarChartStructure from "@/components/mapper/structure/charts/BarChart";
+import * as LineChartStructure from "@/components/mapper/structure/charts/LineChart";
+import * as PieChartStructure from "@/components/mapper/structure/charts/PieChart";
+import * as RadarChartStructure from "@/components/mapper/structure/charts/RadarChart";
+import * as RadialChartStructure from "@/components/mapper/structure/charts/RadialChart";
 import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
 import { Component, ComponentStructure } from "@/utils/editor";
 
@@ -111,11 +111,10 @@ import { TabsPanel } from "@/components/mapper/TabsPanel";
 import { ActionTrigger, SequentialTrigger } from "@/utils/actions";
 import { Modifiers } from "@/utils/modifiers";
 
-import { DraggableComponent } from "@/components/DraggableComponent";
-import { CodeEmbed } from "@/libs/dnd-flex/components/mapper/CodeEmbed";
-import { ColorPicker } from "@/libs/dnd-flex/components/mapper/ColorPicker";
+import { DraggableComponent } from "@/libs/dnd-grid/components/DraggableComponent";
 import { CodeEmbed } from "@/components/mapper/CodeEmbed";
-import { ColorPicker } from "@/components/mapper/ColorPicker";
+import { ColorPicker } from "@/libs/dnd-flex/components/mapper/ColorPicker";
+
 import {
   addAccordionItemToolboxAction,
   addColumnToParentToolboxAction,

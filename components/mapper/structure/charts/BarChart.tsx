@@ -1,4 +1,4 @@
-import * as ChartStructure from "@/libs/dnd-flex/components/mapper/structure/charts/Chart";
+import * as ChartStructure from "@/components/mapper/structure/charts/Chart";
 import { ComponentStructure } from "@/utils/editor";
 import { nanoid } from "nanoid";
 
@@ -7,12 +7,12 @@ export const jsonStructure = (props?: any): ComponentStructure => {
 
   return {
     id: nanoid(),
-    name: "LineChart",
-    description: "LineChart",
+    name: "BarChart",
+    description: "BarChart",
     children: [],
     props: {
       ...chartProps,
-      type: "line",
+      type: "bar",
       options: {
         xaxis: {
           categories: [

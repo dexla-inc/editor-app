@@ -10,8 +10,7 @@ import {
   getElementsOver,
   getGridCoordinates,
 } from "@/libs/dnd-grid/utils/engines/position";
-import { structureMapper } from "@/libs/dnd-grid/utils/componentMapper";
-import { cloneObject } from "@/utils/common";
+import { structureMapper } from "@/utils/componentMapper";
 import { useDndGridStore } from "@/libs/dnd-grid/stores/dndGridStore";
 import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
