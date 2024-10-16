@@ -13,7 +13,7 @@ const AlertComponent = forwardRef<HTMLDivElement, Props>(
   ({ component, renderTree }, ref) => {
     const { triggers } = component.props!;
     const dragTriggers = useDnd();
-    
+
     const gridStyling = useGridStyling({ component });
     const { setHoverComponentId } = useDndGridStore(
       useShallow((state) => state),
@@ -30,29 +30,7 @@ const AlertComponent = forwardRef<HTMLDivElement, Props>(
           ...gridStyling,
           padding: 0
         }}
-        styles={{
-          wrapper: {
-            display: "grid",
-            gridTemplateColumns: "subgrid",
-            gridTemplateRows: "subgrid",
-            gridArea: "1 / 1 / -1 / -1",
-          },
-          icon: {
-            margin: "0px",
-          },
-          body: {
-            display: "grid",
-            gridTemplateColumns: "subgrid",
-            gridTemplateRows: "subgrid",
-            gridArea: "1 / 1 / -1 / -1",
-          },
-          message: {
-            display: "grid",
-            gridTemplateColumns: "subgrid",
-            gridTemplateRows: "subgrid",
-            gridArea: "1 / 1 / -1 / -1",
-          },
-        }}
+        styles={mantineStyles}
         onMouseOver={(e) => {
           const { hoverComponentId } = useDndGridStore.getState();
           if (hoverComponentId !== component.id) {
@@ -74,6 +52,23 @@ const AlertComponent = forwardRef<HTMLDivElement, Props>(
     );
   },
 );
+
+const commonGridStyle = {
+  display: "grid",
+  gridTemplateColumns: "subgrid",
+  gridTemplateRows: "subgrid",
+  gridArea: "1 / 1 / -1 / -1",
+};
+
+const mantineStyles = {
+  wrapper: commonGridStyle,
+  icon: {
+    margin: "0px",
+  },
+  body: commonGridStyle,
+  message: commonGridStyle,
+};
+
 AlertComponent.displayName = "Alert";
 
 export const Alert = memo(AlertComponent);

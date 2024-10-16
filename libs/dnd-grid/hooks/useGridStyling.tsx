@@ -1,12 +1,12 @@
 import { Component, ComponentTree } from "@/utils/editor";
-import { useEditorStore } from "@/libs/dnd-grid/stores/editor";
+import { useDndGridStore } from "@/libs/dnd-grid/stores/dndGridStore";
 
 type Props = {
   component: ComponentTree & Component;
 };
 
 export const useGridStyling = ({ component }: Props) => {
-  const isActive = useEditorStore(
+  const isActive = useDndGridStore(
     (state) =>
       state.selectedComponentId === component.id ||
       state.hoverComponentId === component.id,

@@ -50,7 +50,7 @@ const PageEditor = ({ params: { id: projectId, page: pageId } }: PageProps) => {
 
   return status === "authorised" || userAssignedRole === "DEXLA_ADMIN" ? (
     <Editor
-      cssType={editorPage?.cssType!}
+      cssType={editorPage?.cssType ?? "FLEX"}
       page={editorPage!}
       projectId={projectId}
       pageId={pageId}

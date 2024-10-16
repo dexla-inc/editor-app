@@ -1,6 +1,7 @@
 import { Shell } from "@/components/AppShell";
 import { Cursor } from "@/components/Cursor";
-import { EditorCanvas } from "@/libs/dnd-grid/components/EditorCanvas";
+import { EditorCanvas as EditorCanvasGrid } from "@/libs/dnd-grid/components/EditorCanvas";
+import { EditorCanvas as EditorCanvasFlex } from "@/libs/dnd-flex/components/EditorCanvas";
 import { useGetPageData } from "@/hooks/editor/reactQuery/useGetPageData";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { usePropelAuthStore } from "@/stores/propelAuth";
@@ -20,12 +21,13 @@ type Props = {
   cssType: CssTypes;
 };
 
-const Editor = ({ projectId, pageId, cssType = "FLEX" }: Props) => {
+const Editor = ({ projectId, pageId, cssType }: Props) => {
   const setCurrentPageAndProjectIds = useEditorTreeStore(
     (state) => state.setCurrentPageAndProjectIds,
   );
   const liveblocks = useEditorTreeStore((state) => state.liveblocks);
   const setCurrentUser = useEditorTreeStore((state) => state.setCurrentUser);
+  const _cssType = useEditorTreeStore((state) => state.cssType);
   const setCssType = useEditorTreeStore((state) => state.setCssType);
   const isDarkTheme = useUserConfigStore((state) => state.isDarkTheme);
   const user = usePropelAuthStore((state) => state.user);
@@ -60,7 +62,7 @@ const Editor = ({ projectId, pageId, cssType = "FLEX" }: Props) => {
     };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pageId]);
+  }, [pageId, cssType]);
 
   useEffect(() => {
     setCurrentUser(user);
@@ -71,7 +73,11 @@ const Editor = ({ projectId, pageId, cssType = "FLEX" }: Props) => {
     <>
       <Shell pos="relative" projectId={projectId}>
         <Global styles={globalStyles(isDarkTheme)} />
-        <EditorCanvas projectId={projectId} />
+        {_cssType === "GRID" ? (
+          <EditorCanvasGrid projectId={projectId} />
+        ) : (
+          <EditorCanvasFlex projectId={projectId} />
+        )}
         {isCustomComponentModalOpen && (
           <CustomComponentModal
             isCustomComponentModalOpen={isCustomComponentModalOpen}
