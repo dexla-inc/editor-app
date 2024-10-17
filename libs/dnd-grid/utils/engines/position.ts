@@ -54,13 +54,11 @@ export const getGridCoordinates = (
 
   // Handle the case when no drop zone is found
   if (!dropZoneElement) {
-    throw new Error("No valid drop zone found");
-    // Alternatively, return default values if preferred
-    // return {
-    //   column: 1,
-    //   row: 1,
-    //   parentId: 'main-grid',
-    // };
+    return {
+      column: 1,
+      row: 1,
+      parentId: "main-grid",
+    };
   }
 
   // Calculate the grid position within the drop zone
