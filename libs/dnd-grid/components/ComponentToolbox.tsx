@@ -60,7 +60,7 @@ const ComponentToolbox = () => {
         position: "absolute",
         zIndex: 200,
         top: `${position.top - 55}px`,
-        left: `${position.left}px`,
+        left: `${position.left - 10}px`,
       }}
     >
       <IconHandMove size={12} style={{ marginRight: "2px" }} />

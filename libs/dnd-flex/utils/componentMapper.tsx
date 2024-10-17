@@ -51,58 +51,59 @@ import { BarChart } from "@/components/mapper/charts/BarChart";
 import { LineChart } from "@/components/mapper/charts/LineChart";
 import { PieChart } from "@/components/mapper/charts/PieChart";
 import { RadarChart } from "@/components/mapper/charts/RadarChart";
-import * as AccordionStructure from "@/libs/dnd-flex/components/mapper/structure/Accordion";
-import * as AccordionItemStructure from "@/libs/dnd-flex/components/mapper/structure/AccordionItem";
-import * as AlertStructure from "@/libs/dnd-flex/components/mapper/structure/Alert";
-import * as AppBarStructure from "@/libs/dnd-flex/components/mapper/structure/AppBar";
-import * as AutocompleteStructure from "@/libs/dnd-flex/components/mapper/structure/Autocomplete";
-import * as AvatarStructure from "@/libs/dnd-flex/components/mapper/structure/Avatar";
-import * as BadgeStructure from "@/libs/dnd-flex/components/mapper/structure/Badge";
-import * as Breadcrumbs from "@/libs/dnd-flex/components/mapper/structure/Breadcrumb";
-import * as ButtonStructure from "@/libs/dnd-flex/components/mapper/structure/Button";
-import * as ButtonIconStructure from "@/libs/dnd-flex/components/mapper/structure/ButtonIcon";
-import * as CardStructure from "@/libs/dnd-flex/components/mapper/structure/Card";
-import * as CheckboxStructure from "@/libs/dnd-flex/components/mapper/structure/Checkbox";
-import * as CheckboxGroupStructure from "@/libs/dnd-flex/components/mapper/structure/CheckboxGroup";
-import * as CheckboxItemStructure from "@/libs/dnd-flex/components/mapper/structure/CheckboxItem";
-import * as CodeEmbedStructure from "@/libs/dnd-flex/components/mapper/structure/CodeEmbed";
-import * as ContainerStructure from "@/libs/dnd-flex/components/mapper/structure/Container";
-import * as CountdownButtonStructure from "@/libs/dnd-flex/components/mapper/structure/CountdownButton";
-import * as DateInputStructure from "@/libs/dnd-flex/components/mapper/structure/DateInput";
-import * as DividerStructure from "@/libs/dnd-flex/components/mapper/structure/Divider";
-import * as DrawerStructure from "@/libs/dnd-flex/components/mapper/structure/Drawer";
-import * as FileButtonStructure from "@/libs/dnd-flex/components/mapper/structure/FileButton";
-import * as FileUploadStructure from "@/libs/dnd-flex/components/mapper/structure/FileUpload";
-import * as FormStructure from "@/libs/dnd-flex/components/mapper/structure/Form";
-import * as MapStructure from "@/libs/dnd-flex/components/mapper/structure/GoogleMap";
-import * as GridStructure from "@/libs/dnd-flex/components/mapper/structure/Grid";
-import * as GridColumnStructure from "@/libs/dnd-flex/components/mapper/structure/GridColumn";
-import * as IconStructure from "@/libs/dnd-flex/components/mapper/structure/Icon";
-import * as ImageStructure from "@/libs/dnd-flex/components/mapper/structure/Image";
-import * as InputStructure from "@/libs/dnd-flex/components/mapper/structure/Input";
-import * as LinkStructure from "@/libs/dnd-flex/components/mapper/structure/Link";
-import * as ModalStructure from "@/libs/dnd-flex/components/mapper/structure/Modal";
-import * as NavLinkStructure from "@/libs/dnd-flex/components/mapper/structure/NavLink";
-import * as NavbarStructure from "@/libs/dnd-flex/components/mapper/structure/Navbar";
-import * as PaginationStructure from "@/libs/dnd-flex/components/mapper/structure/Pagination";
-import * as PopOverStructure from "@/libs/dnd-flex/components/mapper/structure/PopOver";
-import * as ProgressStructure from "@/libs/dnd-flex/components/mapper/structure/Progress";
+import * as AccordionStructure from "@/libs/dnd-grid/components/mapper/structure/Accordion";
+import * as AccordionItemStructure from "@/libs/dnd-grid/components/mapper/structure/AccordionItem";
+import * as AlertStructure from "@/libs/dnd-grid/components/mapper/structure/Alert";
+import * as AppBarStructure from "@/libs/dnd-grid/components/mapper/structure/AppBar";
+import * as AutocompleteStructure from "@/libs/dnd-grid/components/mapper/structure/Autocomplete";
+import * as AvatarStructure from "@/libs/dnd-grid/components/mapper/structure/Avatar";
+import * as BadgeStructure from "@/libs/dnd-grid/components/mapper/structure/Badge";
+import * as Breadcrumbs from "@/libs/dnd-grid/components/mapper/structure/Breadcrumb";
+import * as ButtonStructure from "@/libs/dnd-grid/components/mapper/structure/Button";
+import * as ButtonIconStructure from "@/libs/dnd-grid/components/mapper/structure/ButtonIcon";
+import * as CardStructure from "@/libs/dnd-grid/components/mapper/structure/Card";
+import * as CheckboxStructure from "@/libs/dnd-grid/components/mapper/structure/Checkbox";
+import * as CheckboxGroupStructure from "@/libs/dnd-grid/components/mapper/structure/CheckboxGroup";
+import * as CheckboxItemStructure from "@/libs/dnd-grid/components/mapper/structure/CheckboxItem";
+import * as CodeEmbedStructure from "@/libs/dnd-grid/components/mapper/structure/CodeEmbed";
+import * as ContainerStructure from "@/libs/dnd-grid/components/mapper/structure/Container";
+import * as CountdownButtonStructure from "@/libs/dnd-grid/components/mapper/structure/CountdownButton";
+import * as DateInputStructure from "@/libs/dnd-grid/components/mapper/structure/DateInput";
+import * as DividerStructure from "@/libs/dnd-grid/components/mapper/structure/Divider";
+import * as DrawerStructure from "@/libs/dnd-grid/components/mapper/structure/Drawer";
+import * as FileButtonStructure from "@/libs/dnd-grid/components/mapper/structure/FileButton";
+import * as FileUploadStructure from "@/libs/dnd-grid/components/mapper/structure/FileUpload";
+import * as FormStructure from "@/libs/dnd-grid/components/mapper/structure/Form";
+import * as MapStructure from "@/libs/dnd-grid/components/mapper/structure/GoogleMap";
+import * as GridStructure from "@/libs/dnd-grid/components/mapper/structure/Grid";
+import * as GridColumnStructure from "@/libs/dnd-grid/components/mapper/structure/GridColumn";
+import * as IconStructure from "@/libs/dnd-grid/components/mapper/structure/Icon";
+import * as ImageStructure from "@/libs/dnd-grid/components/mapper/structure/Image";
+import * as InputStructure from "@/libs/dnd-grid/components/mapper/structure/Input";
+import * as LinkStructure from "@/libs/dnd-grid/components/mapper/structure/Link";
+import * as ModalStructure from "@/libs/dnd-grid/components/mapper/structure/Modal";
+import * as NavLinkStructure from "@/libs/dnd-grid/components/mapper/structure/NavLink";
+import * as NavbarStructure from "@/libs/dnd-grid/components/mapper/structure/Navbar";
+import * as PaginationStructure from "@/libs/dnd-grid/components/mapper/structure/Pagination";
+import * as PopOverStructure from "@/libs/dnd-grid/components/mapper/structure/PopOver";
+import * as ProgressStructure from "@/libs/dnd-grid/components/mapper/structure/Progress";
+import * as RadioStructure from "@/libs/dnd-grid/components/mapper/structure/Radio";
+import * as RadioItemStructure from "@/libs/dnd-grid/components/mapper/structure/RadioItem";
+import * as RatingStructure from "@/libs/dnd-grid/components/mapper/structure/Rating";
+import * as SelectStructure from "@/libs/dnd-grid/components/mapper/structure/Select";
+import * as SwitchStructure from "@/libs/dnd-grid/components/mapper/structure/Switch";
+import * as TabsStructure from "@/libs/dnd-grid/components/mapper/structure/Tabs";
+import * as TextStructure from "@/libs/dnd-grid/components/mapper/structure/Text";
+import * as TextareaStructure from "@/libs/dnd-grid/components/mapper/structure/Textarea";
+import * as TitleStructure from "@/libs/dnd-grid/components/mapper/structure/Title";
+import * as AreaChartStructure from "@/libs/dnd-grid/components/mapper/structure/charts/AreaChart";
+import * as BarChartStructure from "@/libs/dnd-grid/components/mapper/structure/charts/BarChart";
+import * as LineChartStructure from "@/libs/dnd-grid/components/mapper/structure/charts/LineChart";
+import * as PieChartStructure from "@/libs/dnd-grid/components/mapper/structure/charts/PieChart";
+import * as RadarChartStructure from "@/libs/dnd-grid/components/mapper/structure/charts/RadarChart";
+import * as RadialChartStructure from "@/libs/dnd-grid/components/mapper/structure/charts/RadialChart";
 import * as ColorPickerStructure from "@/libs/dnd-flex/components/mapper/structure/ColorPicker";
-import * as RadioStructure from "@/libs/dnd-flex/components/mapper/structure/Radio";
-import * as RadioItemStructure from "@/libs/dnd-flex/components/mapper/structure/RadioItem";
-import * as RatingStructure from "@/libs/dnd-flex/components/mapper/structure/Rating";
-import * as SelectStructure from "@/libs/dnd-flex/components/mapper/structure/Select";
-import * as SwitchStructure from "@/libs/dnd-flex/components/mapper/structure/Switch";
-import * as TabsStructure from "@/libs/dnd-flex/components/mapper/structure/Tabs";
-import * as TextStructure from "@/libs/dnd-flex/components/mapper/structure/Text";
-import * as TextareaStructure from "@/libs/dnd-flex/components/mapper/structure/Textarea";
-import * as TitleStructure from "@/libs/dnd-flex/components/mapper/structure/Title";
-import * as AreaChartStructure from "@/libs/dnd-flex/components/mapper/structure/charts/AreaChart";
-import * as BarChartStructure from "@/libs/dnd-flex/components/mapper/structure/charts/BarChart";
-import * as LineChartStructure from "@/libs/dnd-flex/components/mapper/structure/charts/LineChart";
-import * as PieChartStructure from "@/libs/dnd-flex/components/mapper/structure/charts/PieChart";
-import * as RadarChartStructure from "@/libs/dnd-flex/components/mapper/structure/charts/RadarChart";
-import * as RadialChartStructure from "@/libs/dnd-flex/components/mapper/structure/charts/RadialChart";
+
 import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
 import { Component, ComponentStructure } from "@/utils/editor";
 
@@ -174,7 +175,7 @@ import {
   IconToggleLeft,
   IconUser,
 } from "@tabler/icons-react";
-import { DraggableComponent } from "@/libs/dnd-flex/components/DraggableComponent";
+import { DraggableComponent } from "@/libs/dnd-grid/components/DraggableComponent";
 
 export type ComponentCategoryType =
   | "Layout"
@@ -204,24 +205,24 @@ export type StructureMapper = {
 
 export const structureMapper: StructureMapper = {
   // AI generated structures
-  Grid: {
-    structure: (props: any) => GridStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Grid"
-        icon={<IconLayoutGrid size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Layout",
-    icon: <IconLayoutGrid size={ICON_SIZE} />,
-    synonyms: ["Grid Layout", "Grid System"],
-  },
-  GridColumn: {
-    structure: (props: any) => GridColumnStructure.jsonStructure(props),
-    category: "Layout",
-    icon: <IconLayoutColumns size={ICON_SIZE} />,
-    synonyms: ["Grid Col", "Grid Cell"],
-  },
+  // Grid: {
+  //   structure: (props: any) => GridStructure.jsonStructure(props),
+  //   Draggable: () => (
+  //     <DraggableComponent
+  //       id="Grid"
+  //       icon={<IconLayoutGrid size={LARGE_ICON_SIZE} />}
+  //     />
+  //   ),
+  //   category: "Layout",
+  //   icon: <IconLayoutGrid size={ICON_SIZE} />,
+  //   synonyms: ["Grid Layout", "Grid System"],
+  // },
+  // GridColumn: {
+  //   structure: (props: any) => GridColumnStructure.jsonStructure(props),
+  //   category: "Layout",
+  //   icon: <IconLayoutColumns size={ICON_SIZE} />,
+  //   synonyms: ["Grid Col", "Grid Cell"],
+  // },
   Container: {
     structure: (props: any) => ContainerStructure.jsonStructure(props),
     Draggable: () => (

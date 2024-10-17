@@ -5,7 +5,7 @@ import {
   ComponentCategoryType,
   componentMapper,
   structureMapper,
-} from "@/libs/dnd-flex/utils/componentMapper";
+} from "@/libs/dnd-grid/utils/componentMapper";
 import { CustomComponentResponse } from "@/requests/components/types";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { usePropelAuthStore } from "@/stores/propelAuth";

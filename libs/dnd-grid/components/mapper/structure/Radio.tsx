@@ -1,4 +1,4 @@
-import { jsonStructure as radioItemStructure } from "@/libs/dnd-flex/components/mapper/structure/RadioItem";
+import { jsonStructure as radioItemStructure } from "@/libs/dnd-grid/components/mapper/structure/RadioItem";
 import { ComponentStructure } from "@/utils/editor";
 import { nanoid } from "nanoid";
 

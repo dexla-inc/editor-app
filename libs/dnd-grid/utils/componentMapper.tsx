@@ -174,7 +174,7 @@ import {
   IconToggleLeft,
   IconUser,
 } from "@tabler/icons-react";
-import { DraggableComponent } from "@/libs/dnd-flex/components/DraggableComponent";
+import { DraggableComponent } from "@/libs/dnd-grid/components/DraggableComponent";
 
 export type ComponentCategoryType =
   | "Layout"
@@ -204,24 +204,24 @@ export type StructureMapper = {
 
 export const structureMapper: StructureMapper = {
   // AI generated structures
-  Grid: {
-    structure: (props: any) => GridStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Grid"
-        icon={<IconLayoutGrid size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Layout",
-    icon: <IconLayoutGrid size={ICON_SIZE} />,
-    synonyms: ["Grid Layout", "Grid System"],
-  },
-  GridColumn: {
-    structure: (props: any) => GridColumnStructure.jsonStructure(props),
-    category: "Layout",
-    icon: <IconLayoutColumns size={ICON_SIZE} />,
-    synonyms: ["Grid Col", "Grid Cell"],
-  },
+  // Grid: {
+  //   structure: (props: any) => GridStructure.jsonStructure(props),
+  //   Draggable: () => (
+  //     <DraggableComponent
+  //       id="Grid"
+  //       icon={<IconLayoutGrid size={LARGE_ICON_SIZE} />}
+  //     />
+  //   ),
+  //   category: "Layout",
+  //   icon: <IconLayoutGrid size={ICON_SIZE} />,
+  //   synonyms: ["Grid Layout", "Grid System"],
+  // },
+  // GridColumn: {
+  //   structure: (props: any) => GridColumnStructure.jsonStructure(props),
+  //   category: "Layout",
+  //   icon: <IconLayoutColumns size={ICON_SIZE} />,
+  //   synonyms: ["Grid Col", "Grid Cell"],
+  // },
   Container: {
     structure: (props: any) => ContainerStructure.jsonStructure(props),
     Draggable: () => (

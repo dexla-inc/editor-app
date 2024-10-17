@@ -75,7 +75,6 @@ export const withComponentWrapper = <T extends Record<string, any>>(
     });
 
     const dndProps = merge({ draggable: true }, extraProps, childStyles);
-    console.log("dndProps-->", dndProps);
 
     const props = {
       component: {
