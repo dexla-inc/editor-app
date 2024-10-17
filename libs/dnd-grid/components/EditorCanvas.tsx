@@ -44,7 +44,6 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
             display: "grid",
             gap: "0",
             border: "2px solid #d1d5db",
-            marginTop: "1rem",
             gridAutoRows: `10px`,
             gridTemplateColumns: `repeat(${TOTAL_COLUMNS_WITH_MULTIPLIER}, 1fr)`,
             minHeight: "400px",
