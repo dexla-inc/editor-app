@@ -101,6 +101,7 @@ import * as LineChartStructure from "@/libs/dnd-grid/components/mapper/structure
 import * as PieChartStructure from "@/libs/dnd-grid/components/mapper/structure/charts/PieChart";
 import * as RadarChartStructure from "@/libs/dnd-grid/components/mapper/structure/charts/RadarChart";
 import * as RadialChartStructure from "@/libs/dnd-grid/components/mapper/structure/charts/RadialChart";
+import * as ColorPickerStructure from "@/libs/dnd-flex/components/mapper/structure/ColorPicker";
 import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
 import { Component, ComponentStructure } from "@/utils/editor";
 
