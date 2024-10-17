@@ -45,6 +45,7 @@ import { Text } from "@/components/mapper/Text";
 import { Textarea } from "@/components/mapper/Textarea";
 import { Title } from "@/components/mapper/Title";
 import { RadialChart } from "@/components/mapper/charts/RadialChart";
+
 import { AreaChart } from "@/components/mapper/charts/AreaChart";
 import { BarChart } from "@/components/mapper/charts/BarChart";
 import { LineChart } from "@/components/mapper/charts/LineChart";
@@ -86,6 +87,7 @@ import * as NavbarStructure from "@/libs/dnd-flex/components/mapper/structure/Na
 import * as PaginationStructure from "@/libs/dnd-flex/components/mapper/structure/Pagination";
 import * as PopOverStructure from "@/libs/dnd-flex/components/mapper/structure/PopOver";
 import * as ProgressStructure from "@/libs/dnd-flex/components/mapper/structure/Progress";
+import * as ColorPickerStructure from "@/libs/dnd-flex/components/mapper/structure/ColorPicker";
 import * as RadioStructure from "@/libs/dnd-flex/components/mapper/structure/Radio";
 import * as RadioItemStructure from "@/libs/dnd-flex/components/mapper/structure/RadioItem";
 import * as RatingStructure from "@/libs/dnd-flex/components/mapper/structure/Rating";
@@ -109,9 +111,9 @@ import { TabsList } from "@/components/mapper/TabsList";
 import { TabsPanel } from "@/components/mapper/TabsPanel";
 import { ActionTrigger, SequentialTrigger } from "@/utils/actions";
 import { Modifiers } from "@/utils/modifiers";
-
 import { CodeEmbed } from "@/components/mapper/CodeEmbed";
-//import { ColorPicker } from "@/components/mapper/ColorPicker";
+import { ColorPicker } from "@/components/mapper/ColorPicker";
+
 import {
   addAccordionItemToolboxAction,
   addColumnToParentToolboxAction,
@@ -136,6 +138,7 @@ import {
   IconClick,
   IconClockHour5,
   IconCode,
+  IconColorFilter,
   IconContainer,
   IconCursorText,
   IconExclamationMark,
@@ -945,6 +948,18 @@ export const structureMapper: StructureMapper = {
       "Embed JS",
     ],
   },
+  ColorPicker: {
+    structure: (props: any) => ColorPickerStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="ColorPicker"
+        icon={<IconColorFilter size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Input",
+    icon: <IconColorFilter size={ICON_SIZE} />,
+    synonyms: ["Color Picker", "Color Selector", "Color Swatch"],
+  },
 };
 
 export type ToolboxAction = {
@@ -1046,7 +1061,6 @@ export const componentMapper: ComponentMapper = {
     actionTriggers: ["onClick", "onHover"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
-
   Card: {
     Component: (props) => <Card {...props} />,
     modifiers: [
@@ -1128,49 +1142,6 @@ export const componentMapper: ComponentMapper = {
     actionTriggers: ["onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
-  // Table: {
-  //   Component: (props) => <Table {...props} />,
-  //   modifiers: ["table", "spacing", "size", "border", "effects"],
-  //   actionTriggers: [
-  //     "onRowClick",
-  //     "onRowHover",
-  //     "onRowSelect",
-  //     "onRowExpand",
-  //     "onSort",
-  //     "onFilterApplied",
-  //   ],
-  //   sequentialTriggers: ["onSuccess", "onError"],
-  // },
-  // TableHead: {
-  //   Component: (props) => <TableHead {...props} />,
-  //   modifiers: [],
-  //   actionTriggers: [],
-  //   sequentialTriggers: [],
-  // },
-  // TableBody: {
-  //   Component: (props) => <TableBody {...props} />,
-  //   modifiers: [],
-  //   actionTriggers: [],
-  //   sequentialTriggers: [],
-  // },
-  // TableRow: {
-  //   Component: (props) => <TableRow {...props} />,
-  //   modifiers: ["size"],
-  //   actionTriggers: [],
-  //   sequentialTriggers: [],
-  // },
-  // TableCell: {
-  //   Component: (props) => <TableCell {...props} />,
-  //   modifiers: [],
-  //   actionTriggers: [],
-  //   sequentialTriggers: [],
-  // },
-  // TableHeaderCell: {
-  //   Component: (props) => <TableHeaderCell {...props} />,
-  //   modifiers: [],
-  //   actionTriggers: [],
-  //   sequentialTriggers: [],
-  // },
   FileUpload: {
     Component: (props) => {
       return (
@@ -1488,5 +1459,11 @@ export const componentMapper: ComponentMapper = {
     modifiers: ["codeEmbed", "effects"],
     actionTriggers: [],
     sequentialTriggers: [],
+  },
+  ColorPicker: {
+    Component: (props) => <ColorPicker {...props} />,
+    modifiers: ["colorPicker", "effects"],
+    actionTriggers: ["onChange"],
+    sequentialTriggers: ["onSuccess", "onError"],
   },
 };
