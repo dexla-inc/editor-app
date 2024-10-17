@@ -22,6 +22,9 @@ const ComponentToolbox = () => {
   );
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const setEditorTree = useEditorTreeStore((state) => state.setTree);
+  const setSelectedComponentIds = useEditorTreeStore(
+    (state) => state.setSelectedComponentIds,
+  );
   const [position, setPosition] = useState({ top: 0, left: 0 });
 
   const leftIcon = { Icon: IconArrowUp, label: "Button" };
@@ -40,6 +43,7 @@ const ComponentToolbox = () => {
       onClick: () => {
         const editorTree = useEditorTreeStore.getState().tree as EditorTreeCopy;
         removeComponent(editorTree.root, component.id!);
+        setSelectedComponentIds(() => []);
         setEditorTree(editorTree, {
           action: `Removed ${component?.name}`,
         });
