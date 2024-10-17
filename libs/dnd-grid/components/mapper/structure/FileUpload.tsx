@@ -1,5 +1,4 @@
 import { useThemeStore } from "@/stores/theme";
-import { defaultTheme } from "@/utils/branding";
 import { ComponentStructure } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { MantineSize, px } from "@mantine/core";
@@ -15,9 +14,8 @@ export const jsonStructure = (props?: any): ComponentStructure => {
     description: "FileUpload",
     props: {
       style: {
-        width: "100%",
-        height: "auto",
-        minHeight: "100px",
+        gridColumn: "1/30",
+        gridRow: "1/10",
         backgroundColor: "white",
       },
       ...(props.props || {}),
@@ -32,12 +30,8 @@ export const jsonStructure = (props?: any): ComponentStructure => {
           style: {
             paddingTop: setSize("lg"),
             paddingBottom: setSize("lg"),
-            width: "100%",
-            height: "100%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            flexDirection: "column",
+            gridColumn: "1/30",
+            gridRow: "1/10",
           },
         },
         children: [
@@ -49,7 +43,10 @@ export const jsonStructure = (props?: any): ComponentStructure => {
             props: {
               ...requiredModifiers.icon,
               name: "IconUpload",
-              size: "xs",
+              style: {
+                gridColumn: "10/12",
+                gridRow: "2/4",
+              },
             },
             blockDroppingChildrenInside: true,
           },
@@ -65,8 +62,8 @@ export const jsonStructure = (props?: any): ComponentStructure => {
                 fontWeight: "normal",
                 lineHeight: "110%",
                 letterSpacing: "0px",
-                width: "fit-content",
-                height: "fit-content",
+                gridColumn: "10/12",
+                gridRow: "5/7",
               },
             },
             blockDroppingChildrenInside: true,
@@ -83,8 +80,8 @@ export const jsonStructure = (props?: any): ComponentStructure => {
                 lineHeight: "110%",
                 letterSpacing: "0px",
                 color: theme.colors.gray[5],
-                width: "fit-content",
-                height: "fit-content",
+                gridColumn: "10/12",
+                gridRow: "8/10",
               },
             },
             blockDroppingChildrenInside: true,

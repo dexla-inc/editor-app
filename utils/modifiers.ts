@@ -184,11 +184,6 @@ export const requiredModifiers: RequiredModifiers = {
   countdownButton: {
     variant: "filled",
     icon: "",
-    style: {
-      width: "fit-content",
-      paddingLeft: "32px",
-      paddingRight: "32px",
-    },
     duration: "60seconds",
   },
   image: {
@@ -345,19 +340,9 @@ export const requiredModifiers: RequiredModifiers = {
     accept: "",
     multiple: false,
     compact: true,
-    style: {
-      width: "fit-content",
-      paddingLeft: "32px",
-      paddingRight: "32px",
-    },
   },
   popOver: {
     position: "bottom",
-    style: {
-      padding: "10px",
-      width: "fit-content",
-      maxWidth: "fit-content",
-    },
   },
   navLink: {
     color: "Black.6",
@@ -463,9 +448,7 @@ export const requiredModifiers: RequiredModifiers = {
     },
   },
   navbar: {
-    width: "260px",
     gridTemplateRows: "auto 1fr auto",
-    height: "100vh",
     top: "0",
     position: "sticky",
   },
@@ -474,13 +457,8 @@ export const requiredModifiers: RequiredModifiers = {
     animate: true,
   },
   codeEmbed: {
-    style: {
-      height: "auto",
-      width: "100%",
-      border: "none",
-      overflow: "hidden",
-      display: "block",
-    },
+    border: "none",
+    overflow: "hidden",
   },
   colorPicker: {
     radius: "xs",

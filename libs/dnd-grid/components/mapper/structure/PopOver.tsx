@@ -14,11 +14,6 @@ export const jsonStructure = (props?: any): ComponentStructure => {
     props: {
       ...(props.props || {}),
       ...requiredModifiers.popOver,
-      style: {
-        padding: "10px",
-        width: "fit-content",
-        maxWidth: "fit-content",
-      },
     },
     children: [
       {
@@ -27,7 +22,8 @@ export const jsonStructure = (props?: any): ComponentStructure => {
         description: "Container",
         props: {
           style: {
-            width: "auto",
+            gridColumn: "1/12",
+            gridRow: "1/12",
             backgroundColor: "white.6",
           },
         },
@@ -45,8 +41,8 @@ export const jsonStructure = (props?: any): ComponentStructure => {
                 fontWeight: "normal",
                 lineHeight: "110%",
                 letterSpacing: "0px",
-                width: "auto",
-                height: "auto",
+                gridColumn: "1/6",
+                gridRow: "1/3",
               },
               ...(props.props || {}),
             },

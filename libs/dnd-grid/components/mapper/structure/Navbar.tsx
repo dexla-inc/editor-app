@@ -49,8 +49,8 @@ export const jsonStructure = (props?: any): ComponentStructure => {
       ...merge({
         style: {
           ...initialValues,
-          width: "260px",
-          height: "100vh",
+          gridColumn: "1/26",
+          gridRow: "1 / -1",
         },
         ...props.props,
       }),
@@ -64,11 +64,8 @@ export const jsonStructure = (props?: any): ComponentStructure => {
         props: {
           showBorder: "bottom",
           style: {
-            display: "flex",
-            flexDirection: "row",
-            gap: "10px",
-            alignItems: "center",
-            padding: "20px",
+            gridColumn: "4/23",
+            gridRow: "2/5",
             borderBottomStyle: "solid",
             borderBottomWidth: "1px",
             borderBottomColor: isDarkTheme
@@ -83,10 +80,9 @@ export const jsonStructure = (props?: any): ComponentStructure => {
             description: "Image",
             props: {
               style: {
-                width: "34px",
-                maxWidth: "180px",
-                height: "34px",
                 ...defaultImageValues,
+                gridColumn: "4/23",
+                gridRow: "2/5",
               },
               src: logoUrl,
             },
@@ -99,9 +95,8 @@ export const jsonStructure = (props?: any): ComponentStructure => {
             description: "User Details",
             props: {
               style: {
-                display: "flex",
-                flexDirection: "column",
-                gap: "5px",
+                gridColumn: "1/26",
+                gridRow: "6/10",
               },
             },
             children: [
@@ -119,8 +114,8 @@ export const jsonStructure = (props?: any): ComponentStructure => {
                   style: {
                     lineHeight: "110%",
                     letterSpacing: "0px",
-                    width: "auto",
-                    height: "auto",
+                    gridColumn: "4/23",
+                    gridRow: "6/8",
                   },
                 },
               },
@@ -136,49 +131,13 @@ export const jsonStructure = (props?: any): ComponentStructure => {
                   style: {
                     lineHeight: "110%",
                     letterSpacing: "0px",
-                    width: "auto",
-                    height: "auto",
+                    gridColumn: "4/23",
+                    gridRow: "9/11",
                   },
                 },
               },
             ],
           },
-          // This needs moving in a container with space between of a logo
-          // {
-          //   id: nanoid(),
-          //   name: "ButtonIcon",
-          //   description: "Button to toggle Navbar",
-          //   props: {
-          //     style: {
-          //       position: "absolute",
-          //       top: "20px",
-          //       right: "-20px",
-          //       width: "auto",
-          //       height: "auto",
-          //       cursor: "pointer",
-          //       zIndex: 10,
-          //     },
-          //     radius: "xl",
-          //   },
-          //   actions: [
-          //     {
-          //       id: nanoid(),
-          //       trigger: "onClick",
-          //       action: { name: "changeState", conditionRules: [] },
-          //     },
-          //   ],
-          //   blockDroppingChildrenInside: true,
-          //   children: [
-          //     {
-          //       id: nanoid(),
-          //       name: "Icon",
-          //       description: "Icon",
-          //       props: {
-          //         name: "IconChevronLeft",
-          //       },
-          //     },
-          //   ],
-          // },
         ],
       },
       {
@@ -187,13 +146,12 @@ export const jsonStructure = (props?: any): ComponentStructure => {
         description: "Nav Links",
         props: {
           style: {
-            display: "flex",
-            flexDirection: "column",
-            height: "auto",
+            gridColumn: "1/26",
+            gridRow: "13/33",
           },
         },
         // @ts-ignore
-        children: pages.map((page) => ({
+        children: pages.map((page, index) => ({
           id: page.id,
           name: "NavLink",
           description: "Nav Link",
@@ -202,13 +160,11 @@ export const jsonStructure = (props?: any): ComponentStructure => {
             label: page.title,
             isNested: !!page.parentPageId,
             style: {
-              width: "100%",
-              height: "auto",
-              display: "flex",
-              alignItems: "center",
               padding: "10px",
               color: isDarkTheme ? theme.colors.gray[5] : theme.colors.dark[9],
               borderRadius: "3px",
+              gridColumn: "1/26",
+              gridRow: `${13 + index * 3}/${16 + index * 3}`,
             },
           },
           blockDroppingChildrenInside: true,
@@ -245,7 +201,10 @@ export const jsonStructure = (props?: any): ComponentStructure => {
         name: "Container",
         description: "Footer",
         props: {
-          style: { display: "flex", flexDirection: "column", gap: "10px" },
+          style: {
+            gridColumn: "1/26",
+            gridRow: "33/43",
+          },
         },
         children: [
           {
@@ -254,12 +213,12 @@ export const jsonStructure = (props?: any): ComponentStructure => {
             description: "Container for NavLinks",
             props: {
               style: {
-                display: "flex",
-                flexDirection: "column",
+                gridColumn: "1/26",
+                gridRow: "33/36",
               },
             },
             // @ts-ignore
-            children: bottomPages.map((page) => ({
+            children: bottomPages.map((page, index) => ({
               id: page.id,
               name: "NavLink",
               description: "Navbar Item",
@@ -268,14 +227,12 @@ export const jsonStructure = (props?: any): ComponentStructure => {
                 label: page.title,
                 isNested: page.isNested,
                 style: {
-                  width: "100%",
-                  height: "auto",
-                  display: "flex",
-                  alignItems: "center",
                   padding: "10px",
                   color: isDarkTheme
                     ? theme.colors.gray[5]
                     : theme.colors.dark[9],
+                  gridColumn: "1/26",
+                  gridRow: `${33 + index * 3}/${36 + index * 3}`,
                 },
               },
               actions: [
@@ -312,9 +269,8 @@ export const jsonStructure = (props?: any): ComponentStructure => {
             description: "Container for Avatar",
             props: {
               style: {
-                display: "flex",
-                gap: "10px",
-                alignItems: "center",
+                gridColumn: "1/26",
+                gridRow: "36/39",
                 cursor: "pointer",
                 padding: "10px",
               },
@@ -326,7 +282,10 @@ export const jsonStructure = (props?: any): ComponentStructure => {
                 description: "Avatar",
                 props: {
                   radius: "xl",
-                  style: { width: "40px", height: "40px" },
+                  style: {
+                    gridColumn: "2/5",
+                    gridRow: "2/5",
+                  },
                 },
                 children: [],
                 actions: [],
@@ -338,9 +297,8 @@ export const jsonStructure = (props?: any): ComponentStructure => {
                 description: "Profile Details",
                 props: {
                   style: {
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "5px",
+                    gridColumn: "1/26",
+                    gridRow: "1/10",
                   },
                 },
                 children: [
@@ -353,13 +311,12 @@ export const jsonStructure = (props?: any): ComponentStructure => {
                       color: `${
                         theme.colors.Black ? "Black.6" : theme.colors.dark[6]
                       }`,
-                      size: "md",
                       weight: "bold",
                       style: {
                         lineHeight: "110%",
                         letterSpacing: "0px",
-                        width: "auto",
-                        height: "auto",
+                        gridColumn: "4/23",
+                        gridRow: "1/3",
                       },
                     },
                   },
@@ -375,8 +332,8 @@ export const jsonStructure = (props?: any): ComponentStructure => {
                       style: {
                         lineHeight: "110%",
                         letterSpacing: "0px",
-                        width: "auto",
-                        height: "auto",
+                        gridColumn: "4/23",
+                        gridRow: "2/4",
                       },
                     },
                   },

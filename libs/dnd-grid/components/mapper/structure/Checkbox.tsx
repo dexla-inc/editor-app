@@ -46,12 +46,10 @@ export const jsonStructure = (props?: any): ComponentStructure => {
         description: "Icon",
         props: {
           name: "IconCheck",
-          width: "12px",
           color: "transparent",
           style: {
-            position: "relative",
-            width: "12px",
-            height: "12px",
+            gridColumn: "1/3",
+            gridRow: "1/3",
           },
         },
         blockDroppingChildrenInside: true,
@@ -68,7 +66,10 @@ export const jsonStructure = (props?: any): ComponentStructure => {
   const containerCheckboxItem = containerStructure({
     children: [containerCheckbox, textCheckboxItem],
     props: {
-      style: { display: "flex", alignItems: "center", width: "100%" },
+      style: {
+        gridColumn: "4/12",
+        gridRow: "1/3",
+      },
     },
   });
 
@@ -78,13 +79,11 @@ export const jsonStructure = (props?: any): ComponentStructure => {
     description: "Checkbox",
     props: {
       style: {
-        width: "auto",
-        height: "auto",
+        gridColumn: "1/3",
+        gridRow: "1/3",
         cursor: "default",
         borderRadius: "2px",
       },
-      // TODO: Get size from branding
-      size: "sm",
       ...(restProps ?? {}),
     },
     onLoad: {

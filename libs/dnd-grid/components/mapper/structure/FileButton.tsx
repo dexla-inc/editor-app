@@ -3,31 +3,26 @@ import { requiredModifiers } from "@/utils/modifiers";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): ComponentStructure => {
+  const { name, style, ...rest } = props.props ?? {};
+
   return {
     id: nanoid(),
-    name: "NavLink",
-    description: "Nav Link",
+    name: "FileButton",
+    description: "File Upload Button",
     onLoad: {
-      label: {
-        static: "Nav Link",
+      name: {
         dataType: "static",
+        static: name ?? "Upload",
       },
     },
     props: {
-      icon: "IconLayoutDashboard",
+      ...requiredModifiers.fileButton,
       style: {
-        ...requiredModifiers.navLink,
-        gridColumn: "1/26",
+        gridColumn: "1/12",
         gridRow: "1/4",
       },
-      ...(props.props || {}),
+      ...(rest || {}),
     },
-    states: {
-      disabled: {
-        bg: "Neutral.6",
-        color: "Neutral.9",
-        iconColor: "Neutral.9",
-      },
-    },
+    blockDroppingChildrenInside: true,
   };
 };
