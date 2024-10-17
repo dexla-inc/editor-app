@@ -78,7 +78,13 @@ const ButtonComponent = forwardRef(
         {...componentProps}
         {...triggers}
         style={customStyle}
-        styles={{ root: DISABLED_HOVER }}
+        styles={{
+          root: DISABLED_HOVER,
+          inner: {
+            display: "flex",
+            gridArea: "1 / 1 / -1 / -1",
+          },
+        }}
         ref={ref}
       >
         {String(childrenValue)}

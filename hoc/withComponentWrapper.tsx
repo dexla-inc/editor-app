@@ -5,12 +5,11 @@ import { useShallow } from "zustand/react/shallow";
 import { useComputeCurrentState } from "@/hooks/components/useComputeCurrentState";
 import { useComponentContextEventHandler } from "@/hooks/components/useComponentContextMenu";
 import { useComputeValue } from "@/hooks/data/useComputeValue";
-import { useEditorDroppableEvents } from "@/hooks/components/useEditorDroppableEvents";
 import { usePropsWithOverwrites } from "@/hooks/components/usePropsWithOverwrites";
 import { useComputeChildStyles } from "@/hooks/components/useComputeChildStyles";
 import { WithComponentWrapperProps } from "@/types/component";
 import merge from "lodash.merge";
-import { withComponentVisibility } from "@/hoc/withComponentVisibility";
+import { withDnd } from "@/hoc/withDnd";
 
 export const withComponentWrapper = <T extends Record<string, any>>(
   Component: ComponentType<T>,
@@ -20,6 +19,7 @@ export const withComponentWrapper = <T extends Record<string, any>>(
     component: componentTree,
     renderTree,
     shareableContent,
+    ...extraProps
   }: WithComponentWrapperProps) => {
     const component = useEditorTreeStore(
       useShallow(
@@ -69,14 +69,13 @@ export const withComponentWrapper = <T extends Record<string, any>>(
       currentState,
     );
 
-    const { droppable } = useEditorDroppableEvents({
-      componentId: componentTree.id!,
-    });
-
     const childStyles = useComputeChildStyles({
       component: { ...component, id: componentTree.id },
       propsWithOverwrites,
     });
+
+    const dndProps = merge({ draggable: true }, extraProps, childStyles);
+    console.log("dndProps-->", dndProps);
 
     const props = {
       component: {
@@ -85,8 +84,7 @@ export const withComponentWrapper = <T extends Record<string, any>>(
         props: propsWithOverwrites,
         onLoad: computedOnLoad ?? {},
       },
-      ...droppable,
-      ...childStyles,
+      ...dndProps,
       renderTree,
       id,
       onContextMenu: handleContextMenu,
@@ -119,5 +117,5 @@ export const withComponentWrapper = <T extends Record<string, any>>(
     );
   };
 
-  return withComponentVisibility(ComponentWrapper);
+  return withDnd(ComponentWrapper);
 };

@@ -7,20 +7,19 @@ type Props = {
 };
 
 export const useGridStyling = ({ component }: Props) => {
-  const hoverComponentId = useDndGridStore((state) => state.hoverComponentId);
-  const selectedComponentId = useEditorTreeStore((state) =>
-    state.selectedComponentIds?.at(-1),
+  const isSelected = useEditorTreeStore((state) =>
+    state.selectedComponentIds?.includes(component.id ?? ""),
   );
-
-  const isActive =
-    hoverComponentId === component.id || selectedComponentId === component.id;
+  const isActive = useDndGridStore(
+    (state) => isSelected || state.hoverComponentId === component.id,
+  );
 
   return {
     position: "relative",
     border: "1px solid",
     borderRadius: "0.25rem",
-    gridColumn: component.props?.style.gridColumn,
-    gridRow: component.props?.style.gridRow,
+    gridColumn: component.props?.style?.gridColumn,
+    gridRow: component.props?.style?.gridRow,
     display: "grid",
     gridTemplateColumns: "subgrid",
     gridTemplateRows: "subgrid",
