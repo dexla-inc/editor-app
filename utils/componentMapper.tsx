@@ -111,7 +111,6 @@ import { TabsPanel } from "@/components/mapper/TabsPanel";
 import { ActionTrigger, SequentialTrigger } from "@/utils/actions";
 import { Modifiers } from "@/utils/modifiers";
 
-import { DraggableComponent } from "@/libs/dnd-grid/components/DraggableComponent";
 import { CodeEmbed } from "@/components/mapper/CodeEmbed";
 import { ColorPicker } from "@/libs/dnd-flex/components/mapper/ColorPicker";
 

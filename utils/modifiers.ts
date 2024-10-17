@@ -485,10 +485,6 @@ export const requiredModifiers: RequiredModifiers = {
   colorPicker: {
     radius: "xs",
   },
-  colorPicker: {
-    size: "sm",
-    radius: "xs",
-  },
 };
 
 type AISupportedModifiers = {

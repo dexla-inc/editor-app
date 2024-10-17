@@ -1,16 +1,19 @@
 import { Component, ComponentTree } from "@/utils/editor";
 import { useDndGridStore } from "@/libs/dnd-grid/stores/dndGridStore";
+import { useEditorTreeStore } from "@/stores/editorTree";
 
 type Props = {
   component: ComponentTree & Component;
 };
 
 export const useGridStyling = ({ component }: Props) => {
-  const isActive = useDndGridStore(
-    (state) =>
-      state.selectedComponentId === component.id ||
-      state.hoverComponentId === component.id,
+  const hoverComponentId = useDndGridStore((state) => state.hoverComponentId);
+  const selectedComponentId = useEditorTreeStore((state) =>
+    state.selectedComponentIds?.at(-1),
   );
+
+  const isActive =
+    hoverComponentId === component.id || selectedComponentId === component.id;
 
   return {
     position: "relative",
