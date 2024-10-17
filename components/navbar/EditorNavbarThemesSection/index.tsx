@@ -123,7 +123,6 @@ export const EditorNavbarThemesSection =
       if (!searchValue) return true;
       return colors.some(
         (color) =>
-          color.name?.toLowerCase().includes(searchValue) ||
           color.hex?.toLowerCase().includes(searchValue) ||
           color.friendlyName?.toLowerCase().includes(searchValue),
       );
