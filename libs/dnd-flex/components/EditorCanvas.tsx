@@ -8,7 +8,7 @@ import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Box, Paper } from "@mantine/core";
 import { memo } from "react";
 import { RenderTreeFunc } from "@/types/component";
-import { ComponentToolbox } from "@/components/ComponentToolbox";
+import { ComponentToolbox } from "@/libs/dnd-flex/components/ComponentToolbox";
 
 type Props = {
   projectId: string;
