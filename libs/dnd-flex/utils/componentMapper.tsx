@@ -122,7 +122,7 @@ import {
   addTabToolboxAction,
   insertGridToolboxAction,
   insertRowToolboxAction,
-} from "@/utils/toolboxActions";
+} from "@/libs/dnd-flex/utils/toolboxActions";
 import {
   IconBoxModel,
   IconBrandChrome,

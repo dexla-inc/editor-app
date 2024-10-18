@@ -121,7 +121,7 @@ import {
   addTabToolboxAction,
   insertGridToolboxAction,
   insertRowToolboxAction,
-} from "@/utils/toolboxActions";
+} from "@/libs/dnd-grid/utils/toolboxActions";
 import {
   IconBoxModel,
   IconBrandChrome,
