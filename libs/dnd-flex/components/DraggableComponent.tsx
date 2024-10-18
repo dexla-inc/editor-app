@@ -13,7 +13,6 @@ type Props = {
 
 export const DraggableComponent = ({ id, text, data, icon }: Props) => {
   const [draggableData, setDraggableData] = useState<any>(data);
-
   useEffect(() => {
     if (!data) {
       const component = structureMapper()[id];

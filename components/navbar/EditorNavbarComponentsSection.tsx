@@ -85,7 +85,7 @@ export const EditorNavbarComponentsSection = () => {
   }, []);
 
   const DraggableComponent =
-    cssType === "GRID" ? DraggableComponentGrid : DraggableComponentFlex;
+    cssType === "FLEX" ? DraggableComponentFlex : DraggableComponentGrid;
 
   return (
     <Stack spacing="xl" p="xs" pr={0}>
@@ -113,6 +113,7 @@ export const EditorNavbarComponentsSection = () => {
       />
       {componentTypeToShow === "default" && (
         <Grid gutter="xs">
+          {cssType}
           {Object.entries(componentsGroupedByCategory).map(
             ([category, components]) => {
               const filteredComponents = filterComponents(components, query);

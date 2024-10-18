@@ -175,7 +175,8 @@ import {
   IconToggleLeft,
   IconUser,
 } from "@tabler/icons-react";
-import { DraggableComponent } from "@/libs/dnd-grid/components/DraggableComponent";
+import { DraggableComponent as DraggableComponentGrid } from "@/libs/dnd-grid/components/DraggableComponent";
+import { DraggableComponent as DraggableComponentFlex } from "@/libs/dnd-flex/components/DraggableComponent";
 
 // Import structures from dnd-flex
 import * as AccordionStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Accordion";
@@ -261,7 +262,9 @@ export type StructureMapper = {
 
 export const structureMapper = (debug: string = ""): StructureMapper => {
   const cssType = useEditorTreeStore.getState().cssType;
-  console.log("cssType--->", debug, cssType);
+  const DraggableComponent =
+    cssType === "FLEX" ? DraggableComponentFlex : DraggableComponentGrid;
+  // console.log("cssType--->", debug, cssType);
   return {
     // AI generated structures
     Grid: {
