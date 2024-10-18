@@ -1,12 +1,12 @@
 import { useThemeStore } from "@/stores/theme";
-import { structureMapper } from "@/libs/dnd-grid/utils/componentMapper";
+import { structureMapper } from "@/utils/componentMapper";
 import { ComponentStructure } from "@/utils/editor";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): ComponentStructure => {
   const theme = useThemeStore.getState().theme;
   const checkboxGroupId = nanoid();
-  const checkboxStructure = structureMapper["Checkbox"].structure;
+  const checkboxStructure = structureMapper()["Checkbox"].structure;
   const checkboxItemOne = checkboxStructure({
     theme,
     optionValue: { static: "option-1" },

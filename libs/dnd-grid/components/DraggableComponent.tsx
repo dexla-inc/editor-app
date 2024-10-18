@@ -1,5 +1,5 @@
 import { Draggable } from "@/libs/dnd-grid/components/Draggable";
-import { structureMapper } from "@/libs/dnd-grid/utils/componentMapper";
+import { structureMapper } from "@/utils/componentMapper";
 import { toSpaced } from "@/types/dashboardTypes";
 import { Box, Text } from "@mantine/core";
 
@@ -11,7 +11,7 @@ type Props = {
 };
 
 export const DraggableComponent = ({ id, text, data, icon }: Props) => {
-  const draggableData = data || structureMapper[id]?.structure({});
+  const draggableData = data || structureMapper()[id]?.structure({});
 
   return (
     <Draggable id={id} data={draggableData} isDeletable={!!data}>

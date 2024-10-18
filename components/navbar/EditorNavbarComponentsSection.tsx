@@ -1,11 +1,12 @@
-import { DraggableComponent } from "@/libs/dnd-grid/components/DraggableComponent";
+import { DraggableComponent as DraggableComponentGrid } from "@/libs/dnd-grid/components/DraggableComponent";
+import { DraggableComponent as DraggableComponentFlex } from "@/libs/dnd-flex/components/DraggableComponent";
 import GridItemComponent from "@/components/navbar/ComponentGridItem";
 import { useCustomComponentList } from "@/hooks/editor/reactQuery/useCustomComponentList";
 import {
   ComponentCategoryType,
   componentMapper,
   structureMapper,
-} from "@/libs/dnd-grid/utils/componentMapper";
+} from "@/utils/componentMapper";
 import { CustomComponentResponse } from "@/requests/components/types";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { usePropelAuthStore } from "@/stores/propelAuth";
@@ -38,12 +39,14 @@ type DraggableComponentData = {
   synonyms?: string[];
 };
 
-const componentsGroupedByCategory = Object.keys(structureMapper).reduce(
+const componentsGroupedByCategory = Object.keys(
+  structureMapper("componentsGroupedByCategory"),
+).reduce(
   (groups, key) => {
-    const draggable = structureMapper[key]?.Draggable;
-    const category = structureMapper[key]?.category;
-    const hide = structureMapper[key]?.hide ?? false;
-    const synonyms = structureMapper[key]?.synonyms ?? [];
+    const draggable = structureMapper()[key]?.Draggable;
+    const category = structureMapper()[key]?.category;
+    const hide = structureMapper()[key]?.hide ?? false;
+    const synonyms = structureMapper()[key]?.synonyms ?? [];
 
     if (draggable) {
       if (!groups[category]) {
@@ -67,6 +70,7 @@ export const EditorNavbarComponentsSection = () => {
   const activeCompany = usePropelAuthStore((state) => state.activeCompany);
   const customStackRef = useRef<HTMLDivElement>(null);
   const userTheme = useThemeStore((state) => state.theme);
+  const cssType = useEditorTreeStore((state) => state.cssType);
 
   const { data: componentList } = useCustomComponentList(
     projectId,
@@ -79,6 +83,9 @@ export const EditorNavbarComponentsSection = () => {
 
     return componentToRender?.Component({ component, renderTree });
   }, []);
+
+  const DraggableComponent =
+    cssType === "GRID" ? DraggableComponentGrid : DraggableComponentFlex;
 
   return (
     <Stack spacing="xl" p="xs" pr={0}>

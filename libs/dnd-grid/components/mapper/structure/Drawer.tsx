@@ -1,4 +1,4 @@
-import { structureMapper } from "@/libs/dnd-grid/utils/componentMapper";
+import { structureMapper } from "@/utils/componentMapper";
 import { ComponentStructure } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { nanoid } from "nanoid";
@@ -7,7 +7,7 @@ export const jsonStructure = (props?: any): ComponentStructure => {
   const { input: defaultInputValues, drawer: defaultDrawerValues } =
     requiredModifiers;
 
-  const defaultButton = structureMapper["Button"].structure({});
+  const defaultButton = structureMapper()["Button"].structure({});
 
   const defaultChildren = [
     {

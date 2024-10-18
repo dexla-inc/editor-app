@@ -10,7 +10,7 @@ import {
   getElementsOver,
   getGridCoordinates,
 } from "@/libs/dnd-grid/utils/engines/position";
-import { structureMapper } from "@/libs/dnd-flex/utils/componentMapper";
+import { structureMapper } from "@/utils/componentMapper";
 import { useDndGridStore } from "@/libs/dnd-grid/stores/dndGridStore";
 import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
@@ -71,7 +71,7 @@ export const useDnd = (debug?: string) => {
       // add new components here
       const type = el.getAttribute("data-type");
       if (type) {
-        const newComponent = structureMapper[type].structure({});
+        const newComponent = structureMapper()[type].structure({});
         setDraggableComponent(newComponent);
         isNewComponent.current = true;
       }

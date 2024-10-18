@@ -1,5 +1,5 @@
 import { Draggable } from "@/libs/dnd-flex/components/Draggable";
-import { structureMapper } from "@/libs/dnd-flex/utils/componentMapper";
+import { structureMapper } from "@/utils/componentMapper";
 import { toSpaced } from "@/types/dashboardTypes";
 import { Box, Text } from "@mantine/core";
 import { useEffect, useState } from "react";
@@ -16,7 +16,7 @@ export const DraggableComponent = ({ id, text, data, icon }: Props) => {
 
   useEffect(() => {
     if (!data) {
-      const component = structureMapper[id];
+      const component = structureMapper()[id];
       const _data = component.structure({});
       setDraggableData(_data);
     } else {

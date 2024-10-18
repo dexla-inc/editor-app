@@ -2,7 +2,7 @@ import { getColorValue } from "@/utils/branding";
 import { ComponentStructure } from "@/utils/editor";
 import { px } from "@mantine/core";
 import { nanoid } from "nanoid";
-import { structureMapper } from "@/libs/dnd-grid/utils/componentMapper";
+import { structureMapper } from "@/utils/componentMapper";
 import { useThemeStore } from "@/stores/theme";
 
 export const jsonStructure = (props?: any): ComponentStructure => {
@@ -10,7 +10,7 @@ export const jsonStructure = (props?: any): ComponentStructure => {
   const radioItemContent = props.content ?? "New Radio Text";
   const radioItemTitle = props.title ?? "Radio Title";
 
-  const title = structureMapper["Title"].structure({
+  const title = structureMapper()["Title"].structure({
     theme,
     props: { order: 6, children: radioItemTitle },
   });

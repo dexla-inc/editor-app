@@ -3,7 +3,7 @@ import { StateSelector } from "@/components/aside/StateSelector";
 import { Tab, useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { isRestrictedComponent } from "@/utils/common";
-import { componentMapper } from "@/libs/dnd-grid/utils/componentMapper";
+import { componentMapper } from "@/utils/componentMapper";
 import {
   selectedComponentIdSelector,
   selectedComponentIdsSelector,

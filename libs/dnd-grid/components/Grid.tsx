@@ -2,7 +2,7 @@ import { forwardRef } from "react";
 import { TOTAL_COLUMNS_WITH_MULTIPLIER } from "@/libs/dnd-grid/types/constants";
 import { useDnd } from "@/libs/dnd-grid/hooks/useDnd";
 import { useDndGridStore } from "@/libs/dnd-grid/stores/dndGridStore";
-import { componentMapper } from "@/libs/dnd-grid/utils/componentMapper";
+import { componentMapper } from "@/utils/componentMapper";
 import { ComponentStructure } from "@/utils/editor";
 import merge from "lodash.merge";
 import { useEditorTreeStore } from "@/stores/editorTree";

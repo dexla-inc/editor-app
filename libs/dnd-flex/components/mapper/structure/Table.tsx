@@ -1,11 +1,11 @@
-import { structureMapper } from "@/libs/dnd-flex/utils/componentMapper";
+import { structureMapper } from "@/utils/componentMapper";
 import { ComponentStructure } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): ComponentStructure => {
-  const select = structureMapper["Select"].structure({});
-  const defaultButton = structureMapper["Button"].structure({});
+  const select = structureMapper()["Select"].structure({});
+  const defaultButton = structureMapper()["Button"].structure({});
 
   const { input: defaultInputValues, text: defaultTextValues } =
     requiredModifiers;

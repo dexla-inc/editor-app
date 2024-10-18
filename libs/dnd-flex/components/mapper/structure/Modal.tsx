@@ -1,4 +1,4 @@
-import { structureMapper } from "@/libs/dnd-flex/utils/componentMapper";
+import { structureMapper } from "@/utils/componentMapper";
 import { ComponentStructure } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import merge from "lodash.merge";
@@ -10,7 +10,7 @@ export const jsonStructure = (props?: any): ComponentStructure => {
 
   const modalId = nanoid();
 
-  const containerItem = structureMapper["Container"].structure({});
+  const containerItem = structureMapper()["Container"].structure({});
 
   const defaultChildren = [
     {

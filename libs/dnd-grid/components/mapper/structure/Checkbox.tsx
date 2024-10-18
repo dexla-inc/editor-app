@@ -1,5 +1,5 @@
 import { defaultTheme, getColorValue } from "@/utils/branding";
-import { structureMapper } from "@/libs/dnd-grid/utils/componentMapper";
+import { structureMapper } from "@/utils/componentMapper";
 import { ComponentStructure } from "@/utils/editor";
 import { nanoid } from "nanoid";
 
@@ -11,8 +11,8 @@ export const jsonStructure = (props?: any): ComponentStructure => {
     optionValue = { static: "new-option" },
     ...restProps
   } = props ?? {};
-  const textStructure = structureMapper["Text"].structure;
-  const containerStructure = structureMapper["Container"].structure;
+  const textStructure = structureMapper()["Text"].structure;
+  const containerStructure = structureMapper()["Container"].structure;
 
   const defaultBorderColor = getColorValue(theme, "Border.6");
   const selectedBackgroundColor = getColorValue(theme, "Primary.6");

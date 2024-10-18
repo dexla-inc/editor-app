@@ -4,7 +4,7 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 import { useInputsStore } from "@/stores/inputs";
 import { useVariableStore } from "@/stores/variables";
 import { RuleItemProps } from "@/types/dataBinding";
-import { structureMapper } from "@/libs/dnd-flex/utils/componentMapper";
+import { structureMapper } from "@/utils/componentMapper";
 import {
   Component,
   ComponentTree,
@@ -55,7 +55,7 @@ export const ModalAndDrawerWrapper = ({ component, children }: Props) => {
       };
 
   useEffect(() => {
-    const inputsComponentsList = Object.entries(structureMapper).reduce(
+    const inputsComponentsList = Object.entries(structureMapper()).reduce(
       (acc, [key, value]) => {
         if (value.category === "Input") {
           acc.push(key);

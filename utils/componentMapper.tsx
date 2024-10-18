@@ -58,7 +58,7 @@ import * as AppBarStructure from "@/libs/dnd-grid/components/mapper/structure/Ap
 import * as AutocompleteStructure from "@/libs/dnd-grid/components/mapper/structure/Autocomplete";
 import * as AvatarStructure from "@/libs/dnd-grid/components/mapper/structure/Avatar";
 import * as BadgeStructure from "@/libs/dnd-grid/components/mapper/structure/Badge";
-import * as Breadcrumbs from "@/libs/dnd-grid/components/mapper/structure/Breadcrumb";
+import * as BreadcrumbsStructure from "@/libs/dnd-grid/components/mapper/structure/Breadcrumb";
 import * as ButtonStructure from "@/libs/dnd-grid/components/mapper/structure/Button";
 import * as ButtonIconStructure from "@/libs/dnd-grid/components/mapper/structure/ButtonIcon";
 import * as CardStructure from "@/libs/dnd-grid/components/mapper/structure/Card";
@@ -122,7 +122,7 @@ import {
   addTabToolboxAction,
   insertGridToolboxAction,
   insertRowToolboxAction,
-} from "@/libs/dnd-flex/utils/toolboxActions";
+} from "@/utils/toolboxActions";
 import {
   IconBoxModel,
   IconBrandChrome,
@@ -177,6 +177,62 @@ import {
 } from "@tabler/icons-react";
 import { DraggableComponent } from "@/libs/dnd-grid/components/DraggableComponent";
 
+// Import structures from dnd-flex
+import * as AccordionStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Accordion";
+import * as AccordionItemStructureFlex from "@/libs/dnd-flex/components/mapper/structure/AccordionItem";
+import * as AlertStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Alert";
+import * as AppBarStructureFlex from "@/libs/dnd-flex/components/mapper/structure/AppBar";
+import * as AutocompleteStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Autocomplete";
+import * as AvatarStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Avatar";
+import * as BadgeStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Badge";
+import * as BreadcrumbsStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Breadcrumb";
+import * as ButtonStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Button";
+import * as ButtonIconStructureFlex from "@/libs/dnd-flex/components/mapper/structure/ButtonIcon";
+import * as CardStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Card";
+import * as CheckboxStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Checkbox";
+import * as CheckboxGroupStructureFlex from "@/libs/dnd-flex/components/mapper/structure/CheckboxGroup";
+import * as CheckboxItemStructureFlex from "@/libs/dnd-flex/components/mapper/structure/CheckboxItem";
+import * as CodeEmbedStructureFlex from "@/libs/dnd-flex/components/mapper/structure/CodeEmbed";
+import * as ContainerStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Container";
+import * as CountdownButtonStructureFlex from "@/libs/dnd-flex/components/mapper/structure/CountdownButton";
+import * as DateInputStructureFlex from "@/libs/dnd-flex/components/mapper/structure/DateInput";
+import * as DividerStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Divider";
+import * as DrawerStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Drawer";
+import * as FileButtonStructureFlex from "@/libs/dnd-flex/components/mapper/structure/FileButton";
+import * as FileUploadStructureFlex from "@/libs/dnd-flex/components/mapper/structure/FileUpload";
+import * as FormStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Form";
+import * as MapStructureFlex from "@/libs/dnd-flex/components/mapper/structure/GoogleMap";
+import * as GridStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Grid";
+import * as GridColumnStructureFlex from "@/libs/dnd-flex/components/mapper/structure/GridColumn";
+import * as IconStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Icon";
+import * as ImageStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Image";
+import * as InputStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Input";
+import * as LinkStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Link";
+import * as ModalStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Modal";
+import * as NavLinkStructureFlex from "@/libs/dnd-flex/components/mapper/structure/NavLink";
+import * as NavbarStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Navbar";
+import * as PaginationStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Pagination";
+import * as PopOverStructureFlex from "@/libs/dnd-flex/components/mapper/structure/PopOver";
+import * as ProgressStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Progress";
+import * as RadioStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Radio";
+import * as RadioItemStructureFlex from "@/libs/dnd-flex/components/mapper/structure/RadioItem";
+import * as RatingStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Rating";
+import * as SelectStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Select";
+import * as SwitchStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Switch";
+import * as TabsStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Tabs";
+import * as TextStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Text";
+import * as TextareaStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Textarea";
+import * as TitleStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Title";
+import * as AreaChartStructureFlex from "@/libs/dnd-flex/components/mapper/structure/charts/AreaChart";
+import * as BarChartStructureFlex from "@/libs/dnd-flex/components/mapper/structure/charts/BarChart";
+import * as LineChartStructureFlex from "@/libs/dnd-flex/components/mapper/structure/charts/LineChart";
+import * as PieChartStructureFlex from "@/libs/dnd-flex/components/mapper/structure/charts/PieChart";
+import * as RadarChartStructureFlex from "@/libs/dnd-flex/components/mapper/structure/charts/RadarChart";
+import * as RadialChartStructureFlex from "@/libs/dnd-flex/components/mapper/structure/charts/RadialChart";
+import * as ColorPickerStructureFlex from "@/libs/dnd-flex/components/mapper/structure/ColorPicker";
+
+import { useEditorTreeStore } from "@/stores/editorTree";
+
 export type ComponentCategoryType =
   | "Layout"
   | "Input"
@@ -203,764 +259,965 @@ export type StructureMapper = {
   [key: string]: StructureDefinition;
 };
 
-export const structureMapper: StructureMapper = {
-  // AI generated structures
-  // Grid: {
-  //   structure: (props: any) => GridStructure.jsonStructure(props),
-  //   Draggable: () => (
-  //     <DraggableComponent
-  //       id="Grid"
-  //       icon={<IconLayoutGrid size={LARGE_ICON_SIZE} />}
-  //     />
-  //   ),
-  //   category: "Layout",
-  //   icon: <IconLayoutGrid size={ICON_SIZE} />,
-  //   synonyms: ["Grid Layout", "Grid System"],
-  // },
-  // GridColumn: {
-  //   structure: (props: any) => GridColumnStructure.jsonStructure(props),
-  //   category: "Layout",
-  //   icon: <IconLayoutColumns size={ICON_SIZE} />,
-  //   synonyms: ["Grid Col", "Grid Cell"],
-  // },
-  Container: {
-    structure: (props: any) => ContainerStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Container"
-        icon={<IconContainer size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Layout",
-    icon: <IconContainer size={ICON_SIZE} />,
-    synonyms: ["Wrapper", "Box"],
-  },
-  Card: {
-    structure: (props: any) => CardStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Card"
-        icon={<IconLayoutCards size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Layout",
-    icon: <IconLayoutCards size={ICON_SIZE} />,
-    synonyms: ["Panel", "Tile"],
-  },
-  Button: {
-    structure: (props: any) => ButtonStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Button"
-        icon={<IconClick size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Input",
-    icon: <IconClick size={ICON_SIZE} />,
-  },
-  Input: {
-    structure: (props: any) => InputStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Input"
-        icon={<IconFileText size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Input",
-    icon: <IconFileText size={ICON_SIZE} />,
-    synonyms: [
-      "TextField",
-      "Input Field",
-      "Email Input",
-      "Text Input",
-      "Password Input",
-      "Number Input",
-      "Phone Input",
-      "Search Input",
-      "URL Input",
-    ],
-  },
-  Select: {
-    structure: (props: any) => SelectStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Select"
-        icon={<IconSelect size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Input",
-    icon: <IconSelect size={ICON_SIZE} />,
-    synonyms: ["Dropdown", "Select Input"],
-  },
-  CheckboxGroup: {
-    structure: (props: any) => CheckboxGroupStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="CheckboxGroup"
-        icon={<IconListCheck size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Input",
-    icon: <IconListCheck size={ICON_SIZE} />,
-    synonyms: ["Checkboxes", "Checkbox Set"],
-  },
-  Checkbox: {
-    structure: (props: any) => CheckboxStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Checkbox"
-        icon={<IconCheckbox size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Input",
-    icon: <IconCheckbox size={ICON_SIZE} />,
-    synonyms: ["Tickbox", "Checkmark Box"],
-  },
-  CheckboxItem: {
-    structure: (props: any) => CheckboxItemStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="CheckboxItem"
-        icon={<IconCheckbox size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Input",
-    icon: <IconCheckbox size={ICON_SIZE} />,
-    // Need to add a way to hide components that should not be visible in components list.
-    hide: true,
-    synonyms: ["Checkbox Element", "Check Item"],
-  },
-  Radio: {
-    structure: (props: any) => RadioStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Radio"
-        icon={<IconCircleDot size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Input",
-    icon: <IconCircleDot size={ICON_SIZE} />,
-    synonyms: ["Radio Button", "Option Button"],
-  },
-  RadioItem: {
-    structure: (props: any) => RadioItemStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="RadioItem"
-        icon={<IconGradienter size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Input",
-    icon: <IconGradienter size={ICON_SIZE} />,
-    hide: true,
-    synonyms: ["Radio Option", "Radio Element"],
-  },
-  Form: {
-    structure: (props: any) => FormStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Form"
-        icon={<IconForms size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Input",
-    icon: <IconForms size={ICON_SIZE} />,
-  },
-  Switch: {
-    structure: (props: any) => SwitchStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Switch"
-        icon={<IconToggleLeft size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Input",
-    icon: <IconToggleLeft size={ICON_SIZE} />,
-    synonyms: ["Toggle"],
-  },
-  DateInput: {
-    structure: (props: any) => DateInputStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="DateInput"
-        icon={<IconCalendar size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Input",
-    icon: <IconCalendar size={ICON_SIZE} />,
-    synonyms: ["Date Picker", "Date Field"],
-  },
-  Textarea: {
-    structure: (props: any) => TextareaStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Textarea"
-        icon={<IconPictureInPicture size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Input",
-    icon: <IconPictureInPicture size={ICON_SIZE} />,
-    synonyms: ["Text Area", "Multiline Input"],
-  },
-  ButtonIcon: {
-    structure: (props: any) => ButtonIconStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="ButtonIcon"
-        icon={<IconCircleDot size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Input",
-    icon: <IconCircleDot size={ICON_SIZE} />,
-    synonyms: ["IconButton", "Icon Button", "Action Icon"],
-  },
-  Autocomplete: {
-    structure: (props: any) => AutocompleteStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Autocomplete"
-        icon={<IconInputSearch size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Input",
-    icon: <IconInputSearch size={ICON_SIZE} />,
-    synonyms: ["Typeahead", "Autosuggest"],
-  },
-  FileButton: {
-    structure: (props: any) => FileButtonStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="FileButton"
-        icon={<IconFileUpload size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Input",
-    icon: <IconFileUpload size={ICON_SIZE} />,
-    synonyms: ["File Uploader", "Upload Input", "File Input"],
-  },
-  FileUpload: {
-    structure: (props: any) => FileUploadStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="FileUpload"
-        icon={<IconFile size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Input",
-    icon: <IconFile size={ICON_SIZE} />,
-    synonyms: ["File Uploader", "Upload Input", "File Input"],
-  },
-  Rating: {
-    structure: (props: any) => RatingStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Rating"
-        icon={<IconJewishStar size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Input",
-    icon: <IconJewishStar size={ICON_SIZE} />,
-    synonyms: ["Star Rating", "Review Rating"],
-  },
-  CountdownButton: {
-    structure: (props: any) => CountdownButtonStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="CountdownButton"
-        icon={<IconClockHour5 size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Input",
-    icon: <IconClockHour5 size={ICON_SIZE} />,
-    synonyms: ["Timer Button", "Countdown Timer"],
-  },
-  Text: {
-    structure: (props: any) => TextStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Text"
-        icon={<IconCursorText size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Typography",
-    icon: <IconCursorText size={ICON_SIZE} />,
-    synonyms: ["Paragraph", "Text Block", "Label"],
-  },
-  Title: {
-    structure: (props: any) => TitleStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Title"
-        icon={<IconHeading size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Typography",
-    icon: <IconHeading size={ICON_SIZE} />,
-    synonyms: ["Heading", "Header"],
-  },
-  // Table: {
-  //   structure: (props: any) => TableStructure.jsonStructure(props),
-  //   Draggable: () => (
-  //     <DraggableComponent
-  //       id="Table"
-  //       icon={<IconTable size={LARGE_ICON_SIZE} />}
-  //     />
-  //   ),
-  //   category: "Data Display",
-  //   icon: <IconTable size={ICON_SIZE} />,
-  // },
-  // TableCell: {
-  //   structure: (props: any) => TableCellStructure.jsonStructure(props),
-  //   Draggable: () => (
-  //     <DraggableComponent
-  //       id="TableCell"
-  //       icon={<IconTable size={LARGE_ICON_SIZE} />}
-  //     />
-  //   ),
-  //   category: "Data Display",
-  //   icon: <IconTable size={ICON_SIZE} />,
-  // },
-  Icon: {
-    structure: (props: any) => IconStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Icon"
-        icon={<IconBrandChrome size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Data Display",
-    icon: <IconBrandChrome size={ICON_SIZE} />,
-    synonyms: ["Symbol", "Glyph"],
-  },
-  Image: {
-    structure: (props: any) => ImageStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Image"
-        icon={<IconPhoto size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Data Display",
-    icon: <IconPhoto size={ICON_SIZE} />,
-    synonyms: ["Picture", "Photo"],
-  },
-  // CodeSnippet: {
-  //   structure: (props: any) => NotImplemented.jsonStructure(props),
-  //   category: "Data Display",
-  // },
-  Divider: {
-    structure: (props: any) => DividerStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Divider"
-        icon={<IconSeparator size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Data Display",
-    icon: <IconSeparator size={ICON_SIZE} />,
-    synonyms: ["Separator", "Line Break"],
-  },
-  // Newsfeed: {
-  //   structure: (props: any) => NotImplemented.jsonStructure(props),
-  //   category: "Data Display",
-  // },
-  // CardList: {
-  //   structure: (props: any) => NotImplemented.jsonStructure(props),
-  //   Draggable: () => (
-  //     <DraggableComponent
-  //       id="CardList"
-  //       icon={<IconCards size={LARGE_ICON_SIZE} />}
-  //     />
-  //   ),
-  //   category: "Data Display",
-  //   icon: <IconCards size={ICON_SIZE} />,
-  // },
-  // TaskList: {
-  //   structure: (props: any) => NotImplemented.jsonStructure(props),
-  //   Draggable: () => (
-  //     <DraggableComponent
-  //       id="TaskList"
-  //       icon={<IconListCheck size={LARGE_ICON_SIZE} />}
-  //     />
-  //   ),
-  //   category: "Data Display",
-  //   icon: <IconListCheck size={ICON_SIZE} />,
-  // },
-  // ProfileList: {
-  //   structure: (props: any) => NotImplemented.jsonStructure(props),
-  //   Draggable: () => (
-  //     <DraggableComponent
-  //       id="ProfileList"
-  //       icon={<IconUsers size={LARGE_ICON_SIZE} />}
-  //     />
-  //   ),
-  //   category: "Data Display",
-  //   icon: <IconUsers size={ICON_SIZE} />,
-  // },
-  Avatar: {
-    structure: (props: any) => AvatarStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Avatar"
-        icon={<IconUser size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Data Display",
-    icon: <IconUser size={ICON_SIZE} />,
-    synonyms: ["Profile Picture", "User Image"],
-  },
-  Alert: {
-    structure: (props: any) => AlertStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Alert"
-        icon={<IconExclamationMark size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Data Display",
-    icon: <IconExclamationMark size={ICON_SIZE} />,
-    synonyms: ["Notification", "Warning"],
-  },
-  // List: {
-  //   structure: (props: any) => NotImplemented.jsonStructure(props),
-  //   category: "Data Display",
-  // },
-  Accordion: {
-    structure: (props: any) => AccordionStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Accordion"
-        icon={<IconLayoutBottombarCollapse size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Data Display",
-    icon: <IconLayoutBottombarCollapse size={ICON_SIZE} />,
-    synonyms: ["Collapsible", "Expandable"],
-  },
-  AccordionItem: {
-    structure: (props: any) => AccordionItemStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="AccordionItem"
-        icon={<IconLayoutNavbar size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Data Display",
-    icon: <IconLayoutNavbar size={ICON_SIZE} />,
-    synonyms: ["Accordion Section", "Accordion Element"],
-    hide: true,
-  },
-  AccordionControl: {
-    structure: (props: any) => AccordionItemStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="AccordionControl"
-        icon={<IconLayoutDistributeHorizontal size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Data Display",
-    icon: <IconLayoutDistributeHorizontal size={ICON_SIZE} />,
-    synonyms: ["Accordion Control", "Accordion Tabs"],
-    hide: true,
-  },
-  Link: {
-    structure: (props: any) => LinkStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Link"
-        icon={<IconLink size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Navigation",
-    icon: <IconLink size={ICON_SIZE} />,
-    synonyms: ["Hyperlink", "Anchor"],
-  },
-  Navbar: {
-    structure: (props: any) => NavbarStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Navbar"
-        icon={<IconLayoutSidebar size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Navigation",
-    icon: <IconLayoutSidebar size={ICON_SIZE} />,
-    synonyms: ["Navigation Bar", "Menu Bar"],
-  },
-  NavLink: {
-    structure: (props: any) => NavLinkStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="NavLink"
-        icon={<IconClick size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Navigation",
-    icon: <IconClick size={ICON_SIZE} />,
-    synonyms: ["Navigation Link", "Menu Link"],
-  },
-  AppBar: {
-    structure: (props: any) => AppBarStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="AppBar"
-        icon={<IconLayoutNavbar size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Navigation",
-    icon: <IconLayoutNavbar size={ICON_SIZE} />,
-    synonyms: ["Navigation Bar", "Top Bar"],
-  },
-  Tabs: {
-    structure: (props: any) => TabsStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Tabs"
-        icon={<IconLayoutKanban size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Navigation",
-    icon: <IconLayoutKanban size={ICON_SIZE} />,
-  },
-  Breadcrumb: {
-    structure: (props: any) => Breadcrumbs.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Breadcrumb"
-        icon={<IconSlash size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Navigation",
-    icon: <IconSlash size={ICON_SIZE} />,
-    synonyms: ["Breadcrumbs", "Navigation Path"],
-  },
-  Pagination: {
-    structure: (props: any) => PaginationStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Pagination"
-        icon={<IconPageBreak size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Navigation",
-    icon: <IconPageBreak size={ICON_SIZE} />,
-    synonyms: ["Pager", "Page Navigator"],
-  },
-  // Carousel: {
-  //   structure: (props: any) => NotImplemented.jsonStructure(props),
-  //   category: "Navigation",
-  // },
-  // ProgressCard: {
-  //   structure: (props: any) => NotImplemented.jsonStructure(props),
-  //   category: "Card",
-  // },
-  // ImageCard: {
-  //   structure: (props: any) => NotImplemented.jsonStructure(props),
-  //   category: "Card",
-  // },
-  // ProfileCard: {
-  //   structure: (props: any) => NotImplemented.jsonStructure(props),
-  //   category: "Card",
-  // },
-  BarChart: {
-    structure: (props: any) => BarChartStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="BarChart"
-        icon={<IconChartBar size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Chart",
-    icon: <IconChartBar size={ICON_SIZE} />,
-    synonyms: ["Bar Graph", "Column Chart"],
-  },
-  // StackedBarChart: {
-  //   structure: (props: any) => NotImplemented.jsonStructure(props),
-  //   category: "Chart",
-  // },
-  // MixBarChart: {
-  //   structure: (props: any) => NotImplemented.jsonStructure(props),
-  //   category: "Chart",
-  // },
-  // ScatterChart: {
-  //   structure: (props: any) => NotImplemented.jsonStructure(props),
-  //   category: "Chart",
-  // },
-  LineChart: {
-    structure: (props: any) => LineChartStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="LineChart"
-        icon={<IconChartLine size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Chart",
-    icon: <IconChartLine size={ICON_SIZE} />,
-    synonyms: ["Line Graph", "Line Plot"],
-  },
-  PieChart: {
-    structure: (props: any) => PieChartStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="PieChart"
-        icon={<IconChartPie size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Chart",
-    icon: <IconChartPie size={ICON_SIZE} />,
-    synonyms: ["Pie Graph", "Circle Chart"],
-  },
-  AreaChart: {
-    structure: (props: any) => AreaChartStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="AreaChart"
-        icon={<IconChartAreaLine size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Chart",
-    icon: <IconChartAreaLine size={ICON_SIZE} />,
-    synonyms: ["Area Graph", "Filled Line Chart"],
-  },
-  // ComposedChart: {
-  //   structure: (props: any) => NotImplemented.jsonStructure(props),
-  //   category: "Chart",
-  // },
-  // StackedAreaChart: {
-  //   structure: (props: any) => NotImplemented.jsonStructure(props),
-  //   category: "Chart",
-  // },
-  // PercentAreaChart: {
-  //   structure: (props: any) => NotImplemented.jsonStructure(props),
-  //   category: "Chart",
-  // },
-  RadarChart: {
-    structure: (props: any) => RadarChartStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="RadarChart"
-        icon={<IconChartRadar size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Chart",
-    icon: <IconChartRadar size={ICON_SIZE} />,
-    synonyms: ["Spider Chart", "Web Chart"],
-  },
-  RadialChart: {
-    structure: (props: any) => RadialChartStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="RadialChart"
-        icon={<IconChartArcs size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Chart",
-    icon: <IconChartDonut size={ICON_SIZE} />,
-    synonyms: ["Donut Chart", "Circular Chart"],
-  },
-  Badge: {
-    structure: (props: any) => BadgeStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Badge"
-        icon={<IconIdBadge size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Feedback",
-    icon: <IconIdBadge size={ICON_SIZE} />,
-    synonyms: ["Label", "Tag"],
-  },
-  Progress: {
-    structure: (props: any) => ProgressStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Progress"
-        icon={<IconLoader2 size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Feedback",
-    icon: <IconLoader2 size={ICON_SIZE} />,
-    synonyms: ["Progress Bar", "Loading Bar"],
-  },
-  Modal: {
-    structure: (props: any) => ModalStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Modal"
-        icon={<IconBoxModel size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Overlays",
-    icon: <IconBoxModel size={ICON_SIZE} />,
-    synonyms: ["Dialog", "Popup"],
-  },
-  Drawer: {
-    structure: (props: any) => DrawerStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Drawer"
-        icon={<IconLayoutSidebarLeftCollapse size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Overlays",
-    icon: <IconLayoutSidebarLeftCollapse size={ICON_SIZE} />,
-    synonyms: ["Slideout", "Side Panel"],
-  },
-  PopOver: {
-    structure: (props: any) => PopOverStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="PopOver"
-        icon={<IconStackPop size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Overlays",
-    icon: <IconStackPop size={ICON_SIZE} />,
-    synonyms: ["Tooltip"],
-  },
-  GoogleMap: {
-    structure: (props: any) => MapStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="GoogleMap"
-        icon={<IconMapPin size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Third Party",
-    icon: <IconMapPin size={ICON_SIZE} />,
-    synonyms: ["Google Maps", "Map Plugin"],
-  },
-  CodeEmbed: {
-    structure: (props: any) => CodeEmbedStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="CodeEmbed"
-        icon={<IconCode size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Advanced",
-    icon: <IconCode size={ICON_SIZE} />,
-    synonyms: [
-      "Html Code",
-      "Custom Code",
-      "Embed Code",
-      "Embed HTML",
-      "Embed CSS",
-      "Embed JS",
-    ],
-  },
-  ColorPicker: {
-    structure: (props: any) => ColorPickerStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="ColorPicker"
-        icon={<IconColorFilter size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Input",
-    icon: <IconColorFilter size={ICON_SIZE} />,
-    synonyms: ["Color Picker", "Color Selector", "Color Swatch"],
-  },
+export const structureMapper = (debug: string = ""): StructureMapper => {
+  const cssType = useEditorTreeStore.getState().cssType;
+  console.log("cssType--->", debug, cssType);
+  return {
+    // AI generated structures
+    Grid: {
+      structure: (props: any) => GridStructure.jsonStructure(props),
+      Draggable: () => (
+        <DraggableComponent
+          id="Grid"
+          icon={<IconLayoutGrid size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Layout",
+      icon: <IconLayoutGrid size={ICON_SIZE} />,
+      synonyms: ["Grid Layout", "Grid System"],
+    },
+    GridColumn: {
+      structure: (props: any) => GridColumnStructure.jsonStructure(props),
+      category: "Layout",
+      icon: <IconLayoutColumns size={ICON_SIZE} />,
+      synonyms: ["Grid Col", "Grid Cell"],
+    },
+    Container: {
+      structure: (props: any) =>
+        (cssType === "FLEX"
+          ? ContainerStructureFlex
+          : ContainerStructure
+        ).jsonStructure(props),
+      Draggable: () => (
+        <DraggableComponent
+          id="Container"
+          icon={<IconContainer size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Layout",
+      icon: <IconContainer size={ICON_SIZE} />,
+      synonyms: ["Wrapper", "Box"],
+    },
+    Card: {
+      structure: (props: any) =>
+        (cssType === "FLEX" ? CardStructureFlex : CardStructure).jsonStructure(
+          props,
+        ),
+      Draggable: () => (
+        <DraggableComponent
+          id="Card"
+          icon={<IconLayoutCards size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Layout",
+      icon: <IconLayoutCards size={ICON_SIZE} />,
+      synonyms: ["Panel", "Tile"],
+    },
+    Button: {
+      structure: (props: any) =>
+        (cssType === "FLEX"
+          ? ButtonStructureFlex
+          : ButtonStructure
+        ).jsonStructure(props),
+      Draggable: () => (
+        <DraggableComponent
+          id="Button"
+          icon={<IconClick size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Input",
+      icon: <IconClick size={ICON_SIZE} />,
+    },
+    Input: {
+      structure: (props: any) =>
+        (cssType === "FLEX"
+          ? InputStructureFlex
+          : InputStructure
+        ).jsonStructure(props),
+      Draggable: () => (
+        <DraggableComponent
+          id="Input"
+          icon={<IconFileText size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Input",
+      icon: <IconFileText size={ICON_SIZE} />,
+      synonyms: [
+        "TextField",
+        "Input Field",
+        "Email Input",
+        "Text Input",
+        "Password Input",
+        "Number Input",
+        "Phone Input",
+        "Search Input",
+        "URL Input",
+      ],
+    },
+    Select: {
+      structure: (props: any) =>
+        (cssType === "FLEX"
+          ? SelectStructureFlex
+          : SelectStructure
+        ).jsonStructure(props),
+      Draggable: () => (
+        <DraggableComponent
+          id="Select"
+          icon={<IconSelect size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Input",
+      icon: <IconSelect size={ICON_SIZE} />,
+      synonyms: ["Dropdown", "Select Input"],
+    },
+    CheckboxGroup: {
+      structure: (props: any) =>
+        (cssType === "FLEX"
+          ? CheckboxGroupStructureFlex
+          : CheckboxGroupStructure
+        ).jsonStructure(props),
+      Draggable: () => (
+        <DraggableComponent
+          id="CheckboxGroup"
+          icon={<IconListCheck size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Input",
+      icon: <IconListCheck size={ICON_SIZE} />,
+      synonyms: ["Checkboxes", "Checkbox Set"],
+    },
+    Checkbox: {
+      structure: (props: any) =>
+        (cssType === "FLEX"
+          ? CheckboxStructureFlex
+          : CheckboxStructure
+        ).jsonStructure(props),
+      Draggable: () => (
+        <DraggableComponent
+          id="Checkbox"
+          icon={<IconCheckbox size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Input",
+      icon: <IconCheckbox size={ICON_SIZE} />,
+      synonyms: ["Tickbox", "Checkmark Box"],
+    },
+    CheckboxItem: {
+      structure: (props: any) =>
+        (cssType === "FLEX"
+          ? CheckboxItemStructureFlex
+          : CheckboxItemStructure
+        ).jsonStructure(props),
+      Draggable: () => (
+        <DraggableComponent
+          id="CheckboxItem"
+          icon={<IconCheckbox size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Input",
+      icon: <IconCheckbox size={ICON_SIZE} />,
+      // Need to add a way to hide components that should not be visible in components list.
+      hide: true,
+      synonyms: ["Checkbox Element", "Check Item"],
+    },
+    Radio: {
+      structure: (props: any) =>
+        (cssType === "FLEX"
+          ? RadioStructureFlex
+          : RadioStructure
+        ).jsonStructure(props),
+      Draggable: () => (
+        <DraggableComponent
+          id="Radio"
+          icon={<IconCircleDot size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Input",
+      icon: <IconCircleDot size={ICON_SIZE} />,
+      synonyms: ["Radio Button", "Option Button"],
+    },
+    RadioItem: {
+      structure: (props: any) =>
+        (cssType === "FLEX"
+          ? RadioItemStructureFlex
+          : RadioItemStructure
+        ).jsonStructure(props),
+      Draggable: () => (
+        <DraggableComponent
+          id="RadioItem"
+          icon={<IconGradienter size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Input",
+      icon: <IconGradienter size={ICON_SIZE} />,
+      hide: true,
+      synonyms: ["Radio Option", "Radio Element"],
+    },
+    Form: {
+      structure: (props: any) =>
+        (cssType === "FLEX" ? FormStructureFlex : FormStructure).jsonStructure(
+          props,
+        ),
+      Draggable: () => (
+        <DraggableComponent
+          id="Form"
+          icon={<IconForms size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Input",
+      icon: <IconForms size={ICON_SIZE} />,
+    },
+    Switch: {
+      structure: (props: any) =>
+        (cssType === "FLEX"
+          ? SwitchStructureFlex
+          : SwitchStructure
+        ).jsonStructure(props),
+      Draggable: () => (
+        <DraggableComponent
+          id="Switch"
+          icon={<IconToggleLeft size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Input",
+      icon: <IconToggleLeft size={ICON_SIZE} />,
+      synonyms: ["Toggle"],
+    },
+    DateInput: {
+      structure: (props: any) =>
+        (cssType === "FLEX"
+          ? DateInputStructureFlex
+          : DateInputStructure
+        ).jsonStructure(props),
+      Draggable: () => (
+        <DraggableComponent
+          id="DateInput"
+          icon={<IconCalendar size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Input",
+      icon: <IconCalendar size={ICON_SIZE} />,
+      synonyms: ["Date Picker", "Date Field"],
+    },
+    Textarea: {
+      structure: (props: any) =>
+        (cssType === "FLEX"
+          ? TextareaStructureFlex
+          : TextareaStructure
+        ).jsonStructure(props),
+      Draggable: () => (
+        <DraggableComponent
+          id="Textarea"
+          icon={<IconPictureInPicture size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Input",
+      icon: <IconPictureInPicture size={ICON_SIZE} />,
+      synonyms: ["Text Area", "Multiline Input"],
+    },
+    ButtonIcon: {
+      structure: (props: any) =>
+        (cssType === "FLEX"
+          ? ButtonIconStructureFlex
+          : ButtonIconStructure
+        ).jsonStructure(props),
+      Draggable: () => (
+        <DraggableComponent
+          id="ButtonIcon"
+          icon={<IconCircleDot size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Input",
+      icon: <IconCircleDot size={ICON_SIZE} />,
+      synonyms: ["IconButton", "Icon Button", "Action Icon"],
+    },
+    Autocomplete: {
+      structure: (props: any) =>
+        (cssType === "FLEX"
+          ? AutocompleteStructureFlex
+          : AutocompleteStructure
+        ).jsonStructure(props),
+      Draggable: () => (
+        <DraggableComponent
+          id="Autocomplete"
+          icon={<IconInputSearch size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Input",
+      icon: <IconInputSearch size={ICON_SIZE} />,
+      synonyms: ["Typeahead", "Autosuggest"],
+    },
+    FileButton: {
+      structure: (props: any) =>
+        (cssType === "FLEX"
+          ? FileButtonStructureFlex
+          : FileButtonStructure
+        ).jsonStructure(props),
+      Draggable: () => (
+        <DraggableComponent
+          id="FileButton"
+          icon={<IconFileUpload size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Input",
+      icon: <IconFileUpload size={ICON_SIZE} />,
+      synonyms: ["File Uploader", "Upload Input", "File Input"],
+    },
+    FileUpload: {
+      structure: (props: any) =>
+        (cssType === "FLEX"
+          ? FileUploadStructureFlex
+          : FileUploadStructure
+        ).jsonStructure(props),
+      Draggable: () => (
+        <DraggableComponent
+          id="FileUpload"
+          icon={<IconFile size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Input",
+      icon: <IconFile size={ICON_SIZE} />,
+      synonyms: ["File Uploader", "Upload Input", "File Input"],
+    },
+    Rating: {
+      structure: (props: any) =>
+        (cssType === "FLEX"
+          ? RatingStructureFlex
+          : RatingStructure
+        ).jsonStructure(props),
+      Draggable: () => (
+        <DraggableComponent
+          id="Rating"
+          icon={<IconJewishStar size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Input",
+      icon: <IconJewishStar size={ICON_SIZE} />,
+      synonyms: ["Star Rating", "Review Rating"],
+    },
+    CountdownButton: {
+      structure: (props: any) =>
+        (cssType === "FLEX"
+          ? CountdownButtonStructureFlex
+          : CountdownButtonStructure
+        ).jsonStructure(props),
+      Draggable: () => (
+        <DraggableComponent
+          id="CountdownButton"
+          icon={<IconClockHour5 size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Input",
+      icon: <IconClockHour5 size={ICON_SIZE} />,
+      synonyms: ["Timer Button", "Countdown Timer"],
+    },
+    Text: {
+      structure: (props: any) =>
+        (cssType === "FLEX" ? TextStructureFlex : TextStructure).jsonStructure(
+          props,
+        ),
+      Draggable: () => (
+        <DraggableComponent
+          id="Text"
+          icon={<IconCursorText size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Typography",
+      icon: <IconCursorText size={ICON_SIZE} />,
+      synonyms: ["Paragraph", "Text Block", "Label"],
+    },
+    Title: {
+      structure: (props: any) =>
+        (cssType === "FLEX"
+          ? TitleStructureFlex
+          : TitleStructure
+        ).jsonStructure(props),
+      Draggable: () => (
+        <DraggableComponent
+          id="Title"
+          icon={<IconHeading size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Typography",
+      icon: <IconHeading size={ICON_SIZE} />,
+      synonyms: ["Heading", "Header"],
+    },
+    // Table: {
+    //   structure: (props: any) => TableStructure.jsonStructure(props),
+    //   Draggable: () => (
+    //     <DraggableComponent
+    //       id="Table"
+    //       icon={<IconTable size={LARGE_ICON_SIZE} />}
+    //     />
+    //   ),
+    //   category: "Data Display",
+    //   icon: <IconTable size={ICON_SIZE} />,
+    // },
+    // TableCell: {
+    //   structure: (props: any) => TableCellStructure.jsonStructure(props),
+    //   Draggable: () => (
+    //     <DraggableComponent
+    //       id="TableCell"
+    //       icon={<IconTable size={LARGE_ICON_SIZE} />}
+    //     />
+    //   ),
+    //   category: "Data Display",
+    //   icon: <IconTable size={ICON_SIZE} />,
+    // },
+    Icon: {
+      structure: (props: any) =>
+        (cssType === "FLEX" ? IconStructureFlex : IconStructure).jsonStructure(
+          props,
+        ),
+      Draggable: () => (
+        <DraggableComponent
+          id="Icon"
+          icon={<IconBrandChrome size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Data Display",
+      icon: <IconBrandChrome size={ICON_SIZE} />,
+      synonyms: ["Symbol", "Glyph"],
+    },
+    Image: {
+      structure: (props: any) =>
+        (cssType === "FLEX"
+          ? ImageStructureFlex
+          : ImageStructure
+        ).jsonStructure(props),
+      Draggable: () => (
+        <DraggableComponent
+          id="Image"
+          icon={<IconPhoto size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Data Display",
+      icon: <IconPhoto size={ICON_SIZE} />,
+      synonyms: ["Picture", "Photo"],
+    },
+    // CodeSnippet: {
+    //   structure: (props: any) => NotImplemented.jsonStructure(props),
+    //   category: "Data Display",
+    // },
+    Divider: {
+      structure: (props: any) =>
+        (cssType === "FLEX"
+          ? DividerStructureFlex
+          : DividerStructure
+        ).jsonStructure(props),
+      Draggable: () => (
+        <DraggableComponent
+          id="Divider"
+          icon={<IconSeparator size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Data Display",
+      icon: <IconSeparator size={ICON_SIZE} />,
+      synonyms: ["Separator", "Line Break"],
+    },
+    // Newsfeed: {
+    //   structure: (props: any) => NotImplemented.jsonStructure(props),
+    //   category: "Data Display",
+    // },
+    // CardList: {
+    //   structure: (props: any) => NotImplemented.jsonStructure(props),
+    //   Draggable: () => (
+    //     <DraggableComponent
+    //       id="CardList"
+    //       icon={<IconCards size={LARGE_ICON_SIZE} />}
+    //     />
+    //   ),
+    //   category: "Data Display",
+    //   icon: <IconCards size={ICON_SIZE} />,
+    // },
+    // TaskList: {
+    //   structure: (props: any) => NotImplemented.jsonStructure(props),
+    //   Draggable: () => (
+    //     <DraggableComponent
+    //       id="TaskList"
+    //       icon={<IconListCheck size={LARGE_ICON_SIZE} />}
+    //     />
+    //   ),
+    //   category: "Data Display",
+    //   icon: <IconListCheck size={ICON_SIZE} />,
+    // },
+    // ProfileList: {
+    //   structure: (props: any) => NotImplemented.jsonStructure(props),
+    //   Draggable: () => (
+    //     <DraggableComponent
+    //       id="ProfileList"
+    //       icon={<IconUsers size={LARGE_ICON_SIZE} />}
+    //     />
+    //   ),
+    //   category: "Data Display",
+    //   icon: <IconUsers size={ICON_SIZE} />,
+    // },
+    Avatar: {
+      structure: (props: any) =>
+        (cssType === "FLEX"
+          ? AvatarStructureFlex
+          : AvatarStructure
+        ).jsonStructure(props),
+      Draggable: () => (
+        <DraggableComponent
+          id="Avatar"
+          icon={<IconUser size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Data Display",
+      icon: <IconUser size={ICON_SIZE} />,
+      synonyms: ["Profile Picture", "User Image"],
+    },
+    Alert: {
+      structure: (props: any) =>
+        (cssType === "FLEX"
+          ? AlertStructureFlex
+          : AlertStructure
+        ).jsonStructure(props),
+      Draggable: () => (
+        <DraggableComponent
+          id="Alert"
+          icon={<IconExclamationMark size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Data Display",
+      icon: <IconExclamationMark size={ICON_SIZE} />,
+      synonyms: ["Notification", "Warning"],
+    },
+    // List: {
+    //   structure: (props: any) => NotImplemented.jsonStructure(props),
+    //   category: "Data Display",
+    // },
+    Accordion: {
+      structure: (props: any) =>
+        (cssType === "FLEX"
+          ? AccordionStructureFlex
+          : AccordionStructure
+        ).jsonStructure(props),
+      Draggable: () => (
+        <DraggableComponent
+          id="Accordion"
+          icon={<IconLayoutBottombarCollapse size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Data Display",
+      icon: <IconLayoutBottombarCollapse size={ICON_SIZE} />,
+      synonyms: ["Collapsible", "Expandable"],
+    },
+    AccordionItem: {
+      structure: (props: any) =>
+        (cssType === "FLEX"
+          ? AccordionItemStructureFlex
+          : AccordionItemStructure
+        ).jsonStructure(props),
+      Draggable: () => (
+        <DraggableComponent
+          id="AccordionItem"
+          icon={<IconLayoutNavbar size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Data Display",
+      icon: <IconLayoutNavbar size={ICON_SIZE} />,
+      synonyms: ["Accordion Section", "Accordion Element"],
+      hide: true,
+    },
+    AccordionControl: {
+      structure: (props: any) =>
+        (cssType === "FLEX"
+          ? AccordionItemStructureFlex
+          : AccordionItemStructure
+        ).jsonStructure(props),
+      Draggable: () => (
+        <DraggableComponent
+          id="AccordionControl"
+          icon={<IconLayoutDistributeHorizontal size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Data Display",
+      icon: <IconLayoutDistributeHorizontal size={ICON_SIZE} />,
+      synonyms: ["Accordion Control", "Accordion Tabs"],
+      hide: true,
+    },
+    Link: {
+      structure: (props: any) =>
+        (cssType === "FLEX" ? LinkStructureFlex : LinkStructure).jsonStructure(
+          props,
+        ),
+      Draggable: () => (
+        <DraggableComponent
+          id="Link"
+          icon={<IconLink size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Navigation",
+      icon: <IconLink size={ICON_SIZE} />,
+      synonyms: ["Hyperlink", "Anchor"],
+    },
+    Navbar: {
+      structure: (props: any) =>
+        (cssType === "FLEX"
+          ? NavbarStructureFlex
+          : NavbarStructure
+        ).jsonStructure(props),
+      Draggable: () => (
+        <DraggableComponent
+          id="Navbar"
+          icon={<IconLayoutSidebar size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Navigation",
+      icon: <IconLayoutSidebar size={ICON_SIZE} />,
+      synonyms: ["Navigation Bar", "Menu Bar"],
+    },
+    NavLink: {
+      structure: (props: any) =>
+        (cssType === "FLEX"
+          ? NavLinkStructureFlex
+          : NavLinkStructure
+        ).jsonStructure(props),
+      Draggable: () => (
+        <DraggableComponent
+          id="NavLink"
+          icon={<IconClick size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Navigation",
+      icon: <IconClick size={ICON_SIZE} />,
+      synonyms: ["Navigation Link", "Menu Link"],
+    },
+    AppBar: {
+      structure: (props: any) =>
+        (cssType === "FLEX"
+          ? AppBarStructureFlex
+          : AppBarStructure
+        ).jsonStructure(props),
+      Draggable: () => (
+        <DraggableComponent
+          id="AppBar"
+          icon={<IconLayoutNavbar size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Navigation",
+      icon: <IconLayoutNavbar size={ICON_SIZE} />,
+      synonyms: ["Navigation Bar", "Top Bar"],
+    },
+    Tabs: {
+      structure: (props: any) =>
+        (cssType === "FLEX" ? TabsStructureFlex : TabsStructure).jsonStructure(
+          props,
+        ),
+      Draggable: () => (
+        <DraggableComponent
+          id="Tabs"
+          icon={<IconLayoutKanban size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Navigation",
+      icon: <IconLayoutKanban size={ICON_SIZE} />,
+    },
+    Breadcrumb: {
+      structure: (props: any) =>
+        (cssType === "FLEX"
+          ? BreadcrumbsStructureFlex
+          : BreadcrumbsStructure
+        ).jsonStructure(props),
+      Draggable: () => (
+        <DraggableComponent
+          id="Breadcrumb"
+          icon={<IconSlash size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Navigation",
+      icon: <IconSlash size={ICON_SIZE} />,
+      synonyms: ["Breadcrumbs", "Navigation Path"],
+    },
+    Pagination: {
+      structure: (props: any) =>
+        (cssType === "FLEX"
+          ? PaginationStructureFlex
+          : PaginationStructure
+        ).jsonStructure(props),
+      Draggable: () => (
+        <DraggableComponent
+          id="Pagination"
+          icon={<IconPageBreak size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Navigation",
+      icon: <IconPageBreak size={ICON_SIZE} />,
+      synonyms: ["Pager", "Page Navigator"],
+    },
+    // Carousel: {
+    //   structure: (props: any) => NotImplemented.jsonStructure(props),
+    //   category: "Navigation",
+    // },
+    // ProgressCard: {
+    //   structure: (props: any) => NotImplemented.jsonStructure(props),
+    //   category: "Card",
+    // },
+    // ImageCard: {
+    //   structure: (props: any) => NotImplemented.jsonStructure(props),
+    //   category: "Card",
+    // },
+    // ProfileCard: {
+    //   structure: (props: any) => NotImplemented.jsonStructure(props),
+    //   category: "Card",
+    // },
+    BarChart: {
+      structure: (props: any) =>
+        (cssType === "FLEX"
+          ? BarChartStructureFlex
+          : BarChartStructure
+        ).jsonStructure(props),
+      Draggable: () => (
+        <DraggableComponent
+          id="BarChart"
+          icon={<IconChartBar size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Chart",
+      icon: <IconChartBar size={ICON_SIZE} />,
+      synonyms: ["Bar Graph", "Column Chart"],
+    },
+    // StackedBarChart: {
+    //   structure: (props: any) => NotImplemented.jsonStructure(props),
+    //   category: "Chart",
+    // },
+    // MixBarChart: {
+    //   structure: (props: any) => NotImplemented.jsonStructure(props),
+    //   category: "Chart",
+    // },
+    // ScatterChart: {
+    //   structure: (props: any) => NotImplemented.jsonStructure(props),
+    //   category: "Chart",
+    // },
+    LineChart: {
+      structure: (props: any) =>
+        (cssType === "FLEX"
+          ? LineChartStructureFlex
+          : LineChartStructure
+        ).jsonStructure(props),
+      Draggable: () => (
+        <DraggableComponent
+          id="LineChart"
+          icon={<IconChartLine size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Chart",
+      icon: <IconChartLine size={ICON_SIZE} />,
+      synonyms: ["Line Graph", "Line Plot"],
+    },
+    PieChart: {
+      structure: (props: any) =>
+        (cssType === "FLEX"
+          ? PieChartStructureFlex
+          : PieChartStructure
+        ).jsonStructure(props),
+      Draggable: () => (
+        <DraggableComponent
+          id="PieChart"
+          icon={<IconChartPie size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Chart",
+      icon: <IconChartPie size={ICON_SIZE} />,
+      synonyms: ["Pie Graph", "Circle Chart"],
+    },
+    AreaChart: {
+      structure: (props: any) =>
+        (cssType === "FLEX"
+          ? AreaChartStructureFlex
+          : AreaChartStructure
+        ).jsonStructure(props),
+      Draggable: () => (
+        <DraggableComponent
+          id="AreaChart"
+          icon={<IconChartAreaLine size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Chart",
+      icon: <IconChartAreaLine size={ICON_SIZE} />,
+      synonyms: ["Area Graph", "Filled Line Chart"],
+    },
+    // ComposedChart: {
+    //   structure: (props: any) => NotImplemented.jsonStructure(props),
+    //   category: "Chart",
+    // },
+    // StackedAreaChart: {
+    //   structure: (props: any) => NotImplemented.jsonStructure(props),
+    //   category: "Chart",
+    // },
+    // PercentAreaChart: {
+    //   structure: (props: any) => NotImplemented.jsonStructure(props),
+    //   category: "Chart",
+    // },
+    RadarChart: {
+      structure: (props: any) =>
+        (cssType === "FLEX"
+          ? RadarChartStructureFlex
+          : RadarChartStructure
+        ).jsonStructure(props),
+      Draggable: () => (
+        <DraggableComponent
+          id="RadarChart"
+          icon={<IconChartRadar size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Chart",
+      icon: <IconChartRadar size={ICON_SIZE} />,
+      synonyms: ["Spider Chart", "Web Chart"],
+    },
+    RadialChart: {
+      structure: (props: any) =>
+        (cssType === "FLEX"
+          ? RadialChartStructureFlex
+          : RadialChartStructure
+        ).jsonStructure(props),
+      Draggable: () => (
+        <DraggableComponent
+          id="RadialChart"
+          icon={<IconChartArcs size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Chart",
+      icon: <IconChartDonut size={ICON_SIZE} />,
+      synonyms: ["Donut Chart", "Circular Chart"],
+    },
+    Badge: {
+      structure: (props: any) =>
+        (cssType === "FLEX"
+          ? BadgeStructureFlex
+          : BadgeStructure
+        ).jsonStructure(props),
+      Draggable: () => (
+        <DraggableComponent
+          id="Badge"
+          icon={<IconIdBadge size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Feedback",
+      icon: <IconIdBadge size={ICON_SIZE} />,
+      synonyms: ["Label", "Tag"],
+    },
+    Progress: {
+      structure: (props: any) =>
+        (cssType === "FLEX"
+          ? ProgressStructureFlex
+          : ProgressStructure
+        ).jsonStructure(props),
+      Draggable: () => (
+        <DraggableComponent
+          id="Progress"
+          icon={<IconLoader2 size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Feedback",
+      icon: <IconLoader2 size={ICON_SIZE} />,
+      synonyms: ["Progress Bar", "Loading Bar"],
+    },
+    Modal: {
+      structure: (props: any) =>
+        (cssType === "FLEX"
+          ? ModalStructureFlex
+          : ModalStructure
+        ).jsonStructure(props),
+      Draggable: () => (
+        <DraggableComponent
+          id="Modal"
+          icon={<IconBoxModel size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Overlays",
+      icon: <IconBoxModel size={ICON_SIZE} />,
+      synonyms: ["Dialog", "Popup"],
+    },
+    Drawer: {
+      structure: (props: any) =>
+        (cssType === "FLEX"
+          ? DrawerStructureFlex
+          : DrawerStructure
+        ).jsonStructure(props),
+      Draggable: () => (
+        <DraggableComponent
+          id="Drawer"
+          icon={<IconLayoutSidebarLeftCollapse size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Overlays",
+      icon: <IconLayoutSidebarLeftCollapse size={ICON_SIZE} />,
+      synonyms: ["Slideout", "Side Panel"],
+    },
+    PopOver: {
+      structure: (props: any) =>
+        (cssType === "FLEX"
+          ? PopOverStructureFlex
+          : PopOverStructure
+        ).jsonStructure(props),
+      Draggable: () => (
+        <DraggableComponent
+          id="PopOver"
+          icon={<IconStackPop size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Overlays",
+      icon: <IconStackPop size={ICON_SIZE} />,
+      synonyms: ["Tooltip"],
+    },
+    GoogleMap: {
+      structure: (props: any) =>
+        (cssType === "FLEX" ? MapStructureFlex : MapStructure).jsonStructure(
+          props,
+        ),
+      Draggable: () => (
+        <DraggableComponent
+          id="GoogleMap"
+          icon={<IconMapPin size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Third Party",
+      icon: <IconMapPin size={ICON_SIZE} />,
+      synonyms: ["Google Maps", "Map Plugin"],
+    },
+    CodeEmbed: {
+      structure: (props: any) =>
+        (cssType === "FLEX"
+          ? CodeEmbedStructureFlex
+          : CodeEmbedStructure
+        ).jsonStructure(props),
+      Draggable: () => (
+        <DraggableComponent
+          id="CodeEmbed"
+          icon={<IconCode size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Advanced",
+      icon: <IconCode size={ICON_SIZE} />,
+      synonyms: [
+        "Html Code",
+        "Custom Code",
+        "Embed Code",
+        "Embed HTML",
+        "Embed CSS",
+        "Embed JS",
+      ],
+    },
+    ColorPicker: {
+      structure: (props: any) =>
+        (cssType === "FLEX"
+          ? ColorPickerStructureFlex
+          : ColorPickerStructure
+        ).jsonStructure(props),
+      Draggable: () => (
+        <DraggableComponent
+          id="ColorPicker"
+          icon={<IconColorFilter size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Input",
+      icon: <IconColorFilter size={ICON_SIZE} />,
+      synonyms: ["Color Picker", "Color Selector", "Color Swatch"],
+    },
+  };
 };
 
 export type ToolboxAction = {
