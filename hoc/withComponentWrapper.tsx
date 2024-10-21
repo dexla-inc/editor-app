@@ -10,6 +10,7 @@ import { useComputeChildStyles } from "@/hooks/components/useComputeChildStyles"
 import { WithComponentWrapperProps } from "@/types/component";
 import merge from "lodash.merge";
 import { withDnd } from "@/hoc/withDnd";
+import { isPreviewModeSelector } from "@/utils/componentSelectors";
 
 export const withComponentWrapper = <T extends Record<string, any>>(
   Component: ComponentType<T>,
@@ -26,6 +27,10 @@ export const withComponentWrapper = <T extends Record<string, any>>(
         (state) => state.componentMutableAttrs[componentTree.id!] ?? {},
       ),
     );
+    const isDraggable = useEditorTreeStore((state) => {
+      const isPreviewMode = isPreviewModeSelector(state);
+      return !isPreviewMode;
+    });
 
     const computedOnLoad = useComputeValue({
       onLoad: component?.onLoad ?? {},
@@ -74,7 +79,7 @@ export const withComponentWrapper = <T extends Record<string, any>>(
       propsWithOverwrites,
     });
 
-    const dndProps = merge({ draggable: true }, extraProps, childStyles);
+    const dndProps = merge({ draggable: isDraggable }, extraProps, childStyles);
 
     const props = {
       component: {
