@@ -15,9 +15,6 @@ const AlertComponent = forwardRef<HTMLDivElement, Props>(
     const dragTriggers = useDnd();
 
     const gridStyling = useGridStyling({ component });
-    const { setHoverComponentId } = useDndGridStore(
-      useShallow((state) => state),
-    );
 
     return (
       <MantineAlert
@@ -28,22 +25,9 @@ const AlertComponent = forwardRef<HTMLDivElement, Props>(
         {...triggers}
         style={{
           ...gridStyling,
-          padding: 0
+          padding: 0,
         }}
         styles={mantineStyles}
-        onMouseOver={(e) => {
-          const { hoverComponentId } = useDndGridStore.getState();
-          if (hoverComponentId !== component.id) {
-            setHoverComponentId(component.id ?? null);
-          }
-        }}
-        onMouseLeave={(e) => {
-          e.stopPropagation();
-          const { hoverComponentId } = useDndGridStore.getState();
-          if (hoverComponentId !== null) {
-            setHoverComponentId(null);
-          }
-        }}
       >
         {component.children &&
           component.children.map((child) => renderTree(child))}

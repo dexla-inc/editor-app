@@ -18,7 +18,7 @@ export const jsonStructure = (props?: any): ComponentStructure => {
       color: "Black.6",
       order: 1,
       style: {
-        gridColumn: "1/7",
+        gridColumn: "1/12",
         gridRow: "1/5",
       },
     }),

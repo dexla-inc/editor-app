@@ -61,6 +61,7 @@ const GridComponent = ({
         alignItems: "center",
         width: "100%",
         height: "100%",
+        gridArea: "1 / 1 / -1 / -1",
       }}
     >
       {children}

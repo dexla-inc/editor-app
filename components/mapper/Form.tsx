@@ -28,6 +28,7 @@ const FormComponent = forwardRef(
       dataType = "static",
       gap,
       loaderText,
+      ChildrenWrapper,
       ...componentProps
     } = component.props as any;
     const { onSubmit, ...otherTriggers } = triggers || {};
@@ -128,7 +129,7 @@ const FormComponent = forwardRef(
         {...otherTriggers}
         pos="relative"
       >
-        {renderData({ renderTree })}
+        <ChildrenWrapper>{renderData({ renderTree })}</ChildrenWrapper>
         <LoadingOverlay visible={loading} radius="sm" text={loaderText} />
       </MantineFlex>
     );

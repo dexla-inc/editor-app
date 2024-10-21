@@ -9,7 +9,10 @@ import { forwardRef, memo } from "react";
 type Props = EditableComponentMapper & FlexProps;
 
 export const ContainerComponent = forwardRef<HTMLDivElement, Props>(
-  ({ renderTree, shareableContent, component, ...props }, ref) => {
+  (
+    { renderTree, shareableContent, component, ChildrenWrapper, ...props },
+    ref,
+  ) => {
     const {
       dataType = "static",
       data,
@@ -36,7 +39,7 @@ export const ContainerComponent = forwardRef<HTMLDivElement, Props>(
         {...componentProps}
         key={props.id}
       >
-        {renderData({ renderTree })}
+        <ChildrenWrapper>{renderData({ renderTree })}</ChildrenWrapper>
       </MantineFlex>
     );
   },

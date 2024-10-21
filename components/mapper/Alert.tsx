@@ -9,7 +9,16 @@ import { forwardRef, memo } from "react";
 type Props = EditableComponentMapper & Omit<AlertProps, "title">;
 
 const AlertComponent = forwardRef(
-  ({ renderTree, shareableContent, component, ...props }: Props, ref) => {
+  (
+    {
+      renderTree,
+      shareableContent,
+      component,
+      ChildrenWrapper,
+      ...props
+    }: Props,
+    ref,
+  ) => {
     const { icon, iconColor, color, triggers, ...componentProps } =
       component.props as any;
     const { children: childrenValue } = component?.onLoad;
@@ -37,17 +46,36 @@ const AlertComponent = forwardRef(
           root: {
             backgroundColor: colorHex,
           },
+          ...mantineStyles,
         }}
       >
-        {component.children && component.children.length > 0
-          ? component.children?.map((child) =>
-              renderTree(child, shareableContent),
-            )
-          : childrenValue?.toString()}
+        <ChildrenWrapper>
+          {component.children && component.children.length > 0
+            ? component.children?.map((child) =>
+                renderTree(child, shareableContent),
+              )
+            : childrenValue?.toString()}
+        </ChildrenWrapper>
       </MantineAlert>
     );
   },
 );
 AlertComponent.displayName = "Alert";
+
+const commonGridStyle = {
+  display: "grid",
+  gridTemplateColumns: "subgrid",
+  gridTemplateRows: "subgrid",
+  gridArea: "1 / 1 / -1 / -1",
+};
+
+const mantineStyles = {
+  wrapper: commonGridStyle,
+  icon: {
+    margin: "0px",
+  },
+  body: commonGridStyle,
+  message: commonGridStyle,
+};
 
 export const Alert = memo(withComponentWrapper<Props>(AlertComponent));

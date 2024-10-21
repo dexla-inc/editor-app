@@ -11,7 +11,10 @@ import { isEmpty } from "@/utils/common";
 type Props = EditableComponentMapper & TextProps;
 
 const TextComponent = forwardRef(
-  ({ component, shareableContent, ...props }: Props, ref: any) => {
+  (
+    { component, shareableContent, ChildrenWrapper, ...props }: Props,
+    ref: any,
+  ) => {
     const theme = useMantineTheme();
     const isFontLoaded = useFontFaceObserver([{ family: theme.fontFamily! }]);
     const contentEditableProps = useContentEditable(
@@ -49,7 +52,9 @@ const TextComponent = forwardRef(
         ref={ref}
         style={customStyle}
       >
-        {!hideIfDataIsEmpty && isFontLoaded && String(childrenValue || "")}
+        <ChildrenWrapper>
+          {!hideIfDataIsEmpty && isFontLoaded && String(childrenValue || "")}
+        </ChildrenWrapper>
       </MantineText>
     );
   },
