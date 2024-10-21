@@ -29,7 +29,7 @@ import {
   Title,
 } from "@mantine/core";
 import { IconFrustum, IconSearch } from "@tabler/icons-react";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 
 type DraggableComponentData = {
   id: string;
@@ -39,26 +39,27 @@ type DraggableComponentData = {
   synonyms?: string[];
 };
 
-const componentsGroupedByCategory = Object.keys(
-  structureMapper("componentsGroupedByCategory"),
-).reduce(
-  (groups, key) => {
-    const draggable = structureMapper()[key]?.Draggable;
-    const category = structureMapper()[key]?.category;
-    const hide = structureMapper()[key]?.hide ?? false;
-    const synonyms = structureMapper()[key]?.synonyms ?? [];
+const componentsGroupedByCategory = (cssType: string) => {
+  const mapper = structureMapper(cssType);
+  return Object.keys(mapper).reduce(
+    (groups, key) => {
+      const draggable = mapper[key]?.Draggable;
+      const category = mapper[key]?.category;
+      const hide = mapper[key]?.hide ?? false;
+      const synonyms = mapper[key]?.synonyms ?? [];
 
-    if (draggable) {
-      if (!groups[category]) {
-        groups[category] = [];
+      if (draggable) {
+        if (!groups[category]) {
+          groups[category] = [];
+        }
+        groups[category].push({ draggable, id: toSpaced(key), hide, synonyms });
       }
-      groups[category].push({ draggable, id: toSpaced(key), hide, synonyms });
-    }
 
-    return groups;
-  },
-  {} as Record<string, DraggableComponentData[]>,
-);
+      return groups;
+    },
+    {} as Record<string, DraggableComponentData[]>,
+  );
+};
 
 export const EditorNavbarComponentsSection = () => {
   const [query, setQuery] = useState<string>("");
@@ -87,6 +88,11 @@ export const EditorNavbarComponentsSection = () => {
   const DraggableComponent =
     cssType === "FLEX" ? DraggableComponentFlex : DraggableComponentGrid;
 
+  const groupedMapperComponents = useMemo(
+    () => componentsGroupedByCategory(cssType),
+    [cssType],
+  );
+
   return (
     <Stack spacing="xl" p="xs" pr={0}>
       <SegmentedControl
@@ -113,8 +119,7 @@ export const EditorNavbarComponentsSection = () => {
       />
       {componentTypeToShow === "default" && (
         <Grid gutter="xs">
-          {cssType}
-          {Object.entries(componentsGroupedByCategory).map(
+          {Object.entries(groupedMapperComponents).map(
             ([category, components]) => {
               const filteredComponents = filterComponents(components, query);
 

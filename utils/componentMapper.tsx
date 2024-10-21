@@ -260,11 +260,11 @@ export type StructureMapper = {
   [key: string]: StructureDefinition;
 };
 
-export const structureMapper = (debug: string = ""): StructureMapper => {
-  const cssType = useEditorTreeStore.getState().cssType;
+export const structureMapper = (forceCssType: string = ""): StructureMapper => {
+  const cssType = forceCssType || useEditorTreeStore.getState().cssType;
   const DraggableComponent =
     cssType === "FLEX" ? DraggableComponentFlex : DraggableComponentGrid;
-  // console.log("cssType--->", debug, cssType);
+
   return {
     // AI generated structures
     Grid: {
