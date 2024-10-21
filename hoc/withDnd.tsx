@@ -2,9 +2,9 @@ import { ComponentType, Suspense } from "react";
 import { withComponentVisibility } from "@/hoc/withComponentVisibility";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useGridStyling } from "@/libs/dnd-grid/hooks/useGridStyling";
-import { useDndGridStore } from "@/libs/dnd-grid/stores/dndGridStore";
 import { useEditorDroppableEvents } from "@/hooks/components/useEditorDroppableEvents";
 import { useDnd } from "@/libs/dnd-grid/hooks/useDnd";
+import { ResizeHandlers } from "@/libs/dnd-grid/components/ResizeHandlers";
 
 export const withDnd = <T extends Record<string, any>>(
   Component: ComponentType<T>,
@@ -36,8 +36,11 @@ const FlexComponent = ({
   const { droppable: flexDnd } = useEditorDroppableEvents({
     componentId: props.component.id!,
   });
+  const ChildrenWrapper = () => <></>;
 
-  return <Component {...props} {...flexDnd} />;
+  return (
+    <Component {...props} {...flexDnd} ChildrenWrapper={ChildrenWrapper} />
+  );
 };
 
 const GridComponent = ({
@@ -50,26 +53,27 @@ const GridComponent = ({
   const gridDnd = useDnd();
   const gridStyling = useGridStyling({ component: props.component });
 
+  const ChildrenWrapper = ({ children }: { children: React.ReactNode }) => (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        width: "100%",
+        height: "100%",
+      }}
+    >
+      {children}
+      <ResizeHandlers componentId={props.component.id} />
+    </div>
+  );
+
   return (
     <Component
       {...props}
       {...gridDnd}
+      ChildrenWrapper={ChildrenWrapper}
       style={gridStyling}
-      onMouseOver={(e: React.MouseEvent) => {
-        const { hoverComponentId, setHoverComponentId } =
-          useDndGridStore.getState();
-        if (hoverComponentId !== props.component.id) {
-          setHoverComponentId(props.component.id ?? null);
-        }
-      }}
-      onMouseLeave={(e: React.MouseEvent) => {
-        e.stopPropagation();
-        const { hoverComponentId, setHoverComponentId } =
-          useDndGridStore.getState();
-        if (hoverComponentId !== null) {
-          setHoverComponentId(null);
-        }
-      }}
     />
   );
 };

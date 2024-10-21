@@ -28,7 +28,7 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
     (state) => state.selectedComponentIds?.length,
   );
 
-  const setHoverComponentId = useDndGridStore(
+  const setHoverComponentId = useEditorStore(
     (state) => state.setHoverComponentId,
   );
   const { onDrop, onDragOver } = useDnd();

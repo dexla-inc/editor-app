@@ -15,7 +15,10 @@ import { useShallow } from "zustand/react/shallow";
 type Props = EditableComponentMapper & ButtonProps & ReactElement<"Button">;
 
 const ButtonComponent = forwardRef(
-  ({ component, style, shareableContent, ...props }: Props, ref) => {
+  (
+    { component, style, shareableContent, ChildrenWrapper, ...props }: Props,
+    ref,
+  ) => {
     const {
       triggers,
       icon,
@@ -84,10 +87,15 @@ const ButtonComponent = forwardRef(
             display: "flex",
             gridArea: "1 / 1 / -1 / -1",
           },
+          label: {
+            display: "flex",
+            width: "100%",
+            height: "100%",
+          },
         }}
         ref={ref}
       >
-        {String(childrenValue)}
+        <ChildrenWrapper>{String(childrenValue)}</ChildrenWrapper>
       </MantineButton>
     );
   },

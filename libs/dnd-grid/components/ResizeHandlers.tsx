@@ -9,7 +9,7 @@ export const ResizeHandlers = ({ componentId }: any) => {
     useShallow((state) => state),
   );
   const isSelected = useEditorTreeStore((state) =>
-    state.selectedComponentIds?.at(-1),
+    state.selectedComponentIds?.includes(componentId),
   );
   const isActive = useDndGridStore(
     (state) => isSelected || state.hoverComponentId === componentId,
