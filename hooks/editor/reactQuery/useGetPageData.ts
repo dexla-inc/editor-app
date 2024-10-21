@@ -2,7 +2,12 @@ import { getPageState } from "@/requests/pages/mutations";
 import { useAppStore } from "@/stores/app";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useUserConfigStore } from "@/stores/userConfig";
-import { cloneObject, emptyEditorTree, safeJsonParse } from "@/utils/common";
+import {
+  cloneObject,
+  emptyCssGridTree,
+  emptyEditorTree,
+  safeJsonParse,
+} from "@/utils/common";
 import { decodeSchema } from "@/utils/compression";
 import { useQuery } from "@tanstack/react-query";
 
@@ -11,9 +16,9 @@ type getPageDataParams = {
 };
 
 export const defaultPageState = {
-  name: "Initial State",
+  name: "Initial State 2",
   timestamp: Date.now(),
-  root: emptyEditorTree.root,
+  root: emptyCssGridTree.root,
 };
 
 type Props = {

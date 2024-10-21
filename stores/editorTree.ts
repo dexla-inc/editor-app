@@ -1,6 +1,6 @@
 import { updatePageState } from "@/requests/pages/mutations";
 import { PageStateParams } from "@/requests/pages/types";
-import { cloneObject, emptyEditorTree } from "@/utils/common";
+import { cloneObject, emptyCssGridTree, emptyEditorTree } from "@/utils/common";
 import { encodeSchema } from "@/utils/compression";
 import { GRID_SIZE } from "@/utils/config";
 import {
@@ -22,6 +22,7 @@ import merge from "lodash.merge";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import setObj from "lodash.set";
+import { CssTypes } from "@/types/types";
 
 const client = createClient({
   publicApiKey: process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY ?? "",
@@ -139,6 +140,8 @@ export type EditorTreeState = {
   setRelatedComponentsData: (props: Record<string, any>) => void;
   language: string;
   setLanguage: (isSaving: string) => void;
+  setCssType: (type: CssTypes) => void;
+  cssType: CssTypes;
 };
 
 const updatePageStateFunc = async (
@@ -214,8 +217,10 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                 );
 
                 // WARNING: backwards compatibility, removing height: 100% from main-content, fixes safari issues
-                newComponentMutableAttrs["main-content"].props.style.height =
-                  "auto";
+                if (newComponentMutableAttrs["main-content"]) {
+                  newComponentMutableAttrs["main-content"].props.style.height =
+                    "auto";
+                }
 
                 const newState = {
                   ...state,
@@ -240,7 +245,6 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                 };
 
                 // also set the pageLoadComponentMutableAttrs if it's an onLoad with componentMutableAttrs
-
                 return newState;
               },
               false,
@@ -251,7 +255,7 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
             const timestamp = Date.now();
             set(
               {
-                tree: { ...emptyEditorTree, timestamp },
+                tree: { ...emptyCssGridTree, timestamp },
               },
               false,
               "editorTree/resetTree",
@@ -394,7 +398,10 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
               };
             });
           },
-          tree: emptyEditorTree,
+          // tree: get().cssType === "GRID" ? emptyEditorTree : emptyEditorTree,
+          tree: (get()?.cssType === "GRID"
+            ? emptyCssGridTree
+            : emptyCssGridTree) as any,
           componentMutableAttrs: emptyEditorComponentMutableAttrs,
           deleteComponentMutableAttr: (id: string) =>
             set(
@@ -502,6 +509,9 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
           language: "en",
           setLanguage: (language) =>
             set({ language }, false, "editorTree/setLanguage"),
+          setCssType: (type: CssTypes) =>
+            set({ cssType: type }, false, "editorTree/setCssType"),
+          cssType: "FLEX",
         }),
         {
           name: "editor-tree-config",

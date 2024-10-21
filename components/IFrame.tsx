@@ -56,6 +56,7 @@ export const IFrame = ({ children, projectId, ...props }: Props) => {
   useEffect(() => {
     setIsLoading(false);
     const w = contentRef?.contentWindow;
+
     if (w) {
       setIframeWindow(w);
     }

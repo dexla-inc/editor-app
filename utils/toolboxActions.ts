@@ -2,7 +2,7 @@ import { jsonStructure as accordionItemSchema } from "@/libs/dnd-flex/components
 import { jsonStructure as tabSchema } from "@/libs/dnd-flex/components/mapper/structure/Tab";
 import { jsonStructure as tabsPanelSchema } from "@/libs/dnd-flex/components/mapper/structure/TabsPanel";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { structureMapper } from "@/libs/dnd-flex/utils/componentMapper";
+import { structureMapper } from "@/utils/componentMapper";
 import {
   Component,
   ComponentStructure,
@@ -14,7 +14,7 @@ export const addColumnToolboxAction = ({ component }: any) => {
   const editorTree = useEditorTreeStore.getState().tree as EditorTreeCopy;
   const setEditorTree = useEditorTreeStore.getState().setTree;
 
-  const ColumnSchema = structureMapper["GridColumn"].structure({});
+  const ColumnSchema = structureMapper()["GridColumn"].structure({});
 
   addComponent(
     editorTree.root,
@@ -35,8 +35,8 @@ export const insertRowToolboxAction = ({ parent }: any) => {
   const editorTree = useEditorTreeStore.getState().tree as EditorTreeCopy;
   const setEditorTree = useEditorTreeStore.getState().setTree;
 
-  const ColumnSchema = structureMapper["GridColumn"].structure({});
-  const GridSchema = structureMapper["Grid"].structure({});
+  const ColumnSchema = structureMapper()["GridColumn"].structure({});
+  const GridSchema = structureMapper()["Grid"].structure({});
 
   addComponent(
     editorTree.root,
@@ -54,7 +54,7 @@ export const addColumnToParentToolboxAction = ({ parent }: any) => {
   const editorTree = useEditorTreeStore.getState().tree as EditorTreeCopy;
   const setEditorTree = useEditorTreeStore.getState().setTree;
 
-  const ColumnSchema = structureMapper["GridColumn"].structure({});
+  const ColumnSchema = structureMapper()["GridColumn"].structure({});
 
   addComponent(
     editorTree.root,
@@ -75,7 +75,7 @@ export const insertGridToolboxAction = ({ component }: any) => {
   const editorTree = useEditorTreeStore.getState().tree as EditorTreeCopy;
   const setEditorTree = useEditorTreeStore.getState().setTree;
 
-  const GridSchema = structureMapper["Grid"].structure({});
+  const GridSchema = structureMapper()["Grid"].structure({});
 
   addComponent(editorTree.root, GridSchema, {
     id: component.id!,

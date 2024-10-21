@@ -35,7 +35,7 @@ export const jsonStructure = (props?: any): ComponentStructure => {
             width: "100%",
             height: "100%",
             display: "flex",
-            jistifyContent: "center",
+            justifyContent: "center",
             alignItems: "center",
             flexDirection: "column",
           },

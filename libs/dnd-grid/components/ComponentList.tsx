@@ -1,9 +1,11 @@
+import { useEditorStore } from "@/stores/editor";
 import { useDnd } from "../hooks/useDnd";
 
 const componentTypes = ["Button", "Container", "Text", "Alert", "Title"];
 
-const ComponentList = ({}) => {
-  const { onDragStart, onDrag, onDragEnd } = useDnd();
+const ComponentList = () => {
+  const { onDragStart, onDrag, onDragEnd } = useDnd("ComponentList");
+
   return (
     <div
       style={{

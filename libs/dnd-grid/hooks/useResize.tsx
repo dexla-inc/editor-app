@@ -1,8 +1,10 @@
 import { useState, useRef, useCallback, useEffect } from "react";
-import { useEditorStore } from "../stores/editor";
-import { getAllIds, updateComponentSize } from "../utils/editor";
-import { checkOverlap } from "../utils/engines/overlap";
-import { getGridCoordinates } from "../utils/engines/position";
+import { useDndGridStore } from "@/libs/dnd-grid/stores/dndGridStore";
+import { getAllIds, updateComponentSize } from "@/libs/dnd-grid/utils/editor";
+import { checkOverlap } from "@/libs/dnd-grid/utils/engines/overlap";
+import { getGridCoordinates } from "@/libs/dnd-grid/utils/engines/position";
+import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 
 interface GridCoords {
   gridColumn: string;
@@ -20,7 +22,7 @@ export const useResize = () => {
   });
   const parentElement = useRef<HTMLDivElement | null>(null);
   const initialOverlappingElements = useRef<string[]>([]);
-
+  const iframeWindow = useEditorStore((state) => state.iframeWindow);
   /**
    * Initializes the resizing process by setting up necessary states and references.
    */
@@ -31,18 +33,18 @@ export const useResize = () => {
       currComponentId: string,
     ) => {
       e.preventDefault();
+      const { setElementRects, setIsInteracting } = useDndGridStore.getState();
       const {
-        selectedComponentId,
-        components,
-        setSelectedComponentId,
-        setElementRects,
-        setIsInteracting,
-      } = useEditorStore.getState();
-
-      const el = document.getElementById(currComponentId)!;
+        tree: editorTree,
+        setSelectedComponentIds,
+        selectedComponentIds,
+      } = useEditorTreeStore.getState();
+      const components = editorTree.root;
+      const el = iframeWindow?.document.getElementById(currComponentId)!;
+      const selectedComponentId = selectedComponentIds?.at(0);
 
       setIsResizing(true);
-      setSelectedComponentId(currComponentId);
+      setSelectedComponentIds(() => [currComponentId]);
       setIsInteracting(true);
 
       const componentStyles = window.getComputedStyle(el);
@@ -60,7 +62,7 @@ export const useResize = () => {
         e.clientX - 10,
         e.clientY - 10,
       );
-      parentElement.current = document.getElementById(
+      parentElement.current = iframeWindow?.document.getElementById(
         parentId,
       ) as HTMLDivElement;
 
@@ -68,7 +70,7 @@ export const useResize = () => {
       const allIds = getAllIds(components);
       const targets = allIds.reduce<Record<string, DOMRect>>((acc, id) => {
         if (currComponentId !== id) {
-          const element = document.getElementById(id);
+          const element = iframeWindow?.document.getElementById(id);
           if (element) {
             acc[id] = element.getBoundingClientRect();
           }
@@ -80,7 +82,7 @@ export const useResize = () => {
       // Store initial overlapping elements to detect new overlaps during resizing
       initialOverlappingElements.current = checkOverlap(el, 5);
     },
-    [],
+    [iframeWindow],
   );
 
   /**
@@ -140,10 +142,11 @@ export const useResize = () => {
     (e: MouseEvent) => {
       if (!isResizing) return;
 
-      const { selectedComponentId } = useEditorStore.getState();
+      const { selectedComponentIds } = useEditorTreeStore.getState();
+      const selectedComponentId = selectedComponentIds?.at(0);
       if (!selectedComponentId) return;
 
-      const el = document.getElementById(selectedComponentId)!;
+      const el = iframeWindow?.document.getElementById(selectedComponentId)!;
 
       const { column, row } = getGridCoordinates(
         selectedComponentId,
@@ -186,7 +189,7 @@ export const useResize = () => {
         gridRow: el.style.gridRow,
       };
     },
-    [isResizing],
+    [isResizing, iframeWindow],
   );
 
   /**
@@ -195,21 +198,23 @@ export const useResize = () => {
   const finalizeResize = useCallback(() => {
     if (isResizing) {
       setIsResizing(false);
+      const { setIsInteracting } = useDndGridStore.getState();
       const {
-        components,
-        selectedComponentId,
-        setComponents,
-        setIsInteracting,
-      } = useEditorStore.getState();
+        tree: editorTree,
+        setTree: setComponents,
+        selectedComponentIds,
+      } = useEditorTreeStore.getState();
+      const selectedComponentId = selectedComponentIds?.at(0);
+
       if (!selectedComponentId) return;
 
-      const updatedComponents = updateComponentSize(
-        components,
+      updateComponentSize(
+        editorTree.root,
         selectedComponentId,
         lastValidGridCoords.current.gridColumn,
         lastValidGridCoords.current.gridRow,
       );
-      setComponents(updatedComponents);
+      setComponents(editorTree);
       setIsInteracting(false);
     }
   }, [isResizing]);
@@ -219,14 +224,23 @@ export const useResize = () => {
    */
   useEffect(() => {
     if (isResizing) {
-      window.addEventListener("mousemove", handleResize as any);
-      window.addEventListener("mouseup", finalizeResize);
+      iframeWindow?.document.body.addEventListener(
+        "mousemove",
+        handleResize as any,
+      );
+      iframeWindow?.document.body.addEventListener("mouseup", finalizeResize);
     }
     return () => {
-      window.removeEventListener("mousemove", handleResize as any);
-      window.removeEventListener("mouseup", finalizeResize);
+      iframeWindow?.document.body.removeEventListener(
+        "mousemove",
+        handleResize as any,
+      );
+      iframeWindow?.document.body.removeEventListener(
+        "mouseup",
+        finalizeResize,
+      );
     };
-  }, [isResizing, handleResize, finalizeResize]);
+  }, [isResizing, handleResize, finalizeResize, iframeWindow]);
 
   return {
     handleResizeStart,

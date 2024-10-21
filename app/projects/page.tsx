@@ -11,7 +11,6 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { ICON_SIZE } from "@/utils/config";
-import { generateId } from "@/types/dashboardTypes";
 import {
   Container,
   Flex,
@@ -37,8 +36,6 @@ export default function Page() {
   const debouncedSearch = debounce((query) => setSearch(query), 100);
   const user = usePropelAuthStore((state) => state.user);
   const company = usePropelAuthStore((state) => state.activeCompany);
-
-  const manuallyCreatedProjectId = generateId();
 
   const startLoading = useAppStore((state) => state.startLoading);
 
@@ -81,7 +78,10 @@ export default function Page() {
     });
 
     setPageCancelled(true);
-    const project = await createProject({ companyId: company.orgId }, true);
+    const project = await createProject(
+      { companyId: company.orgId, cssType: "GRID" },
+      true,
+    );
     invalidateQueries(["project"]);
     invalidate();
 

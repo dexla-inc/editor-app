@@ -1,5 +1,7 @@
-import { useEditorStore } from "../../stores/editor";
-import { getAllIds } from "../editor";
+import { useDndGridStore } from "@/libs/dnd-grid/stores/dndGridStore";
+import { getAllIds } from "@/libs/dnd-grid/utils/editor";
+import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 
 // Define the structure of the result returned by getGridCoordinates
 interface GridCoordinateResult {
@@ -15,12 +17,14 @@ interface GridCoordinateResult {
  * @returns Array of elements under the point that are valid components
  */
 export const getElementsOver = (x: number, y: number): Element[] => {
-  const { components } = useEditorStore.getState();
+  const { tree: editorTree } = useEditorTreeStore.getState();
+  const components = editorTree.root;
+  const { iframeWindow } = useEditorStore.getState();
   const allIds = getAllIds(components);
 
-  return document
+  return iframeWindow?.document
     .elementsFromPoint(x, y)
-    .filter((el) => allIds.includes(el.id));
+    .filter((el: Element) => allIds.includes(el.id)) as Element[];
 };
 
 /**
@@ -50,13 +54,11 @@ export const getGridCoordinates = (
 
   // Handle the case when no drop zone is found
   if (!dropZoneElement) {
-    throw new Error("No valid drop zone found");
-    // Alternatively, return default values if preferred
-    // return {
-    //   column: 1,
-    //   row: 1,
-    //   parentId: 'main-grid',
-    // };
+    return {
+      column: 1,
+      row: 1,
+      parentId: "main-grid",
+    };
   }
 
   // Calculate the grid position within the drop zone
@@ -105,11 +107,12 @@ const getDropZoneElement = (
  * @returns boolean indicating if the element is a valid drop zone
  */
 const isValidDropZone = (el: HTMLElement, currentId: string): boolean => {
+  const { iframeWindow } = useEditorStore.getState();
   const elId = el.id;
   // Exclude the current element
   if (elId === currentId) return false;
 
-  const currentElement = document.getElementById(currentId);
+  const currentElement = iframeWindow?.document.getElementById(currentId);
   if (!currentElement) return false;
 
   // Get bounding rectangles for both elements

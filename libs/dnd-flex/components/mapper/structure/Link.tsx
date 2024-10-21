@@ -1,5 +1,6 @@
 import { ComponentStructure } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
+import merge from "lodash.merge";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): ComponentStructure => {
@@ -10,17 +11,19 @@ export const jsonStructure = (props?: any): ComponentStructure => {
     props.props?.value ??
     "New link";
 
-  const defaultValues = requiredModifiers.link;
+  const combinedProps = merge({}, requiredModifiers.link, props.props, {
+    children: content,
+    style: {
+      width: "fit-content",
+      height: "fit-content",
+    },
+  });
 
   return {
     id: nanoid(),
     name: "Link",
     description: "Link",
-    props: {
-      children: content,
-      ...defaultValues,
-      ...(props.props || {}),
-    },
+    props: combinedProps,
     blockDroppingChildrenInside: true,
   };
 };

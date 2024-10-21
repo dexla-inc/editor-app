@@ -17,6 +17,11 @@ export const jsonStructure = (props?: any): ComponentStructure => {
     },
     props: {
       ...requiredModifiers.fileButton,
+      style: {
+        width: "fit-content",
+        paddingLeft: "32px",
+        paddingRight: "32px",
+      },
       ...(rest || {}),
     },
     blockDroppingChildrenInside: true,

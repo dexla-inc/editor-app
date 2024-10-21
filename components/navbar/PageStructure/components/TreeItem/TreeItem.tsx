@@ -12,7 +12,7 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { DARK_COLOR, GRAY_WHITE_COLOR, theme } from "@/utils/branding";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
-import { structureMapper } from "@/libs/dnd-flex/utils/componentMapper";
+import { structureMapper } from "@/utils/componentMapper";
 import { ICON_SIZE } from "@/utils/config";
 import {
   Component,
@@ -159,7 +159,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
       if (e.key === "Enter" || e.key === "Escape") closeEdit();
     };
 
-    const icon = structureMapper[component.name as string]?.icon;
+    const icon = structureMapper()[component.name as string]?.icon;
 
     return (
       <li

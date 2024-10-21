@@ -11,6 +11,9 @@ export const jsonStructure = (props?: any): ComponentStructure => {
     description: "Textarea",
     props: {
       ...defaultValues,
+      style: {
+        height: "fit-content",
+      },
       ...(props.props || {}),
     },
     states: { disabled: { bg: "Neutral.6", textColor: "Neutral.9" } },

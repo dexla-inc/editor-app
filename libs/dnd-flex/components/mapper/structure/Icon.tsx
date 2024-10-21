@@ -10,6 +10,7 @@ export const jsonStructure = (props?: any): ComponentStructure => {
     children: [],
     props: {
       ...requiredModifiers.icon,
+      size: "md",
       ...(props.props || {}),
     },
     blockDroppingChildrenInside: true,

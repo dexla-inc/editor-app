@@ -45,6 +45,7 @@ import {
 import { useEditorStore } from "@/stores/editor";
 import { useShallow } from "zustand/react/shallow";
 import { usePrevious } from "@mantine/hooks";
+import { EditorTree } from "@/utils/editor";
 
 const measuring = {
   droppable: {

@@ -1,7 +1,7 @@
 import { defaultPopOverValues } from "@/components/modifiers/PopOver";
 import { useThemeStore } from "@/stores/theme";
-import { defaultTheme } from "@/utils/branding";
 import { ComponentStructure } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import { px } from "@mantine/core";
 import { nanoid } from "nanoid";
 
@@ -13,7 +13,12 @@ export const jsonStructure = (props?: any): ComponentStructure => {
     description: "PopOver",
     props: {
       ...(props.props || {}),
-      ...defaultPopOverValues,
+      ...requiredModifiers.popOver,
+      style: {
+        padding: "10px",
+        width: "fit-content",
+        maxWidth: "fit-content",
+      },
     },
     children: [
       {

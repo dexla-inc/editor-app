@@ -1,6 +1,6 @@
 import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { componentMapper } from "@/libs/dnd-flex/utils/componentMapper";
+import { componentMapper } from "@/utils/componentMapper";
 import {
   Component,
   ComponentStructure,

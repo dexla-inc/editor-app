@@ -24,7 +24,12 @@ export const jsonStructure = (props?: any): ComponentStructure => ({
   name: "CodeEmbed",
   description: "CodeEmbed",
   props: {
-    ...requiredModifiers.codeEmbed,
+    style: {
+      ...requiredModifiers.codeEmbed,
+      display: "block",
+      height: "auto",
+      width: "100%",
+    },
     ...(props.props || {}),
   },
   onLoad: {

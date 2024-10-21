@@ -13,7 +13,7 @@ const Modifier = withModifier(({ selectedComponent }) => {
 
   useEffect(() => {
     form.setValues(
-      merge({}, requiredModifiers.icon, {
+      merge({}, defaultImageValues, {
         fit: selectedComponent?.props?.style?.fit,
       }),
     );

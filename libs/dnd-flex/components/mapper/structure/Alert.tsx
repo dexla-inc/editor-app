@@ -1,11 +1,10 @@
-import { defaultTheme } from "@/utils/branding";
-import { structureMapper } from "@/libs/dnd-flex/utils/componentMapper";
+import { structureMapper } from "@/utils/componentMapper";
 import { ComponentStructure } from "@/utils/editor";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): ComponentStructure => {
-  const title = structureMapper["Title"].structure({});
-  const text = structureMapper["Text"].structure({});
+  const title = structureMapper()["Title"].structure({});
+  const text = structureMapper()["Text"].structure({});
 
   return {
     id: nanoid(),
