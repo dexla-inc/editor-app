@@ -11,13 +11,16 @@ export const withDnd = <T extends Record<string, any>>(
 ) => {
   const ComponentWrapper = (props: any) => {
     const cssType = useEditorTreeStore((state) => state.cssType);
+    const isGridCss = cssType === "GRID";
+
+    const customProps = { ...props, grid: { isGridCss } };
 
     return (
       <Suspense fallback={<></>}>
         {cssType === "FLEX" ? (
-          <FlexComponent Component={Component} props={props} />
+          <FlexComponent Component={Component} props={customProps} />
         ) : (
-          <GridComponent Component={Component} props={props} />
+          <GridComponent Component={Component} props={customProps} />
         )}
       </Suspense>
     );
@@ -36,10 +39,16 @@ const FlexComponent = ({
   const { droppable: flexDnd } = useEditorDroppableEvents({
     componentId: props.component.id!,
   });
-  const ChildrenWrapper = () => <></>;
+  const ChildrenWrapper = ({ children }: { children: React.ReactNode }) => (
+    <>{children}</>
+  );
 
   return (
-    <Component {...props} {...flexDnd} ChildrenWrapper={ChildrenWrapper} />
+    <Component
+      {...props}
+      {...flexDnd}
+      grid={{ ...props.grid, ChildrenWrapper }}
+    />
   );
 };
 
@@ -73,7 +82,7 @@ const GridComponent = ({
     <Component
       {...props}
       {...gridDnd}
-      ChildrenWrapper={ChildrenWrapper}
+      grid={{ ...props.grid, ChildrenWrapper }}
       style={gridStyling}
     />
   );

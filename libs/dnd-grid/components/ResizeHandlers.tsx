@@ -2,6 +2,7 @@ import { useShallow } from "zustand/react/shallow";
 import { useResize } from "../hooks/useResize";
 import { useDndGridStore } from "../stores/dndGridStore";
 import { useEditorTreeStore } from "@/stores/editorTree";
+import { useEditorStore } from "@/stores/editor";
 
 export const ResizeHandlers = ({ componentId }: any) => {
   const { handleResizeStart } = useResize();
@@ -11,7 +12,7 @@ export const ResizeHandlers = ({ componentId }: any) => {
   const isSelected = useEditorTreeStore((state) =>
     state.selectedComponentIds?.includes(componentId),
   );
-  const isActive = useDndGridStore(
+  const isActive = useEditorStore(
     (state) => isSelected || state.hoverComponentId === componentId,
   );
 

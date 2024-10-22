@@ -16,8 +16,6 @@ export const useGridStyling = ({ component }: Props) => {
 
   return {
     position: "relative",
-    border: "1px solid",
-    borderRadius: "0.25rem",
     gridColumn: component.props?.style?.gridColumn,
     gridRow: component.props?.style?.gridRow,
     display: "grid",

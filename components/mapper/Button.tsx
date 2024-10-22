@@ -16,7 +16,13 @@ type Props = EditableComponentMapper & ButtonProps & ReactElement<"Button">;
 
 const ButtonComponent = forwardRef(
   (
-    { component, style, shareableContent, ChildrenWrapper, ...props }: Props,
+    {
+      component,
+      style,
+      shareableContent,
+      grid: { ChildrenWrapper },
+      ...props
+    }: Props,
     ref,
   ) => {
     const {

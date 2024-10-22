@@ -13,9 +13,9 @@ const Grid = forwardRef(({}: any, ref: any) => {
   const setSelectedComponentIds = useEditorTreeStore(
     (state) => state.setSelectedComponentIds,
   );
-  const setHoverComponentId = useDndGridStore(
-    (state) => state.setHoverComponentId,
-  );
+  // const setHoverComponentId = useDndGridStore(
+  //   (state) => state.setHoverComponentId,
+  // );
   const { onDrop, onDragOver } = useDnd();
   const renderComponent = (component: ComponentStructure) => {
     const CustomComponent = componentMapper[component.name].Component;
@@ -67,7 +67,7 @@ const Grid = forwardRef(({}: any, ref: any) => {
       }}
       onMouseOver={(e) => {
         e.stopPropagation();
-        setHoverComponentId(null);
+        // setHoverComponentId(null);
       }}
     >
       {components?.children?.map((component: ComponentStructure) =>

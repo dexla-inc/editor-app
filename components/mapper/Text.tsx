@@ -12,7 +12,7 @@ type Props = EditableComponentMapper & TextProps;
 
 const TextComponent = forwardRef(
   (
-    { component, shareableContent, ChildrenWrapper, ...props }: Props,
+    { component, shareableContent, grid: { ChildrenWrapper }, ...props }: Props,
     ref: any,
   ) => {
     const theme = useMantineTheme();

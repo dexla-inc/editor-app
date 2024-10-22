@@ -34,7 +34,16 @@ type Position = {
 const defaultCenter = { lat: 25.816347481537285, lng: -80.1219500315037 };
 
 const GoogleMapPluginComponent = forwardRef<GoogleMap, Props>(
-  ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
+  (
+    {
+      renderTree,
+      component,
+      shareableContent,
+      grid: { ChildrenWrapper },
+      ...props
+    }: Props,
+    ref,
+  ) => {
     const [activeMarkerId, setActiveMarkerId] = useState<string | null>(null);
     const [map, setMap] = useState<any | null>(null);
 
@@ -192,26 +201,28 @@ const GoogleMapPluginComponent = forwardRef<GoogleMap, Props>(
         {...triggers}
         onClick={(e) => handleClick(e)}
       >
-        <GoogleMap
-          ref={ref}
-          key={apiKey}
-          options={customOptions}
-          onLoad={gmOnLoad}
-          onUnmount={unMount}
-          mapContainerStyle={containerStyle}
-          {...componentProps}
-          {...props}
-          {...googleStyles}
-          center={{
-            lat: Number(center.lat),
-            lng: Number(center.lng),
-          }}
-          zoom={zoom}
-        >
-          {validMarkers?.map?.(({ id, position }) => (
-            <Marker key={id} position={position} />
-          ))}
-        </GoogleMap>
+        <ChildrenWrapper>
+          <GoogleMap
+            ref={ref}
+            key={apiKey}
+            options={customOptions}
+            onLoad={gmOnLoad}
+            onUnmount={unMount}
+            mapContainerStyle={containerStyle}
+            {...componentProps}
+            {...props}
+            {...googleStyles}
+            center={{
+              lat: Number(center.lat),
+              lng: Number(center.lng),
+            }}
+            zoom={zoom}
+          >
+            {validMarkers?.map?.(({ id, position }) => (
+              <Marker key={id} position={position} />
+            ))}
+          </GoogleMap>
+        </ChildrenWrapper>
 
         {fade && <Overlay color="#fff" opacity={0.7} blur={0.5} zIndex={1} />}
       </Box>

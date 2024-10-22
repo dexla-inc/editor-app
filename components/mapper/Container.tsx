@@ -10,7 +10,13 @@ type Props = EditableComponentMapper & FlexProps;
 
 export const ContainerComponent = forwardRef<HTMLDivElement, Props>(
   (
-    { renderTree, shareableContent, component, ChildrenWrapper, ...props },
+    {
+      renderTree,
+      shareableContent,
+      component,
+      grid: { ChildrenWrapper },
+      ...props
+    },
     ref,
   ) => {
     const {

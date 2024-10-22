@@ -6,7 +6,16 @@ import { forwardRef, memo } from "react";
 type Props = EditableComponentMapper & DividerProps;
 
 const DividerComponent = forwardRef(
-  ({ renderTree, shareableContent, component, ...props }: Props, ref) => {
+  (
+    {
+      renderTree,
+      shareableContent,
+      component,
+      grid: { ChildrenWrapper },
+      ...props
+    }: Props,
+    ref,
+  ) => {
     const { children, triggers, ...componentProps } = component.props as any;
 
     return (
@@ -17,11 +26,13 @@ const DividerComponent = forwardRef(
         {...triggers}
         style={{ ...props.style, width: "100%" }}
       >
-        {component.children && component.children.length > 0
-          ? component.children?.map((child) =>
-              renderTree(child, shareableContent),
-            )
-          : children?.toString()}
+        <ChildrenWrapper>
+          {component.children && component.children.length > 0
+            ? component.children?.map((child) =>
+                renderTree(child, shareableContent),
+              )
+            : children?.toString()}
+        </ChildrenWrapper>
       </MantineDivider>
     );
   },

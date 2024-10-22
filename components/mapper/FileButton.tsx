@@ -32,7 +32,10 @@ const defaultFileProps = {
 };
 
 export const FileButtonComponent = forwardRef(
-  ({ component, shareableContent, ...props }: Props, ref) => {
+  (
+    { component, shareableContent, grid: { ChildrenWrapper }, ...props }: Props,
+    ref,
+  ) => {
     const {
       triggers: { onClick, ...otherTriggers },
       variable,
@@ -97,8 +100,22 @@ export const FileButtonComponent = forwardRef(
           onChange={handleChange}
         >
           {(props) => (
-            <Button {...props} onClick={onButtonClick(props)}>
-              {nameValue}
+            <Button
+              {...props}
+              onClick={onButtonClick(props)}
+              styles={{
+                inner: {
+                  display: "flex",
+                  gridArea: "1 / 1 / -1 / -1",
+                },
+                label: {
+                  display: "flex",
+                  width: "100%",
+                  height: "100%",
+                },
+              }}
+            >
+              <ChildrenWrapper>{nameValue}</ChildrenWrapper>
             </Button>
           )}
         </MantineFileButton>

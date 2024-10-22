@@ -16,7 +16,16 @@ import { useRenderData } from "@/hooks/components/useRenderData";
 type Props = EditableComponentMapper & FlexProps;
 
 const FormComponent = forwardRef(
-  ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
+  (
+    {
+      renderTree,
+      component,
+      shareableContent,
+      grid: { ChildrenWrapper },
+      ...props
+    }: Props,
+    ref,
+  ) => {
     const isPreviewMode = useEditorTreeStore(
       useShallow((state) => state.isPreviewMode || state.isLive),
     );
@@ -28,7 +37,6 @@ const FormComponent = forwardRef(
       dataType = "static",
       gap,
       loaderText,
-      ChildrenWrapper,
       ...componentProps
     } = component.props as any;
     const { onSubmit, ...otherTriggers } = triggers || {};

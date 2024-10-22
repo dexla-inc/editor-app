@@ -8,7 +8,16 @@ import { forwardRef, memo } from "react";
 type Props = EditableComponentMapper;
 
 const IconComponent = forwardRef(
-  ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
+  (
+    {
+      renderTree,
+      component,
+      shareableContent,
+      grid: { ChildrenWrapper },
+      ...props
+    }: Props,
+    ref,
+  ) => {
     const { children, color, bg, triggers, size, ...componentProps } =
       component.props as any;
 
@@ -27,11 +36,13 @@ const IconComponent = forwardRef(
         })}
         ref={ref}
       >
-        {component.children && component.children.length > 0
-          ? component.children?.map((child) =>
-              renderTree(child, shareableContent),
-            )
-          : children?.toString()}
+        <ChildrenWrapper>
+          {component.children && component.children.length > 0
+            ? component.children?.map((child) =>
+                renderTree(child, shareableContent),
+              )
+            : children?.toString()}
+        </ChildrenWrapper>
       </BaseIconComponent>
     );
   },

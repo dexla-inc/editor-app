@@ -20,6 +20,7 @@ const DateInputComponent = ({
   renderTree,
   component,
   shareableContent,
+  grid: { ChildrenWrapper },
   ...props
 }: Props) => {
   const {
@@ -126,11 +127,13 @@ const DateInputComponent = ({
           },
         }}
       >
-        {component.children && component.children.length > 0
-          ? component.children?.map((child) =>
-              renderTree(child, shareableContent),
-            )
-          : children?.toString()}
+        <ChildrenWrapper>
+          {component.children && component.children.length > 0
+            ? component.children?.map((child) =>
+                renderTree(child, shareableContent),
+              )
+            : children?.toString()}
+        </ChildrenWrapper>
       </MantineDatePickerInput>
     </>
   );

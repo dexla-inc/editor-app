@@ -9,7 +9,10 @@ import { forwardRef, memo } from "react";
 type Props = EditableComponentMapper & AnchorProps;
 
 const LinkComponent = forwardRef(
-  ({ component, shareableContent, ...props }: Props, ref) => {
+  (
+    { component, shareableContent, grid: { ChildrenWrapper }, ...props }: Props,
+    ref,
+  ) => {
     const {
       triggers,
       variable,
@@ -37,7 +40,7 @@ const LinkComponent = forwardRef(
         ref={ref}
         style={customStyle}
       >
-        {String(childrenValue)}
+        <ChildrenWrapper>{String(childrenValue)}</ChildrenWrapper>
       </MantineAnchor>
     );
   },

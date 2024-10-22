@@ -14,7 +14,10 @@ import { ReactElement, forwardRef, memo } from "react";
 type Props = EditableComponentMapper & ActionIconProps & ReactElement<"Button">;
 
 const ButtonIconComponent = forwardRef(
-  ({ component, shareableContent, ...props }: Props, ref) => {
+  (
+    { component, shareableContent, grid: { ChildrenWrapper }, ...props }: Props,
+    ref,
+  ) => {
     const {
       children,
       triggers,
@@ -56,7 +59,9 @@ const ButtonIconComponent = forwardRef(
         styles={{ root: DISABLED_HOVER }}
         {...triggers}
       >
-        <BaseIconComponent {...iconProps} />
+        <ChildrenWrapper>
+          <BaseIconComponent {...iconProps} />
+        </ChildrenWrapper>
       </MantineActionIcon>
     );
   },

@@ -10,7 +10,16 @@ import { useShallow } from "zustand/react/shallow";
 type Props = EditableComponentMapper & RadioGroupProps;
 
 const RadioComponent = forwardRef(
-  ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
+  (
+    {
+      renderTree,
+      component,
+      shareableContent,
+      grid: { ChildrenWrapper },
+      ...props
+    }: Props,
+    ref,
+  ) => {
     const isPreviewMode = useEditorTreeStore(
       useShallow((state) => state.isPreviewMode || state.isLive),
     );
@@ -57,15 +66,17 @@ const RadioComponent = forwardRef(
         value={value}
         label={undefined}
       >
-        <Group grow w="100%">
-          {component?.children?.map((child) =>
-            renderTree(child, {
-              ...shareableContent,
-              isInsideGroup: isPreviewMode,
-              value,
-            }),
-          )}
-        </Group>
+        <ChildrenWrapper>
+          <Group grow w="100%">
+            {component?.children?.map((child) =>
+              renderTree(child, {
+                ...shareableContent,
+                isInsideGroup: isPreviewMode,
+                value,
+              }),
+            )}
+          </Group>
+        </ChildrenWrapper>
       </MantineRadio.Group>
     );
   },

@@ -14,7 +14,7 @@ const AlertComponent = forwardRef(
       renderTree,
       shareableContent,
       component,
-      ChildrenWrapper,
+      grid: { ChildrenWrapper, isGridCss },
       ...props
     }: Props,
     ref,
@@ -46,7 +46,7 @@ const AlertComponent = forwardRef(
           root: {
             backgroundColor: colorHex,
           },
-          ...mantineStyles,
+          ...(isGridCss && mantineStyles),
         }}
       >
         <ChildrenWrapper>

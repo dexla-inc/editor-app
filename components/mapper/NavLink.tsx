@@ -15,7 +15,16 @@ import { useShallow } from "zustand/react/shallow";
 type Props = EditableComponentMapper & NavLinkProps;
 
 const NavLinkComponent = forwardRef(
-  ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
+  (
+    {
+      renderTree,
+      component,
+      shareableContent,
+      grid: { ChildrenWrapper },
+      ...props
+    }: Props,
+    ref,
+  ) => {
     const isPreviewMode = useEditorTreeStore(
       useShallow((state) => state.isPreviewMode || state.isLive),
     );
@@ -106,11 +115,13 @@ const NavLinkComponent = forwardRef(
           },
         }}
       >
-        {component.children &&
-          component.children.length > 0 &&
-          component.children?.map((child) =>
-            renderTree(child, shareableContent),
-          )}
+        <ChildrenWrapper>
+          {component.children &&
+            component.children.length > 0 &&
+            component.children?.map((child) =>
+              renderTree(child, shareableContent),
+            )}
+        </ChildrenWrapper>
       </MantineNavLink>
     );
   },

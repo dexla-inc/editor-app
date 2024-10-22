@@ -16,7 +16,7 @@ type Props = EditableComponentMapper & TitleProps;
 
 const TitleComponent = forwardRef(
   (
-    { component, shareableContent, ChildrenWrapper, ...props }: Props,
+    { component, shareableContent, grid: { ChildrenWrapper }, ...props }: Props,
     ref: any,
   ) => {
     const contentEditableProps = useContentEditable(
