@@ -2,6 +2,7 @@
   list-style: none;
   box-sizing: border-box;
   padding-left: var(--spacing);
+  height: 22px;
 
   &.clone {
     display: inline-block;
@@ -68,9 +69,10 @@
 .TreeItem {
   --vertical-padding: 2px;
   height: 22px;
+  gap: 8px;
 
   position: relative;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   padding: var(--vertical-padding) 0;
   background-color: #fff;

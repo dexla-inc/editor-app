@@ -208,7 +208,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
           }}
           {...handleProps}
         >
-          <Group position="apart" noWrap w="100%" h="100%">
+          <Group noWrap w="100%" h="100%">
             <Group
               spacing={2}
               noWrap
