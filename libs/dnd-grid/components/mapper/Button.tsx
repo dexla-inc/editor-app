@@ -1,10 +1,11 @@
 import { ButtonProps, Button as MantineButton } from "@mantine/core";
-import { ReactElement, forwardRef, memo, Ref } from "react";
+import { ReactElement, forwardRef, memo } from "react";
 import { EditableComponentMapper } from "@/utils/editor";
 import { useDnd } from "@/libs/dnd-grid/hooks/useDnd";
-import { useEditorStore } from "@/libs/dnd-grid/stores/editor";
+import { useDndGridStore } from "@/libs/dnd-grid/stores/dndGridStore";
 import { useShallow } from "zustand/react/shallow";
 import { ResizeHandlers } from "@/libs/dnd-grid/components/ResizeHandlers";
+import { useGridStyling } from "@/libs/dnd-grid/hooks/useGridStyling";
 
 type Props = EditableComponentMapper & ButtonProps & ReactElement<"Button">;
 
@@ -12,12 +13,8 @@ const ButtonComponent = forwardRef<HTMLButtonElement, Props>(
   ({ component }, ref) => {
     const { triggers } = component.props!;
     const dragTriggers = useDnd();
-    const isActive = useEditorStore(
-      (state) =>
-        state.selectedComponentId === component.id ||
-        state.hoverComponentId === component.id,
-    );
-    const { setHoverComponentId } = useEditorStore(
+    const gridStyling = useGridStyling({ component });
+    const { setHoverComponentId } = useDndGridStore(
       useShallow((state) => state),
     );
 
@@ -28,20 +25,7 @@ const ButtonComponent = forwardRef<HTMLButtonElement, Props>(
         {...dragTriggers}
         {...triggers}
         style={{
-          position: "relative",
-          border: "1px solid",
-          borderRadius: "0.25rem",
-          gridColumn: component.props?.style.gridColumn,
-          gridRow: component.props?.style.gridRow,
-          display: "grid",
-          gridTemplateColumns: "subgrid",
-          gridTemplateRows: "subgrid",
-          ...(isActive && {
-            boxShadow: "0 0 0 2px #3b82f6 inset",
-          }),
-          ...(component?.props?.bg && {
-            backgroundColor: component.props.bg,
-          }),
+          ...gridStyling,
         }}
         styles={{
           inner: {
@@ -51,14 +35,14 @@ const ButtonComponent = forwardRef<HTMLButtonElement, Props>(
         }}
         onMouseOver={(e) => {
           e.stopPropagation();
-          const { hoverComponentId } = useEditorStore.getState();
+          const { hoverComponentId } = useDndGridStore.getState();
           if (hoverComponentId !== component.id) {
             setHoverComponentId(component.id ?? null);
           }
         }}
         onMouseLeave={(e) => {
           e.stopPropagation();
-          const { hoverComponentId } = useEditorStore.getState();
+          const { hoverComponentId } = useDndGridStore.getState();
           if (hoverComponentId !== null) {
             setHoverComponentId(null);
           }

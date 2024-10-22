@@ -19,10 +19,19 @@ const Modifier = withModifier(({ selectedComponent }) => {
 
   useEffect(() => {
     form.setValues(
-      merge({}, requiredModifiers.tabsList, {
-        position: selectedComponent.props?.position,
-        disableLine: selectedComponent.props?.disableLine,
-      }),
+      merge(
+        {},
+        requiredModifiers.tabsList,
+        {
+          style: {
+            flexWrap: "wrap",
+          },
+        },
+        {
+          position: selectedComponent.props?.position,
+          disableLine: selectedComponent.props?.disableLine,
+        },
+      ),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedComponent]);

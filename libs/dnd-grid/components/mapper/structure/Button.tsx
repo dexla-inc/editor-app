@@ -13,7 +13,7 @@ export const jsonStructure = (props?: any): any => {
       textColor: "text-white",
       style: {
         gridColumn: "1/12",
-        gridRow: "1/5",
+        gridRow: "1/4",
       },
     },
   };

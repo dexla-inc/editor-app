@@ -45,6 +45,7 @@ import {
 import { useEditorStore } from "@/stores/editor";
 import { useShallow } from "zustand/react/shallow";
 import { usePrevious } from "@mantine/hooks";
+import { ScrollArea } from "@mantine/core";
 
 const measuring = {
   droppable: {
@@ -294,64 +295,67 @@ export function NavbarLayersSection({ indentationWidth = 12 }: Props) {
     : overItem?.parentId;
 
   return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCenter}
-      measuring={measuring}
-      onDragStart={handleDragStart}
-      onDragMove={handleDragMove}
-      onDragOver={handleDragOver}
-      onDragEnd={handleDragEnd}
-      onDragCancel={handleDragCancel}
-    >
-      <SortableContext
-        items={sortedIds as string[]}
-        strategy={verticalListSortingStrategy}
+    <div style={{ minWidth: "600px", overflowX: "auto" }}>
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        measuring={measuring}
+        onDragStart={handleDragStart}
+        onDragMove={handleDragMove}
+        onDragOver={handleDragOver}
+        onDragEnd={handleDragEnd}
+        onDragCancel={handleDragCancel}
+        autoScroll={false}
       >
-        <List
-          data={flattenedItems}
-          itemKey="id"
-          itemHeight={22}
-          height={1000}
-          ref={listRef}
+        <SortableContext
+          items={sortedIds as string[]}
+          strategy={verticalListSortingStrategy}
         >
-          {(component) => {
-            return (
+          <List
+            data={flattenedItems}
+            itemKey="id"
+            itemHeight={22}
+            height={1000}
+            ref={listRef}
+          >
+            {(component) => {
+              return (
+                <SortableTreeItem
+                  component={component}
+                  key={component.id}
+                  id={component.id!}
+                  depth={
+                    component.id === activeId && projected
+                      ? projected.depth
+                      : component.depth
+                  }
+                  indentationWidth={indentationWidth}
+                  onCollapse={
+                    (component.children ?? []).length
+                      ? () => handleCollapse(component.id!)
+                      : undefined
+                  }
+                  highlightId={highlightId as string}
+                />
+              );
+            }}
+          </List>
+        </SortableContext>
+        {createPortal(
+          <DragOverlay dropAnimation={dropAnimationConfig}>
+            {activeId && activeItem ? (
               <SortableTreeItem
-                component={component}
-                key={component.id}
-                id={component.id!}
-                depth={
-                  component.id === activeId && projected
-                    ? projected.depth
-                    : component.depth
-                }
+                component={activeItem}
+                id={activeId}
+                depth={activeItem.depth}
+                clone
                 indentationWidth={indentationWidth}
-                onCollapse={
-                  (component.children ?? []).length
-                    ? () => handleCollapse(component.id!)
-                    : undefined
-                }
-                highlightId={highlightId as string}
               />
-            );
-          }}
-        </List>
-      </SortableContext>
-      {createPortal(
-        <DragOverlay dropAnimation={dropAnimationConfig}>
-          {activeId && activeItem ? (
-            <SortableTreeItem
-              component={activeItem}
-              id={activeId}
-              depth={activeItem.depth}
-              clone
-              indentationWidth={indentationWidth}
-            />
-          ) : null}
-        </DragOverlay>,
-        document.body,
-      )}
-    </DndContext>
+            ) : null}
+          </DragOverlay>,
+          document.body,
+        )}
+      </DndContext>
+    </div>
   );
 }

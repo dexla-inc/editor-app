@@ -3,7 +3,7 @@ import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useThemeStore } from "@/stores/theme";
 import { copyToClipboard, pasteFromClipboard } from "@/utils/clipboard";
-import { structureMapper } from "@/libs/dnd-flex/utils/componentMapper";
+import { structureMapper } from "@/utils/componentMapper";
 import { NAVBAR_WIDTH } from "@/utils/config";
 import {
   Component,
@@ -70,7 +70,7 @@ export const useComponentContextMenu = () => {
 
   const wrapIn = useCallback(
     (component: Component, componentName: string) => {
-      const container = structureMapper[componentName].structure({
+      const container = structureMapper()[componentName].structure({
         theme: editorTheme,
       }) as ComponentStructure;
 
@@ -132,7 +132,7 @@ export const useComponentContextMenu = () => {
   const resetComponent = useCallback(
     async (component: Component) => {
       if (component.id && component.id !== "root") {
-        const structure = structureMapper[component.name].structure({
+        const structure = structureMapper()[component.name].structure({
           theme: editorTheme,
         }) as ComponentStructure;
 
@@ -244,7 +244,7 @@ export const useComponentContextMenu = () => {
     const isTargetModalsOrDrawers = ["Modal", "Drawer"].includes(targetName);
 
     const isLayoutCategory =
-      structureMapper[componentToPaste.name!]?.category === "Layout";
+      structureMapper()[componentToPaste.name!]?.category === "Layout";
     const isAllowedGridMatch =
       isGridItems === isTargetGridItems && targetName === componentToPaste.name;
     const isAllowedSibling =

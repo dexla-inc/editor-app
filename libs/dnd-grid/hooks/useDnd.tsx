@@ -4,37 +4,32 @@ import {
   getComponentById,
   getParentId,
   updateComponentPosition,
-} from "../utils/editor";
+} from "@/libs/dnd-grid/utils/editor";
 import { useRef } from "react";
-import { useEditorStore } from "../stores/editor";
-import { getElementsOver, getGridCoordinates } from "../utils/engines/position";
-import { structureMapper } from "../utils/componentMapper";
-import { cloneObject } from "@/utils/common";
+import {
+  getElementsOver,
+  getGridCoordinates,
+} from "@/libs/dnd-grid/utils/engines/position";
+import { structureMapper } from "@/utils/componentMapper";
+import { useDndGridStore } from "@/libs/dnd-grid/stores/dndGridStore";
+import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
 
-export const useDnd = () => {
-  const {
-    setComponents,
-    components,
-    setInvalidComponent,
-    setValidComponent,
-    setSelectedComponentId,
-    setIsInteracting,
-    setDraggableComponent,
-    draggableComponent,
-    setCoords,
-    coords,
-  } = useEditorStore();
+export const useDnd = (debug?: string) => {
   const dragOffset = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const isNewComponent = useRef<boolean>(false);
 
   const getElementRects = (currComponentId: string) => {
+    const { root: components } = useEditorTreeStore.getState().tree;
+    const { iframeWindow } = useEditorStore.getState();
+
     const allIds = getAllIds(components, {
       filterFromParent: currComponentId,
     });
     const targets = allIds.reduce(
       (acc, id) => {
         if (currComponentId !== id) {
-          const element = document.getElementById(id);
+          const element = iframeWindow?.document.getElementById(id);
           if (element) {
             const targetRect = element.getBoundingClientRect();
             acc[id] = targetRect;
@@ -49,6 +44,10 @@ export const useDnd = () => {
 
   const onDragStart = (e: React.DragEvent) => {
     e.stopPropagation();
+    const { setIsInteracting, setDraggableComponent, setCoords } =
+      useDndGridStore.getState();
+    const { root: components } = useEditorTreeStore.getState().tree;
+
     setIsInteracting(true);
 
     const el = e.target as HTMLElement;
@@ -72,7 +71,7 @@ export const useDnd = () => {
       // add new components here
       const type = el.getAttribute("data-type");
       if (type) {
-        const newComponent = structureMapper[type].structure({});
+        const newComponent = structureMapper()[type].structure({});
         setDraggableComponent(newComponent);
         isNewComponent.current = true;
       }
@@ -113,10 +112,10 @@ export const useDnd = () => {
   }
 
   function checkFitsInside(movable: any, elementRects: any) {
+    const { root: components } = useEditorTreeStore.getState().tree;
+
     const movableRect = movable.getBoundingClientRect();
     const overlappingElements: any[] = [];
-
-    // console.log(movableRect, elementRects);
 
     Object.entries(elementRects).forEach(([key, rect]) => {
       const parentComponent = getComponentById(components, key);
@@ -139,17 +138,30 @@ export const useDnd = () => {
     e.preventDefault();
     e.stopPropagation();
 
-    const newComponents = cloneObject(components);
+    const {
+      setTree: setComponents,
+      tree: editorTree,
+      setSelectedComponentIds,
+    } = useEditorTreeStore.getState();
+    const { iframeWindow } = useEditorStore.getState();
+    const {
+      draggableComponent,
+      coords,
+      setInvalidComponent,
+      setValidComponent,
+    } = useDndGridStore.getState();
 
-    const updatingComponent = document.getElementById(draggableComponent!.id!)!;
+    const updatingComponent = iframeWindow?.document.getElementById(
+      draggableComponent!.id!,
+    )!;
     updatingComponent.style.gridColumn = coords.gridColumn;
     updatingComponent.style.gridRow = coords.gridRow;
-    moveElement(draggableComponent!.id!, coords.parentId);
 
-    updateComponentPosition(newComponents, draggableComponent!.id!, coords);
-
-    setSelectedComponentId(draggableComponent!.id!);
-    setComponents(newComponents);
+    updateComponentPosition(editorTree.root, draggableComponent!.id!, coords);
+    setSelectedComponentIds(() => [draggableComponent?.id!]);
+    setComponents(editorTree, {
+      action: `Updated ${draggableComponent?.description} component`,
+    });
     setInvalidComponent(null);
     setValidComponent(null);
   };
@@ -158,24 +170,34 @@ export const useDnd = () => {
     e.preventDefault();
     e.stopPropagation();
 
+    const { setTree: setComponents, tree: editorTree } =
+      useEditorTreeStore.getState();
+    const { iframeWindow } = useEditorStore.getState();
+    const {
+      draggableComponent,
+      setInvalidComponent,
+      setValidComponent,
+      setCoords,
+    } = useDndGridStore.getState();
+
     const elementsOver = getElementsOver(e.clientX, e.clientY);
     if (!elementsOver.find((item) => item.id === "main-grid")) {
       return;
     }
 
-    const { validComponent, invalidComponent } = useEditorStore.getState();
+    const { validComponent, invalidComponent } = useDndGridStore.getState();
     const { id } = draggableComponent!;
 
     if (isNewComponent.current) {
-      const newComponents = cloneObject(components);
-
-      addComponent(newComponents, draggableComponent!, "main-grid");
-      setComponents(newComponents);
+      addComponent(editorTree.root, draggableComponent!, "main-grid");
+      setComponents(editorTree, {
+        action: `Added ${draggableComponent?.description} component`,
+      });
       isNewComponent.current = false;
       return;
     }
 
-    const el = document.getElementById(id!)!;
+    const el = iframeWindow?.document.getElementById(id!)!;
 
     const {
       column: rawColumn,
@@ -216,8 +238,6 @@ export const useDnd = () => {
     const overlappingIds = checkOverlap(el, elementRects);
     const fittingIds = checkFitsInside(el, elementRects);
 
-    // console.log({ overlappingIds, fittingIds });
-
     if (JSON.stringify(overlappingIds) === JSON.stringify(fittingIds)) {
       setCoords({ gridColumn, gridRow, parentId });
       invalidComponent !== null && setInvalidComponent(null);
@@ -229,6 +249,8 @@ export const useDnd = () => {
   };
 
   const onDragEnd = () => {
+    const { setIsInteracting, setInvalidComponent, setValidComponent } =
+      useDndGridStore.getState();
     setIsInteracting(false);
     setInvalidComponent(null);
     setValidComponent(null);
@@ -256,8 +278,9 @@ function fitsInside(innerRect: any, outerRect: any) {
 }
 
 function moveElement(elementId: string, newParentId: string) {
-  const element = document.getElementById(elementId);
-  const newParent = document.getElementById(newParentId);
+  const { iframeWindow } = useEditorStore.getState();
+  const element = iframeWindow?.document.getElementById(elementId);
+  const newParent = iframeWindow?.document.getElementById(newParentId);
 
   if (element && newParent) {
     newParent.appendChild(element);

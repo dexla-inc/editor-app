@@ -1,11 +1,12 @@
-import { DraggableComponent } from "@/components/DraggableComponent";
+import { DraggableComponent as DraggableComponentGrid } from "@/libs/dnd-grid/components/DraggableComponent";
+import { DraggableComponent as DraggableComponentFlex } from "@/libs/dnd-flex/components/DraggableComponent";
 import GridItemComponent from "@/components/navbar/ComponentGridItem";
 import { useCustomComponentList } from "@/hooks/editor/reactQuery/useCustomComponentList";
 import {
   ComponentCategoryType,
   componentMapper,
   structureMapper,
-} from "@/libs/dnd-flex/utils/componentMapper";
+} from "@/utils/componentMapper";
 import { CustomComponentResponse } from "@/requests/components/types";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { usePropelAuthStore } from "@/stores/propelAuth";
@@ -28,7 +29,7 @@ import {
   Title,
 } from "@mantine/core";
 import { IconFrustum, IconSearch } from "@tabler/icons-react";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 
 type DraggableComponentData = {
   id: string;
@@ -38,24 +39,27 @@ type DraggableComponentData = {
   synonyms?: string[];
 };
 
-const componentsGroupedByCategory = Object.keys(structureMapper).reduce(
-  (groups, key) => {
-    const draggable = structureMapper[key]?.Draggable;
-    const category = structureMapper[key]?.category;
-    const hide = structureMapper[key]?.hide ?? false;
-    const synonyms = structureMapper[key]?.synonyms ?? [];
+const componentsGroupedByCategory = (cssType: string) => {
+  const mapper = structureMapper(cssType);
+  return Object.keys(mapper).reduce(
+    (groups, key) => {
+      const draggable = mapper[key]?.Draggable;
+      const category = mapper[key]?.category;
+      const hide = mapper[key]?.hide ?? false;
+      const synonyms = mapper[key]?.synonyms ?? [];
 
-    if (draggable) {
-      if (!groups[category]) {
-        groups[category] = [];
+      if (draggable) {
+        if (!groups[category]) {
+          groups[category] = [];
+        }
+        groups[category].push({ draggable, id: toSpaced(key), hide, synonyms });
       }
-      groups[category].push({ draggable, id: toSpaced(key), hide, synonyms });
-    }
 
-    return groups;
-  },
-  {} as Record<string, DraggableComponentData[]>,
-);
+      return groups;
+    },
+    {} as Record<string, DraggableComponentData[]>,
+  );
+};
 
 export const EditorNavbarComponentsSection = () => {
   const [query, setQuery] = useState<string>("");
@@ -67,6 +71,7 @@ export const EditorNavbarComponentsSection = () => {
   const activeCompany = usePropelAuthStore((state) => state.activeCompany);
   const customStackRef = useRef<HTMLDivElement>(null);
   const userTheme = useThemeStore((state) => state.theme);
+  const cssType = useEditorTreeStore((state) => state.cssType);
 
   const { data: componentList } = useCustomComponentList(
     projectId,
@@ -79,6 +84,14 @@ export const EditorNavbarComponentsSection = () => {
 
     return componentToRender?.Component({ component, renderTree });
   }, []);
+
+  const DraggableComponent =
+    cssType === "FLEX" ? DraggableComponentFlex : DraggableComponentGrid;
+
+  const groupedMapperComponents = useMemo(
+    () => componentsGroupedByCategory(cssType),
+    [cssType],
+  );
 
   return (
     <Stack spacing="xl" p="xs" pr={0}>
@@ -106,7 +119,7 @@ export const EditorNavbarComponentsSection = () => {
       />
       {componentTypeToShow === "default" && (
         <Grid gutter="xs">
-          {Object.entries(componentsGroupedByCategory).map(
+          {Object.entries(groupedMapperComponents).map(
             ([category, components]) => {
               const filteredComponents = filterComponents(components, query);
 

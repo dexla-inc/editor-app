@@ -130,7 +130,7 @@ export const objToItems = (
 };
 
 export const emptyEditorTree = {
-  name: "Initial State",
+  name: "Initial Flex State",
   timestamp: Date.now(),
   root: {
     id: "root",
@@ -147,6 +147,18 @@ export const emptyEditorTree = {
         ],
       },
     ],
+  },
+};
+
+export const emptyCssGridTree = {
+  name: "Initial Grid State",
+  timestamp: Date.now(),
+  root: {
+    id: "main-grid",
+    name: "Container",
+    description: "Container",
+    blockDroppingChildrenInside: false,
+    children: [],
   },
 };
 

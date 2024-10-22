@@ -10,6 +10,7 @@ export const jsonStructure = (props?: any): ComponentStructure => {
     children: [],
     props: {
       ...requiredModifiers.progress,
+      size: "xs",
       ...(props.props || {}),
     },
     onLoad: {

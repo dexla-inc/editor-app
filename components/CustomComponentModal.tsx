@@ -2,7 +2,7 @@ import { upsertCustomComponent } from "@/requests/components/mutations";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
-import { structureMapper } from "@/libs/dnd-flex/utils/componentMapper";
+import { structureMapper } from "@/utils/componentMapper";
 import { encodeSchema } from "@/utils/compression";
 import { ICON_SIZE } from "@/utils/config";
 import {
@@ -132,7 +132,7 @@ export const CustomComponentModal = ({ isCustomComponentModalOpen }: Props) => {
             <Select
               withinPortal
               label="Type"
-              data={Object.keys(structureMapper)}
+              data={Object.keys(structureMapper())}
               searchable
               dropdownPosition="bottom"
               {...customComponentForm.getInputProps("type")}

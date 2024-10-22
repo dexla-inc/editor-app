@@ -17,6 +17,8 @@ export const jsonStructure = (props?: any): ComponentStructure => {
       icon: "IconLayoutDashboard",
       style: {
         ...requiredModifiers.navLink,
+        width: "100%",
+        height: "auto",
       },
       ...(props.props || {}),
     },

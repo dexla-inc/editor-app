@@ -16,6 +16,11 @@ export const jsonStructure = (props?: any): ComponentStructure => {
       ...defaultValues,
       color: color ?? "Primary.6",
       textColor: textColor ?? "PrimaryText.6",
+      style: {
+        width: "fit-content",
+        paddingLeft: "32px",
+        paddingRight: "32px",
+      },
       ...(rest || {}),
     },
     states: {

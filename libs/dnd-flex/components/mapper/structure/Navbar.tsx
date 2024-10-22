@@ -49,6 +49,8 @@ export const jsonStructure = (props?: any): ComponentStructure => {
       ...merge({
         style: {
           ...initialValues,
+          width: "260px",
+          height: "100vh",
         },
         ...props.props,
       }),

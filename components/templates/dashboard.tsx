@@ -6,7 +6,7 @@ import {
 } from "@/requests/datasources/queries-noauth";
 import { createLogicFlow } from "@/requests/logicflows/mutations";
 import { createVariable } from "@/requests/variables/mutations";
-import { structureMapper } from "@/libs/dnd-flex/utils/componentMapper";
+import { structureMapper } from "@/utils/componentMapper";
 import { encodeSchema } from "@/utils/compression";
 import { px } from "@mantine/core";
 import { nanoid } from "nanoid";
@@ -178,7 +178,7 @@ export const template = async (
       return acc;
     }, {});
 
-  const navBar = structureMapper["Navbar"].structure({
+  const navBar = structureMapper()["Navbar"].structure({
     theme,
     pages,
   });

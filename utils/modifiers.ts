@@ -77,8 +77,6 @@ export const requiredModifiers: RequiredModifiers = {
   },
   text: {
     style: {
-      width: "fit-content",
-      height: "fit-content",
       letterSpacing: "0px",
       wordSpacing: "0px",
       whiteSpace: "normal",
@@ -169,9 +167,6 @@ export const requiredModifiers: RequiredModifiers = {
     hideIfDataIsEmpty: false,
     withAsterisk: false,
     autosize: false,
-    style: {
-      height: "fit-content",
-    },
     bg: "White.6",
     textColor: "Black.6",
   },
@@ -189,11 +184,6 @@ export const requiredModifiers: RequiredModifiers = {
   countdownButton: {
     variant: "filled",
     icon: "",
-    style: {
-      width: "fit-content",
-      paddingLeft: "32px",
-      paddingRight: "32px",
-    },
     duration: "60seconds",
   },
   image: {
@@ -203,15 +193,12 @@ export const requiredModifiers: RequiredModifiers = {
   link: {
     color: "Primary.6",
     style: {
-      width: "fit-content",
-      height: "fit-content",
       fontWeight: 500,
       letterSpacing: "0px",
     },
     fontTag: "P",
   },
   icon: {
-    size: "md",
     name: "IconArrowNarrowRight",
     color: "Primary.6",
     bg: "transparent",
@@ -221,7 +208,6 @@ export const requiredModifiers: RequiredModifiers = {
     label: "Divider",
     labelPosition: "center",
     orientation: "horizontal",
-    size: "xs",
     variant: "solid",
   },
   select: {
@@ -297,14 +283,12 @@ export const requiredModifiers: RequiredModifiers = {
     checked: false,
     withAsterisk: false,
     labelSpacing: "0",
-    size: "sm",
   },
   checkboxGroup: {
     label: "A label",
     withAsterisk: false,
     labelSpacing: "0",
     workLikeRadio: false,
-    size: "sm",
   },
   table: {
     dataType: "dynamic",
@@ -356,26 +340,14 @@ export const requiredModifiers: RequiredModifiers = {
     accept: "",
     multiple: false,
     compact: true,
-    style: {
-      width: "fit-content",
-      paddingLeft: "32px",
-      paddingRight: "32px",
-    },
   },
   popOver: {
     position: "bottom",
-    style: {
-      padding: "10px",
-      width: "fit-content",
-      maxWidth: "fit-content",
-    },
   },
   navLink: {
     color: "Black.6",
     iconColor: "Black.6",
     textAlign: "left",
-    width: "100%",
-    height: "auto",
     padding: "10px",
   },
   accordionItem: {
@@ -410,9 +382,6 @@ export const requiredModifiers: RequiredModifiers = {
   tabsPanel: { value: "first" },
   tabsList: {
     position: "left",
-    style: {
-      flexWrap: "wrap",
-    },
   },
   alert: {
     title: "Alert",
@@ -421,7 +390,6 @@ export const requiredModifiers: RequiredModifiers = {
   badge: {
     color: "PrimaryText.6",
     bg: "Primary.6",
-    size: "md",
     radius: "xl",
   },
   dateInput: {
@@ -480,28 +448,19 @@ export const requiredModifiers: RequiredModifiers = {
     },
   },
   navbar: {
-    width: "260px",
     gridTemplateRows: "auto 1fr auto",
-    height: "100vh",
     top: "0",
     position: "sticky",
   },
   progress: {
     color: "Primary.6",
-    size: "xs",
     animate: true,
   },
   codeEmbed: {
-    style: {
-      height: "auto",
-      width: "100%",
-      border: "none",
-      overflow: "hidden",
-      display: "block",
-    },
+    border: "none",
+    overflow: "hidden",
   },
   colorPicker: {
-    size: "sm",
     radius: "xs",
   },
 };

@@ -14,12 +14,17 @@ const Modifier = withModifier(({ selectedComponent }) => {
 
   useEffect(() => {
     form.setValues(
-      merge({}, requiredModifiers.icon, {
-        color: selectedComponent.props?.color,
-        bg: selectedComponent.props?.bg,
-        icon: selectedComponent.props?.name,
-        size: selectedComponent.props?.size,
-      }),
+      merge(
+        {},
+        requiredModifiers.icon,
+        { size: "md" },
+        {
+          color: selectedComponent.props?.color,
+          bg: selectedComponent.props?.bg,
+          icon: selectedComponent.props?.name,
+          size: selectedComponent.props?.size,
+        },
+      ),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedComponent]);
