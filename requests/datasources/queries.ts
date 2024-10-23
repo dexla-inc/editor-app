@@ -6,7 +6,8 @@ import {
 } from "@/requests/datasources/types";
 import { buildQueryString } from "@/types/dashboardTypes";
 import { get } from "@/utils/api";
-import { PagingResponse } from "../types";
+import { PagingResponse } from "@/requests/types";
+import { evictCache } from "@/requests/cache/queries-noauth";
 
 // Put this back when datasources are called from the deployment in live pages
 export const getDataSources = async (
@@ -104,5 +105,16 @@ export const getSwagger = async (projectId: string, id: string) => {
     {},
   )) as DataSourceResponse;
 
+  const cacheTag = getDatasourcesCacheTag(projectId);
+  const dataSourceCacheTag = getDatasourceCacheTag(projectId, id);
+  await evictCache(cacheTag);
+  await evictCache(dataSourceCacheTag);
+
   return response;
 };
+
+const getDatasourcesCacheTag = (projectId: string) =>
+  `/projects/${projectId}/datasources`;
+
+const getDatasourceCacheTag = (projectId: string, id: string) =>
+  `/projects/${projectId}/datasources/${id}`;
