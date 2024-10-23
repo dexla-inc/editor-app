@@ -50,7 +50,11 @@ export async function GET(request: Request) {
     const blob = new Blob([openapiJson], { type: "application/json" });
 
     const formData = new FormData();
-    formData.append("file", blob, "openapi.json");
+    formData.append(
+      "file",
+      blob,
+      `${baseUrl?.replace("https://", "")}_openapi.json`,
+    );
 
     const storageUrl = `${storageBaseUrl}/projects/${projectId}/storage/internal`;
 

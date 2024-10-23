@@ -1,33 +1,36 @@
 import {
   DataSourceAuthListResponse,
   DataSourceResponse,
+  DataSourcesListParams,
   Endpoint,
 } from "@/requests/datasources/types";
+import { buildQueryString } from "@/types/dashboardTypes";
 import { get } from "@/utils/api";
+import { PagingResponse } from "../types";
 
 // Put this back when datasources are called from the deployment in live pages
-// export const getDataSources = async (
-//   projectId: string,
-//   { datasourceId, include, type, search, offset, limit }: DataSourcesListParams,
-// ) => {
-//   let url = `/projects/${projectId}/datasources`;
+export const getDataSources = async (
+  projectId: string,
+  { datasourceId, include, type, search, offset, limit }: DataSourcesListParams,
+) => {
+  let url = `/projects/${projectId}/datasources`;
 
-//   url += buildQueryString({
-//     datasourceId,
-//     include,
-//     type,
-//     search,
-//     offset,
-//     limit,
-//   });
+  url += buildQueryString({
+    datasourceId,
+    include,
+    type,
+    search,
+    offset,
+    limit,
+  });
 
-//   const response = (await get<PagingResponse<DataSourceResponse>>(
-//     url,
-//     {},
-//   )) as PagingResponse<DataSourceResponse>;
+  const response = (await get<PagingResponse<DataSourceResponse>>(
+    url,
+    {},
+  )) as PagingResponse<DataSourceResponse>;
 
-//   return response;
-// };
+  return response;
+};
 
 // export const getDataSourceEndpoints = async (
 //   projectId: string,
