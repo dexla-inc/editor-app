@@ -18,6 +18,7 @@ import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import {
   IconAlignCenter,
+  IconAlignJustified,
   IconAlignLeft,
   IconAlignRight,
   IconCheck,
@@ -238,6 +239,15 @@ const Modifier = withModifier(({ selectedComponent }) => {
                   />
                 ),
                 value: "right",
+              },
+              {
+                label: (
+                  <StylingPaneItemIcon
+                    label="Justify"
+                    icon={<IconAlignJustified size={14} />}
+                  />
+                ),
+                value: "justify",
               },
             ]}
             styles={{
