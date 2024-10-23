@@ -23,24 +23,7 @@ export const Icon = forwardRef(
     const sizeAsNumber =
       typeof size === "number" ? size : globalStyles().sizing.icon[size];
 
-    return (
-      <Box
-        ref={ref}
-        unstyled
-        bg={props.bg}
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          width: props.style?.width,
-          height: props.style?.height,
-          borderRadius: props.style?.borderBottomLeftRadius,
-        }}
-        sx={{ ...props.sx }}
-      >
-        <IconToRender size={sizeAsNumber} {...props} />
-      </Box>
-    );
+    return <IconToRender size={sizeAsNumber} {...props} />;
   },
 );
 Icon.displayName = "Icon";

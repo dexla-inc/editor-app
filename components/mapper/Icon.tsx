@@ -5,6 +5,7 @@ import { getColorValue, globalStyles } from "@/utils/branding";
 import { EditableComponentMapper } from "@/utils/editor";
 import merge from "lodash.merge";
 import { forwardRef, memo } from "react";
+import { Box } from "@mantine/core";
 type Props = EditableComponentMapper;
 
 const IconComponent = forwardRef(
@@ -13,7 +14,7 @@ const IconComponent = forwardRef(
       renderTree,
       component,
       shareableContent,
-      grid: { ChildrenWrapper },
+      grid: { ChildrenWrapper, isGridCss },
       ...props
     }: Props,
     ref,
@@ -23,6 +24,32 @@ const IconComponent = forwardRef(
 
     const theme = useThemeStore((state) => state.theme);
     const width = globalStyles().sizing.icon[size];
+
+    if (isGridCss) {
+      return (
+        <Box unstyled style={props.style as any} {...props} {...triggers}>
+          <BaseIconComponent
+            {...componentProps}
+            bg={getColorValue(theme, bg)}
+            style={
+              merge({}, props.style, {
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                gridColumn: "1/-1",
+                gridRow: "1/-1",
+                gridArea: "1 / 1 / -1 / -1",
+                color: getColorValue(theme, color),
+                background: "red",
+              }) as any
+            }
+            ref={ref}
+          />
+          <ChildrenWrapper />
+        </Box>
+      );
+    }
+
     return (
       <BaseIconComponent
         {...props}
@@ -35,15 +62,7 @@ const IconComponent = forwardRef(
           color: getColorValue(theme, color),
         })}
         ref={ref}
-      >
-        <ChildrenWrapper>
-          {component.children && component.children.length > 0
-            ? component.children?.map((child) =>
-                renderTree(child, shareableContent),
-              )
-            : children?.toString()}
-        </ChildrenWrapper>
-      </BaseIconComponent>
+      />
     );
   },
 );

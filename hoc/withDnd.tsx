@@ -5,6 +5,7 @@ import { useGridStyling } from "@/libs/dnd-grid/hooks/useGridStyling";
 import { useEditorDroppableEvents } from "@/hooks/components/useEditorDroppableEvents";
 import { useDnd } from "@/libs/dnd-grid/hooks/useDnd";
 import { ResizeHandlers } from "@/libs/dnd-grid/components/ResizeHandlers";
+import { isPreviewModeSelector } from "@/utils/componentSelectors";
 
 export const withDnd = <T extends Record<string, any>>(
   Component: ComponentType<T>,
@@ -61,22 +62,29 @@ const GridComponent = ({
 }) => {
   const gridDnd = useDnd();
   const gridStyling = useGridStyling({ component: props.component });
+  const isPreviewMode = useEditorTreeStore(isPreviewModeSelector);
 
-  const ChildrenWrapper = ({ children }: { children: React.ReactNode }) => (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        width: "100%",
-        height: "100%",
-        gridArea: "1 / 1 / -1 / -1",
-      }}
-    >
-      {children}
-      <ResizeHandlers componentId={props.component.id} />
-    </div>
-  );
+  const ChildrenWrapper = ({ children }: { children: React.ReactNode }) => {
+    if (isPreviewMode) {
+      return <>{children}</>;
+    }
+
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          width: "100%",
+          height: "100%",
+          gridArea: "1 / 1 / -1 / -1",
+        }}
+      >
+        {children}
+        <ResizeHandlers componentId={props.component.id} />
+      </div>
+    );
+  };
 
   return (
     <Component

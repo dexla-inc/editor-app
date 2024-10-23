@@ -93,6 +93,14 @@ const FileUploadComponent = ({
       {...defaultTriggers}
       style={style}
     >
+      {component.children && component.children.length > 0
+        ? component.children?.map((child) =>
+            renderTree(child, shareableContent),
+          )
+        : children}
+    </Dropzone>
+  ) : (
+    <Box {...otherProps} {...otherTriggers} {...componentProps} style={style}>
       <ChildrenWrapper>
         {component.children && component.children.length > 0
           ? component.children?.map((child) =>
@@ -100,14 +108,6 @@ const FileUploadComponent = ({
             )
           : children}
       </ChildrenWrapper>
-    </Dropzone>
-  ) : (
-    <Box {...otherProps} {...otherTriggers} {...componentProps} style={style}>
-      {component.children && component.children.length > 0
-        ? component.children?.map((child) =>
-            renderTree(child, shareableContent),
-          )
-        : children}
     </Box>
   );
 };
