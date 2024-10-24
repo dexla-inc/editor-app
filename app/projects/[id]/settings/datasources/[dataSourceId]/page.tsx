@@ -47,6 +47,7 @@ import { useForm } from "@mantine/form";
 import { IconRefresh } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { useOldRouter } from "@/hooks/data/useOldRouter";
+import { usePropelAuthStore } from "@/stores/propelAuth";
 
 export default function DataSourcePage() {
   const {
@@ -135,6 +136,23 @@ export default function DataSourcePage() {
       setIsLoading(true);
 
       form.validate();
+
+      const accessToken = usePropelAuthStore.getState().accessToken;
+
+      if (dataSource.type === "SUPABASE") {
+        const swaggerResponse = await fetch(
+          `/api/swagger2openapi?projectId=${id}&baseUrl=${encodeURIComponent(dataSource.baseUrl)}&relativeUrl=/rest/v1/&apiKey=${encodeURIComponent(
+            dataSource.apiKey as string,
+          )}&accessToken=${encodeURIComponent(accessToken)}&type=${dataSource.type}`,
+        );
+
+        if (!swaggerResponse.ok) {
+          const errorData = await swaggerResponse.json();
+          throw new Error(
+            errorData.error || "Failed to convert Swagger to OpenAPI",
+          );
+        }
+      }
 
       const result = await getSwagger(id, dataSourceId);
 

@@ -85,6 +85,8 @@ export const DataSourceForm = ({ datasource }: Props) => {
           <DataSourceEndpointsRefetch
             datasourceId={datasource.id}
             updated={datasource.updated}
+            baseUrl={datasource.baseUrl}
+            apiKey={datasource.apiKey as string}
             type={datasource.type}
           />
         )}
