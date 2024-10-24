@@ -10,6 +10,7 @@ import {
   Select as MantineSelect,
   MultiSelectProps,
   SelectProps,
+  Box,
 } from "@mantine/core";
 import debounce from "lodash.debounce";
 import merge from "lodash.merge";
@@ -21,7 +22,16 @@ import { useInputValue } from "@/hooks/components/useInputValue";
 type Props = EditableComponentMapper & SelectProps & MultiSelectProps;
 
 const SelectComponent = forwardRef(
-  ({ component, children: child, shareableContent, ...props }: Props, ref) => {
+  (
+    {
+      component,
+      children: child,
+      shareableContent,
+      grid: { ChildrenWrapper },
+      ...props
+    }: Props,
+    ref,
+  ) => {
     const {
       children,
       triggers,
@@ -113,46 +123,55 @@ const SelectComponent = forwardRef(
     ];
 
     return (
-      <MantineSelectWrapper
-        ref={ref}
-        {...props}
-        {...omit(componentProps, [
-          "customText",
-          "customLinkText",
-          "customLinkUrl",
-          "labelAlign",
-        ])}
-        onChange={handleChange}
-        onSearchChange={debouncedHandleSearchChange}
-        {...restTriggers}
-        style={{}}
-        styles={{
-          root: {
-            position: "relative",
-            ...pick(customStyle, rootStyleProps),
-          },
-          wrapper: {
-            ...pick(customStyle, wrapperStyleProps),
-          },
-          input: {
-            ...omit(customStyle, wrapperStyleProps),
-            height: fetchHeight(customStyle),
-          },
-          values: { minHeight: customStyle.minHeight },
-        }}
-        withinPortal={false}
-        maxDropdownHeight={maxDropdownHeight}
-        data={data}
-        {...(component.props?.customText
-          ? {
-              dropdownComponent: CustomDropdown,
-            }
-          : {})}
-        rightSection={loading ? <InputLoader /> : null}
-        label={undefined}
-        value={typeof value === "number" ? String(value) : value}
-        wrapperProps={{ "data-id": props.id }}
-      />
+      <Box unstyled style={props.style as any} {...props} {...restTriggers}>
+        <MantineSelectWrapper
+          {...omit(componentProps, [
+            "customText",
+            "customLinkText",
+            "customLinkUrl",
+            "labelAlign",
+          ])}
+          // @ts-ignore
+          onChange={handleChange}
+          onSearchChange={debouncedHandleSearchChange}
+          style={{}}
+          styles={{
+            root: {
+              position: "relative",
+              ...pick(customStyle, rootStyleProps),
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              gridArea: "1 / 1 / -1 / -1",
+            },
+            wrapper: {
+              ...pick(customStyle, wrapperStyleProps),
+              width: "100%",
+              height: "100%",
+            },
+            input: {
+              ...omit(customStyle, wrapperStyleProps),
+              height: fetchHeight(customStyle),
+              width: "100%",
+              // height: "100%",
+            },
+            values: { minHeight: customStyle.minHeight },
+          }}
+          withinPortal={false}
+          maxDropdownHeight={maxDropdownHeight}
+          data={data}
+          {...(component.props?.customText
+            ? {
+                dropdownComponent: CustomDropdown,
+              }
+            : {})}
+          rightSection={loading ? <InputLoader /> : null}
+          label={undefined}
+          value={typeof value === "number" ? String(value) : value}
+          wrapperProps={{ "data-id": props.id }}
+        />
+        <ChildrenWrapper />
+      </Box>
     );
   },
 );

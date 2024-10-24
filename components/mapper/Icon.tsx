@@ -40,7 +40,6 @@ const IconComponent = forwardRef(
                 gridRow: "1/-1",
                 gridArea: "1 / 1 / -1 / -1",
                 color: getColorValue(theme, color),
-                background: "red",
               }) as any
             }
             ref={ref}

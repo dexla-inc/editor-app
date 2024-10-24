@@ -1,6 +1,6 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { EditableComponentMapper } from "@/utils/editor";
-import { Progress as MantineProgress, ProgressProps } from "@mantine/core";
+import { Box, Progress as MantineProgress, ProgressProps } from "@mantine/core";
 import { forwardRef, memo } from "react";
 
 type Props = EditableComponentMapper & ProgressProps;
@@ -21,22 +21,22 @@ const ProgressComponent = forwardRef(
     const { value = 0 } = component.onLoad;
 
     return (
-      <MantineProgress
-        ref={ref}
-        {...props}
-        {...componentProps}
-        {...triggers}
-        value={Number(value)}
-        style={{ ...props.style }}
-      >
-        <ChildrenWrapper>
-          {component.children && component.children.length > 0
-            ? component.children?.map((child) =>
-                renderTree(child, shareableContent),
-              )
-            : children}
-        </ChildrenWrapper>
-      </MantineProgress>
+      <Box unstyled style={props.style as any} {...props} {...triggers}>
+        <MantineProgress
+          ref={ref}
+          {...componentProps}
+          value={Number(value)}
+          styles={{
+            root: {
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              gridArea: "1 / 1 / -1 / -1",
+            },
+          }}
+        />
+        <ChildrenWrapper />
+      </Box>
     );
   },
 );

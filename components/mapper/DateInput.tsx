@@ -13,6 +13,7 @@ import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { memo } from "react";
+import { Box } from "@mantine/core";
 
 type Props = EditableComponentMapper & DatePickerInputProps;
 
@@ -94,7 +95,7 @@ const DateInputComponent = ({
   const dateInputValue = setDate(value, typeValue, valueFormatValue);
 
   return (
-    <>
+    <Box unstyled style={props.style as any} {...props} {...restTriggers}>
       <MantineDatePickerInput
         {...(iconName && isPositionLeft && { icon: <Icon name={iconName} /> })}
         {...(iconName &&
@@ -104,7 +105,6 @@ const DateInputComponent = ({
         type={typeValue}
         valueFormat={valueFormatValue}
         value={dateInputValue}
-        {...restTriggers}
         wrapperProps={{ "data-id": props.id }}
         onChange={handleChange}
         style={{}}
@@ -113,6 +113,10 @@ const DateInputComponent = ({
             position: "relative",
             ...pick(customStyle, rootStyleProps),
             height: "fit-content",
+            display: "flex",
+            gridColumn: "1/-1",
+            gridRow: "1/-1",
+            gridArea: "1 / 1 / -1 / -1",
           },
           input: {
             ...omit(customStyle, rootStyleProps),
@@ -125,17 +129,13 @@ const DateInputComponent = ({
           placeholder: {
             color: `${_placeholderColor}!important`,
           },
+          wrapper: {
+            width: "100%",
+            height: "100%",
+          },
         }}
-      >
-        <ChildrenWrapper>
-          {component.children && component.children.length > 0
-            ? component.children?.map((child) =>
-                renderTree(child, shareableContent),
-              )
-            : children?.toString()}
-        </ChildrenWrapper>
-      </MantineDatePickerInput>
-    </>
+      />
+    </Box>
   );
 };
 
