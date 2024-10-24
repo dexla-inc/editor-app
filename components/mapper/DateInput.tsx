@@ -122,6 +122,7 @@ const DateInputComponent = ({
             ...omit(customStyle, rootStyleProps),
             color,
             backgroundColor,
+            paddingLeft: "12px", // Configure this for theme
           },
           icon: {
             color,

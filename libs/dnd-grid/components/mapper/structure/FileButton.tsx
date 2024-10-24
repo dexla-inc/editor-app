@@ -23,6 +23,13 @@ export const jsonStructure = (props?: any): ComponentStructure => {
       },
       ...(rest || {}),
     },
+    states: {
+      hover: { color: "Primary.7" },
+      disabled: {
+        color: "Neutral.6",
+        textColor: "Neutral.9",
+      },
+    },
     blockDroppingChildrenInside: true,
   };
 };
