@@ -57,9 +57,8 @@ const TitleComponent = forwardRef(
         //   ...(style?.fontSize ? { fontSize: style.fontSize + "px" } : {}),
         // }}
       >
-        <ChildrenWrapper>
-          {isFontLoaded && String(childrenValue || "")}
-        </ChildrenWrapper>
+        {isFontLoaded && String(childrenValue || "")}
+        <ChildrenWrapper />
       </MantineTitle>
     );
   },

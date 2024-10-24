@@ -101,13 +101,12 @@ const FileUploadComponent = ({
     </Dropzone>
   ) : (
     <Box {...otherProps} {...otherTriggers} {...componentProps} style={style}>
-      <ChildrenWrapper>
-        {component.children && component.children.length > 0
-          ? component.children?.map((child) =>
-              renderTree(child, shareableContent),
-            )
-          : children}
-      </ChildrenWrapper>
+      {component.children && component.children.length > 0
+        ? component.children?.map((child) =>
+            renderTree(child, shareableContent),
+          )
+        : children}
+      <ChildrenWrapper />
     </Box>
   );
 };

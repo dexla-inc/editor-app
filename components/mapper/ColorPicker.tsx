@@ -69,7 +69,8 @@ const ColorPickerComponent = forwardRef<HTMLDivElement, Props>(
     return (
       <MantinePopover>
         <MantinePopover.Target>
-          <ChildrenWrapper>{targetcomponent}</ChildrenWrapper>
+          {targetcomponent}
+          <ChildrenWrapper />
         </MantinePopover.Target>
         <MantinePopover.Dropdown>
           <Stack>

@@ -132,9 +132,8 @@ const CountdownButtonComponent = forwardRef(
         }}
         ref={ref}
       >
-        <ChildrenWrapper>
-          {String(childrenValue)} {count > 0 ? ` ${count} ${durationUnit}` : ""}
-        </ChildrenWrapper>
+        {String(childrenValue)} {count > 0 ? ` ${count} ${durationUnit}` : ""}
+        <ChildrenWrapper />
       </MantineButton>
     );
   },

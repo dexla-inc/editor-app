@@ -66,17 +66,16 @@ const RadioComponent = forwardRef(
         value={value}
         label={undefined}
       >
-        <ChildrenWrapper>
-          <Group grow w="100%">
-            {component?.children?.map((child) =>
-              renderTree(child, {
-                ...shareableContent,
-                isInsideGroup: isPreviewMode,
-                value,
-              }),
-            )}
-          </Group>
-        </ChildrenWrapper>
+        <Group grow w="100%">
+          {component?.children?.map((child) =>
+            renderTree(child, {
+              ...shareableContent,
+              isInsideGroup: isPreviewMode,
+              value,
+            }),
+          )}
+        </Group>
+        <ChildrenWrapper />
       </MantineRadio.Group>
     );
   },

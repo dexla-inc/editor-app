@@ -9,7 +9,16 @@ import { forwardRef, memo } from "react";
 type Props = EditableComponentMapper & AccordionControlProps;
 
 const AccordionControlComponent = forwardRef(
-  ({ renderTree, shareableContent, component, ...props }: Props, ref) => {
+  (
+    {
+      renderTree,
+      shareableContent,
+      component,
+      grid: { ChildrenWrapper },
+      ...props
+    }: Props,
+    ref,
+  ) => {
     const { children, triggers, ...componentProps } = component.props as any;
 
     return (
@@ -24,6 +33,7 @@ const AccordionControlComponent = forwardRef(
               renderTree(child, shareableContent),
             )
           : children?.toString()}
+        <ChildrenWrapper />
       </MantineAccordion.Control>
     );
   },

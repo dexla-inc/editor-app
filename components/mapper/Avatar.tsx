@@ -39,13 +39,12 @@ const AvatarComponent = forwardRef(
             : undefined
         }
       >
-        <ChildrenWrapper>
-          {component.children && component.children.length > 0
-            ? component.children?.map((child) =>
-                renderTree(child, shareableContent),
-              )
-            : String(childrenValue)}
-        </ChildrenWrapper>
+        {component.children && component.children.length > 0
+          ? component.children?.map((child) =>
+              renderTree(child, shareableContent),
+            )
+          : String(childrenValue)}
+        <ChildrenWrapper />
       </MantineAvatar>
     );
   },

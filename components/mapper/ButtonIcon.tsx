@@ -59,9 +59,8 @@ const ButtonIconComponent = forwardRef(
         styles={{ root: DISABLED_HOVER }}
         {...triggers}
       >
-        <ChildrenWrapper>
-          <BaseIconComponent {...iconProps} />
-        </ChildrenWrapper>
+        <BaseIconComponent {...iconProps} />
+        <ChildrenWrapper />
       </MantineActionIcon>
     );
   },

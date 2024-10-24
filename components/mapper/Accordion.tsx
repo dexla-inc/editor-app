@@ -7,7 +7,17 @@ import { forwardRef, memo } from "react";
 type Props = EditableComponentMapper & AccordionProps;
 
 const AccordionComponent = forwardRef(
-  ({ renderTree, shareableContent, component, id, ...props }: Props, ref) => {
+  (
+    {
+      renderTree,
+      shareableContent,
+      component,
+      id,
+      grid: { ChildrenWrapper },
+      ...props
+    }: Props,
+    ref,
+  ) => {
     const { children, icon, triggers, ...componentProps } =
       component.props as any;
 
@@ -26,6 +36,7 @@ const AccordionComponent = forwardRef(
         styles={{ label: { padding: 0 } }}
       >
         {renderData({ renderTree })}
+        <ChildrenWrapper />
       </MantineAccordion>
     );
   },

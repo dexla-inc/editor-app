@@ -115,13 +115,12 @@ const NavLinkComponent = forwardRef(
           },
         }}
       >
-        <ChildrenWrapper>
-          {component.children &&
-            component.children.length > 0 &&
-            component.children?.map((child) =>
-              renderTree(child, shareableContent),
-            )}
-        </ChildrenWrapper>
+        {component.children &&
+          component.children.length > 0 &&
+          component.children?.map((child) =>
+            renderTree(child, shareableContent),
+          )}
+        <ChildrenWrapper />
       </MantineNavLink>
     );
   },

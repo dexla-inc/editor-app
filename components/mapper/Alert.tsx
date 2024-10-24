@@ -49,13 +49,12 @@ const AlertComponent = forwardRef(
           ...(isGridCss && mantineStyles),
         }}
       >
-        <ChildrenWrapper>
-          {component.children && component.children.length > 0
-            ? component.children?.map((child) =>
-                renderTree(child, shareableContent),
-              )
-            : childrenValue?.toString()}
-        </ChildrenWrapper>
+        {component.children && component.children.length > 0
+          ? component.children?.map((child) =>
+              renderTree(child, shareableContent),
+            )
+          : childrenValue?.toString()}
+        <ChildrenWrapper />
       </MantineAlert>
     );
   },

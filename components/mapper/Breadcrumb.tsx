@@ -28,13 +28,12 @@ const BreadcrumbComponent = forwardRef(
         {...componentProps}
         {...triggers}
       >
-        <ChildrenWrapper>
-          {component.children && component.children.length > 0
-            ? component.children?.map((child) =>
-                renderTree(child, shareableContent),
-              )
-            : children?.toString()}
-        </ChildrenWrapper>
+        {component.children && component.children.length > 0
+          ? component.children?.map((child) =>
+              renderTree(child, shareableContent),
+            )
+          : children?.toString()}
+        <ChildrenWrapper />
       </MantineBreadcrumbs>
     );
   },

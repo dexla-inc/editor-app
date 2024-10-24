@@ -64,26 +64,12 @@ const GridComponent = ({
   const gridStyling = useGridStyling({ component: props.component });
   const isPreviewMode = useEditorTreeStore(isPreviewModeSelector);
 
-  const ChildrenWrapper = ({ children }: { children: React.ReactNode }) => {
+  const ChildrenWrapper = () => {
     if (isPreviewMode) {
-      return <>{children}</>;
+      return <></>;
     }
 
-    return (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          width: "100%",
-          height: "100%",
-          gridArea: "1 / 1 / -1 / -1",
-        }}
-      >
-        {children}
-        <ResizeHandlers componentId={props.component.id} />
-      </div>
-    );
+    return <ResizeHandlers componentId={props.component.id} />;
   };
 
   return (

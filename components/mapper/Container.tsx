@@ -45,7 +45,8 @@ export const ContainerComponent = forwardRef<HTMLDivElement, Props>(
         {...componentProps}
         key={props.id}
       >
-        <ChildrenWrapper>{renderData({ renderTree })}</ChildrenWrapper>
+        {renderData({ renderTree })}
+        <ChildrenWrapper />
       </MantineFlex>
     );
   },

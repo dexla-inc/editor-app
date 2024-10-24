@@ -52,9 +52,8 @@ const TextComponent = forwardRef(
         ref={ref}
         style={customStyle}
       >
-        <ChildrenWrapper>
-          {!hideIfDataIsEmpty && isFontLoaded && String(childrenValue || "")}
-        </ChildrenWrapper>
+        {!hideIfDataIsEmpty && isFontLoaded && String(childrenValue || "")}
+        <ChildrenWrapper />
       </MantineText>
     );
   },

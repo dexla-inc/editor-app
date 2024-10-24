@@ -115,7 +115,8 @@ export const FileButtonComponent = forwardRef(
                 },
               }}
             >
-              <ChildrenWrapper>{nameValue}</ChildrenWrapper>
+              {nameValue}
+              <ChildrenWrapper />
             </Button>
           )}
         </MantineFileButton>

@@ -20,13 +20,12 @@ const MenuComponent = forwardRef(
 
     return (
       <MantineMenu ref={ref} {...props} {...componentProps}>
-        <ChildrenWrapper>
-          {component.children && component.children.length > 0
-            ? component.children?.map((child) =>
-                renderTree(child, shareableContent),
-              )
-            : children}
-        </ChildrenWrapper>
+        {component.children && component.children.length > 0
+          ? component.children?.map((child) =>
+              renderTree(child, shareableContent),
+            )
+          : children}
+        <ChildrenWrapper />
       </MantineMenu>
     );
   },

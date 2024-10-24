@@ -137,7 +137,8 @@ const FormComponent = forwardRef(
         {...otherTriggers}
         pos="relative"
       >
-        <ChildrenWrapper>{renderData({ renderTree })}</ChildrenWrapper>
+        {renderData({ renderTree })}
+        <ChildrenWrapper />
         <LoadingOverlay visible={loading} radius="sm" text={loaderText} />
       </MantineFlex>
     );

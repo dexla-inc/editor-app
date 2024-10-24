@@ -32,13 +32,12 @@ const NavbarComponent = forwardRef(
 
     return (
       <Box display="grid" {...props} {...componentProps} {...triggers}>
-        <ChildrenWrapper>
-          {component.children &&
-            component.children.length > 0 &&
-            component.children?.map((child) =>
-              renderTree(child, shareableContent),
-            )}
-        </ChildrenWrapper>
+        {component.children &&
+          component.children.length > 0 &&
+          component.children?.map((child) =>
+            renderTree(child, shareableContent),
+          )}
+        <ChildrenWrapper />
       </Box>
     );
   },

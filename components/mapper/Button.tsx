@@ -97,11 +97,13 @@ const ButtonComponent = forwardRef(
             display: "flex",
             width: "100%",
             height: "100%",
+            justifyContent: "center",
           },
         }}
         ref={ref}
       >
-        <ChildrenWrapper>{String(childrenValue)}</ChildrenWrapper>
+        {String(childrenValue)}
+        <ChildrenWrapper />
       </MantineButton>
     );
   },

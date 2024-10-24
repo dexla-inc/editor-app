@@ -53,7 +53,8 @@ export const CardComponent = forwardRef(
         {...triggers}
         {...componentProps}
       >
-        <ChildrenWrapper>{renderData({ renderTree })}</ChildrenWrapper>
+        {renderData({ renderTree })}
+        <ChildrenWrapper />
       </MantineFlex>
     );
   },
