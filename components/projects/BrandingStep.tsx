@@ -11,7 +11,6 @@ import {
   NextStepperClickEvent,
   PreviousStepperClickEvent,
   fonts,
-  isWebsite,
 } from "@/types/dashboardTypes";
 import {
   convertThemeColors,
@@ -21,6 +20,7 @@ import { convertToBase64, safeJsonParse } from "@/utils/common";
 import { componentMapper } from "@/utils/componentMapper";
 import { ICON_SIZE } from "@/utils/config";
 import { Component } from "@/utils/editor";
+import { isWebsite } from "@/utils/validation";
 import {
   Anchor,
   Button,

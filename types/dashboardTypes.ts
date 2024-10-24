@@ -49,20 +49,6 @@ export type StepperState = {
   setActiveStep: React.Dispatch<React.SetStateAction<number>>;
 };
 
-export function isWebsite(value: string): boolean {
-  // This regex checks for optional 'http://', 'https://', and 'www.', followed by
-  // any non-space characters (which should be the domain name plus TLD), at least
-  // one dot, and then more non-space characters (which should be the TLD).
-  // It also enforces that the string does not contain spaces and ends with a TLD.
-  const pattern =
-    /^(?:(?:http:\/\/)|(?:https:\/\/))?(?:www\.)?[\w\-_]+(\.[\w\-_]+)+.*$/i;
-  return pattern.test(value);
-}
-
-export function isSwaggerFile(url: string) {
-  return url.endsWith("json") || url.endsWith("yaml");
-}
-
 type DataSourceSettingsProps = {
   dataSource: DataSourceResponse | undefined;
   setDataSource?: (dataSource: DataSourceResponse) => void;
