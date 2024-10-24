@@ -15,6 +15,7 @@ import {
   NumberInput as MantineNumberInput,
   NumberInputProps,
   TextInputProps,
+  Box,
 } from "@mantine/core";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
@@ -24,7 +25,16 @@ import { useShallow } from "zustand/react/shallow";
 type Props = EditableComponentMapper & NumberInputProps & TextInputProps;
 
 const InputComponent = forwardRef(
-  ({ component, id, shareableContent, ...props }: Props, ref) => {
+  (
+    {
+      component,
+      id,
+      shareableContent,
+      grid: { ChildrenWrapper },
+      ...props
+    }: Props,
+    ref,
+  ) => {
     const isPreviewMode = useEditorTreeStore(
       useShallow((state) => state.isPreviewMode || state.isLive),
     );
@@ -201,87 +211,93 @@ const InputComponent = forwardRef(
               >
                 +
               </ActionIcon>
+              <ChildrenWrapper />
             </Group>
           </>
         ) : type === "number" ? (
-          <MantineNumberInput
-            {...props}
-            {...componentProps}
-            ref={ref}
-            autoComplete="off"
-            id={component.id}
-            icon={iconName ? <Icon name={iconName} /> : null}
-            style={{}}
-            styles={{
-              root: {
-                position: "relative",
-                ...pick(customStyle, rootStyleProps),
-                height: "fit-content",
-              },
-              input: { ...customStyle, minHeight: "auto" },
-            }}
-            min={0}
-            value={parseToNumber(value)}
-            {...restTriggers}
-            onChange={handleChange}
-            rightSection={loading ? <InputLoader /> : null}
-            label={undefined}
-            wrapperProps={{ "data-id": id }}
-            onKeyDown={onKeyDown}
-          />
+          <Box unstyled style={props.style as any} {...props} {...restTriggers}>
+            <MantineNumberInput
+              {...componentProps}
+              ref={ref}
+              autoComplete="off"
+              id={component.id}
+              icon={iconName ? <Icon name={iconName} /> : null}
+              style={{}}
+              styles={{
+                root: {
+                  position: "relative",
+                  ...pick(customStyle, rootStyleProps),
+                  height: "fit-content",
+                },
+                input: { ...customStyle, minHeight: "auto" },
+              }}
+              min={0}
+              value={parseToNumber(value)}
+              onChange={handleChange}
+              rightSection={loading ? <InputLoader /> : null}
+              label={undefined}
+              wrapperProps={{ "data-id": id }}
+              onKeyDown={onKeyDown}
+            />
+            <ChildrenWrapper />
+          </Box>
         ) : type === "password" ? (
-          <PasswordInput
-            componentId={component?.id!}
-            ref={ref}
-            value={value?.toString()}
-            isPreviewMode={isPreviewMode}
-            triggers={restTriggers}
-            onChange={handleChange}
-            displayRequirements={displayRequirements}
-            testParameters={{
-              passwordRange,
-              passwordNumber,
-              passwordLower,
-              passwordUpper,
-              passwordSpecial,
-            }}
-            iconComponent={Icon}
-            iconName={iconName}
-            color={color}
-            customStyle={customStyle}
-            props={props}
-            componentProps={componentProps}
-            rootStyleProps={rootStyleProps}
-          />
+          <Box unstyled style={props.style as any} {...props} {...restTriggers}>
+            <PasswordInput
+              componentId={component?.id!}
+              ref={ref}
+              value={value?.toString()}
+              isPreviewMode={isPreviewMode}
+              triggers={restTriggers}
+              onChange={handleChange}
+              displayRequirements={displayRequirements}
+              testParameters={{
+                passwordRange,
+                passwordNumber,
+                passwordLower,
+                passwordUpper,
+                passwordSpecial,
+              }}
+              iconComponent={Icon}
+              iconName={iconName}
+              color={color}
+              customStyle={customStyle}
+              props={props}
+              componentProps={componentProps}
+              rootStyleProps={rootStyleProps}
+            />
+            <ChildrenWrapper />
+          </Box>
         ) : (
-          <MantineInput
-            {...props}
-            {...componentProps}
-            ref={ref}
-            icon={iconName ? <Icon name={iconName} /> : null}
-            style={{}}
-            styles={{
-              root: {
-                position: "relative",
-                ...pick(customStyle, rootStyleProps),
-                height: "fit-content",
-              },
-              input: { ...customStyle, minHeight: "auto" },
-            }}
-            value={value}
-            {...restTriggers}
-            onChange={handleChange}
-            onKeyDown={onKeyDown}
-            rightSection={
-              loading ? (
-                <InputLoader />
-              ) : isClearable ? (
-                <Icon onClick={clearInput} name="IconX" />
-              ) : null
-            }
-            label={undefined}
-            wrapperProps={{ "data-id": id }}
-          />
+          <Box unstyled style={props.style as any} {...props} {...restTriggers}>
+            <MantineInput
+              {...componentProps}
+              ref={ref}
+              icon={iconName ? <Icon name={iconName} /> : null}
+              style={{}}
+              styles={{
+                root: {
+                  position: "relative",
+                  ...pick(customStyle, rootStyleProps),
+                  height: "fit-content",
+                },
+                input: { ...customStyle, minHeight: "auto" },
+              }}
+              value={value}
+              onChange={handleChange}
+              onKeyDown={onKeyDown}
+              rightSection={
+                loading ? (
+                  <InputLoader />
+                ) : isClearable ? (
+                  <Icon onClick={clearInput} name="IconX" />
+                ) : null
+              }
+              label={undefined}
+              wrapperProps={{ "data-id": id }}
+            />
+            <ChildrenWrapper />
+          </Box>
         )}
       </>
     );
