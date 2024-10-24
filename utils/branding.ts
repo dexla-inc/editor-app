@@ -203,7 +203,7 @@ const DISABLED_HOVER = { "&:hover": { backgroundColor: "none" } };
 const scrollbarStyles = {
   overflow: "scroll",
   scrollbarWidth: "thin",
-  scrollbarColor: "transparent transparent",
+  scrollbarColor: "#505051 #2d2e33",
   msOverflowStyle: "-ms-autohiding-scrollbar",
   "::-webkit-scrollbar": { width: "5px", borderRadius: "10px", height: "5px" },
   "::-webkit-scrollbar-thumb": {

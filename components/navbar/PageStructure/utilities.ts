@@ -1,7 +1,6 @@
 import type { UniqueIdentifier } from "@dnd-kit/core";
 import type { FlattenedItem, TreeItem, TreeItems } from "./types";
-import { Component, ComponentStructure } from "@/utils/editor";
-import { useEditorTreeStore } from "@/stores/editorTree";
+import { ComponentStructure } from "@/utils/editor";
 import crawl from "tree-crawl";
 import { arrayMove } from "@dnd-kit/sortable";
 
