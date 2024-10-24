@@ -121,7 +121,7 @@ const FormComponent = forwardRef(
       component,
       shareableContent,
     });
-
+    // console.log({ style, otherProps, componentProps });
     return (
       <MantineFlex
         ref={ref}

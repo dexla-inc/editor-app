@@ -11,6 +11,7 @@ import ErrorBoundary from "@/libs/dnd-grid/components/ErrorBoundary";
 import { useDndGridStore } from "@/libs/dnd-grid/stores/dndGridStore";
 import { useDnd } from "../hooks/useDnd";
 import { TOTAL_COLUMNS_WITH_MULTIPLIER } from "../types/constants";
+import { isPreviewModeSelector } from "@/utils/componentSelectors";
 
 type Props = {
   projectId: string;
@@ -24,6 +25,7 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
   const isComponentSelected = useEditorTreeStore(
     (state) => state.selectedComponentIds?.length,
   );
+  const isPreviewMode = useEditorTreeStore(isPreviewModeSelector);
 
   const setHoverComponentId = useEditorStore(
     (state) => state.setHoverComponentId,
@@ -45,10 +47,12 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
             gridTemplateColumns: `repeat(${TOTAL_COLUMNS_WITH_MULTIPLIER}, 1fr)`,
             minHeight: "400px",
             backgroundSize: `calc(100% / ${TOTAL_COLUMNS_WITH_MULTIPLIER}) 10px`,
-            backgroundImage: `
+            ...(!isPreviewMode && {
+              backgroundImage: `
             linear-gradient(to right, #e5e7eb 1px, transparent 1px),
             linear-gradient(to bottom, #e5e7eb 1px, transparent 1px)
           `,
+            }),
           }}
           draggable={false}
           onDrop={onDrop}
