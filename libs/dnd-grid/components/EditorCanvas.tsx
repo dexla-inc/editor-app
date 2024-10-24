@@ -85,9 +85,10 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
     });
   };
 
-  if ((editorTree?.root?.children ?? [])?.length === 0) {
-    return null;
-  }
+  // TODO: Check if this is needed
+  // if ((editorTree?.root?.children ?? [])?.length === 0) {
+  //   return null;
+  // }
 
   return (
     <IFrame projectId={projectId}>
