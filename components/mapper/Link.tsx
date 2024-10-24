@@ -40,7 +40,9 @@ const LinkComponent = forwardRef(
         ref={ref}
         style={customStyle}
       >
-        {String(childrenValue)}
+        <div style={{ gridArea: "1 / 1 / -1 / -1" }}>
+          {String(childrenValue)}
+        </div>
         <ChildrenWrapper />
       </MantineAnchor>
     );
