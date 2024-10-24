@@ -52,7 +52,9 @@ const TextComponent = forwardRef(
         ref={ref}
         style={customStyle}
       >
-        {!hideIfDataIsEmpty && isFontLoaded && String(childrenValue || "")}
+        <div style={{ gridArea: "1 / 1 / -1 / -1" }}>
+          {!hideIfDataIsEmpty && isFontLoaded && String(childrenValue || "")}
+        </div>
         <ChildrenWrapper />
       </MantineText>
     );

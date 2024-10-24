@@ -57,7 +57,9 @@ const TitleComponent = forwardRef(
         //   ...(style?.fontSize ? { fontSize: style.fontSize + "px" } : {}),
         // }}
       >
-        {isFontLoaded && String(childrenValue || "")}
+        <div style={{ gridArea: "1 / 1 / -1 / -1" }}>
+          {isFontLoaded && String(childrenValue || "")}
+        </div>
         <ChildrenWrapper />
       </MantineTitle>
     );
