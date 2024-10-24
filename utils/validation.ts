@@ -17,7 +17,7 @@ export function isWebsite(value: string): boolean {
 }
 
 export function isSwaggerFile(url: string) {
-  return url.endsWith("json") || url.endsWith("yaml");
+  return url.endsWith("json") || url.endsWith("yaml") || url.endsWith("yml");
 }
 
 export function validateBaseUrl(value: string | undefined) {

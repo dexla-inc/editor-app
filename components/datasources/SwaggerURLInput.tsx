@@ -1,5 +1,6 @@
 import { DataSourceParams } from "@/requests/datasources/types";
-import { isSwaggerFile, isWebsite } from "@/types/dashboardTypes";
+import { isSwaggerFile } from "@/utils/validation";
+import { isWebsite } from "@/utils/validation";
 import { Loader, TextInput } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 
@@ -9,7 +10,7 @@ export function validateSwaggerUrl(value: string | undefined) {
   } else if (!isWebsite(value)) {
     return "Swagger URL must be valid and preferably start with https://";
   } else if (!isSwaggerFile(value)) {
-    return "Swagger URL must end with .json or .yaml";
+    return "Swagger URL must end with .json, .yaml, or .yml";
   } else {
     return null;
   }

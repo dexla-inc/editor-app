@@ -4,7 +4,7 @@ import {
   DataSourceParams,
   EnvironmentTypes,
 } from "@/requests/datasources/types";
-import { isWebsite } from "@/types/dashboardTypes";
+import { isWebsite } from "@/utils/validation";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { Select, TextInput } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
