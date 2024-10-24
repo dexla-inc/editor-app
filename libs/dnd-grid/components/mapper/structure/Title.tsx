@@ -4,7 +4,7 @@ import merge from "lodash.merge";
 import { requiredModifiers } from "@/utils/modifiers";
 
 export const jsonStructure = (props?: any): ComponentStructure => {
-  const { order = 1, ...rest } = props.props || {};
+  const { order = 1 } = props.props || {};
 
   const defaultTextValues = requiredModifiers.text;
 
@@ -18,7 +18,7 @@ export const jsonStructure = (props?: any): ComponentStructure => {
       color: "Black.6",
       order: 1,
       style: {
-        gridColumn: "1/12",
+        gridColumn: "1/17",
         gridRow: "1/5",
       },
     }),
