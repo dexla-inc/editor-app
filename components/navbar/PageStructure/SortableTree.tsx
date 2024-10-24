@@ -45,7 +45,6 @@ import {
 import { useEditorStore } from "@/stores/editor";
 import { useShallow } from "zustand/react/shallow";
 import { usePrevious } from "@mantine/hooks";
-import { ScrollArea } from "@mantine/core";
 
 const measuring = {
   droppable: {
