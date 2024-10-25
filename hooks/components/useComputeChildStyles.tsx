@@ -101,7 +101,7 @@ export const useComputeChildStyles = ({
 
   handleBackground(component, childStyles);
   const hasBorder = componentHasBorder(childStyles);
-  console.log(component.description, outline);
+
   return {
     style: childStyles,
     sx: {

@@ -141,7 +141,7 @@ export const useResize = () => {
   const handleResize = useCallback(
     (e: MouseEvent) => {
       if (!isResizing) return;
-      console.log("1234");
+
       const { selectedComponentIds } = useEditorTreeStore.getState();
       const selectedComponentId = selectedComponentIds?.at(0);
       if (!selectedComponentId) return;

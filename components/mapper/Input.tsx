@@ -148,7 +148,7 @@ const InputComponent = forwardRef(
         e.preventDefault();
       }
     };
-
+    console.log("INPUT HERE", type, props);
     return (
       <>
         {type === "numberRange" ? (
@@ -158,64 +158,72 @@ const InputComponent = forwardRef(
               {...props}
               style={{
                 ...customStyle,
-                overflow: "hidden",
+                overflow: "visible",
                 position: "relative",
               }}
+              id={id}
+              {...restTriggers}
             >
-              <ActionIcon
-                size={customStyle.height}
-                variant="transparent"
-                style={{ border: "none" }}
-                onClick={decreaseNumber}
-              >
-                –
-              </ActionIcon>
+              <Box unstyled style={{ gridArea: "1/1/-1/-1" }}>
+                <ActionIcon
+                  size={customStyle.height}
+                  variant="transparent"
+                  style={{ border: "none" }}
+                  onClick={decreaseNumber}
+                >
+                  –
+                </ActionIcon>
 
-              <MantineNumberInput
-                hideControls
-                type="number"
-                autoComplete="off"
-                id={component.id}
-                {...componentProps}
-                style={{}}
-                styles={{
-                  root: {
-                    display: "inline",
-                    flex: "1 !important",
-                    width: "min-content",
-                    height: customStyle.height,
-                  },
-                  wrapper: { height: "inherit" },
-                  input: {
-                    border: "none",
-                    textAlign: "center",
-                    backgroundColor,
-                    color,
-                    padding: "0px",
-                    minHeight: "auto",
-                    height: "inherit",
-                  },
-                }}
-                value={parseToNumber(value)}
-                {...restTriggers}
-                onChange={handleChange}
-                label={undefined}
-                wrapperProps={{ "data-id": id }}
-              />
+                <MantineNumberInput
+                  hideControls
+                  type="number"
+                  autoComplete="off"
+                  id={component.id}
+                  {...componentProps}
+                  style={{}}
+                  styles={{
+                    root: {
+                      display: "inline",
+                      flex: "1 !important",
+                      width: "min-content",
+                      height: customStyle.height,
+                    },
+                    wrapper: { height: "inherit" },
+                    input: {
+                      border: "none",
+                      textAlign: "center",
+                      backgroundColor,
+                      color,
+                      padding: "0px",
+                      minHeight: "auto",
+                      height: "inherit",
+                    },
+                  }}
+                  value={parseToNumber(value)}
+                  onChange={handleChange}
+                  label={undefined}
+                />
 
-              <ActionIcon
-                size={customStyle.height}
-                variant="transparent"
-                style={{ border: "none" }}
-                onClick={increaseNumber}
-              >
-                +
-              </ActionIcon>
+                <ActionIcon
+                  size={customStyle.height}
+                  variant="transparent"
+                  style={{ border: "none" }}
+                  onClick={increaseNumber}
+                >
+                  +
+                </ActionIcon>
+              </Box>
               <ChildrenWrapper />
             </Group>
           </>
         ) : type === "number" ? (
-          <Box unstyled style={props.style as any} {...props} {...restTriggers}>
+          <Box
+            unstyled
+            style={props.style as any}
+            {...props}
+            {...restTriggers}
+            id={id}
+          >
             <MantineNumberInput
               {...componentProps}
               ref={ref}
@@ -227,9 +235,20 @@ const InputComponent = forwardRef(
                 root: {
                   position: "relative",
                   ...pick(customStyle, rootStyleProps),
-                  height: "fit-content",
+                  height: "100%",
+                  gridArea: "1/1/-1/-1",
+                  display: "flex",
                 },
-                input: { ...customStyle, minHeight: "auto" },
+                wrapper: {
+                  display: "flex",
+                  width: "100%",
+                },
+                input: {
+                  ...customStyle,
+                  minHeight: "100%",
+                  display: "flex",
+                  paddingLeft: "10px",
+                },
               }}
               min={0}
               value={parseToNumber(value)}
@@ -242,7 +261,13 @@ const InputComponent = forwardRef(
             <ChildrenWrapper />
           </Box>
         ) : type === "password" ? (
-          <Box unstyled style={props.style as any} {...props} {...restTriggers}>
+          <Box
+            unstyled
+            style={props.style as any}
+            {...props}
+            {...restTriggers}
+            id={id}
+          >
             <PasswordInput
               componentId={component?.id!}
               ref={ref}
@@ -269,7 +294,13 @@ const InputComponent = forwardRef(
             <ChildrenWrapper />
           </Box>
         ) : (
-          <Box unstyled style={props.style as any} {...props} {...restTriggers}>
+          <Box
+            unstyled
+            style={props.style as any}
+            {...props}
+            {...restTriggers}
+            id={id}
+          >
             <MantineInput
               {...componentProps}
               ref={ref}
@@ -279,9 +310,20 @@ const InputComponent = forwardRef(
                 root: {
                   position: "relative",
                   ...pick(customStyle, rootStyleProps),
-                  height: "fit-content",
+                  height: "100%",
+                  gridArea: "1/1/-1/-1",
+                  display: "flex",
                 },
-                input: { ...customStyle, minHeight: "auto" },
+                wrapper: {
+                  display: "flex",
+                  width: "100%",
+                },
+                input: {
+                  ...customStyle,
+                  minHeight: "100%",
+                  display: "flex",
+                  paddingLeft: "10px",
+                },
               }}
               value={value}
               onChange={handleChange}
