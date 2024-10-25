@@ -15,12 +15,13 @@ const ruleFunctions: { [key: string]: RuleFunction<boolean> } = {
     location === safeJsonParse(comparingValue),
   notEqualTo: ({ location, comparingValue }) =>
     location !== safeJsonParse(comparingValue),
-  contains: ({ location, comparingValue }) => location.includes(comparingValue),
+  contains: ({ location, comparingValue }) =>
+    location?.includes(comparingValue),
   notContains: ({ location, comparingValue }) =>
-    !location.includes(comparingValue),
+    !location?.includes(comparingValue),
   equalToMultiple: ({ location, comparingValue }) => {
     if (Array.isArray(location)) {
-      return location.some((locItem: any) =>
+      return location?.some((locItem: any) =>
         comparingValue?.some((item: any) => safeJsonParse(item) === locItem),
       );
     }
@@ -30,7 +31,7 @@ const ruleFunctions: { [key: string]: RuleFunction<boolean> } = {
   },
   notEqualToMultiple: ({ location, comparingValue }) => {
     if (Array.isArray(location)) {
-      return location.every((locItem: any) =>
+      return location?.every((locItem: any) =>
         comparingValue?.every((item: any) => safeJsonParse(item) !== locItem),
       );
     }
