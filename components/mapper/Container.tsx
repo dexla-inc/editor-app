@@ -35,7 +35,7 @@ export const ContainerComponent = forwardRef<HTMLDivElement, Props>(
       component,
       shareableContent,
     });
-    // console.log("container ->>>", { props });
+
     return (
       <MantineFlex
         ref={ref}

@@ -10,7 +10,13 @@ type Props = EditableComponentMapper & SwitchProps;
 
 const SwitchComponent = forwardRef(
   (
-    { component, shareableContent, grid: { ChildrenWrapper }, ...props }: Props,
+    {
+      component,
+      shareableContent,
+      renderTree,
+      grid: { ChildrenWrapper },
+      ...props
+    }: Props,
     ref,
   ) => {
     const isPreviewMode = useEditorTreeStore(
@@ -37,10 +43,13 @@ const SwitchComponent = forwardRef(
       triggers?.onChange?.(e);
     };
 
+    console.log("======>", component.children);
+
     return (
       <Box unstyled style={props.style as any} {...props} {...triggers}>
         <MantineSwitch
           ref={ref}
+          {...props}
           {...componentProps}
           wrapperProps={{ "data-id": component.id }}
           label={undefined}
@@ -48,6 +57,11 @@ const SwitchComponent = forwardRef(
           checked={Boolean(value)}
           value={optionValue}
         />
+        {component.children && component.children.length > 0
+          ? component.children?.map((child) =>
+              renderTree(child, shareableContent),
+            )
+          : String()}
         <ChildrenWrapper />
       </Box>
     );

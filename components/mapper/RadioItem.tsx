@@ -2,6 +2,7 @@ import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { EditableComponentMapper } from "@/utils/editor";
 import {
+  Box,
   Radio as MantineRadio,
   RadioProps as MantineRadioProps,
 } from "@mantine/core";
@@ -16,7 +17,16 @@ interface RadioProps extends MantineRadioProps {
 type Props = EditableComponentMapper & RadioProps;
 
 const RadioItemComponent = forwardRef<HTMLInputElement, Props>(
-  ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
+  (
+    {
+      renderTree,
+      component,
+      shareableContent,
+      grid: { ChildrenWrapper },
+      ...props
+    }: Props,
+    ref,
+  ) => {
     const isPreviewMode = useEditorTreeStore(
       useShallow((state) => state.isPreviewMode || state.isLive),
     );
@@ -32,33 +42,42 @@ const RadioItemComponent = forwardRef<HTMLInputElement, Props>(
     const checked = parentValue === String(value);
 
     return (
-      <MantineRadio
-        ref={ref}
+      <Box
+        unstyled
+        style={props.style as any}
         {...props}
-        {...componentProps}
         {...triggers}
-        {...(!isPreviewMode && { wrapperProps: { "data-id": component.id } })}
-        label={
-          <div {...(isPreviewMode && { id: component.id })} {...triggers}>
-            {component.children?.map((child) =>
-              renderTree(child, {
-                ...shareableContent,
-                ...(checked && {
-                  parentState: "checked",
+        id={component.id}
+      >
+        <MantineRadio
+          ref={ref}
+          {...componentProps}
+          label={
+            <div {...(isPreviewMode && { id: component.id })} {...triggers}>
+              {component.children?.map((child) =>
+                renderTree(child, {
+                  ...shareableContent,
+                  ...(checked && {
+                    parentState: "checked",
+                  }),
                 }),
-              }),
-            )}
-          </div>
-        }
-        value={value}
-        styles={{
-          inner: { display: "none" },
-          label: {
-            padding: 0,
-          },
-          labelWrapper: { width: "100%" },
-        }}
-      />
+              )}
+            </div>
+          }
+          value={value}
+          styles={{
+            root: {
+              gridArea: "1/1/-1/-1",
+            },
+            inner: { display: "none" },
+            label: {
+              padding: 0,
+            },
+            labelWrapper: { width: "100%" },
+          }}
+        />
+        <ChildrenWrapper />
+      </Box>
     );
   },
 );

@@ -148,7 +148,7 @@ const InputComponent = forwardRef(
         e.preventDefault();
       }
     };
-    console.log("INPUT HERE", type, props);
+
     return (
       <>
         {type === "numberRange" ? (
