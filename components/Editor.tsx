@@ -68,7 +68,7 @@ const Editor = ({ projectId, pageId, cssType }: Props) => {
     setCurrentUser(user);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
-  console.log(_cssType);
+
   return (
     <>
       <Shell pos="relative" projectId={projectId}>
