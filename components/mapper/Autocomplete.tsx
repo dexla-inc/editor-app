@@ -154,7 +154,10 @@ const AutocompleteComponent = forwardRef(
               "minWidth",
             ]),
           },
-          input: customStyle,
+          input: {
+            ...customStyle,
+            paddingLeft: "12px",
+          },
         }}
         withinPortal={false}
         data={data}
