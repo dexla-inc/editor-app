@@ -7,14 +7,26 @@ export const jsonStructure = (props?: any): any => {
     id: nanoid(),
     name: "Button",
     description: "Button",
-    blockDroppingChildrenInside: true,
     props: {
-      bg: "bg-blue-500",
-      textColor: "text-white",
+      children: value ?? "Button",
+      type: "button",
+      variant: "filled",
+      icon: "",
+      color: color ?? "Primary.6",
+      textColor: textColor ?? "PrimaryText.6",
       style: {
         gridColumn: "1/12",
         gridRow: "1/4",
       },
+      ...(rest || {}),
     },
+    states: {
+      hover: { color: "Primary.7" },
+      disabled: {
+        color: "Neutral.6",
+        textColor: "Neutral.9",
+      },
+    },
+    blockDroppingChildrenInside: true,
   };
 };

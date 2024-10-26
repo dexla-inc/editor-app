@@ -8,7 +8,16 @@ import { forwardRef, memo } from "react";
 type Props = EditableComponentMapper & AvatarProps;
 
 const AvatarComponent = forwardRef(
-  ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
+  (
+    {
+      renderTree,
+      component,
+      shareableContent,
+      grid: { ChildrenWrapper, isGridCss },
+      ...props
+    }: Props,
+    ref,
+  ) => {
     const { triggers, data, size, ...componentProps } = component.props as any;
     const { children: childrenValue, src: srcValue } = component.onLoad;
 
@@ -23,13 +32,19 @@ const AvatarComponent = forwardRef(
         {...componentProps}
         {...triggers}
         src={srcValue}
-        styles={customStyle}
+        style={customStyle}
+        styles={
+          isGridCss
+            ? { placeholder: { display: "grid", gridArea: "1/1/-1/-1" } }
+            : undefined
+        }
       >
         {component.children && component.children.length > 0
           ? component.children?.map((child) =>
               renderTree(child, shareableContent),
             )
           : String(childrenValue)}
+        <ChildrenWrapper />
       </MantineAvatar>
     );
   },

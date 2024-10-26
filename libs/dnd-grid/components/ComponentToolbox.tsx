@@ -124,7 +124,7 @@ const ComponentToolbox = () => {
           marginRight: "2px",
         }}
       >
-        {id}
+        {id} - {component.description}
       </div>
       {rightIcons.map(({ Icon, label, onClick }) => (
         <Group

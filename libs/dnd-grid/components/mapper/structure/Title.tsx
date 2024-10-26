@@ -16,11 +16,12 @@ export const jsonStructure = (props?: any): ComponentStructure => {
     props: merge({}, defaultTextValues, {
       children: "New Title",
       color: "Black.6",
-      order: 1,
+      order: order,
       style: {
-        gridColumn: "1/7",
+        gridColumn: "1/17",
         gridRow: "1/5",
       },
+      ...(rest || {}),
     }),
     blockDroppingChildrenInside: true,
   };

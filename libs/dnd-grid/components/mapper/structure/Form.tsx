@@ -1,6 +1,7 @@
 import { ComponentStructure } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { nanoid } from "nanoid";
+import { IDENTIFIER } from "@/utils/branding";
 
 export const jsonStructure = (props?: any): ComponentStructure => {
   const { style: propsStyle, ...rest } = props?.props || {};
@@ -8,12 +9,9 @@ export const jsonStructure = (props?: any): ComponentStructure => {
   const { style: defaultStyle, ...restProps } = requiredModifiers.layout;
   const style = {
     ...propsStyle,
-    ...defaultStyle,
-    paddingLeft: "0px",
-    paddingRight: "0px",
-    marginBottom: "0px",
+    ...IDENTIFIER,
     gridColumn: "1/30",
-    gridRow: "1/30",
+    gridRow: "1/10",
   };
 
   return {

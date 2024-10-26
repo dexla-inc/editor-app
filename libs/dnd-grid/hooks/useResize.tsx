@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { useDndGridStore } from "@/libs/dnd-grid/stores/dndGridStore";
-import { getAllIds, updateComponentSize } from "@/libs/dnd-grid/utils/editor";
+import { getAllIds } from "@/libs/dnd-grid/utils/editor";
 import { checkOverlap } from "@/libs/dnd-grid/utils/engines/overlap";
 import { getGridCoordinates } from "@/libs/dnd-grid/utils/engines/position";
 import { useEditorStore } from "@/stores/editor";
@@ -203,18 +203,23 @@ export const useResize = () => {
         tree: editorTree,
         setTree: setComponents,
         selectedComponentIds,
+        updateTreeComponentAttrs,
       } = useEditorTreeStore.getState();
       const selectedComponentId = selectedComponentIds?.at(0);
 
       if (!selectedComponentId) return;
 
-      updateComponentSize(
-        editorTree.root,
-        selectedComponentId,
-        lastValidGridCoords.current.gridColumn,
-        lastValidGridCoords.current.gridRow,
-      );
-      setComponents(editorTree);
+      updateTreeComponentAttrs({
+        componentIds: [selectedComponentId],
+        attrs: {
+          props: {
+            style: {
+              gridColumn: lastValidGridCoords.current.gridColumn,
+              gridRow: lastValidGridCoords.current.gridRow,
+            },
+          },
+        },
+      });
       setIsInteracting(false);
     }
   }, [isResizing]);

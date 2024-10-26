@@ -16,7 +16,16 @@ import { useRenderData } from "@/hooks/components/useRenderData";
 type Props = EditableComponentMapper & FlexProps;
 
 const FormComponent = forwardRef(
-  ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
+  (
+    {
+      renderTree,
+      component,
+      shareableContent,
+      grid: { ChildrenWrapper },
+      ...props
+    }: Props,
+    ref,
+  ) => {
     const isPreviewMode = useEditorTreeStore(
       useShallow((state) => state.isPreviewMode || state.isLive),
     );
@@ -112,7 +121,7 @@ const FormComponent = forwardRef(
       component,
       shareableContent,
     });
-
+    // console.log({ style, otherProps, componentProps });
     return (
       <MantineFlex
         ref={ref}
@@ -129,6 +138,7 @@ const FormComponent = forwardRef(
         pos="relative"
       >
         {renderData({ renderTree })}
+        <ChildrenWrapper />
         <LoadingOverlay visible={loading} radius="sm" text={loaderText} />
       </MantineFlex>
     );

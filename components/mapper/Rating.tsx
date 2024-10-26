@@ -1,6 +1,6 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { EditableComponentMapper } from "@/utils/editor";
-import { Rating as MantineRating, RatingProps } from "@mantine/core";
+import { Box, Rating as MantineRating, RatingProps } from "@mantine/core";
 import { forwardRef, memo } from "react";
 import { useInputValue } from "@/hooks/components/useInputValue";
 import { useEditorTreeStore } from "@/stores/editorTree";
@@ -9,7 +9,10 @@ import { useShallow } from "zustand/react/shallow";
 type Props = EditableComponentMapper & RatingProps;
 
 const RatingComponent = forwardRef(
-  ({ component, shareableContent, ...props }: Props, ref) => {
+  (
+    { component, shareableContent, grid: { ChildrenWrapper }, ...props }: Props,
+    ref,
+  ) => {
     const isPreviewMode = useEditorTreeStore(
       useShallow((state) => state.isPreviewMode || state.isLive),
     );
@@ -32,16 +35,25 @@ const RatingComponent = forwardRef(
     };
 
     return (
-      <MantineRating
-        ref={ref}
-        {...props}
-        {...componentProps}
-        {...triggers}
-        onChange={handleInputChange}
-        value={value}
-        data-id={props.id}
-        readOnly={false}
-      />
+      <Box unstyled style={props.style as any} {...props} {...triggers}>
+        <MantineRating
+          ref={ref}
+          {...componentProps}
+          onChange={handleInputChange}
+          value={value}
+          data-id={props.id}
+          readOnly={false}
+          styles={{
+            root: {
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              gridArea: "1 / 1 / -1 / -1",
+            },
+          }}
+        />
+        <ChildrenWrapper />
+      </Box>
     );
   },
 );

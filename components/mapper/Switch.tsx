@@ -2,14 +2,23 @@ import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useInputValue } from "@/hooks/components/useInputValue";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { EditableComponentMapper } from "@/utils/editor";
-import { Switch as MantineSwitch, SwitchProps } from "@mantine/core";
+import { Box, Switch as MantineSwitch, SwitchProps } from "@mantine/core";
 import { ChangeEvent, forwardRef, memo } from "react";
 import { useShallow } from "zustand/react/shallow";
 
 type Props = EditableComponentMapper & SwitchProps;
 
 const SwitchComponent = forwardRef(
-  ({ component, shareableContent, ...props }: Props, ref) => {
+  (
+    {
+      component,
+      shareableContent,
+      renderTree,
+      grid: { ChildrenWrapper },
+      ...props
+    }: Props,
+    ref,
+  ) => {
     const isPreviewMode = useEditorTreeStore(
       useShallow((state) => state.isPreviewMode || state.isLive),
     );
@@ -34,18 +43,27 @@ const SwitchComponent = forwardRef(
       triggers?.onChange?.(e);
     };
 
+    console.log("======>", component.children);
+
     return (
-      <MantineSwitch
-        ref={ref}
-        {...props}
-        {...componentProps}
-        {...triggers}
-        wrapperProps={{ "data-id": component.id }}
-        label={undefined}
-        onChange={handleInputChange}
-        checked={Boolean(value)}
-        value={optionValue}
-      />
+      <Box unstyled style={props.style as any} {...props} {...triggers}>
+        <MantineSwitch
+          ref={ref}
+          {...props}
+          {...componentProps}
+          wrapperProps={{ "data-id": component.id }}
+          label={undefined}
+          onChange={handleInputChange}
+          checked={Boolean(value)}
+          value={optionValue}
+        />
+        {component.children && component.children.length > 0
+          ? component.children?.map((child) =>
+              renderTree(child, shareableContent),
+            )
+          : String()}
+        <ChildrenWrapper />
+      </Box>
     );
   },
 );

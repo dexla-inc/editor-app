@@ -8,14 +8,23 @@ import { useThemeStore } from "@/stores/theme";
 import { NavigationAction } from "@/utils/actions";
 import { getColorValue } from "@/utils/branding";
 import { EditableComponentMapper } from "@/utils/editor";
-import { NavLink as MantineNavLink, NavLinkProps } from "@mantine/core";
+import { Box, NavLink as MantineNavLink, NavLinkProps } from "@mantine/core";
 import merge from "lodash.merge";
 import { forwardRef, memo } from "react";
 import { useShallow } from "zustand/react/shallow";
 type Props = EditableComponentMapper & NavLinkProps;
 
 const NavLinkComponent = forwardRef(
-  ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
+  (
+    {
+      renderTree,
+      component,
+      shareableContent,
+      grid: { ChildrenWrapper },
+      ...props
+    }: Props,
+    ref,
+  ) => {
     const isPreviewMode = useEditorTreeStore(
       useShallow((state) => state.isPreviewMode || state.isLive),
     );
@@ -67,51 +76,49 @@ const NavLinkComponent = forwardRef(
       (component.children && component.children?.length > 0) ?? isNested;
 
     return (
-      <MantineNavLink
-        {...contentEditableProps}
-        ref={ref}
-        {...(icon && {
-          icon: (
-            <Icon
-              name={icon}
-              size={20}
-              {...(iconColor
-                ? { color: getColorValue(theme, iconColor) }
-                : null)}
-            />
-          ),
-        })}
-        childrenOffset={hasNestedLinks ? 20 : 0}
-        rightSection={hasNestedLinks ? <Icon name="IconChevronRight" /> : null}
-        active={active}
-        {...props}
-        {...componentProps}
-        {...triggers}
-        label={String(labelValue)}
-        styles={{
-          ...(!icon && {
-            icon: { marginRight: 0 },
-          }),
-          children: { paddingLeft: 0 },
-          ...(icon &&
-            !labelValue && {
-              icon: { width: "100%", marginRight: 0 },
-              children: { display: "none" },
+      <Box unstyled style={props.style as any} {...props} {...triggers}>
+        <MantineNavLink
+          {...contentEditableProps}
+          ref={ref}
+          {...(icon && {
+            icon: (
+              <Icon
+                name={icon}
+                size={20}
+                {...(iconColor
+                  ? { color: getColorValue(theme, iconColor) }
+                  : null)}
+              />
+            ),
+          })}
+          childrenOffset={hasNestedLinks ? 20 : 0}
+          rightSection={
+            hasNestedLinks ? <Icon name="IconChevronRight" /> : null
+          }
+          active={active}
+          {...componentProps}
+          label={String(labelValue)}
+          styles={{
+            ...(!icon && {
+              icon: { marginRight: 0 },
             }),
-          root: {
-            padding: 0,
-            "&:hover": {
-              backgroundColor: "unset",
+            children: { paddingLeft: 0 },
+            ...(icon &&
+              !labelValue && {
+                icon: { width: "100%", marginRight: 0 },
+                children: { display: "none" },
+              }),
+            root: {
+              gridArea: "1/1/-1/-1",
+              padding: 0,
+              "&:hover": {
+                backgroundColor: "unset",
+              },
             },
-          },
-        }}
-      >
-        {component.children &&
-          component.children.length > 0 &&
-          component.children?.map((child) =>
-            renderTree(child, shareableContent),
-          )}
-      </MantineNavLink>
+          }}
+        />
+        <ChildrenWrapper />
+      </Box>
     );
   },
 );

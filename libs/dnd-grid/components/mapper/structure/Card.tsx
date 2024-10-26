@@ -1,6 +1,7 @@
 import { ComponentStructure } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { nanoid } from "nanoid";
+import { IDENTIFIER } from "@/utils/branding";
 
 export const jsonStructure = (props?: any): ComponentStructure => {
   const { style: propStyle, ...restProps } = props?.props || {};
@@ -10,7 +11,7 @@ export const jsonStructure = (props?: any): ComponentStructure => {
 
   const mergedStyle = {
     ...propStyle,
-    padding: propStyle?.padding,
+    ...IDENTIFIER,
     gridColumn: "1/30",
     gridRow: "1/10",
   };

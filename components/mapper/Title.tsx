@@ -15,7 +15,10 @@ import useFontFaceObserver from "use-font-face-observer";
 type Props = EditableComponentMapper & TitleProps;
 
 const TitleComponent = forwardRef(
-  ({ component, shareableContent, ...props }: Props, ref: any) => {
+  (
+    { component, shareableContent, grid: { ChildrenWrapper }, ...props }: Props,
+    ref: any,
+  ) => {
     const contentEditableProps = useContentEditable(
       component.id as string,
       ref,
@@ -54,7 +57,10 @@ const TitleComponent = forwardRef(
         //   ...(style?.fontSize ? { fontSize: style.fontSize + "px" } : {}),
         // }}
       >
-        {isFontLoaded && String(childrenValue || "")}
+        <div style={{ gridArea: "1 / 1 / -1 / -1" }}>
+          {isFontLoaded && String(childrenValue || "")}
+        </div>
+        <ChildrenWrapper />
       </MantineTitle>
     );
   },

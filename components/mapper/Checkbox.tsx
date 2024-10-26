@@ -4,6 +4,7 @@ import { EditableComponentMapper } from "@/utils/editor";
 import {
   CheckboxProps as MantineCheckboxProps,
   Checkbox as MantineCheckbox,
+  Box,
 } from "@mantine/core";
 import merge from "lodash.merge";
 import { ChangeEvent, forwardRef, memo, ForwardedRef } from "react";
@@ -20,7 +21,16 @@ interface CheckboxProps extends MantineCheckboxProps {
 type Props = EditableComponentMapper & CheckboxProps;
 
 const CheckboxComponent = forwardRef<HTMLInputElement, Props>(
-  ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
+  (
+    {
+      renderTree,
+      component,
+      shareableContent,
+      grid: { ChildrenWrapper },
+      ...props
+    }: Props,
+    ref,
+  ) => {
     const isPreviewMode = useEditorTreeStore(
       useShallow((state) => state.isPreviewMode || state.isLive),
     );
@@ -54,59 +64,68 @@ const CheckboxComponent = forwardRef<HTMLInputElement, Props>(
       isPreviewMode && !isInsideGroup ? { onChange: handleInputChange } : {};
 
     return (
-      <MantineCheckbox
-        ref={ref}
+      <Box
+        unstyled
+        style={props.style as any}
         {...props}
-        {...componentProps}
-        style={{}}
-        styles={{
-          root: {
-            position: "relative",
-            width: customStyle.width,
-            height: customStyle.height,
-            minHeight: customStyle.minHeight,
-            minWidth: customStyle.minWidth,
-          },
-          input: {
-            ...customStyle,
-            width: "-webkit-fill-available",
-            height: "-webkit-fill-available",
-            minHeight: "-webkit-fill-available",
-            minWidth: "-webkit-fill-available",
-          },
-          ...(isInsideGroup && {
-            inner: { display: "none" },
-            label: {
-              padding: 0,
-            },
-            labelWrapper: { width: "100%" },
-          }),
-        }}
-        {...(!isPreviewMode && { wrapperProps: { "data-id": component.id } })}
-        label={
-          isInsideGroup && (
-            <div {...(isPreviewMode && { id: component.id })} {...triggers}>
-              {component.children?.map((child) =>
-                renderTree(child, {
-                  ...shareableContent,
-                  ...(checked && {
-                    parentState: "checked",
-                  }),
-                }),
-              )}
-            </div>
-          )
-        }
-        {...(!isInsideGroup && { checked: value })}
-        value={optionValue}
         {...triggers}
-        {...defaultTriggers}
-        onClick={(e) => {
-          e.stopPropagation();
-          props.onClick?.(e);
-          triggers?.onClick?.(e);
-        }}
-      />
+        id={component.id}
+      >
+        <MantineCheckbox
+          ref={ref}
+          {...componentProps}
+          style={{}}
+          styles={{
+            root: {
+              position: "relative",
+              width: customStyle.width,
+              height: customStyle.height,
+              minHeight: customStyle.minHeight,
+              minWidth: customStyle.minWidth,
+              gridArea: "1/1/-1/-1",
+            },
+            input: {
+              ...customStyle,
+              width: "-webkit-fill-available",
+              height: "-webkit-fill-available",
+              minHeight: "-webkit-fill-available",
+              minWidth: "-webkit-fill-available",
+            },
+            body: { width: "100%", height: "100%" },
+            inner: { width: "100%", height: "100%" },
+            ...(isInsideGroup && {
+              inner: { display: "none", width: "100%", height: "100%" },
+              label: {
+                padding: 0,
+              },
+              labelWrapper: { width: "100%" },
+            }),
+          }}
+          label={
+            isInsideGroup && (
+              <div {...(isPreviewMode && { id: component.id })} {...triggers}>
+                {component.children?.map((child) =>
+                  renderTree(child, {
+                    ...shareableContent,
+                    ...(checked && {
+                      parentState: "checked",
+                    }),
+                  }),
+                )}
+              </div>
+            )
+          }
+          {...(!isInsideGroup && { checked: value })}
+          value={optionValue}
+          {...defaultTriggers}
+          onClick={(e) => {
+            e.stopPropagation();
+            props.onClick?.(e);
+            triggers?.onClick?.(e);
+          }}
+        />
+        <ChildrenWrapper />
+      </Box>
     );
   },
 );

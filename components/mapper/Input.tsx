@@ -15,6 +15,7 @@ import {
   NumberInput as MantineNumberInput,
   NumberInputProps,
   TextInputProps,
+  Box,
 } from "@mantine/core";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
@@ -24,7 +25,16 @@ import { useShallow } from "zustand/react/shallow";
 type Props = EditableComponentMapper & NumberInputProps & TextInputProps;
 
 const InputComponent = forwardRef(
-  ({ component, id, shareableContent, ...props }: Props, ref) => {
+  (
+    {
+      component,
+      id,
+      shareableContent,
+      grid: { ChildrenWrapper },
+      ...props
+    }: Props,
+    ref,
+  ) => {
     const isPreviewMode = useEditorTreeStore(
       useShallow((state) => state.isPreviewMode || state.isLive),
     );
@@ -148,140 +158,188 @@ const InputComponent = forwardRef(
               {...props}
               style={{
                 ...customStyle,
-                overflow: "hidden",
+                overflow: "visible",
                 position: "relative",
               }}
+              id={id}
+              {...restTriggers}
             >
-              <ActionIcon
-                size={customStyle.height}
-                variant="transparent"
-                style={{ border: "none" }}
-                onClick={decreaseNumber}
-              >
-                –
-              </ActionIcon>
+              <Box unstyled style={{ gridArea: "1/1/-1/-1" }}>
+                <ActionIcon
+                  size={customStyle.height}
+                  variant="transparent"
+                  style={{ border: "none" }}
+                  onClick={decreaseNumber}
+                >
+                  –
+                </ActionIcon>
 
-              <MantineNumberInput
-                hideControls
-                type="number"
-                autoComplete="off"
-                id={component.id}
-                {...componentProps}
-                style={{}}
-                styles={{
-                  root: {
-                    display: "inline",
-                    flex: "1 !important",
-                    width: "min-content",
-                    height: customStyle.height,
-                  },
-                  wrapper: { height: "inherit" },
-                  input: {
-                    border: "none",
-                    textAlign: "center",
-                    backgroundColor,
-                    color,
-                    padding: "0px",
-                    minHeight: "auto",
-                    height: "inherit",
-                  },
-                }}
-                value={parseToNumber(value)}
-                {...restTriggers}
-                onChange={handleChange}
-                label={undefined}
-                wrapperProps={{ "data-id": id }}
-              />
+                <MantineNumberInput
+                  hideControls
+                  type="number"
+                  autoComplete="off"
+                  id={component.id}
+                  {...componentProps}
+                  style={{}}
+                  styles={{
+                    root: {
+                      display: "inline",
+                      flex: "1 !important",
+                      width: "min-content",
+                      height: customStyle.height,
+                    },
+                    wrapper: { height: "inherit" },
+                    input: {
+                      border: "none",
+                      textAlign: "center",
+                      backgroundColor,
+                      color,
+                      padding: "0px",
+                      minHeight: "auto",
+                      height: "inherit",
+                    },
+                  }}
+                  value={parseToNumber(value)}
+                  onChange={handleChange}
+                  label={undefined}
+                />
 
-              <ActionIcon
-                size={customStyle.height}
-                variant="transparent"
-                style={{ border: "none" }}
-                onClick={increaseNumber}
-              >
-                +
-              </ActionIcon>
+                <ActionIcon
+                  size={customStyle.height}
+                  variant="transparent"
+                  style={{ border: "none" }}
+                  onClick={increaseNumber}
+                >
+                  +
+                </ActionIcon>
+              </Box>
+              <ChildrenWrapper />
             </Group>
           </>
         ) : type === "number" ? (
-          <MantineNumberInput
+          <Box
+            unstyled
+            style={props.style as any}
             {...props}
-            {...componentProps}
-            ref={ref}
-            autoComplete="off"
-            id={component.id}
-            icon={iconName ? <Icon name={iconName} /> : null}
-            style={{}}
-            styles={{
-              root: {
-                position: "relative",
-                ...pick(customStyle, rootStyleProps),
-                height: "fit-content",
-              },
-              input: { ...customStyle, minHeight: "auto" },
-            }}
-            min={0}
-            value={parseToNumber(value)}
             {...restTriggers}
-            onChange={handleChange}
-            rightSection={loading ? <InputLoader /> : null}
-            label={undefined}
-            wrapperProps={{ "data-id": id }}
-            onKeyDown={onKeyDown}
-          />
+            id={id}
+          >
+            <MantineNumberInput
+              {...componentProps}
+              ref={ref}
+              autoComplete="off"
+              id={component.id}
+              icon={iconName ? <Icon name={iconName} /> : null}
+              style={{}}
+              styles={{
+                root: {
+                  position: "relative",
+                  ...pick(customStyle, rootStyleProps),
+                  height: "100%",
+                  gridArea: "1/1/-1/-1",
+                  display: "flex",
+                },
+                wrapper: {
+                  display: "flex",
+                  width: "100%",
+                },
+                input: {
+                  ...customStyle,
+                  minHeight: "100%",
+                  display: "flex",
+                  paddingLeft: "10px",
+                },
+              }}
+              min={0}
+              value={parseToNumber(value)}
+              onChange={handleChange}
+              rightSection={loading ? <InputLoader /> : null}
+              label={undefined}
+              wrapperProps={{ "data-id": id }}
+              onKeyDown={onKeyDown}
+            />
+            <ChildrenWrapper />
+          </Box>
         ) : type === "password" ? (
-          <PasswordInput
-            componentId={component?.id!}
-            ref={ref}
-            value={value?.toString()}
-            isPreviewMode={isPreviewMode}
-            triggers={restTriggers}
-            onChange={handleChange}
-            displayRequirements={displayRequirements}
-            testParameters={{
-              passwordRange,
-              passwordNumber,
-              passwordLower,
-              passwordUpper,
-              passwordSpecial,
-            }}
-            iconComponent={Icon}
-            iconName={iconName}
-            color={color}
-            customStyle={customStyle}
-            props={props}
-            componentProps={componentProps}
-            rootStyleProps={rootStyleProps}
-          />
-        ) : (
-          <MantineInput
+          <Box
+            unstyled
+            style={props.style as any}
             {...props}
-            {...componentProps}
-            ref={ref}
-            icon={iconName ? <Icon name={iconName} /> : null}
-            style={{}}
-            styles={{
-              root: {
-                position: "relative",
-                ...pick(customStyle, rootStyleProps),
-                height: "fit-content",
-              },
-              input: { ...customStyle, minHeight: "auto" },
-            }}
-            value={value}
             {...restTriggers}
-            onChange={handleChange}
-            onKeyDown={onKeyDown}
-            rightSection={
-              loading ? (
-                <InputLoader />
-              ) : isClearable ? (
-                <Icon onClick={clearInput} name="IconX" />
-              ) : null
-            }
-            label={undefined}
-            wrapperProps={{ "data-id": id }}
-          />
+            id={id}
+          >
+            <PasswordInput
+              componentId={component?.id!}
+              ref={ref}
+              value={value?.toString()}
+              isPreviewMode={isPreviewMode}
+              triggers={restTriggers}
+              onChange={handleChange}
+              displayRequirements={displayRequirements}
+              testParameters={{
+                passwordRange,
+                passwordNumber,
+                passwordLower,
+                passwordUpper,
+                passwordSpecial,
+              }}
+              iconComponent={Icon}
+              iconName={iconName}
+              color={color}
+              customStyle={customStyle}
+              props={props}
+              componentProps={componentProps}
+              rootStyleProps={rootStyleProps}
+            />
+            <ChildrenWrapper />
+          </Box>
+        ) : (
+          <Box
+            unstyled
+            style={props.style as any}
+            {...props}
+            {...restTriggers}
+            id={id}
+          >
+            <MantineInput
+              {...componentProps}
+              ref={ref}
+              icon={iconName ? <Icon name={iconName} /> : null}
+              style={{}}
+              styles={{
+                root: {
+                  position: "relative",
+                  ...pick(customStyle, rootStyleProps),
+                  height: "100%",
+                  gridArea: "1/1/-1/-1",
+                  display: "flex",
+                },
+                wrapper: {
+                  display: "flex",
+                  width: "100%",
+                },
+                input: {
+                  ...customStyle,
+                  minHeight: "100%",
+                  display: "flex",
+                  paddingLeft: "10px",
+                },
+              }}
+              value={value}
+              onChange={handleChange}
+              onKeyDown={onKeyDown}
+              rightSection={
+                loading ? (
+                  <InputLoader />
+                ) : isClearable ? (
+                  <Icon onClick={clearInput} name="IconX" />
+                ) : null
+              }
+              label={undefined}
+              wrapperProps={{ "data-id": id }}
+            />
+            <ChildrenWrapper />
+          </Box>
         )}
       </>
     );

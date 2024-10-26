@@ -7,7 +7,16 @@ import { forwardRef, memo } from "react";
 type Props = EditableComponentMapper & BoxProps;
 
 const NavbarComponent = forwardRef(
-  ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
+  (
+    {
+      renderTree,
+      component,
+      shareableContent,
+      grid: { ChildrenWrapper },
+      ...props
+    }: Props,
+    ref,
+  ) => {
     const theme = useThemeStore((state) => state.theme);
 
     const {
@@ -28,6 +37,7 @@ const NavbarComponent = forwardRef(
           component.children?.map((child) =>
             renderTree(child, shareableContent),
           )}
+        <ChildrenWrapper />
       </Box>
     );
   },

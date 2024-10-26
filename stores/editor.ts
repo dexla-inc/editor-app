@@ -66,6 +66,8 @@ export type EditorState = {
   setEdge: (edge: Edge | undefined) => void;
   selectedPageActionIds: string[];
   setSelectedPageActionIds: (actionId: string) => void;
+  hoverComponentId: string | null;
+  setHoverComponentId: (hoverComponentId: string | null) => void;
 };
 
 // creates a store with undo/redo capability
@@ -171,6 +173,9 @@ export const useEditorStore = create<EditorState>()(
         set({ isResizing }, false, "editor/setIsResizing"),
       setCollapsedItemsCount: (collapsedItemsCount) =>
         set({ collapsedItemsCount }, false, "editor/setCollapsedItemsCount"),
+      hoverComponentId: null,
+      setHoverComponentId: (hoverComponentId) =>
+        set({ hoverComponentId }, false, "editor/setHoverComponentId"),
     }),
     { name: "Editor store" },
   ),

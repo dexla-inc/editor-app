@@ -7,6 +7,7 @@ export const jsonStructure = (props?: any): ComponentStructure => {
     name: "Divider",
     description: "Divider",
     props: {
+      color: "Secondary.6",
       style: {
         gridColumn: "1/30",
         gridRow: "1/1",

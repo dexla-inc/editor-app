@@ -17,7 +17,16 @@ import { forwardRef, memo } from "react";
 type Props = EditableComponentMapper & Omit<ColorSwatchProps, "color">;
 
 const ColorPickerComponent = forwardRef<HTMLDivElement, Props>(
-  ({ renderTree, shareableContent, component, ...props }, ref) => {
+  (
+    {
+      renderTree,
+      shareableContent,
+      component,
+      grid: { ChildrenWrapper },
+      ...props
+    },
+    ref,
+  ) => {
     const isPreviewMode = useEditorTreeStore(isPreviewModeSelector);
     const {
       triggers,
@@ -59,7 +68,10 @@ const ColorPickerComponent = forwardRef<HTMLDivElement, Props>(
 
     return (
       <MantinePopover>
-        <MantinePopover.Target>{targetcomponent}</MantinePopover.Target>
+        <MantinePopover.Target>
+          {targetcomponent}
+          <ChildrenWrapper />
+        </MantinePopover.Target>
         <MantinePopover.Dropdown>
           <Stack>
             <MantineColorPicker

@@ -22,7 +22,16 @@ import { useShallow } from "zustand/react/shallow";
 type Props = EditableComponentMapper & ButtonProps & ReactElement<"Button">;
 
 const CountdownButtonComponent = forwardRef(
-  ({ component, style, shareableContent, ...props }: Props, ref) => {
+  (
+    {
+      component,
+      style,
+      shareableContent,
+      grid: { ChildrenWrapper },
+      ...props
+    }: Props,
+    ref,
+  ) => {
     const isPreviewMode = useEditorTreeStore(
       useShallow((state) => state.isPreviewMode || state.isLive),
     );
@@ -109,10 +118,22 @@ const CountdownButtonComponent = forwardRef(
         {...componentProps}
         {...triggers}
         style={customStyle}
-        styles={{ root: DISABLED_HOVER }}
+        styles={{
+          root: DISABLED_HOVER,
+          inner: {
+            display: "flex",
+            gridArea: "1 / 1 / -1 / -1",
+          },
+          label: {
+            display: "flex",
+            width: "100%",
+            height: "100%",
+          },
+        }}
         ref={ref}
       >
         {String(childrenValue)} {count > 0 ? ` ${count} ${durationUnit}` : ""}
+        <ChildrenWrapper />
       </MantineButton>
     );
   },

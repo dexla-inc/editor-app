@@ -8,6 +8,7 @@ import merge from "lodash.merge";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { useRouterWithLoader } from "@/hooks/useRouterWithLoader";
 import { useEffect, useMemo, useState } from "react";
+import { useEditorStore } from "@/stores/editor";
 
 export const usePropsWithOverwrites = (
   component: Component,
@@ -32,6 +33,7 @@ export const usePropsWithOverwrites = (
 
   const hoverStateFunc = (e: React.MouseEvent<HTMLElement>) => {
     const isEditorMode = isEditorModeSelector(useEditorTreeStore.getState());
+    const { hoverComponentId, setHoverComponentId } = useEditorStore.getState();
     if (isEditorMode) return;
 
     if (
@@ -40,10 +42,15 @@ export const usePropsWithOverwrites = (
     ) {
       setCustomCurrentState("hover");
     }
+
+    if (hoverComponentId !== component.id) {
+      setHoverComponentId(component.id ?? null);
+    }
   };
 
   const leaveHoverStateFunc = (e: React.MouseEvent<HTMLElement>) => {
     const isEditorMode = isEditorModeSelector(useEditorTreeStore.getState());
+    const { hoverComponentId, setHoverComponentId } = useEditorStore.getState();
     if (isEditorMode) return;
 
     if (
@@ -51,6 +58,10 @@ export const usePropsWithOverwrites = (
       Object.keys(component?.states?.hover ?? {}).length
     ) {
       setCustomCurrentState(currentState);
+    }
+
+    if (hoverComponentId !== null) {
+      setHoverComponentId(null);
     }
   };
 

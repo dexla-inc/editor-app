@@ -15,6 +15,7 @@ import {
   MantineColor,
   SelectItemProps,
   Text,
+  Box,
 } from "@mantine/core";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
@@ -133,38 +134,42 @@ const AutocompleteComponent = forwardRef(
     };
 
     return (
-      <MantineAutocomplete
-        ref={ref}
-        {...props}
-        wrapperProps={{ "data-id": component.id }}
-        {...componentProps}
-        onChange={handleChange}
-        onItemSubmit={handleItemSubmit}
-        {...restTriggers}
-        icon={iconName ? <Icon name={iconName} /> : null}
-        style={{}}
-        styles={{
-          root: {
-            position: "relative",
-            ...pick(customStyle, [
-              "display",
-              "width",
-              "height",
-              "minHeight",
-              "minWidth",
-            ]),
-          },
-          input: customStyle,
-        }}
-        withinPortal={false}
-        data={data}
-        filter={() => true}
-        dropdownComponent={CustomDropdown}
-        rightSection={loading || isLoading ? <InputLoader /> : null}
-        label={undefined}
-        value={typingValue?.label ?? typingValue}
-        {...(isAdvanced ? { itemComponent: AutoCompleteItem } : {})}
-      />
+      <Box unstyled {...props} {...restTriggers} id={component.id}>
+        <MantineAutocomplete
+          ref={ref}
+          {...componentProps}
+          onChange={handleChange}
+          onItemSubmit={handleItemSubmit}
+          icon={iconName ? <Icon name={iconName} /> : null}
+          style={{}}
+          styles={{
+            root: {
+              position: "relative",
+              ...pick(customStyle, [
+                "display",
+                "width",
+                "height",
+                "minHeight",
+                "minWidth",
+              ]),
+              gridArea: "1 / 1 / -1 / -1",
+            },
+            input: {
+              ...customStyle,
+              height: "100%",
+              padding: "5px",
+            },
+          }}
+          withinPortal={false}
+          data={data}
+          filter={() => true}
+          dropdownComponent={CustomDropdown}
+          rightSection={loading || isLoading ? <InputLoader /> : null}
+          label={undefined}
+          value={typingValue?.label ?? typingValue}
+          {...(isAdvanced ? { itemComponent: AutoCompleteItem } : {})}
+        />
+      </Box>
     );
   },
 );

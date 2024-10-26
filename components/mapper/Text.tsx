@@ -11,7 +11,10 @@ import { isEmpty } from "@/utils/common";
 type Props = EditableComponentMapper & TextProps;
 
 const TextComponent = forwardRef(
-  ({ component, shareableContent, ...props }: Props, ref: any) => {
+  (
+    { component, shareableContent, grid: { ChildrenWrapper }, ...props }: Props,
+    ref: any,
+  ) => {
     const theme = useMantineTheme();
     const isFontLoaded = useFontFaceObserver([{ family: theme.fontFamily! }]);
     const contentEditableProps = useContentEditable(
@@ -49,7 +52,10 @@ const TextComponent = forwardRef(
         ref={ref}
         style={customStyle}
       >
-        {!hideIfDataIsEmpty && isFontLoaded && String(childrenValue || "")}
+        <div style={{ gridArea: "1 / 1 / -1 / -1" }}>
+          {!hideIfDataIsEmpty && isFontLoaded && String(childrenValue || "")}
+        </div>
+        <ChildrenWrapper />
       </MantineText>
     );
   },

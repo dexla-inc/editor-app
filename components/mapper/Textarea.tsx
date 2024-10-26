@@ -4,6 +4,7 @@ import { useInputValue } from "@/hooks/components/useInputValue";
 import { useBrandingStyles } from "@/hooks/editor/useBrandingStyles";
 import { EditableComponentMapper } from "@/utils/editor";
 import {
+  Box,
   Loader,
   Textarea as MantineTextarea,
   TextareaProps,
@@ -15,7 +16,16 @@ import { ChangeEvent, forwardRef, memo } from "react";
 type Props = EditableComponentMapper & TextareaProps;
 
 const TextareaComponent = forwardRef(
-  ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
+  (
+    {
+      renderTree,
+      component,
+      shareableContent,
+      grid: { ChildrenWrapper },
+      ...props
+    }: Props,
+    ref,
+  ) => {
     const {
       children,
       triggers,
@@ -52,31 +62,37 @@ const TextareaComponent = forwardRef(
     };
 
     return (
-      <MantineTextarea
-        ref={ref}
-        {...props}
-        {...componentProps}
-        {...triggers}
-        wrapperProps={{ "data-id": component.id }}
-        style={{}}
-        styles={{
-          root: {
-            position: "relative",
-            ...pick(customStyle, [
-              "display",
-              "width",
-              "height",
-              "minHeight",
-              "minWidth",
-            ]),
-          },
-          input: customStyle,
-        }}
-        value={value}
-        onChange={handleInputChange}
-        rightSection={loading ? <Loader size="xs" /> : null}
-        label={undefined}
-      />
+      <Box unstyled {...props} {...triggers}>
+        <MantineTextarea
+          ref={ref}
+          {...componentProps}
+          wrapperProps={{ "data-id": component.id }}
+          style={{}}
+          styles={{
+            root: {
+              position: "relative",
+              ...pick(customStyle, [
+                "display",
+                "width",
+                "height",
+                "minHeight",
+                "minWidth",
+              ]),
+              gridArea: "1 / 1 / -1 / -1",
+            },
+            input: {
+              ...customStyle,
+              height: "100%",
+              padding: "5px",
+            },
+          }}
+          value={value}
+          onChange={handleInputChange}
+          rightSection={loading ? <Loader size="xs" /> : null}
+          label={undefined}
+        />
+        <ChildrenWrapper />
+      </Box>
     );
   },
 );

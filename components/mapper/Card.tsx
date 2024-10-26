@@ -10,7 +10,16 @@ import { convertSizeToPx } from "@/utils/defaultSizes";
 type Props = EditableComponentMapper & FlexProps;
 
 export const CardComponent = forwardRef(
-  ({ renderTree, shareableContent, component, ...props }: Props, ref) => {
+  (
+    {
+      renderTree,
+      shareableContent,
+      component,
+      grid: { ChildrenWrapper },
+      ...props
+    }: Props,
+    ref,
+  ) => {
     const theme = useThemeStore((state) => state.theme);
 
     const {
@@ -45,6 +54,7 @@ export const CardComponent = forwardRef(
         {...componentProps}
       >
         {renderData({ renderTree })}
+        <ChildrenWrapper />
       </MantineFlex>
     );
   },

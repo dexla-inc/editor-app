@@ -9,7 +9,17 @@ type Props = EditableComponentMapper & BoxProps;
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const CodeEmbedComponent = forwardRef<HTMLIFrameElement, Props>(
-  ({ component, shareableContent, style, sx, ...props }, ref) => {
+  (
+    {
+      component,
+      shareableContent,
+      style,
+      sx,
+      grid: { ChildrenWrapper },
+      ...props
+    },
+    ref,
+  ) => {
     const [isLoaded, setIsLoaded] = useState(false);
 
     const injectedHtmlCode = useCodeInjection(
@@ -32,12 +42,16 @@ const CodeEmbedComponent = forwardRef<HTMLIFrameElement, Props>(
             {...props}
             sx={sx}
             style={style}
-          />
+          >
+            <ChildrenWrapper />
+          </Box>
         ) : (
           <Skeleton
             height={style?.height || "100%"}
             width={style?.width || "100%"}
-          />
+          >
+            <ChildrenWrapper />
+          </Skeleton>
         )}
       </Suspense>
     );

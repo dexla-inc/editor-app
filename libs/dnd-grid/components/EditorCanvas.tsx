@@ -1,12 +1,9 @@
-import { Droppable } from "@/components/Droppable";
 import { IFrame } from "@/components/IFrame";
 import useEditorHotkeys from "@/hooks/editor/useEditorHotkeys";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useEditorStore } from "@/stores/editor";
 import { componentMapper } from "@/utils/componentMapper";
-import { HEADER_HEIGHT } from "@/utils/config";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import { Box, Paper } from "@mantine/core";
 import { memo } from "react";
 import { RenderTreeFunc } from "@/types/component";
 import ComponentToolbox from "@/libs/dnd-grid/components/ComponentToolbox";
@@ -14,7 +11,8 @@ import ErrorBoundary from "@/libs/dnd-grid/components/ErrorBoundary";
 import { useDndGridStore } from "@/libs/dnd-grid/stores/dndGridStore";
 import { useDnd } from "../hooks/useDnd";
 import { TOTAL_COLUMNS_WITH_MULTIPLIER } from "../types/constants";
-import merge from "lodash.merge";
+import { isPreviewModeSelector } from "@/utils/componentSelectors";
+
 type Props = {
   projectId: string;
 };
@@ -27,8 +25,9 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
   const isComponentSelected = useEditorTreeStore(
     (state) => state.selectedComponentIds?.length,
   );
+  const isPreviewMode = useEditorTreeStore(isPreviewModeSelector);
 
-  const setHoverComponentId = useDndGridStore(
+  const setHoverComponentId = useEditorStore(
     (state) => state.setHoverComponentId,
   );
   const { onDrop, onDragOver } = useDnd();
@@ -48,10 +47,12 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
             gridTemplateColumns: `repeat(${TOTAL_COLUMNS_WITH_MULTIPLIER}, 1fr)`,
             minHeight: "400px",
             backgroundSize: `calc(100% / ${TOTAL_COLUMNS_WITH_MULTIPLIER}) 10px`,
-            backgroundImage: `
+            ...(!isPreviewMode && {
+              backgroundImage: `
             linear-gradient(to right, #e5e7eb 1px, transparent 1px),
             linear-gradient(to bottom, #e5e7eb 1px, transparent 1px)
           `,
+            }),
           }}
           draggable={false}
           onDrop={onDrop}
@@ -81,19 +82,17 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
       );
     }
 
-    const onClick = (e: React.MouseEvent<HTMLDivElement>) => {
-      e.stopPropagation();
-      setSelectedComponentIds(() => [componentTree.id!]);
-    };
-
     return componentToRender?.Component({
-      component: merge({}, componentTree, {
-        props: { triggers: { onClick } },
-      }),
+      component: componentTree,
       renderTree,
       shareableContent,
     });
   };
+
+  // TODO: Check if this is needed
+  // if ((editorTree?.root?.children ?? [])?.length === 0) {
+  //   return null;
+  // }
 
   return (
     <IFrame projectId={projectId}>

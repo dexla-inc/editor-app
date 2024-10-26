@@ -32,6 +32,10 @@ export type EditableComponentMapper = {
   component: ComponentTree & Component;
   shareableContent?: any;
   style?: CSSObject & { display?: string | ValueProps };
+  grid: {
+    ChildrenWrapper: any;
+    isGridCss: boolean;
+  };
 };
 
 type ComponentBase = {

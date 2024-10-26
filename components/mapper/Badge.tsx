@@ -11,7 +11,16 @@ import { forwardRef, memo } from "react";
 type Props = EditableComponentMapper & BadgeProps;
 
 const BadgeComponent = forwardRef(
-  ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
+  (
+    {
+      renderTree,
+      component,
+      shareableContent,
+      grid: { ChildrenWrapper, isGridCss },
+      ...props
+    }: Props,
+    ref,
+  ) => {
     const contentEditableProps = useContentEditable(
       component.id as string,
       ref,
@@ -33,6 +42,7 @@ const BadgeComponent = forwardRef(
     const customStyle = merge({}, badgeStyle, style, {
       color: getColorFromTheme(theme, color),
       textTransform: "none",
+      ...(isGridCss && { display: "grid", gridArea: "1 / 1 / -1 / -1" }),
     });
 
     return (
@@ -48,6 +58,7 @@ const BadgeComponent = forwardRef(
         {...triggers}
       >
         {String(childrenValue)}
+        <ChildrenWrapper />
       </MantineBadge>
     );
   },

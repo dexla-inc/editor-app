@@ -11,7 +11,16 @@ import { forwardRef, memo } from "react";
 type Props = EditableComponentMapper & AccordionItemProps;
 
 const AccordionItemComponent = forwardRef(
-  ({ renderTree, shareableContent, component, ...props }: Props, ref) => {
+  (
+    {
+      renderTree,
+      shareableContent,
+      component,
+      grid: { ChildrenWrapper },
+      ...props
+    }: Props,
+    ref,
+  ) => {
     const { bg, triggers, ...componentProps } = component.props as any;
     const { renderData } = useRenderData({
       component,
@@ -29,6 +38,7 @@ const AccordionItemComponent = forwardRef(
         value={String(children || nanoid())}
       >
         {renderData({ renderTree })}
+        <ChildrenWrapper />
       </MantineAccordion.Item>
     );
   },

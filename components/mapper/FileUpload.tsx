@@ -33,6 +33,7 @@ const FileUploadComponent = ({
   renderTree,
   component,
   shareableContent,
+  grid: { ChildrenWrapper },
   ...props
 }: Props) => {
   const isPreviewMode = useEditorTreeStore(
@@ -105,6 +106,7 @@ const FileUploadComponent = ({
             renderTree(child, shareableContent),
           )
         : children}
+      <ChildrenWrapper />
     </Box>
   );
 };

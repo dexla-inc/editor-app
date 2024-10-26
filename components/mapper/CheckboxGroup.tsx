@@ -24,7 +24,16 @@ const defaultStyle = {
 };
 
 const CheckboxGroupComponent = forwardRef(
-  ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
+  (
+    {
+      renderTree,
+      component,
+      shareableContent,
+      grid: { ChildrenWrapper },
+      ...props
+    }: Props,
+    ref,
+  ) => {
     const isPreviewMode = useEditorTreeStore(
       useShallow((state) => state.isPreviewMode || state.isLive),
     );
@@ -101,6 +110,7 @@ const CheckboxGroupComponent = forwardRef(
             renderTree,
           })}
         </Group>
+        <ChildrenWrapper />
       </MantineCheckbox.Group>
     );
   },

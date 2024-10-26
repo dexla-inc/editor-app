@@ -19,8 +19,6 @@ interface State {
   ) => void;
   coords: Coordinates;
   setCoords: (coords: Coordinates) => void;
-  hoverComponentId: string | null;
-  setHoverComponentId: (id: string | null) => void;
 }
 
 interface ElementRects {
@@ -51,9 +49,6 @@ export const useDndGridStore = create<State>()(
         parentId: "",
       },
       setCoords: (coords: Coordinates) => set({ coords }, false, "setCoords"),
-      hoverComponentId: null,
-      setHoverComponentId: (hoverComponentId: string | null) =>
-        set({ hoverComponentId }, false, "setHoverComponentId"),
     }),
     { name: "DnDGridStore" },
   ),
