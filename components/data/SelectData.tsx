@@ -1,8 +1,8 @@
 import { DynamicSettings } from "@/components/data/forms/DynamicSettings";
-import { useEditorTreeStore } from "@/stores/editorTree";
-import { SegmentedControl, Select, Stack, Text, Title } from "@mantine/core";
-import { DataProps, DataType } from "@/types/dataBinding";
 import { FormFieldsBuilder } from "@/components/data/forms/FormFieldsBuilder";
+import { useEditorTreeStore } from "@/stores/editorTree";
+import { DataProps, DataType } from "@/types/dataBinding";
+import { SegmentedControl, Select, Stack, Text, Title } from "@mantine/core";
 
 export const SelectData = ({ component, endpoints, dataType }: DataProps) => {
   const updateTreeComponentAttrs = useEditorTreeStore(
@@ -32,6 +32,11 @@ export const SelectData = ({ component, endpoints, dataType }: DataProps) => {
             { name: "data", label: "Options", fieldType: "Options" },
             { name: "value", label: "Value", fieldType: "Text" },
             { name: "placeholder", label: "Placeholder", fieldType: "Text" },
+            {
+              name: "nothingFound",
+              label: "No result message",
+              fieldType: "Text",
+            },
             {
               name: "validationMessage",
               label: "Validation message",
@@ -74,6 +79,20 @@ export const SelectData = ({ component, endpoints, dataType }: DataProps) => {
                   {...form.getInputProps("onLoad.dataValueKey")}
                   searchable
                 />
+                <Select
+                  label="Group"
+                  data={selectableObjectKeys}
+                  {...form.getInputProps("onLoad.dataGroupKey")}
+                  searchable
+                  clearable
+                />
+                <Select
+                  label="Description"
+                  data={selectableObjectKeys}
+                  {...form.getInputProps("onLoad.dataDescriptionKey")}
+                  searchable
+                  clearable
+                />
                 <FormFieldsBuilder
                   fields={[
                     {
@@ -84,6 +103,11 @@ export const SelectData = ({ component, endpoints, dataType }: DataProps) => {
                     {
                       name: "placeholder",
                       label: "Placeholder",
+                      fieldType: "Text",
+                    },
+                    {
+                      name: "nothingFound",
+                      label: "No result message",
                       fieldType: "Text",
                     },
                   ]}

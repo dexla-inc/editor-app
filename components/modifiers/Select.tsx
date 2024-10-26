@@ -1,6 +1,9 @@
+import { IconSelector } from "@/components/IconSelector";
 import { SegmentedControlSizes } from "@/components/SegmentedControlSizes";
 import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
+import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { TopLabel } from "@/components/TopLabel";
+import { UnitInput } from "@/components/UnitInput";
 import { UrlOrPageSelector } from "@/components/UrlOrPageSelector";
 import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon";
 import { withModifier } from "@/hoc/withModifier";
@@ -15,24 +18,28 @@ import {
   IconArrowBarUp,
   IconArrowsMoveVertical,
 } from "@tabler/icons-react";
+import isEmpty from "lodash.isempty";
 import merge from "lodash.merge";
 import { useEffect } from "react";
-import { ThemeColorSelector } from "../ThemeColorSelector";
-import { UnitInput } from "../UnitInput";
 
 const Modifier = withModifier(({ selectedComponent }) => {
   const theme = useThemeStore((state) => state.theme);
   const form = useForm();
   useEffect(() => {
+    let icon = selectedComponent?.props?.icon;
+    if (isEmpty(icon)) {
+      icon = "";
+    }
     form.setValues(
       merge({}, requiredModifiers.select, {
         size: selectedComponent?.props?.size ?? theme.inputSize,
-        icon: selectedComponent?.props?.icon,
+        icon,
         data: selectedComponent?.props?.data,
         withAsterisk: selectedComponent?.props?.withAsterisk,
         clearable: selectedComponent?.props?.clearable,
         searchable: selectedComponent?.props?.searchable,
         multiSelect: selectedComponent?.props?.multiSelect,
+        openInEditor: selectedComponent?.props?.openInEditor || false,
         customerFooter: selectedComponent?.props?.customerFooter || false,
         customText: selectedComponent?.props?.customText,
         customLinkText: selectedComponent?.props?.customLinkText,
@@ -94,6 +101,20 @@ const Modifier = withModifier(({ selectedComponent }) => {
               attrs: {
                 props: {
                   multiSelect: value,
+                },
+              },
+            });
+          }}
+        />
+        <SegmentedControlYesNo
+          label="Open in Editor"
+          {...form.getInputProps("openInEditor")}
+          onChange={(value) => {
+            form.setFieldValue("openInEditor", value);
+            debouncedTreeComponentAttrsUpdate({
+              attrs: {
+                props: {
+                  openInEditor: value,
                 },
               },
             });
@@ -206,6 +227,16 @@ const Modifier = withModifier(({ selectedComponent }) => {
             <UrlOrPageSelector form={form} />
           </Stack>
         )}
+        <IconSelector
+          topLabel="Icon"
+          selectedIcon={form.values.icon as string}
+          onIconSelect={(value: string) => {
+            setFieldValue("icon", value);
+          }}
+          onIconDelete={() => {
+            setFieldValue("icon", null);
+          }}
+        />
       </Stack>
     </form>
   );

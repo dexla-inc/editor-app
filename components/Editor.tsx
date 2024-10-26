@@ -1,19 +1,19 @@
 import { Shell } from "@/components/AppShell";
 import { Cursor } from "@/components/Cursor";
-import { EditorCanvas as EditorCanvasGrid } from "@/libs/dnd-grid/components/EditorCanvas";
-import { EditorCanvas as EditorCanvasFlex } from "@/libs/dnd-flex/components/EditorCanvas";
+import { CustomComponentModal } from "@/components/CustomComponentModal";
+import { withPageOnLoad } from "@/hoc/withPageOnLoad";
 import { useGetPageData } from "@/hooks/editor/reactQuery/useGetPageData";
+import { EditorCanvas as EditorCanvasFlex } from "@/libs/dnd-flex/components/EditorCanvas";
+import { EditorCanvas as EditorCanvasGrid } from "@/libs/dnd-grid/components/EditorCanvas";
 import { useEditorTreeStore } from "@/stores/editorTree";
+import { useInputsStore } from "@/stores/inputs";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { useUserConfigStore } from "@/stores/userConfig";
+import { CssTypes } from "@/types/types";
 import { globalStyles } from "@/utils/branding";
 import { CURSOR_COLORS } from "@/utils/config";
 import { Global } from "@mantine/core";
 import { memo, useEffect, useState } from "react";
-import { useInputsStore } from "@/stores/inputs";
-import { withPageOnLoad } from "@/hoc/withPageOnLoad";
-import { CustomComponentModal } from "@/components/CustomComponentModal";
-import { CssTypes } from "@/types/types";
 
 type Props = {
   projectId: string;

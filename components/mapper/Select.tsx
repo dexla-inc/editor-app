@@ -1,27 +1,46 @@
+import { Icon } from "@/components/Icon";
 import { InputLoader } from "@/components/InputLoader";
 import { CustomDropdown } from "@/components/mapper/CustomSelectDropdown";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { useBrandingStyles } from "@/hooks/editor/useBrandingStyles";
 import { useChangeState } from "@/hooks/components/useChangeState";
 import { useEndpoint } from "@/hooks/components/useEndpoint";
+import { useInputValue } from "@/hooks/components/useInputValue";
+import { useBrandingStyles } from "@/hooks/editor/useBrandingStyles";
+import { useEditorTreeStore } from "@/stores/editorTree";
 import { EditableComponentMapper } from "@/utils/editor";
 import {
+  Checkbox,
+  Group,
   MultiSelect as MantineMultiSelect,
   Select as MantineSelect,
   MultiSelectProps,
   SelectProps,
+  Stack,
+  Text,
 } from "@mantine/core";
 import debounce from "lodash.debounce";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { forwardRef, memo } from "react";
-import { useInputValue } from "@/hooks/components/useInputValue";
+import { useShallow } from "zustand/react/shallow";
 
 type Props = EditableComponentMapper & SelectProps & MultiSelectProps;
 
 const SelectComponent = forwardRef(
-  ({ component, children: child, shareableContent, ...props }: Props, ref) => {
+  (
+    {
+      renderTree,
+      component,
+      children: child,
+      shareableContent,
+      ...props
+    }: Props,
+    ref,
+  ) => {
+    const isPreviewMode = useEditorTreeStore(
+      useShallow((state) => state.isPreviewMode || state.isLive),
+    );
     const {
       children,
       triggers,
@@ -32,12 +51,19 @@ const SelectComponent = forwardRef(
       textColor,
       multiSelect,
       maxDropdownHeight,
+      icon,
+      openInEditor,
       ...restComponentProps
     } = component.props as any;
 
-    const { placeholder = component.props?.placeholder } = component?.onLoad;
+    const { placeholder = component.props?.placeholder, nothingFound } =
+      component?.onLoad;
 
-    const componentProps = { ...restComponentProps, placeholder };
+    const componentProps = {
+      ...restComponentProps,
+      placeholder,
+      nothingFound,
+    };
 
     const MantineSelectWrapper = multiSelect
       ? MantineMultiSelect
@@ -50,7 +76,8 @@ const SelectComponent = forwardRef(
       props.id!,
     );
 
-    const { dataLabelKey, dataValueKey } = component.onLoad;
+    const { dataLabelKey, dataValueKey, dataGroupKey, dataDescriptionKey } =
+      component.onLoad;
     const { onChange, onSearchChange, ...restTriggers } = triggers || {};
     const { color, backgroundColor } = useChangeState({ bg, textColor });
     const { borderStyle, inputStyle } = useBrandingStyles();
@@ -88,6 +115,10 @@ const SelectComponent = forwardRef(
         data = list.map((item: any) => ({
           label: String(item[dataLabelKey]),
           value: String(item[dataValueKey]),
+          group: dataGroupKey ? String(item[dataGroupKey]) : undefined,
+          description: dataDescriptionKey
+            ? String(item[dataDescriptionKey])
+            : undefined,
         }));
       }
     }
@@ -139,16 +170,30 @@ const SelectComponent = forwardRef(
             height: fetchHeight(customStyle),
           },
           values: { minHeight: customStyle.minHeight },
+          rightSection: { pointerEvents: "none" },
         }}
         withinPortal={false}
+        initiallyOpened={!isPreviewMode && openInEditor}
+        disableSelectedItemFiltering
         maxDropdownHeight={maxDropdownHeight}
         data={data}
-        {...(component.props?.customText
+        {...(component.props?.customText || component.children
           ? {
-              dropdownComponent: CustomDropdown,
+              dropdownComponent: (props: any) => (
+                <CustomDropdown
+                  {...props}
+                  renderTree={renderTree}
+                  footer={component.children}
+                />
+              ),
             }
           : {})}
-        rightSection={loading ? <InputLoader /> : null}
+        itemComponent={(props: any) => (
+          <SelectItem {...props} multiSelect={multiSelect} />
+        )}
+        rightSection={
+          loading ? <InputLoader /> : icon ? <Icon name={icon} /> : null
+        }
         label={undefined}
         value={typeof value === "number" ? String(value) : value}
         wrapperProps={{ "data-id": props.id }}
@@ -165,3 +210,25 @@ const fetchHeight = (style: any) => {
   const match = minHeight.match(/\d+/);
   return match && parseInt(match[0]) < 36 ? minHeight : "inherit";
 };
+
+const SelectItem = forwardRef<HTMLDivElement, any>(
+  ({ label, value, description, multiSelect, ...others }: any, ref) => {
+    const { "data-selected": dataSelected, ...rest } = others;
+    const props = multiSelect ? rest : others;
+    return (
+      <Group noWrap ref={ref} {...props}>
+        {multiSelect && (
+          <Checkbox checked={dataSelected} onChange={() => {}} tabIndex={-1} />
+        )}
+        <Stack spacing={0}>
+          <Text>{label}</Text>
+          {description && (
+            <Text size="xs" color="dimmed">
+              {description}
+            </Text>
+          )}
+        </Stack>
+      </Group>
+    );
+  },
+);
