@@ -3,6 +3,7 @@ import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
 import { usePageListQuery } from "@/hooks/editor/reactQuery/usePageListQuery";
 import { useProjectQuery } from "@/hooks/editor/reactQuery/useProjectQuery";
 import { useEditorParams } from "@/hooks/editor/useEditorParams";
+import { useRouterWithLoader } from "@/hooks/useRouterWithLoader";
 import { createPage, deletePage, patchPage } from "@/requests/pages/mutations";
 import { PageConfigProps, PageResponse } from "@/requests/pages/types";
 import { useAppStore } from "@/stores/app";
@@ -20,7 +21,7 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconArrowLeft } from "@tabler/icons-react";
-import { useRouterWithLoader } from "@/hooks/useRouterWithLoader";
+import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { useEffect, useState } from "react";
 import slugify from "slugify";
 
@@ -120,7 +121,9 @@ export default function PageConfig({ page, setPage }: Props) {
       form.validate();
       let pageId = page?.id;
       if (page?.id) {
-        const patchParams = convertToPatchParams<PageConfigProps>(values);
+        const newValues = omit(values, ["cssType"]);
+        const patchParams =
+          convertToPatchParams<Omit<PageConfigProps, "cssType">>(newValues);
 
         const result = await patchPage(projectId, page.id, patchParams);
         setPage({ ...result, id: pageId } as PageResponse);
