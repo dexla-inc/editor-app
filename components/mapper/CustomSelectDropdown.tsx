@@ -39,7 +39,12 @@ const FixedLink = ({ text, link, url, isLive }: LinkProps) => {
   );
 };
 
-export const CustomDropdown = ({ children, ...props }: any) => {
+export const CustomDropdown = ({
+  children,
+  renderTree,
+  footer,
+  ...props
+}: any) => {
   const component = useEditorTreeStore(
     (state) => state.componentMutableAttrs[props.id.split("-").at(0)],
   );
@@ -64,6 +69,9 @@ export const CustomDropdown = ({ children, ...props }: any) => {
           isLive={isLive}
         />
       )}
+      {footer &&
+        footer.length > 0 &&
+        footer?.map((child: any) => renderTree?.(child, {}))}
     </MantineBox>
   );
 };
