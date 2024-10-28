@@ -5,7 +5,7 @@ import {
   getParentId,
   updateComponentPosition,
 } from "@/libs/dnd-grid/utils/editor";
-import { useRef } from "react";
+import { useRef, useMemo } from "react";
 import {
   getElementsOver,
   getGridCoordinates,
@@ -19,17 +19,68 @@ export const useDnd = (debug?: string) => {
   const dragOffset = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const isNewComponent = useRef<boolean>(false);
 
-  const getElementRects = (currComponentId: string) => {
-    const { root: components } = useEditorTreeStore.getState().tree;
-    const { iframeWindow } = useEditorStore.getState();
+  const iframeWindow = useEditorStore.getState().iframeWindow;
+  const { root: components } = useEditorTreeStore.getState().tree;
 
+  const baseElementFinder = () => {
+    if (!iframeWindow?.document) return iframeWindow?.document;
+    const modalBody = iframeWindow.document.querySelector(
+      ".iframe-canvas-Modal-body",
+    );
+    return modalBody ? modalBody : iframeWindow.document;
+  };
+
+  const baseElementId = () => {
+    const baseElement = baseElementFinder();
+    // console.log(
+    //   "---->",
+    //   baseElement?.constructor.name,
+    //   iframeWindow?.document.constructor.name,
+    //   iframeWindow?.document instanceof Document,
+    // );
+    if (baseElement?.constructor.name !== "HTMLDocument") {
+      return (baseElement as Element)?.getAttribute("id")!;
+    }
+
+    return "main-grid";
+  };
+
+  // Helper function to get element by id using the baseElement
+  const getElementById = (id: string): HTMLElement | null => {
+    // Determine the base document or a specific container if `.iframe-canvas-Modal-body` exists
+    // const baseElementFinder = () => {
+    //   if (!iframeWindow?.document) return iframeWindow?.document;
+    //   const modalBody = iframeWindow.document.querySelector(
+    //     ".iframe-canvas-Modal-body",
+    //   );
+    //   return modalBody ? modalBody : iframeWindow.document;
+    // };
+
+    const baseElement = baseElementFinder();
+    console.log(
+      { baseElement, id },
+      baseElement?.constructor.name,
+      baseElement?.querySelector(`#${id}`),
+    );
+    if (!baseElement) return null;
+
+    if (baseElement?.constructor.name === "HTMLDocument") {
+      return (baseElement as Document).getElementById(id);
+    } else {
+      return baseElement.querySelector(`#${id}`);
+    }
+
+    return null;
+  };
+
+  const getElementRects = (currComponentId: string) => {
     const allIds = getAllIds(components, {
       filterFromParent: currComponentId,
     });
     const targets = allIds.reduce(
       (acc, id) => {
         if (currComponentId !== id) {
-          const element = iframeWindow?.document.getElementById(id);
+          const element = getElementById(id);
           if (element) {
             const targetRect = element.getBoundingClientRect();
             acc[id] = targetRect;
@@ -143,7 +194,6 @@ export const useDnd = (debug?: string) => {
       tree: editorTree,
       setSelectedComponentIds,
     } = useEditorTreeStore.getState();
-    const { iframeWindow } = useEditorStore.getState();
     const {
       draggableComponent,
       coords,
@@ -151,11 +201,11 @@ export const useDnd = (debug?: string) => {
       setValidComponent,
     } = useDndGridStore.getState();
 
-    const updatingComponent = iframeWindow?.document.getElementById(
-      draggableComponent!.id!,
-    )!;
-    updatingComponent.style.gridColumn = coords.gridColumn;
-    updatingComponent.style.gridRow = coords.gridRow;
+    const updatingComponent = getElementById(draggableComponent!.id!);
+    if (updatingComponent) {
+      updatingComponent.style.gridColumn = coords.gridColumn;
+      updatingComponent.style.gridRow = coords.gridRow;
+    }
 
     updateComponentPosition(editorTree.root, draggableComponent!.id!, coords);
     setSelectedComponentIds(() => [draggableComponent?.id!]);
@@ -172,7 +222,6 @@ export const useDnd = (debug?: string) => {
 
     const { setTree: setComponents, tree: editorTree } =
       useEditorTreeStore.getState();
-    const { iframeWindow } = useEditorStore.getState();
     const {
       draggableComponent,
       setInvalidComponent,
@@ -189,7 +238,8 @@ export const useDnd = (debug?: string) => {
     const { id } = draggableComponent!;
 
     if (isNewComponent.current) {
-      addComponent(editorTree.root, draggableComponent!, "main-grid");
+      const elementId = baseElementId().replace("-body", "");
+      addComponent(editorTree.root, draggableComponent!, elementId);
       setComponents(editorTree, {
         action: `Added ${draggableComponent?.description} component`,
       });
@@ -197,7 +247,9 @@ export const useDnd = (debug?: string) => {
       return;
     }
 
-    const el = iframeWindow?.document.getElementById(id!)!;
+    const el = getElementById(id!);
+    console.log({ el });
+    if (!el) return;
 
     const {
       column: rawColumn,
@@ -234,7 +286,6 @@ export const useDnd = (debug?: string) => {
     moveElement(id!, parentId);
 
     const elementRects = getElementRects(id!);
-
     const overlappingIds = checkOverlap(el, elementRects);
     const fittingIds = checkFitsInside(el, elementRects);
 
@@ -279,8 +330,29 @@ function fitsInside(innerRect: any, outerRect: any) {
 
 function moveElement(elementId: string, newParentId: string) {
   const { iframeWindow } = useEditorStore.getState();
-  const element = iframeWindow?.document.getElementById(elementId);
-  const newParent = iframeWindow?.document.getElementById(newParentId);
+
+  // Determine the base element again inside moveElement
+  const baseElement = iframeWindow?.document.querySelector(
+    ".iframe-canvas-Modal-body",
+  )
+    ? iframeWindow.document.querySelector(".iframe-canvas-Modal-body")
+    : iframeWindow?.document;
+
+  // Adjusted helper to correctly get element by id based on baseElement type
+  const getElementById = (id: string): HTMLElement | null => {
+    if (!baseElement) return null;
+
+    if (baseElement instanceof Document) {
+      return baseElement.getElementById(id);
+    } else if (baseElement instanceof Element) {
+      return baseElement.querySelector(`#${id}`);
+    }
+
+    return null;
+  };
+
+  const element = getElementById(elementId);
+  const newParent = getElementById(newParentId);
 
   if (element && newParent) {
     newParent.appendChild(element);
