@@ -2,6 +2,10 @@ import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { componentMapper } from "@/utils/componentMapper";
+import {
+  isEditorModeSelector,
+  selectedComponentIdSelector,
+} from "@/utils/componentSelectors";
 import { NAVBAR_WIDTH } from "@/utils/config";
 import {
   DropTarget,
@@ -11,10 +15,6 @@ import {
 } from "@/utils/editor";
 import debounce from "lodash.debounce";
 import { useCallback } from "react";
-import {
-  isEditorModeSelector,
-  selectedComponentIdSelector,
-} from "@/utils/componentSelectors";
 
 const debouncedDragEnter = debounce((event: any, id: string) => {
   const isResizing = useEditorStore.getState().isResizing;
@@ -125,6 +125,8 @@ export const useDroppable = ({
     let isAllowed = !blockDroppingChildrenInside || isPopOver;
     if (componentName === "NavLink")
       isAllowed = componentToAdd?.name === "NavLink";
+    if (componentName === "Select")
+      isAllowed = componentToAdd?.name !== "Select";
 
     if (
       leftDist > threshold &&
