@@ -5,7 +5,11 @@ import { useProjectQuery } from "@/hooks/editor/reactQuery/useProjectQuery";
 import { useEditorParams } from "@/hooks/editor/useEditorParams";
 import { useRouterWithLoader } from "@/hooks/useRouterWithLoader";
 import { createPage, deletePage, patchPage } from "@/requests/pages/mutations";
-import { PageConfigProps, PageResponse } from "@/requests/pages/types";
+import {
+  PageConfigProps,
+  PageResponse,
+  BaseConfigProps as UpdatePageConfigProps,
+} from "@/requests/pages/types";
 import { useAppStore } from "@/stores/app";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { convertToPatchParams } from "@/types/dashboardTypes";
@@ -21,7 +25,6 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconArrowLeft } from "@tabler/icons-react";
-import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { useEffect, useState } from "react";
 import slugify from "slugify";
 
@@ -58,7 +61,7 @@ export default function PageConfig({ page, setPage }: Props) {
             ? "Title too long"
             : null,
       description: (value) =>
-        value.length > 200 ? "Description too long" : null,
+        value && value.length > 200 ? "Description too long" : null,
       slug: (value) =>
         value === ""
           ? "You must provide a slug"
@@ -121,9 +124,9 @@ export default function PageConfig({ page, setPage }: Props) {
       form.validate();
       let pageId = page?.id;
       if (page?.id) {
-        const newValues = omit(values, ["cssType"]);
+        const { cssType, ...updateValues } = values;
         const patchParams =
-          convertToPatchParams<Omit<PageConfigProps, "cssType">>(newValues);
+          convertToPatchParams<UpdatePageConfigProps>(updateValues);
 
         const result = await patchPage(projectId, page.id, patchParams);
         setPage({ ...result, id: pageId } as PageResponse);

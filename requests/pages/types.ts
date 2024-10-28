@@ -1,7 +1,7 @@
 import { IResponse, PagingParams } from "@/requests/types";
-import { Action } from "@/utils/actions";
 import { AppTypes } from "@/types/dashboardTypes";
 import { CssTypes } from "@/types/types";
+import { Action } from "@/utils/actions";
 
 export type PageAIResponse = {
   name: string;
@@ -31,13 +31,16 @@ export type PageStateResponse = PageStateParams & {
 
 export type QueryStringListItem = { key: string; value: string };
 
-export type PageBody = {
+export interface BaseConfigProps {
   title: string;
-  slug: string;
-  isHome: boolean;
-  authenticatedOnly: boolean;
-  authenticatedUserRole?: string;
   description?: string;
+  slug: string;
+  authenticatedOnly: boolean;
+}
+
+export interface PageBody extends BaseConfigProps {
+  isHome: boolean;
+  authenticatedUserRole?: string;
   parentPageId?: string;
   hasNavigation: boolean;
   queryStrings?: Record<string, string>;
@@ -47,15 +50,11 @@ export type PageBody = {
   };
   actions?: Action[];
   features?: string[];
-};
+}
 
-export type PageConfigProps = {
-  title: string;
-  description: string;
-  slug: string;
-  authenticatedOnly: boolean;
+export interface PageConfigProps extends BaseConfigProps {
   cssType: CssTypes;
-};
+}
 
 export type PageActionProps = {
   name?: string;
