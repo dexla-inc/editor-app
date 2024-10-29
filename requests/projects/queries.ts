@@ -6,7 +6,7 @@ export const getProjects = async (
   companyId: string,
   search: string = "",
   offset: number = 0,
-  limit: number = 10,
+  limit: number = 25,
 ) => {
   const response = (await get<ProjectListResponse>(
     `/projects?companyId=${companyId}&search=${search}&offset=${offset}&limit=${limit}`,
