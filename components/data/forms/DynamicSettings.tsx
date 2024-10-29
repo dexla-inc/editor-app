@@ -133,6 +133,7 @@ export const DynamicSettings = ({
                   ? {}
                   : {
                       // Keep only auth headers if endpoint changes and remove other config
+                      ...onLoadValues,
                       binds: {
                         header: {
                           ...(onLoadValues.binds?.header?.Authorization && {
