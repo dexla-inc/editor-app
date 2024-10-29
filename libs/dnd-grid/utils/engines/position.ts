@@ -2,6 +2,7 @@ import { useDndGridStore } from "@/libs/dnd-grid/stores/dndGridStore";
 import { getAllIds } from "@/libs/dnd-grid/utils/editor";
 import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
+import { getBaseElementId } from "@/libs/dnd-grid/utils/engines/finder";
 
 // Define the structure of the result returned by getGridCoordinates
 interface GridCoordinateResult {
@@ -24,7 +25,9 @@ export const getElementsOver = (x: number, y: number): Element[] => {
 
   return iframeWindow?.document
     .elementsFromPoint(x, y)
-    .filter((el: Element) => allIds.includes(el.id)) as Element[];
+    .filter((el: Element) =>
+      allIds.some((id) => el.id.startsWith(id)),
+    ) as Element[];
 };
 
 /**
@@ -57,7 +60,7 @@ export const getGridCoordinates = (
     return {
       column: 1,
       row: 1,
-      parentId: "main-grid",
+      parentId: getBaseElementId().replace("-body", ""),
     };
   }
 
@@ -67,7 +70,7 @@ export const getGridCoordinates = (
   return {
     column,
     row,
-    parentId: dropZoneElement.id,
+    parentId: dropZoneElement.id.replace("-body", ""),
   };
 };
 

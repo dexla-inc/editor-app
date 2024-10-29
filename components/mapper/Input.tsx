@@ -321,6 +321,7 @@ const InputComponent = forwardRef(
                 input: {
                   ...customStyle,
                   minHeight: "100%",
+                  width: "100%",
                   display: "flex",
                   paddingLeft: "10px",
                 },

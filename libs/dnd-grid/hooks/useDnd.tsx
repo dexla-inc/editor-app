@@ -5,7 +5,7 @@ import {
   getParentId,
   updateComponentPosition,
 } from "@/libs/dnd-grid/utils/editor";
-import { useRef, useMemo } from "react";
+import { useRef } from "react";
 import {
   getElementsOver,
   getGridCoordinates,
@@ -14,63 +14,29 @@ import { structureMapper } from "@/utils/componentMapper";
 import { useDndGridStore } from "@/libs/dnd-grid/stores/dndGridStore";
 import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
+import {
+  getBaseElementId,
+  getElementByIdInContext,
+} from "@/libs/dnd-grid/utils/engines/finder";
 
 export const useDnd = (debug?: string) => {
   const dragOffset = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const isNewComponent = useRef<boolean>(false);
 
-  const iframeWindow = useEditorStore.getState().iframeWindow;
   const { root: components } = useEditorTreeStore.getState().tree;
 
-  const baseElementFinder = () => {
-    if (!iframeWindow?.document) return iframeWindow?.document;
-    const modalBody = iframeWindow.document.querySelector(
-      ".iframe-canvas-Modal-body",
-    );
-    return modalBody ? modalBody : iframeWindow.document;
-  };
-
-  const baseElementId = () => {
-    const baseElement = baseElementFinder();
-    // console.log(
-    //   "---->",
-    //   baseElement?.constructor.name,
-    //   iframeWindow?.document.constructor.name,
-    //   iframeWindow?.document instanceof Document,
-    // );
-    if (baseElement?.constructor.name !== "HTMLDocument") {
-      return (baseElement as Element)?.getAttribute("id")!;
-    }
-
-    return "main-grid";
-  };
-
-  // Helper function to get element by id using the baseElement
+  /**
+   * Retrieves an element by ID using the context utilities.
+   *
+   * @param id - The ID of the element to retrieve.
+   * @returns The HTMLElement if found; otherwise, null.
+   */
   const getElementById = (id: string): HTMLElement | null => {
-    // Determine the base document or a specific container if `.iframe-canvas-Modal-body` exists
-    // const baseElementFinder = () => {
-    //   if (!iframeWindow?.document) return iframeWindow?.document;
-    //   const modalBody = iframeWindow.document.querySelector(
-    //     ".iframe-canvas-Modal-body",
-    //   );
-    //   return modalBody ? modalBody : iframeWindow.document;
-    // };
-
-    const baseElement = baseElementFinder();
-    console.log(
-      { baseElement, id },
-      baseElement?.constructor.name,
-      baseElement?.querySelector(`#${id}`),
-    );
-    if (!baseElement) return null;
-
-    if (baseElement?.constructor.name === "HTMLDocument") {
-      return (baseElement as Document).getElementById(id);
-    } else {
-      return baseElement.querySelector(`#${id}`);
+    const element = getElementByIdInContext(id);
+    if (debug) {
+      console.log({ element, id }, element?.constructor.name);
     }
-
-    return null;
+    return element;
   };
 
   const getElementRects = (currComponentId: string) => {
@@ -118,6 +84,7 @@ export const useDnd = (debug?: string) => {
         // @ts-ignore
         parentId: getParentId(components, currComponentId!) || "",
       });
+      console.log(getParentId(components, currComponentId!));
     } else {
       // add new components here
       const type = el.getAttribute("data-type");
@@ -149,9 +116,12 @@ export const useDnd = (debug?: string) => {
     });
   };
 
-  function checkOverlap(movable: any, elementRects: any) {
+  function checkOverlap(
+    movable: HTMLElement,
+    elementRects: Record<string, DOMRect>,
+  ) {
     const movableRect = movable.getBoundingClientRect();
-    const overlappingElements: any[] = [];
+    const overlappingElements: string[] = [];
 
     Object.entries(elementRects).forEach(([key, rect]) => {
       if (isOverlapping(movableRect, rect)) {
@@ -162,11 +132,14 @@ export const useDnd = (debug?: string) => {
     return overlappingElements;
   }
 
-  function checkFitsInside(movable: any, elementRects: any) {
+  function checkFitsInside(
+    movable: HTMLElement,
+    elementRects: Record<string, DOMRect>,
+  ) {
     const { root: components } = useEditorTreeStore.getState().tree;
 
     const movableRect = movable.getBoundingClientRect();
-    const overlappingElements: any[] = [];
+    const fittingElements: string[] = [];
 
     Object.entries(elementRects).forEach(([key, rect]) => {
       const parentComponent = getComponentById(components, key);
@@ -174,11 +147,11 @@ export const useDnd = (debug?: string) => {
         fitsInside(movableRect, rect) &&
         !parentComponent?.blockDroppingChildrenInside
       ) {
-        overlappingElements.push(key);
+        fittingElements.push(key);
       }
     });
 
-    return overlappingElements;
+    return fittingElements;
   }
 
   const onDragOver = (e: React.DragEvent) => {
@@ -202,13 +175,14 @@ export const useDnd = (debug?: string) => {
     } = useDndGridStore.getState();
 
     const updatingComponent = getElementById(draggableComponent!.id!);
+    console.log("updatingComponent", updatingComponent);
     if (updatingComponent) {
       updatingComponent.style.gridColumn = coords.gridColumn;
       updatingComponent.style.gridRow = coords.gridRow;
     }
-
+    console.log("DROP", coords);
     updateComponentPosition(editorTree.root, draggableComponent!.id!, coords);
-    setSelectedComponentIds(() => [draggableComponent?.id!]);
+    setSelectedComponentIds(() => [draggableComponent!.id!]);
     setComponents(editorTree, {
       action: `Updated ${draggableComponent?.description} component`,
     });
@@ -228,17 +202,18 @@ export const useDnd = (debug?: string) => {
       setValidComponent,
       setCoords,
     } = useDndGridStore.getState();
-
+    // console.log("======1");
     const elementsOver = getElementsOver(e.clientX, e.clientY);
     if (!elementsOver.find((item) => item.id === "main-grid")) {
       return;
     }
-
+    // console.log("======2");
     const { validComponent, invalidComponent } = useDndGridStore.getState();
     const { id } = draggableComponent!;
 
     if (isNewComponent.current) {
-      const elementId = baseElementId().replace("-body", "");
+      const elementId = getBaseElementId().replace("-body", "");
+      // console.log("NEW COMPONENT", elementId);
       addComponent(editorTree.root, draggableComponent!, elementId);
       setComponents(editorTree, {
         action: `Added ${draggableComponent?.description} component`,
@@ -246,9 +221,9 @@ export const useDnd = (debug?: string) => {
       isNewComponent.current = false;
       return;
     }
-
+    // console.log("======3");
     const el = getElementById(id!);
-    console.log({ el });
+
     if (!el) return;
 
     const {
@@ -256,7 +231,7 @@ export const useDnd = (debug?: string) => {
       row: rawRow,
       parentId,
     } = getGridCoordinates(
-      id || "",
+      id!,
       e.clientX - dragOffset.current.x,
       e.clientY - dragOffset.current.y,
     );
@@ -291,11 +266,19 @@ export const useDnd = (debug?: string) => {
 
     if (JSON.stringify(overlappingIds) === JSON.stringify(fittingIds)) {
       setCoords({ gridColumn, gridRow, parentId });
-      invalidComponent !== null && setInvalidComponent(null);
-      validComponent !== id && setValidComponent(id!);
+      if (invalidComponent !== null) {
+        setInvalidComponent(null);
+      }
+      if (validComponent !== id) {
+        setValidComponent(id!);
+      }
     } else {
-      invalidComponent !== id && setInvalidComponent(id!);
-      validComponent !== id && setValidComponent(null);
+      if (invalidComponent !== id) {
+        setInvalidComponent(id!);
+      }
+      if (validComponent !== id) {
+        setValidComponent(null);
+      }
     }
   };
 
@@ -310,7 +293,7 @@ export const useDnd = (debug?: string) => {
   return { onDrop, onDragStart, onDragOver, onDrag, onDragEnd };
 };
 
-export function isOverlapping(rect1: any, rect2: any) {
+export function isOverlapping(rect1: DOMRect, rect2: DOMRect) {
   return !(
     rect1.right < rect2.left ||
     rect1.left > rect2.right ||
@@ -319,7 +302,7 @@ export function isOverlapping(rect1: any, rect2: any) {
   );
 }
 
-function fitsInside(innerRect: any, outerRect: any) {
+function fitsInside(innerRect: DOMRect, outerRect: DOMRect) {
   return (
     innerRect.left >= outerRect.left &&
     innerRect.right <= outerRect.right &&
@@ -331,21 +314,21 @@ function fitsInside(innerRect: any, outerRect: any) {
 function moveElement(elementId: string, newParentId: string) {
   const { iframeWindow } = useEditorStore.getState();
 
-  // Determine the base element again inside moveElement
-  const baseElement = iframeWindow?.document.querySelector(
-    ".iframe-canvas-Modal-body",
-  )
-    ? iframeWindow.document.querySelector(".iframe-canvas-Modal-body")
-    : iframeWindow?.document;
-
-  // Adjusted helper to correctly get element by id based on baseElement type
+  // Reuse the getElementByIdInContext utility
   const getElementById = (id: string): HTMLElement | null => {
-    if (!baseElement) return null;
+    if (!iframeWindow?.document) return null;
+
+    const modalBody = iframeWindow.document.querySelector(
+      ".iframe-canvas-Modal-body",
+    );
+    const baseElement = modalBody
+      ? (modalBody as HTMLElement)
+      : iframeWindow.document;
 
     if (baseElement instanceof Document) {
       return baseElement.getElementById(id);
-    } else if (baseElement instanceof Element) {
-      return baseElement.querySelector(`#${id}`);
+    } else if (baseElement instanceof HTMLElement) {
+      return baseElement.querySelector<HTMLElement>(`#${id}`);
     }
 
     return null;

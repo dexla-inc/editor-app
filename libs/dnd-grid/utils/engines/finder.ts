@@ -1,7 +1,61 @@
-export const findElementById = (context: any, id: string) => {
-  // find the element that start with id or data-id
-  return (
-    context.querySelector(`[id="${id}"]`) ||
-    context.querySelector(`[data-id="${id}"]`)
+import { useEditorStore } from "@/stores/editor";
+
+/**
+ * Retrieves the base element within the iframe, prioritizing
+ * the ".iframe-canvas-Modal-body" if it exists.
+ *
+ * @returns The base HTMLElement or Document.
+ */
+export const getBaseElement = (): Element | Document | null => {
+  const { iframeWindow } = useEditorStore.getState();
+
+  if (!iframeWindow?.document) return null;
+
+  const modalBody = iframeWindow.document.querySelector(
+    ".iframe-canvas-Modal-body",
   );
+
+  return modalBody ? modalBody : iframeWindow.document;
+};
+
+/**
+ * Retrieves the ID of the base element. If the base element is a document,
+ * returns a default ID ("main-grid").
+ *
+ * @returns The ID of the base element.
+ */
+export const getBaseElementId = (): string => {
+  const baseElement = getBaseElement();
+
+  if (!baseElement) return "main-grid"; // Fallback ID
+
+  if (baseElement.constructor.name !== "HTMLDocument") {
+    const element = baseElement as HTMLElement;
+    const id = element.getAttribute("id");
+    return id ? id.replace("-body", "") : "main-grid"; // Fallback if ID is absent
+  }
+
+  return "main-grid";
+};
+
+/**
+ * Retrieves an element by its ID within the base context.
+ *
+ * @param id - The ID of the element to retrieve.
+ * @returns The HTMLElement if found; otherwise, null.
+ */
+export const getElementByIdInContext = (id: string): HTMLElement | null => {
+  const baseElement = getBaseElement();
+  const { iframeWindow } = useEditorStore.getState();
+  if (!baseElement) return null;
+
+  if (baseElement.constructor.name !== "HTMLDocument") {
+    // In case when the modal is dragged, the context element id must be different from the dragged element id
+    if (!(baseElement as Element).id.includes(id)) {
+      return baseElement.querySelector(`[id^="${id}"]`);
+    }
+  }
+
+  // Force find the element by ID in the iframe window if the conditions above are not met
+  return iframeWindow?.document.querySelector(`[id^="${id}"]`)!;
 };
