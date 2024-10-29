@@ -184,6 +184,7 @@ const SelectComponent = forwardRef(
                   {...props}
                   renderTree={renderTree}
                   footer={component.children}
+                  shareableContent={shareableContent}
                 />
               ),
             }

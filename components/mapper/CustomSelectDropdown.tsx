@@ -43,6 +43,7 @@ export const CustomDropdown = ({
   children,
   renderTree,
   footer,
+  shareableContent,
   ...props
 }: any) => {
   const component = useEditorTreeStore(
@@ -71,7 +72,7 @@ export const CustomDropdown = ({
       )}
       {footer &&
         footer.length > 0 &&
-        footer?.map((child: any) => renderTree?.(child, {}))}
+        footer?.map((child: any) => renderTree?.(child, shareableContent))}
     </MantineBox>
   );
 };
