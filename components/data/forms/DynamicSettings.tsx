@@ -125,12 +125,31 @@ export const DynamicSettings = ({
           {...form.getInputProps("onLoad.endpointId")}
           isOnLoad
           onChange={async (selected) => {
+            console.log("onLoadValues", onLoadValues);
             form.setValues({
               // @ts-ignore
               onLoad: {
-                ...(selected === null ? {} : onLoadValues),
-                endpointId: selected,
-                resultsKey: "",
+                ...(selected === null
+                  ? {}
+                  : {
+                      // Keep only auth headers if endpoint changes and remove other config
+                      binds: {
+                        header: {
+                          ...(onLoadValues.binds?.header?.Authorization && {
+                            Authorization:
+                              onLoadValues.binds.header.Authorization,
+                          }),
+                          ...(onLoadValues.binds?.header?.apikey && {
+                            apikey: onLoadValues.binds.header.apikey,
+                          }),
+                          ...(onLoadValues.binds?.header?.apiKey && {
+                            apiKey: onLoadValues.binds.header.apiKey,
+                          }),
+                        },
+                      },
+                      endpointId: selected,
+                      resultsKey: "",
+                    }),
               },
             });
             await updateTreeComponentAttrs({
