@@ -242,10 +242,12 @@ const InputComponent = forwardRef(
                 wrapper: {
                   display: "flex",
                   width: "100%",
+                  height: "100%",
                 },
                 input: {
                   ...customStyle,
                   minHeight: "100%",
+                  height: "100%",
                   display: "flex",
                   paddingLeft: "10px",
                 },
@@ -317,10 +319,12 @@ const InputComponent = forwardRef(
                 wrapper: {
                   display: "flex",
                   width: "100%",
+                  height: "100%",
                 },
                 input: {
                   ...customStyle,
                   minHeight: "100%",
+                  height: "100%",
                   width: "100%",
                   display: "flex",
                   paddingLeft: "10px",
