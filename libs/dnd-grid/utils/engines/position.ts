@@ -2,13 +2,36 @@ import { useDndGridStore } from "@/libs/dnd-grid/stores/dndGridStore";
 import { getAllIds } from "@/libs/dnd-grid/utils/editor";
 import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { getBaseElementId } from "@/libs/dnd-grid/utils/engines/finder";
+import {
+  getBaseElement,
+  getBaseElementId,
+} from "@/libs/dnd-grid/utils/engines/finder";
 
 // Define the structure of the result returned by getGridCoordinates
 interface GridCoordinateResult {
   column: number;
   row: number;
   parentId: string;
+}
+
+/**
+ * Retrieves all elements at a given point relative to a specific container element.
+ *
+ * @param {HTMLElement} container - The container element within which to search.
+ * @param {number} x - The X coordinate relative to the container.
+ * @param {number} y - The Y coordinate relative to the container.
+ * @returns {HTMLElement[]} - An array of elements found at the specified point within the container.
+ */
+function elementsFromPointWithin(container: HTMLElement, x: number, y: number) {
+  // console.log("elementsFromPointWithin", container);
+  const rect = container.getBoundingClientRect();
+  const viewportX = rect.left + x;
+  const viewportY = rect.top + y;
+  const allElements = document.elementsFromPoint(viewportX, viewportY);
+  return [
+    container,
+    ...allElements.filter((element) => container.contains(element)),
+  ];
 }
 
 /**
@@ -22,12 +45,14 @@ export const getElementsOver = (x: number, y: number): Element[] => {
   const components = editorTree.root;
   const { iframeWindow } = useEditorStore.getState();
   const allIds = getAllIds(components);
+  const baseElementId = getBaseElementId();
 
-  return iframeWindow?.document
-    .elementsFromPoint(x, y)
-    .filter((el: Element) =>
-      allIds.some((id) => el.id.startsWith(id)),
-    ) as Element[];
+  const containerContext =
+    iframeWindow?.document.getElementById(baseElementId)!;
+
+  return elementsFromPointWithin(containerContext, x, y).filter((el: Element) =>
+    allIds.some((id) => el.id.startsWith(id)),
+  ) as Element[];
 };
 
 /**

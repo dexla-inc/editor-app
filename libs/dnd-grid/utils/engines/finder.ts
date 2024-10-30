@@ -32,7 +32,7 @@ export const getBaseElementId = (): string => {
   if (baseElement.constructor.name !== "HTMLDocument") {
     const element = baseElement as HTMLElement;
     const id = element.getAttribute("id");
-    return id ? id.replace("-body", "") : "main-grid"; // Fallback if ID is absent
+    return id ? id : "main-grid"; // Fallback if ID is absent
   }
 
   return "main-grid";

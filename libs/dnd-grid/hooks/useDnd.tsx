@@ -6,10 +6,7 @@ import {
   updateComponentPosition,
 } from "@/libs/dnd-grid/utils/editor";
 import { useRef } from "react";
-import {
-  getElementsOver,
-  getGridCoordinates,
-} from "@/libs/dnd-grid/utils/engines/position";
+import { getGridCoordinates } from "@/libs/dnd-grid/utils/engines/position";
 import { structureMapper } from "@/utils/componentMapper";
 import { useDndGridStore } from "@/libs/dnd-grid/stores/dndGridStore";
 import { useEditorStore } from "@/stores/editor";
@@ -25,20 +22,6 @@ export const useDnd = (debug?: string) => {
 
   const { root: components } = useEditorTreeStore.getState().tree;
 
-  /**
-   * Retrieves an element by ID using the context utilities.
-   *
-   * @param id - The ID of the element to retrieve.
-   * @returns The HTMLElement if found; otherwise, null.
-   */
-  const getElementById = (id: string): HTMLElement | null => {
-    const element = getElementByIdInContext(id);
-    if (debug) {
-      console.log({ element, id }, element?.constructor.name);
-    }
-    return element;
-  };
-
   const getElementRects = (currComponentId: string) => {
     const allIds = getAllIds(components, {
       filterFromParent: currComponentId,
@@ -46,7 +29,7 @@ export const useDnd = (debug?: string) => {
     const targets = allIds.reduce(
       (acc, id) => {
         if (currComponentId !== id) {
-          const element = getElementById(id);
+          const element = getElementByIdInContext(id);
           if (element) {
             const targetRect = element.getBoundingClientRect();
             acc[id] = targetRect;
@@ -174,8 +157,8 @@ export const useDnd = (debug?: string) => {
       setValidComponent,
     } = useDndGridStore.getState();
 
-    const updatingComponent = getElementById(draggableComponent!.id!);
-    console.log("updatingComponent", updatingComponent);
+    const updatingComponent = getElementByIdInContext(draggableComponent!.id!);
+
     if (updatingComponent) {
       updatingComponent.style.gridColumn = coords.gridColumn;
       updatingComponent.style.gridRow = coords.gridRow;
@@ -202,18 +185,12 @@ export const useDnd = (debug?: string) => {
       setValidComponent,
       setCoords,
     } = useDndGridStore.getState();
-    // console.log("======1");
-    const elementsOver = getElementsOver(e.clientX, e.clientY);
-    if (!elementsOver.find((item) => item.id === "main-grid")) {
-      return;
-    }
-    // console.log("======2");
+
     const { validComponent, invalidComponent } = useDndGridStore.getState();
     const { id } = draggableComponent!;
 
     if (isNewComponent.current) {
       const elementId = getBaseElementId().replace("-body", "");
-      // console.log("NEW COMPONENT", elementId);
       addComponent(editorTree.root, draggableComponent!, elementId);
       setComponents(editorTree, {
         action: `Added ${draggableComponent?.description} component`,
@@ -221,8 +198,8 @@ export const useDnd = (debug?: string) => {
       isNewComponent.current = false;
       return;
     }
-    // console.log("======3");
-    const el = getElementById(id!);
+
+    const el = getElementByIdInContext(id!);
 
     if (!el) return;
 
