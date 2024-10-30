@@ -485,8 +485,10 @@ export const useApiCallAction = async (
 
     let responseJson: any;
 
+    const [apiUrl, params] = url.split("?");
+
     const fetchUrl = endpoint?.isServerRequest
-      ? `/api/proxy?targetUrl=${toBase64(url)}`
+      ? `/api/proxy?url=${apiUrl}${params !== undefined ? `&params=${toBase64(params)}` : ""}`
       : url;
 
     switch (action.authType) {
