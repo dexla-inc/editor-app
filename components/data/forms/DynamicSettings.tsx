@@ -82,7 +82,7 @@ export const DynamicSettings = ({
     },
   });
 
-  const onLoadValues = form.values.onLoad;
+  const [onLoadValues, setOnLoadValues] = useState(form.values.onLoad);
 
   const selectableObject = onLoadValues.resultsKey
     ? get(exampleResponse, onLoadValues.resultsKey)
@@ -96,7 +96,7 @@ export const DynamicSettings = ({
         ...form.values,
         props: {
           ...form.values.props,
-          dataType: (form.values.onLoad.endpointId
+          dataType: (onLoadValues.endpointId
             ? "dynamic"
             : "static") as DataType,
         },
@@ -125,31 +125,36 @@ export const DynamicSettings = ({
           {...form.getInputProps("onLoad.endpointId")}
           isOnLoad
           onChange={async (selected) => {
-            console.log("onLoadValues", onLoadValues);
+            const newBind = {
+              ...onLoadValues,
+              binds: {
+                header: {
+                  ...(onLoadValues.binds?.header?.Authorization && {
+                    Authorization: onLoadValues.binds.header.Authorization,
+                  }),
+                  ...(onLoadValues.binds?.header?.apikey && {
+                    apikey: onLoadValues.binds.header.apikey,
+                  }),
+                  ...(onLoadValues.binds?.header?.apiKey && {
+                    apiKey: onLoadValues.binds.header.apiKey,
+                  }),
+                },
+                parameter: {},
+                body: {},
+              },
+              endpointId: selected,
+              resultsKey: "",
+            };
+
+            setOnLoadValues(newBind);
+
             form.setValues({
               // @ts-ignore
               onLoad: {
                 ...(selected === null
                   ? {}
                   : {
-                      // Keep only auth headers if endpoint changes and remove other config
-                      ...onLoadValues,
-                      binds: {
-                        header: {
-                          ...(onLoadValues.binds?.header?.Authorization && {
-                            Authorization:
-                              onLoadValues.binds.header.Authorization,
-                          }),
-                          ...(onLoadValues.binds?.header?.apikey && {
-                            apikey: onLoadValues.binds.header.apikey,
-                          }),
-                          ...(onLoadValues.binds?.header?.apiKey && {
-                            apiKey: onLoadValues.binds.header.apiKey,
-                          }),
-                        },
-                      },
-                      endpointId: selected,
-                      resultsKey: "",
+                      ...newBind,
                     }),
               },
             });
