@@ -14,22 +14,39 @@ import { structureMapper } from "@/utils/componentMapper";
 import { useDndGridStore } from "@/libs/dnd-grid/stores/dndGridStore";
 import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
+import {
+  getBaseElementId,
+  getElementByIdInContext,
+} from "@/libs/dnd-grid/utils/engines/finder";
 
 export const useDnd = (debug?: string) => {
   const dragOffset = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const isNewComponent = useRef<boolean>(false);
 
-  const getElementRects = (currComponentId: string) => {
-    const { root: components } = useEditorTreeStore.getState().tree;
-    const { iframeWindow } = useEditorStore.getState();
+  const { root: components } = useEditorTreeStore.getState().tree;
 
+  /**
+   * Retrieves an element by ID using the context utilities.
+   *
+   * @param id - The ID of the element to retrieve.
+   * @returns The HTMLElement if found; otherwise, null.
+   */
+  const getElementById = (id: string): HTMLElement | null => {
+    const element = getElementByIdInContext(id);
+    if (debug) {
+      console.log({ element, id }, element?.constructor.name);
+    }
+    return element;
+  };
+
+  const getElementRects = (currComponentId: string) => {
     const allIds = getAllIds(components, {
       filterFromParent: currComponentId,
     });
     const targets = allIds.reduce(
       (acc, id) => {
         if (currComponentId !== id) {
-          const element = iframeWindow?.document.getElementById(id);
+          const element = getElementById(id);
           if (element) {
             const targetRect = element.getBoundingClientRect();
             acc[id] = targetRect;
@@ -67,6 +84,7 @@ export const useDnd = (debug?: string) => {
         // @ts-ignore
         parentId: getParentId(components, currComponentId!) || "",
       });
+      console.log(getParentId(components, currComponentId!));
     } else {
       // add new components here
       const type = el.getAttribute("data-type");
@@ -98,9 +116,12 @@ export const useDnd = (debug?: string) => {
     });
   };
 
-  function checkOverlap(movable: any, elementRects: any) {
+  function checkOverlap(
+    movable: HTMLElement,
+    elementRects: Record<string, DOMRect>,
+  ) {
     const movableRect = movable.getBoundingClientRect();
-    const overlappingElements: any[] = [];
+    const overlappingElements: string[] = [];
 
     Object.entries(elementRects).forEach(([key, rect]) => {
       if (isOverlapping(movableRect, rect)) {
@@ -111,11 +132,14 @@ export const useDnd = (debug?: string) => {
     return overlappingElements;
   }
 
-  function checkFitsInside(movable: any, elementRects: any) {
+  function checkFitsInside(
+    movable: HTMLElement,
+    elementRects: Record<string, DOMRect>,
+  ) {
     const { root: components } = useEditorTreeStore.getState().tree;
 
     const movableRect = movable.getBoundingClientRect();
-    const overlappingElements: any[] = [];
+    const fittingElements: string[] = [];
 
     Object.entries(elementRects).forEach(([key, rect]) => {
       const parentComponent = getComponentById(components, key);
@@ -123,11 +147,11 @@ export const useDnd = (debug?: string) => {
         fitsInside(movableRect, rect) &&
         !parentComponent?.blockDroppingChildrenInside
       ) {
-        overlappingElements.push(key);
+        fittingElements.push(key);
       }
     });
 
-    return overlappingElements;
+    return fittingElements;
   }
 
   const onDragOver = (e: React.DragEvent) => {
@@ -143,7 +167,6 @@ export const useDnd = (debug?: string) => {
       tree: editorTree,
       setSelectedComponentIds,
     } = useEditorTreeStore.getState();
-    const { iframeWindow } = useEditorStore.getState();
     const {
       draggableComponent,
       coords,
@@ -151,14 +174,15 @@ export const useDnd = (debug?: string) => {
       setValidComponent,
     } = useDndGridStore.getState();
 
-    const updatingComponent = iframeWindow?.document.getElementById(
-      draggableComponent!.id!,
-    )!;
-    updatingComponent.style.gridColumn = coords.gridColumn;
-    updatingComponent.style.gridRow = coords.gridRow;
-
+    const updatingComponent = getElementById(draggableComponent!.id!);
+    console.log("updatingComponent", updatingComponent);
+    if (updatingComponent) {
+      updatingComponent.style.gridColumn = coords.gridColumn;
+      updatingComponent.style.gridRow = coords.gridRow;
+    }
+    console.log("DROP", coords);
     updateComponentPosition(editorTree.root, draggableComponent!.id!, coords);
-    setSelectedComponentIds(() => [draggableComponent?.id!]);
+    setSelectedComponentIds(() => [draggableComponent!.id!]);
     setComponents(editorTree, {
       action: `Updated ${draggableComponent?.description} component`,
     });
@@ -172,39 +196,42 @@ export const useDnd = (debug?: string) => {
 
     const { setTree: setComponents, tree: editorTree } =
       useEditorTreeStore.getState();
-    const { iframeWindow } = useEditorStore.getState();
     const {
       draggableComponent,
       setInvalidComponent,
       setValidComponent,
       setCoords,
     } = useDndGridStore.getState();
-
+    // console.log("======1");
     const elementsOver = getElementsOver(e.clientX, e.clientY);
     if (!elementsOver.find((item) => item.id === "main-grid")) {
       return;
     }
-
+    // console.log("======2");
     const { validComponent, invalidComponent } = useDndGridStore.getState();
     const { id } = draggableComponent!;
 
     if (isNewComponent.current) {
-      addComponent(editorTree.root, draggableComponent!, "main-grid");
+      const elementId = getBaseElementId().replace("-body", "");
+      // console.log("NEW COMPONENT", elementId);
+      addComponent(editorTree.root, draggableComponent!, elementId);
       setComponents(editorTree, {
         action: `Added ${draggableComponent?.description} component`,
       });
       isNewComponent.current = false;
       return;
     }
+    // console.log("======3");
+    const el = getElementById(id!);
 
-    const el = iframeWindow?.document.getElementById(id!)!;
+    if (!el) return;
 
     const {
       column: rawColumn,
       row: rawRow,
       parentId,
     } = getGridCoordinates(
-      id || "",
+      id!,
       e.clientX - dragOffset.current.x,
       e.clientY - dragOffset.current.y,
     );
@@ -234,17 +261,24 @@ export const useDnd = (debug?: string) => {
     moveElement(id!, parentId);
 
     const elementRects = getElementRects(id!);
-
     const overlappingIds = checkOverlap(el, elementRects);
     const fittingIds = checkFitsInside(el, elementRects);
 
     if (JSON.stringify(overlappingIds) === JSON.stringify(fittingIds)) {
       setCoords({ gridColumn, gridRow, parentId });
-      invalidComponent !== null && setInvalidComponent(null);
-      validComponent !== id && setValidComponent(id!);
+      if (invalidComponent !== null) {
+        setInvalidComponent(null);
+      }
+      if (validComponent !== id) {
+        setValidComponent(id!);
+      }
     } else {
-      invalidComponent !== id && setInvalidComponent(id!);
-      validComponent !== id && setValidComponent(null);
+      if (invalidComponent !== id) {
+        setInvalidComponent(id!);
+      }
+      if (validComponent !== id) {
+        setValidComponent(null);
+      }
     }
   };
 
@@ -259,7 +293,7 @@ export const useDnd = (debug?: string) => {
   return { onDrop, onDragStart, onDragOver, onDrag, onDragEnd };
 };
 
-export function isOverlapping(rect1: any, rect2: any) {
+export function isOverlapping(rect1: DOMRect, rect2: DOMRect) {
   return !(
     rect1.right < rect2.left ||
     rect1.left > rect2.right ||
@@ -268,7 +302,7 @@ export function isOverlapping(rect1: any, rect2: any) {
   );
 }
 
-function fitsInside(innerRect: any, outerRect: any) {
+function fitsInside(innerRect: DOMRect, outerRect: DOMRect) {
   return (
     innerRect.left >= outerRect.left &&
     innerRect.right <= outerRect.right &&
@@ -279,8 +313,29 @@ function fitsInside(innerRect: any, outerRect: any) {
 
 function moveElement(elementId: string, newParentId: string) {
   const { iframeWindow } = useEditorStore.getState();
-  const element = iframeWindow?.document.getElementById(elementId);
-  const newParent = iframeWindow?.document.getElementById(newParentId);
+
+  // Reuse the getElementByIdInContext utility
+  const getElementById = (id: string): HTMLElement | null => {
+    if (!iframeWindow?.document) return null;
+
+    const modalBody = iframeWindow.document.querySelector(
+      ".iframe-canvas-Modal-body",
+    );
+    const baseElement = modalBody
+      ? (modalBody as HTMLElement)
+      : iframeWindow.document;
+
+    if (baseElement instanceof Document) {
+      return baseElement.getElementById(id);
+    } else if (baseElement instanceof HTMLElement) {
+      return baseElement.querySelector<HTMLElement>(`#${id}`);
+    }
+
+    return null;
+  };
+
+  const element = getElementById(elementId);
+  const newParent = getElementById(newParentId);
 
   if (element && newParent) {
     newParent.appendChild(element);

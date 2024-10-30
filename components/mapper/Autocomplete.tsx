@@ -25,7 +25,16 @@ import { useInputValue } from "@/hooks/components/useInputValue";
 type Props = EditableComponentMapper & AutocompleteProps;
 
 const AutocompleteComponent = forwardRef(
-  ({ component, shareableContent, children: child, ...props }: Props, ref) => {
+  (
+    {
+      component,
+      shareableContent,
+      children: child,
+      grid: { ChildrenWrapper },
+      ...props
+    }: Props,
+    ref,
+  ) => {
     const {
       children,
       triggers,
@@ -34,6 +43,7 @@ const AutocompleteComponent = forwardRef(
       bg,
       textColor,
       iconName,
+
       ...restComponentProps
     } = component.props as any;
 
@@ -145,19 +155,14 @@ const AutocompleteComponent = forwardRef(
           styles={{
             root: {
               position: "relative",
-              ...pick(customStyle, [
-                "display",
-                "width",
-                "height",
-                "minHeight",
-                "minWidth",
-              ]),
               gridArea: "1 / 1 / -1 / -1",
             },
+            wrapper: { height: "100%" },
             input: {
               ...customStyle,
+              minHeight: "100%",
               height: "100%",
-              padding: "5px",
+              paddingLeft: "5px",
             },
           }}
           withinPortal={false}
@@ -169,6 +174,7 @@ const AutocompleteComponent = forwardRef(
           value={typingValue?.label ?? typingValue}
           {...(isAdvanced ? { itemComponent: AutoCompleteItem } : {})}
         />
+        <ChildrenWrapper />
       </Box>
     );
   },

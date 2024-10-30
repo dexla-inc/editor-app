@@ -5,6 +5,7 @@ import { checkOverlap } from "@/libs/dnd-grid/utils/engines/overlap";
 import { getGridCoordinates } from "@/libs/dnd-grid/utils/engines/position";
 import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
+import { getElementByIdInContext } from "@/libs/dnd-grid/utils/engines/finder";
 
 interface GridCoords {
   gridColumn: string;
@@ -146,7 +147,7 @@ export const useResize = () => {
       const selectedComponentId = selectedComponentIds?.at(0);
       if (!selectedComponentId) return;
 
-      const el = iframeWindow?.document.getElementById(selectedComponentId)!;
+      const el = getElementByIdInContext(selectedComponentId)!;
 
       const { column, row } = getGridCoordinates(
         selectedComponentId,
@@ -160,7 +161,12 @@ export const useResize = () => {
         column,
         row,
       );
-
+      console.log("NEW GRID COORDS", {
+        column,
+        row,
+        newGridColumn,
+        newGridRow,
+      });
       // Apply new grid coordinates
       el.style.gridColumn = newGridColumn;
       el.style.gridRow = newGridRow;
@@ -188,6 +194,8 @@ export const useResize = () => {
         gridColumn: el.style.gridColumn,
         gridRow: el.style.gridRow,
       };
+
+      console.log("FINAL COORDS", resizeEndCoords.current);
     },
     [isResizing, iframeWindow],
   );
