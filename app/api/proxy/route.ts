@@ -14,10 +14,11 @@ export {
 };
 
 async function handleRequest(req: NextRequest) {
-  const targetUrl = req.nextUrl.searchParams.get("targetUrl");
+  const url = req.nextUrl.searchParams.get("url");
+  const params = req.nextUrl.searchParams.get("params");
 
-  if (!targetUrl) {
-    return NextResponse.json({ error: "Missing targetUrl" }, { status: 400 });
+  if (!url) {
+    return NextResponse.json({ error: "Missing url" }, { status: 400 });
   }
 
   const validHeaders = [
@@ -29,7 +30,7 @@ async function handleRequest(req: NextRequest) {
     "apikey",
   ];
 
-  const decodedUrl = fromBase64(targetUrl as string);
+  const decodedUrl = `${url}?${fromBase64(params as string)}`;
 
   const headers: Record<string, string> = {};
   req.headers.forEach((value, key) => {
