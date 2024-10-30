@@ -49,7 +49,7 @@ export const useEndpoint = ({
     : "";
 
   const [_apiUrl, params] = url.split("?");
-  console.log(params, toBase64(params));
+
   const fetchUrl = endpoint?.isServerRequest
     ? `/api/proxy?url=${_apiUrl}${params !== undefined ? `&params=${toBase64(params)}` : ""}`
     : url;
