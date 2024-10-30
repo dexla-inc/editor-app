@@ -11,11 +11,11 @@ export const getBaseElement = (): Element | Document | null => {
 
   if (!iframeWindow?.document) return null;
 
-  const modalBody = iframeWindow.document.querySelector(
-    ".iframe-canvas-Modal-body",
+  const modalBody = iframeWindow.document.querySelectorAll(
+    ".iframe-canvas-Modal-body, .iframe-canvas-Drawer-body",
   );
 
-  return modalBody ? modalBody : iframeWindow.document;
+  return modalBody.length ? modalBody[0] : iframeWindow.document;
 };
 
 /**

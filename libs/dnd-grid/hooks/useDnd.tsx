@@ -163,8 +163,12 @@ export const useDnd = (debug?: string) => {
       updatingComponent.style.gridColumn = coords.gridColumn;
       updatingComponent.style.gridRow = coords.gridRow;
     }
-    console.log("DROP", coords);
-    updateComponentPosition(editorTree.root, draggableComponent!.id!, coords);
+
+    updateComponentPosition(
+      editorTree.root,
+      draggableComponent!.id!.replace("-body", ""),
+      coords,
+    );
     setSelectedComponentIds(() => [draggableComponent!.id!]);
     setComponents(editorTree, {
       action: `Updated ${draggableComponent?.description} component`,
@@ -295,11 +299,11 @@ function moveElement(elementId: string, newParentId: string) {
   const getElementById = (id: string): HTMLElement | null => {
     if (!iframeWindow?.document) return null;
 
-    const modalBody = iframeWindow.document.querySelector(
-      ".iframe-canvas-Modal-body",
+    const modalBody = iframeWindow.document.querySelectorAll(
+      ".iframe-canvas-Modal-body, .iframe-canvas-Drawer-body",
     );
-    const baseElement = modalBody
-      ? (modalBody as HTMLElement)
+    const baseElement = modalBody.length
+      ? (modalBody[0] as HTMLElement)
       : iframeWindow.document;
 
     if (baseElement instanceof Document) {
@@ -310,6 +314,19 @@ function moveElement(elementId: string, newParentId: string) {
 
     return null;
   };
+
+  console.log(
+    "1====>",
+    elementId,
+    getElementById(elementId),
+    getElementByIdInContext(elementId),
+  );
+  console.log(
+    "2====>",
+    newParentId,
+    getElementById(newParentId),
+    getElementByIdInContext(newParentId),
+  );
 
   const element = getElementById(elementId);
   const newParent = getElementById(newParentId);

@@ -1,11 +1,7 @@
-import { useDndGridStore } from "@/libs/dnd-grid/stores/dndGridStore";
 import { getAllIds } from "@/libs/dnd-grid/utils/editor";
 import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import {
-  getBaseElement,
-  getBaseElementId,
-} from "@/libs/dnd-grid/utils/engines/finder";
+import { getBaseElementId } from "@/libs/dnd-grid/utils/engines/finder";
 
 // Define the structure of the result returned by getGridCoordinates
 interface GridCoordinateResult {
@@ -79,6 +75,8 @@ export const getGridCoordinates = (
     y,
     forceDropZone,
   );
+
+  // IMPORTANT: remove the replace statement, the moveElement.getElementById and use the finder.
 
   // Handle the case when no drop zone is found
   if (!dropZoneElement) {
