@@ -47,8 +47,11 @@ export const useEndpoint = ({
   const url = endpoint
     ? getUrl(Object.keys(cleanParameter), apiUrl, cleanParameter)
     : "";
+
+  const [_apiUrl, params] = url.split("?");
+  console.log(params, toBase64(params));
   const fetchUrl = endpoint?.isServerRequest
-    ? `/api/proxy?targetUrl=${toBase64(url)}`
+    ? `/api/proxy?url=${_apiUrl}${params !== undefined ? `&params=${toBase64(params)}` : ""}`
     : url;
 
   const apiCall = async () => {

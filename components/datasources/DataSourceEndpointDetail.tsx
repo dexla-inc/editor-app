@@ -44,9 +44,7 @@ import {
 } from "@/utils/common";
 import { AddRequestInput } from "./AddRequestInput";
 import { useEndpoints } from "@/hooks/editor/reactQuery/useDataSourcesEndpoints";
-import {
-  constructHeaders,
-} from "@/utils/actionsApi";
+import { constructHeaders } from "@/utils/actionsApi";
 
 const MethodTypeArray: MethodTypes[] = [
   "GET",
@@ -369,14 +367,13 @@ export const DataSourceEndpointDetail = ({
       let apiUrl = url ?? `${baseUrl}/${relativeUrl}`;
 
       // Add query parameters if any
+      const urlParams = new URLSearchParams();
       if (parameters && parameters.length > 0) {
-        const urlParams = new URLSearchParams();
         for (const param of parameters) {
           if (param.value !== null && param.location === "Query") {
             urlParams.append(param.name, param.value?.toString());
           }
         }
-        apiUrl = `${apiUrl}?${urlParams.toString()}`;
       }
 
       // Prepare request headers
@@ -392,7 +389,7 @@ export const DataSourceEndpointDetail = ({
       }
 
       const fetchUrl = state.isServerRequest
-        ? `/api/proxy?targetUrl=${toBase64(apiUrl)}`
+        ? `/api/proxy?url=${apiUrl}${urlParams !== undefined ? `&params=${toBase64(urlParams.toString())}` : ""}`
         : apiUrl;
 
       const isGetMethodType = methodType === "GET";
@@ -441,7 +438,10 @@ export const DataSourceEndpointDetail = ({
         const contentRange = response.headers.get("Content-Range");
 
         if (contentRange && !contentRange.endsWith("/*")) {
-          result = extractPagingFromSupabase<typeof result>(contentRange, result);
+          result = extractPagingFromSupabase<typeof result>(
+            contentRange,
+            result,
+          );
         }
 
         let exampleResult = result;
