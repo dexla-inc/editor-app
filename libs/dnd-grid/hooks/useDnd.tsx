@@ -156,6 +156,12 @@ export const useDnd = (debug?: string) => {
       setInvalidComponent,
       setValidComponent,
     } = useDndGridStore.getState();
+    console.log("drop", draggableComponent!.id!.replace("-body", ""), coords);
+
+    // workaround? if coords.parentId is now detected as the draggableComponentId, force it to be the main-grid
+    if (draggableComponent?.id === coords.parentId) {
+      coords.parentId = "main-grid";
+    }
 
     const updatingComponent = getElementByIdInContext(draggableComponent!.id!);
 

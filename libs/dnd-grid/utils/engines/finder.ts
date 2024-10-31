@@ -52,10 +52,18 @@ export const getElementByIdInContext = (id: string): HTMLElement | null => {
   if (baseElement.constructor.name !== "HTMLDocument") {
     // In case when the modal is dragged, the context element id must be different from the dragged element id
     if (!(baseElement as Element).id.includes(id)) {
-      return baseElement.querySelector(`[id^="${id}"]`);
+      return (
+        baseElement.querySelectorAll<HTMLElement>(
+          `[id^="${id}"], [data-id^="${id}"]`,
+        )[0] ?? null
+      );
     }
   }
 
   // Force find the element by ID in the iframe window if the conditions above are not met
-  return iframeWindow?.document.querySelector(`[id^="${id}"]`)!;
+  return (
+    iframeWindow?.document.querySelectorAll<HTMLElement>(
+      `[id^="${id}"], [data-id^="${id}"]`,
+    )[0] ?? null
+  );
 };

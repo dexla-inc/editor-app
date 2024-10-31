@@ -24,6 +24,8 @@ function elementsFromPointWithin(container: HTMLElement, x: number, y: number) {
   const viewportX = rect.left + x;
   const viewportY = rect.top + y;
   const allElements = document.elementsFromPoint(viewportX, viewportY);
+
+  // putting 'container' as a valid dropzone as allElements consider only the elements inside the 'container'
   return [
     container,
     ...allElements.filter((element) => container.contains(element)),
