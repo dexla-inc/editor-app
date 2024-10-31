@@ -243,7 +243,11 @@ export const DataSourceEndpointDetail = ({
   };
 
   const handleAddNew = (apiType: ApiType) => {
-    const newItem = { ...defaultApiRequest[apiType], apiType };
+    const newItem = {
+      ...defaultApiRequest[apiType],
+      apiType,
+      manuallyAdded: true,
+    };
     dispatch({ type: "ADD_NEW", payload: { apiType, newItem } });
   };
 

@@ -165,6 +165,7 @@ export default function PagesStep({
             description: "",
             value:
               "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZpc25kdXZleGV6ZW5rc3Fwdm1vIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTc3NzM3NjksImV4cCI6MjAxMzM0OTc2OX0.BtdpJTGNBGIEM84dwXL_4khMNA0EjBeXeg2RbrmtOLA",
+            manuallyAdded: true,
           },
         ],
         parameters: [
@@ -175,6 +176,7 @@ export default function PagesStep({
             description: "",
             value: "eq.263f4aa3ce574cf3a8996f8f28c3b24a",
             location: "Query",
+            manuallyAdded: true,
           },
           {
             name: "select",
@@ -183,6 +185,7 @@ export default function PagesStep({
             description: "",
             value: "data",
             location: "Query",
+            manuallyAdded: true,
           },
         ],
         requestBody: [],

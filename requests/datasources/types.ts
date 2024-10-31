@@ -103,6 +103,7 @@ export interface FieldTypeBase {
   type: ParameterTypes | AuthenticationSchemes;
   description: string | null;
   value: any | null;
+  manuallyAdded: boolean;
 }
 
 export interface Header extends FieldTypeBase {
@@ -201,6 +202,7 @@ export const defaultApiRequest: {
     type: "string",
     description: null,
     value: null,
+    manuallyAdded: false,
   },
   parameter: {
     location: "Query",
@@ -209,11 +211,13 @@ export const defaultApiRequest: {
     type: "string",
     description: null,
     value: null,
+    manuallyAdded: false,
   },
   body: {
     name: "",
     type: "string",
     description: null,
     value: null,
+    manuallyAdded: false,
   },
 };
