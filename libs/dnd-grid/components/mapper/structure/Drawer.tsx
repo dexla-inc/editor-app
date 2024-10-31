@@ -170,6 +170,9 @@ export const jsonStructure = (props?: any): ComponentStructure => {
     props: {
       ...(props.props || {}),
       ...defaultDrawerValues,
+      style: {
+        zIndex: 300,
+      },
     },
     onLoad: {
       isVisible: {
