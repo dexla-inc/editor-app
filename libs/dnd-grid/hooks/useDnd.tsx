@@ -67,7 +67,6 @@ export const useDnd = (debug?: string) => {
         // @ts-ignore
         parentId: getParentId(components, currComponentId!) || "",
       });
-      console.log(getParentId(components, currComponentId!));
     } else {
       // add new components here
       const type = el.getAttribute("data-type");
@@ -156,10 +155,12 @@ export const useDnd = (debug?: string) => {
       setInvalidComponent,
       setValidComponent,
     } = useDndGridStore.getState();
-    console.log("drop", draggableComponent!.id!.replace("-body", ""), coords);
 
-    // workaround? if coords.parentId is now detected as the draggableComponentId, force it to be the main-grid
-    if (draggableComponent?.id === coords.parentId) {
+    // before really adding one of them to the tree, the parent is correctly defined.
+    // as they get added to the tree, the context is changed, and it now is one of them.
+    if (
+      ["Modal", "Drawer", "PopOver"].includes(draggableComponent?.name || "")
+    ) {
       coords.parentId = "main-grid";
     }
 
@@ -245,7 +246,7 @@ export const useDnd = (debug?: string) => {
 
     el.style.gridColumn = gridColumn;
     el.style.gridRow = gridRow;
-    moveElement(id!, parentId);
+    moveElement(el, parentId);
 
     const elementRects = getElementRects(id!);
     const overlappingIds = checkOverlap(el, elementRects);
@@ -298,46 +299,13 @@ function fitsInside(innerRect: DOMRect, outerRect: DOMRect) {
   );
 }
 
-function moveElement(elementId: string, newParentId: string) {
+function moveElement(currentElement: HTMLElement, newParentId: string) {
   const { iframeWindow } = useEditorStore.getState();
+  const newParent = iframeWindow?.document.querySelectorAll<HTMLElement>(
+    `[id="${newParentId}"], [data-id="${newParentId}"]`,
+  )[0];
 
-  // Reuse the getElementByIdInContext utility
-  const getElementById = (id: string): HTMLElement | null => {
-    if (!iframeWindow?.document) return null;
-
-    const modalBody = iframeWindow.document.querySelectorAll(
-      ".iframe-canvas-Modal-body, .iframe-canvas-Drawer-body",
-    );
-    const baseElement = modalBody.length
-      ? (modalBody[0] as HTMLElement)
-      : iframeWindow.document;
-
-    if (baseElement instanceof Document) {
-      return baseElement.getElementById(id);
-    } else if (baseElement instanceof HTMLElement) {
-      return baseElement.querySelector<HTMLElement>(`#${id}`);
-    }
-
-    return null;
-  };
-
-  console.log(
-    "1====>",
-    elementId,
-    getElementById(elementId),
-    getElementByIdInContext(elementId),
-  );
-  console.log(
-    "2====>",
-    newParentId,
-    getElementById(newParentId),
-    getElementByIdInContext(newParentId),
-  );
-
-  const element = getElementById(elementId);
-  const newParent = getElementById(newParentId);
-
-  if (element && newParent) {
-    newParent.appendChild(element);
+  if (currentElement && newParent) {
+    newParent.appendChild(currentElement);
   }
 }

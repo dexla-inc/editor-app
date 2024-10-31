@@ -161,12 +161,7 @@ export const useResize = () => {
         column,
         row,
       );
-      console.log("NEW GRID COORDS", {
-        column,
-        row,
-        newGridColumn,
-        newGridRow,
-      });
+
       // Apply new grid coordinates
       el.style.gridColumn = newGridColumn;
       el.style.gridRow = newGridRow;
@@ -194,8 +189,6 @@ export const useResize = () => {
         gridColumn: el.style.gridColumn,
         gridRow: el.style.gridRow,
       };
-
-      console.log("FINAL COORDS", resizeEndCoords.current);
     },
     [isResizing, iframeWindow],
   );

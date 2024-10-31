@@ -11,45 +11,28 @@ interface GridCoordinateResult {
 }
 
 /**
- * Retrieves all elements at a given point relative to a specific container element.
- *
- * @param {HTMLElement} container - The container element within which to search.
- * @param {number} x - The X coordinate relative to the container.
- * @param {number} y - The Y coordinate relative to the container.
- * @returns {HTMLElement[]} - An array of elements found at the specified point within the container.
- */
-function elementsFromPointWithin(container: HTMLElement, x: number, y: number) {
-  // console.log("elementsFromPointWithin", container);
-  const rect = container.getBoundingClientRect();
-  const viewportX = rect.left + x;
-  const viewportY = rect.top + y;
-  const allElements = document.elementsFromPoint(viewportX, viewportY);
-
-  // putting 'container' as a valid dropzone as allElements consider only the elements inside the 'container'
-  return [
-    container,
-    ...allElements.filter((element) => container.contains(element)),
-  ];
-}
-
-/**
  * Get all elements under a specific point that are valid component IDs.
  * @param x - Mouse X coordinate
  * @param y - Mouse Y coordinate
  * @returns Array of elements under the point that are valid components
  */
-export const getElementsOver = (x: number, y: number): Element[] => {
+export const getElementsUnder = (x: number, y: number): Element[] => {
   const { tree: editorTree } = useEditorTreeStore.getState();
   const components = editorTree.root;
   const { iframeWindow } = useEditorStore.getState();
   const allIds = getAllIds(components);
   const baseElementId = getBaseElementId();
+  const allElementsUnder = iframeWindow?.document.elementsFromPoint(x, y) || [];
 
   const containerContext =
     iframeWindow?.document.getElementById(baseElementId)!;
 
-  return elementsFromPointWithin(containerContext, x, y).filter((el: Element) =>
-    allIds.some((id) => el.id.startsWith(id)),
+  return allElementsUnder.filter(
+    (el: Element) =>
+      allIds.some(
+        (id) =>
+          el.id.startsWith(id) || el.getAttribute("data-id")?.startsWith(id),
+      ) && containerContext.contains(el),
   ) as Element[];
 };
 
@@ -78,14 +61,12 @@ export const getGridCoordinates = (
     forceDropZone,
   );
 
-  // IMPORTANT: remove the replace statement, the moveElement.getElementById and use the finder.
-
   // Handle the case when no drop zone is found
   if (!dropZoneElement) {
     return {
       column: 1,
       row: 1,
-      parentId: getBaseElementId().replace("-body", ""),
+      parentId: getBaseElementId(),
     };
   }
 
@@ -95,7 +76,7 @@ export const getGridCoordinates = (
   return {
     column,
     row,
-    parentId: dropZoneElement.id.replace("-body", ""),
+    parentId: dropZoneElement.id,
   };
 };
 
@@ -117,10 +98,10 @@ const getDropZoneElement = (
   if (forceDropZone) return forceDropZone;
 
   // Get all elements under the point that are valid component IDs
-  const elementsOver = getElementsOver(x, y);
+  const elementsUnder = getElementsUnder(x, y);
 
   // Filter elements to find valid drop zones
-  const validDropZones = elementsOver.filter((el) =>
+  const validDropZones = elementsUnder.filter((el) =>
     isValidDropZone(el as HTMLElement, currentId),
   );
 

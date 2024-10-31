@@ -32,7 +32,10 @@ export const updateComponentPosition = (
   crawl(
     components,
     (node: any) => {
-      if (node.id === newPosition.parentId && movedComponent) {
+      if (
+        node.id === newPosition.parentId.replace("-body", "") &&
+        movedComponent
+      ) {
         if (!node.children) {
           node.children = [];
         }
