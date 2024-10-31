@@ -19,5 +19,6 @@ export const jsonStructure = (props?: any): ComponentStructure => {
         dataType: "static",
       },
     },
+    blockDroppingChildrenInside: true,
   };
 };
