@@ -227,7 +227,7 @@ export const useDnd = (debug?: string) => {
     // Enforce minimum column and row start values
     let column = Math.max(rawColumn, 0);
     let row = Math.max(rawRow, 0);
-
+    console.log({ parentId });
     const [columnStart, columnEnd] = el.style.gridColumn.split("/");
     const columnSize = parseInt(columnEnd) - parseInt(columnStart);
     const [rowStart, rowEnd] = el.style.gridRow.split("/");

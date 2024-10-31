@@ -7,7 +7,17 @@ import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 type Props = EditableComponentMapper & Omit<DrawerProps, "opened">;
 
 export const DrawerComponent = forwardRef(
-  ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
+  (
+    {
+      renderTree,
+      component,
+      shareableContent,
+      style,
+      grid: { ChildrenWrapper },
+      ...props
+    }: Props,
+    ref,
+  ) => {
     return (
       <ModalAndDrawerWrapper component={component}>
         {({
@@ -35,9 +45,23 @@ export const DrawerComponent = forwardRef(
               opened={isPreviewMode ? true : showInEditor}
               onClose={handleClose}
               styles={{
+                content: {
+                  ...(style ?? {}),
+                  minHeight: "90%",
+                  display: "flex",
+                  flexDirection: "column",
+                },
+                body: {
+                  display: "grid",
+                  gridTemplateColumns: "repeat(120, 1fr)",
+                  gridAutoRows: "10px",
+                  height: "90%",
+                  flex: 1,
+                  padding: 0,
+                  position: "relative",
+                },
                 title: { ...titleStyle },
-                body: { height: "fit-content", padding: 0 },
-                ...(isSizeFullScreen && { inner: { left: 0 } }),
+                // ...(isSizeFullScreen && { inner: { left: 0 } }),
               }}
             >
               {component.children?.map((child) =>
