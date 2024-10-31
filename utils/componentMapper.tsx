@@ -1699,7 +1699,7 @@ export const componentMapper: ComponentMapper = {
   },
   Drawer: {
     Component: (props) => <Drawer {...props} />,
-    modifiers: ["drawer", "border", "effects"],
+    modifiers: ["drawer", "border", "position", "effects"],
     actionTriggers: ["onClose"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
