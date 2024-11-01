@@ -1340,7 +1340,7 @@ export const componentMapper: ComponentMapper = {
   Select: {
     Component: (props) => <Select {...props} />,
     modifiers: ["select", "spacing", "size", "border", "effects"],
-    actionTriggers: ["onChange", "onSearchChange"],
+    actionTriggers: ["onChange", "onSearchChange", "onBlur"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Input: {
