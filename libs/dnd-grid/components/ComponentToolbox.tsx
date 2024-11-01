@@ -69,7 +69,7 @@ const ComponentToolbox = () => {
   useEffect(() => {
     if (id) {
       const element = iframeWindow?.document.querySelectorAll(
-        `[id="${id}"], [data-id="${id}"]`,
+        `[aria-describedby^="${id}"], [id="${id}"], [data-id="${id}"]`,
       )[0];
       if (element) {
         const rect = element.getBoundingClientRect();
