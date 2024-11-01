@@ -3,6 +3,7 @@ import { DrawerProps, Drawer as MantineDrawer } from "@mantine/core";
 import { forwardRef, memo } from "react";
 import { ModalAndDrawerWrapper } from "@/components/mapper/ModalAndDrawerWrapper";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { TOTAL_COLUMNS_WITH_MULTIPLIER } from "@/libs/dnd-grid/types/constants";
 
 type Props = EditableComponentMapper & Omit<DrawerProps, "opened">;
 
@@ -59,6 +60,13 @@ export const DrawerComponent = forwardRef(
                   flex: 1,
                   padding: 0,
                   position: "relative",
+                  backgroundSize: `calc(100% / ${TOTAL_COLUMNS_WITH_MULTIPLIER}) 10px`,
+                  ...(!isPreviewMode && {
+                    backgroundImage: `
+                    linear-gradient(to right, #e5e7eb 1px, transparent 1px),
+                    linear-gradient(to bottom, #e5e7eb 1px, transparent 1px)
+                  `,
+                  }),
                 },
                 title: { ...titleStyle },
                 // ...(isSizeFullScreen && { inner: { left: 0 } }),
