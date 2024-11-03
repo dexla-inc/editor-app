@@ -4,8 +4,8 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 import { useUserConfigStore } from "@/stores/userConfig";
 import {
   cloneObject,
-  emptyCssGridTree,
-  emptyEditorTree,
+  emptyEditorTree as flexTree,
+  emptyCssGridTree as gridTree,
   safeJsonParse,
 } from "@/utils/common";
 import { decodeSchema } from "@/utils/compression";
@@ -13,12 +13,6 @@ import { useQuery } from "@tanstack/react-query";
 
 type getPageDataParams = {
   signal: AbortSignal | undefined;
-};
-
-export const defaultPageState = {
-  name: "Initial State 2",
-  timestamp: Date.now(),
-  root: emptyCssGridTree.root,
 };
 
 type Props = {
@@ -33,7 +27,14 @@ export const useGetPageData = ({ projectId, pageId }: Props) => {
     setIsLoading: state.setIsLoading,
   }));
 
+  const cssType = useEditorTreeStore((state) => state.cssType);
   const setEditorTree = useEditorTreeStore((state) => state.setTree);
+
+  const defaultPageState = {
+    name: "Initial State 2",
+    timestamp: Date.now(),
+    root: cssType === "GRID" ? gridTree.root : flexTree.root,
+  };
 
   const { pageCancelled, setPageCancelled } = useUserConfigStore((state) => ({
     pageCancelled: state.pageCancelled,
@@ -88,6 +89,10 @@ export const useGetPageData = ({ projectId, pageId }: Props) => {
         setIsLoading(false);
         return safeJsonParse(decodedSchema);
       } else {
+        setEditorTree(defaultPageState, {
+          onLoad: false,
+          action: "Initial State",
+        });
         setIsLoading(false);
         return defaultPageState;
       }
