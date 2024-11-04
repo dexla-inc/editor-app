@@ -99,7 +99,7 @@ const ColorPickerModifier = dynamic(
 );
 const RichTextModifier = dynamic(
   () => import("@/components/modifiers/RichText"),
-
+);
 
 type SectionsMapper = {
   [key in Modifiers]: any;
