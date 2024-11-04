@@ -5,6 +5,10 @@ import IconTitleDescriptionButton from "@/components/projects/NewProjectButton";
 import { ProjectItem } from "@/components/projects/ProjectItem";
 import { useProjectListQuery } from "@/hooks/editor/reactQuery/useProjectListQuery";
 import { useProjectMutatation } from "@/hooks/editor/reactQuery/useProjectMutation";
+import { invalidateQueries } from "@/hooks/editor/reactQuery/useProjectQuery";
+import { useCreateTemplateProject } from "@/hooks/editor/useCreateTemplateProject";
+import { usePropelAuth } from "@/hooks/editor/usePropelAuth";
+import { useRouterWithLoader } from "@/hooks/useRouterWithLoader";
 import { createProject } from "@/requests/projects/mutations";
 import { useAppStore } from "@/stores/app";
 import { useEditorTreeStore } from "@/stores/editorTree";
@@ -22,13 +26,9 @@ import {
 } from "@mantine/core";
 import { IconSearch } from "@tabler/icons-react";
 import debounce from "lodash.debounce";
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { useCreateTemplateProject } from "@/hooks/editor/useCreateTemplateProject";
-import { usePropelAuth } from "@/hooks/editor/usePropelAuth";
-import { invalidateQueries } from "@/hooks/editor/reactQuery/useProjectQuery";
-import Image from "next/image";
-import { useRouterWithLoader } from "@/hooks/useRouterWithLoader";
 
 export default function Page() {
   const router = useRouterWithLoader();
@@ -79,7 +79,7 @@ export default function Page() {
 
     setPageCancelled(true);
     const project = await createProject(
-      { companyId: company.orgId, cssType: "GRID" },
+      { companyId: company.orgId, cssType: "FLEX" },
       true,
     );
     invalidateQueries(["project"]);
