@@ -1,5 +1,6 @@
 import { updatePageState } from "@/requests/pages/mutations";
 import { PageStateParams } from "@/requests/pages/types";
+import { CssTypes } from "@/types/types";
 import { cloneObject, emptyCssGridTree, emptyEditorTree } from "@/utils/common";
 import { encodeSchema } from "@/utils/compression";
 import { GRID_SIZE } from "@/utils/config";
@@ -19,10 +20,9 @@ import { WithLiveblocks, liveblocks } from "@liveblocks/zustand";
 import { User } from "@propelauth/react";
 import debounce from "lodash.debounce";
 import merge from "lodash.merge";
+import setObj from "lodash.set";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
-import setObj from "lodash.set";
-import { CssTypes } from "@/types/types";
 
 const client = createClient({
   publicApiKey: process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY ?? "",
@@ -398,10 +398,7 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
               };
             });
           },
-          // tree: get().cssType === "GRID" ? emptyEditorTree : emptyEditorTree,
-          tree: (get()?.cssType === "GRID"
-            ? emptyCssGridTree
-            : emptyCssGridTree) as any,
+          tree: get()?.cssType === "GRID" ? emptyCssGridTree : emptyEditorTree,
           componentMutableAttrs: emptyEditorComponentMutableAttrs,
           deleteComponentMutableAttr: (id: string) =>
             set(
@@ -511,7 +508,7 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
             set({ language }, false, "editorTree/setLanguage"),
           setCssType: (type: CssTypes) =>
             set({ cssType: type }, false, "editorTree/setCssType"),
-          cssType: "FLEX",
+          cssType: "FLEX" as const,
         }),
         {
           name: "editor-tree-config",
