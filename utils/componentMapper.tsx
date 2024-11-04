@@ -51,6 +51,7 @@ import { BarChart } from "@/components/mapper/charts/BarChart";
 import { LineChart } from "@/components/mapper/charts/LineChart";
 import { PieChart } from "@/components/mapper/charts/PieChart";
 import { RadarChart } from "@/components/mapper/charts/RadarChart";
+import * as ColorPickerStructure from "@/libs/dnd-flex/components/mapper/structure/ColorPicker";
 import * as AccordionStructure from "@/libs/dnd-grid/components/mapper/structure/Accordion";
 import * as AccordionItemStructure from "@/libs/dnd-grid/components/mapper/structure/AccordionItem";
 import * as AlertStructure from "@/libs/dnd-grid/components/mapper/structure/Alert";
@@ -102,19 +103,20 @@ import * as LineChartStructure from "@/libs/dnd-grid/components/mapper/structure
 import * as PieChartStructure from "@/libs/dnd-grid/components/mapper/structure/charts/PieChart";
 import * as RadarChartStructure from "@/libs/dnd-grid/components/mapper/structure/charts/RadarChart";
 import * as RadialChartStructure from "@/libs/dnd-grid/components/mapper/structure/charts/RadialChart";
-import * as ColorPickerStructure from "@/libs/dnd-flex/components/mapper/structure/ColorPicker";
 
 import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
 import { Component, ComponentStructure } from "@/utils/editor";
 
+import { CodeEmbed } from "@/components/mapper/CodeEmbed";
+import { ColorPicker } from "@/components/mapper/ColorPicker";
 import { FileButton } from "@/components/mapper/FileButton";
 import { TabsList } from "@/components/mapper/TabsList";
 import { TabsPanel } from "@/components/mapper/TabsPanel";
 import { ActionTrigger, SequentialTrigger } from "@/utils/actions";
 import { Modifiers } from "@/utils/modifiers";
-import { CodeEmbed } from "@/components/mapper/CodeEmbed";
-import { ColorPicker } from "@/components/mapper/ColorPicker";
 
+import { DraggableComponent as DraggableComponentFlex } from "@/libs/dnd-flex/components/DraggableComponent";
+import { DraggableComponent as DraggableComponentGrid } from "@/libs/dnd-grid/components/DraggableComponent";
 import {
   addAccordionItemToolboxAction,
   addColumnToParentToolboxAction,
@@ -172,11 +174,10 @@ import {
   IconSeparator,
   IconSlash,
   IconStackPop,
+  IconTextSize,
   IconToggleLeft,
   IconUser,
 } from "@tabler/icons-react";
-import { DraggableComponent as DraggableComponentGrid } from "@/libs/dnd-grid/components/DraggableComponent";
-import { DraggableComponent as DraggableComponentFlex } from "@/libs/dnd-flex/components/DraggableComponent";
 
 // Import structures from dnd-flex
 import * as AccordionStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Accordion";
@@ -194,6 +195,7 @@ import * as CheckboxStructureFlex from "@/libs/dnd-flex/components/mapper/struct
 import * as CheckboxGroupStructureFlex from "@/libs/dnd-flex/components/mapper/structure/CheckboxGroup";
 import * as CheckboxItemStructureFlex from "@/libs/dnd-flex/components/mapper/structure/CheckboxItem";
 import * as CodeEmbedStructureFlex from "@/libs/dnd-flex/components/mapper/structure/CodeEmbed";
+import * as ColorPickerStructureFlex from "@/libs/dnd-flex/components/mapper/structure/ColorPicker";
 import * as ContainerStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Container";
 import * as CountdownButtonStructureFlex from "@/libs/dnd-flex/components/mapper/structure/CountdownButton";
 import * as DateInputStructureFlex from "@/libs/dnd-flex/components/mapper/structure/DateInput";
@@ -203,8 +205,6 @@ import * as FileButtonStructureFlex from "@/libs/dnd-flex/components/mapper/stru
 import * as FileUploadStructureFlex from "@/libs/dnd-flex/components/mapper/structure/FileUpload";
 import * as FormStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Form";
 import * as MapStructureFlex from "@/libs/dnd-flex/components/mapper/structure/GoogleMap";
-import * as GridStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Grid";
-import * as GridColumnStructureFlex from "@/libs/dnd-flex/components/mapper/structure/GridColumn";
 import * as IconStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Icon";
 import * as ImageStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Image";
 import * as InputStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Input";
@@ -222,6 +222,7 @@ import * as SelectStructureFlex from "@/libs/dnd-flex/components/mapper/structur
 import * as SwitchStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Switch";
 import * as TabsStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Tabs";
 import * as TextStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Text";
+import * as TextEditorStructureFlex from "@/libs/dnd-flex/components/mapper/structure/TextEditor";
 import * as TextareaStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Textarea";
 import * as TitleStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Title";
 import * as AreaChartStructureFlex from "@/libs/dnd-flex/components/mapper/structure/charts/AreaChart";
@@ -230,8 +231,8 @@ import * as LineChartStructureFlex from "@/libs/dnd-flex/components/mapper/struc
 import * as PieChartStructureFlex from "@/libs/dnd-flex/components/mapper/structure/charts/PieChart";
 import * as RadarChartStructureFlex from "@/libs/dnd-flex/components/mapper/structure/charts/RadarChart";
 import * as RadialChartStructureFlex from "@/libs/dnd-flex/components/mapper/structure/charts/RadialChart";
-import * as ColorPickerStructureFlex from "@/libs/dnd-flex/components/mapper/structure/ColorPicker";
 
+import { TextEditor } from "@/components/mapper/TextEditor";
 import { useEditorTreeStore } from "@/stores/editorTree";
 
 export type ComponentCategoryType =
@@ -1220,6 +1221,23 @@ export const structureMapper = (forceCssType: string = ""): StructureMapper => {
       icon: <IconColorFilter size={ICON_SIZE} />,
       synonyms: ["Color Picker", "Color Selector", "Color Swatch"],
     },
+    TextEditor: {
+      structure: (props: any) => TextEditorStructureFlex.jsonStructure(props),
+      Draggable: () => (
+        <DraggableComponent
+          id="TextEditor"
+          icon={<IconTextSize size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Input",
+      icon: <IconTextSize size={ICON_SIZE} />,
+      synonyms: [
+        "Text Formatter",
+        "Text Editor",
+        "Textarea Formatter",
+        "Textarea Editor",
+      ],
+    },
   };
 };
 
@@ -1725,6 +1743,12 @@ export const componentMapper: ComponentMapper = {
     Component: (props) => <ColorPicker {...props} />,
     modifiers: ["colorPicker", "effects"],
     actionTriggers: ["onChange"],
+    sequentialTriggers: ["onSuccess", "onError"],
+  },
+  TextEditor: {
+    Component: (props) => <TextEditor {...props} />,
+    modifiers: ["textEditor", "size", "effects"],
+    actionTriggers: ["onChange", "onFocus", "onBlur"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
 };

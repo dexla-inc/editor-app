@@ -48,7 +48,8 @@ export type Modifiers =
   | "countdownButton"
   | "autocomplete"
   | "codeEmbed"
-  | "colorPicker";
+  | "colorPicker"
+  | "textEditor";
 
 type RequiredModifiers = {
   [K in Modifiers]: Record<string, any>;
@@ -167,6 +168,11 @@ export const requiredModifiers: RequiredModifiers = {
     hideIfDataIsEmpty: false,
     withAsterisk: false,
     autosize: false,
+    bg: "White.6",
+    textColor: "Black.6",
+  },
+  textEditor: {
+    placeholder: "Text Editor",
     bg: "White.6",
     textColor: "Black.6",
   },

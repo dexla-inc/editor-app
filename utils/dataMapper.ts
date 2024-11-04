@@ -86,4 +86,5 @@ export const dataMapper = {
   FileUpload,
   ColorPicker,
   AccordionControl,
+  TextEditor: Textarea,
 };

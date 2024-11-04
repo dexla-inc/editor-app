@@ -1,26 +1,26 @@
-import { useEditorTreeStore } from "@/stores/editorTree";
-import { Node, useNodes } from "reactflow";
-import { NodeData } from "@/components/logic-flow/nodes/CustomNode";
-import { safeJsonParse } from "@/utils/common";
-import merge from "lodash.merge";
-import { Action, APICallAction } from "@/utils/actions";
-import { usePageListQuery } from "@/hooks/editor/reactQuery/usePageListQuery";
-import { useEditorStore } from "@/stores/editor";
-import { useVariableStore } from "@/stores/variables";
-import { useDataSourceStore } from "@/stores/datasource";
-import { pick } from "next/dist/lib/pick";
-import { useInputsStore } from "@/stores/inputs";
-import { useShallow } from "zustand/react/shallow";
-import { ContextType } from "@/types/dataBinding";
-import { selectedComponentIdSelector } from "@/utils/componentSelectors";
-import { useShareableContent } from "@/hooks/data/useShareableContent";
-import { useEventData } from "@/hooks/data/useEventData";
-import { useEndpoints } from "../editor/reactQuery/useDataSourcesEndpoints";
-import { useOldRouter } from "@/hooks/data/useOldRouter";
-import { useDataBinding } from "@/hooks/data/useDataBinding";
 import { useBindingField } from "@/components/editor/BindingField/components/ComponentToBindFromInput";
+import { NodeData } from "@/components/logic-flow/nodes/CustomNode";
+import { useDataBinding } from "@/hooks/data/useDataBinding";
+import { useEventData } from "@/hooks/data/useEventData";
+import { useOldRouter } from "@/hooks/data/useOldRouter";
+import { useShareableContent } from "@/hooks/data/useShareableContent";
+import { usePageListQuery } from "@/hooks/editor/reactQuery/usePageListQuery";
+import { useDataSourceStore } from "@/stores/datasource";
+import { useEditorStore } from "@/stores/editor";
+import { useEditorTreeStore } from "@/stores/editorTree";
+import { useInputsStore } from "@/stores/inputs";
+import { useVariableStore } from "@/stores/variables";
+import { ContextType } from "@/types/dataBinding";
+import { Action, APICallAction } from "@/utils/actions";
+import { safeJsonParse } from "@/utils/common";
+import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 import { getAllComponentsByName } from "@/utils/editor";
+import merge from "lodash.merge";
+import { pick } from "next/dist/lib/pick";
 import { useEffect } from "react";
+import { Node, useNodes } from "reactflow";
+import { useShallow } from "zustand/react/shallow";
+import { useEndpoints } from "../editor/reactQuery/useDataSourcesEndpoints";
 
 type BindType = {
   selectedEntityId: string;
@@ -41,6 +41,8 @@ const inputComponentNames = [
   "FileUpload",
   "FileButton",
   "Rating",
+  "ColorPicker",
+  "TextEditor",
 ];
 
 const setEntityString = ({ selectedEntityId, entity }: BindType) => {
