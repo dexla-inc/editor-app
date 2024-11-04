@@ -25,6 +25,7 @@ export const useEventData = () => {
     FileButton: "files",
     FileUpload: "files",
     ColorPicker: "value",
+    TextEditor: "value",
   };
 
   const eventKey = eventKeyMapper?.[selectedComponentName];

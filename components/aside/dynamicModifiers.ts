@@ -97,6 +97,9 @@ const CodeEmbedModifier = dynamic(
 const ColorPickerModifier = dynamic(
   () => import("@/components/modifiers/ColorPicker"),
 );
+const TextEditorModifier = dynamic(
+  () => import("@/components/modifiers/TextEditor"),
+);
 
 type SectionsMapper = {
   [key in Modifiers]: any;
@@ -166,4 +169,5 @@ export const modifierSectionMapper: SectionsMapper = {
   },
   codeEmbed: { Modifier: CodeEmbedModifier, icon: "IconCode" },
   colorPicker: { Modifier: ColorPickerModifier, icon: "IconFilter" },
+  textEditor: { Modifier: TextEditorModifier, icon: "IconTextSize" },
 };
