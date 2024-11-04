@@ -1747,8 +1747,8 @@ export const componentMapper: ComponentMapper = {
   },
   TextEditor: {
     Component: (props) => <TextEditor {...props} />,
-    modifiers: ["effects"],
-    actionTriggers: [],
-    sequentialTriggers: [],
+    modifiers: ["textEditor", "size", "effects"],
+    actionTriggers: ["onChange", "onFocus", "onBlur"],
+    sequentialTriggers: ["onSuccess", "onError"],
   },
 };
