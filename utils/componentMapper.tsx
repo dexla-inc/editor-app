@@ -223,6 +223,7 @@ import * as SelectStructureFlex from "@/libs/dnd-flex/components/mapper/structur
 import * as SwitchStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Switch";
 import * as TabsStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Tabs";
 import * as TextStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Text";
+import * as TextEditorStructureFlex from "@/libs/dnd-flex/components/mapper/structure/TextEditor";
 import * as TextareaStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Textarea";
 import * as TitleStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Title";
 import * as AreaChartStructureFlex from "@/libs/dnd-flex/components/mapper/structure/charts/AreaChart";
