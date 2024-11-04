@@ -9,15 +9,25 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import Image from "next/image";
-import Link from "next/link";
 
-type Props = {
+type BaseProps = {
   title: string;
   logoUrl: string;
   description: string;
   caption: string;
-  href: string;
 };
+
+type WithHref = BaseProps & {
+  href: string;
+  onClick?: () => void;
+};
+
+type WithOnClick = BaseProps & {
+  href?: undefined;
+  onClick: () => void;
+};
+
+type Props = WithHref | WithOnClick;
 
 export default function MantineStyledButton({
   title,
@@ -25,16 +35,19 @@ export default function MantineStyledButton({
   description,
   caption,
   href,
+  onClick,
 }: Props) {
   const theme = useMantineTheme();
   return (
     <UnstyledButton
-      component={Link}
-      href={href}
+      component={href ? "a" : "button"}
+      {...(href ? { href } : undefined)}
+      {...(onClick ? { onClick } : undefined)}
       sx={{
         display: "flex",
         flex: 1,
         cursor: "pointer",
+        width: "100%",
       }}
     >
       <Card
