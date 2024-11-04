@@ -244,6 +244,8 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                     : state.pageLoadComponentMutableAttrs,
                 };
 
+                console.log({ newState });
+
                 // also set the pageLoadComponentMutableAttrs if it's an onLoad with componentMutableAttrs
                 return newState;
               },

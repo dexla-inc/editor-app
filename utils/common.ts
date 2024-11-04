@@ -154,11 +154,17 @@ export const emptyCssGridTree = {
   name: "Initial Grid State",
   timestamp: Date.now(),
   root: {
-    id: "main-grid",
-    name: "Container",
-    description: "Container",
+    id: "root",
     blockDroppingChildrenInside: false,
-    children: [],
+    children: [
+      {
+        id: "main-grid",
+        name: "Container",
+        description: "Container",
+        blockDroppingChildrenInside: false,
+        children: [],
+      },
+    ],
   },
 };
 

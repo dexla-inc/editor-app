@@ -12,66 +12,97 @@ import { useDndGridStore } from "@/libs/dnd-grid/stores/dndGridStore";
 import { useDnd } from "../hooks/useDnd";
 import { TOTAL_COLUMNS_WITH_MULTIPLIER } from "../types/constants";
 import { isPreviewModeSelector } from "@/utils/componentSelectors";
+import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { Box } from "@mantine/core";
 
 type Props = {
   projectId: string;
 };
 
-const EditorCanvasComponent = ({ projectId }: Props) => {
-  const editorTree = useEditorTreeStore((state) => state.tree);
+const MainGridComponent = ({
+  component: componentTree,
+  renderTree,
+  shareableContent,
+  style,
+  grid,
+  ...props
+}: any) => {
+  const { onDrop, onDragOver, sx } = props;
+  const {
+    props: { triggers, ...componentProps },
+  } = componentTree;
+  const [canvasRef] = useAutoAnimate();
+
   const setSelectedComponentIds = useEditorTreeStore(
     (state) => state.setSelectedComponentIds,
   );
-  const isComponentSelected = useEditorTreeStore(
-    (state) => state.selectedComponentIds?.length,
-  );
-  const isPreviewMode = useEditorTreeStore(isPreviewModeSelector);
-
   const setHoverComponentId = useEditorStore(
     (state) => state.setHoverComponentId,
   );
-  const { onDrop, onDragOver } = useDnd();
-  const [canvasRef] = useAutoAnimate();
+  const isPreviewMode = useEditorTreeStore(isPreviewModeSelector);
+
+  return (
+    <Box
+      unstyled
+      {...componentProps}
+      id="main-grid"
+      ref={canvasRef}
+      sx={sx}
+      style={{
+        display: "grid",
+        gap: "0",
+        border: "2px solid #d1d5db",
+        gridAutoRows: `10px`,
+        gridTemplateColumns: `repeat(${TOTAL_COLUMNS_WITH_MULTIPLIER}, 1fr)`,
+        minHeight: "100%",
+        width: "100%",
+        backgroundSize: `calc(100% / ${TOTAL_COLUMNS_WITH_MULTIPLIER}) 10px`,
+        ...(!isPreviewMode && {
+          backgroundImage: `
+          linear-gradient(to right, #e5e7eb 1px, transparent 1px),
+          linear-gradient(to bottom, #e5e7eb 1px, transparent 1px)
+        `,
+        }),
+      }}
+      draggable={false}
+      onDrop={onDrop}
+      onDragOver={onDragOver}
+      onMouseDown={() => {
+        const { isInteracting } = useDndGridStore.getState();
+        if (!isInteracting) {
+          setSelectedComponentIds(() => ["main-grid"]);
+        }
+      }}
+      onMouseOver={(e) => {
+        e.stopPropagation();
+        setHoverComponentId(null);
+      }}
+    >
+      {componentTree.children?.map((child: any) =>
+        renderTree(child, shareableContent),
+      )}
+    </Box>
+  );
+};
+
+const MainGrid = memo(withComponentWrapper(MainGridComponent));
+
+const EditorCanvasComponent = ({ projectId }: Props) => {
+  const editorTree = useEditorTreeStore((state) => state.tree);
+  const isComponentSelected = useEditorTreeStore(
+    (state) => !!state.selectedComponentIds?.length,
+  );
+
+  useEditorHotkeys();
 
   const renderTree: RenderTreeFunc = (componentTree, shareableContent) => {
     if (componentTree.id === "main-grid") {
       return (
-        <div
-          id="main-grid"
-          ref={canvasRef}
-          style={{
-            display: "grid",
-            gap: "0",
-            border: "2px solid #d1d5db",
-            gridAutoRows: `10px`,
-            gridTemplateColumns: `repeat(${TOTAL_COLUMNS_WITH_MULTIPLIER}, 1fr)`,
-            minHeight: "400px",
-            backgroundSize: `calc(100% / ${TOTAL_COLUMNS_WITH_MULTIPLIER}) 10px`,
-            ...(!isPreviewMode && {
-              backgroundImage: `
-            linear-gradient(to right, #e5e7eb 1px, transparent 1px),
-            linear-gradient(to bottom, #e5e7eb 1px, transparent 1px)
-          `,
-            }),
-          }}
-          draggable={false}
-          onDrop={onDrop}
-          onDragOver={onDragOver}
-          onMouseDown={() => {
-            const { isInteracting } = useDndGridStore.getState();
-            if (!isInteracting) {
-              setSelectedComponentIds(() => []);
-            }
-          }}
-          onMouseOver={(e) => {
-            e.stopPropagation();
-            setHoverComponentId(null);
-          }}
-        >
-          {componentTree.children?.map((child) =>
-            renderTree(child, shareableContent),
-          )}
-        </div>
+        <MainGrid
+          component={componentTree}
+          renderTree={renderTree}
+          shareableContent={shareableContent}
+        />
       );
     }
 
@@ -89,15 +120,19 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
     });
   };
 
-  // TODO: Check if this is needed
-  // if ((editorTree?.root?.children ?? [])?.length === 0) {
-  //   return null;
-  // }
-
   return (
     <IFrame projectId={projectId}>
       <ErrorBoundary>
-        <div style={{ background: "white" }}>{renderTree(editorTree.root)}</div>
+        <div
+          style={{
+            background: "white",
+            minHeight: "100%",
+            display: "flex",
+            flex: 1,
+          }}
+        >
+          {renderTree(editorTree.root)}
+        </div>
       </ErrorBoundary>
       {isComponentSelected && <ComponentToolbox />}
     </IFrame>
