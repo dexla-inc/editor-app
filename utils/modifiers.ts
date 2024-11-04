@@ -49,7 +49,7 @@ export type Modifiers =
   | "autocomplete"
   | "codeEmbed"
   | "colorPicker"
-  | "textEditor";
+  | "richText";
 
 type RequiredModifiers = {
   [K in Modifiers]: Record<string, any>;
@@ -171,7 +171,7 @@ export const requiredModifiers: RequiredModifiers = {
     bg: "White.6",
     textColor: "Black.6",
   },
-  textEditor: {
+  richText: {
     placeholder: "Text Editor",
     bg: "White.6",
     textColor: "Black.6",
