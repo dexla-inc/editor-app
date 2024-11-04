@@ -42,7 +42,7 @@ const inputComponentNames = [
   "FileButton",
   "Rating",
   "ColorPicker",
-  "TextEditor",
+  "RichText",
 ];
 
 const setEntityString = ({ selectedEntityId, entity }: BindType) => {

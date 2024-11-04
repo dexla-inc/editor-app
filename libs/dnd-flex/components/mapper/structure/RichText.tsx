@@ -7,17 +7,18 @@ export const jsonStructure = (props?: any): ComponentStructure => {
 
   return {
     id: nanoid(),
-    name: "TextEditor",
-    description: "Text Editor",
+    name: "RichText",
+    description: "Rich Text",
     props: {
       ...defaultValues,
       style: {
+        width: "300px",
         height: "fit-content",
       },
       ...(props.props || {}),
     },
     onLoad: {
-      placeholder: { dataType: "static", static: "Enter your message here..." },
+      placeholder: { dataType: "static", static: "Rich Text..." },
     },
     states: { disabled: { bg: "Neutral.6", textColor: "Neutral.9" } },
     children: [],

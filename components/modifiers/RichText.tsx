@@ -12,7 +12,7 @@ const Modifier = withModifier(({ selectedComponent }) => {
 
   useEffect(() => {
     form.setValues(
-      merge({}, requiredModifiers.textEditor, {
+      merge({}, requiredModifiers.richText, {
         bg: selectedComponent?.props?.bg,
         textColor: selectedComponent?.props?.textColor,
       }),
