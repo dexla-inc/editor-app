@@ -7,11 +7,12 @@ export const jsonStructure = (props?: any): ComponentStructure => {
 
   return {
     id: nanoid(),
-    name: "TextEditor",
-    description: "Text Editor",
+    name: "RichText",
+    description: "Rich Text",
     props: {
       ...defaultValues,
       style: {
+        width: "300px",
         height: "fit-content",
       },
       ...(props.props || {}),
