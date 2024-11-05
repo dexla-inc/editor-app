@@ -320,6 +320,7 @@ export const requiredModifiers: RequiredModifiers = {
     title: "Heading",
     titleTag: "H4",
     withCloseButton: true,
+    bgColor: "White.6",
   },
   buttonIcon: {
     style: {
