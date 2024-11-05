@@ -16,6 +16,12 @@ import { memo } from "react";
 
 type Props = EditableComponentMapper & DatePickerInputProps;
 
+const isArrayofDates = (value: any[]) => {
+  const isAllDates = value.every((date) => date instanceof Date);
+  const isAllNull = value.every((date) => date === null);
+  return isAllDates || isAllNull;
+};
+
 const DateInputComponent = ({
   renderTree,
   component,
@@ -47,7 +53,9 @@ const DateInputComponent = ({
     color,
     backgroundColor,
     placeholderColor: _placeholderColor,
+    getPrimaryBackgrounds,
   } = useChangeState({ bg, textColor, placeholderColor });
+  const { primaryBackground, primaryBackgroundLight } = getPrimaryBackgrounds();
 
   const customStyle = merge({}, borderStyle, inputStyle, props.style);
   const isPositionLeft =
@@ -68,9 +76,7 @@ const DateInputComponent = ({
     let formattedValue;
 
     if (Array.isArray(value)) {
-      if (value.length === 2 && value[0] && value[1]) {
-        formattedValue = getNewDate(value, valueFormatValue, withTimeZone);
-      } else if (value[0] === null && value[1] === null) {
+      if (isArrayofDates(value)) {
         formattedValue = getNewDate(value, valueFormatValue, withTimeZone);
       } else {
         console.warn("Incomplete date range:", value);
@@ -123,6 +129,20 @@ const DateInputComponent = ({
           },
           placeholder: {
             color: `${_placeholderColor}!important`,
+          },
+          day: {
+            "&[data-in-range]": {
+              backgroundColor: primaryBackgroundLight,
+            },
+            "&[data-in-range]:hover": {
+              backgroundColor: primaryBackgroundLight,
+            },
+            "&[data-selected]": {
+              backgroundColor: primaryBackground,
+            },
+            "&[data-selected]:hover": {
+              backgroundColor: primaryBackground,
+            },
           },
         }}
       >

@@ -1,14 +1,13 @@
-import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useThemeStore } from "@/stores/theme";
-import { getHoverColor } from "@/utils/branding";
+import { extractColorName, getHoverColor } from "@/utils/branding";
 import { componentMapper, structureMapper } from "@/utils/componentMapper";
+import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 import {
   Component,
   debouncedTreeComponentAttrsUpdate,
   getColorFromTheme,
 } from "@/utils/editor";
-import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 
 type StateProps = {
   bg?: string | undefined;
@@ -91,10 +90,22 @@ export const useChangeState = ({
     );
     debouncedTreeComponentAttrsUpdate({ attrs: treeUpdate });
   };
+
+  const getPrimaryBackgrounds = () => {
+    const bgWithoutIndex = extractColorName(bg ?? "").name;
+    let newBg = backgroundColor;
+    let newBgLight = getColorFromTheme(theme, `${bgWithoutIndex}.1`);
+    if (["#ffffff", "#000000"].includes(newBg.substring(0, 7).toLowerCase())) {
+      newBg = getColorFromTheme(theme, "Primary.6");
+      newBgLight = getColorFromTheme(theme, "Primary.1");
+    }
+    return { primaryBackground: newBg, primaryBackgroundLight: newBgLight };
+  };
   return {
     color,
     backgroundColor,
     setBackgroundColor,
     placeholderColor: _placeholderColor,
+    getPrimaryBackgrounds,
   };
 };

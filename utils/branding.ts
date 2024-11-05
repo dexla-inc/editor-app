@@ -572,6 +572,13 @@ const setFormColorShadesFromColorFamilies = (values: ExtendedUserTheme) => {
   return omit({ ...values, colorShades }, ["colorFamilies"]);
 };
 
+const extractColorName = (color: string) => {
+  const lastDotIndex = color.lastIndexOf(".");
+  const name = color.substring(0, lastDotIndex);
+  const index = color.substring(lastDotIndex + 1);
+  return { name, index };
+};
+
 export {
   BG_COLOR,
   BINDER_BACKGROUND,
@@ -587,6 +594,7 @@ export {
   DEFAULT_TEXTCOLOR,
   defaultUsersTheme as defaultTheme,
   DISABLED_HOVER,
+  extractColorName,
   FLEX_HOVER,
   flexStyles,
   getColorLabels,

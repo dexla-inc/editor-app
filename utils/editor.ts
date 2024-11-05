@@ -3,7 +3,7 @@ import { RenderTreeFunc } from "@/types/component";
 import { DataType, ValueProps } from "@/types/dataBinding";
 import { MantineThemeExtended } from "@/types/types";
 import { Action } from "@/utils/actions";
-import { IDENTIFIER } from "@/utils/branding";
+import { extractColorName, IDENTIFIER } from "@/utils/branding";
 import { cloneObject } from "@/utils/common";
 import {
   selectedComponentIdSelector,
@@ -741,9 +741,7 @@ export const getColorFromTheme = (
   if (colorName === "transparent") {
     return "transparent";
   }
-  const lastDotIndex = colorName.lastIndexOf(".");
-  const section = colorName.slice(0, lastDotIndex);
-  const index = colorName.slice(lastDotIndex + 1);
+  const { name: section, index } = extractColorName(colorName);
   const colorSection = theme.colors[section];
   return index !== undefined && colorSection
     ? colorSection[Number(index)]

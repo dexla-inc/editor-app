@@ -1,5 +1,5 @@
 import { ExtendedUserTheme } from "@/requests/themes/types";
-import { createUserThemeColors } from "@/utils/branding";
+import { createUserThemeColors, extractColorName } from "@/utils/branding";
 import { LARGE_ICON_SIZE } from "@/utils/config";
 import {
   ActionIcon,
@@ -44,8 +44,7 @@ export const ColorSelector = ({
     name: fetchedName = "",
     isDefault,
   } = colorFamily.colors[6] ?? {};
-  const lastDotIndex = fetchedName.lastIndexOf(".");
-  const defaultFamilyName = fetchedName.slice(0, lastDotIndex);
+  const defaultFamilyName = extractColorName(fetchedName).name;
   const [hexa, setHexa] = useState(hexToHexa(fetchedHex));
   const [newColors, setNewColors] = useState(colorFamily.colors);
   const [opened, { toggle, close }] = useDisclosure(false);

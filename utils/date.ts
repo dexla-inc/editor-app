@@ -94,3 +94,9 @@ export const getNewDate = (
   }
   return formatDate(date, format, withTimeZone);
 };
+
+export const isArrayofDates = (value: Array<Date | null>) => {
+  const isAllDates = value.every((date) => date instanceof Date);
+  const isAllNull = value.every((date) => date === null);
+  return isAllDates || isAllNull;
+};
