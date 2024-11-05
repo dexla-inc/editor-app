@@ -1,14 +1,13 @@
-import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useThemeStore } from "@/stores/theme";
-import { getHoverColor } from "@/utils/branding";
+import { extractColorName, getHoverColor } from "@/utils/branding";
 import { componentMapper, structureMapper } from "@/utils/componentMapper";
+import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 import {
   Component,
   debouncedTreeComponentAttrsUpdate,
   getColorFromTheme,
 } from "@/utils/editor";
-import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 
 type StateProps = {
   bg?: string | undefined;
@@ -91,10 +90,26 @@ export const useChangeState = ({
     );
     debouncedTreeComponentAttrsUpdate({ attrs: treeUpdate });
   };
+
+  const getCalendarDayColors = () => {
+    const bgWithoutIndex = extractColorName(bg ?? "").name;
+    let selectedDayColor = backgroundColor;
+    let rangeDayColor = getColorFromTheme(theme, `${bgWithoutIndex}.1`);
+    if (
+      ["#ffffff", "#000000"].includes(
+        selectedDayColor.substring(0, 7).toLowerCase(),
+      )
+    ) {
+      selectedDayColor = getColorFromTheme(theme, "Primary.6");
+      rangeDayColor = getColorFromTheme(theme, "Primary.1");
+    }
+    return { selectedDayColor, rangeDayColor };
+  };
   return {
     color,
     backgroundColor,
     setBackgroundColor,
     placeholderColor: _placeholderColor,
+    getCalendarDayColors,
   };
 };

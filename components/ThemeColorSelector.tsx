@@ -3,7 +3,7 @@ import { TopLabel } from "@/components/TopLabel";
 import { useProjectQuery } from "@/hooks/editor/reactQuery/useProjectQuery";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useThemeStore } from "@/stores/theme";
-import { getColorLabels } from "@/utils/branding";
+import { extractColorName, getColorLabels } from "@/utils/branding";
 import {
   Box,
   ColorSwatch,
@@ -84,9 +84,7 @@ export const ThemeColorSelector = ({ isGradient, ...props }: Props) => {
 
   // If a color is selected and it's not 'transparent', determine the color
   if (props.value && props.value !== "transparent") {
-    const lastDotIndex = props.value.lastIndexOf(".");
-    const color = props.value.slice(0, lastDotIndex);
-    const index = props.value.slice(lastDotIndex + 1);
+    const { name: color, index } = extractColorName(props.value);
     [selectedColor, selectedIndex] = [color, Number(index)];
   }
 

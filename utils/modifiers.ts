@@ -410,7 +410,7 @@ export const requiredModifiers: RequiredModifiers = {
     withTimeZone: false,
     icon: "",
     iconPosition: "left",
-    color: "Neutral.6",
+    textColor: "Black.6",
     bg: "White.6",
     placeholderColor: "Neutral.8",
   },
