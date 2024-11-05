@@ -45,6 +45,20 @@ const Modifier = withModifier(({ selectedComponent }) => {
                 });
               }}
             />
+            <ThemeColorSelector
+              label="Heading Color"
+              {...form.getInputProps("headingColor")}
+              onChange={(value: string) => {
+                form.setFieldValue("headingColor", value);
+                debouncedTreeComponentAttrsUpdate({
+                  attrs: {
+                    props: {
+                      headingColor: value,
+                    },
+                  },
+                });
+              }}
+            />
           </Stack>
         );
       }}
