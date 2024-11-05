@@ -91,21 +91,25 @@ export const useChangeState = ({
     debouncedTreeComponentAttrsUpdate({ attrs: treeUpdate });
   };
 
-  const getPrimaryBackgrounds = () => {
+  const getCalendarDayColors = () => {
     const bgWithoutIndex = extractColorName(bg ?? "").name;
-    let newBg = backgroundColor;
-    let newBgLight = getColorFromTheme(theme, `${bgWithoutIndex}.1`);
-    if (["#ffffff", "#000000"].includes(newBg.substring(0, 7).toLowerCase())) {
-      newBg = getColorFromTheme(theme, "Primary.6");
-      newBgLight = getColorFromTheme(theme, "Primary.1");
+    let selectedDayColor = backgroundColor;
+    let rangeDayColor = getColorFromTheme(theme, `${bgWithoutIndex}.1`);
+    if (
+      ["#ffffff", "#000000"].includes(
+        selectedDayColor.substring(0, 7).toLowerCase(),
+      )
+    ) {
+      selectedDayColor = getColorFromTheme(theme, "Primary.6");
+      rangeDayColor = getColorFromTheme(theme, "Primary.1");
     }
-    return { primaryBackground: newBg, primaryBackgroundLight: newBgLight };
+    return { selectedDayColor, rangeDayColor };
   };
   return {
     color,
     backgroundColor,
     setBackgroundColor,
     placeholderColor: _placeholderColor,
-    getPrimaryBackgrounds,
+    getCalendarDayColors,
   };
 };

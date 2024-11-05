@@ -3,7 +3,7 @@ import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useChangeState } from "@/hooks/components/useChangeState";
 import { useInputValue } from "@/hooks/components/useInputValue";
 import { useBrandingStyles } from "@/hooks/editor/useBrandingStyles";
-import { getNewDate, setDate } from "@/utils/date";
+import { getNewDate, isArrayofDates, setDate } from "@/utils/date";
 import { EditableComponentMapper } from "@/utils/editor";
 import {
   DatePickerInputProps,
@@ -15,12 +15,6 @@ import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { memo } from "react";
 
 type Props = EditableComponentMapper & DatePickerInputProps;
-
-const isArrayofDates = (value: any[]) => {
-  const isAllDates = value.every((date) => date instanceof Date);
-  const isAllNull = value.every((date) => date === null);
-  return isAllDates || isAllNull;
-};
 
 const DateInputComponent = ({
   renderTree,
@@ -53,9 +47,9 @@ const DateInputComponent = ({
     color,
     backgroundColor,
     placeholderColor: _placeholderColor,
-    getPrimaryBackgrounds,
+    getCalendarDayColors,
   } = useChangeState({ bg, textColor, placeholderColor });
-  const { primaryBackground, primaryBackgroundLight } = getPrimaryBackgrounds();
+  const { selectedDayColor, rangeDayColor } = getCalendarDayColors();
 
   const customStyle = merge({}, borderStyle, inputStyle, props.style);
   const isPositionLeft =
@@ -132,16 +126,16 @@ const DateInputComponent = ({
           },
           day: {
             "&[data-in-range]": {
-              backgroundColor: primaryBackgroundLight,
+              backgroundColor: rangeDayColor,
             },
             "&[data-in-range]:hover": {
-              backgroundColor: primaryBackgroundLight,
+              backgroundColor: rangeDayColor,
             },
             "&[data-selected]": {
-              backgroundColor: primaryBackground,
+              backgroundColor: selectedDayColor,
             },
             "&[data-selected]:hover": {
-              backgroundColor: primaryBackground,
+              backgroundColor: selectedDayColor,
             },
           },
         }}
