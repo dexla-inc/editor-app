@@ -3,7 +3,7 @@ import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useChangeState } from "@/hooks/components/useChangeState";
 import { useInputValue } from "@/hooks/components/useInputValue";
 import { useBrandingStyles } from "@/hooks/editor/useBrandingStyles";
-import { getNewDate, setDate } from "@/utils/date";
+import { getNewDate, isArrayofDates, setDate } from "@/utils/date";
 import { EditableComponentMapper } from "@/utils/editor";
 import {
   DatePickerInputProps,
@@ -47,7 +47,9 @@ const DateInputComponent = ({
     color,
     backgroundColor,
     placeholderColor: _placeholderColor,
+    getCalendarDayColors,
   } = useChangeState({ bg, textColor, placeholderColor });
+  const { selectedDayColor, rangeDayColor } = getCalendarDayColors();
 
   const customStyle = merge({}, borderStyle, inputStyle, props.style);
   const isPositionLeft =
@@ -68,9 +70,7 @@ const DateInputComponent = ({
     let formattedValue;
 
     if (Array.isArray(value)) {
-      if (value.length === 2 && value[0] && value[1]) {
-        formattedValue = getNewDate(value, valueFormatValue, withTimeZone);
-      } else if (value[0] === null && value[1] === null) {
+      if (isArrayofDates(value)) {
         formattedValue = getNewDate(value, valueFormatValue, withTimeZone);
       } else {
         console.warn("Incomplete date range:", value);
@@ -123,6 +123,20 @@ const DateInputComponent = ({
           },
           placeholder: {
             color: `${_placeholderColor}!important`,
+          },
+          day: {
+            "&[data-in-range]": {
+              backgroundColor: rangeDayColor,
+            },
+            "&[data-in-range]:hover": {
+              backgroundColor: rangeDayColor,
+            },
+            "&[data-selected]": {
+              backgroundColor: selectedDayColor,
+            },
+            "&[data-selected]:hover": {
+              backgroundColor: selectedDayColor,
+            },
           },
         }}
       >
