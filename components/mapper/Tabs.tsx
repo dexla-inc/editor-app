@@ -1,6 +1,8 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { useThemeStore } from "@/stores/theme";
 import { EditableComponentMapper } from "@/utils/editor";
 import { Tabs as MantineTabs, TabsProps } from "@mantine/core";
+import get from "lodash.get";
 import { forwardRef, memo } from "react";
 
 type Props = EditableComponentMapper & TabsProps;
@@ -8,6 +10,8 @@ type Props = EditableComponentMapper & TabsProps;
 const TabsComponent = forwardRef(
   ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
     const { children, triggers, ...componentProps } = component.props as any;
+    const theme = useThemeStore((state) => state.theme);
+    const tabsBgColorHex = get(theme.colors, componentProps.tabsBgColor);
 
     return (
       <MantineTabs
@@ -16,6 +20,13 @@ const TabsComponent = forwardRef(
         {...componentProps}
         {...triggers}
         keepMounted={false}
+        styles={{
+          tab: {
+            "&:hover": {
+              backgroundColor: tabsBgColorHex,
+            },
+          },
+        }}
       >
         {component.children && component.children.length > 0
           ? component.children?.map((child) =>
