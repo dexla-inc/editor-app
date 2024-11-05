@@ -10,10 +10,10 @@ type Props = EditableComponentMapper & Omit<DrawerProps, "opened">;
 
 export const DrawerComponent = forwardRef(
   ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
-    const { bgColor } = component.props as any;
+    const { bgColor, headingColor } = component.props as any;
     const theme = useThemeStore((state) => state.theme);
     const bgColorHex = get(theme.colors, bgColor);
-
+    const headingColorHex = get(theme.colors, headingColor);
     return (
       <ModalAndDrawerWrapper component={component}>
         {({
@@ -43,6 +43,7 @@ export const DrawerComponent = forwardRef(
               styles={{
                 header: {
                   backgroundColor: bgColorHex,
+                  color: headingColorHex,
                 },
                 content: {
                   backgroundColor: bgColorHex,
