@@ -381,6 +381,7 @@ export const requiredModifiers: RequiredModifiers = {
     orientation: "horizontal",
     radius: "sm",
     color: "Primary.6",
+    tabItemHoverColor: "White.7",
   },
   tab: {
     value: "first",
