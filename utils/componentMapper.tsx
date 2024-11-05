@@ -218,11 +218,11 @@ import * as ProgressStructureFlex from "@/libs/dnd-flex/components/mapper/struct
 import * as RadioStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Radio";
 import * as RadioItemStructureFlex from "@/libs/dnd-flex/components/mapper/structure/RadioItem";
 import * as RatingStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Rating";
+import * as RichTextStructureFlex from "@/libs/dnd-flex/components/mapper/structure/RichText";
 import * as SelectStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Select";
 import * as SwitchStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Switch";
 import * as TabsStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Tabs";
 import * as TextStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Text";
-import * as TextEditorStructureFlex from "@/libs/dnd-flex/components/mapper/structure/TextEditor";
 import * as TextareaStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Textarea";
 import * as TitleStructureFlex from "@/libs/dnd-flex/components/mapper/structure/Title";
 import * as AreaChartStructureFlex from "@/libs/dnd-flex/components/mapper/structure/charts/AreaChart";
@@ -232,7 +232,7 @@ import * as PieChartStructureFlex from "@/libs/dnd-flex/components/mapper/struct
 import * as RadarChartStructureFlex from "@/libs/dnd-flex/components/mapper/structure/charts/RadarChart";
 import * as RadialChartStructureFlex from "@/libs/dnd-flex/components/mapper/structure/charts/RadialChart";
 
-import { TextEditor } from "@/components/mapper/TextEditor";
+import { RichText } from "@/components/mapper/RichText";
 import { useEditorTreeStore } from "@/stores/editorTree";
 
 export type ComponentCategoryType =
@@ -1221,11 +1221,11 @@ export const structureMapper = (forceCssType: string = ""): StructureMapper => {
       icon: <IconColorFilter size={ICON_SIZE} />,
       synonyms: ["Color Picker", "Color Selector", "Color Swatch"],
     },
-    TextEditor: {
-      structure: (props: any) => TextEditorStructureFlex.jsonStructure(props),
+    RichText: {
+      structure: (props: any) => RichTextStructureFlex.jsonStructure(props),
       Draggable: () => (
         <DraggableComponent
-          id="TextEditor"
+          id="RichText"
           icon={<IconTextSize size={LARGE_ICON_SIZE} />}
         />
       ),
@@ -1745,9 +1745,9 @@ export const componentMapper: ComponentMapper = {
     actionTriggers: ["onChange"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
-  TextEditor: {
-    Component: (props) => <TextEditor {...props} />,
-    modifiers: ["textEditor", "size", "effects"],
+  RichText: {
+    Component: (props) => <RichText {...props} />,
+    modifiers: ["richText", "size", "effects"],
     actionTriggers: ["onChange", "onFocus", "onBlur"],
     sequentialTriggers: ["onSuccess", "onError"],
   },

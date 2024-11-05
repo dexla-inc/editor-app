@@ -13,7 +13,7 @@ import { forwardRef, memo } from "react";
 
 type Props = EditableComponentMapper & RichTextEditorProps;
 
-const TextEditorComponent = forwardRef(
+const RichTextComponent = forwardRef(
   ({ component, shareableContent, ...props }: Props, ref) => {
     const { placeholder, value: computedValue } = component?.onLoad ?? {};
     const { triggers, bg, textColor, ...componentProps } =
@@ -96,6 +96,6 @@ const TextEditorComponent = forwardRef(
   },
 );
 
-export const TextEditor = memo(
-  withComponentWrapper<Props>(TextEditorComponent),
-);
+RichTextComponent.displayName = "RichText";
+
+export const RichText = memo(withComponentWrapper<Props>(RichTextComponent));
