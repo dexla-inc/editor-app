@@ -443,7 +443,9 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                 )
                   .map((id) =>
                     id === "content-wrapper" || id === "root"
-                      ? "main-content"
+                      ? state.cssType === "GRID"
+                        ? "main-grid"
+                        : "main-content"
                       : id,
                   )
                   .filter((id, index, self) => self.indexOf(id) === index);

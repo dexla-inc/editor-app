@@ -4,15 +4,15 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 import { useEditorStore } from "@/stores/editor";
 import { componentMapper } from "@/utils/componentMapper";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import { memo } from "react";
+import { memo, useEffect, useState } from "react";
 import { RenderTreeFunc } from "@/types/component";
 import ComponentToolbox from "@/libs/dnd-grid/components/ComponentToolbox";
 import ErrorBoundary from "@/libs/dnd-grid/components/ErrorBoundary";
 import { useDndGridStore } from "@/libs/dnd-grid/stores/dndGridStore";
 import { TOTAL_COLUMNS_WITH_MULTIPLIER } from "../types/constants";
-import { isPreviewModeSelector } from "@/utils/componentSelectors";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { Box } from "@mantine/core";
+import { getBaseElementId } from "@/libs/dnd-grid/utils/engines/finder";
 
 type Props = {
   projectId: string;
@@ -38,7 +38,17 @@ const MainGridComponent = ({
   const setHoverComponentId = useEditorStore(
     (state) => state.setHoverComponentId,
   );
-  const isPreviewMode = useEditorTreeStore(isPreviewModeSelector);
+  const isInteracting = useDndGridStore((state) => state.isInteracting);
+  const [showGrid, setShowGrid] = useState(false);
+
+  useEffect(() => {
+    const isMainGrid = getBaseElementId() === "main-grid";
+    if (isMainGrid && isInteracting) {
+      setShowGrid(true);
+    } else {
+      setShowGrid(false);
+    }
+  }, [isInteracting]);
 
   return (
     <Box
@@ -46,7 +56,27 @@ const MainGridComponent = ({
       {...componentProps}
       id="main-grid"
       ref={canvasRef}
-      sx={sx}
+      sx={{
+        ...sx,
+        ...(showGrid && {
+          "&:after": {
+            content: '""',
+            position: "absolute",
+            left: 0,
+            top: 0,
+            right: 0,
+            bottom: 0,
+            width: "100%",
+            height: "100%",
+            zIndex: 100,
+            backgroundSize: `calc(100% / ${TOTAL_COLUMNS_WITH_MULTIPLIER}) 10px`,
+            backgroundImage: `
+              linear-gradient(to right, #e5e7eb 1px, transparent 1px),
+              linear-gradient(to bottom, #e5e7eb 1px, transparent 1px)
+            `,
+          },
+        }),
+      }}
       style={{
         display: "grid",
         gap: "0",
@@ -55,13 +85,6 @@ const MainGridComponent = ({
         gridTemplateColumns: `repeat(${TOTAL_COLUMNS_WITH_MULTIPLIER}, 1fr)`,
         minHeight: "100%",
         width: "100%",
-        backgroundSize: `calc(100% / ${TOTAL_COLUMNS_WITH_MULTIPLIER}) 10px`,
-        ...(!isPreviewMode && {
-          backgroundImage: `
-          linear-gradient(to right, #e5e7eb 1px, transparent 1px),
-          linear-gradient(to bottom, #e5e7eb 1px, transparent 1px)
-        `,
-        }),
       }}
       draggable={false}
       onDrop={onDrop}

@@ -161,7 +161,7 @@ export const emptyCssGridTree = {
       {
         id: "main-grid",
         name: "Container",
-        description: "Container",
+        description: "Main Grid",
         blockDroppingChildrenInside: false,
         children: [],
       },

@@ -5,6 +5,7 @@ import { forwardRef, memo } from "react";
 import { ModalAndDrawerWrapper } from "@/components/mapper/ModalAndDrawerWrapper";
 import { convertSizeToPx } from "@/utils/defaultSizes";
 import { TOTAL_COLUMNS_WITH_MULTIPLIER } from "@/libs/dnd-grid/types/constants";
+import { useDndGridStore } from "@/libs/dnd-grid/stores/dndGridStore";
 
 type Props = EditableComponentMapper & Omit<ModalProps, "opened">;
 
@@ -21,7 +22,8 @@ export const ModalComponent = forwardRef(
     ref,
   ) => {
     const sizePx = convertSizeToPx(component?.props?.size, "modal");
-
+    const isInteracting = useDndGridStore((state) => state.isInteracting);
+    console.log({ isInteracting });
     return (
       <ModalAndDrawerWrapper component={component}>
         {({
@@ -69,13 +71,6 @@ export const ModalComponent = forwardRef(
                   flex: 1,
                   padding: 0,
                   position: "relative",
-                  backgroundSize: `calc(100% / ${TOTAL_COLUMNS_WITH_MULTIPLIER}) 10px`,
-                  ...(!isPreviewMode && {
-                    backgroundImage: `
-                    linear-gradient(to right, #e5e7eb 1px, transparent 1px),
-                    linear-gradient(to bottom, #e5e7eb 1px, transparent 1px)
-                  `,
-                  }),
                 },
                 title: { ...titleStyle },
                 // ...(isSizeFullScreen && { inner: { left: 0 } }),

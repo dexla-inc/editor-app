@@ -12,6 +12,7 @@ import { Component } from "@/utils/editor";
 import { CSSObject, Sx } from "@mantine/core";
 import { useMemo } from "react";
 import { useShallow } from "zustand/react/shallow";
+import { useDndGridStore } from "@/libs/dnd-grid/stores/dndGridStore";
 
 type UseComputeChildStylesProps = {
   component: Component;
@@ -22,6 +23,8 @@ export const useComputeChildStyles = ({
   component,
   propsWithOverwrites,
 }: UseComputeChildStylesProps): CSSObject => {
+  const isInteracting = useDndGridStore((state) => state.isInteracting);
+
   const shadows = useEditorStore(
     useShallow((state) => {
       const baseShadow = GREEN_BASE_SHADOW;
@@ -108,6 +111,7 @@ export const useComputeChildStyles = ({
       ".editor-mode &": {
         ...tealOutline,
         ...(!hasBorder && { outline, outlineOffset }),
+        ...(isInteracting && { zIndex: 1000 }),
       },
       ".preview-mode &": {
         ...(propsWithOverwrites.disabled && { pointerEvents: "none" }),
