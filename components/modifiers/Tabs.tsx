@@ -20,7 +20,7 @@ const Modifier = withModifier(({ selectedComponent }) => {
         radius: selectedComponent?.props?.radius,
         color: selectedComponent?.props?.color,
         grow: selectedComponent?.props?.grow,
-        tabBgColor: selectedComponent?.props?.tabsBgColor,
+        tabItemHoverColor: selectedComponent?.props?.tabItemHoverColor,
       }),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -95,11 +95,11 @@ const Modifier = withModifier(({ selectedComponent }) => {
         />
         <ThemeColorSelector
           label="Tab Item Hover Color"
-          {...form.getInputProps("tabsBgColor")}
+          {...form.getInputProps("tabItemHoverColor")}
           onChange={(value: string) => {
-            form.setFieldValue("tabsBgColor", value);
+            form.setFieldValue("tabItemHoverColor", value);
             debouncedTreeComponentAttrsUpdate({
-              attrs: { props: { tabsBgColor: value } },
+              attrs: { props: { tabItemHoverColor: value } },
             });
           }}
         />

@@ -11,7 +11,10 @@ const TabsComponent = forwardRef(
   ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
     const { children, triggers, ...componentProps } = component.props as any;
     const theme = useThemeStore((state) => state.theme);
-    const tabsBgColorHex = get(theme.colors, componentProps.tabsBgColor);
+    const tabItemHoverColor = get(
+      theme.colors,
+      componentProps.tabItemHoverColor,
+    );
 
     return (
       <MantineTabs
@@ -23,7 +26,7 @@ const TabsComponent = forwardRef(
         styles={{
           tab: {
             "&:hover": {
-              backgroundColor: tabsBgColorHex,
+              backgroundColor: tabItemHoverColor,
             },
           },
         }}
