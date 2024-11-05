@@ -155,6 +155,7 @@ export const emptyCssGridTree = {
   timestamp: Date.now(),
   root: {
     id: "root",
+    name: "Container",
     blockDroppingChildrenInside: false,
     children: [
       {

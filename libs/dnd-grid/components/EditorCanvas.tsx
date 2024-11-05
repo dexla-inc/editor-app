@@ -9,7 +9,6 @@ import { RenderTreeFunc } from "@/types/component";
 import ComponentToolbox from "@/libs/dnd-grid/components/ComponentToolbox";
 import ErrorBoundary from "@/libs/dnd-grid/components/ErrorBoundary";
 import { useDndGridStore } from "@/libs/dnd-grid/stores/dndGridStore";
-import { useDnd } from "../hooks/useDnd";
 import { TOTAL_COLUMNS_WITH_MULTIPLIER } from "../types/constants";
 import { isPreviewModeSelector } from "@/utils/componentSelectors";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";

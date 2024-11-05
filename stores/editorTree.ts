@@ -71,6 +71,14 @@ const emptyEditorComponentMutableAttrs = {
       },
     },
   },
+  "main-grid": {
+    id: "main-grid",
+    name: "Container",
+    description: "Main Grid",
+    children: [],
+    blockDroppingChildrenInside: false,
+    props: {},
+  },
 };
 
 export type EditorTreeState = {
@@ -243,8 +251,6 @@ export const useEditorTreeStore = create<WithLiveblocks<EditorTreeState>>()(
                       )
                     : state.pageLoadComponentMutableAttrs,
                 };
-
-                console.log({ newState });
 
                 // also set the pageLoadComponentMutableAttrs if it's an onLoad with componentMutableAttrs
                 return newState;

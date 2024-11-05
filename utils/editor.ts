@@ -387,7 +387,6 @@ export const recoverTreeComponentAttrs = (
   crawl(
     tree.root,
     (nodeTree, context) => {
-      console.log(nodeTree.id, componentMutableAttrs[nodeTree.id!]);
       const node = {
         ...componentMutableAttrs[nodeTree.id!],
         children: nodeTree.children,
@@ -399,7 +398,7 @@ export const recoverTreeComponentAttrs = (
     },
     { order: "bfs" },
   );
-  console.log({ tree });
+
   return tree;
 };
 

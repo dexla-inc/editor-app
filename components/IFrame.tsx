@@ -136,20 +136,13 @@ export const IFrame = ({ children, projectId, ...props }: Props) => {
           >
             <Box
               className={isEditorMode ? "editor-mode" : "preview-mode"}
-              // component={ScrollArea}
-              // offsetScrollbars
               mih={100}
               w="100%"
               id="iframe-content"
-              style={{ minHeight: "100%", display: "flex", flex: 1 }}
-              // styles={{
-              //   root: { overflow: "visible", minHeight: "100%" },
-              //   viewport: {
-              //     overflow: "visible!important",
-              //     minHeight: "100%",
-              //     height: "auto",
-              //   },
-              // }}
+              styles={{
+                root: { overflow: "visible" },
+                viewport: { overflow: "visible!important" },
+              }}
             >
               {children}
             </Box>
