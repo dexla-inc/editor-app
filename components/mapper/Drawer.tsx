@@ -10,8 +10,7 @@ type Props = EditableComponentMapper & Omit<DrawerProps, "opened">;
 
 export const DrawerComponent = forwardRef(
   ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
-    //console.log("DrawerComponent", component);
-    const { bgColor, ...componentProps } = component.props as any;
+    const { bgColor } = component.props as any;
     const theme = useThemeStore((state) => state.theme);
     const bgColorHex = get(theme.colors, bgColor);
 
