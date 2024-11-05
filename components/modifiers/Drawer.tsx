@@ -3,6 +3,8 @@ import { withModifier } from "@/hoc/withModifier";
 import { SegmentedControl, Stack } from "@mantine/core";
 import { ModalDrawerFormBuilder } from "@/components/modifiers/ModalDrawerFormBuilder";
 import { SizeSelector } from "../SizeSelector";
+import { ThemeColorSelector } from "../ThemeColorSelector";
+import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 
 const Modifier = withModifier(({ selectedComponent }) => {
   return (
@@ -28,6 +30,20 @@ const Modifier = withModifier(({ selectedComponent }) => {
               showNone={false}
               {...form.getInputProps("size")}
               onChange={(value) => onChange("size", value as string)}
+            />
+            <ThemeColorSelector
+              label="Background Color"
+              {...form.getInputProps("bgColor")}
+              onChange={(value: string) => {
+                form.setFieldValue("bgColor", value);
+                debouncedTreeComponentAttrsUpdate({
+                  attrs: {
+                    props: {
+                      bgColor: value,
+                    },
+                  },
+                });
+              }}
             />
           </Stack>
         );
