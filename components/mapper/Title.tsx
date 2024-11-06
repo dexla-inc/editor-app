@@ -57,7 +57,7 @@ const TitleComponent = forwardRef(
         //   ...(style?.fontSize ? { fontSize: style.fontSize + "px" } : {}),
         // }}
       >
-        <div style={{ gridArea: "1 / 1 / -1 / -1" }}>
+        <div style={{ gridArea: "1 / 1 / -1 / -1", textAlign: "center" }}>
           {isFontLoaded && String(childrenValue || "")}
         </div>
         <ChildrenWrapper />

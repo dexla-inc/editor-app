@@ -7,6 +7,7 @@ import { EditableComponentMapper } from "@/utils/editor";
 import {
   ActionIconProps,
   ActionIcon as MantineActionIcon,
+  Box,
 } from "@mantine/core";
 import merge from "lodash.merge";
 import { ReactElement, forwardRef, memo } from "react";
@@ -59,7 +60,21 @@ const ButtonIconComponent = forwardRef(
         styles={{ root: DISABLED_HOVER }}
         {...triggers}
       >
-        <BaseIconComponent {...iconProps} />
+        <Box
+          unstyled
+          sx={{
+            display: "flex",
+            gridArea: "1 / 1 / -1 / -1",
+            width: "100%",
+            height: "100%",
+          }}
+        >
+          <BaseIconComponent
+            {...iconProps}
+            style={{ width: "100%", height: "100%" }}
+          />
+        </Box>
+
         <ChildrenWrapper />
       </MantineActionIcon>
     );
