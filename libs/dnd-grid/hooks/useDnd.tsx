@@ -15,6 +15,7 @@ import {
   getBaseElementId,
   getElementByIdInContext,
 } from "@/libs/dnd-grid/utils/engines/finder";
+import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 
 export const useDnd = (debug?: string) => {
   const dragOffset = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
@@ -51,7 +52,7 @@ export const useDnd = (debug?: string) => {
     setIsInteracting(true);
 
     const el = e.target as HTMLElement;
-    const currComponentId = el.getAttribute("id");
+    const currComponentId = el.getAttribute("data-id") ?? el.getAttribute("id");
     const componentData = getComponentById(components, currComponentId!);
 
     if (componentData) {
@@ -154,6 +155,7 @@ export const useDnd = (debug?: string) => {
       coords,
       setInvalidComponent,
       setValidComponent,
+      setIsInteracting,
     } = useDndGridStore.getState();
 
     // before really adding one of them to the tree, the parent is correctly defined.
@@ -182,6 +184,7 @@ export const useDnd = (debug?: string) => {
     });
     setInvalidComponent(null);
     setValidComponent(null);
+    setIsInteracting(false);
   };
 
   const onDrag = (e: React.DragEvent) => {
@@ -227,7 +230,7 @@ export const useDnd = (debug?: string) => {
     // Enforce minimum column and row start values
     let column = Math.max(rawColumn, 0);
     let row = Math.max(rawRow, 0);
-    console.log({ parentId });
+
     const [columnStart, columnEnd] = el.style.gridColumn.split("/");
     const columnSize = parseInt(columnEnd) - parseInt(columnStart);
     const [rowStart, rowEnd] = el.style.gridRow.split("/");
@@ -278,7 +281,14 @@ export const useDnd = (debug?: string) => {
     setValidComponent(null);
   };
 
-  return { onDrop, onDragStart, onDragOver, onDrag, onDragEnd };
+  return {
+    onDrop,
+    onDragStart,
+    onDragOver,
+    onDrag,
+    onDragEnd,
+    onDragLeave: onDragEnd,
+  };
 };
 
 export function isOverlapping(rect1: DOMRect, rect2: DOMRect) {

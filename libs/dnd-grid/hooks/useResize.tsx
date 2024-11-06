@@ -96,6 +96,7 @@ export const useResize = () => {
       currComponentId: string,
     ) => {
       initializeResize(direction, e, currComponentId);
+      console.log("resize start");
     },
     [initializeResize],
   );
@@ -142,7 +143,7 @@ export const useResize = () => {
   const handleResize = useCallback(
     (e: MouseEvent) => {
       if (!isResizing) return;
-
+      console.log("resize");
       const { selectedComponentIds } = useEditorTreeStore.getState();
       const selectedComponentId = selectedComponentIds?.at(0);
       if (!selectedComponentId) return;
@@ -197,45 +198,44 @@ export const useResize = () => {
    * Finalizes the resize action by updating the component size in the store.
    */
   const finalizeResize = useCallback(() => {
-    if (isResizing) {
-      setIsResizing(false);
-      const { setIsInteracting } = useDndGridStore.getState();
-      const {
-        tree: editorTree,
-        setTree: setComponents,
-        selectedComponentIds,
-        updateTreeComponentAttrs,
-      } = useEditorTreeStore.getState();
-      const selectedComponentId = selectedComponentIds?.at(0);
+    if (!isResizing) return;
+    console.log("resize end");
 
-      if (!selectedComponentId) return;
+    setIsResizing(false);
+    const { setIsInteracting } = useDndGridStore.getState();
+    const {
+      tree: editorTree,
+      setTree: setComponents,
+      selectedComponentIds,
+      updateTreeComponentAttrs,
+    } = useEditorTreeStore.getState();
+    const selectedComponentId = selectedComponentIds?.at(0);
 
-      updateTreeComponentAttrs({
-        componentIds: [selectedComponentId],
-        attrs: {
-          props: {
-            style: {
-              gridColumn: lastValidGridCoords.current.gridColumn,
-              gridRow: lastValidGridCoords.current.gridRow,
-            },
+    if (!selectedComponentId) return;
+
+    updateTreeComponentAttrs({
+      componentIds: [selectedComponentId],
+      attrs: {
+        props: {
+          style: {
+            gridColumn: lastValidGridCoords.current.gridColumn,
+            gridRow: lastValidGridCoords.current.gridRow,
           },
         },
-      });
-      setIsInteracting(false);
-    }
+      },
+    });
+    setIsInteracting(false);
   }, [isResizing]);
 
   /**
    * Sets up event listeners for mouse movements and mouse release during resizing.
    */
   useEffect(() => {
-    if (isResizing) {
-      iframeWindow?.document.body.addEventListener(
-        "mousemove",
-        handleResize as any,
-      );
-      iframeWindow?.document.body.addEventListener("mouseup", finalizeResize);
-    }
+    iframeWindow?.document.body.addEventListener(
+      "mousemove",
+      handleResize as any,
+    );
+    iframeWindow?.document.body.addEventListener("mouseup", finalizeResize);
     return () => {
       iframeWindow?.document.body.removeEventListener(
         "mousemove",
@@ -246,7 +246,7 @@ export const useResize = () => {
         finalizeResize,
       );
     };
-  }, [isResizing, handleResize, finalizeResize, iframeWindow]);
+  }, [handleResize, finalizeResize, iframeWindow]);
 
   return {
     handleResizeStart,

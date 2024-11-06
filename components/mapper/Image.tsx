@@ -8,7 +8,13 @@ type Props = EditableComponentMapper & ImageProps;
 
 const ImageComponent = forwardRef(
   (
-    { component, shareableContent, grid: { ChildrenWrapper }, ...props }: Props,
+    {
+      renderTree,
+      component,
+      shareableContent,
+      grid: { ChildrenWrapper },
+      ...props
+    }: Props,
     ref,
   ) => {
     const { triggers, loading, src, alt, ...componentProps } =
@@ -28,28 +34,23 @@ const ImageComponent = forwardRef(
     } = props.style ?? {};
 
     return (
-      <Box unstyled style={props.style as any} {...props} {...triggers}>
+      <Box unstyled {...props} {...triggers} data-id={props.id}>
         <MantineImage
           ref={ref}
           alt={String(altValue)}
-          imageProps={{ src: srcValue }}
+          imageProps={{ src: srcValue, ["data-id"]: props.id }}
           {...componentProps}
           style={{}}
           styles={{
             root: {
-              position,
-              top,
-              bottom,
-              left,
-              right,
-              zIndex,
               gridArea: "1 / 1 / -1 / -1",
             },
-            // @ts-ignore
-            image: omit(style, ["position", "top", "bottom", "left", "right"]),
+            image: {
+              ...omit(style, ["position", "top", "bottom", "left", "right"]),
+              height: "100%",
+            },
           }}
-          width={width}
-          height={height}
+          fit="fill"
         />
         <ChildrenWrapper />
       </Box>

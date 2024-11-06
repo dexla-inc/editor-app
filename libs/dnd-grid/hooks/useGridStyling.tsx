@@ -29,5 +29,6 @@ export const useGridStyling = ({ component }: Props) => {
     ...(component?.props?.bg && {
       backgroundColor: component.props.bg,
     }),
+    gap: 0,
   };
 };

@@ -25,7 +25,7 @@ export const ResizeHandlers = ({ componentId }: any) => {
             inset: 0,
             backgroundColor: "rgba(59, 130, 246, 0.3)",
             pointerEvents: "none",
-            zIndex: 10,
+            zIndex: 1000,
           }}
         />
       )}
@@ -36,7 +36,7 @@ export const ResizeHandlers = ({ componentId }: any) => {
             inset: 0,
             backgroundColor: "rgba(239, 68, 68, 0.3)",
             pointerEvents: "none",
-            zIndex: 10,
+            zIndex: 1000,
           }}
         />
       )}
@@ -55,7 +55,7 @@ export const ResizeHandlers = ({ componentId }: any) => {
               borderRadius: "0.5rem",
               cursor: "ew-resize",
               pointerEvents: "auto",
-              zIndex: 20,
+              zIndex: 1000,
             }}
             onMouseDown={(e) => handleResizeStart("left", e, componentId)}
           />
@@ -72,7 +72,7 @@ export const ResizeHandlers = ({ componentId }: any) => {
               borderRadius: "0.5rem",
               cursor: "ew-resize",
               pointerEvents: "auto",
-              zIndex: 20,
+              zIndex: 1000,
             }}
             onMouseDown={(e) => handleResizeStart("right", e, componentId)}
           />
@@ -89,7 +89,7 @@ export const ResizeHandlers = ({ componentId }: any) => {
               borderRadius: "0.5rem",
               cursor: "ns-resize",
               pointerEvents: "auto",
-              zIndex: 20,
+              zIndex: 1000,
             }}
             onMouseDown={(e) => handleResizeStart("top", e, componentId)}
           />
@@ -106,7 +106,7 @@ export const ResizeHandlers = ({ componentId }: any) => {
               borderRadius: "0.5rem",
               cursor: "ns-resize",
               pointerEvents: "auto",
-              zIndex: 20,
+              zIndex: 1000,
             }}
             onMouseDown={(e) => handleResizeStart("bottom", e, componentId)}
           />

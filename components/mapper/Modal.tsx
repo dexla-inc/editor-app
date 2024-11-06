@@ -22,8 +22,8 @@ export const ModalComponent = forwardRef(
     ref,
   ) => {
     const sizePx = convertSizeToPx(component?.props?.size, "modal");
-    const isInteracting = useDndGridStore((state) => state.isInteracting);
-    console.log({ isInteracting });
+    // const isInteracting = useDndGridStore((state) => state.isInteracting);
+
     return (
       <ModalAndDrawerWrapper component={component}>
         {({

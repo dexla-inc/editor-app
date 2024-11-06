@@ -27,9 +27,13 @@ export const ContainerComponent = forwardRef<HTMLDivElement, Props>(
     } = component?.props ?? {};
 
     const gapPx = convertSizeToPx(component?.props?.gap, "gap");
-    const customStyle = merge({ width: "100%" }, props.style, {
-      gap: gapPx,
-    });
+    const customStyle = merge(
+      { width: "100%" },
+      {
+        gap: gapPx,
+      },
+      props.style,
+    );
 
     const { renderData } = useRenderData({
       component,

@@ -79,7 +79,7 @@ export const withComponentWrapper = <T extends Record<string, any>>(
       propsWithOverwrites,
     });
 
-    const dndProps = merge({ draggable: isDraggable }, extraProps, childStyles);
+    const dndProps = merge({ draggable: isDraggable }, childStyles, extraProps);
 
     const props = {
       component: {
