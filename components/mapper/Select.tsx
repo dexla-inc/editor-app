@@ -134,26 +134,17 @@ const SelectComponent = forwardRef(
           // @ts-ignore
           onChange={handleChange}
           onSearchChange={debouncedHandleSearchChange}
-          style={{}}
+          style={{
+            gridArea: "1 / 1 / -1 / -1",
+          }}
           styles={{
             root: {
               position: "relative",
               ...pick(customStyle, rootStyleProps),
-              width: "100%",
-              height: "100%",
-              display: "flex",
-              gridArea: "1 / 1 / -1 / -1",
-            },
-            wrapper: {
-              ...pick(customStyle, wrapperStyleProps),
-              width: "100%",
-              height: "100%",
             },
             input: {
-              ...omit(customStyle, wrapperStyleProps),
               height: fetchHeight(customStyle),
               width: "100%",
-              // height: "100%",
             },
             values: { minHeight: customStyle.minHeight },
           }}
@@ -168,7 +159,6 @@ const SelectComponent = forwardRef(
           rightSection={loading ? <InputLoader /> : null}
           label={undefined}
           value={typeof value === "number" ? String(value) : value}
-          wrapperProps={{ "data-id": props.id }}
         />
         <ChildrenWrapper />
       </Box>

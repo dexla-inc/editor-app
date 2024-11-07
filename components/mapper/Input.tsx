@@ -178,7 +178,6 @@ const InputComponent = forwardRef(
                   hideControls
                   type="number"
                   autoComplete="off"
-                  id={component.id}
                   {...componentProps}
                   style={{}}
                   styles={{
@@ -217,13 +216,7 @@ const InputComponent = forwardRef(
             </Group>
           </>
         ) : type === "number" ? (
-          <Box
-            unstyled
-            style={props.style as any}
-            {...props}
-            {...restTriggers}
-            id={id}
-          >
+          <Box unstyled {...props} {...restTriggers} id={id}>
             <MantineNumberInput
               {...componentProps}
               ref={ref}
@@ -257,19 +250,12 @@ const InputComponent = forwardRef(
               onChange={handleChange}
               rightSection={loading ? <InputLoader /> : null}
               label={undefined}
-              wrapperProps={{ "data-id": id }}
               onKeyDown={onKeyDown}
             />
             <ChildrenWrapper />
           </Box>
         ) : type === "password" ? (
-          <Box
-            unstyled
-            style={props.style as any}
-            {...props}
-            {...restTriggers}
-            id={id}
-          >
+          <Box unstyled {...props} {...restTriggers} id={id}>
             <PasswordInput
               componentId={component?.id!}
               ref={ref}
@@ -296,13 +282,7 @@ const InputComponent = forwardRef(
             <ChildrenWrapper />
           </Box>
         ) : (
-          <Box
-            unstyled
-            style={props.style as any}
-            {...props}
-            {...restTriggers}
-            id={id}
-          >
+          <Box unstyled {...props} {...restTriggers} id={id}>
             <MantineInput
               {...componentProps}
               ref={ref}
@@ -341,7 +321,6 @@ const InputComponent = forwardRef(
                 ) : null
               }
               label={undefined}
-              wrapperProps={{ "data-id": id }}
             />
             <ChildrenWrapper />
           </Box>

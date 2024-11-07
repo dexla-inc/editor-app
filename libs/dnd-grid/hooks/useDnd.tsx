@@ -112,9 +112,12 @@ export const useDnd = (debug?: string) => {
       const movableRect = movable.getBoundingClientRect();
       const overlappingElements: string[] = [];
 
+      // console.log("Movable Rect:", movableRect);
       for (const [key, rect] of Object.entries(elementRects)) {
+        // console.log("Checking against Rect:", rect);
         if (isOverlapping(movableRect, rect)) {
           overlappingElements.push(key);
+          // console.log(`Overlaps with element id: ${key}`);
         }
       }
 
@@ -236,7 +239,6 @@ export const useDnd = (debug?: string) => {
           e.clientX - dragOffset.current.x,
           e.clientY - dragOffset.current.y,
         );
-
         // Enforce minimum column and row start values
         let column = Math.max(Math.floor(rawColumn), 1);
         let row = Math.max(Math.floor(rawRow), 1);

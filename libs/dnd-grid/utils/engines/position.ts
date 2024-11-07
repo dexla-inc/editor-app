@@ -121,7 +121,9 @@ const isValidDropZone = (el: HTMLElement, currentId: string): boolean => {
   // Exclude the current element
   if (elId === currentId) return false;
 
-  const currentElement = iframeWindow?.document.getElementById(currentId);
+  const currentElement = iframeWindow?.document.querySelectorAll(
+    `[id="${currentId}"], [data-id="${currentId}"]`,
+  )?.[0];
   if (!currentElement) return false;
 
   // Get bounding rectangles for both elements

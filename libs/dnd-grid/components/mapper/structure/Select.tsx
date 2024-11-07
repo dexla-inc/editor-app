@@ -13,7 +13,7 @@ export const jsonStructure = (props?: any): ComponentStructure => {
       ...defaultValues,
       style: {
         gridColumn: "1/30",
-        gridRow: "1/4",
+        gridRow: "1/5",
       },
       ...(props.props || {}),
     },
