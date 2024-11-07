@@ -53,6 +53,8 @@ const SelectComponent = forwardRef(
       maxDropdownHeight,
       icon,
       openInEditor,
+      customerFooter,
+      customText,
       ...restComponentProps
     } = component.props as any;
 
@@ -142,6 +144,13 @@ const SelectComponent = forwardRef(
       "marginLeft",
       "marginRight",
     ];
+    const hasChildren = component.children && component.children?.length > 0;
+    const hasCustomFooter = customerFooter && customText;
+    const footer = hasChildren
+      ? component.children?.map((child: any) =>
+          renderTree?.(child, shareableContent),
+        )
+      : undefined;
 
     return (
       <MantineSelectWrapper
@@ -153,6 +162,7 @@ const SelectComponent = forwardRef(
           "customLinkUrl",
           "labelAlign",
         ])}
+        data={data}
         onChange={handleChange}
         onSearchChange={debouncedHandleSearchChange}
         {...restTriggers}
@@ -176,16 +186,10 @@ const SelectComponent = forwardRef(
         initiallyOpened={!isPreviewMode && openInEditor}
         disableSelectedItemFiltering
         maxDropdownHeight={maxDropdownHeight}
-        data={data}
-        {...(component.props?.customText || component.children
+        {...(hasCustomFooter || hasChildren
           ? {
               dropdownComponent: (props: any) => (
-                <CustomDropdown
-                  {...props}
-                  renderTree={renderTree}
-                  footer={component.children}
-                  shareableContent={shareableContent}
-                />
+                <CustomDropdown {...props} footer={footer} />
               ),
             }
           : {})}
@@ -198,6 +202,7 @@ const SelectComponent = forwardRef(
         label={undefined}
         value={typeof value === "number" ? String(value) : value}
         wrapperProps={{ "data-id": props.id }}
+        data-mantine-stop-propagation
       />
     );
   },
@@ -217,7 +222,7 @@ const SelectItem = forwardRef<HTMLDivElement, any>(
     const { "data-selected": dataSelected, ...rest } = others;
     const props = multiSelect ? rest : others;
     return (
-      <Group noWrap ref={ref} {...props}>
+      <Group noWrap ref={ref} {...props} tabIndex={-1}>
         {multiSelect && (
           <Checkbox checked={dataSelected} onChange={() => {}} tabIndex={-1} />
         )}
