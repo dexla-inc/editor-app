@@ -5,7 +5,7 @@ import {
   getParentId,
   updateComponentPosition,
 } from "@/libs/dnd-grid/utils/editor";
-import { useRef } from "react";
+import { useRef, useCallback } from "react";
 import { getGridCoordinates } from "@/libs/dnd-grid/utils/engines/position";
 import { structureMapper } from "@/utils/componentMapper";
 import { useDndGridStore } from "@/libs/dnd-grid/stores/dndGridStore";
@@ -20,30 +20,38 @@ import { selectedComponentIdSelector } from "@/utils/componentSelectors";
 export const useDnd = (debug?: string) => {
   const dragOffset = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const isNewComponent = useRef<boolean>(false);
+  const animationFrame = useRef<number | null>(null);
 
   const { root: components } = useEditorTreeStore.getState().tree;
 
-  const getElementRects = (currComponentId: string) => {
-    const allIds = getAllIds(components, {
-      filterFromParent: currComponentId,
-    });
-    const targets = allIds.reduce(
-      (acc, id) => {
+  // Cache elementRects to avoid redundant calculations
+  const elementRectsCache = useRef<Record<string, Record<string, DOMRect>>>({});
+
+  const getElementRects = useCallback(
+    (currComponentId: string) => {
+      if (elementRectsCache.current[currComponentId]) {
+        return elementRectsCache.current[currComponentId];
+      }
+
+      const allIds = getAllIds(components, {
+        filterFromParent: currComponentId,
+      });
+      const targets = allIds.reduce<Record<string, DOMRect>>((acc, id) => {
         if (currComponentId !== id) {
           const element = getElementByIdInContext(id);
           if (element) {
-            const targetRect = element.getBoundingClientRect();
-            acc[id] = targetRect;
+            acc[id] = element.getBoundingClientRect();
           }
         }
         return acc;
-      },
-      {} as Record<string, DOMRect>,
-    );
-    return targets;
-  };
+      }, {});
+      elementRectsCache.current[currComponentId] = targets;
+      return targets;
+    },
+    [components],
+  );
 
-  const onDragStart = (e: React.DragEvent) => {
+  const onDragStart = useCallback((e: React.DragEvent) => {
     e.stopPropagation();
     const { setIsInteracting, setDraggableComponent, setCoords } =
       useDndGridStore.getState();
@@ -57,19 +65,19 @@ export const useDnd = (debug?: string) => {
 
     if (componentData) {
       setDraggableComponent({
-        name: componentData?.name,
-        id: componentData?.id,
+        name: componentData.name,
+        id: componentData.id,
         props: {
           style: {
-            gridColumn: componentData?.props?.style?.gridColumn || "",
-            gridRow: componentData?.props?.style?.gridRow || "",
+            gridColumn: componentData.props?.style?.gridColumn || "",
+            gridRow: componentData.props?.style?.gridRow || "",
           },
         },
         // @ts-ignore
         parentId: getParentId(components, currComponentId!) || "",
       });
     } else {
-      // add new components here
+      // Add new components here
       const type = el.getAttribute("data-type");
       if (type) {
         const newComponent = structureMapper()[type].structure({});
@@ -97,51 +105,46 @@ export const useDnd = (debug?: string) => {
       gridRow: componentData?.props?.style?.gridRow || "",
       parentId: parentId || "",
     });
-  };
+  }, []);
 
-  function checkOverlap(
-    movable: HTMLElement,
-    elementRects: Record<string, DOMRect>,
-  ) {
-    const movableRect = movable.getBoundingClientRect();
-    const overlappingElements: string[] = [];
+  const checkOverlap = useCallback(
+    (movable: HTMLElement, elementRects: Record<string, DOMRect>) => {
+      const movableRect = movable.getBoundingClientRect();
+      const overlappingElements: string[] = [];
 
-    Object.entries(elementRects).forEach(([key, rect]) => {
-      if (isOverlapping(movableRect, rect)) {
-        overlappingElements.push(key);
+      for (const [key, rect] of Object.entries(elementRects)) {
+        if (isOverlapping(movableRect, rect)) {
+          overlappingElements.push(key);
+        }
       }
-    });
 
-    return overlappingElements;
-  }
+      return overlappingElements;
+    },
+    [],
+  );
 
-  function checkFitsInside(
-    movable: HTMLElement,
-    elementRects: Record<string, DOMRect>,
-  ) {
-    const { root: components } = useEditorTreeStore.getState().tree;
+  const checkFitsInside = useCallback(
+    (movable: HTMLElement, elementRects: Record<string, DOMRect>) => {
+      const { root: components } = useEditorTreeStore.getState().tree;
+      const movableRect = movable.getBoundingClientRect();
+      const fittingElements: string[] = [];
 
-    const movableRect = movable.getBoundingClientRect();
-    const fittingElements: string[] = [];
-
-    Object.entries(elementRects).forEach(([key, rect]) => {
-      const parentComponent = getComponentById(components, key);
-      if (
-        fitsInside(movableRect, rect) &&
-        !parentComponent?.blockDroppingChildrenInside
-      ) {
-        fittingElements.push(key);
+      for (const [key, rect] of Object.entries(elementRects)) {
+        const parentComponent = getComponentById(components, key);
+        if (
+          fitsInside(movableRect, rect) &&
+          !parentComponent?.blockDroppingChildrenInside
+        ) {
+          fittingElements.push(key);
+        }
       }
-    });
 
-    return fittingElements;
-  }
+      return fittingElements;
+    },
+    [],
+  );
 
-  const onDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-  };
-
-  const onDrop = (e: React.DragEvent) => {
+  const onDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
 
@@ -158,8 +161,7 @@ export const useDnd = (debug?: string) => {
       setIsInteracting,
     } = useDndGridStore.getState();
 
-    // before really adding one of them to the tree, the parent is correctly defined.
-    // as they get added to the tree, the context is changed, and it now is one of them.
+    // Reset parentId for specific component types
     if (
       ["Modal", "Drawer", "PopOver"].includes(draggableComponent?.name || "")
     ) {
@@ -185,106 +187,131 @@ export const useDnd = (debug?: string) => {
     setInvalidComponent(null);
     setValidComponent(null);
     setIsInteracting(false);
-  };
+  }, []);
 
-  const onDrag = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const onDrag = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
 
-    const { setTree: setComponents, tree: editorTree } =
-      useEditorTreeStore.getState();
-    const {
-      draggableComponent,
-      setInvalidComponent,
-      setValidComponent,
-      setCoords,
-    } = useDndGridStore.getState();
+      if (animationFrame.current !== null) {
+        cancelAnimationFrame(animationFrame.current);
+      }
 
-    const { validComponent, invalidComponent } = useDndGridStore.getState();
-    const { id } = draggableComponent!;
+      // Schedule the drag handling within the next animation frame
+      animationFrame.current = requestAnimationFrame(() => {
+        const { setTree: setComponents, tree: editorTree } =
+          useEditorTreeStore.getState();
+        const {
+          draggableComponent,
+          setInvalidComponent,
+          setValidComponent,
+          setCoords,
+        } = useDndGridStore.getState();
 
-    if (isNewComponent.current) {
-      const elementId = getBaseElementId().replace("-body", "");
-      addComponent(editorTree.root, draggableComponent!, elementId);
-      setComponents(editorTree, {
-        action: `Added ${draggableComponent?.description} component`,
+        const id = draggableComponent?.id;
+        if (!draggableComponent || id === undefined) return;
+
+        const { validComponent, invalidComponent } = useDndGridStore.getState();
+
+        if (isNewComponent.current) {
+          const elementId = getBaseElementId().replace("-body", "");
+          addComponent(editorTree.root, draggableComponent, elementId);
+          setComponents(editorTree, {
+            action: `Added ${draggableComponent.description} component`,
+          });
+          isNewComponent.current = false;
+          return;
+        }
+
+        const el = getElementByIdInContext(id);
+        if (!el) return;
+
+        const {
+          column: rawColumn,
+          row: rawRow,
+          parentId,
+        } = getGridCoordinates(
+          id,
+          e.clientX - dragOffset.current.x,
+          e.clientY - dragOffset.current.y,
+        );
+
+        // Enforce minimum column and row start values
+        let column = Math.max(Math.floor(rawColumn), 1);
+        let row = Math.max(Math.floor(rawRow), 1);
+
+        const [columnStart, columnEnd] = el.style.gridColumn
+          .split("/")
+          .map(Number);
+        const columnSize = columnEnd - columnStart;
+        const [rowStart, rowEnd] = el.style.gridRow.split("/").map(Number);
+        const rowSize = rowEnd - rowStart;
+
+        // Enforce maximum column end value
+        const maxColumn = 121;
+        let columnEndValue = column + columnSize;
+        if (columnEndValue > maxColumn) {
+          column = maxColumn - columnSize;
+          columnEndValue = maxColumn;
+        }
+
+        const gridColumn = `${column}/${columnEndValue}`;
+        const gridRow = `${row}/${row + rowSize}`;
+
+        // Batch DOM updates to minimize layout thrashing
+        el.style.transition = "none"; // Optional: disable transitions during drag for performance
+        el.style.gridColumn = gridColumn;
+        el.style.gridRow = gridRow;
+        moveElement(el, parentId);
+
+        const elementRects = getElementRects(id);
+        const overlappingIds = checkOverlap(el, elementRects as any);
+        const fittingIds = checkFitsInside(el, elementRects as any);
+
+        if (arraysEqual(overlappingIds, fittingIds)) {
+          setCoords({ gridColumn, gridRow, parentId });
+          if (invalidComponent !== null) {
+            setInvalidComponent(null);
+          }
+          if (validComponent !== id) {
+            setValidComponent(id);
+          }
+        } else {
+          if (invalidComponent !== id) {
+            setInvalidComponent(id);
+          }
+          if (validComponent !== id) {
+            setValidComponent(null);
+          }
+        }
+
+        // Clear the cache as the layout has changed
+        elementRectsCache.current = {};
       });
-      isNewComponent.current = false;
-      return;
-    }
+    },
+    [checkFitsInside, checkOverlap, getElementRects],
+  );
 
-    const el = getElementByIdInContext(id!);
-
-    if (!el) return;
-
-    const {
-      column: rawColumn,
-      row: rawRow,
-      parentId,
-    } = getGridCoordinates(
-      id!,
-      e.clientX - dragOffset.current.x,
-      e.clientY - dragOffset.current.y,
-    );
-
-    // Enforce minimum column and row start values
-    let column = Math.max(rawColumn, 0);
-    let row = Math.max(rawRow, 0);
-
-    const [columnStart, columnEnd] = el.style.gridColumn.split("/");
-    const columnSize = parseInt(columnEnd) - parseInt(columnStart);
-    const [rowStart, rowEnd] = el.style.gridRow.split("/");
-    const rowSize = parseInt(rowEnd) - parseInt(rowStart);
-
-    // Enforce maximum column end value
-    const maxColumn = 121;
-    let columnEndValue = column + columnSize;
-    if (columnEndValue > maxColumn) {
-      column = maxColumn - columnSize;
-      columnEndValue = maxColumn;
-    }
-
-    const gridColumn = `${column}/${columnEndValue}`;
-    const gridRow = `${row}/${row + rowSize}`;
-
-    el.style.gridColumn = gridColumn;
-    el.style.gridRow = gridRow;
-    moveElement(el, parentId);
-
-    const elementRects = getElementRects(id!);
-    const overlappingIds = checkOverlap(el, elementRects);
-    const fittingIds = checkFitsInside(el, elementRects);
-
-    if (JSON.stringify(overlappingIds) === JSON.stringify(fittingIds)) {
-      setCoords({ gridColumn, gridRow, parentId });
-      if (invalidComponent !== null) {
-        setInvalidComponent(null);
-      }
-      if (validComponent !== id) {
-        setValidComponent(id!);
-      }
-    } else {
-      if (invalidComponent !== id) {
-        setInvalidComponent(id!);
-      }
-      if (validComponent !== id) {
-        setValidComponent(null);
-      }
-    }
-  };
-
-  const onDragEnd = () => {
+  const onDragEnd = useCallback(() => {
     const { setIsInteracting, setInvalidComponent, setValidComponent } =
       useDndGridStore.getState();
-    setIsInteracting(false);
+    // setIsInteracting(false);
     setInvalidComponent(null);
     setValidComponent(null);
-  };
+
+    if (animationFrame.current !== null) {
+      cancelAnimationFrame(animationFrame.current);
+      animationFrame.current = null;
+    }
+  }, []);
 
   return {
     onDrop,
     onDragStart,
-    onDragOver,
+    onDragOver: useCallback((e: React.DragEvent) => {
+      e.preventDefault();
+    }, []),
     onDrag,
     onDragEnd,
     onDragLeave: onDragEnd,
@@ -293,10 +320,10 @@ export const useDnd = (debug?: string) => {
 
 export function isOverlapping(rect1: DOMRect, rect2: DOMRect) {
   return !(
-    rect1.right < rect2.left ||
-    rect1.left > rect2.right ||
-    rect1.bottom < rect2.top ||
-    rect1.top > rect2.bottom
+    rect1.right <= rect2.left ||
+    rect1.left >= rect2.right ||
+    rect1.bottom <= rect2.top ||
+    rect1.top >= rect2.bottom
   );
 }
 
@@ -311,11 +338,23 @@ function fitsInside(innerRect: DOMRect, outerRect: DOMRect) {
 
 function moveElement(currentElement: HTMLElement, newParentId: string) {
   const { iframeWindow } = useEditorStore.getState();
-  const newParent = iframeWindow?.document.querySelectorAll<HTMLElement>(
+  const newParent = iframeWindow?.document.querySelector<HTMLElement>(
     `[id="${newParentId}"], [data-id="${newParentId}"]`,
-  )[0];
+  );
 
   if (currentElement && newParent) {
     newParent.appendChild(currentElement);
   }
+}
+
+// Utility function to compare two arrays for equality
+function arraysEqual(arr1: string[], arr2: string[]) {
+  if (arr1.length !== arr2.length) return false;
+  const set1 = new Set(arr1);
+  const set2 = new Set(arr2);
+  if (set1.size !== set2.size) return false;
+  for (const item of set1) {
+    if (!set2.has(item)) return false;
+  }
+  return true;
 }
