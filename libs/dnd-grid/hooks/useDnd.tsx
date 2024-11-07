@@ -269,6 +269,7 @@ export const useDnd = (debug?: string) => {
         const overlappingIds = checkOverlap(el, elementRects as any);
         const fittingIds = checkFitsInside(el, elementRects as any);
 
+        // check if the elements the draggable overlaps are the same as the elements the draggable fits inside
         if (arraysEqual(overlappingIds, fittingIds)) {
           setCoords({ gridColumn, gridRow, parentId });
           if (invalidComponent !== null) {
