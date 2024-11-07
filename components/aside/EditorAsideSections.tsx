@@ -21,7 +21,6 @@ import intersection from "lodash.intersection";
 import { memo, useEffect } from "react";
 import { useShallow } from "zustand/react/shallow";
 import { useEditorTreeStore } from "../../stores/editorTree";
-import { WarningAlert } from "../Alerts";
 import { ActionsTab, Data, modifierSectionMapper } from "./dynamicModifiers";
 
 const EditorAsideSections = () => {
@@ -148,14 +147,6 @@ const EditorAsideSections = () => {
       {asideSelectedTab === "design" && (
         <Stack spacing="xs">
           {componentName && <StateSelector componentName={componentName} />}
-          {["Select", "AutoComplete"].includes(componentName) && (
-            <WarningAlert
-              title="Warning"
-              size="xs"
-              text="Custom dropdown may interfere with the scroll behaviour of the
-              page."
-            />
-          )}
           {designSections}
         </Stack>
       )}
