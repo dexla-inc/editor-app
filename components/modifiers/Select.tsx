@@ -1,3 +1,4 @@
+import { WarningAlert } from "@/components/Alerts";
 import { IconSelector } from "@/components/IconSelector";
 import { SegmentedControlSizes } from "@/components/SegmentedControlSizes";
 import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
@@ -207,24 +208,32 @@ const Modifier = withModifier(({ selectedComponent }) => {
           }}
         />
         {selectedComponent?.props?.customerFooter && (
-          <Stack bg="black" p="xs" spacing="xs" sx={{ borderRadius: 4 }}>
-            <TextInput
-              label="Custom Text"
+          <Stack spacing="xs">
+            <WarningAlert
+              title="Warning"
               size="xs"
-              {...form.getInputProps("customText")}
-              onChange={(e) => {
-                setFieldValue("customText", e.target.value);
-              }}
+              text="Custom dropdown may interfere with the scroll behaviour of the
+              page."
             />
-            <TextInput
-              label="Custom Link Description"
-              size="xs"
-              {...form.getInputProps("customLinkText")}
-              onChange={(e) => {
-                setFieldValue("customLinkText", e.target.value);
-              }}
-            />
-            <UrlOrPageSelector form={form} />
+            <Stack bg="black" p="xs" spacing="xs" sx={{ borderRadius: 4 }}>
+              <TextInput
+                label="Custom Text"
+                size="xs"
+                {...form.getInputProps("customText")}
+                onChange={(e) => {
+                  setFieldValue("customText", e.target.value);
+                }}
+              />
+              <TextInput
+                label="Custom Link Description"
+                size="xs"
+                {...form.getInputProps("customLinkText")}
+                onChange={(e) => {
+                  setFieldValue("customLinkText", e.target.value);
+                }}
+              />
+              <UrlOrPageSelector form={form} />
+            </Stack>
           </Stack>
         )}
         <IconSelector
