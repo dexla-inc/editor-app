@@ -3,7 +3,12 @@ import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { useThemeStore } from "@/stores/theme";
 import { copyToClipboard, pasteFromClipboard } from "@/utils/clipboard";
+import { cloneObject } from "@/utils/common";
 import { structureMapper } from "@/utils/componentMapper";
+import {
+  isEditorModeSelector,
+  selectedComponentIdSelector,
+} from "@/utils/componentSelectors";
 import { NAVBAR_WIDTH } from "@/utils/config";
 import {
   Component,
@@ -13,6 +18,7 @@ import {
   debouncedTreeComponentAttrsUpdate,
   getComponentIndex,
   getComponentParent,
+  getComponentTreeById,
   removeComponent,
   removeComponentFromParent,
 } from "@/utils/editor";
@@ -31,12 +37,6 @@ import {
 } from "@tabler/icons-react";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { useCallback } from "react";
-import { getComponentTreeById } from "@/utils/editor";
-import { cloneObject } from "@/utils/common";
-import {
-  isEditorModeSelector,
-  selectedComponentIdSelector,
-} from "@/utils/componentSelectors";
 
 const determinePasteTarget = (selectedId: string | undefined) => {
   if (!selectedId) return "content-wrapper";
@@ -237,7 +237,7 @@ export const useComponentContextMenu = () => {
     let componentIndex = 0;
 
     const isSpecialComponents = ["GridColumn", "Alert", "Accordion"].includes(
-      clipboardContent.name,
+      componentToPaste.name,
     );
     const isGridItems = ["Grid", "GridColumn"].includes(componentToPaste.name);
     const isTargetGridItems = ["Grid", "GridColumn"].includes(targetName);
@@ -267,12 +267,12 @@ export const useComponentContextMenu = () => {
       componentIndex =
         getComponentIndex(parentComponentTree!, selectedComponentId!) + 1;
     } else {
-      componentIndex = clipboardContent?.children?.length ?? 0;
+      componentIndex = componentToPaste?.children?.length ?? 0;
     }
 
     const newSelectedId = addComponent(
       editorTreeCopy.root as ComponentStructure,
-      clipboardContent,
+      componentToPaste,
       {
         id: targetId!,
         edge: isGridItems ? "center" : "top",
@@ -282,7 +282,7 @@ export const useComponentContextMenu = () => {
     );
 
     setEditorTree(editorTreeCopy, {
-      action: `Pasted ${clipboardContent.name}`,
+      action: `Pasted ${componentToPaste.name}`,
     });
     setSelectedComponentIds(() => [newSelectedId]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
