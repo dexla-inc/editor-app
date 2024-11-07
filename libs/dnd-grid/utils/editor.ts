@@ -85,12 +85,8 @@ export const getAllIds = (
     components,
     (node: ComponentStructure, context: any) => {
       if (node.id) {
-        if (
-          options?.filterFromParent &&
-          context.parent &&
-          context.parent.id === options.filterFromParent
-        ) {
-          return; // Skip children of the specified parent
+        if (node.id === options?.filterFromParent) {
+          context.skip(); // Skip children of the specified parent
         }
         if (options?.filterBy) {
           const matchesFilter = Object.entries(options.filterBy).every(

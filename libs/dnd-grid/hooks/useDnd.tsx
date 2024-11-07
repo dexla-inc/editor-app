@@ -36,6 +36,7 @@ export const useDnd = (debug?: string) => {
       const allIds = getAllIds(components, {
         filterFromParent: currComponentId,
       });
+
       const targets = allIds.reduce<Record<string, DOMRect>>((acc, id) => {
         if (currComponentId !== id) {
           const element = getElementByIdInContext(id);
@@ -112,12 +113,9 @@ export const useDnd = (debug?: string) => {
       const movableRect = movable.getBoundingClientRect();
       const overlappingElements: string[] = [];
 
-      // console.log("Movable Rect:", movableRect);
       for (const [key, rect] of Object.entries(elementRects)) {
-        // console.log("Checking against Rect:", rect);
         if (isOverlapping(movableRect, rect)) {
           overlappingElements.push(key);
-          // console.log(`Overlaps with element id: ${key}`);
         }
       }
 

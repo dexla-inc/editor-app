@@ -25,7 +25,7 @@ export const jsonStructure = (props?: any): ComponentStructure => {
         lineHeight: "110%",
         letterSpacing: "0px",
         fontWeight: "normal",
-        gridColumn: "1/6",
+        gridColumn: "1/7",
         gridRow: "1/3",
       },
       ...(props?.props ?? {}),
