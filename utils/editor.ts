@@ -107,8 +107,12 @@ export const replaceIdsDeeply = (treeRoot: ComponentStructure) => {
     treeRoot,
     async (node) => {
       const newId = nanoid();
+      let existingMutableAttrs = componentMutableAttrs[node.id!];
+      if (!existingMutableAttrs) {
+        existingMutableAttrs = getTreeComponentMutableProps(node)[node.id!];
+      }
 
-      const nodeAttrs = cloneObject(componentMutableAttrs[node.id!]);
+      const nodeAttrs = cloneObject(existingMutableAttrs);
       nodeAttrs.id = newId;
 
       // if targetId is equal to the current pointer node, update that parent targetId with the new id of the current node
@@ -540,14 +544,6 @@ export const addComponent = (
   const copyComponentToAdd = cloneObject(componentToAdd);
   let copyComponentToAddId = copyComponentToAdd.id;
   if (isPasteAction) {
-    // Initialize componentMutableAttrs for clipboard content
-    const mutableAttrs = getTreeComponentMutableProps(copyComponentToAdd);
-    useEditorTreeStore.getState().updateTreeComponentAttrs({
-      componentIds: Object.keys(mutableAttrs),
-      attrs: mutableAttrs,
-      save: false,
-      replaceAll: true,
-    });
     replaceIdsDeeply(copyComponentToAdd);
     copyComponentToAddId = copyComponentToAdd.id as string;
   }
