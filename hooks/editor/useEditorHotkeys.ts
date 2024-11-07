@@ -2,7 +2,12 @@ import { useHotkeysOnIframe } from "@/hooks/editor/useHotkeysOnIframe";
 import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
 import { copyToClipboard, pasteFromClipboard } from "@/utils/clipboard";
+import { cloneObject } from "@/utils/common";
 import { structureMapper } from "@/utils/componentMapper";
+import {
+  selectedComponentIdSelector,
+  selectedComponentIdsSelector,
+} from "@/utils/componentSelectors";
 import {
   ComponentStructure,
   EditorTreeCopy,
@@ -14,11 +19,6 @@ import {
 } from "@/utils/editor";
 import { useHotkeys } from "@mantine/hooks";
 import { useCallback } from "react";
-import {
-  selectedComponentIdSelector,
-  selectedComponentIdsSelector,
-} from "@/utils/componentSelectors";
-import { cloneObject } from "@/utils/common";
 
 export const useEditorHotkeys = () => {
   const editorTree = useEditorTreeStore((state) => state.tree);
@@ -159,7 +159,7 @@ export const useEditorHotkeys = () => {
     let componentIndex = 0;
 
     const isSpecialComponents = ["GridColumn", "Alert", "Accordion"].includes(
-      clipboardContent.name,
+      componentToPaste.name,
     );
     const isGridItems = ["Grid", "GridColumn"].includes(componentToPaste.name);
     const isTargetGridItems = ["Grid", "GridColumn"].includes(targetName);
@@ -189,12 +189,12 @@ export const useEditorHotkeys = () => {
       componentIndex =
         getComponentIndex(parentComponentTree!, selectedComponentId!) + 1;
     } else {
-      componentIndex = clipboardContent?.children?.length ?? 0;
+      componentIndex = componentToPaste?.children?.length ?? 0;
     }
 
     const newSelectedId = addComponent(
       editorTreeCopy.root as ComponentStructure,
-      clipboardContent,
+      componentToPaste,
       {
         id: targetId!,
         edge: isGridItems ? "center" : "top",
@@ -204,7 +204,7 @@ export const useEditorHotkeys = () => {
     );
 
     setEditorTree(editorTreeCopy, {
-      action: `Pasted ${clipboardContent.name}`,
+      action: `Pasted ${componentToPaste.name}`,
     });
     setSelectedComponentIds(() => [newSelectedId]);
     // eslint-disable-next-line react-hooks/exhaustive-deps

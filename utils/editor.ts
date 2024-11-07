@@ -540,6 +540,14 @@ export const addComponent = (
   const copyComponentToAdd = cloneObject(componentToAdd);
   let copyComponentToAddId = copyComponentToAdd.id;
   if (isPasteAction) {
+    // Initialize componentMutableAttrs for clipboard content
+    const mutableAttrs = getTreeComponentMutableProps(copyComponentToAdd);
+    useEditorTreeStore.getState().updateTreeComponentAttrs({
+      componentIds: Object.keys(mutableAttrs),
+      attrs: mutableAttrs,
+      save: false,
+      replaceAll: true,
+    });
     replaceIdsDeeply(copyComponentToAdd);
     copyComponentToAddId = copyComponentToAdd.id as string;
   }
