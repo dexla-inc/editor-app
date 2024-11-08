@@ -88,7 +88,6 @@ export const useResize = () => {
       currComponentId: string,
     ) => {
       initializeResize(direction, e, currComponentId);
-      console.log("resize start");
     },
     [initializeResize],
   );
@@ -134,7 +133,6 @@ export const useResize = () => {
    */
   const handleResize = useCallback(
     (e: MouseEvent) => {
-      console.log("resize");
       if (!isResizing) return;
 
       const { selectedComponentIds } = useEditorTreeStore.getState();
@@ -193,7 +191,6 @@ export const useResize = () => {
    */
   const finalizeResize = useCallback(() => {
     if (!isResizing) return;
-    console.log("resize end");
 
     setIsResizing(false);
     const { setIsInteracting } = useDndGridStore.getState();
