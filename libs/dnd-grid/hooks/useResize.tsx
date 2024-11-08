@@ -34,18 +34,17 @@ export const useResize = () => {
       currComponentId: string,
     ) => {
       e.preventDefault();
-      const { setElementRects, setIsInteracting } = useDndGridStore.getState();
-      const {
-        tree: editorTree,
-        setSelectedComponentIds,
-        selectedComponentIds,
-      } = useEditorTreeStore.getState();
+      const { setElementRects, setIsInteracting, elementRects } =
+        useDndGridStore.getState();
+      const { tree: editorTree, selectedComponentIds } =
+        useEditorTreeStore.getState();
       const components = editorTree.root;
-      const el = iframeWindow?.document.getElementById(currComponentId)!;
+      const el = iframeWindow?.document.querySelector(
+        `[id='${currComponentId}']`,
+      )!;
       const selectedComponentId = selectedComponentIds?.at(0);
 
       setIsResizing(true);
-      setSelectedComponentIds(() => [currComponentId]);
       setIsInteracting(true);
 
       const componentStyles = window.getComputedStyle(el);
@@ -81,7 +80,7 @@ export const useResize = () => {
       setElementRects(targets);
 
       // Store initial overlapping elements to detect new overlaps during resizing
-      initialOverlappingElements.current = checkOverlap(el, 5);
+      initialOverlappingElements.current = checkOverlap(el, elementRects, 5);
     },
     [iframeWindow],
   );
@@ -142,9 +141,11 @@ export const useResize = () => {
    */
   const handleResize = useCallback(
     (e: MouseEvent) => {
-      if (!isResizing) return;
       console.log("resize");
+      if (!isResizing) return;
+
       const { selectedComponentIds } = useEditorTreeStore.getState();
+      const { elementRects } = useDndGridStore.getState();
       const selectedComponentId = selectedComponentIds?.at(0);
       if (!selectedComponentId) return;
 
@@ -168,7 +169,7 @@ export const useResize = () => {
       el.style.gridRow = newGridRow;
 
       // Check for overlaps with other elements
-      const currentOverlappingElements = checkOverlap(el, 5);
+      const currentOverlappingElements = checkOverlap(el, elementRects, 5);
       const newOverlaps = currentOverlappingElements.filter(
         (id) => !initialOverlappingElements.current.includes(id),
       );
@@ -191,7 +192,7 @@ export const useResize = () => {
         gridRow: el.style.gridRow,
       };
     },
-    [isResizing, iframeWindow],
+    [isResizing],
   );
 
   /**
@@ -231,11 +232,13 @@ export const useResize = () => {
    * Sets up event listeners for mouse movements and mouse release during resizing.
    */
   useEffect(() => {
-    iframeWindow?.document.body.addEventListener(
-      "mousemove",
-      handleResize as any,
-    );
-    iframeWindow?.document.body.addEventListener("mouseup", finalizeResize);
+    if (isResizing) {
+      iframeWindow?.document.body.addEventListener(
+        "mousemove",
+        handleResize as any,
+      );
+      iframeWindow?.document.body.addEventListener("mouseup", finalizeResize);
+    }
     return () => {
       iframeWindow?.document.body.removeEventListener(
         "mousemove",
@@ -246,7 +249,7 @@ export const useResize = () => {
         finalizeResize,
       );
     };
-  }, [handleResize, finalizeResize, iframeWindow]);
+  }, [isResizing, handleResize, finalizeResize, iframeWindow]);
 
   return {
     handleResizeStart,

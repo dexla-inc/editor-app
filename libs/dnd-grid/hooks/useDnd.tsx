@@ -15,7 +15,7 @@ import {
   getBaseElementId,
   getElementByIdInContext,
 } from "@/libs/dnd-grid/utils/engines/finder";
-import { selectedComponentIdSelector } from "@/utils/componentSelectors";
+import { checkOverlap } from "@/libs/dnd-grid/utils/engines/overlap";
 
 export const useDnd = (debug?: string) => {
   const dragOffset = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
@@ -107,22 +107,6 @@ export const useDnd = (debug?: string) => {
       parentId: parentId || "",
     });
   }, []);
-
-  const checkOverlap = useCallback(
-    (movable: HTMLElement, elementRects: Record<string, DOMRect>) => {
-      const movableRect = movable.getBoundingClientRect();
-      const overlappingElements: string[] = [];
-
-      for (const [key, rect] of Object.entries(elementRects)) {
-        if (isOverlapping(movableRect, rect)) {
-          overlappingElements.push(key);
-        }
-      }
-
-      return overlappingElements;
-    },
-    [],
-  );
 
   const checkFitsInside = useCallback(
     (movable: HTMLElement, elementRects: Record<string, DOMRect>) => {
@@ -291,13 +275,12 @@ export const useDnd = (debug?: string) => {
         elementRectsCache.current = {};
       });
     },
-    [checkFitsInside, checkOverlap, getElementRects],
+    [checkFitsInside, getElementRects],
   );
 
   const onDragEnd = useCallback(() => {
-    const { setIsInteracting, setInvalidComponent, setValidComponent } =
+    const { setInvalidComponent, setValidComponent } =
       useDndGridStore.getState();
-    // setIsInteracting(false);
     setInvalidComponent(null);
     setValidComponent(null);
 
@@ -318,15 +301,6 @@ export const useDnd = (debug?: string) => {
     onDragLeave: onDragEnd,
   };
 };
-
-export function isOverlapping(rect1: DOMRect, rect2: DOMRect) {
-  return !(
-    rect1.right <= rect2.left ||
-    rect1.left >= rect2.right ||
-    rect1.bottom <= rect2.top ||
-    rect1.top >= rect2.bottom
-  );
-}
 
 function fitsInside(innerRect: DOMRect, outerRect: DOMRect) {
   return (

@@ -1,6 +1,4 @@
-import { useDndGridStore } from "@/libs/dnd-grid/stores/dndGridStore";
-
-const isOverlapping = (
+export const isOverlapping = (
   rect1: DOMRect,
   rect2: DOMRect,
   threshold: number = 0,
@@ -14,10 +12,10 @@ const isOverlapping = (
 };
 
 export const checkOverlap = (
-  movable: HTMLElement,
+  movable: Element,
+  elementRects: Record<string, DOMRect>,
   threshold: number = 0,
 ): string[] => {
-  const { elementRects } = useDndGridStore.getState();
   const movableRect = movable.getBoundingClientRect();
   const overlappingElements: string[] = [];
 
