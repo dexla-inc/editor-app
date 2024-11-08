@@ -23,8 +23,6 @@ export const useComputeChildStyles = ({
   component,
   propsWithOverwrites,
 }: UseComputeChildStylesProps): CSSObject => {
-  const isInteracting = useDndGridStore((state) => state.isInteracting);
-
   const shadows = useEditorStore(
     useShallow((state) => {
       const baseShadow = GREEN_BASE_SHADOW;
@@ -111,7 +109,7 @@ export const useComputeChildStyles = ({
       ".editor-mode &": {
         ...tealOutline,
         ...(!hasBorder && { outline, outlineOffset }),
-        ...(isInteracting && { zIndex: 1000 }),
+        ...{ zIndex: 1000 },
       },
       ".preview-mode &": {
         ...(propsWithOverwrites.disabled && { pointerEvents: "none" }),
