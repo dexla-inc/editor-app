@@ -1,4 +1,7 @@
 import { useEditorStore } from "@/stores/editor";
+import { MutableRefObject } from "react";
+import { getAllIds } from "@/libs/dnd-grid/utils/editor";
+import { ComponentTree } from "@/utils/editor";
 
 /**
  * Retrieves the base element within the iframe, prioritizing
@@ -66,4 +69,24 @@ export const getElementByIdInContext = (id: string): HTMLElement | null => {
       `[id^="${id}"], [data-id^="${id}"]`,
     )[0] ?? null
   );
+};
+
+export const getElementRects = (
+  currComponentId: string,
+  components: ComponentTree,
+) => {
+  const allIds = getAllIds(components, {
+    filterFromParent: currComponentId,
+  });
+
+  const targets = allIds.reduce<Record<string, DOMRect>>((acc, id) => {
+    if (currComponentId !== id) {
+      const element = getElementByIdInContext(id);
+      if (element) {
+        acc[id] = element.getBoundingClientRect();
+      }
+    }
+    return acc;
+  }, {});
+  return targets;
 };

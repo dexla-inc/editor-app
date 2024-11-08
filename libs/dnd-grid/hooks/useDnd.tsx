@@ -1,6 +1,5 @@
 import {
   addComponent,
-  getAllIds,
   getComponentById,
   getParentId,
   updateComponentPosition,
@@ -14,6 +13,7 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 import {
   getBaseElementId,
   getElementByIdInContext,
+  getElementRects,
 } from "@/libs/dnd-grid/utils/engines/finder";
 import { checkOverlap } from "@/libs/dnd-grid/utils/engines/overlap";
 
@@ -22,35 +22,8 @@ export const useDnd = (debug?: string) => {
   const isNewComponent = useRef<boolean>(false);
   const animationFrame = useRef<number | null>(null);
 
-  const { root: components } = useEditorTreeStore.getState().tree;
-
   // Cache elementRects to avoid redundant calculations
-  const elementRectsCache = useRef<Record<string, Record<string, DOMRect>>>({});
-
-  const getElementRects = useCallback(
-    (currComponentId: string) => {
-      if (elementRectsCache.current[currComponentId]) {
-        return elementRectsCache.current[currComponentId];
-      }
-
-      const allIds = getAllIds(components, {
-        filterFromParent: currComponentId,
-      });
-
-      const targets = allIds.reduce<Record<string, DOMRect>>((acc, id) => {
-        if (currComponentId !== id) {
-          const element = getElementByIdInContext(id);
-          if (element) {
-            acc[id] = element.getBoundingClientRect();
-          }
-        }
-        return acc;
-      }, {});
-      elementRectsCache.current[currComponentId] = targets;
-      return targets;
-    },
-    [components],
-  );
+  const elementRectsCache = useRef<Record<string, DOMRect>>({});
 
   const onDragStart = useCallback((e: React.DragEvent) => {
     e.stopPropagation();
@@ -101,6 +74,7 @@ export const useDnd = (debug?: string) => {
 
     const parentId = getParentId(components, currComponentId!);
 
+    elementRectsCache.current = getElementRects(currComponentId!, components);
     setCoords({
       gridColumn: componentData?.props?.style?.gridColumn || "",
       gridRow: componentData?.props?.style?.gridRow || "",
@@ -249,9 +223,14 @@ export const useDnd = (debug?: string) => {
         el.style.gridRow = gridRow;
         moveElement(el, parentId);
 
-        const elementRects = getElementRects(id);
-        const overlappingIds = checkOverlap(el, elementRects as any);
-        const fittingIds = checkFitsInside(el, elementRects as any);
+        const overlappingIds = checkOverlap(
+          el,
+          elementRectsCache.current as any,
+        );
+        const fittingIds = checkFitsInside(
+          el,
+          elementRectsCache.current as any,
+        );
 
         // check if the elements the draggable overlaps are the same as the elements the draggable fits inside
         if (arraysEqual(overlappingIds, fittingIds)) {
@@ -270,20 +249,12 @@ export const useDnd = (debug?: string) => {
             setValidComponent(null);
           }
         }
-
-        // Clear the cache as the layout has changed
-        elementRectsCache.current = {};
       });
     },
-    [checkFitsInside, getElementRects],
+    [checkFitsInside],
   );
 
   const onDragEnd = useCallback(() => {
-    const { setInvalidComponent, setValidComponent } =
-      useDndGridStore.getState();
-    setInvalidComponent(null);
-    setValidComponent(null);
-
     if (animationFrame.current !== null) {
       cancelAnimationFrame(animationFrame.current);
       animationFrame.current = null;

@@ -1,11 +1,13 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { useDndGridStore } from "@/libs/dnd-grid/stores/dndGridStore";
-import { getAllIds } from "@/libs/dnd-grid/utils/editor";
 import { checkOverlap } from "@/libs/dnd-grid/utils/engines/overlap";
 import { getGridCoordinates } from "@/libs/dnd-grid/utils/engines/position";
 import { useEditorStore } from "@/stores/editor";
 import { useEditorTreeStore } from "@/stores/editorTree";
-import { getElementByIdInContext } from "@/libs/dnd-grid/utils/engines/finder";
+import {
+  getElementByIdInContext,
+  getElementRects,
+} from "@/libs/dnd-grid/utils/engines/finder";
 
 interface GridCoords {
   gridColumn: string;
@@ -67,16 +69,7 @@ export const useResize = () => {
       ) as HTMLDivElement;
 
       // Get bounding rectangles of all other components
-      const allIds = getAllIds(components);
-      const targets = allIds.reduce<Record<string, DOMRect>>((acc, id) => {
-        if (currComponentId !== id) {
-          const element = iframeWindow?.document.getElementById(id);
-          if (element) {
-            acc[id] = element.getBoundingClientRect();
-          }
-        }
-        return acc;
-      }, {});
+      const targets = getElementRects(currComponentId, components);
       setElementRects(targets);
 
       // Store initial overlapping elements to detect new overlaps during resizing
