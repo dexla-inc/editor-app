@@ -56,7 +56,7 @@ Deno.serve(async (req: Request) => {
           acc[contactType] = [];
         }
 
-        acc[contactType].push(rest);
+        acc[contactType].push(item);
 
         return acc;
       },
