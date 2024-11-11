@@ -71,8 +71,8 @@ const MainGridComponent = ({
             zIndex: 100,
             backgroundSize: `calc(100% / ${TOTAL_COLUMNS_WITH_MULTIPLIER}) 10px`,
             backgroundImage: `
-              linear-gradient(to right, rgba(229, 231, 235, 0.5) 0.75px, transparent 0.5px),
-              linear-gradient(to bottom, rgba(229, 231, 235, 0.5) 0.75px, transparent 0.5px)
+              linear-gradient(to right, rgba(60, 60, 60, 0.9) 0.75px, transparent 0.5px),
+              linear-gradient(to bottom, rgba(10, 60, 60, 0.9) 0.75px, transparent 0.5px)
             `,
           },
         }),

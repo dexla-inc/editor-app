@@ -4,7 +4,7 @@ import { useEditorTreeStore } from "@/stores/editorTree";
 import { getBaseElementId } from "@/libs/dnd-grid/utils/engines/finder";
 
 // Define the structure of the result returned by getGridCoordinates
-interface GridCoordinateResult {
+export interface GridCoordinateResult {
   column: number;
   row: number;
   parentId: string;
@@ -63,11 +63,7 @@ export const getGridCoordinates = (
 
   // Handle the case when no drop zone is found
   if (!dropZoneElement) {
-    return {
-      column: 1,
-      row: 1,
-      parentId: getBaseElementId(),
-    };
+    throw new Error("No drop zone found");
   }
 
   // Calculate the grid position within the drop zone

@@ -100,22 +100,17 @@ const DateInputComponent = ({
         {...(iconName && isPositionLeft && { icon: <Icon name={iconName} /> })}
         {...(iconName &&
           !isPositionLeft && { rightSection: <Icon name={iconName} /> })}
-        {...props}
         {...componentProps}
         type={typeValue}
         valueFormat={valueFormatValue}
         value={dateInputValue}
-        wrapperProps={{ "data-id": props.id }}
         onChange={handleChange}
         style={{}}
         styles={{
           root: {
             position: "relative",
             ...pick(customStyle, rootStyleProps),
-            height: "fit-content",
             display: "flex",
-            gridColumn: "1/-1",
-            gridRow: "1/-1",
             gridArea: "1 / 1 / -1 / -1",
           },
           input: {
@@ -123,6 +118,7 @@ const DateInputComponent = ({
             color,
             backgroundColor,
             paddingLeft: "12px", // Configure this for theme
+            height: "100%",
           },
           icon: {
             color,
@@ -136,6 +132,7 @@ const DateInputComponent = ({
           },
         }}
       />
+      <ChildrenWrapper />
     </Box>
   );
 };

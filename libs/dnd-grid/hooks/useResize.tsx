@@ -73,7 +73,7 @@ export const useResize = () => {
       setElementRects(targets);
 
       // Store initial overlapping elements to detect new overlaps during resizing
-      initialOverlappingElements.current = checkOverlap(el, elementRects, 5);
+      initialOverlappingElements.current = checkOverlap(el, elementRects, 0);
     },
     [iframeWindow],
   );
@@ -160,7 +160,7 @@ export const useResize = () => {
       el.style.gridRow = newGridRow;
 
       // Check for overlaps with other elements
-      const currentOverlappingElements = checkOverlap(el, elementRects, 5);
+      const currentOverlappingElements = checkOverlap(el, elementRects, 0);
       const newOverlaps = currentOverlappingElements.filter(
         (id) => !initialOverlappingElements.current.includes(id),
       );

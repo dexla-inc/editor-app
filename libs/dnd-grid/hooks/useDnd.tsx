@@ -5,7 +5,10 @@ import {
   updateComponentPosition,
 } from "@/libs/dnd-grid/utils/editor";
 import { useRef, useCallback } from "react";
-import { getGridCoordinates } from "@/libs/dnd-grid/utils/engines/position";
+import {
+  getGridCoordinates,
+  GridCoordinateResult,
+} from "@/libs/dnd-grid/utils/engines/position";
 import { structureMapper } from "@/utils/componentMapper";
 import { useDndGridStore } from "@/libs/dnd-grid/stores/dndGridStore";
 import { useEditorStore } from "@/stores/editor";
@@ -21,6 +24,11 @@ export const useDnd = (debug?: string) => {
   const dragOffset = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const isNewComponent = useRef<boolean>(false);
   const animationFrame = useRef<number | null>(null);
+  const lastValidGridCoords = useRef<GridCoordinateResult>({
+    column: 1,
+    row: 1,
+    parentId: "main-grid",
+  });
 
   // Cache elementRects to avoid redundant calculations
   const elementRectsCache = useRef<Record<string, DOMRect>>({});
@@ -186,15 +194,21 @@ export const useDnd = (debug?: string) => {
         const el = getElementByIdInContext(id);
         if (!el) return;
 
+        // If it is over any invalid position, getGridCoordinates is going to throw an error and we will use the last valid coordinates
+        try {
+          lastValidGridCoords.current = getGridCoordinates(
+            id,
+            e.clientX - dragOffset.current.x,
+            e.clientY - dragOffset.current.y,
+          );
+        } catch {}
+
         const {
           column: rawColumn,
           row: rawRow,
           parentId,
-        } = getGridCoordinates(
-          id,
-          e.clientX - dragOffset.current.x,
-          e.clientY - dragOffset.current.y,
-        );
+        } = lastValidGridCoords.current;
+
         // Enforce minimum column and row start values
         let column = Math.max(Math.floor(rawColumn), 1);
         let row = Math.max(Math.floor(rawRow), 1);
