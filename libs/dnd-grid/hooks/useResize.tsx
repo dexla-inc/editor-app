@@ -108,7 +108,8 @@ export const useResize = () => {
 
     if (resizeDirection.current.includes("right")) {
       const [startColumn] = componentStyles.gridColumn.split("/");
-      const newEndColumn = Math.max(parseInt(startColumn) + 1, column);
+      const newEndColumn = Math.max(parseInt(startColumn) + 1, column + 1);
+      console.log({ startColumn, column });
       newGridColumn = `${startColumn}/${newEndColumn}`;
     }
     if (resizeDirection.current.includes("bottom")) {
