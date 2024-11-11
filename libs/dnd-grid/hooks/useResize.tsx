@@ -26,6 +26,8 @@ export const useResize = () => {
   const parentElement = useRef<HTMLDivElement | null>(null);
   const initialOverlappingElements = useRef<string[]>([]);
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
+  let resizeFrameRef = useRef<number | null>(null);
+
   /**
    * Initializes the resizing process by setting up necessary states and references.
    */
@@ -142,46 +144,48 @@ export const useResize = () => {
 
       const el = getElementByIdInContext(selectedComponentId)!;
 
-      const { column, row } = getGridCoordinates(
-        selectedComponentId,
-        e.clientX,
-        e.clientY,
-        parentElement.current,
-      );
+      resizeFrameRef.current = requestAnimationFrame(() => {
+        const { column, row } = getGridCoordinates(
+          selectedComponentId,
+          e.clientX,
+          e.clientY,
+          parentElement.current,
+        );
 
-      const { newGridColumn, newGridRow } = calculateNewGridCoords(
-        el,
-        column,
-        row,
-      );
+        const { newGridColumn, newGridRow } = calculateNewGridCoords(
+          el,
+          column,
+          row,
+        );
 
-      // Apply new grid coordinates
-      el.style.gridColumn = newGridColumn;
-      el.style.gridRow = newGridRow;
+        // Apply new grid coordinates
+        el.style.gridColumn = newGridColumn;
+        el.style.gridRow = newGridRow;
 
-      // Check for overlaps with other elements
-      const currentOverlappingElements = checkOverlap(el, elementRects, 0);
-      const newOverlaps = currentOverlappingElements.filter(
-        (id) => !initialOverlappingElements.current.includes(id),
-      );
+        // Check for overlaps with other elements
+        const currentOverlappingElements = checkOverlap(el, elementRects, 0);
+        const newOverlaps = currentOverlappingElements.filter(
+          (id) => !initialOverlappingElements.current.includes(id),
+        );
 
-      if (newOverlaps.length > 0) {
-        // If new overlaps are found, revert to the last valid coordinates
-        el.style.gridColumn = lastValidGridCoords.current.gridColumn;
-        el.style.gridRow = lastValidGridCoords.current.gridRow;
-      } else {
-        // Update the last valid coordinates
-        lastValidGridCoords.current = {
-          gridColumn: newGridColumn,
-          gridRow: newGridRow,
+        if (newOverlaps.length > 0) {
+          // If new overlaps are found, revert to the last valid coordinates
+          el.style.gridColumn = lastValidGridCoords.current.gridColumn;
+          el.style.gridRow = lastValidGridCoords.current.gridRow;
+        } else {
+          // Update the last valid coordinates
+          lastValidGridCoords.current = {
+            gridColumn: newGridColumn,
+            gridRow: newGridRow,
+          };
+        }
+
+        // Update the resize end coordinates
+        resizeEndCoords.current = {
+          gridColumn: el.style.gridColumn,
+          gridRow: el.style.gridRow,
         };
-      }
-
-      // Update the resize end coordinates
-      resizeEndCoords.current = {
-        gridColumn: el.style.gridColumn,
-        gridRow: el.style.gridRow,
-      };
+      });
     },
     [isResizing],
   );
@@ -230,6 +234,7 @@ export const useResize = () => {
       iframeWindow?.document.body.addEventListener("mouseup", finalizeResize);
     }
     return () => {
+      resizeFrameRef.current && cancelAnimationFrame(resizeFrameRef.current);
       iframeWindow?.document.body.removeEventListener(
         "mousemove",
         handleResize as any,
