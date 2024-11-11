@@ -7,51 +7,21 @@ export const jsonStructure = (props?: any): ComponentStructure => {
 
   return {
     id: nanoid(),
-    name: "Container",
-    description: "Container",
+    name: "Switch",
+    description: "Switch",
     props: {
       style: {
-        ...defaultLayoutValues,
-        gridColumn: "1/12",
+        gridColumn: "1/4",
         gridRow: "1/3",
       },
+      ...(props.props || {}),
     },
-    children: [
-      {
-        id: nanoid(),
-        name: "Switch",
-        description: "Switch",
-        props: {
-          style: {
-            gridColumn: "1/4",
-            gridRow: "1/3",
-          },
-          ...(props.props || {}),
-        },
-        onLoad: {
-          value: {
-            static: false,
-            dataType: "static",
-          },
-        },
-        blockDroppingChildrenInside: true,
+    onLoad: {
+      value: {
+        static: false,
+        dataType: "static",
       },
-      {
-        id: nanoid(),
-        name: "Text",
-        description: "Text",
-        children: [],
-        props: {
-          children: "A label",
-          color: "Black.6",
-          style: {
-            gridColumn: "5/12",
-            gridRow: "1/3",
-          },
-          ...(props.props || {}),
-        },
-        blockDroppingChildrenInside: true,
-      },
-    ],
+    },
+    blockDroppingChildrenInside: true,
   };
 };

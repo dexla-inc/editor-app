@@ -43,19 +43,16 @@ const SwitchComponent = forwardRef(
       triggers?.onChange?.(e);
     };
 
-    console.log("======>", component.children);
-
     return (
-      <Box unstyled style={props.style as any} {...props} {...triggers}>
+      <Box unstyled {...props} {...triggers}>
         <MantineSwitch
           ref={ref}
-          {...props}
           {...componentProps}
-          wrapperProps={{ "data-id": component.id }}
           label={undefined}
           onChange={handleInputChange}
           checked={Boolean(value)}
           value={optionValue}
+          style={{ gridArea: "1 / 1 / -1 / -1" }}
         />
         {component.children && component.children.length > 0
           ? component.children?.map((child) =>

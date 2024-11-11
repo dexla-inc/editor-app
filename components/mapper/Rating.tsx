@@ -35,13 +35,12 @@ const RatingComponent = forwardRef(
     };
 
     return (
-      <Box unstyled style={props.style as any} {...props} {...triggers}>
+      <Box unstyled {...props} {...triggers}>
         <MantineRating
           ref={ref}
           {...componentProps}
           onChange={handleInputChange}
           value={value}
-          data-id={props.id}
           readOnly={false}
           styles={{
             root: {

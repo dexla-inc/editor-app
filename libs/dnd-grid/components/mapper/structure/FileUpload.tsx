@@ -14,8 +14,8 @@ export const jsonStructure = (props?: any): ComponentStructure => {
     description: "FileUpload",
     props: {
       style: {
-        gridColumn: "1/30",
-        gridRow: "1/10",
+        gridColumn: "1/20",
+        gridRow: "1/8",
         backgroundColor: "white",
       },
       ...(props.props || {}),
@@ -23,70 +23,54 @@ export const jsonStructure = (props?: any): ComponentStructure => {
     children: [
       {
         id: nanoid(),
-        name: "Container",
-        description: "FileUpload Child Container",
+        name: "Icon",
+        description: "FileUpload Icon",
+        children: [],
         props: {
-          gap: "xs",
+          ...requiredModifiers.icon,
+          name: "IconUpload",
           style: {
-            paddingTop: setSize("lg"),
-            paddingBottom: setSize("lg"),
-            gridColumn: "1/30",
-            gridRow: "1/10",
+            gridColumn: "2/4",
+            gridRow: "2/4",
           },
         },
-        children: [
-          {
-            id: nanoid(),
-            name: "Icon",
-            description: "FileUpload Icon",
-            children: [],
-            props: {
-              ...requiredModifiers.icon,
-              name: "IconUpload",
-              style: {
-                gridColumn: "10/12",
-                gridRow: "2/4",
-              },
-            },
-            blockDroppingChildrenInside: true,
+        blockDroppingChildrenInside: true,
+      },
+      {
+        id: nanoid(),
+        name: "Text",
+        description: "FileUpload Title",
+        props: {
+          children: "FileUpload",
+          color: "Black.6",
+          style: {
+            fontSize: setSize("sm"),
+            fontWeight: "normal",
+            lineHeight: "110%",
+            letterSpacing: "0px",
+            gridColumn: "5/13",
+            gridRow: "2/4",
           },
-          {
-            id: nanoid(),
-            name: "Text",
-            description: "FileUpload Title",
-            props: {
-              children: "FileUpload",
-              color: "Black.6",
-              style: {
-                fontSize: setSize("sm"),
-                fontWeight: "normal",
-                lineHeight: "110%",
-                letterSpacing: "0px",
-                gridColumn: "10/12",
-                gridRow: "5/7",
-              },
-            },
-            blockDroppingChildrenInside: true,
+        },
+        blockDroppingChildrenInside: true,
+      },
+      {
+        id: nanoid(),
+        name: "Text",
+        description: "FileUpload Text",
+        props: {
+          children: "Drag a file here",
+          style: {
+            fontSize: setSize("xs"),
+            fontWeight: "normal",
+            lineHeight: "110%",
+            letterSpacing: "0px",
+            color: theme.colors.gray[5],
+            gridColumn: "5/19",
+            gridRow: "5/7",
           },
-          {
-            id: nanoid(),
-            name: "Text",
-            description: "FileUpload Text",
-            props: {
-              children: "Drag a file here",
-              style: {
-                fontSize: setSize("xs"),
-                fontWeight: "normal",
-                lineHeight: "110%",
-                letterSpacing: "0px",
-                color: theme.colors.gray[5],
-                gridColumn: "10/12",
-                gridRow: "8/10",
-              },
-            },
-            blockDroppingChildrenInside: true,
-          },
-        ],
+        },
+        blockDroppingChildrenInside: true,
       },
     ],
   };
