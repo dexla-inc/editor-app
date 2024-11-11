@@ -69,6 +69,7 @@ export const useEditorHotkeys = () => {
         );
 
         if (
+          selectedComponentId === "main-grid" ||
           selectedComponentId === "content-wrapper" ||
           selectedComponentId === "main-content"
         )

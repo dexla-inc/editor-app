@@ -41,6 +41,8 @@ const ComponentToolbox = () => {
       Icon: IconTrash,
       label: "Delete",
       onClick: () => {
+        if (component.id === "main-grid") return;
+
         const editorTree = useEditorTreeStore.getState().tree as EditorTreeCopy;
         removeComponent(editorTree.root, component.id!);
         setSelectedComponentIds(() => []);

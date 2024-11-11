@@ -118,6 +118,7 @@ export const useComponentContextMenu = () => {
         component.id &&
         component.id !== "root" &&
         component.id !== "main-content" &&
+        component.id !== "main-grid" &&
         component.id !== "content-wrapper"
       ) {
         const editorTree = useEditorTreeStore.getState().tree as EditorTreeCopy;

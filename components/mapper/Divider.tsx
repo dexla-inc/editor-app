@@ -19,14 +19,13 @@ const DividerComponent = forwardRef(
     const { children, triggers, ...componentProps } = component.props as any;
 
     return (
-      <Box style={props.style}>
+      <Box {...props}>
         <MantineDivider
           ref={ref}
-          {...props}
           {...componentProps}
           {...triggers}
           style={{
-            ...props.style,
+            // ...props.style,
             width: "100%",
             height: "100%",
             display: "flex",
