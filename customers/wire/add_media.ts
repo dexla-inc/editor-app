@@ -22,13 +22,17 @@ Deno.serve(async (req: Request) => {
   // Parse the request body
   const { data, property_id } = await req.json();
 
-  if (!Array.isArray(data) || data.length === 0 || !property_id) {
-    return new Response(
-      JSON.stringify({
-        error: "Invalid or empty data array, or missing property_id",
-      }),
-      { status: 400 },
-    );
+  if (!data || data.length === 0 || !Array.isArray(data)) {
+    return new Response(JSON.stringify({}), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  if (!property_id) {
+    return new Response(JSON.stringify({ error: "Missing property_id" }), {
+      status: 400,
+    });
   }
   const requestData = data.map(({ is_main, ...rest }) => ({
     ...rest,
@@ -49,7 +53,7 @@ Deno.serve(async (req: Request) => {
 
   // Find the main photo ID
   const mainPhotoData = mediaData.find(
-    (media: Record<string, any>, index: number) => data[index].is_main === true,
+    (media: any, index: number) => data[index].is_main === true,
   );
   const mainPhotoId = mainPhotoData ? mainPhotoData.id : null;
 
