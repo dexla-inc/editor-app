@@ -83,7 +83,7 @@ const ComponentToolbox = () => {
     }
   }, [id, components, iframeWindow]);
 
-  if (!id || isInteracting) {
+  if (!id || isInteracting || id === "main-grid") {
     return null;
   }
 
@@ -99,7 +99,7 @@ const ComponentToolbox = () => {
         alignItems: "center",
         position: "absolute",
         zIndex: 1000,
-        top: `${position.top - 55}px`,
+        top: `${position.top - 45}px`,
         left: `${position.left - 10}px`,
       }}
     >

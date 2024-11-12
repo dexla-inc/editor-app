@@ -135,6 +135,8 @@ export const useDnd = (debug?: string) => {
       coords.parentId = "main-grid";
     }
 
+    console.log({ coords });
+
     const updatingComponent = getElementByIdInContext(draggableComponent!.id!);
 
     if (updatingComponent) {
@@ -151,6 +153,7 @@ export const useDnd = (debug?: string) => {
     setComponents(editorTree, {
       action: `Updated ${draggableComponent?.description} component`,
     });
+    moveElement(updatingComponent!, coords.parentId);
     setInvalidComponent(null);
     setValidComponent(null);
     setIsInteracting(false);
@@ -245,7 +248,7 @@ export const useDnd = (debug?: string) => {
           el,
           elementRectsCache.current as any,
         );
-
+        console.log({ overlappingIds, fittingIds });
         // check if the elements the draggable overlaps are the same as the elements the draggable fits inside
         if (arraysEqual(overlappingIds, fittingIds)) {
           setCoords({ gridColumn, gridRow, parentId });
