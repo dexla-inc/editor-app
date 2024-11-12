@@ -89,9 +89,11 @@ const MainGridComponent = ({
       draggable={false}
       onDrop={onDrop}
       onDragOver={onDragOver}
-      onMouseDown={() => {
+      onMouseDown={(e) => {
+        // @ts-ignore
+        const id = e.target.id;
         const { isInteracting } = useDndGridStore.getState();
-        if (!isInteracting) {
+        if (!isInteracting && id === "main-grid") {
           setSelectedComponentIds(() => ["main-grid"]);
         }
       }}
