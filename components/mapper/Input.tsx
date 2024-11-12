@@ -64,7 +64,7 @@ const InputComponent = forwardRef(
 
     const { borderStyle, inputStyle } = useBrandingStyles();
 
-    const [value, setValue] = useInputValue<string | number>(
+    const [value = "", setValue] = useInputValue<string | number | undefined>(
       {
         value: component?.onLoad?.value ?? "",
       },
