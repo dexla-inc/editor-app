@@ -18,7 +18,7 @@ const ProgressComponent = forwardRef(
         {...componentProps}
         {...triggers}
         value={Number(value)}
-        style={{ ...props.style }}
+        style={{ ...props.style, width: "100%" }}
       >
         {component.children && component.children.length > 0
           ? component.children?.map((child) =>
