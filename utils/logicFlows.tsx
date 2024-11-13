@@ -6,10 +6,10 @@ import * as ConnectionCreatorNodeExports from "@/components/logic-flow/nodes/Con
 import * as StartNodeExports from "@/components/logic-flow/nodes/StartNode";
 import { LogicFlowResponse } from "@/requests/logicflows/types";
 import { FlowData } from "@/stores/flow";
+import { safeJsonParse } from "@/utils/common";
 import { decodeSchema } from "@/utils/compression";
 import startCase from "lodash.startcase";
 import { getOutgoers, Node, NodeProps } from "reactflow";
-import { safeJsonParse } from "@/utils/common";
 
 const {
   ConnectionCreatorNode,
@@ -84,11 +84,12 @@ const run = async (state: FlowData, params: any) => {
 
     while (nextNodes.length) {
       let nextNode = nextNodes[0];
-      if (nextNode.type === "booleanNode") {
+
+      // Keep evaluating boolean nodes until we get a non-boolean node
+      while (nextNode.type === "booleanNode") {
         const nodeToTrigger = getNextNode(state, nextNode, params);
-        if (nodeToTrigger) {
-          nextNode = nodeToTrigger;
-        }
+        if (!nodeToTrigger) break;
+        nextNode = nodeToTrigger;
       }
 
       const computeNode = computeNodeMapper[nextNode?.type!];
