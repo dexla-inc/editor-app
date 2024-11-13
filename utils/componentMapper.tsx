@@ -541,6 +541,54 @@ export const structureMapper = (forceCssType: string = ""): StructureMapper => {
           "Embed JS",
         ],
       },
+      Breadcrumb: {
+        structure: (props: any) =>
+          (cssType === "FLEX"
+            ? BreadcrumbsStructureFlex
+            : BreadcrumbsStructure
+          ).jsonStructure(props),
+        Draggable: () => (
+          <DraggableComponent
+            id="Breadcrumb"
+            icon={<IconSlash size={LARGE_ICON_SIZE} />}
+          />
+        ),
+        category: "Navigation",
+        icon: <IconSlash size={ICON_SIZE} />,
+        synonyms: ["Breadcrumbs", "Navigation Path"],
+      },
+      ColorPicker: {
+        structure: (props: any) =>
+          (cssType === "FLEX"
+            ? ColorPickerStructureFlex
+            : ColorPickerStructure
+          ).jsonStructure(props),
+        Draggable: () => (
+          <DraggableComponent
+            id="ColorPicker"
+            icon={<IconColorFilter size={LARGE_ICON_SIZE} />}
+          />
+        ),
+        category: "Input",
+        icon: <IconColorFilter size={ICON_SIZE} />,
+        synonyms: ["Color Picker", "Color Selector", "Color Swatch"],
+      },
+      CheckboxGroup: {
+        structure: (props: any) =>
+          (cssType === "FLEX"
+            ? CheckboxGroupStructureFlex
+            : CheckboxGroupStructure
+          ).jsonStructure(props),
+        Draggable: () => (
+          <DraggableComponent
+            id="CheckboxGroup"
+            icon={<IconListCheck size={LARGE_ICON_SIZE} />}
+          />
+        ),
+        category: "Input",
+        icon: <IconListCheck size={ICON_SIZE} />,
+        synonyms: ["Checkboxes", "Checkbox Set"],
+      },
     }),
     Container: {
       structure: (props: any) =>
@@ -629,22 +677,6 @@ export const structureMapper = (forceCssType: string = ""): StructureMapper => {
       category: "Input",
       icon: <IconSelect size={ICON_SIZE} />,
       synonyms: ["Dropdown", "Select Input"],
-    },
-    CheckboxGroup: {
-      structure: (props: any) =>
-        (cssType === "FLEX"
-          ? CheckboxGroupStructureFlex
-          : CheckboxGroupStructure
-        ).jsonStructure(props),
-      Draggable: () => (
-        <DraggableComponent
-          id="CheckboxGroup"
-          icon={<IconListCheck size={LARGE_ICON_SIZE} />}
-        />
-      ),
-      category: "Input",
-      icon: <IconListCheck size={ICON_SIZE} />,
-      synonyms: ["Checkboxes", "Checkbox Set"],
     },
     Checkbox: {
       structure: (props: any) =>
@@ -1079,22 +1111,6 @@ export const structureMapper = (forceCssType: string = ""): StructureMapper => {
       icon: <IconClick size={ICON_SIZE} />,
       synonyms: ["Navigation Link", "Menu Link"],
     },
-    Breadcrumb: {
-      structure: (props: any) =>
-        (cssType === "FLEX"
-          ? BreadcrumbsStructureFlex
-          : BreadcrumbsStructure
-        ).jsonStructure(props),
-      Draggable: () => (
-        <DraggableComponent
-          id="Breadcrumb"
-          icon={<IconSlash size={LARGE_ICON_SIZE} />}
-        />
-      ),
-      category: "Navigation",
-      icon: <IconSlash size={ICON_SIZE} />,
-      synonyms: ["Breadcrumbs", "Navigation Path"],
-    },
     Pagination: {
       structure: (props: any) =>
         (cssType === "FLEX"
@@ -1206,22 +1222,6 @@ export const structureMapper = (forceCssType: string = ""): StructureMapper => {
       category: "Overlays",
       icon: <IconStackPop size={ICON_SIZE} />,
       synonyms: ["Tooltip"],
-    },
-    ColorPicker: {
-      structure: (props: any) =>
-        (cssType === "FLEX"
-          ? ColorPickerStructureFlex
-          : ColorPickerStructure
-        ).jsonStructure(props),
-      Draggable: () => (
-        <DraggableComponent
-          id="ColorPicker"
-          icon={<IconColorFilter size={LARGE_ICON_SIZE} />}
-        />
-      ),
-      category: "Input",
-      icon: <IconColorFilter size={ICON_SIZE} />,
-      synonyms: ["Color Picker", "Color Selector", "Color Swatch"],
     },
   };
 };

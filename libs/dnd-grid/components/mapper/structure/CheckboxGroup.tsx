@@ -2,6 +2,7 @@ import { useThemeStore } from "@/stores/theme";
 import { structureMapper } from "@/utils/componentMapper";
 import { ComponentStructure } from "@/utils/editor";
 import { nanoid } from "nanoid";
+import merge from "lodash.merge";
 
 export const jsonStructure = (props?: any): ComponentStructure => {
   const theme = useThemeStore.getState().theme;
@@ -26,10 +27,13 @@ export const jsonStructure = (props?: any): ComponentStructure => {
       name: checkboxGroupId,
       style: {
         gridColumn: "1/16",
-        gridRow: "1/2",
+        gridRow: "1/4",
       },
       ...(props.props || {}),
     },
-    children: [checkboxItemOne, checkboxItemTwo],
+    children: [
+      merge(checkboxItemOne, { props: { style: {} } }),
+      merge(checkboxItemTwo, { props: { style: {} } }),
+    ],
   };
 };

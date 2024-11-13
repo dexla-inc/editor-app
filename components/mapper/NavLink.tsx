@@ -68,15 +68,16 @@ const NavLinkComponent = forwardRef(
       isTransparentBackground: true,
     });
 
-    merge(componentProps, {
-      style: { ...props.style, color: textColor, backgroundColor },
-    });
-
     const hasNestedLinks =
       (component.children && component.children?.length > 0) ?? isNested;
 
     return (
-      <Box unstyled style={props.style as any} {...props} {...triggers}>
+      <Box
+        unstyled
+        {...props}
+        {...triggers}
+        style={{ ...props.style, color: textColor, backgroundColor }}
+      >
         <MantineNavLink
           {...contentEditableProps}
           ref={ref}

@@ -98,18 +98,21 @@ const CheckboxGroupComponent = forwardRef(
         style={{
           ...(style ?? {}),
           ...defaultStyle,
-          gap: gapSize,
+          //gap: gapSize,
           ...pick(customStyle, rootStyleProps),
+          display: "grid",
         }}
         styles={{
           root: { width: customStyle?.width ?? "100%" },
         }}
       >
-        <Group {...checkboxWrapperProps} w="100%">
-          {renderData({
-            renderTree,
-          })}
-        </Group>
+        {component?.children?.map((child) =>
+          renderTree(child, {
+            ...shareableContent,
+            isInsideGroup: isPreviewMode,
+            value,
+          }),
+        )}
         <ChildrenWrapper />
       </MantineCheckbox.Group>
     );
