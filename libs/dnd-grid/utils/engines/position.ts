@@ -12,28 +12,36 @@ export interface GridCoordinateResult {
 
 /**
  * Get all elements under a specific point that are valid component IDs.
+ * @param currentId - ID of the current element being dragged
  * @param x - Mouse X coordinate
  * @param y - Mouse Y coordinate
  * @returns Array of elements under the point that are valid components
  */
-export const getElementsUnder = (x: number, y: number): Element[] => {
+export const getElementsUnder = (
+  currentId: string,
+  x: number,
+  y: number,
+): Element[] => {
   const { tree: editorTree } = useEditorTreeStore.getState();
   const components = editorTree.root;
   const { iframeWindow } = useEditorStore.getState();
-  const allIds = getAllIds(components);
+  const allIds = getAllIds(components, { filterFromParent: currentId }).filter(
+    (id) => id !== currentId,
+  );
   const baseElementId = getBaseElementId();
   const allElementsUnder = iframeWindow?.document.elementsFromPoint(x, y) || [];
 
   const containerContext =
     iframeWindow?.document.getElementById(baseElementId)!;
 
-  return allElementsUnder.filter(
-    (el: Element) =>
+  return allElementsUnder.filter((el: Element) => {
+    return (
       allIds.some(
         (id) =>
           el.id.startsWith(id) || el.getAttribute("data-id")?.startsWith(id),
-      ) && containerContext.contains(el),
-  ) as Element[];
+      ) && containerContext.contains(el)
+    );
+  }) as Element[];
 };
 
 /**
@@ -63,6 +71,7 @@ export const getGridCoordinates = (
 
   // Handle the case when no drop zone is found
   if (!dropZoneElement) {
+    console.log("No drop zone found");
     throw new Error("No drop zone found");
   }
 
@@ -94,45 +103,10 @@ const getDropZoneElement = (
   if (forceDropZone) return forceDropZone;
 
   // Get all elements under the point that are valid component IDs
-  const elementsUnder = getElementsUnder(x, y);
-
-  // Filter elements to find valid drop zones
-  const validDropZones = elementsUnder.filter((el) =>
-    isValidDropZone(el as HTMLElement, currentId),
-  );
+  const validDropZones = getElementsUnder(currentId, x, y);
 
   // Return the first valid drop zone found, or null if none
   return validDropZones.length > 0 ? (validDropZones[0] as HTMLElement) : null;
-};
-
-/**
- * Check if an element is a valid drop zone
- * @param el - Element to check
- * @param currentId - ID of the current element being dragged
- * @returns boolean indicating if the element is a valid drop zone
- */
-const isValidDropZone = (el: HTMLElement, currentId: string): boolean => {
-  const { iframeWindow } = useEditorStore.getState();
-  const elId = el.id;
-  // Exclude the current element
-  if (elId === currentId) return false;
-
-  const currentElement = iframeWindow?.document.querySelectorAll(
-    `[id="${currentId}"], [data-id="${currentId}"]`,
-  )?.[0];
-  if (!currentElement) return false;
-
-  // Get bounding rectangles for both elements
-  const elRect = el.getBoundingClientRect();
-  const currentRect = currentElement.getBoundingClientRect();
-
-  // Check if the current element fits inside the potential drop zone
-  return (
-    currentRect.left >= elRect.left &&
-    currentRect.right <= elRect.right &&
-    currentRect.top >= elRect.top &&
-    currentRect.bottom <= elRect.bottom
-  );
 };
 
 /**

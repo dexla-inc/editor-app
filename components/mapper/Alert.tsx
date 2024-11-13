@@ -71,7 +71,8 @@ const commonGridStyle = {
 const mantineStyles = {
   wrapper: commonGridStyle,
   icon: {
-    margin: "0px",
+    margin: "5px",
+    position: "absolute",
   },
   body: commonGridStyle,
   message: commonGridStyle,

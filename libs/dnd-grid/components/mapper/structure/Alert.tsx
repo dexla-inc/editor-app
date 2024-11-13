@@ -25,7 +25,7 @@ export const jsonStructure = (props?: any): ComponentStructure => {
               display: "grid",
               gridTemplateColumns: "subgrid",
               gridTemplateRows: "subgrid",
-              gridColumn: "1/7",
+              gridColumn: "2/17",
               gridRow: "1/5",
             },
           },
@@ -34,11 +34,11 @@ export const jsonStructure = (props?: any): ComponentStructure => {
       },
       {
         id: nanoid(),
-        name: "Title",
-        description: "Title",
+        name: "Text",
+        description: "Alert Description",
         children: [],
         props: {
-          children: "New Title",
+          children: "This is your Alert Description",
           color: "Black.6",
           order: 1,
           style: {
@@ -47,8 +47,8 @@ export const jsonStructure = (props?: any): ComponentStructure => {
             display: "grid",
             gridTemplateColumns: "subgrid",
             gridTemplateRows: "subgrid",
-            gridColumn: "8 / 16",
-            gridRow: "1 / 5",
+            gridColumn: "1 / 30",
+            gridRow: "6 / 9",
           },
         },
         blockDroppingChildrenInside: true,
@@ -65,7 +65,7 @@ export const jsonStructure = (props?: any): ComponentStructure => {
         gridRow: "1 / 10",
       },
       icon: "IconAlertCircle",
-      color: "Danger.6",
+      color: "Danger.2",
       iconColor: "Danger.6",
     },
   };

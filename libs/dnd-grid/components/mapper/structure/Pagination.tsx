@@ -10,7 +10,7 @@ export const jsonStructure = (props?: any): ComponentStructure => {
     props: {
       total: 10,
       style: {
-        gridColumn: "1/24",
+        gridColumn: "1/32",
         gridRow: "1/4",
       },
       ...(props.props || {}),

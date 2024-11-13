@@ -43,9 +43,7 @@ export const useResize = () => {
       const { tree: editorTree, selectedComponentIds } =
         useEditorTreeStore.getState();
       const components = editorTree.root;
-      const el = iframeWindow?.document.querySelector(
-        `[id='${currComponentId}']`,
-      )!;
+      const el = getElementByIdInContext(currComponentId)!;
       const selectedComponentId = selectedComponentIds?.at(0);
 
       setIsResizing(true);
@@ -144,6 +142,8 @@ export const useResize = () => {
       if (!selectedComponentId) return;
 
       const el = getElementByIdInContext(selectedComponentId)!;
+
+      console.log({ el });
 
       resizeFrameRef.current = requestAnimationFrame(() => {
         const { column, row } = getGridCoordinates(

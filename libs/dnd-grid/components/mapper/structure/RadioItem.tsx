@@ -12,7 +12,11 @@ export const jsonStructure = (props?: any): ComponentStructure => {
 
   const title = structureMapper()["Title"].structure({
     theme,
-    props: { order: 6, children: radioItemTitle },
+    props: {
+      order: 6,
+      children: radioItemTitle,
+      style: { gridColumn: "3/9", gridRow: "1/3" },
+    },
   });
 
   const defaultBorderColor = getColorValue(theme, "Border.6");
@@ -27,93 +31,65 @@ export const jsonStructure = (props?: any): ComponentStructure => {
       value: "change-me",
       style: {
         borderRadius: `${px(theme.radius.md)}px`,
+        gridColumn: "1/12",
+        gridRow: "1/12",
+        borderWidth: "1px",
+        borderStyle: "solid",
+        borderColor: defaultBorderColor,
+        backgroundColor: "transparent",
       },
       ...(props.props || {}),
     },
+    states: {
+      checked: {
+        style: {
+          borderColor: selectedBorderColor,
+          backgroundColor: selectedBgColor,
+          borderWidth: "2px",
+        },
+      },
+    },
     children: [
+      title,
       {
         id: nanoid(),
-        name: "Container",
-        description: "Container",
+        name: "Text",
+        description: "Text",
+        children: [],
         props: {
-          gap: "sm",
+          children: radioItemContent,
+          color: "Black.6",
           style: {
             gridColumn: "1/12",
-            gridRow: "1/8",
-            paddingTop: "15px",
-            paddingBottom: "15px",
-            paddingLeft: "15px",
-            paddingRight: "15px",
-            borderWidth: "1px",
-            borderRadius: "8px",
-            borderStyle: "solid",
-            borderColor: defaultBorderColor,
-            backgroundColor: "transparent",
+            gridRow: "4/8",
+            lineHeight: "110%",
+            letterSpacing: "0px",
+            marginRight: "0px",
+            marginBottom: "0px",
           },
         },
+        blockDroppingChildrenInside: true,
+      },
+      {
+        id: nanoid(),
+        name: "Icon",
+        description: "Icon",
+        children: [],
+        props: {
+          name: "IconCircle",
+          color: "Border.6",
+          style: {
+            gridColumn: "1/3",
+            gridRow: "1/3",
+          },
+        },
+        blockDroppingChildrenInside: true,
         states: {
           checked: {
-            style: {
-              borderColor: selectedBorderColor,
-              backgroundColor: selectedBgColor,
-              borderWidth: "2px",
-            },
+            name: "IconCircleDot",
+            color: "Primary.6",
           },
         },
-        children: [
-          {
-            id: nanoid(),
-            name: "Container",
-            description: "Radio Description",
-            props: {
-              gap: "xs",
-              style: { gridColumn: "1/12", gridRow: "1/12" },
-            },
-            children: [
-              title,
-              {
-                id: nanoid(),
-                name: "Text",
-                description: "Text",
-                children: [],
-                props: {
-                  children: radioItemContent,
-                  color: "Black.6",
-                  style: {
-                    gridColumn: "1/8",
-                    gridRow: "1/3",
-                    lineHeight: "110%",
-                    letterSpacing: "0px",
-                    marginRight: "0px",
-                    marginBottom: "0px",
-                  },
-                },
-                blockDroppingChildrenInside: true,
-              },
-            ],
-          },
-          {
-            id: nanoid(),
-            name: "Icon",
-            description: "Icon",
-            children: [],
-            props: {
-              name: "IconCircle",
-              color: "Border.6",
-              style: {
-                gridColumn: "1/3",
-                gridRow: "1/3",
-              },
-            },
-            blockDroppingChildrenInside: true,
-            states: {
-              checked: {
-                name: "IconCircleDot",
-                color: "Primary.6",
-              },
-            },
-          },
-        ],
       },
     ],
     blockDroppingChildrenInside: false,

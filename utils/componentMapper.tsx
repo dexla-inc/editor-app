@@ -267,24 +267,281 @@ export const structureMapper = (forceCssType: string = ""): StructureMapper => {
 
   return {
     // AI generated structures
-    Grid: {
-      structure: (props: any) => GridStructure.jsonStructure(props),
-      Draggable: () => (
-        <DraggableComponent
-          id="Grid"
-          icon={<IconLayoutGrid size={LARGE_ICON_SIZE} />}
-        />
-      ),
-      category: "Layout",
-      icon: <IconLayoutGrid size={ICON_SIZE} />,
-      synonyms: ["Grid Layout", "Grid System"],
-    },
-    GridColumn: {
-      structure: (props: any) => GridColumnStructure.jsonStructure(props),
-      category: "Layout",
-      icon: <IconLayoutColumns size={ICON_SIZE} />,
-      synonyms: ["Grid Col", "Grid Cell"],
-    },
+    ...(cssType === "FLEX" && {
+      Grid: {
+        structure: (props: any) => GridStructure.jsonStructure(props),
+        Draggable: () => (
+          <DraggableComponent
+            id="Grid"
+            icon={<IconLayoutGrid size={LARGE_ICON_SIZE} />}
+          />
+        ),
+        category: "Layout",
+        icon: <IconLayoutGrid size={ICON_SIZE} />,
+        synonyms: ["Grid Layout", "Grid System"],
+      },
+      GridColumn: {
+        structure: (props: any) => GridColumnStructure.jsonStructure(props),
+        category: "Layout",
+        icon: <IconLayoutColumns size={ICON_SIZE} />,
+        synonyms: ["Grid Col", "Grid Cell"],
+      },
+      Accordion: {
+        structure: (props: any) =>
+          (cssType === "FLEX"
+            ? AccordionStructureFlex
+            : AccordionStructure
+          ).jsonStructure(props),
+        Draggable: () => (
+          <DraggableComponent
+            id="Accordion"
+            icon={<IconLayoutBottombarCollapse size={LARGE_ICON_SIZE} />}
+          />
+        ),
+        category: "Data Display",
+        icon: <IconLayoutBottombarCollapse size={ICON_SIZE} />,
+        synonyms: ["Collapsible", "Expandable"],
+      },
+      AccordionItem: {
+        structure: (props: any) =>
+          (cssType === "FLEX"
+            ? AccordionItemStructureFlex
+            : AccordionItemStructure
+          ).jsonStructure(props),
+        Draggable: () => (
+          <DraggableComponent
+            id="AccordionItem"
+            icon={<IconLayoutNavbar size={LARGE_ICON_SIZE} />}
+          />
+        ),
+        category: "Data Display",
+        icon: <IconLayoutNavbar size={ICON_SIZE} />,
+        synonyms: ["Accordion Section", "Accordion Element"],
+        hide: true,
+      },
+      AccordionControl: {
+        structure: (props: any) =>
+          (cssType === "FLEX"
+            ? AccordionItemStructureFlex
+            : AccordionItemStructure
+          ).jsonStructure(props),
+        Draggable: () => (
+          <DraggableComponent
+            id="AccordionControl"
+            icon={<IconLayoutDistributeHorizontal size={LARGE_ICON_SIZE} />}
+          />
+        ),
+        category: "Data Display",
+        icon: <IconLayoutDistributeHorizontal size={ICON_SIZE} />,
+        synonyms: ["Accordion Control", "Accordion Tabs"],
+        hide: true,
+      },
+      Navbar: {
+        structure: (props: any) =>
+          (cssType === "FLEX"
+            ? NavbarStructureFlex
+            : NavbarStructure
+          ).jsonStructure(props),
+        Draggable: () => (
+          <DraggableComponent
+            id="Navbar"
+            icon={<IconLayoutSidebar size={LARGE_ICON_SIZE} />}
+          />
+        ),
+        category: "Navigation",
+        icon: <IconLayoutSidebar size={ICON_SIZE} />,
+        synonyms: ["Navigation Bar", "Menu Bar"],
+      },
+      AppBar: {
+        structure: (props: any) =>
+          (cssType === "FLEX"
+            ? AppBarStructureFlex
+            : AppBarStructure
+          ).jsonStructure(props),
+        Draggable: () => (
+          <DraggableComponent
+            id="AppBar"
+            icon={<IconLayoutNavbar size={LARGE_ICON_SIZE} />}
+          />
+        ),
+        category: "Navigation",
+        icon: <IconLayoutNavbar size={ICON_SIZE} />,
+        synonyms: ["Navigation Bar", "Top Bar"],
+      },
+      Tabs: {
+        structure: (props: any) =>
+          (cssType === "FLEX"
+            ? TabsStructureFlex
+            : TabsStructure
+          ).jsonStructure(props),
+        Draggable: () => (
+          <DraggableComponent
+            id="Tabs"
+            icon={<IconLayoutKanban size={LARGE_ICON_SIZE} />}
+          />
+        ),
+        category: "Navigation",
+        icon: <IconLayoutKanban size={ICON_SIZE} />,
+      },
+      BarChart: {
+        structure: (props: any) =>
+          (cssType === "FLEX"
+            ? BarChartStructureFlex
+            : BarChartStructure
+          ).jsonStructure(props),
+        Draggable: () => (
+          <DraggableComponent
+            id="BarChart"
+            icon={<IconChartBar size={LARGE_ICON_SIZE} />}
+          />
+        ),
+        category: "Chart",
+        icon: <IconChartBar size={ICON_SIZE} />,
+        synonyms: ["Bar Graph", "Column Chart"],
+      },
+      // StackedBarChart: {
+      //   structure: (props: any) => NotImplemented.jsonStructure(props),
+      //   category: "Chart",
+      // },
+      // MixBarChart: {
+      //   structure: (props: any) => NotImplemented.jsonStructure(props),
+      //   category: "Chart",
+      // },
+      // ScatterChart: {
+      //   structure: (props: any) => NotImplemented.jsonStructure(props),
+      //   category: "Chart",
+      // },
+      LineChart: {
+        structure: (props: any) =>
+          (cssType === "FLEX"
+            ? LineChartStructureFlex
+            : LineChartStructure
+          ).jsonStructure(props),
+        Draggable: () => (
+          <DraggableComponent
+            id="LineChart"
+            icon={<IconChartLine size={LARGE_ICON_SIZE} />}
+          />
+        ),
+        category: "Chart",
+        icon: <IconChartLine size={ICON_SIZE} />,
+        synonyms: ["Line Graph", "Line Plot"],
+      },
+      PieChart: {
+        structure: (props: any) =>
+          (cssType === "FLEX"
+            ? PieChartStructureFlex
+            : PieChartStructure
+          ).jsonStructure(props),
+        Draggable: () => (
+          <DraggableComponent
+            id="PieChart"
+            icon={<IconChartPie size={LARGE_ICON_SIZE} />}
+          />
+        ),
+        category: "Chart",
+        icon: <IconChartPie size={ICON_SIZE} />,
+        synonyms: ["Pie Graph", "Circle Chart"],
+      },
+      AreaChart: {
+        structure: (props: any) =>
+          (cssType === "FLEX"
+            ? AreaChartStructureFlex
+            : AreaChartStructure
+          ).jsonStructure(props),
+        Draggable: () => (
+          <DraggableComponent
+            id="AreaChart"
+            icon={<IconChartAreaLine size={LARGE_ICON_SIZE} />}
+          />
+        ),
+        category: "Chart",
+        icon: <IconChartAreaLine size={ICON_SIZE} />,
+        synonyms: ["Area Graph", "Filled Line Chart"],
+      },
+      // ComposedChart: {
+      //   structure: (props: any) => NotImplemented.jsonStructure(props),
+      //   category: "Chart",
+      // },
+      // StackedAreaChart: {
+      //   structure: (props: any) => NotImplemented.jsonStructure(props),
+      //   category: "Chart",
+      // },
+      // PercentAreaChart: {
+      //   structure: (props: any) => NotImplemented.jsonStructure(props),
+      //   category: "Chart",
+      // },
+      RadarChart: {
+        structure: (props: any) =>
+          (cssType === "FLEX"
+            ? RadarChartStructureFlex
+            : RadarChartStructure
+          ).jsonStructure(props),
+        Draggable: () => (
+          <DraggableComponent
+            id="RadarChart"
+            icon={<IconChartRadar size={LARGE_ICON_SIZE} />}
+          />
+        ),
+        category: "Chart",
+        icon: <IconChartRadar size={ICON_SIZE} />,
+        synonyms: ["Spider Chart", "Web Chart"],
+      },
+      RadialChart: {
+        structure: (props: any) =>
+          (cssType === "FLEX"
+            ? RadialChartStructureFlex
+            : RadialChartStructure
+          ).jsonStructure(props),
+        Draggable: () => (
+          <DraggableComponent
+            id="RadialChart"
+            icon={<IconChartArcs size={LARGE_ICON_SIZE} />}
+          />
+        ),
+        category: "Chart",
+        icon: <IconChartDonut size={ICON_SIZE} />,
+        synonyms: ["Donut Chart", "Circular Chart"],
+      },
+      GoogleMap: {
+        structure: (props: any) =>
+          (cssType === "FLEX" ? MapStructureFlex : MapStructure).jsonStructure(
+            props,
+          ),
+        Draggable: () => (
+          <DraggableComponent
+            id="GoogleMap"
+            icon={<IconMapPin size={LARGE_ICON_SIZE} />}
+          />
+        ),
+        category: "Third Party",
+        icon: <IconMapPin size={ICON_SIZE} />,
+        synonyms: ["Google Maps", "Map Plugin"],
+      },
+      CodeEmbed: {
+        structure: (props: any) =>
+          (cssType === "FLEX"
+            ? CodeEmbedStructureFlex
+            : CodeEmbedStructure
+          ).jsonStructure(props),
+        Draggable: () => (
+          <DraggableComponent
+            id="CodeEmbed"
+            icon={<IconCode size={LARGE_ICON_SIZE} />}
+          />
+        ),
+        category: "Advanced",
+        icon: <IconCode size={ICON_SIZE} />,
+        synonyms: [
+          "Html Code",
+          "Custom Code",
+          "Embed Code",
+          "Embed HTML",
+          "Embed CSS",
+          "Embed JS",
+        ],
+      },
+    }),
     Container: {
       structure: (props: any) =>
         (cssType === "FLEX"
@@ -791,56 +1048,6 @@ export const structureMapper = (forceCssType: string = ""): StructureMapper => {
     //   structure: (props: any) => NotImplemented.jsonStructure(props),
     //   category: "Data Display",
     // },
-    Accordion: {
-      structure: (props: any) =>
-        (cssType === "FLEX"
-          ? AccordionStructureFlex
-          : AccordionStructure
-        ).jsonStructure(props),
-      Draggable: () => (
-        <DraggableComponent
-          id="Accordion"
-          icon={<IconLayoutBottombarCollapse size={LARGE_ICON_SIZE} />}
-        />
-      ),
-      category: "Data Display",
-      icon: <IconLayoutBottombarCollapse size={ICON_SIZE} />,
-      synonyms: ["Collapsible", "Expandable"],
-    },
-    AccordionItem: {
-      structure: (props: any) =>
-        (cssType === "FLEX"
-          ? AccordionItemStructureFlex
-          : AccordionItemStructure
-        ).jsonStructure(props),
-      Draggable: () => (
-        <DraggableComponent
-          id="AccordionItem"
-          icon={<IconLayoutNavbar size={LARGE_ICON_SIZE} />}
-        />
-      ),
-      category: "Data Display",
-      icon: <IconLayoutNavbar size={ICON_SIZE} />,
-      synonyms: ["Accordion Section", "Accordion Element"],
-      hide: true,
-    },
-    AccordionControl: {
-      structure: (props: any) =>
-        (cssType === "FLEX"
-          ? AccordionItemStructureFlex
-          : AccordionItemStructure
-        ).jsonStructure(props),
-      Draggable: () => (
-        <DraggableComponent
-          id="AccordionControl"
-          icon={<IconLayoutDistributeHorizontal size={LARGE_ICON_SIZE} />}
-        />
-      ),
-      category: "Data Display",
-      icon: <IconLayoutDistributeHorizontal size={ICON_SIZE} />,
-      synonyms: ["Accordion Control", "Accordion Tabs"],
-      hide: true,
-    },
     Link: {
       structure: (props: any) =>
         (cssType === "FLEX" ? LinkStructureFlex : LinkStructure).jsonStructure(
@@ -855,22 +1062,6 @@ export const structureMapper = (forceCssType: string = ""): StructureMapper => {
       category: "Navigation",
       icon: <IconLink size={ICON_SIZE} />,
       synonyms: ["Hyperlink", "Anchor"],
-    },
-    Navbar: {
-      structure: (props: any) =>
-        (cssType === "FLEX"
-          ? NavbarStructureFlex
-          : NavbarStructure
-        ).jsonStructure(props),
-      Draggable: () => (
-        <DraggableComponent
-          id="Navbar"
-          icon={<IconLayoutSidebar size={LARGE_ICON_SIZE} />}
-        />
-      ),
-      category: "Navigation",
-      icon: <IconLayoutSidebar size={ICON_SIZE} />,
-      synonyms: ["Navigation Bar", "Menu Bar"],
     },
     NavLink: {
       structure: (props: any) =>
@@ -887,36 +1078,6 @@ export const structureMapper = (forceCssType: string = ""): StructureMapper => {
       category: "Navigation",
       icon: <IconClick size={ICON_SIZE} />,
       synonyms: ["Navigation Link", "Menu Link"],
-    },
-    AppBar: {
-      structure: (props: any) =>
-        (cssType === "FLEX"
-          ? AppBarStructureFlex
-          : AppBarStructure
-        ).jsonStructure(props),
-      Draggable: () => (
-        <DraggableComponent
-          id="AppBar"
-          icon={<IconLayoutNavbar size={LARGE_ICON_SIZE} />}
-        />
-      ),
-      category: "Navigation",
-      icon: <IconLayoutNavbar size={ICON_SIZE} />,
-      synonyms: ["Navigation Bar", "Top Bar"],
-    },
-    Tabs: {
-      structure: (props: any) =>
-        (cssType === "FLEX" ? TabsStructureFlex : TabsStructure).jsonStructure(
-          props,
-        ),
-      Draggable: () => (
-        <DraggableComponent
-          id="Tabs"
-          icon={<IconLayoutKanban size={LARGE_ICON_SIZE} />}
-        />
-      ),
-      category: "Navigation",
-      icon: <IconLayoutKanban size={ICON_SIZE} />,
     },
     Breadcrumb: {
       structure: (props: any) =>
@@ -966,126 +1127,6 @@ export const structureMapper = (forceCssType: string = ""): StructureMapper => {
     //   structure: (props: any) => NotImplemented.jsonStructure(props),
     //   category: "Card",
     // },
-    BarChart: {
-      structure: (props: any) =>
-        (cssType === "FLEX"
-          ? BarChartStructureFlex
-          : BarChartStructure
-        ).jsonStructure(props),
-      Draggable: () => (
-        <DraggableComponent
-          id="BarChart"
-          icon={<IconChartBar size={LARGE_ICON_SIZE} />}
-        />
-      ),
-      category: "Chart",
-      icon: <IconChartBar size={ICON_SIZE} />,
-      synonyms: ["Bar Graph", "Column Chart"],
-    },
-    // StackedBarChart: {
-    //   structure: (props: any) => NotImplemented.jsonStructure(props),
-    //   category: "Chart",
-    // },
-    // MixBarChart: {
-    //   structure: (props: any) => NotImplemented.jsonStructure(props),
-    //   category: "Chart",
-    // },
-    // ScatterChart: {
-    //   structure: (props: any) => NotImplemented.jsonStructure(props),
-    //   category: "Chart",
-    // },
-    LineChart: {
-      structure: (props: any) =>
-        (cssType === "FLEX"
-          ? LineChartStructureFlex
-          : LineChartStructure
-        ).jsonStructure(props),
-      Draggable: () => (
-        <DraggableComponent
-          id="LineChart"
-          icon={<IconChartLine size={LARGE_ICON_SIZE} />}
-        />
-      ),
-      category: "Chart",
-      icon: <IconChartLine size={ICON_SIZE} />,
-      synonyms: ["Line Graph", "Line Plot"],
-    },
-    PieChart: {
-      structure: (props: any) =>
-        (cssType === "FLEX"
-          ? PieChartStructureFlex
-          : PieChartStructure
-        ).jsonStructure(props),
-      Draggable: () => (
-        <DraggableComponent
-          id="PieChart"
-          icon={<IconChartPie size={LARGE_ICON_SIZE} />}
-        />
-      ),
-      category: "Chart",
-      icon: <IconChartPie size={ICON_SIZE} />,
-      synonyms: ["Pie Graph", "Circle Chart"],
-    },
-    AreaChart: {
-      structure: (props: any) =>
-        (cssType === "FLEX"
-          ? AreaChartStructureFlex
-          : AreaChartStructure
-        ).jsonStructure(props),
-      Draggable: () => (
-        <DraggableComponent
-          id="AreaChart"
-          icon={<IconChartAreaLine size={LARGE_ICON_SIZE} />}
-        />
-      ),
-      category: "Chart",
-      icon: <IconChartAreaLine size={ICON_SIZE} />,
-      synonyms: ["Area Graph", "Filled Line Chart"],
-    },
-    // ComposedChart: {
-    //   structure: (props: any) => NotImplemented.jsonStructure(props),
-    //   category: "Chart",
-    // },
-    // StackedAreaChart: {
-    //   structure: (props: any) => NotImplemented.jsonStructure(props),
-    //   category: "Chart",
-    // },
-    // PercentAreaChart: {
-    //   structure: (props: any) => NotImplemented.jsonStructure(props),
-    //   category: "Chart",
-    // },
-    RadarChart: {
-      structure: (props: any) =>
-        (cssType === "FLEX"
-          ? RadarChartStructureFlex
-          : RadarChartStructure
-        ).jsonStructure(props),
-      Draggable: () => (
-        <DraggableComponent
-          id="RadarChart"
-          icon={<IconChartRadar size={LARGE_ICON_SIZE} />}
-        />
-      ),
-      category: "Chart",
-      icon: <IconChartRadar size={ICON_SIZE} />,
-      synonyms: ["Spider Chart", "Web Chart"],
-    },
-    RadialChart: {
-      structure: (props: any) =>
-        (cssType === "FLEX"
-          ? RadialChartStructureFlex
-          : RadialChartStructure
-        ).jsonStructure(props),
-      Draggable: () => (
-        <DraggableComponent
-          id="RadialChart"
-          icon={<IconChartArcs size={LARGE_ICON_SIZE} />}
-        />
-      ),
-      category: "Chart",
-      icon: <IconChartDonut size={ICON_SIZE} />,
-      synonyms: ["Donut Chart", "Circular Chart"],
-    },
     Badge: {
       structure: (props: any) =>
         (cssType === "FLEX"
@@ -1165,44 +1206,6 @@ export const structureMapper = (forceCssType: string = ""): StructureMapper => {
       category: "Overlays",
       icon: <IconStackPop size={ICON_SIZE} />,
       synonyms: ["Tooltip"],
-    },
-    GoogleMap: {
-      structure: (props: any) =>
-        (cssType === "FLEX" ? MapStructureFlex : MapStructure).jsonStructure(
-          props,
-        ),
-      Draggable: () => (
-        <DraggableComponent
-          id="GoogleMap"
-          icon={<IconMapPin size={LARGE_ICON_SIZE} />}
-        />
-      ),
-      category: "Third Party",
-      icon: <IconMapPin size={ICON_SIZE} />,
-      synonyms: ["Google Maps", "Map Plugin"],
-    },
-    CodeEmbed: {
-      structure: (props: any) =>
-        (cssType === "FLEX"
-          ? CodeEmbedStructureFlex
-          : CodeEmbedStructure
-        ).jsonStructure(props),
-      Draggable: () => (
-        <DraggableComponent
-          id="CodeEmbed"
-          icon={<IconCode size={LARGE_ICON_SIZE} />}
-        />
-      ),
-      category: "Advanced",
-      icon: <IconCode size={ICON_SIZE} />,
-      synonyms: [
-        "Html Code",
-        "Custom Code",
-        "Embed Code",
-        "Embed HTML",
-        "Embed CSS",
-        "Embed JS",
-      ],
     },
     ColorPicker: {
       structure: (props: any) =>

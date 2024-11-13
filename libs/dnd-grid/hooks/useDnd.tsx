@@ -135,8 +135,6 @@ export const useDnd = (debug?: string) => {
       coords.parentId = "main-grid";
     }
 
-    console.log({ coords });
-
     const updatingComponent = getElementByIdInContext(draggableComponent!.id!);
 
     if (updatingComponent) {
@@ -248,7 +246,7 @@ export const useDnd = (debug?: string) => {
           el,
           elementRectsCache.current as any,
         );
-        console.log({ overlappingIds, fittingIds });
+
         // check if the elements the draggable overlaps are the same as the elements the draggable fits inside
         if (arraysEqual(overlappingIds, fittingIds)) {
           setCoords({ gridColumn, gridRow, parentId });
@@ -272,7 +270,12 @@ export const useDnd = (debug?: string) => {
   );
 
   const onDragEnd = useCallback(() => {
+    const { setInvalidComponent, setValidComponent } =
+      useDndGridStore.getState();
     if (animationFrame.current !== null) {
+      setInvalidComponent(null);
+      setValidComponent(null);
+
       cancelAnimationFrame(animationFrame.current);
       animationFrame.current = null;
     }

@@ -29,7 +29,7 @@ export const withComponentWrapper = <T extends Record<string, any>>(
     );
     const isDraggable = useEditorTreeStore((state) => {
       const isPreviewMode = isPreviewModeSelector(state);
-      return !isPreviewMode;
+      return !isPreviewMode && id !== "root";
     });
 
     const computedOnLoad = useComputeValue({

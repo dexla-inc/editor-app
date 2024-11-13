@@ -55,10 +55,11 @@ const RadioComponent = forwardRef(
         ref={ref}
         styles={merge({ label: { width: "100%" } }, styles)}
         {...props}
-        wrapperProps={{ "data-id": component.id }}
+        wrapperProps={{ "data-id": props.id }}
         style={{
           ...(props.style ?? {}),
           ...defaultStyle,
+          display: "grid",
         }}
         {...defaultTriggers}
         {...componentProps}
@@ -66,15 +67,13 @@ const RadioComponent = forwardRef(
         value={value}
         label={undefined}
       >
-        <Group grow w="100%">
-          {component?.children?.map((child) =>
-            renderTree(child, {
-              ...shareableContent,
-              isInsideGroup: isPreviewMode,
-              value,
-            }),
-          )}
-        </Group>
+        {component?.children?.map((child) =>
+          renderTree(child, {
+            ...shareableContent,
+            isInsideGroup: isPreviewMode,
+            value,
+          }),
+        )}
         <ChildrenWrapper />
       </MantineRadio.Group>
     );

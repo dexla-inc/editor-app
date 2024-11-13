@@ -1,6 +1,7 @@
 import { jsonStructure as radioItemStructure } from "@/libs/dnd-grid/components/mapper/structure/RadioItem";
 import { ComponentStructure } from "@/utils/editor";
 import { nanoid } from "nanoid";
+import merge from "lodash.merge";
 
 export const jsonStructure = (props?: any): ComponentStructure => {
   const radioGroupId = nanoid();
@@ -25,18 +26,20 @@ export const jsonStructure = (props?: any): ComponentStructure => {
       name: radioGroupId,
       style: {
         gridColumn: "1/30",
-        gridRow: "1/10",
+        gridRow: "1/13",
       },
       ...(props.props || {}),
     },
     children: [
       {
-        id: nanoid(),
-        ...radioItemOne,
+        ...merge({ id: nanoid() }, radioItemOne, {
+          props: { style: { gridColumn: "1/14", gridRow: "1/13" } },
+        }),
       },
       {
-        id: nanoid(),
-        ...radioItemTwo,
+        ...merge({ id: nanoid() }, radioItemTwo, {
+          props: { style: { gridColumn: "15/30", gridRow: "1/13" } },
+        }),
       },
     ],
   };

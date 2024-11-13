@@ -11,6 +11,7 @@ import {
   ColorSwatch as MantineColorSwatch,
   Popover as MantinePopover,
   Stack,
+  Box,
 } from "@mantine/core";
 import { forwardRef, memo } from "react";
 
@@ -51,15 +52,25 @@ const ColorPickerComponent = forwardRef<HTMLDivElement, Props>(
     };
 
     const targetcomponent = (
-      <MantineColorSwatch
-        ref={ref}
-        color={value}
-        size={size}
-        radius={radius}
-        {...componentProps}
-        {...props}
-        {...otherTriggers}
-      />
+      <Box {...props}>
+        <MantineColorSwatch
+          ref={ref}
+          color={value}
+          size={size}
+          radius={radius}
+          {...componentProps}
+          {...otherTriggers}
+          styles={{
+            root: {
+              display: "flex",
+              gridArea: "1 / 1 / -1 / -1",
+              height: "auto",
+              width: "auto",
+            },
+          }}
+        />
+        <ChildrenWrapper />
+      </Box>
     );
 
     if (!isPreviewMode) {
@@ -68,10 +79,7 @@ const ColorPickerComponent = forwardRef<HTMLDivElement, Props>(
 
     return (
       <MantinePopover>
-        <MantinePopover.Target>
-          {targetcomponent}
-          <ChildrenWrapper />
-        </MantinePopover.Target>
+        <MantinePopover.Target>{targetcomponent}</MantinePopover.Target>
         <MantinePopover.Dropdown>
           <Stack>
             <MantineColorPicker

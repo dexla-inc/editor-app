@@ -42,18 +42,20 @@ const RadioItemComponent = forwardRef<HTMLInputElement, Props>(
     const checked = parentValue === String(value);
 
     return (
-      <Box
-        unstyled
-        style={props.style as any}
-        {...props}
-        {...triggers}
-        id={component.id}
-      >
+      <Box unstyled {...props} {...triggers}>
         <MantineRadio
           ref={ref}
           {...componentProps}
           label={
-            <div {...(isPreviewMode && { id: component.id })} {...triggers}>
+            <div
+              {...(isPreviewMode && { id: component.id })}
+              {...triggers}
+              style={{
+                display: "grid",
+                gridTemplateColumns: "subgrid",
+                gridTemplateRows: "subgrid",
+              }}
+            >
               {component.children?.map((child) =>
                 renderTree(child, {
                   ...shareableContent,

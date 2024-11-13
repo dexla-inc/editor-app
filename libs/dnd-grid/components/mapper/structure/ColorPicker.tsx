@@ -11,6 +11,10 @@ export const jsonStructure = (props?: any): ComponentStructure => {
     props: {
       ...colorPickerValues,
       ...(props.props || {}),
+      style: {
+        gridColumn: "1/4",
+        gridRow: "1/4",
+      },
     },
     onLoad: {
       children: { dataType: "static", static: "#ffffff" },
