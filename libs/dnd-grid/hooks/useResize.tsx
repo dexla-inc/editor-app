@@ -27,6 +27,7 @@ export const useResize = () => {
   const initialOverlappingElements = useRef<string[]>([]);
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
   let resizeFrameRef = useRef<number | null>(null);
+  const initialElementRects = useRef<any>(null);
 
   /**
    * Initializes the resizing process by setting up necessary states and references.
@@ -38,8 +39,7 @@ export const useResize = () => {
       currComponentId: string,
     ) => {
       e.preventDefault();
-      const { setElementRects, setIsInteracting, elementRects } =
-        useDndGridStore.getState();
+      const { setIsInteracting } = useDndGridStore.getState();
       const { tree: editorTree, selectedComponentIds } =
         useEditorTreeStore.getState();
       const components = editorTree.root;
@@ -69,8 +69,8 @@ export const useResize = () => {
       ) as HTMLDivElement;
 
       // Get bounding rectangles of all other components
-      const targets = getElementRects(currComponentId, components);
-      setElementRects(targets);
+      const elementRects = getElementRects(currComponentId, components);
+      initialElementRects.current = elementRects;
 
       // Store initial overlapping elements to detect new overlaps during resizing
       initialOverlappingElements.current = checkOverlap(el, elementRects, 0);
@@ -136,7 +136,6 @@ export const useResize = () => {
       if (!isResizing) return;
 
       const { selectedComponentIds } = useEditorTreeStore.getState();
-      const { elementRects } = useDndGridStore.getState();
       const selectedComponentId = selectedComponentIds?.at(0);
       if (!selectedComponentId) return;
 
@@ -161,7 +160,11 @@ export const useResize = () => {
         el.style.gridRow = newGridRow;
 
         // Check for overlaps with other elements
-        const currentOverlappingElements = checkOverlap(el, elementRects, 0);
+        const currentOverlappingElements = checkOverlap(
+          el,
+          initialElementRects.current,
+          0,
+        );
         const newOverlaps = currentOverlappingElements.filter(
           (id) => !initialOverlappingElements.current.includes(id),
         );

@@ -5,8 +5,6 @@ import { devtools } from "zustand/middleware";
 type Coordinates = { gridColumn: string; gridRow: string; parentId: string };
 
 interface State {
-  elementRects: ElementRects;
-  setElementRects: (elementRects: ElementRects) => void;
   validComponent: string | null;
   setValidComponent: (id: string | null) => void;
   invalidComponent: string | null;
@@ -21,18 +19,11 @@ interface State {
   setCoords: (coords: Coordinates) => void;
 }
 
-interface ElementRects {
-  [key: string]: DOMRect;
-}
-
 export const useDndGridStore = create<State>()(
   devtools(
     (set) => ({
       validComponent: null,
       invalidComponent: null,
-      elementRects: {} as ElementRects,
-      setElementRects: (elementRects: ElementRects) =>
-        set({ elementRects }, false, "setElementRects"),
       setValidComponent: (id: string | null) =>
         set({ validComponent: id }, false, "setValidComponent"),
       setInvalidComponent: (id: string | null) =>
