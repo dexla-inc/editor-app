@@ -82,7 +82,7 @@ const TextareaComponent = forwardRef(
             input: {
               ...customStyle,
               height: "100%",
-              padding: "5px",
+              padding: "10px",
             },
           }}
           value={value}

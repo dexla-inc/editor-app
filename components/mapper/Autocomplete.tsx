@@ -162,7 +162,7 @@ const AutocompleteComponent = forwardRef(
               ...customStyle,
               minHeight: "100%",
               height: "100%",
-              paddingLeft: "5px",
+              paddingLeft: "10px",
             },
           }}
           withinPortal={false}

@@ -21,7 +21,7 @@ const FormComponent = forwardRef(
       renderTree,
       component,
       shareableContent,
-      grid: { ChildrenWrapper },
+      grid: { ChildrenWrapper, isGridCss },
       ...props
     }: Props,
     ref,
@@ -121,15 +121,15 @@ const FormComponent = forwardRef(
       component,
       shareableContent,
     });
-    // console.log({ style, otherProps, componentProps });
+
     return (
       <MantineFlex
         ref={ref}
         {...otherProps}
         {...componentProps}
         style={{
-          ...style,
           gap: gapPx,
+          ...style,
         }}
         component="form"
         autoComplete={isPreviewMode ? "on" : "off"}

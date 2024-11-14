@@ -98,7 +98,7 @@ const ComponentToolbox = () => {
         display: "flex",
         alignItems: "center",
         position: "absolute",
-        zIndex: 1000,
+        zIndex: 1400,
         top: `${position.top - 35}px`,
         left: `${position.left - 10}px`,
       }}

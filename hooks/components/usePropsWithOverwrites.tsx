@@ -50,7 +50,6 @@ export const usePropsWithOverwrites = (
 
   const leaveHoverStateFunc = (e: React.MouseEvent<HTMLElement>) => {
     const isEditorMode = isEditorModeSelector(useEditorTreeStore.getState());
-    const { hoverComponentId, setHoverComponentId } = useEditorStore.getState();
     if (isEditorMode) return;
 
     if (
@@ -58,10 +57,6 @@ export const usePropsWithOverwrites = (
       Object.keys(component?.states?.hover ?? {}).length
     ) {
       setCustomCurrentState(currentState);
-    }
-
-    if (hoverComponentId !== null) {
-      setHoverComponentId(null);
     }
   };
 
