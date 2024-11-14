@@ -50,7 +50,7 @@ const BadgeComponent = forwardRef(
         {...contentEditableProps}
         ref={ref}
         styles={{
-          inner: omit(customStyle, ["height"]),
+          inner: { ...omit(customStyle, ["height"]), textAlign: "center" },
           root: { height: customStyle?.height, ...DISABLED_HOVER },
         }}
         {...props}

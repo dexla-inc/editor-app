@@ -128,6 +128,8 @@ const CountdownButtonComponent = forwardRef(
             display: "flex",
             width: "100%",
             height: "100%",
+            justifyContent: "center",
+            textAlign: "center",
           },
         }}
         ref={ref}
