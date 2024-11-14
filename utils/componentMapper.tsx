@@ -383,126 +383,6 @@ export const structureMapper = (forceCssType: string = ""): StructureMapper => {
         category: "Navigation",
         icon: <IconLayoutKanban size={ICON_SIZE} />,
       },
-      BarChart: {
-        structure: (props: any) =>
-          (cssType === "FLEX"
-            ? BarChartStructureFlex
-            : BarChartStructure
-          ).jsonStructure(props),
-        Draggable: () => (
-          <DraggableComponent
-            id="BarChart"
-            icon={<IconChartBar size={LARGE_ICON_SIZE} />}
-          />
-        ),
-        category: "Chart",
-        icon: <IconChartBar size={ICON_SIZE} />,
-        synonyms: ["Bar Graph", "Column Chart"],
-      },
-      // StackedBarChart: {
-      //   structure: (props: any) => NotImplemented.jsonStructure(props),
-      //   category: "Chart",
-      // },
-      // MixBarChart: {
-      //   structure: (props: any) => NotImplemented.jsonStructure(props),
-      //   category: "Chart",
-      // },
-      // ScatterChart: {
-      //   structure: (props: any) => NotImplemented.jsonStructure(props),
-      //   category: "Chart",
-      // },
-      LineChart: {
-        structure: (props: any) =>
-          (cssType === "FLEX"
-            ? LineChartStructureFlex
-            : LineChartStructure
-          ).jsonStructure(props),
-        Draggable: () => (
-          <DraggableComponent
-            id="LineChart"
-            icon={<IconChartLine size={LARGE_ICON_SIZE} />}
-          />
-        ),
-        category: "Chart",
-        icon: <IconChartLine size={ICON_SIZE} />,
-        synonyms: ["Line Graph", "Line Plot"],
-      },
-      PieChart: {
-        structure: (props: any) =>
-          (cssType === "FLEX"
-            ? PieChartStructureFlex
-            : PieChartStructure
-          ).jsonStructure(props),
-        Draggable: () => (
-          <DraggableComponent
-            id="PieChart"
-            icon={<IconChartPie size={LARGE_ICON_SIZE} />}
-          />
-        ),
-        category: "Chart",
-        icon: <IconChartPie size={ICON_SIZE} />,
-        synonyms: ["Pie Graph", "Circle Chart"],
-      },
-      AreaChart: {
-        structure: (props: any) =>
-          (cssType === "FLEX"
-            ? AreaChartStructureFlex
-            : AreaChartStructure
-          ).jsonStructure(props),
-        Draggable: () => (
-          <DraggableComponent
-            id="AreaChart"
-            icon={<IconChartAreaLine size={LARGE_ICON_SIZE} />}
-          />
-        ),
-        category: "Chart",
-        icon: <IconChartAreaLine size={ICON_SIZE} />,
-        synonyms: ["Area Graph", "Filled Line Chart"],
-      },
-      // ComposedChart: {
-      //   structure: (props: any) => NotImplemented.jsonStructure(props),
-      //   category: "Chart",
-      // },
-      // StackedAreaChart: {
-      //   structure: (props: any) => NotImplemented.jsonStructure(props),
-      //   category: "Chart",
-      // },
-      // PercentAreaChart: {
-      //   structure: (props: any) => NotImplemented.jsonStructure(props),
-      //   category: "Chart",
-      // },
-      RadarChart: {
-        structure: (props: any) =>
-          (cssType === "FLEX"
-            ? RadarChartStructureFlex
-            : RadarChartStructure
-          ).jsonStructure(props),
-        Draggable: () => (
-          <DraggableComponent
-            id="RadarChart"
-            icon={<IconChartRadar size={LARGE_ICON_SIZE} />}
-          />
-        ),
-        category: "Chart",
-        icon: <IconChartRadar size={ICON_SIZE} />,
-        synonyms: ["Spider Chart", "Web Chart"],
-      },
-      RadialChart: {
-        structure: (props: any) =>
-          (cssType === "FLEX"
-            ? RadialChartStructureFlex
-            : RadialChartStructure
-          ).jsonStructure(props),
-        Draggable: () => (
-          <DraggableComponent
-            id="RadialChart"
-            icon={<IconChartArcs size={LARGE_ICON_SIZE} />}
-          />
-        ),
-        category: "Chart",
-        icon: <IconChartDonut size={ICON_SIZE} />,
-        synonyms: ["Donut Chart", "Circular Chart"],
-      },
       GoogleMap: {
         structure: (props: any) =>
           (cssType === "FLEX" ? MapStructureFlex : MapStructure).jsonStructure(
@@ -1222,6 +1102,126 @@ export const structureMapper = (forceCssType: string = ""): StructureMapper => {
       category: "Overlays",
       icon: <IconStackPop size={ICON_SIZE} />,
       synonyms: ["Tooltip"],
+    },
+    BarChart: {
+      structure: (props: any) =>
+        (cssType === "FLEX"
+          ? BarChartStructureFlex
+          : BarChartStructure
+        ).jsonStructure(props),
+      Draggable: () => (
+        <DraggableComponent
+          id="BarChart"
+          icon={<IconChartBar size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Chart",
+      icon: <IconChartBar size={ICON_SIZE} />,
+      synonyms: ["Bar Graph", "Column Chart"],
+    },
+    // StackedBarChart: {
+    //   structure: (props: any) => NotImplemented.jsonStructure(props),
+    //   category: "Chart",
+    // },
+    // MixBarChart: {
+    //   structure: (props: any) => NotImplemented.jsonStructure(props),
+    //   category: "Chart",
+    // },
+    // ScatterChart: {
+    //   structure: (props: any) => NotImplemented.jsonStructure(props),
+    //   category: "Chart",
+    // },
+    LineChart: {
+      structure: (props: any) =>
+        (cssType === "FLEX"
+          ? LineChartStructureFlex
+          : LineChartStructure
+        ).jsonStructure(props),
+      Draggable: () => (
+        <DraggableComponent
+          id="LineChart"
+          icon={<IconChartLine size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Chart",
+      icon: <IconChartLine size={ICON_SIZE} />,
+      synonyms: ["Line Graph", "Line Plot"],
+    },
+    PieChart: {
+      structure: (props: any) =>
+        (cssType === "FLEX"
+          ? PieChartStructureFlex
+          : PieChartStructure
+        ).jsonStructure(props),
+      Draggable: () => (
+        <DraggableComponent
+          id="PieChart"
+          icon={<IconChartPie size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Chart",
+      icon: <IconChartPie size={ICON_SIZE} />,
+      synonyms: ["Pie Graph", "Circle Chart"],
+    },
+    AreaChart: {
+      structure: (props: any) =>
+        (cssType === "FLEX"
+          ? AreaChartStructureFlex
+          : AreaChartStructure
+        ).jsonStructure(props),
+      Draggable: () => (
+        <DraggableComponent
+          id="AreaChart"
+          icon={<IconChartAreaLine size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Chart",
+      icon: <IconChartAreaLine size={ICON_SIZE} />,
+      synonyms: ["Area Graph", "Filled Line Chart"],
+    },
+    // ComposedChart: {
+    //   structure: (props: any) => NotImplemented.jsonStructure(props),
+    //   category: "Chart",
+    // },
+    // StackedAreaChart: {
+    //   structure: (props: any) => NotImplemented.jsonStructure(props),
+    //   category: "Chart",
+    // },
+    // PercentAreaChart: {
+    //   structure: (props: any) => NotImplemented.jsonStructure(props),
+    //   category: "Chart",
+    // },
+    RadarChart: {
+      structure: (props: any) =>
+        (cssType === "FLEX"
+          ? RadarChartStructureFlex
+          : RadarChartStructure
+        ).jsonStructure(props),
+      Draggable: () => (
+        <DraggableComponent
+          id="RadarChart"
+          icon={<IconChartRadar size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Chart",
+      icon: <IconChartRadar size={ICON_SIZE} />,
+      synonyms: ["Spider Chart", "Web Chart"],
+    },
+    RadialChart: {
+      structure: (props: any) =>
+        (cssType === "FLEX"
+          ? RadialChartStructureFlex
+          : RadialChartStructure
+        ).jsonStructure(props),
+      Draggable: () => (
+        <DraggableComponent
+          id="RadialChart"
+          icon={<IconChartArcs size={LARGE_ICON_SIZE} />}
+        />
+      ),
+      category: "Chart",
+      icon: <IconChartDonut size={ICON_SIZE} />,
+      synonyms: ["Donut Chart", "Circular Chart"],
     },
   };
 };

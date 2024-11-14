@@ -12,8 +12,8 @@ export const jsonStructure = (props?: any): ComponentStructure => {
       dataType: "static",
       type: "line",
       style: {
-        width: "100%",
-        height: 320,
+        gridColumn: "1/30",
+        gridRow: "1/20",
       },
       chartColors: [
         requiredModifiers.chart.chartColors[0],

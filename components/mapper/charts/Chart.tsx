@@ -76,7 +76,16 @@ const baseOptions: ApexOptions = {
 };
 
 const ChartComponent = forwardRef(
-  ({ renderTree, shareableContent, component, ...props }: Props, ref) => {
+  (
+    {
+      renderTree,
+      shareableContent,
+      component,
+      grid: { ChildrenWrapper, isGridCss },
+      ...props
+    }: Props,
+    ref,
+  ) => {
     const mergedProps = merge({}, component.props, component.onLoad);
 
     const {
@@ -205,26 +214,38 @@ const ChartComponent = forwardRef(
       Object.assign(customOptions, dynamicOptions);
 
       return (
-        <Skeleton visible={isLoading} id={component.id}>
-          <Box
-            ref={ref}
-            component={ReactApexChart}
-            {...omit(props, ["id"])}
-            {...componentProps}
-            {...triggers}
-            series={safeJsonParse(dataSeries)}
-            style={{
-              ...(props.style ?? {}),
-              textAlign: "center",
-              padding: 0,
-              color: theme.colors.gray[8],
-            }}
-            type={type}
-            options={customOptions}
-            width={componentProps.style?.width ?? "100%"}
-            height={componentProps.style?.height ?? 320}
-          />
-        </Skeleton>
+        <>
+          {/* @ts-ignore */}
+          <Box unstyled {...props}>
+            <Box
+              ref={ref}
+              component={ReactApexChart}
+              {...componentProps}
+              {...triggers}
+              series={safeJsonParse(dataSeries)}
+              style={{
+                textAlign: "center",
+                padding: 0,
+                color: theme.colors.gray[8],
+                ...(isGridCss && {
+                  display: "flex",
+                  gridArea: "1 / 1 / -1 / -1",
+                  minHeight: "auto!important",
+                }),
+              }}
+              type={type}
+              options={customOptions}
+              {...(!isGridCss && {
+                width: componentProps.style?.width ?? "100%",
+                height: componentProps.style?.height ?? 320,
+              })}
+              {...(isGridCss && {
+                height: "100%",
+              })}
+            />
+            <ChildrenWrapper />
+          </Box>
+        </>
       );
     } catch {
       return (

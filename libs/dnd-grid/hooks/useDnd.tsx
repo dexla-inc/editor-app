@@ -270,12 +270,7 @@ export const useDnd = (debug?: string) => {
   );
 
   const onDragEnd = useCallback(() => {
-    const { setInvalidComponent, setValidComponent } =
-      useDndGridStore.getState();
     if (animationFrame.current !== null) {
-      setInvalidComponent(null);
-      setValidComponent(null);
-
       cancelAnimationFrame(animationFrame.current);
       animationFrame.current = null;
     }

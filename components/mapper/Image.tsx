@@ -12,7 +12,7 @@ const ImageComponent = forwardRef(
       renderTree,
       component,
       shareableContent,
-      grid: { ChildrenWrapper },
+      grid: { ChildrenWrapper, isGridCss },
       ...props
     }: Props,
     ref,
@@ -50,6 +50,9 @@ const ImageComponent = forwardRef(
               height: "100%",
             },
           }}
+          {...(isGridCss && {
+            height: "100%",
+          })}
           fit="fill"
         />
         <ChildrenWrapper />
