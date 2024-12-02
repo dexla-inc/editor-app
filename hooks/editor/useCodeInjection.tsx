@@ -3,7 +3,7 @@ import { useVariableStore } from "@/stores/variables";
 import { isPreviewModeSelector } from "@/utils/componentSelectors";
 import { EditableComponentMapper } from "@/utils/editor";
 import merge from "lodash.merge";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useMemo, useEffect } from "react";
 
 export const useCodeInjection = (
   ref: React.RefObject<HTMLIFrameElement>,
@@ -34,50 +34,27 @@ export const useCodeInjection = (
     );
 
     return `
-    (function(w) {
-      let lastVariables = {};
-      
-      // Function to check if variables have changed
-      const checkVariables = () => {
-        const currentVars = w.variables();
-        if (JSON.stringify(lastVariables) !== JSON.stringify(currentVars)) {
-          lastVariables = Object.freeze({ ...currentVars });
-          updateDOMWithVariables();
-        }
-        requestAnimationFrame(checkVariables);
-      };
+      (function(w) {
+        const variables = new Proxy({}, {
+          get: (target, prop) => w.variables()[prop],
+          set: (target, prop, value) => {
+            w.variables()[prop] = value;
+            w.postMessage({ type: 'SET_VARIABLE', params: [prop, value] }, '*');
+            w.parent.postMessage({ type: 'SET_VARIABLE', params: [prop, value] }, '*');
+          }
+        });
+        const dexla = {
+          setVariable: (variable, value) => {
+            const variablePattern = /variables\\[s*(?:\\/\\*[\\s\\S]*?\\*\\/\\s*)?'(.*?)'\\s*\\]/g;
+            const variableId = [...variable.matchAll(variablePattern)][0][1];
+            variables[variableId] = value;
+          }
+        };
+        Object.freeze(dexla);
 
-      const variables = new Proxy({}, {
-        get: (target, prop) => w.variables()[prop],
-        set: (target, prop, value) => {
-          w.variables()[prop] = value;
-          w.postMessage({ type: 'SET_VARIABLE', params: [prop, value] }, '*');
-          w.parent.postMessage({ type: 'SET_VARIABLE', params: [prop, value] }, '*');
-          return true;
-        }
-      });
-
-      const dexla = {
-        setVariable: (variable, value) => {
-          const variablePattern = /variables\\[s*(?:\\/\\*[\\s\\S]*?\\*\\/\\s*)?'(.*?)'\\s*\\]/g;
-          const variableId = [...variable.matchAll(variablePattern)][0][1];
-          variables[variableId] = value;
-        }
-      };
-      Object.freeze(dexla);
-
-      // Function that runs the script with latest values
-      const updateDOMWithVariables = () => {
         ${transformedJsCode}
-      };
-
-      // Start watching for variable changes
-      checkVariables();
-      
-      // Initial run
-      updateDOMWithVariables();
-    })(window);
-  `;
+      })(window);
+    `;
   }, []);
 
   const injectEventHandlers = useCallback(() => {
