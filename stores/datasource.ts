@@ -70,8 +70,13 @@ export const useDataSourceStore = create<DataSourceState>()(
             return acc;
           }, {});
 
+          const domain = window.location.hostname
+            .split(".")
+            .slice(-2)
+            .join(".");
           Cookies.set(projectId, refreshToken, {
             expires: 7,
+            domain: domain,
           });
 
           set((state) => ({
